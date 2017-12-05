@@ -1,62 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:53856 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753193AbdLHNNH (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:39352 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751904AbdLETnB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Dec 2017 08:13:07 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] of: overlay: Fix out-of-bounds write in init_overlay_changeset()
-Date: Fri,  8 Dec 2017 14:13:02 +0100
-Message-Id: <1512738783-17452-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512738783-17452-1-git-send-email-geert+renesas@glider.be>
-References: <1512738783-17452-1-git-send-email-geert+renesas@glider.be>
+        Tue, 5 Dec 2017 14:43:01 -0500
+Date: Tue, 05 Dec 2017 14:42:59 -0500 (EST)
+Message-Id: <20171205.144259.1917745716758080716.davem@davemloft.net>
+To: thomas.petazzoni@free-electrons.com
+Cc: sergei.shtylyov@cogentembedded.com,
+        niklas.soderlund+renesas@ragnatech.se, geert+renesas@glider.be,
+        horms+renesas@verge.net.au, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/2] net: sh_eth: DMA mapping API fixes
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
+References: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If an overlay has no "__symbols__" node, but it has nodes without
-"__overlay__" subnodes at the end (e.g. a "__fixups__" node), after
-filling in all fragments for nodes with "__overlay__" subnodes,
-"fragment = &fragments[cnt]" will point beyond the end of the allocated
-array.
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Date: Mon,  4 Dec 2017 14:33:25 +0100
 
-Hence writing to "fragment->overlay" will overwrite unallocated memory,
-which may lead to a crash later.
+> Here are two patches that fix how the sh_eth driver is using the DMA
+> mapping API: a bogus struct device is used in some places, or a NULL
+> struct device is used.
 
-Fix this by deferring both the assignment to "fragment" and the
-offending write afterwards until we know for sure the node has an
-"__overlay__" subnode, and thus a valid entry in "fragments[]".
-
-Fixes: 61b4de4e0b384f4a ("of: overlay: minor restructuring")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
---
-This applies to both v4.15-rc2 and Rob's for-next branch.
----
- drivers/of/overlay.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index b8918e92d5a5268f..49b8939af6b201ca 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -572,9 +572,10 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs,
- 
- 	cnt = 0;
- 	for_each_child_of_node(tree, node) {
--		fragment = &fragments[cnt];
--		fragment->overlay = of_get_child_by_name(node, "__overlay__");
--		if (fragment->overlay) {
-+		overlay_node = of_get_child_by_name(node, "__overlay__");
-+		if (overlay_node) {
-+			fragment = &fragments[cnt];
-+			fragment->overlay = overlay_node;
- 			fragment->target = find_target_node(node);
- 			if (!fragment->target) {
- 				of_node_put(fragment->overlay);
--- 
-2.7.4
+Series applied.
