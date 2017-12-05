@@ -1,164 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46416 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752585AbdLSVXA (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:34484 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751323AbdLEJKU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 16:23:00 -0500
-Received: by mail-lf0-f68.google.com with SMTP id r143so21696745lfe.13
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Dec 2017 13:22:59 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 1/3] phy: core: Move runtime PM reference counting to the parent device
-Date: Tue, 19 Dec 2017 22:22:29 +0100
-Message-Id: <1513718551-28624-2-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1513718551-28624-1-git-send-email-ulf.hansson@linaro.org>
-References: <1513718551-28624-1-git-send-email-ulf.hansson@linaro.org>
+        Tue, 5 Dec 2017 04:10:20 -0500
+MIME-Version: 1.0
+In-Reply-To: <20171204133327.3505-3-thomas.petazzoni@free-electrons.com>
+References: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com> <20171204133327.3505-3-thomas.petazzoni@free-electrons.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Dec 2017 10:10:19 +0100
+Message-ID: <CAMuHMdV2u26uWGeJFz+f11hUtvM45ax1jbG98JWTcZwGgbrSrg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] net: sh_eth: don't use NULL as "struct device" for
+ the DMA mapping API
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The runtime PM deployment in the phy core is a bit unnecessary complicated
-and the main reason is because it operates on the phy device, which is
-created by the phy core and assigned as a child device of the phy provider
-device.
+On Mon, Dec 4, 2017 at 2:33 PM, Thomas Petazzoni
+<thomas.petazzoni@free-electrons.com> wrote:
+> Using NULL as argument for the DMA mapping API is bogus, as the DMA
+> mapping API may use information from the "struct device" to perform
+> the DMA mapping operation. Therefore, pass the appropriate "struct
+> device".
+>
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Let's simplify the code, by replacing the existing calls to
-phy_pm_runtime_get_sync() and phy_pm_runtime_put(), with regular calls to
-pm_runtime_get_sync() and pm_runtime_put(). While doing that, let's also
-change to give the phy provider device as the parameter to the runtime PM
-calls. This together with adding error paths, that allows the phy
-provider device to be runtime PM disabled, enables further clean up the
-code. More precisely, we can simply avoid to enable runtime PM for the phy
-device altogether, so let's do that as well.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-More importantly, this change also fixes an issue for system suspend.
-Especially in those cases when the phy provider device gets put into a low
-power state via calling the pm_runtime_force_suspend() helper, as is the
-case for a Renesas SoC, which has the phy provider device attached to the
-generic PM domain.
+Gr{oetje,eeting}s,
 
-The problem in this case, is that pm_runtime_force_suspend() expects the
-child device of the provider device to be runtime suspended, else this will
-trigger a WARN splat (correctly) when runtime PM gets re-enabled at system
-resume.
+                        Geert
 
-In the current case, even if phy_power_off() triggers a pm_runtime_put()
-during system suspend the phy device (child) doesn't get runtime suspended,
-because that is prevented in the system suspend phases. However, by
-avoiding to enable runtime PM, this problem goes away.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/phy/phy-core.c | 33 +++++++++++++--------------------
- 1 file changed, 13 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index b4964b0..9fa3f13 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -222,10 +222,10 @@ int phy_init(struct phy *phy)
- 	if (!phy)
- 		return 0;
- 
--	ret = phy_pm_runtime_get_sync(phy);
--	if (ret < 0 && ret != -ENOTSUPP)
-+	ret = pm_runtime_get_sync(phy->dev.parent);
-+	if (ret < 0 && ret != -EACCES)
- 		return ret;
--	ret = 0; /* Override possible ret == -ENOTSUPP */
-+	ret = 0;
- 
- 	mutex_lock(&phy->mutex);
- 	if (phy->init_count == 0 && phy->ops->init) {
-@@ -239,7 +239,7 @@ int phy_init(struct phy *phy)
- 
- out:
- 	mutex_unlock(&phy->mutex);
--	phy_pm_runtime_put(phy);
-+	pm_runtime_put(phy->dev.parent);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(phy_init);
-@@ -251,10 +251,10 @@ int phy_exit(struct phy *phy)
- 	if (!phy)
- 		return 0;
- 
--	ret = phy_pm_runtime_get_sync(phy);
--	if (ret < 0 && ret != -ENOTSUPP)
-+	ret = pm_runtime_get_sync(phy->dev.parent);
-+	if (ret < 0 && ret != -EACCES)
- 		return ret;
--	ret = 0; /* Override possible ret == -ENOTSUPP */
-+	ret = 0;
- 
- 	mutex_lock(&phy->mutex);
- 	if (phy->init_count == 1 && phy->ops->exit) {
-@@ -268,7 +268,7 @@ int phy_exit(struct phy *phy)
- 
- out:
- 	mutex_unlock(&phy->mutex);
--	phy_pm_runtime_put(phy);
-+	pm_runtime_put(phy->dev.parent);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(phy_exit);
-@@ -286,11 +286,10 @@ int phy_power_on(struct phy *phy)
- 			goto out;
- 	}
- 
--	ret = phy_pm_runtime_get_sync(phy);
--	if (ret < 0 && ret != -ENOTSUPP)
-+	ret = pm_runtime_get_sync(phy->dev.parent);
-+	if (ret < 0 && ret != -EACCES)
- 		goto err_pm_sync;
--
--	ret = 0; /* Override possible ret == -ENOTSUPP */
-+	ret = 0;
- 
- 	mutex_lock(&phy->mutex);
- 	if (phy->power_count == 0 && phy->ops->power_on) {
-@@ -306,7 +305,7 @@ int phy_power_on(struct phy *phy)
- 
- err_pwr_on:
- 	mutex_unlock(&phy->mutex);
--	phy_pm_runtime_put_sync(phy);
-+	pm_runtime_put(phy->dev.parent);
- err_pm_sync:
- 	if (phy->pwr)
- 		regulator_disable(phy->pwr);
-@@ -333,7 +332,7 @@ int phy_power_off(struct phy *phy)
- 	}
- 	--phy->power_count;
- 	mutex_unlock(&phy->mutex);
--	phy_pm_runtime_put(phy);
-+	pm_runtime_put(phy->dev.parent);
- 
- 	if (phy->pwr)
- 		regulator_disable(phy->pwr);
-@@ -774,11 +773,6 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
- 	if (ret)
- 		goto put_dev;
- 
--	if (pm_runtime_enabled(dev)) {
--		pm_runtime_enable(&phy->dev);
--		pm_runtime_no_callbacks(&phy->dev);
--	}
--
- 	return phy;
- 
- put_dev:
-@@ -831,7 +825,6 @@ EXPORT_SYMBOL_GPL(devm_phy_create);
-  */
- void phy_destroy(struct phy *phy)
- {
--	pm_runtime_disable(&phy->dev);
- 	device_unregister(&phy->dev);
- }
- EXPORT_SYMBOL_GPL(phy_destroy);
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
