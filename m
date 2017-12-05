@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:55760 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:49043 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752491AbdLGLZg (ORCPT
+        id S1752668AbdLEQnI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 06:25:36 -0500
-Date: Thu, 7 Dec 2017 12:25:35 +0100
+        Tue, 5 Dec 2017 11:43:08 -0500
+Date: Tue, 5 Dec 2017 17:43:07 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -16,63 +16,66 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Claudio Foellmi <claudio.foellmi@ergon.ch>,
         Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH 3/6] i2c: add 'set_sda' to bus_recovery_info
-Message-ID: <20171207112535.oqtnemvi4q5xnewh@ninjato>
+Message-ID: <20171205164307.65htuotj3heglefj@ninjato>
 References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
  <20171204123640.3382-4-wsa+renesas@sang-engineering.com>
  <CACRpkdZzwo9UhT08VDHXg6=eXdK80Pt1omZ4Xda_HFwguyNpaw@mail.gmail.com>
  <20171205133848.nzrhysiz2twvlamx@ninjato>
  <CACRpkdYuHit1w1_d4h++vOuSWosf+iBdgimtCUbmic3mkbm1Wg@mail.gmail.com>
- <20171205164307.65htuotj3heglefj@ninjato>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fduft7bcvmojdurz"
+        protocol="application/pgp-signature"; boundary="pne57ups5geiyx6s"
 Content-Disposition: inline
-In-Reply-To: <20171205164307.65htuotj3heglefj@ninjato>
+In-Reply-To: <CACRpkdYuHit1w1_d4h++vOuSWosf+iBdgimtCUbmic3mkbm1Wg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---fduft7bcvmojdurz
+--pne57ups5geiyx6s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 
-> > Two statice inlines in <linux/gpio/consumer.h>
-> > named
-> >=20
-> > int gpiod_is output()
-> > int gpiod_is_input()
-> >=20
-> > should conform to Rusty Russell's API hierarchy.
+> Two statice inlines in <linux/gpio/consumer.h>
+> named
 >=20
-> Yes, sounds good!
+> int gpiod_is output()
+> int gpiod_is_input()
 >=20
-> > Interested in fixing it, or should I?
->=20
-> Please do. I don't want to add magic numbers to the kernel ;)
+> should conform to Rusty Russell's API hierarchy.
 
-OK?
+Yes, sounds good!
+
+> Interested in fixing it, or should I?
+
+Please do. I don't want to add magic numbers to the kernel ;)
+Could you provide an immutable branch then that I could pick up, because
+my series will depend on it.
+
+> I can almost ACK it before you write the patch.
+
+:)
 
 
---fduft7bcvmojdurz
+--pne57ups5geiyx6s
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlopJSsACgkQFA3kzBSg
-Kbb3+Q/+NL/cocupKxr/88KYYmVgkBij5ojsvYUdCX+BhshYHvMccOG9pz4vsQuJ
-ORRyBi4jP/teC7Fi3Mw7Ob2Mh3H/iibi9p0Ax92N8pr7PmubiAHVN+x39SH0J5Mz
-yVGcz+XQn1r+0jCEJVmgmn3R2Zket69KVoYwDBPxR0sJ8A6x+N1QDB7kAVQKVvtV
-F0m3qvMIaEncjm59pL/I9n35GPiS/WsP2PCykbAMwIGgIojwKrYfLxbmJxY38tUE
-mAeKzU1ybD4mQNrfRNVsLUyuSqlRC3aPLD/NhAB7DCRFCOIUYYLgg6j2lSCuUi28
-rsaa53nmG7vraeYxQE6JjAAk9eyRFR0gN37ls6ls2uDPTgZvBb/ojOIyAAFQ+OlO
-CVfJMP/fC8Mo44ngCtypUakIzfTvBW72Zkv2wDIcOvKjZebm5p4ZnyTEgOXJeSSa
-L8yonCNFjdJlNtzsbqaFs4fWR0cxkqWLu3mAEhgwXrcwEC3BBYmSSKlW8Pg/wUOh
-lA0NMdi//0qBzg05QNLrTD4+Lsz8ZSXlIqD0z8dYFrB/Q+0/OXZVGhBT4Hz/bFtA
-3rMY+zMmTSdQaVHQHypEbQ7u3/PT7rUOA5efmF4z6g11uXaPpdLW9ejs6+3AWPfz
-Nt2ND59xLglgvmHIHCya/BOvzvJYOWahD0NVctBoxWuUiuR6Gm8=
-=rujJ
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlomzJcACgkQFA3kzBSg
+KbYWDw//d6AxLQ+JAy3olTWi2Q+wykiO7D23T37WungRyCiGSMMf9gFthy2u8bWL
+fndDTzuJLPq/bD3RftEDTbFDZ8um/WQSh9jDv52Ex7xy/WgsbVQkbt/saaOkyWbN
+H7eEYnkMn/PAYCWnPMH/M9gbgG0y8Mj7MHizvylH2Yjb8Urz/2Zn3H4FUmujANmx
+S6MuOWdJZhKe4CWe3pQ56fEqRwtEiwz/Cdnk3RAw2YXYaAx03YAYDlkbgxhTs0NV
+vf3yvDMJ/Zzo216bzUNcZ/WL0H7YZCEcDJAbhTuCtRlIZeZMlVcx4CodpBqDafvh
+Sx32soNZ0GPE73WET7tJUvyUxC16CQ8DJok2UoTvQ03y91CHA1ixaWZn8vOVT1le
+FOzx29BZVkrXZrpdmQhS6mEZqees5M6kvW2SzCIp7KM44WPG4ZhYi1ivgLfmcLEN
+Ee561ThZBuq+gxet/WAKv+tdg0TZbYuA36ZvztEipxdBcjaA8GrpkbMNTFEli6ei
+XWearWZph2XiiXJ/1PEqaXe+eKgGtbOTCr02U25yJ3caRH4nYUdMmf0JaW3fdIG6
+67RYbTYncZN61/9+yuyMs1HBh9Nu1MquM75N7eYus6ma0n5JtcVkxvCwSgZuENE8
+Sg+K6E1XbZWCiW089EyYmMq3tJ0nQlzZXVsoKcSM0lhuyRjtZis=
+=5pwh
 -----END PGP SIGNATURE-----
 
---fduft7bcvmojdurz--
+--pne57ups5geiyx6s--
