@@ -1,73 +1,50 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Tue, 5 Dec 2017 14:38:48 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Linus Walleij <linus.walleij@linaro.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:44316 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752911AbdLEKeN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 5 Dec 2017 05:34:13 -0500
+Received: by mail-it0-f65.google.com with SMTP id b5so383480itc.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Dec 2017 02:34:13 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <53d5696c-6f0d-1717-5c9e-4facf397f284@electromag.com.au>
+References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
+ <20171204123640.3382-4-wsa+renesas@sang-engineering.com> <CACRpkdZzwo9UhT08VDHXg6=eXdK80Pt1omZ4Xda_HFwguyNpaw@mail.gmail.com>
+ <53d5696c-6f0d-1717-5c9e-4facf397f284@electromag.com.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 5 Dec 2017 11:34:12 +0100
+Message-ID: <CACRpkdY1nuRpk5BRn2iWXqhfRycLRb2VtwEUA4pA9FM+7JrTog@mail.gmail.com>
+Subject: Re: [PATCH 3/6] i2c: add 'set_sda' to bus_recovery_info
+To: Phil Reid <preid@electromag.com.au>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-i2c@vger.kernel.org,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phil Reid <preid@electromag.com.au>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Jarkko Nikula <jarkko.nikula@linux.intel.com>,
         Claudio Foellmi <claudio.foellmi@ergon.ch>,
         Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 3/6] i2c: add 'set_sda' to bus_recovery_info
-Message-ID: <20171205133848.nzrhysiz2twvlamx@ninjato>
-References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
- <20171204123640.3382-4-wsa+renesas@sang-engineering.com>
- <CACRpkdZzwo9UhT08VDHXg6=eXdK80Pt1omZ4Xda_HFwguyNpaw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vddxjidrseoouwvo"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZzwo9UhT08VDHXg6=eXdK80Pt1omZ4Xda_HFwguyNpaw@mail.gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Tue, Dec 5, 2017 at 10:57 AM, Phil Reid <preid@electromag.com.au> wrote:
+> On 5/12/2017 16:39, Linus Walleij wrote:
 
---vddxjidrseoouwvo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> Just compare it to zero. if (!gpiod_get_direction())
+>>
+>> This flag is only for requesting GPIOs in the old API.
+>> We didn't add a define in the new API, it seemed overengineered.
+>>
+>
+> Perhaps the docs need updating?
+> as of 4.15-rc2 it says
+>  * Return GPIOF_DIR_IN or GPIOF_DIR_OUT, or an error code in case of error.
+>
+> I can submit something if you wish.
 
+Hit me.
 
-> > +                       if (gpiod_get_direction(bri->sda_gpiod) =3D=3D =
-GPIOF_DIR_OUT)
-> > +                               bri->set_sda =3D set_sda_gpio_value;
->=20
-> Just compare it to zero. if (!gpiod_get_direction())
+Sorry for the incoherent information.
 
-So, this?
-
-	if (!gpiod_get_direction())
-		bri->set_sda =3D set_sda_gpio_value;
-
-That looks like "if i couldn't the direction, then...", or?
-
-Comparing to plain numbers feels like magic values?
-
-Maybe this should be named 'gpiod_is_direction_input()'?
-
-Or?
-
-
---vddxjidrseoouwvo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlomoWQACgkQFA3kzBSg
-KbYakQ//f+aFWvPc941A5xL0CJxtco4PhXoENpjrlTkkvp9RIHGi0iCFTLxvNieo
-MUvZmP01sFWJIQDHcyt+FNUeG9B/b4sCLtkBC6COqX89NJNZ81ME7cnlNxGXnRKO
-qnrfjyHaJZ6ikdOnf++ygcHT1zVdmsYIfF8r+NP/TEf7JR+fbWzYCwqctPLmRTrg
-dFCMz3OHwdhhazxS5vXK0xMHTHwYVUBc+6zmSnslcJSGerdagXb2/fQbf1Tc47lU
-ROKO7eKAuFkl7oZ2mIcBrp0RQcPdBIIvtAC6mzZyepRJpo9QgRVUu2m4ZjzO+c07
-rXuqQpLiC3n3NMTJ4wsvxa35auUePfEJAkW1hwb1E7PGf7YQ6cTc/ppU+CrULwc1
-dysFMtl7SVFQu1ixdIAmz+lCDiuwglnYKyiaaiwXDdtcgXu85+fjfPQrSPobR32Q
-pA3dvsU9qe/L/ZmuOlaqS7P/KvgBWjjjIJnrCCnx0dy0iOrrj4wj6tgC3cZ85Br1
-UhOLBxzMY9SB0AF8T5aulq/YKd3lucXxLp+GRCZOq928bRgiV4d+2yYvXDol+Vis
-z2dUW+O/1xo7q3r8gOpLJDvtLw8r/B1pblM4gwNxG4rJn7ieKaUq9L0rJMwS+4T9
-bAmqRnqctA31mJS9KESA8p7u8XY3QmZbA+yI6sBZCdlguIFkvJE=
-=VDpP
------END PGP SIGNATURE-----
-
---vddxjidrseoouwvo--
+Yours,
+Linus Walleij
