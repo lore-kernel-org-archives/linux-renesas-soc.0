@@ -1,34 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44688 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753874AbdLDPF1 (ORCPT
+Received: from condef-04.nifty.com ([202.248.20.69]:57017 "EHLO
+        condef-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751982AbdLEEVl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 10:05:27 -0500
-Date: Mon, 4 Dec 2017 16:05:24 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
+        Mon, 4 Dec 2017 23:21:41 -0500
+Received: from conssluserg-02.nifty.com ([10.126.8.81])by condef-04.nifty.com with ESMTP id vB54HTTL032614
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 5 Dec 2017 13:17:29 +0900
+MIME-Version: 1.0
+In-Reply-To: <20171204152533.w5ykfqtkk6kzydet@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-3-git-send-email-yamada.masahiro@socionext.com> <20171204152533.w5ykfqtkk6kzydet@ninjato>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 5 Dec 2017 13:16:37 +0900
+Message-ID: <CAK7LNAQ6bQ98nYj4+7js2f2HOMN1_A0GALYWXLXqabFnvVCUpQ@mail.gmail.com>
+Subject: Re: [PATCH v2 02/22] mmc: renesas_sdhi: remove wrong depends on to
+ enable compile test
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <simon.horman@netronome.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 13/22] mmc: tmio,renesas_sdhi: move Renesas-specific
- DMA data to renesas_sdhi.h
-Message-ID: <20171204150523.ulcezxgqamroimaw@ninjato>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-14-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-14-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Nov 25, 2017 at 01:24:48AM +0900, Masahiro Yamada wrote:
-> struct tmio_mmc_host has "dma_dataend" and "dma_complete", but in fact,
-> they are Renesas private data.  Move them to renesas_sdhi.h
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+2017-12-05 0:25 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
+> On Sat, Nov 25, 2017 at 01:24:37AM +0900, Masahiro Yamada wrote:
+>> ARCH_RENESAS is a stronger condition than (ARM || ARM64).
+>> If ARCH_RENESAS is enabled, (ARM || ARM64) is met as well.
+>>
+>> What is worse, the first depends on line prevents COMPILE_TEST from
+>> enabling this driver.  It should be removed.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Because COMPILE_TEST now works, buildbot spotted something:
+>
+> https://www.spinics.net/lists/linux-i2c/msg32556.html
+>
+> Likely, we should include linux/io.h in the header?
+>
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Yes.  Can you insert a patch before this one?
+
+
+-- 
+Best Regards
+Masahiro Yamada
