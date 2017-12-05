@@ -1,35 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f47.google.com ([209.85.214.47]:35894 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753083AbdLEPss (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38250 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752373AbdLEPXh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 10:48:48 -0500
-Received: by mail-it0-f47.google.com with SMTP id d16so2572121itj.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Dec 2017 07:48:48 -0800 (PST)
+        Tue, 5 Dec 2017 10:23:37 -0500
 MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB0992214C75585618A1400A1CD83D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1713438.irjm9MTSvo@aspire.rjw.lan> <CAMuHMdV4LV2Uzh2oGdaPiS4W4dfsZ-pn3rGcJNiZLStfo39How@mail.gmail.com>
- <TY1PR06MB09928D43D4E5E5752A6A604ED83A0@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAPDyKFoF0WMSTuK4AAyDzerpVpnfEq=Hn1n9kDJM0fYMkFL_wA@mail.gmail.com>
- <TY1PR06MB09924E4F66C6FCF131EE71CFD83B0@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAPDyKFoG2-mVGDtzPyg2FDVbXnsWGy543craKqeBVE_awKpf8Q@mail.gmail.com>
- <CAMuHMdViD3vqzits=th52+01d5y3p5iwbAg0jbUBcoGvYfULuA@mail.gmail.com>
- <CAPDyKFpRrQr3LRXH_CoLSYe2a=2PnUqvuNWUYSuh0wm+rBJ0dw@mail.gmail.com>
- <TY1PR06MB09928B145D35E52444F8D462D8380@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAPDyKFr8D4jL2vwO5tdBJnNVP=DoAD6H_K=4SQbu7rFAZFd3Xg@mail.gmail.com>
- <TY1PR06MB09929CD76E67B64FDE54B170D8390@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAPDyKFr4=Vct_-w1euOsEnb3WdeBvH9mz12zNTUfX7Z6nEwRuw@mail.gmail.com> <TY1PR06MB0992214C75585618A1400A1CD83D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 5 Dec 2017 16:48:46 +0100
-Message-ID: <CAPDyKFojEgSN9TfxywYW6Td-j--QzdZ5MNJjBXhJ_vQ=Rz=Aew@mail.gmail.com>
+In-Reply-To: <Pine.LNX.4.44L0.1712050958090.1416-100000@iolanthe.rowland.org>
+References: <TY1PR06MB0992214C75585618A1400A1CD83D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <Pine.LNX.4.44L0.1712050958090.1416-100000@iolanthe.rowland.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 5 Dec 2017 16:23:35 +0100
+Message-ID: <CAJZ5v0j6u3oH_mRac4zcZsJdZtXAD0UxUQUYf4pj2SDwmaHsNw@mail.gmail.com>
 Subject: Re: [PATCH] PM / runtime: Drop children check from __pm_runtime_set_status()
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Linux PM <linux-pm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
         USB list <linux-usb@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
@@ -37,47 +27,66 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 5 December 2017 at 04:23, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Hi,
+On Tue, Dec 5, 2017 at 4:03 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Tue, 5 Dec 2017, Yoshihiro Shimoda wrote:
 >
->> From: Ulf Hansson, Sent: Monday, December 4, 2017 7:41 PM
+>> Hi,
 >>
->> On 1 December 2017 at 12:03, Yoshihiro Shimoda
->> <yoshihiro.shimoda.uh@renesas.com> wrote:
-> <snip>
->> > Sure! I tested your patch, and then the following message disappeared!
+>> > From: Ulf Hansson, Sent: Monday, December 4, 2017 7:41 PM
 >> >
->> >    Enabling runtime PM for inactive device (ee080200.usb-phy) with active children
->>
->> Great, that confirms my theory.
->>
->> I will re-work the patch and re-post it to see what people thinks about it.
->
-> Thank you!
->
+>> > On 1 December 2017 at 12:03, Yoshihiro Shimoda
+>> > <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> <snip>
+>> > > Sure! I tested your patch, and then the following message disappeared!
+>> > >
+>> > >    Enabling runtime PM for inactive device (ee080200.usb-phy) with active children
 >> >
->> > However, the following message still exists.
+>> > Great, that confirms my theory.
 >> >
->> >    Enabling runtime PM for inactive device (ee080000.usb) with active children
+>> > I will re-work the patch and re-post it to see what people thinks about it.
+>>
+>> Thank you!
+>>
+>> > >
+>> > > However, the following message still exists.
+>> > >
+>> > >    Enabling runtime PM for inactive device (ee080000.usb) with active children
+>> > >
+>> > > So, I guess ohci-platform.c also has similar issue.
 >> >
->> > So, I guess ohci-platform.c also has similar issue.
+>> > Yes, very likely!
+>> >
+>> > However, I need some more time to look into this to be able to suggest
+>> > a solution.
 >>
->> Yes, very likely!
+>> I found a solution and sent a report as below:
+>> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1551146.html
 >>
->> However, I need some more time to look into this to be able to suggest
->> a solution.
+>> What do you think about using pm_runtime_forbid()?
 >
-> I found a solution and sent a report as below:
-> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1551146.html
->
-> What do you think about using pm_runtime_forbid()?
+> In general, drivers should not use pm_runtime_forbid().
 
-As both Alan and Rafael pointed out in their replies, this is not the
-right solution.
+I'd rather say that it's not very useful to them. :-)
 
-However, what is indeed interesting is how it can silence the error
-messages. I keep this is mind while later moving forward.
+> It is meant for use by userspace, through the /sys/.../power/control file.
 
-Kind regards
-Uffe
+Or when the driver wants to change the default setting.
+
+> Drivers cannot rely on the result of calling pm_runtime_forbid()
+> or pm_runtime_allow(), because the user can change it at any time.
+
+Right.
+
+> If you really want to prevent the OHCI controller from going into
+> runtime suspend, the proper approach is to call pm_runtime_get() in the
+> probe routine and pm_runtime_put() in the release routine.  However,
+> this will waste energy because it will force the controller to remain
+> at full power even when no active devices are attached.
+>
+> In this case, there probably is a better to solution to your problem
+> (such as fixing the runtime PM support in the phy driver).
+
+Agreed.
+
+Thanks,
+Rafael
