@@ -1,69 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47955 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753120AbdLEKcZ (ORCPT
+Received: from anchovy3.45ru.net.au ([203.30.46.155]:57905 "EHLO
+        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753150AbdLEJ5V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 05:32:25 -0500
-Date: Tue, 5 Dec 2017 11:32:24 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Phil Reid <preid@electromag.com.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org,
+        Tue, 5 Dec 2017 04:57:21 -0500
+Subject: Re: [PATCH 3/6] i2c: add 'set_sda' to bus_recovery_info
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Jarkko Nikula <jarkko.nikula@linux.intel.com>,
         Claudio Foellmi <claudio.foellmi@ergon.ch>,
         Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 3/6] i2c: add 'set_sda' to bus_recovery_info
-Message-ID: <20171205103224.up4m6mse7dfztykb@ninjato>
 References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
  <20171204123640.3382-4-wsa+renesas@sang-engineering.com>
  <CACRpkdZzwo9UhT08VDHXg6=eXdK80Pt1omZ4Xda_HFwguyNpaw@mail.gmail.com>
- <53d5696c-6f0d-1717-5c9e-4facf397f284@electromag.com.au>
+From: Phil Reid <preid@electromag.com.au>
+Message-ID: <53d5696c-6f0d-1717-5c9e-4facf397f284@electromag.com.au>
+Date: Tue, 5 Dec 2017 17:57:11 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l2qins7dhwbzeb5p"
-Content-Disposition: inline
-In-Reply-To: <53d5696c-6f0d-1717-5c9e-4facf397f284@electromag.com.au>
+In-Reply-To: <CACRpkdZzwo9UhT08VDHXg6=eXdK80Pt1omZ4Xda_HFwguyNpaw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 5/12/2017 16:39, Linus Walleij wrote:
+> On Mon, Dec 4, 2017 at 1:36 PM, Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> 
+>> This will be needed when we want to create STOP conditions, too, later.
+>> Create the needed fields and populate them for the GPIO case if the GPIO
+>> is set to output.
+>>
+>> Cc: Phil Reid <preid@electromag.com.au>
+>> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+>> Cc: Claudio Foellmi <claudio.foellmi@ergon.ch>
+>> Cc: Andrzej Hajda <a.hajda@samsung.com>
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> (...)
+>>   #include <linux/errno.h>
+>> +#include <linux/gpio.h>
+> 
+> Please no.
+> 
+>> +                       if (gpiod_get_direction(bri->sda_gpiod) == GPIOF_DIR_OUT)
+>> +                               bri->set_sda = set_sda_gpio_value;
+> 
+> Just compare it to zero. if (!gpiod_get_direction())
+> 
+> This flag is only for requesting GPIOs in the old API.
+> We didn't add a define in the new API, it seemed overengineered.
+> 
 
---l2qins7dhwbzeb5p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Perhaps the docs need updating?
+as of 4.15-rc2 it says
+  * Return GPIOF_DIR_IN or GPIOF_DIR_OUT, or an error code in case of error.
+
+I can submit something if you wish.
 
 
-> Perhaps the docs need updating?
-> as of 4.15-rc2 it says
->  * Return GPIOF_DIR_IN or GPIOF_DIR_OUT, or an error code in case of erro=
-r.
->=20
-> I can submit something if you wish.
-
-They surely need updating. I was relying on exactly this information.
-
-
---l2qins7dhwbzeb5p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlomdbgACgkQFA3kzBSg
-KbbivA//X9BWsLUzv51igv49yHjLf7475VGO/iqIXvQ0A7/H4GrTWwzGdKVb5rNa
-gJOo+pH0M6TL18sbZBDVgLIBZ7jSwb8eVkvXYzfBoJttJM5ZYh4RnXulcd+O5Osh
-XTmiow4/sTHBR6zXeYnhouP43+PQXHCcB8c6DfU+ipQU8589GI8U5JBq+KtNYIE/
-lGqGj6DubCW9Xut0QxZaOlR8npXIdh7gOpX1wc2oVilJdiydAqFQNgKqsnVzlPWW
-mlg8TO6+DcxR02u1OGyedZIg0GQio2p/5SU8WWyfjOX8w6EpuC054zFlj7wKwQDC
-SUvc0K/WUH6JixJzHguSFJb2Gp1gN53/tLy6LsxQiQdhzRZzLC6KUBhvZ4RSuGX0
-CdC2B7vcaYs6UXZsyDx48FOizfjp7e+tkaZwQrDeYDKShnQ7xxYtzhs1+5qrHbbv
-lf5foVaedjs2aHzr0fl46gd2wvEGvOSTuay/ioUVhwRa2AsGl8Hub2DPpzDlH9aP
-Ab5gQmQIzdxRLubSy4OSnr7ShHx4SCoJRXxNHTLqBri3s8jWuSuwXD2y7O7ayKs2
-zGcsb4CTqPkrf0XIf1t/OZCiBBZ1RnPuUB4u32NTMRUJLHhUxb4SY0oFdsLF0W3+
-cJiNyXI5cHczADoQMEDJQ36ScMDTXxhP8rff9Dkig/rGWGzCQOo=
-=uLo1
------END PGP SIGNATURE-----
-
---l2qins7dhwbzeb5p--
+-- 
+Regards
+Phil Reid
