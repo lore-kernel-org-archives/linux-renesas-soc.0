@@ -1,66 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46410 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756747AbdLOPQa (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754908AbdLFKYG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 10:16:30 -0500
-Received: by mail-wr0-f196.google.com with SMTP id x49so8317554wrb.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 07:16:29 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+        Wed, 6 Dec 2017 05:24:06 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 6/7] drm/img-rogue: init_timer() -> setup_timer()
-Date: Fri, 15 Dec 2017 16:15:44 +0100
-Message-Id: <1513350945-2642-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1513350945-2642-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1513350945-2642-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 54/61] ARM: dts: r8a7791: Remove CMT renesas,channels-mask
+Date: Wed,  6 Dec 2017 11:22:49 +0100
+Message-Id: <d3fb90537855bb7f27d6256446197675ffb4a1bd.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- services/server/env/linux/osfunc.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+From: Magnus Damm <damm+renesas@opensource.se>
 
-diff --git a/services/server/env/linux/osfunc.c b/services/server/env/linux/osfunc.c
-index c222095..b529c63 100644
---- a/services/server/env/linux/osfunc.c
-+++ b/services/server/env/linux/osfunc.c
-@@ -492,7 +492,7 @@ static inline IMG_UINT64 KClockns64(void)
- {
- 	ktime_t sTime = ktime_get();
+Update the DTS to remove the now deprecated "renesas,channels-mask"
+property.
+
+The channel information is now kept in the device driver and can easily
+be determined based on the compat string.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index a69d6f883b34..dfc1c406179f 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -266,8 +266,6 @@
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		resets = <&cpg 124>;
  
--	return sTime.tv64;
-+	return sTime;
- }
- 
- PVRSRV_ERROR OSClockMonotonicns64(IMG_UINT64 *pui64Time)
-@@ -1135,9 +1135,9 @@ static void OSTimerCallbackBody(TIMER_CALLBACK_DATA *psTimerCBData)
- @Description    OS specific timer callback wrapper function
- @Input          uData    Timer callback data
- */ /**************************************************************************/
--static void OSTimerCallbackWrapper(uintptr_t uData)
-+static void OSTimerCallbackWrapper(struct timer_list *t)
- {
--	TIMER_CALLBACK_DATA	*psTimerCBData = (TIMER_CALLBACK_DATA*)uData;
-+	TIMER_CALLBACK_DATA *psTimerCBData = from_timer(psTimerCBData, t, sTimer);
- 
- #if defined(PVR_LINUX_TIMERS_USING_WORKQUEUES) || defined(PVR_LINUX_TIMERS_USING_SHARED_WORKQUEUE)
- 	int res;
-@@ -1219,12 +1219,8 @@ IMG_HANDLE OSAddTimer(PFN_TIMER_FUNC pfnTimerFunc, void *pvData, IMG_UINT32 ui32
- 	psTimerCBData->ui32Delay = ((HZ * ui32MsTimeout) < 1000)
- 								?	1
- 								:	((HZ * ui32MsTimeout) / 1000);
--	/* initialise object */
--	init_timer(&psTimerCBData->sTimer);
+-		renesas,channels-mask = <0x60>;
 -
- 	/* setup timer object */
--	psTimerCBData->sTimer.function = (void *)OSTimerCallbackWrapper;
--	psTimerCBData->sTimer.data = (uintptr_t)psTimerCBData;
-+	timer_setup(&psTimerCBData->sTimer, OSTimerCallbackWrapper, 0);
+ 		status = "disabled";
+ 	};
  
- 	return (IMG_HANDLE)(uintptr_t)(ui32i + 1);
- }
+@@ -287,8 +285,6 @@
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		resets = <&cpg 329>;
+ 
+-		renesas,channels-mask = <0xff>;
+-
+ 		status = "disabled";
+ 	};
+ 
 -- 
-2.7.4
+2.11.0
