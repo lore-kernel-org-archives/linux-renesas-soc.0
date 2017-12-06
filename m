@@ -1,41 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:52432 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753594AbdLDNjH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754879AbdLFKXa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 08:39:07 -0500
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 6 Dec 2017 05:23:30 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH 0/2] net: sh_eth: DMA mapping API fixes
-Date: Mon,  4 Dec 2017 14:33:25 +0100
-Message-Id: <20171204133327.3505-1-thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 32/61] ARM: dts: r8a7745: Add CAN[01] SoC support
+Date: Wed,  6 Dec 2017 11:22:27 +0100
+Message-Id: <85d3122659be310c632ef1908532157ce82900ee.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Here are two patches that fix how the sh_eth driver is using the DMA
-mapping API: a bogus struct device is used in some places, or a NULL
-struct device is used.
+Add the definitions for can0 and can1 to the SoC .dtsi.
 
-Best regards,
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7745.dtsi | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-Thomas
-
-Thomas Petazzoni (2):
-  net: sh_eth: use correct "struct device" when calling DMA mapping
-    functions
-  net: sh_eth: don't use NULL as "struct device" for the DMA mapping API
-
- drivers/net/ethernet/renesas/sh_eth.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 53eb1ce446a4..52f13246fc8a 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -1049,6 +1049,34 @@
+ 				#phy-cells = <1>;
+ 			};
+ 		};
++
++		can0: can@e6e80000 {
++			compatible = "renesas,can-r8a7745",
++				     "renesas,rcar-gen2-can";
++			reg = <0 0xe6e80000 0 0x1000>;
++			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 916>,
++				 <&cpg CPG_CORE R8A7745_CLK_RCAN>,
++				 <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 916>;
++			status = "disabled";
++		};
++
++		can1: can@e6e88000 {
++			compatible = "renesas,can-r8a7745",
++				     "renesas,rcar-gen2-can";
++			reg = <0 0xe6e88000 0 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>,
++				 <&cpg CPG_CORE R8A7745_CLK_RCAN>,
++				 <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 915>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	/* External root clock */
+@@ -1066,6 +1094,14 @@
+ 		clock-frequency = <48000000>;
+ 	};
+ 
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
+ 	/* External SCIF clock */
+ 	scif_clk: scif {
+ 		compatible = "fixed-clock";
 -- 
-2.13.6
+2.11.0
