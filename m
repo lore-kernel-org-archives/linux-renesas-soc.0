@@ -1,98 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46434 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753234AbdLMPq0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754707AbdLFKXI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 10:46:26 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+        Wed, 6 Dec 2017 05:23:08 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        alsa-devel@alsa-project.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rsnd: Add device tree support for r8a774[35]" to the asoc tree
-In-Reply-To: <1513102155-47925-1-git-send-email-biju.das@bp.renesas.com>
-Message-Id: <E1eP9Eh-0002PT-V8@debutante>
-Date: Wed, 13 Dec 2017 15:46:19 +0000
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/61] ARM: dts: r8a7791: Use R-Car Gen2 Ether fallback compat string
+Date: Wed,  6 Dec 2017 11:22:00 +0100
+Message-Id: <fc2d62f04dfd03eefc0061f3db9c00ded83db19e.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Use newly added R-Car Gen2 Ether fallback compat string
+in the DT of the r8a7791 SoC.
 
-   ASoC: rsnd: Add device tree support for r8a774[35]
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From b0a858a47a7889757dbc9ac9872685955eaa5cc0 Mon Sep 17 00:00:00 2001
-From: Biju Das <biju.das@bp.renesas.com>
-Date: Tue, 12 Dec 2017 18:09:15 +0000
-Subject: [PATCH] ASoC: rsnd: Add device tree support for r8a774[35]
-
-Document r8a774[35] specific compatible strings. The Renesas RZ/G1[ME]
-(r8a774[35]) sound modules are identical to the R-Car Gen2 family.
-No driver change is needed as the fallback compatible string
-"renesas,rcar_sound-gen2" activates the right code in the driver.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index 085bec364caf..b3c28bdcc268 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -4,7 +4,7 @@ Renesas R-Car sound
- * Modules
- =============================================
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 67831d0405f3..9815a933e4cc 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -961,7 +961,8 @@
+ 	};
  
--Renesas R-Car sound is constructed from below modules
-+Renesas R-Car and RZ/G sound is constructed from below modules
- (for Gen2 or later)
- 
-  SCU		: Sampling Rate Converter Unit
-@@ -334,9 +334,11 @@ Required properties:
- 
- - compatible			: "renesas,rcar_sound-<soctype>", fallbacks
- 				  "renesas,rcar_sound-gen1" if generation1, and
--				  "renesas,rcar_sound-gen2" if generation2
-+				  "renesas,rcar_sound-gen2" if generation2 (or RZ/G1)
- 				  "renesas,rcar_sound-gen3" if generation3
- 				  Examples with soctypes are:
-+				    - "renesas,rcar_sound-r8a7743" (RZ/G1M)
-+				    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
- 				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
- 				    - "renesas,rcar_sound-r8a7779" (R-Car H1)
- 				    - "renesas,rcar_sound-r8a7790" (R-Car H2)
+ 	ether: ethernet@ee700000 {
+-		compatible = "renesas,ether-r8a7791";
++		compatible = "renesas,ether-r8a7791",
++			     "renesas,rcar-gen2-ether";
+ 		reg = <0 0xee700000 0 0x400>;
+ 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 813>;
 -- 
-2.15.1
+2.11.0
