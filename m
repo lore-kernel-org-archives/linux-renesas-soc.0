@@ -1,72 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:44325 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752563AbdLNOKx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754897AbdLFKX7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 09:10:53 -0500
-Received: by mail-it0-f68.google.com with SMTP id b5so11667547itc.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2017 06:10:53 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1510234022-29442-2-git-send-email-geert+renesas@glider.be>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be> <1510234022-29442-2-git-send-email-geert+renesas@glider.be>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 14 Dec 2017 15:10:52 +0100
-Message-ID: <CAPDyKFq7dBHk9AhyMc1x+dJPmDJQ0osR4WkbT0wUR=hZMBScyw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: renesas: mstp: Keep wakeup sources active
- during system suspend
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
+        Wed, 6 Dec 2017 05:23:59 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 48/61] ARM: dts: r8a7791: Update CMT compat strings
+Date: Wed,  6 Dec 2017 11:22:43 +0100
+Message-Id: <bf50e0ab4f5062bb9d4bb5dcb81a6673ea7e2473.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> If a device is part of the CPG/MSTP Clock Domain and to be used as a
-> wakeup source, it must be kept active during system suspend.
->
-> Currently this is handled in device-specific drivers by explicitly
-> increasing the use count of the module clock when the device is
-> configured as a wakeup source.  However, the proper way to prevent the
-> device from being stopped is to inform this requirement to the genpd
-> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
->
-> Note that this will only affect devices configured as wakeup sources.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
 
-Kind regards
-Uffe
+With this change in place we can keep device-specific configuration in
+the driver and the driver can be able to support CMT1 specific features.
 
-> ---
-> v2:
->   - Integrate "clk: renesas: mstp: Use GENPD_FLAG_ACTIVE_WAKEUP",
-> ---
->  drivers/clk/renesas/clk-mstp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-> index 500a9e4e03c48957..0b222197a4576fd7 100644
-> --- a/drivers/clk/renesas/clk-mstp.c
-> +++ b/drivers/clk/renesas/clk-mstp.c
-> @@ -344,7 +344,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
->                 return;
->
->         pd->name = np->name;
-> -       pd->flags = GENPD_FLAG_PM_CLK;
-> +       pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
->         pd->attach_dev = cpg_mstp_attach_dev;
->         pd->detach_dev = cpg_mstp_detach_dev;
->         pm_genpd_init(pd, &pm_domain_always_on_gov, false);
-> --
-> 2.7.4
->
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index e888b5b0e135..a69d6f883b34 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -257,7 +257,7 @@
+ 	};
+ 
+ 	cmt0: timer@ffca0000 {
+-		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7791-cmt0", "renesas,rcar-gen2-cmt0";
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+@@ -272,7 +272,7 @@
+ 	};
+ 
+ 	cmt1: timer@e6130000 {
+-		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a7791-cmt1", "renesas,rcar-gen2-cmt1";
+ 		reg = <0 0xe6130000 0 0x1004>;
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.11.0
