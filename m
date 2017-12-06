@@ -1,13 +1,23 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:6269 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751680AbdLFLVm (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:46707 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752084AbdLFKaV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 06:21:42 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>
-CC: Chris Paterson <Chris.Paterson2@renesas.com>,
+        Wed, 6 Dec 2017 05:30:21 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170915110609.GL3924@verge.net.au>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
+ <1505322341-9480-2-git-send-email-chris.paterson2@renesas.com>
+ <20170915074551.GF3924@verge.net.au> <CAMuHMdWrMiHQz_Tadh3R00n+zeSnGOW-o=skbK-R-yD6Z-x2+A@mail.gmail.com>
+ <TY1PR06MB0895763DA6DE79A64B9981ECC06C0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <20170915110609.GL3924@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Dec 2017 11:30:19 +0100
+Message-ID: <CAMuHMdUuF4kwUiUYCbSew3W0Pa2CfRdCijefbOO1ZYAbnyG3KA@mail.gmail.com>
+Subject: Re: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
+To: Simon Horman <horms@verge.net.au>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -17,37 +27,80 @@ CC: Chris Paterson <Chris.Paterson2@renesas.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: RE: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
-Date: Wed, 6 Dec 2017 11:21:37 +0000
-Message-ID: <TY1PR06MB089533C44E4B42D647C2CC25C0320@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
- <1505322341-9480-2-git-send-email-chris.paterson2@renesas.com>
- <20170915074551.GF3924@verge.net.au>
- <CAMuHMdWrMiHQz_Tadh3R00n+zeSnGOW-o=skbK-R-yD6Z-x2+A@mail.gmail.com>
- <TY1PR06MB0895763DA6DE79A64B9981ECC06C0@TY1PR06MB0895.apcprd06.prod.outlook.com>
- <20170915110609.GL3924@verge.net.au>
- <CAMuHMdUuF4kwUiUYCbSew3W0Pa2CfRdCijefbOO1ZYAbnyG3KA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUuF4kwUiUYCbSew3W0Pa2CfRdCijefbOO1ZYAbnyG3KA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsIFNpbW9uLA0KDQo+DQo+IEFzIHRoZSBkZXBlbmRlbmN5IGlzIGluIHY0LjE1
-LXJjMSwgaXQgY2FuIGJlIGFwcGxpZWQgbm93Lg0KPg0KDQp3ZSB0aG91Z2h0IGV4YWN0bHkgdGhl
-IHNhbWUgdGhpbmcsIHRoZXJlZm9yZSB3ZSByZWJhc2VkIGFuZCB3ZSByZS1yYW4gb3VyIHRlc3Rz
-LCB0byBkaXNjb3ZlciB0aGF0IHNvbWV0aGluZyBicm9rZSBpbiBiZXR3ZWVuIHZlcnNpb25zLg0K
-SSdsbCBiZSBpbiB0b3VjaCBvbmNlIEkgaGF2ZSBtb3JlIGluZm9ybWF0aW9uLCBidXQgaXQncyBh
-IG5vIGdvIGZvciBub3cuDQoNClRoYW5rcywNCkZhYg0KDQoNCltodHRwczovL3d3dzIucmVuZXNh
-cy5ldS9tZWRpYS9lbWFpbC91bmljZWZfMjAxNy5qcGddDQoNClRoaXMgQ2hyaXN0bWFzLCBpbnN0
-ZWFkIG9mIHNlbmRpbmcgb3V0IGNhcmRzLCBSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBoYXZl
-IGRlY2lkZWQgdG8gc3VwcG9ydCBVbmljZWYgd2l0aCBhIGRvbmF0aW9uLiBGb3IgZnVydGhlciBk
-ZXRhaWxzIGNsaWNrIGhlcmU8aHR0cHM6Ly93d3cudW5pY2VmLm9yZy8+IHRvIGZpbmQgb3V0IGFi
-b3V0IHRoZSB2YWx1YWJsZSB3b3JrIHRoZXkgZG8sIGhlbHBpbmcgY2hpbGRyZW4gYWxsIG92ZXIg
-dGhlIHdvcmxkLg0KV2Ugd291bGQgbGlrZSB0byB0YWtlIHRoaXMgb3Bwb3J0dW5pdHkgdG8gd2lz
-aCB5b3UgYSBNZXJyeSBDaHJpc3RtYXMgYW5kIGEgcHJvc3Blcm91cyBOZXcgWWVhci4NCg0KDQoN
-ClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQg
-Um9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJl
-ZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Simon,
+
+On Fri, Sep 15, 2017 at 1:06 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Sep 15, 2017 at 08:57:53AM +0000, Fabrizio Castro wrote:
+>> > -----Original Message-----
+>> > From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc-owner@vger.kernel.org] On Behalf Of Geert
+>> > Uytterhoeven
+>> > Sent: 15 September 2017 09:05
+>> > To: Simon Horman <horms@verge.net.au>; Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>> > Cc: Chris Paterson <Chris.Paterson2@renesas.com>; Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
+>> > Magnus Damm <magnus.damm@gmail.com>; Russell King <linux@armlinux.org.uk>; devicetree@vger.kernel.org; Linux-Renesas
+>> > <linux-renesas-soc@vger.kernel.org>; linux-arm-kernel@lists.infradead.org; Geert Uytterhoeven <geert+renesas@glider.be>
+>> > Subject: Re: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
+>> >
+>> > Hi Simon, Fabrizio,
+>> >
+>> > On Fri, Sep 15, 2017 at 9:45 AM, Simon Horman <horms@verge.net.au> wrote:
+>> > > On Wed, Sep 13, 2017 at 06:05:34PM +0100, Chris Paterson wrote:
+>> > >> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>> > >>
+>> > >> Add DT node for the Advanced Power Management Unit (APMU), add the
+>> > >> second CPU core, and use "renesas,apmu" as "enable-method".
+>> > >>
+>> > >> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>> > >> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+>> > >> ---
+>> > >> This patch is based on renesas-devel-20170913-v4.13.
+>> > >
+>> > > Hi,
+>> > >
+>> > > with reference to "[PATCH v3 0/3] ARM: renesas: Enable SMP on R-Car E2"
+>> > > is the CNTVOFF initialised in the boot loader of boards (in upstream)
+>> > > for this SoC? If not I expect you will have trouble with the arch timer
+>> > > on secondary CPU cores.
+>>
+>> I can confirm that this patch relies on:
+>> * "ARM: Add definition for monitor mode", and
+>> * "ARM: shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15 "
+>> as the bootloader doesn't initialize CNTVOFF.
+>>
+>> >
+>> > Exactly my question.
+>> >
+>> > Fabrizio: Given your feedback on "[PATCH v3 0/3] ARM: renesas: Enable SMP on
+>> > R-Car E2", I think SMP enablement on RZ/G1E has to be postponed until "ARM:
+>> > shmobile: rcar-gen2: Make sure CNTVOFF is initialized on CA7/15" has been
+>> > accepted upstream.
+>>
+>> You are right, somehow we missed the comment made by Simon on Monday:
+>>
+>> " I would like to deffer the third and last patch until v4.16 to avoid
+>> an awkward branch dependency on the above - the branches are different
+>> even though the tree is the same. Please resubmit this patch once the
+>> above dependencies are present in an rc release, which at this stage
+>> I expect to be v4.15-rc1."
+>>
+>> Apologies for this, we will send this patch later on, once both patches have been
+>> accepted upstream.
+>
+> No problem, I will mark this one as deferred.
+
+As the dependency is in v4.15-rc1, it can be applied now.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
