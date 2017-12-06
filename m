@@ -1,101 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:33430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751092AbdLMXKY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754801AbdLFKXO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 18:10:24 -0500
-From: Kieran Bingham <kbingham@kernel.org>
+        Wed, 6 Dec 2017 05:23:14 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 4/4] kms++util: Add frame compare functionality
-Date: Wed, 13 Dec 2017 23:10:12 +0000
-Message-Id: <29f0046ac6a6e4f9337aa66c912d99fa4a30d592.1513206331.git-series.kieran.bingham@ideasonboard.com>
-In-Reply-To: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
-References: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
-In-Reply-To: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
-References: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/61] ARM: dts: r8a7743: Add DU support
+Date: Wed,  6 Dec 2017 11:22:03 +0100
+Message-Id: <0d975e29a51011c244d41e16a59a26fddf6ea281.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Provide a means to compare two identically sized framebuffers.
+Add du node to r8a7743 SoC DT. Boards that want to enable the DU
+need to specify the output topology.
 
-This basic implementation expects the two buffers to have the same
-formats and sizes, and will return zero for identical frames, or a
-positive float representing and average difference otherwise.
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- kms++util/inc/kms++util/kms++util.h |  1 +-
- kms++util/src/verification.cpp      | 31 ++++++++++++++++++++++++++++++-
- py/pykms/pykmsutil.cpp              |  2 ++-
- 3 files changed, 34 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/kms++util/inc/kms++util/kms++util.h b/kms++util/inc/kms++util/kms++util.h
-index 431de0bb159a..753cee189451 100644
---- a/kms++util/inc/kms++util/kms++util.h
-+++ b/kms++util/inc/kms++util/kms++util.h
-@@ -29,6 +29,7 @@ void draw_color_bar(IFramebuffer& buf, int old_xpos, int xpos, int width);
- void draw_test_pattern(IFramebuffer &fb, YUVType yuvt = YUVType::BT601_Lim);
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index f647b86c0205..112a72baa7a4 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -1034,6 +1034,36 @@
+ 			};
+ 		};
  
- void save_raw_frame(IFramebuffer& fb, const char *filename);
-+float compare_framebuffers(IFramebuffer& a, IFramebuffer& b);
- }
- 
- #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-diff --git a/kms++util/src/verification.cpp b/kms++util/src/verification.cpp
-index 3210bb144d2b..a46d6f924095 100644
---- a/kms++util/src/verification.cpp
-+++ b/kms++util/src/verification.cpp
-@@ -18,4 +18,35 @@ void save_raw_frame(IFramebuffer& fb, const char *filename)
- 		os->write((char*)fb.map(i), fb.size(i));
- }
- 
-+float compare_framebuffers(IFramebuffer& a, IFramebuffer& b)
-+{
-+	unsigned int i;
-+	unsigned int pixels = a.width() * a.height();
-+	uint8_t *pa = a.map(0);
-+	uint8_t *pb = b.map(0);
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a7743";
++			reg = <0 0xfeb00000 0 0x40000>,
++			      <0 0xfeb90000 0 0x1c>;
++			reg-names = "du", "lvds.0";
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>,
++				 <&cpg CPG_MOD 723>,
++				 <&cpg CPG_MOD 726>;
++			clock-names = "du.0", "du.1", "lvds.0";
++			status = "disabled";
 +
-+	float diff = 0;
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+	if (a.format() != b.format())
-+		throw std::invalid_argument("Pixel formats differ...");
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++				port@1 {
++					reg = <1>;
++					du_out_lvds0: endpoint {
++					};
++				};
++			};
++		};
 +
-+	if ((a.width() != b.width() ||
-+	    (a.height() != b.height())))
-+		throw std::invalid_argument("Frame sizes differ...");
-+
-+	// Formats are identical, so num_planes are already identical
-+	for (i = 0; i < a.num_planes(); i++) {
-+		if ((a.offset(i) != b.offset(i)) ||
-+		    (a.stride(i) != b.stride(i)))
-+			throw std::invalid_argument("Planes differ...");
-+	}
-+
-+	// Simple byte comparisons to start.
-+	// This expects a frame to be identical, including non-visible data.
-+	for (i = 0; i < a.size(0) && i < b.size(0); i++)
-+		diff += abs(pa[i] - pb[i]);
-+
-+	return diff / pixels;
-+}
-+
- }
-diff --git a/py/pykms/pykmsutil.cpp b/py/pykms/pykmsutil.cpp
-index 2d741751ba75..b86690a3d306 100644
---- a/py/pykms/pykmsutil.cpp
-+++ b/py/pykms/pykmsutil.cpp
-@@ -64,4 +64,6 @@ void init_pykmstest(py::module &m)
- 	m.def("save_raw_frame", [](Framebuffer& fb, const char * filename) {
- 		save_raw_frame(fb, filename);
- 	});
-+	m.def("compare_framebuffers", [](Framebuffer& a, Framebuffer& b) {
-+		return compare_framebuffers(a, b); } );
- }
+ 		pci0: pci@ee090000 {
+ 			compatible = "renesas,pci-r8a7743",
+ 				     "renesas,pci-rcar-gen2";
 -- 
-git-series 0.9.1
+2.11.0
