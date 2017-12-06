@@ -1,88 +1,65 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:34819 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750812AbdLFMFt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 07:05:49 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>
+CC: Chris Paterson <Chris.Paterson2@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2] ARM: dts: r8a7745: Add APMU node and second CPU core
-Date: Wed,  6 Dec 2017 12:05:29 +0000
-Message-Id: <1512561929-16540-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: RE: [PATCH 1/8] ARM: dts: r8a7745: Add APMU node and second CPU core
+Date: Wed, 6 Dec 2017 11:59:48 +0000
+Message-ID: <TY1PR06MB0895C5C14B9BD6CDE867832CC0320@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1505322341-9480-1-git-send-email-chris.paterson2@renesas.com>
+ <1505322341-9480-2-git-send-email-chris.paterson2@renesas.com>
+ <20170915074551.GF3924@verge.net.au>
+ <CAMuHMdWrMiHQz_Tadh3R00n+zeSnGOW-o=skbK-R-yD6Z-x2+A@mail.gmail.com>
+ <TY1PR06MB0895763DA6DE79A64B9981ECC06C0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <20170915110609.GL3924@verge.net.au>
+ <CAMuHMdUuF4kwUiUYCbSew3W0Pa2CfRdCijefbOO1ZYAbnyG3KA@mail.gmail.com>
+ <TY1PR06MB089533C44E4B42D647C2CC25C0320@TY1PR06MB0895.apcprd06.prod.outlook.com>
+In-Reply-To: <TY1PR06MB089533C44E4B42D647C2CC25C0320@TY1PR06MB0895.apcprd06.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
-Add DT node for the Advanced Power Management Unit (APMU), add the
-second CPU core, and use "renesas,apmu" as "enable-method".
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-Dear All,
-
-I am reposting this patch now that its dependecy ("ARM: shmobile: rcar-gen2:
-Make sure CNTVOFF is initialized on CA7/15") is part of v4.15-rc1, similarly
-to patch "ARM: dts: r8a7794: Add SMP support".
-
-v2:
-- rebased against renesas-devel-20171205-v4.15-rc2
-
-Thanks
-
- arch/arm/boot/dts/r8a7745.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index de13e15..0fa7861 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -38,6 +38,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -49,6 +50,15 @@
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7745_PD_CA7_CPU1>;
-+			next-level-cache = <&L2_CA7>;
-+		};
-+
- 		L2_CA7: cache-controller-0 {
- 			compatible = "cache";
- 			cache-unified;
-@@ -65,6 +75,12 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		apmu@e6151000 {
-+			compatible = "renesas,r8a7745-apmu", "renesas,apmu";
-+			reg = <0 0xe6151000 0 0x188>;
-+			cpus = <&cpu0 &cpu1>;
-+		};
-+
- 		gic: interrupt-controller@f1001000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
--- 
-2.7.4
+SGVsbG8gR2VlcnQsIFNpbW9uLA0KDQp0aGUgcHJvYmxlbXMgSSBhbSBzZWVpbmcgYXJlIG5vdCBy
+ZWxhdGVkIHRvIEFQTVUvU01QLCBJJ2xsIHNlbmQgYSB2MiBzaG9ydGx5Lg0KDQpUaGFua3MsDQpG
+YWINCg0KPg0KPiBIZWxsbyBHZWVydCwgU2ltb24sDQo+DQo+ID4NCj4gPiBBcyB0aGUgZGVwZW5k
+ZW5jeSBpcyBpbiB2NC4xNS1yYzEsIGl0IGNhbiBiZSBhcHBsaWVkIG5vdy4NCj4gPg0KPg0KPiB3
+ZSB0aG91Z2h0IGV4YWN0bHkgdGhlIHNhbWUgdGhpbmcsIHRoZXJlZm9yZSB3ZSByZWJhc2VkIGFu
+ZCB3ZSByZS1yYW4gb3VyIHRlc3RzLCB0byBkaXNjb3ZlciB0aGF0IHNvbWV0aGluZyBicm9rZSBp
+biBiZXR3ZWVuDQo+IHZlcnNpb25zLg0KPiBJJ2xsIGJlIGluIHRvdWNoIG9uY2UgSSBoYXZlIG1v
+cmUgaW5mb3JtYXRpb24sIGJ1dCBpdCdzIGEgbm8gZ28gZm9yIG5vdy4NCj4NCj4gVGhhbmtzLA0K
+PiBGYWINCj4NCj4NCj4gW2h0dHBzOi8vd3d3Mi5yZW5lc2FzLmV1L21lZGlhL2VtYWlsL3VuaWNl
+Zl8yMDE3LmpwZ10NCj4NCj4gVGhpcyBDaHJpc3RtYXMsIGluc3RlYWQgb2Ygc2VuZGluZyBvdXQg
+Y2FyZHMsIFJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIGhhdmUgZGVjaWRlZCB0byBzdXBwb3J0
+IFVuaWNlZiB3aXRoIGEgZG9uYXRpb24uIEZvciBmdXJ0aGVyDQo+IGRldGFpbHMgY2xpY2sgaGVy
+ZTxodHRwczovL3d3dy51bmljZWYub3JnLz4gdG8gZmluZCBvdXQgYWJvdXQgdGhlIHZhbHVhYmxl
+IHdvcmsgdGhleSBkbywgaGVscGluZyBjaGlsZHJlbiBhbGwgb3ZlciB0aGUgd29ybGQuDQo+IFdl
+IHdvdWxkIGxpa2UgdG8gdGFrZSB0aGlzIG9wcG9ydHVuaXR5IHRvIHdpc2ggeW91IGEgTWVycnkg
+Q2hyaXN0bWFzIGFuZCBhIHByb3NwZXJvdXMgTmV3IFllYXIuDQo+DQo+DQo+DQo+IFJlbmVzYXMg
+RWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91
+cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmds
+YW5kICYNCj4gV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQoNCg0KW2h0dHBz
+Oi8vd3d3Mi5yZW5lc2FzLmV1L21lZGlhL2VtYWlsL3VuaWNlZl8yMDE3LmpwZ10NCg0KVGhpcyBD
+aHJpc3RtYXMsIGluc3RlYWQgb2Ygc2VuZGluZyBvdXQgY2FyZHMsIFJlbmVzYXMgRWxlY3Ryb25p
+Y3MgRXVyb3BlIGhhdmUgZGVjaWRlZCB0byBzdXBwb3J0IFVuaWNlZiB3aXRoIGEgZG9uYXRpb24u
+IEZvciBmdXJ0aGVyIGRldGFpbHMgY2xpY2sgaGVyZTxodHRwczovL3d3dy51bmljZWYub3JnLz4g
+dG8gZmluZCBvdXQgYWJvdXQgdGhlIHZhbHVhYmxlIHdvcmsgdGhleSBkbywgaGVscGluZyBjaGls
+ZHJlbiBhbGwgb3ZlciB0aGUgd29ybGQuDQpXZSB3b3VsZCBsaWtlIHRvIHRha2UgdGhpcyBvcHBv
+cnR1bml0eSB0byB3aXNoIHlvdSBhIE1lcnJ5IENocmlzdG1hcyBhbmQgYSBwcm9zcGVyb3VzIE5l
+dyBZZWFyLg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFk
+b3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1Rkgs
+IFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAw
+NDU4NjcwOS4NCg==
