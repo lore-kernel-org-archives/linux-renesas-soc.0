@@ -1,51 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60427 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752562AbdLEMiI (ORCPT
+        with ESMTP id S1754896AbdLFKX5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 07:38:08 -0500
+        Wed, 6 Dec 2017 05:23:57 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT 3/3] arm64: dts: salvator-common: Enable HS400 of SDHI2
-Date: Tue,  5 Dec 2017 13:37:56 +0100
-Message-Id: <20171205123756.18424-4-horms+renesas@verge.net.au>
-In-Reply-To: <20171205123756.18424-1-horms+renesas@verge.net.au>
-References: <20171205123756.18424-1-horms+renesas@verge.net.au>
+Subject: [PATCH 46/61] ARM: dts: r8a73a4: Update CMT compat string
+Date: Wed,  6 Dec 2017 11:22:41 +0100
+Message-Id: <86656e9cc618c14d44f722786c568d1236211364.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch adds the mmc-hs400-1_8v property to SDHI2 and enable eMMC
-HS400.
+Use the recently updated r8a73a4 CMT1 compat string.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+With this change in place we can keep device-specific configuration in
+the driver and the driver can be able to support CMT1 specific features.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v1 [Simon Horman]
-* Rebase
+ arch/arm/boot/dts/r8a73a4.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v0 [Takeshi Kihara]
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 3f9170b30b5b..66eaa23500a9 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -624,6 +624,7 @@
- 	vqmmc-supply = <&reg_1p8v>;
- 	bus-width = <8>;
- 	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
- 	non-removable;
- 	status = "okay";
- };
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index dd4d09712a2a..805b0fd70f53 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -132,7 +132,7 @@
+ 	};
+ 
+ 	cmt1: timer@e6130000 {
+-		compatible = "renesas,cmt-48-r8a73a4", "renesas,cmt-48-gen2";
++		compatible = "renesas,r8a73a4-cmt1", "renesas,rcar-gen2-cmt1";
+ 		reg = <0 0xe6130000 0 0x1004>;
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A73A4_CLK_CMT1>;
 -- 
 2.11.0
