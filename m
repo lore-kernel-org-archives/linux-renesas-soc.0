@@ -1,61 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35482 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752292AbdLLLfy (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754927AbdLFKYQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 06:35:54 -0500
-MIME-Version: 1.0
-In-Reply-To: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.04beabdebfb3483e7f009337bc09953e6d78701d.1510933306.git-series.kieran.bingham+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 12 Dec 2017 12:35:51 +0100
-Message-ID: <CAMuHMdWC_SNJB4QNypTJ01EKbROicqV1m-LPSk3jo+f14fbZzA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] vsp1: TLB optimisation and DL caching
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 6 Dec 2017 05:24:16 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 41/61] ARM: dts: r8a7743: add VIN dt support
+Date: Wed,  6 Dec 2017 11:22:36 +0100
+Message-Id: <001b32ae64dbf780d89fbc258c3f1007ee7b34e8.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-On Fri, Nov 17, 2017 at 4:47 PM, Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
-> Each display list currently allocates an area of DMA memory to store register
-> settings for the VSP1 to process. Each of these allocations adds pressure to
-> the IPMMU TLB entries.
->
-> We can reduce the pressure by pre-allocating larger areas and dividing the area
-> across multiple bodies represented as a pool.
->
-> With this reconfiguration of bodies, we can adapt the configuration code to
-> separate out constant hardware configuration and cache it for re-use.
->
-> --
->
-> The patches provided in this series can be found at:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git  tags/vsp1/tlb-optimise/v4
+Add VIN[012] support to SoC dt. Also, add aliases.
 
-This started to conflict with commit dd286a531461748f ("v4l: vsp1:
-Start and stop DRM pipeline independently of planes"), causing build
-failures as it changes the signature of vsp1_entity_route_setup(), and
-removed several VSP1_ENTITY_PARAMS_* definitions.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-After fixing those, it hangs after:
-     [drm] No driver support for vblank timestamp query.
-
-So I dropped the above for today's release.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 9e26c40976ff..c09c6672ca37 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -32,6 +32,9 @@
+ 		spi1 = &msiof0;
+ 		spi2 = &msiof1;
+ 		spi3 = &msiof2;
++		vin0 = &vin0;
++		vin1 = &vin1;
++		vin2 = &vin2;
+ 	};
+ 
+ 	cpus {
+@@ -1037,6 +1040,39 @@
+ 			};
+ 		};
+ 
++		vin0: video@e6ef0000 {
++			compatible = "renesas,vin-r8a7743",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef0000 0 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 811>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 811>;
++			status = "disabled";
++		};
++
++		vin1: video@e6ef1000 {
++			compatible = "renesas,vin-r8a7743",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef1000 0 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 810>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 810>;
++			status = "disabled";
++		};
++
++		vin2: video@e6ef2000 {
++			compatible = "renesas,vin-r8a7743",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef2000 0 0x1000>;
++			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 809>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 809>;
++			status = "disabled";
++		};
++
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7743";
+ 			reg = <0 0xfeb00000 0 0x40000>,
+-- 
+2.11.0
