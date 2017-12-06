@@ -1,51 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:40070 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751749AbdLBP0U (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754918AbdLFKYL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Dec 2017 10:26:20 -0500
-Received: by mail-it0-f68.google.com with SMTP id f190so5520297ita.5
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 02 Dec 2017 07:26:20 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1512046646-15253-2-git-send-email-geert+renesas@glider.be>
-References: <1512046646-15253-1-git-send-email-geert+renesas@glider.be> <1512046646-15253-2-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 2 Dec 2017 16:26:19 +0100
-Message-ID: <CACRpkdbY=zAw-8LrqmMcGGf7cHmAaC=YvpovxqTTPwcsXPUYAA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] ARM: dts: armadillo800eva: Convert to named
- i2c-gpio bindings
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+        Wed, 6 Dec 2017 05:24:11 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-i2c@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/61] ARM: dts: r8a7745: Add USB-DMAC device nodes
+Date: Wed,  6 Dec 2017 11:22:10 +0100
+Message-Id: <fbdf17b307dae407b2e673806386f84660d01b63.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 30, 2017 at 1:57 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+From: Biju Das <biju.das@bp.renesas.com>
 
-> Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
-> named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
-> gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
-> more error-prone unnamed variant.
->
-> Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
-> flags, which were implicitly assumed before.
->
-> The latter gets rid of the message:
->
->     gpio-208 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
->     gpio-91 (?): enforced open drain please flag it properly in DT/ACPI DSDT/board file
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7745.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 432aa48ea395..6e0c69bb375d 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -312,6 +312,34 @@
+ 			dma-channels = <15>;
+ 		};
+ 
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a7745-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a7745-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		scifa0: serial@e6c40000 {
+ 			compatible = "renesas,scifa-r8a7745",
+ 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
+-- 
+2.11.0
