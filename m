@@ -1,78 +1,89 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/5] phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
-Date: Wed, 13 Dec 2017 15:27:37 +0900
-Message-Id: <1513146460-20326-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1513146460-20326-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1513146460-20326-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754853AbdLFKXW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 6 Dec 2017 05:23:22 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 18/61] ARM: dts: r8a7745: Add IIC cores to dtsi
+Date: Wed,  6 Dec 2017 11:22:13 +0100
+Message-Id: <0ee0aff583ddb6e92a5d05a1f2147a772413ab40.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch unifies the OBINTEN handling to clean-up the code.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add iic0 and iic1 nodes to SoC dtsi. Also, define aliases i2c6
+and i2c7. Board specific DT files will enable the interfaces
+if needed.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index c22d65a..beeaa30 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -147,6 +147,18 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
- 	writel(val, usb2_base + USB2_ADPCTRL);
- }
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 948dd1fc2d9c..16dc4895b455 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -25,6 +25,8 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		i2c6 = &iic0;
++		i2c7 = &iic1;
+ 		spi0 = &qspi;
+ 		spi1 = &msiof0;
+ 		spi2 = &msiof1;
+@@ -753,6 +755,40 @@
+ 			status = "disabled";
+ 		};
  
-+static void rcar_gen3_enable_otg_irq(struct rcar_gen3_chan *ch, int enable)
-+{
-+	void __iomem *usb2_base = ch->base;
-+	u32 val = readl(usb2_base + USB2_OBINTEN);
++		iic0: i2c@e6500000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7745",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6500000 0 0x425>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 318>;
++			dmas = <&dmac0 0x61>, <&dmac0 0x62>,
++			       <&dmac1 0x61>, <&dmac1 0x62>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 318>;
++			status = "disabled";
++		};
 +
-+	if (enable)
-+		val |= USB2_OBINT_BITS;
-+	else
-+		val &= ~USB2_OBINT_BITS;
-+	writel(val, usb2_base + USB2_OBINTEN);
-+}
++		iic1: i2c@e6510000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7745",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6510000 0 0x425>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 323>;
++			dmas = <&dmac0 0x65>, <&dmac0 0x66>,
++			       <&dmac1 0x65>, <&dmac1 0x66>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 323>;
++			status = "disabled";
++		};
 +
- static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
- {
- 	rcar_gen3_set_linectrl(ch, 1, 1);
-@@ -192,16 +204,12 @@ static void rcar_gen3_init_for_a_peri(struct rcar_gen3_chan *ch)
- 
- static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
- {
--	void __iomem *usb2_base = ch->base;
--	u32 val;
--
--	val = readl(usb2_base + USB2_OBINTEN);
--	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-+	rcar_gen3_enable_otg_irq(ch, 0);
- 
- 	rcar_gen3_enable_vbus_ctrl(ch, 0);
- 	rcar_gen3_init_for_host(ch);
- 
--	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-+	rcar_gen3_enable_otg_irq(ch, 1);
- }
- 
- static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
-@@ -291,8 +299,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
- 	val = readl(usb2_base + USB2_VBCTRL);
- 	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
- 	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
--	val = readl(usb2_base + USB2_OBINTEN);
--	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-+	rcar_gen3_enable_otg_irq(ch, 1);
- 	val = readl(usb2_base + USB2_ADPCTRL);
- 	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
- 	val = readl(usb2_base + USB2_LINECTRL1);
+ 		mmcif0: mmc@ee200000 {
+ 			compatible = "renesas,mmcif-r8a7745",
+ 				     "renesas,sh-mmcif";
 -- 
-1.9.1
-
+2.11.0
