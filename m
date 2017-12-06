@@ -1,88 +1,143 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46092 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752679AbdLLWmI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754887AbdLFKXw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 17:42:08 -0500
-Date: Tue, 12 Dec 2017 23:42:07 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] gpio: Add helpers to determin direction of gpiods
-Message-ID: <20171212224207.xi4yiuyhp5radivr@ninjato>
-References: <20171210002340.18460-1-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ulgqb3x656bkgo26"
-Content-Disposition: inline
-In-Reply-To: <20171210002340.18460-1-linus.walleij@linaro.org>
+        Wed, 6 Dec 2017 05:23:52 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 31/61] ARM: dts: iwg22d-sodimm-dbhd-ca: Add HDMI video output
+Date: Wed,  6 Dec 2017 11:22:26 +0100
+Message-Id: <97b94d256d432ba9e1b37f9b21c3b285caf11de6.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
---ulgqb3x656bkgo26
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch enables the HDMI interface found on the expansion board.
 
-Hey Linus,
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 85 ++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-thanks for doing this.
-
-On Sun, Dec 10, 2017 at 01:23:40AM +0100, Linus Walleij wrote:
-> The gpiod_get_direction() returns 1 for input and 0 for output
-> but it's pretty hard to remember which one is which and generally
-> unintuitive and messy to provide #defines so let's simply add
-> two static inlines to do the job.
->=20
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Suggested-by: Wolfram Sang <wsa@the-dreams.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  Documentation/gpio/consumer.txt | 14 +++++++++++---
->  include/linux/gpio/consumer.h   | 25 +++++++++++++++++++++++++
->  2 files changed, 36 insertions(+), 3 deletions(-)
-
-You need to fix the kerneldoc for 'gpiod_get_direction", too. It still
-mentions GPIOF_DIR_*.
-
-> +static inline bool gpiod_is_input(struct gpio_desc *desc)
-> +{
-> +	int ret =3D gpiod_get_direction(desc);
-> +	if (ret < 0) {
-> +		pr_err("GPIO: failed to get direction\n");
-
-Is that really helpful for the user if we don't say which GPIO failed?
-
-> +		/* It is usually safest to assume we are input */
-> +		return true;
-> +	}
-> +	return !!ret;
-> +}
-
-Regards,
-
-   Wolfram
-
-
---ulgqb3x656bkgo26
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlowWz4ACgkQFA3kzBSg
-KbacFQ/8DCJTSvMKuNQrHiAigMM7Odi3+1aKyxYmQg8LyebwItspyQ545zH7T8Hq
-myVriRNQlZF7pyZcVvrJFz+O7N6lz2jEUb7/Mj1Hze5xkrcNLNOkSZ/jsN5vUhNL
-k/tLu+Xa8G7pI7t6ArUHAR1PwwDlKfZhFH4XY5w/Q40rlrtmoxQ2y6RQlBgb7JtD
-0yQY90xpdbUAL5IqA7cwk43TQcPlXfqUoxA4o7b/PSiwcCmdtsSEB0WGY3apTjCq
-UB9dQkqVSiw/V643m5PPT/lZz5ECifMhoAg42KLQBbTdMcsqKrBG6O0aP1XSFMMR
-bK6w+va+5Ec6ViYDHAF+xfcmeMzR31XUYfTRegXzdWduMnTZF/5mRiB+dIj/KYuP
-WouKTgRdqksrX9TwIj9Kf7Gn2F0RatsYtHQqAyJyyX2tk9PbaLkF1h+SLBbZ3vKA
-A+P3Z0TCL0AgEvHcUgbNGKpT0F5Sm7WqvAg9Llo0O+jydJzcFmnNTDSsWChGvZWy
-jbduWOXb+tRBbec/uTDepvmacRs/wb73c84eTJ6gbe7PTI9lpzukiFCqzUYIdm7N
-hP3ubZQLIB8wQw5h+CScBPwQ3brliySf3aCspw0cPMqV6Kp3vSf37L0tPod0p+cs
-EHjaMwplfd3hK0gazZhI4H1jODtbkR1ps0R7Lp8+G/n9yNIc0zA=
-=J/VM
------END PGP SIGNATURE-----
-
---ulgqb3x656bkgo26--
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+index f925388454da..a8a4ec87378d 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+@@ -20,6 +20,38 @@
+ 		serial4 = &scif5;
+ 		serial6 = &hscif2;
+ 	};
++
++	cec_clock: cec-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <12000000>;
++	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
++};
++
++&du {
++	pinctrl-0 = <&du0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&adv7511_in>;
++			};
++		};
++	};
+ };
+ 
+ &hscif2 {
+@@ -29,12 +61,65 @@
+ 	status = "okay";
+ };
+ 
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	hdmi@39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&cec_clock>;
++		clock-names = "cec";
++		pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&du_out_rgb0>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con>;
++				};
++			};
++		};
++	};
++};
++
+ &pfc {
++	du0_pins: du0 {
++		groups = "du0_rgb888", "du0_sync", "du0_disp", "du0_clk0_out";
++		function = "du0";
++	};
++
+ 	hscif2_pins: hscif2 {
+ 		groups = "hscif2_data";
+ 		function = "hscif2";
+ 	};
+ 
++	i2c1_pins: i2c1 {
++		groups = "i2c1_d";
++		function = "i2c1";
++	};
++
+ 	scif1_pins: scif1 {
+ 		groups = "scif1_data";
+ 		function = "scif1";
+-- 
+2.11.0
