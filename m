@@ -1,51 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:53675 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752071AbdLCK5e (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754888AbdLFKXv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 3 Dec 2017 05:57:34 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/9] v4l: vsp1: Fix display stalls when requesting too many inputs
-Date: Sun,  3 Dec 2017 12:57:27 +0200
-Message-Id: <20171203105735.10529-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 6 Dec 2017 05:23:51 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 19/61] ARM: dts: r8a7743: Use R-Car SDHI Gen2 fallback compat string
+Date: Wed,  6 Dec 2017 11:22:14 +0100
+Message-Id: <67eee4eeb3cd4df684a18f3824ea8030ea37d442.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make sure we don't accept more inputs than the hardware can handle. This
-is a temporary fix to avoid display stall, we need to instead allocate
-the BRU or BRS to display pipelines dynamically based on the number of
-planes they each use.
+Use newly added R-Car SDHI Gen2 fallback compat string
+in the DT of the r8a7743 SoC.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/vsp1/vsp1_drm.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 7ce69f23f50a..ac85942162c1 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -530,6 +530,15 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
- 		struct vsp1_rwpf *rpf = vsp1->rpf[i];
- 		unsigned int j;
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 112a72baa7a4..6aa86b75b80c 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -954,7 +954,8 @@
+ 		};
  
-+		/*
-+		 * Make sure we don't accept more inputs than the hardware can
-+		 * handle. This is a temporary fix to avoid display stall, we
-+		 * need to instead allocate the BRU or BRS to display pipelines
-+		 * dynamically based on the number of planes they each use.
-+		 */
-+		if (pipe->num_inputs >= pipe->bru->source_pad)
-+			pipe->inputs[i] = NULL;
-+
- 		if (!pipe->inputs[i])
- 			continue;
+ 		sdhi0: sd@ee100000 {
+-			compatible = "renesas,sdhi-r8a7743";
++			compatible = "renesas,sdhi-r8a7743",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee100000 0 0x328>;
+ 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 314>;
+@@ -968,7 +969,8 @@
+ 		};
  
+ 		sdhi1: sd@ee140000 {
+-			compatible = "renesas,sdhi-r8a7743";
++			compatible = "renesas,sdhi-r8a7743",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee140000 0 0x100>;
+ 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 312>;
+@@ -982,7 +984,8 @@
+ 		};
+ 
+ 		sdhi2: sd@ee160000 {
+-			compatible = "renesas,sdhi-r8a7743";
++			compatible = "renesas,sdhi-r8a7743",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee160000 0 0x100>;
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 311>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
