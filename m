@@ -1,49 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:46176 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752719AbdLSQCL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754831AbdLFKXQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 11:02:11 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] ARM: dts: r8a7740: Correct TPU register block size
-Date: Tue, 19 Dec 2017 17:02:05 +0100
-Message-Id: <1513699327-27357-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1513699327-27357-1-git-send-email-geert+renesas@glider.be>
-References: <1513699327-27357-1-git-send-email-geert+renesas@glider.be>
+        Wed, 6 Dec 2017 05:23:16 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 17/61] ARM: dts: iwg22d-sodimm: Enable HS-USB
+Date: Wed,  6 Dec 2017 11:22:12 +0100
+Message-Id: <b73ae2bdd83af78e5057d20ab2884cfd004c8543.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Timer Pulse Unit has registers that lie outside the declared
-register block.  Enlarge the register block size to fix this.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das@bp.renesas.com>
+
+Enable HS-USB on iWave RZ/G1E carrier board.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This was probably based on the old platform code, which also assumed a
-register block size of 0x100.
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
- arch/arm/boot/dts/r8a7740.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index 95c408b11991fb77..afd3bc5e6cf2e23f 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -317,7 +317,7 @@
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 3eb4f83297d4..80c82aa94c06 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -67,6 +67,12 @@
+ 	status = "okay";
+ };
  
- 	tpu: pwm@e6600000 {
- 		compatible = "renesas,tpu-r8a7740", "renesas,tpu";
--		reg = <0xe6600000 0x100>;
-+		reg = <0xe6600000 0x148>;
- 		clocks = <&mstp3_clks R8A7740_CLK_TPU0>;
- 		power-domains = <&pd_a3sp>;
- 		status = "disabled";
++&hsusb {
++	status = "okay";
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
++};
++
+ &pci1 {
+ 	status = "okay";
+ 	pinctrl-0 = <&usb1_pins>;
+@@ -95,6 +101,11 @@
+ 		power-source = <3300>;
+ 	};
+ 
++	usb0_pins: usb0 {
++		groups = "usb0";
++		function = "usb0";
++	};
++
+ 	usb1_pins: usb1 {
+ 		groups = "usb1";
+ 		function = "usb1";
 -- 
-2.7.4
+2.11.0
