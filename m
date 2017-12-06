@@ -1,139 +1,140 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from us-smtp-delivery-194.mimecast.com ([216.205.24.194]:25493 "EHLO
-        us-smtp-delivery-194.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752221AbdLFQK4 (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36305 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751463AbdLFObr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 11:10:56 -0500
-From: Trond Myklebust <trondmy@primarydata.com>
-To: "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "me@tobin.cc" <me@tobin.cc>
-Subject: Re: NFS crash, hashed pointers in backtrace
-Date: Wed, 6 Dec 2017 16:10:50 +0000
-Message-ID: <1512576648.26816.3.camel@primarydata.com>
-References: <CAMuHMdWm8SGtekpdGVKsDi4L4sgvVZDFoC5wnSggVXFRt-irzA@mail.gmail.com>
-         <CAMuHMdW00vUYmbvS=bvD+dAF4ge4yTLjE7gyso2Gk_tfqGrwXg@mail.gmail.com>
-In-Reply-To: <CAMuHMdW00vUYmbvS=bvD+dAF4ge4yTLjE7gyso2Gk_tfqGrwXg@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <DD43C4BADCEF9248AD35C42C71426E90@namprd11.prod.outlook.com>
+        Wed, 6 Dec 2017 09:31:47 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <CAMuHMdWm8SGtekpdGVKsDi4L4sgvVZDFoC5wnSggVXFRt-irzA@mail.gmail.com>
+References: <CAMuHMdWm8SGtekpdGVKsDi4L4sgvVZDFoC5wnSggVXFRt-irzA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Dec 2017 15:31:46 +0100
+Message-ID: <CAMuHMdW00vUYmbvS=bvD+dAF4ge4yTLjE7gyso2Gk_tfqGrwXg@mail.gmail.com>
+Subject: Re: NFS crash, hashed pointers in backtrace
+To: Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Cc: "Tobin C. Harding" <me@tobin.cc>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFdlZCwgMjAxNy0xMi0wNiBhdCAxNTozMSArMDEwMCwgR2VlcnQgVXl0
-dGVyaG9ldmVuIHdyb3RlOg0KPiBIaSBUcm9uZC4gQW5uYSwNCj4gDQo+IE9uIFR1ZSwgRGVjIDUs
-IDIwMTcgYXQgNTowMiBQTSwgR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLg0K
-PiBvcmc+IHdyb3RlOg0KPiA+IER1cmluZyBhIGZhaWxlZCB3cml0ZSB0byBhIHZpcnR1YWwgc3lz
-ZnMgZmlsZSAocm9vdCBmcyBpcyBORlMpLCBJDQo+ID4gZ290Og0KPiA+IA0KPiA+IFVuYWJsZSB0
-byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdCB2aXJ0dWFsIGFkZHJl
-c3MNCj4gPiAwMDAwMDAyMA0KPiA+IHBnZCA9IGM0NDhiYjE1DQo+ID4gWzAwMDAwMDIwXSAqcGdk
-PTY5YzljMDAzLCAqcG1kPTY5ZDU1MDAzLCAqcHRlPTAwMDAwMDAwDQo+ID4gSW50ZXJuYWwgZXJy
-b3I6IE9vcHM6IDIwNyBbIzFdIFNNUCBBUk0NCj4gPiBNb2R1bGVzIGxpbmtlZCBpbjoNCj4gPiBD
-UFU6IDAgUElEOiAxMjMwIENvbW06IHJzOm1haW4gUTpSZWcgTm90IHRhaW50ZWQNCj4gPiA0LjE1
-LjAtcmMyLWtvZWxzY2gtMDExNjAtZ2QzODlhMTU0YzY0MGNhYWItZGlydHkgIzM3NTINCj4gPiBI
-YXJkd2FyZSBuYW1lOiBHZW5lcmljIFItQ2FyIEdlbjIgKEZsYXR0ZW5lZCBEZXZpY2UgVHJlZSkN
-Cj4gPiB0YXNrOiA0YTNiYjZkMiB0YXNrLnN0YWNrOiBmZDBjMDBiZA0KPiA+IFBDIGlzIGF0IG5m
-c19mbHVzaF9pbmNvbXBhdGlibGUrMHg1NC8weGY4DQo+IA0KPiBHb3QgYW5vdGhlciBuZnNyb290
-IGNyYXNoOg0KPiANCj4gVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVm
-ZXJlbmNlIGF0IHZpcnR1YWwgYWRkcmVzcw0KPiAwMDAwMDAzMA0KPiBwZ2QgPSAzMjllOGY2ZQ0K
-PiBbMDAwMDAwMzBdICpwZ2Q9ODAwMDAwNDAwMDQwMDMsICpwbWQ9MDAwMDAwMDANCj4gSW50ZXJu
-YWwgZXJyb3I6IE9vcHM6IDIwNiBbIzFdIFNNUCBBUk0NCj4gTW9kdWxlcyBsaW5rZWQgaW46DQo+
-IENQVTogMCBQSUQ6IDEwMSBDb21tOiBrd29ya2VyL3U0OjEgTm90IHRhaW50ZWQNCj4gNC4xNS4w
-LXJjMi1rb2Vsc2NoLTAxMTY2LWcwNDdkN2QzMjQ4ZTA4ZmM3LWRpcnR5ICMzNzYyDQo+IEhhcmR3
-YXJlIG5hbWU6IEdlbmVyaWMgUi1DYXIgR2VuMiAoRmxhdHRlbmVkIERldmljZSBUcmVlKQ0KPiBX
-b3JrcXVldWU6IHdyaXRlYmFjayB3Yl93b3JrZm4gKGZsdXNoLTA6MTUpDQo+IHRhc2s6IDhhNWJm
-ODU4IHRhc2suc3RhY2s6IGU5M2M5MmJjDQo+IFBDIGlzIGF0IG5mc19wYWdlX2FzeW5jX2ZsdXNo
-KzB4MTEwLzB4MjQ0DQo+IExSIGlzIGF0IDB4MTANCj4gcGMgOiBbPGMwM2JjNjQ4Pl0gICAgbHIg
-OiBbPDAwMDAwMDEwPl0gICAgcHNyOiA0MDBmMDAxMw0KPiBzcCA6IGVhZmY5Yzk4ICBpcCA6IGMw
-YzUwOTJiICBmcCA6IDAwMDAwMDA1DQo+IHIxMDogMDAwMThlODQgIHI5IDogZWJlZjkyYzAgIHI4
-IDogZWFmZjlkNjQNCj4gcjcgOiBlYTQyMWEwMCAgcjYgOiBlYmVmOTJjMCAgcjUgOiBlYTk5OTA0
-MCAgcjQgOiBlYTliMWEwMA0KPiByMyA6IDAwMDAwMDAwICByMiA6IDAwMDAwMDA2ICByMSA6IDAw
-MDAwMDAwICByMCA6IDAwMDAwMDAwDQo+IEZsYWdzOiBuWmN2ICBJUlFzIG9uICBGSVFzIG9uICBN
-b2RlIFNWQ18zMiAgSVNBIEFSTSAgU2VnbWVudCB1c2VyDQo+IENvbnRyb2w6IDMwYzUzODdkICBU
-YWJsZTogNjlkNjU2ODAgIERBQzogZmZmZmZmZmQNCj4gUHJvY2VzcyBrd29ya2VyL3U0OjEgKHBp
-ZDogMTAxLCBzdGFjayBsaW1pdCA9IDB4ZWFmZjgyMTApDQo+IFN0YWNrOiAoMHhlYWZmOWM5OCB0
-byAweGVhZmZhMDAwKQ0KPiA5YzgwOiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBlYmVmOTJjMA0KPiBlYWZmOWQ2NA0KPiA5Y2EwOiBlYWZmOWUy
-MCBlYTQyMWFmYyAwMDAwMDAwMCBjMDNiYzg1OCBlYWZmOWUyMCAwMDAwMDAwMCBmZmZmZmZmZg0K
-PiBjMDJiMTFlOA0KPiA5Y2MwOiAwMDAwMDAwMCBlYThmNDUwMCBlYjQyNzMyOCAwMDAxOGU4OSAw
-MDAwMDAwMCAwMDAwMDAwOSBlYWZmOWQwYw0KPiAwMDAwMDAwMA0KPiA5Y2UwOiBjMDNiYzgzMCBl
-YWZmOWQ2NCAwMDAwMDAwMCBmZmZmZmZmZiAwMDAwMDAwOSAwMDAwMDAwMCBlYmVmODQ0MA0KPiBl
-YmVmNDVjMA0KPiA5ZDAwOiBlYmYxYWJjMCBlYmVmODg2MCBlYmVmODQyMCBlYmVmOTJjMCBlYmVm
-NWNlMCBlYmVmN2U4MCBlYmVmM2NjMA0KPiBlYWZmOWQxYw0KPiA5ZDIwOiBlYWZmOWQxYyBlYjFk
-MmQ5OCBlYjFkMmQyOCBlYTQyMWEwMCBlYjQwMDcwMCBlYTQyMWEwMCBlYWI4OWJjMA0KPiBlYTQy
-MWFmYw0KPiA5ZDQwOiBlYWZmOWUyMCBlYTQyMWFmYyAwMDAwMDAwMiBlYTQyMWE1MCBlYWZmODAw
-MCBjMDNiYzk0YyBjMDgxNTkwYw0KPiBjMDI0ODNkOA0KPiA5ZDYwOiBlYWE2MjE0MCAwMDAwMDAw
-MSBlYTQyMWEwMCBjMDgxNTdjYyBjMDgxNThlMCAwMDAwMDAwMCAwMDAwMDAwMA0KPiBjMDgxNTdi
-Yw0KPiA5ZDgwOiBjMDgxNTkwYyAwMDAwMDAwMCBlYWI4OWJjMCAwMDAwMDAwMCAwMDAwMTAwMCAw
-MDAwMDAwMSBlYWZmOWQ5Yw0KPiBlYTk5OWZjMA0KPiA5ZGEwOiBlYTk5OWZjMCAwMDAwNDAwMCAw
-MDAwMTAwMCAwMDAwMTAwMCAwMDAwMDAwMCBjMDc0NTcwNCAwMDAwMDAwMA0KPiAwMDAwMDAwMA0K
-PiA5ZGMwOiBlYzA5ZTI1MCBlYWZmOWUyMCBlYTQyMWFmYyBlYWZmOWUyMCBlYTljNGMzOCBjMDJi
-MmQ0OCAwMDAwMDA4Ng0KPiBlYTQyMWEwMA0KPiA5ZGUwOiBlYTQyMWEwMCBjMDMxMDQzNCBlYTQy
-MWEwMCBlYWZmOWUyMCAwMDAwMDAwMCBlYTQyMWFiNCBlYTQyMWEwMA0KPiAwMDAwMTQwMA0KPiA5
-ZTAwOiBlYTljNGMzOCBlYWZmOWVmYyAwMDAwMDAwMiBjMDMxMDliOCBlYTljNGM2NCAwMDAwM2Zk
-MCBlYTk4YjgwMA0KPiAwMDAwMDAwMA0KPiA5ZTIwOiAwMDAwMTNmYiAwMDAwMDAwMCAwMDAwMDAw
-MCAwMDAwMDAwMCBmZmZmZmZmZiA3ZmZmZmZmZiAwMDAwMDAwMA0KPiAwMDAwMDAxMQ0KPiA5ZTQw
-OiAwMDAwMDAwMCBlYTljNGMzOCAwMDAwMDAwMCBjMGUwNDkwMCAwMDAwM2ZkYSBlYWZmOWVmYyBl
-YTljNGM0Yw0KPiBlYTk4YjgwMA0KPiA5ZTYwOiBlYjFmNzU4NCBjMDMxMGJlMCBlYTljNGM0YyBl
-YTljNGMzOCBlYWZmOWVmYyBjMGUwNDkwMCBlYTljNGM2NA0KPiAwMDAwMTc1Yw0KPiA5ZTgwOiBl
-YTljNGQ5MCBjMGUxMzAyMCAwMDAwMDAwYSBjMDMxMGQyYyAwMDAwM2ZkMCAwMDAwM2ZkMCBlYjQ2
-NTE5OA0KPiAwMDAwMzQxOA0KPiA5ZWEwOiBlYWZmOWVhMCBlYWZmOWVhMCBlYWZmOWVhOCBlYWZm
-OWVhOCBlYWZmOWViMCBlYWZmOWViMCAwMDAwMDAxYQ0KPiBlYTljNGQ5OA0KPiA5ZWMwOiBlYTlj
-NGMzOCAwMDAwMTc1YyBlYTljNGQ5MCBlYTljNGMzYyBlYTljNGQ4MCAwMDAwMDAwMCAwMDAwMDA4
-OA0KPiBjMDMxMTBhMA0KPiA5ZWUwOiAwMDAwMDAwMCBjMDIzYjkyNCBlYjlhMGQ4MCBlYWZkNzEw
-MCBlYjQ2NTEwMCBlYWJlODAwMCAwMDAwMDAwMA0KPiAwMDAwMTc1Yw0KPiA5ZjAwOiAwMDAwMDAw
-MCBlYWZmOWU5YyAwMDAwMDAwMCAwMDAwMDAwNiAwMDAwMDAwMyAwMDAwMDAwMCAwMDAwMDAwMA0K
-PiAwMDAwMDAwMA0KPiA5ZjIwOiBlYjdmNjIwMCBlYTljNGQ5OCBlYjQwNjYwMCAwMDAwMDAwMCBl
-YjQwN2YwMCAwMDAwMDAwMCBlYTljNGQ5Yw0KPiBjMDIzNWJkYw0KPiA5ZjQwOiBlYjdmNjIwMCBl
-YTljNGQ5OCBlYjdmNjIwMCBlYjQwNjYwMCBlYjQwNjYwMCBlYWZmODAwMCBlYjQwNjYyNA0KPiBj
-MGUwNDkwMA0KPiA5ZjYwOiBlYjdmNjIxOCBjMDIzNjM0YyBlYWZkNzEwMCBlYjdmNjM4MCBlYjdh
-N2ZjMCAwMDAwMDAwMCBlYjQ0M2VlNA0KPiBlYjdmNjNhOA0KPiA5ZjgwOiBlYjdmNjIwMCBjMDIz
-NjA4MCAwMDAwMDAwMCBjMDIzYTUyOCBlYjdhN2ZjMCBjMDIzYTQwYyAwMDAwMDAwMA0KPiAwMDAw
-MDAwMA0KPiA5ZmEwOiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCBjMDIwNmYzOCAwMDAwMDAw
-MCAwMDAwMDAwMCAwMDAwMDAwMA0KPiAwMDAwMDAwMA0KPiA5ZmMwOiAwMDAwMDAwMCAwMDAwMDAw
-MCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMA0KPiAwMDAwMDAw
-MA0KPiA5ZmUwOiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAxMyAw
-MDAwMDAwMCAwMDAwMDAwMA0KPiAwMDAwMDAwMA0KPiBbPGMwM2JjNjQ4Pl0gKG5mc19wYWdlX2Fz
-eW5jX2ZsdXNoKSBmcm9tIFs8YzAzYmM4NTg+XQ0KPiAobmZzX3dyaXRlcGFnZXNfY2FsbGJhY2sr
-MHgyOC8weDU0KQ0KPiBbPGMwM2JjODU4Pl0gKG5mc193cml0ZXBhZ2VzX2NhbGxiYWNrKSBmcm9t
-IFs8YzAyYjExZTg+XQ0KPiAod3JpdGVfY2FjaGVfcGFnZXMrMHgyNzgvMHgzNjQpDQo+IFs8YzAy
-YjExZTg+XSAod3JpdGVfY2FjaGVfcGFnZXMpIGZyb20gWzxjMDNiYzk0Yz5dDQo+IChuZnNfd3Jp
-dGVwYWdlcysweGE4LzB4ZTgpDQo+IFs8YzAzYmM5NGM+XSAobmZzX3dyaXRlcGFnZXMpIGZyb20g
-WzxjMDJiMmQ0OD5dDQo+IChkb193cml0ZXBhZ2VzKzB4MzQvMHg4MCkNCj4gWzxjMDJiMmQ0OD5d
-IChkb193cml0ZXBhZ2VzKSBmcm9tIFs8YzAzMTA0MzQ+XQ0KPiAoX193cml0ZWJhY2tfc2luZ2xl
-X2lub2RlKzB4MzQvMHgxOTQpDQo+IFs8YzAzMTA0MzQ+XSAoX193cml0ZWJhY2tfc2luZ2xlX2lu
-b2RlKSBmcm9tIFs8YzAzMTA5Yjg+XQ0KPiAod3JpdGViYWNrX3NiX2lub2RlcysweDFjYy8weDM5
-MCkNCj4gWzxjMDMxMDliOD5dICh3cml0ZWJhY2tfc2JfaW5vZGVzKSBmcm9tIFs8YzAzMTBiZTA+
-XQ0KPiAoX193cml0ZWJhY2tfaW5vZGVzX3diKzB4NjQvMHhhMCkNCj4gWzxjMDMxMGJlMD5dIChf
-X3dyaXRlYmFja19pbm9kZXNfd2IpIGZyb20gWzxjMDMxMGQyYz5dDQo+ICh3Yl93cml0ZWJhY2sr
-MHgxMTAvMHgxOGMpDQo+IFs8YzAzMTBkMmM+XSAod2Jfd3JpdGViYWNrKSBmcm9tIFs8YzAzMTEw
-YTA+XSAod2Jfd29ya2ZuKzB4MWI4LzB4MzA0KQ0KPiBbPGMwMzExMGEwPl0gKHdiX3dvcmtmbikg
-ZnJvbSBbPGMwMjM1YmRjPl0NCj4gKHByb2Nlc3Nfb25lX3dvcmsrMHgxY2MvMHgzMWMpDQo+IFs8
-YzAyMzViZGM+XSAocHJvY2Vzc19vbmVfd29yaykgZnJvbSBbPGMwMjM2MzRjPl0NCj4gKHdvcmtl
-cl90aHJlYWQrMHgyY2MvMHg0MDgpDQo+IFs8YzAyMzYzNGM+XSAod29ya2VyX3RocmVhZCkgZnJv
-bSBbPGMwMjNhNTI4Pl0gKGt0aHJlYWQrMHgxMWMvMHgxM2MpDQo+IFs8YzAyM2E1Mjg+XSAoa3Ro
-cmVhZCkgZnJvbSBbPGMwMjA2ZjM4Pl0gKHJldF9mcm9tX2ZvcmsrMHgxNC8weDNjKQ0KPiBDb2Rl
-OiBlM2EwMjAwMSBlNWMzMjAwNCBlYmY5OGU5NSBlNTk1MzAwYyAoZTU5MzAwMzApDQo+IC0tLVsg
-ZW5kIHRyYWNlIDI3NzFiNzA1MDZhODIzYTMgXS0tLQ0KPiANCj4gc3RhdGljIGludCBuZnNfcGFn
-ZV9hc3luY19mbHVzaChzdHJ1Y3QgbmZzX3BhZ2Vpb19kZXNjcmlwdG9yICpwZ2lvLA0KPiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBwYWdlICpwYWdlKQ0KPiB7DQo+ICAg
-ICAgICAgc3RydWN0IG5mc19wYWdlICpyZXE7DQo+ICAgICAgICAgaW50IHJldCA9IDA7DQo+IA0K
-PiAgICAgICAgIC4uLg0KPiANCj4gICAgICAgICAvKiBJZiB0aGVyZSBpcyBhIGZhdGFsIGVycm9y
-IHRoYXQgY292ZXJzIHRoaXMgd3JpdGUsIGp1c3QNCj4gZXhpdCAqLw0KPiAgICAgICAgIGlmIChu
-ZnNfZXJyb3JfaXNfZmF0YWxfb25fc2VydmVyKHJlcS0+d2JfY29udGV4dC0+ZXJyb3IpKQ0KPiAg
-ICAgICAgICAgICAgICAgZ290byBvdXRfbGF1bmRlcjsNCj4gDQo+IGMwM2JjNjQ0OiAgICAgICBl
-NTk1MzAwYyAgICAgICAgbGRyICAgICByMywgW3I1LCAjMTJdDQo+IGMwM2JjNjQ4OiAgICAgICBl
-NTkzMDAzMCAgICAgICAgbGRyICAgICByMCwgW3IzLCAjNDhdICAgOyAweDMwDQo+IGMwM2JjNjRj
-OiAgICAgICBlYmZmZmQxYiAgICAgICAgYmwgICAgICBjMDNiYmFjMA0KPiA8bmZzX2Vycm9yX2lz
-X2ZhdGFsX29uX3NlcnZlcj4NCj4gDQo+IHJlcS0+d2JfY29udGV4dCBtdXN0IGJlIE5VTEwuDQo+
-IA0KDQpJJ20gY29uZnVzZWQuIElmIHlvdXIgdGVzdCBpbnZvbHZlcyBvbmx5IHdyaXRpbmcgdG8g
-YSBzeXNmcyBmaWxlLCB0aGVuDQp3aHkgaXMgdGhlIE5GUyBjb2RlIGludm9sdmVkIGF0IGFsbD8g
-Q291bGQgdGhpcyBiZSBhIHVzZS1hZnRlci1mcmVlPw0KDQotLSANClRyb25kIE15a2xlYnVzdA0K
-TGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBQcmltYXJ5RGF0YQ0KdHJvbmQubXlrbGVidXN0
-QHByaW1hcnlkYXRhLmNvbQ0K
+Hi Trond. Anna,
+
+On Tue, Dec 5, 2017 at 5:02 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> During a failed write to a virtual sysfs file (root fs is NFS), I got:
+>
+> Unable to handle kernel NULL pointer dereference at virtual address 00000020
+> pgd = c448bb15
+> [00000020] *pgd=69c9c003, *pmd=69d55003, *pte=00000000
+> Internal error: Oops: 207 [#1] SMP ARM
+> Modules linked in:
+> CPU: 0 PID: 1230 Comm: rs:main Q:Reg Not tainted
+> 4.15.0-rc2-koelsch-01160-gd389a154c640caab-dirty #3752
+> Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+> task: 4a3bb6d2 task.stack: fd0c00bd
+> PC is at nfs_flush_incompatible+0x54/0xf8
+
+Got another nfsroot crash:
+
+Unable to handle kernel NULL pointer dereference at virtual address 00000030
+pgd = 329e8f6e
+[00000030] *pgd=80000040004003, *pmd=00000000
+Internal error: Oops: 206 [#1] SMP ARM
+Modules linked in:
+CPU: 0 PID: 101 Comm: kworker/u4:1 Not tainted
+4.15.0-rc2-koelsch-01166-g047d7d3248e08fc7-dirty #3762
+Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
+Workqueue: writeback wb_workfn (flush-0:15)
+task: 8a5bf858 task.stack: e93c92bc
+PC is at nfs_page_async_flush+0x110/0x244
+LR is at 0x10
+pc : [<c03bc648>]    lr : [<00000010>]    psr: 400f0013
+sp : eaff9c98  ip : c0c5092b  fp : 00000005
+r10: 00018e84  r9 : ebef92c0  r8 : eaff9d64
+r7 : ea421a00  r6 : ebef92c0  r5 : ea999040  r4 : ea9b1a00
+r3 : 00000000  r2 : 00000006  r1 : 00000000  r0 : 00000000
+Flags: nZcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
+Control: 30c5387d  Table: 69d65680  DAC: fffffffd
+Process kworker/u4:1 (pid: 101, stack limit = 0xeaff8210)
+Stack: (0xeaff9c98 to 0xeaffa000)
+9c80:                                                       ebef92c0 eaff9d64
+9ca0: eaff9e20 ea421afc 00000000 c03bc858 eaff9e20 00000000 ffffffff c02b11e8
+9cc0: 00000000 ea8f4500 eb427328 00018e89 00000000 00000009 eaff9d0c 00000000
+9ce0: c03bc830 eaff9d64 00000000 ffffffff 00000009 00000000 ebef8440 ebef45c0
+9d00: ebf1abc0 ebef8860 ebef8420 ebef92c0 ebef5ce0 ebef7e80 ebef3cc0 eaff9d1c
+9d20: eaff9d1c eb1d2d98 eb1d2d28 ea421a00 eb400700 ea421a00 eab89bc0 ea421afc
+9d40: eaff9e20 ea421afc 00000002 ea421a50 eaff8000 c03bc94c c081590c c02483d8
+9d60: eaa62140 00000001 ea421a00 c08157cc c08158e0 00000000 00000000 c08157bc
+9d80: c081590c 00000000 eab89bc0 00000000 00001000 00000001 eaff9d9c ea999fc0
+9da0: ea999fc0 00004000 00001000 00001000 00000000 c0745704 00000000 00000000
+9dc0: ec09e250 eaff9e20 ea421afc eaff9e20 ea9c4c38 c02b2d48 00000086 ea421a00
+9de0: ea421a00 c0310434 ea421a00 eaff9e20 00000000 ea421ab4 ea421a00 00001400
+9e00: ea9c4c38 eaff9efc 00000002 c03109b8 ea9c4c64 00003fd0 ea98b800 00000000
+9e20: 000013fb 00000000 00000000 00000000 ffffffff 7fffffff 00000000 00000011
+9e40: 00000000 ea9c4c38 00000000 c0e04900 00003fda eaff9efc ea9c4c4c ea98b800
+9e60: eb1f7584 c0310be0 ea9c4c4c ea9c4c38 eaff9efc c0e04900 ea9c4c64 0000175c
+9e80: ea9c4d90 c0e13020 0000000a c0310d2c 00003fd0 00003fd0 eb465198 00003418
+9ea0: eaff9ea0 eaff9ea0 eaff9ea8 eaff9ea8 eaff9eb0 eaff9eb0 0000001a ea9c4d98
+9ec0: ea9c4c38 0000175c ea9c4d90 ea9c4c3c ea9c4d80 00000000 00000088 c03110a0
+9ee0: 00000000 c023b924 eb9a0d80 eafd7100 eb465100 eabe8000 00000000 0000175c
+9f00: 00000000 eaff9e9c 00000000 00000006 00000003 00000000 00000000 00000000
+9f20: eb7f6200 ea9c4d98 eb406600 00000000 eb407f00 00000000 ea9c4d9c c0235bdc
+9f40: eb7f6200 ea9c4d98 eb7f6200 eb406600 eb406600 eaff8000 eb406624 c0e04900
+9f60: eb7f6218 c023634c eafd7100 eb7f6380 eb7a7fc0 00000000 eb443ee4 eb7f63a8
+9f80: eb7f6200 c0236080 00000000 c023a528 eb7a7fc0 c023a40c 00000000 00000000
+9fa0: 00000000 00000000 00000000 c0206f38 00000000 00000000 00000000 00000000
+9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[<c03bc648>] (nfs_page_async_flush) from [<c03bc858>]
+(nfs_writepages_callback+0x28/0x54)
+[<c03bc858>] (nfs_writepages_callback) from [<c02b11e8>]
+(write_cache_pages+0x278/0x364)
+[<c02b11e8>] (write_cache_pages) from [<c03bc94c>] (nfs_writepages+0xa8/0xe8)
+[<c03bc94c>] (nfs_writepages) from [<c02b2d48>] (do_writepages+0x34/0x80)
+[<c02b2d48>] (do_writepages) from [<c0310434>]
+(__writeback_single_inode+0x34/0x194)
+[<c0310434>] (__writeback_single_inode) from [<c03109b8>]
+(writeback_sb_inodes+0x1cc/0x390)
+[<c03109b8>] (writeback_sb_inodes) from [<c0310be0>]
+(__writeback_inodes_wb+0x64/0xa0)
+[<c0310be0>] (__writeback_inodes_wb) from [<c0310d2c>]
+(wb_writeback+0x110/0x18c)
+[<c0310d2c>] (wb_writeback) from [<c03110a0>] (wb_workfn+0x1b8/0x304)
+[<c03110a0>] (wb_workfn) from [<c0235bdc>] (process_one_work+0x1cc/0x31c)
+[<c0235bdc>] (process_one_work) from [<c023634c>] (worker_thread+0x2cc/0x408)
+[<c023634c>] (worker_thread) from [<c023a528>] (kthread+0x11c/0x13c)
+[<c023a528>] (kthread) from [<c0206f38>] (ret_from_fork+0x14/0x3c)
+Code: e3a02001 e5c32004 ebf98e95 e595300c (e5930030)
+---[ end trace 2771b70506a823a3 ]---
+
+static int nfs_page_async_flush(struct nfs_pageio_descriptor *pgio,
+                                struct page *page)
+{
+        struct nfs_page *req;
+        int ret = 0;
+
+        ...
+
+        /* If there is a fatal error that covers this write, just exit */
+        if (nfs_error_is_fatal_on_server(req->wb_context->error))
+                goto out_launder;
+
+c03bc644:       e595300c        ldr     r3, [r5, #12]
+c03bc648:       e5930030        ldr     r0, [r3, #48]   ; 0x30
+c03bc64c:       ebfffd1b        bl      c03bbac0 <nfs_error_is_fatal_on_server>
+
+req->wb_context must be NULL.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
