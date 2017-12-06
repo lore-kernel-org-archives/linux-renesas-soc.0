@@ -1,79 +1,87 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v9 10/28] rcar-vin: do not reset crop and compose when setting format
-Date: Fri,  8 Dec 2017 02:08:24 +0100
-Message-Id: <20171208010842.20047-11-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:49676 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752653AbdLFIWu (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 6 Dec 2017 03:22:50 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] usb: renesas_usbhs: add usbhs_pipe_clear_without_sequence() function
+Date: Wed,  6 Dec 2017 17:18:32 +0900
+Message-Id: <1512548313-20175-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1512548313-20175-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1512548313-20175-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It was a bad idea to reset the crop and compose settings when a new
-format is set. This would overwrite any crop/compose set by s_select and
-cause unexpected behaviors, remove it. Also fold the reset helper in to
-the only remaining caller.
+This patch adds usbhs_pipe_clear_without_sequence() function.
+The controller has the pipe buffer and the PIPEnCTR.ACLRM can clear
+it completely. But, it's also clear the data sequence. So, the driver
+needs to get the sequence before.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ drivers/usb/renesas_usbhs/pipe.c | 19 ++++++++++++++-----
+ drivers/usb/renesas_usbhs/pipe.h |  2 ++
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 1c5e7f6d5b963740..254fa1c8770275a5 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -90,17 +90,6 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
-  * V4L2
-  */
- 
--static void rvin_reset_crop_compose(struct rvin_dev *vin)
--{
--	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = vin->source.width;
--	vin->crop.height = vin->source.height;
--
--	vin->compose.top = vin->compose.left = 0;
--	vin->compose.width = vin->format.width;
--	vin->compose.height = vin->format.height;
--}
--
- static int rvin_reset_format(struct rvin_dev *vin)
- {
- 	struct v4l2_subdev_format fmt = {
-@@ -147,7 +136,13 @@ static int rvin_reset_format(struct rvin_dev *vin)
- 		break;
+diff --git a/drivers/usb/renesas_usbhs/pipe.c b/drivers/usb/renesas_usbhs/pipe.c
+index 093cd8e..9677e0e 100644
+--- a/drivers/usb/renesas_usbhs/pipe.c
++++ b/drivers/usb/renesas_usbhs/pipe.c
+@@ -590,10 +590,22 @@ void usbhs_pipe_clear(struct usbhs_pipe *pipe)
  	}
- 
--	rvin_reset_crop_compose(vin);
-+	vin->crop.top = vin->crop.left = 0;
-+	vin->crop.width = mf->width;
-+	vin->crop.height = mf->height;
-+
-+	vin->compose.top = vin->compose.left = 0;
-+	vin->compose.width = mf->width;
-+	vin->compose.height = mf->height;
- 
- 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
- 	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
-@@ -317,8 +312,6 @@ static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
- 
- 	vin->format = f->fmt.pix;
- 
--	rvin_reset_crop_compose(vin);
--
- 	return 0;
  }
  
+-void usbhs_pipe_config_change_bfre(struct usbhs_pipe *pipe, int enable)
++/* Should call usbhsp_pipe_select() before */
++void usbhs_pipe_clear_without_sequence(struct usbhs_pipe *pipe,
++				       int needs_bfre, int bfre_enable)
+ {
+ 	int sequence;
+ 
++	usbhsp_pipe_select(pipe);
++	sequence = usbhs_pipe_get_data_sequence(pipe);
++	if (needs_bfre)
++		usbhsp_pipe_cfg_set(pipe, BFRE, bfre_enable ? BFRE : 0);
++	usbhs_pipe_clear(pipe);
++	usbhs_pipe_data_sequence(pipe, sequence);
++}
++
++void usbhs_pipe_config_change_bfre(struct usbhs_pipe *pipe, int enable)
++{
+ 	if (usbhs_pipe_is_dcp(pipe))
+ 		return;
+ 
+@@ -602,10 +614,7 @@ void usbhs_pipe_config_change_bfre(struct usbhs_pipe *pipe, int enable)
+ 	if (!(enable ^ !!(usbhsp_pipe_cfg_get(pipe) & BFRE)))
+ 		return;
+ 
+-	sequence = usbhs_pipe_get_data_sequence(pipe);
+-	usbhsp_pipe_cfg_set(pipe, BFRE, enable ? BFRE : 0);
+-	usbhs_pipe_clear(pipe);
+-	usbhs_pipe_data_sequence(pipe, sequence);
++	usbhs_pipe_clear_without_sequence(pipe, 1, enable);
+ }
+ 
+ static struct usbhs_pipe *usbhsp_get_pipe(struct usbhs_priv *priv, u32 type)
+diff --git a/drivers/usb/renesas_usbhs/pipe.h b/drivers/usb/renesas_usbhs/pipe.h
+index d3d0022..3080423 100644
+--- a/drivers/usb/renesas_usbhs/pipe.h
++++ b/drivers/usb/renesas_usbhs/pipe.h
+@@ -80,6 +80,8 @@ void usbhs_pipe_init(struct usbhs_priv *priv,
+ 					 struct usbhs_pkt *pkt, int map));
+ int usbhs_pipe_get_maxpacket(struct usbhs_pipe *pipe);
+ void usbhs_pipe_clear(struct usbhs_pipe *pipe);
++void usbhs_pipe_clear_without_sequence(struct usbhs_pipe *pipe,
++				       int needs_bfre, int bfre_enable);
+ int usbhs_pipe_is_accessible(struct usbhs_pipe *pipe);
+ void usbhs_pipe_enable(struct usbhs_pipe *pipe);
+ void usbhs_pipe_disable(struct usbhs_pipe *pipe);
 -- 
-2.15.0
+1.9.1
