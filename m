@@ -1,52 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:45936 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752823AbdLDILi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754853AbdLFKXn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 03:11:38 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171124210313.219761525@cogentembedded.com>
-References: <20171124210313.219761525@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Dec 2017 09:11:36 +0100
-Message-ID: <CAMuHMdWZ76aGbOhePsQU4aH0FSmi5aiutRpShyZhkPVbmYNUSg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: renesas: initial V3MSK board device tree
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Wed, 6 Dec 2017 05:23:43 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 23/61] ARM: dts: r8a7790: Use R-Car SDHI Gen2 fallback compat string
+Date: Wed,  6 Dec 2017 11:22:18 +0100
+Message-Id: <e0ac55614d1013efcd46e018612a7a11ea79f1c1.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 24, 2017 at 9:59 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the initial device  tree for the V3M Starter Kit board.
-> The board has 1 debug serial port (SCIF0); include support for it,
-> so that the serial console can work.
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Use newly added R-Car SDHI Gen2 fallback compat string
+in the DT of the r8a7790 SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 4fc607e8e40c..6ea06455c0d1 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -662,7 +662,8 @@
+ 	};
+ 
+ 	sdhi0: sd@ee100000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 314>;
+@@ -676,7 +677,8 @@
+ 	};
+ 
+ 	sdhi1: sd@ee120000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee120000 0 0x328>;
+ 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 313>;
+@@ -690,7 +692,8 @@
+ 	};
+ 
+ 	sdhi2: sd@ee140000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 312>;
+@@ -704,7 +707,8 @@
+ 	};
+ 
+ 	sdhi3: sd@ee160000 {
+-		compatible = "renesas,sdhi-r8a7790";
++		compatible = "renesas,sdhi-r8a7790",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 311>;
+-- 
+2.11.0
