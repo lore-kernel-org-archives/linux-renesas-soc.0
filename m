@@ -1,57 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40891 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965215AbdLRV6J (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47357 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754767AbdLFKVw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 16:58:09 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/7] i2c: sh_mobile: move type detection upwards
-Date: Mon, 18 Dec 2017 22:57:56 +0100
-Message-Id: <20171218215802.28591-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
-References: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
+        Wed, 6 Dec 2017 05:21:52 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] arm64: renesas: document V3MSK board bindings
+Date: Wed,  6 Dec 2017 11:21:44 +0100
+Message-Id: <eebd0732136fd293c8f15a435978c1c34cd7f32f.1512553735.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512553735.git.horms+renesas@verge.net.au>
+References: <cover.1512553735.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For refactoring reasons, we will need this information before the setup
-callback. Also, simplify the comment to a oneliner.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Document the V3M Starter Kit device tree bindings, listing it as
+a supported board.
+
+This allows to use checkpatch.pl to validate .dts files referring to
+the V3MSK board.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index b01607b4fce2b8..1ac896e46b390c 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -873,6 +873,10 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
- 	pd->bus_speed = ret ? STANDARD_MODE : bus_speed;
- 	pd->clks_per_count = 1;
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 062520a0e74c..5c3af7ef0761 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -112,6 +112,8 @@ Boards:
+     compatible = "renesas,sk-rzg1e", "renesas,r8a7745"
+   - SK-RZG1M (YR8A77430S000BE)
+     compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
++  - V3MSK
++    compatible = "renesas,v3msk", "renesas,r8a77970"
+   - Wheat
+     compatible = "renesas,wheat", "renesas,r8a7792"
  
-+	/* Newer variants come with two new bits in ICIC */
-+	if (resource_size(res) > 0x17)
-+		pd->flags |= IIC_FLAG_HAS_ICIC67;
-+
- 	config = of_device_get_match_data(&dev->dev);
- 	if (config) {
- 		pd->clks_per_count = config->clks_per_count;
-@@ -881,12 +885,6 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
- 			config->setup(pd);
- 	}
- 
--	/* The IIC blocks on SH-Mobile ARM processors
--	 * come with two new bits in ICIC.
--	 */
--	if (resource_size(res) > 0x17)
--		pd->flags |= IIC_FLAG_HAS_ICIC67;
--
- 	ret = sh_mobile_i2c_init(pd);
- 	if (ret)
- 		return ret;
 -- 
 2.11.0
