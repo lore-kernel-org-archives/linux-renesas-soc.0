@@ -1,133 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:46508 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751125AbdL2Nb6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47357 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754713AbdLFKVv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Dec 2017 08:31:58 -0500
-Received: by mail-lf0-f65.google.com with SMTP id a12so11848106lfe.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Dec 2017 05:31:58 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Wed, 6 Dec 2017 05:21:51 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] irqchip/renesas-irqc: Use WAKEUP_PATH driver PM flag
-Date: Fri, 29 Dec 2017 14:31:43 +0100
-Message-Id: <1514554304-18989-3-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
-References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] ARM: shmobile: Document Renesas M3-W-based Salvator-XS board DT bindings
+Date: Wed,  6 Dec 2017 11:21:43 +0100
+Message-Id: <0021ca8ef7cad34a8077073ec3aaf638117681f5.1512553735.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512553735.git.horms+renesas@verge.net.au>
+References: <cover.1512553735.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Since commit 6f46aedb9c85873b ("irqchip: renesas-irqc: Add wake-up
-support"), when an IRQ is used for wakeup, the INTC block's module clock is
-manually kept running during system suspend, to make sure the device stays
-active.
+The Renesas Salvator-XS (Salvator-X 2nd version) development board can
+be equipped with either an R-Car H3 ES2.0 or M3-W ES1.x SiP, which are
+pin-compatible.
 
-However, this explicit clock handling is merely a workaround for a failure
-to properly communicate wakeup information to the PM core. Instead, set the
-WAKEUP_PATH driver PM flag to indicate that the device is part of the
-wakeup path, which further also enables middle-layers and PM domains (like
-genpd) to act on this.
-
-In case the device is attached to genpd and depending on if it has an
-active wakeup configuration, genpd will keep the device active (the clock
-running) during system suspend when needed. This enables us to remove all
-explicit clock handling code from the driver, so let's do that as well.
+Document board part number and compatible values for the version with
+R-Car M3-W.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[Ulf: Converted to use the WAKEUP_PATH driver PM flag]
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/irqchip/irq-renesas-irqc.c | 32 +++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index 52304b1..70d1409 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
-@@ -17,7 +17,6 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
- 
--#include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
-@@ -64,7 +63,7 @@ struct irqc_priv {
- 	struct platform_device *pdev;
- 	struct irq_chip_generic *gc;
- 	struct irq_domain *irq_domain;
--	struct clk *clk;
-+	unsigned wakeup_path:1;
- };
- 
- static struct irqc_priv *irq_data_to_priv(struct irq_data *data)
-@@ -111,15 +110,7 @@ static int irqc_irq_set_wake(struct irq_data *d, unsigned int on)
- 	int hw_irq = irqd_to_hwirq(d);
- 
- 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
--
--	if (!p->clk)
--		return 0;
--
--	if (on)
--		clk_enable(p->clk);
--	else
--		clk_disable(p->clk);
--
-+	p->wakeup_path = on;
- 	return 0;
- }
- 
-@@ -159,12 +150,6 @@ static int irqc_probe(struct platform_device *pdev)
- 	p->pdev = pdev;
- 	platform_set_drvdata(pdev, p);
- 
--	p->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(p->clk)) {
--		dev_warn(&pdev->dev, "unable to get clock\n");
--		p->clk = NULL;
--	}
--
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_sync(&pdev->dev);
- 
-@@ -276,6 +261,18 @@ static int irqc_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int irqc_suspend(struct device *dev)
-+{
-+	struct irqc_priv *p = dev_get_drvdata(dev);
-+
-+	dev_pm_set_driver_flags(dev, p->wakeup_path ? DPM_FLAG_WAKEUP_PATH : 0);
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(irqc_pm_ops, irqc_suspend, NULL);
-+
- static const struct of_device_id irqc_dt_ids[] = {
- 	{ .compatible = "renesas,irqc", },
- 	{},
-@@ -288,6 +285,7 @@ static struct platform_driver irqc_device_driver = {
- 	.driver		= {
- 		.name	= "renesas_irqc",
- 		.of_match_table	= irqc_dt_ids,
-+		.pm	= &irqc_pm_ops,
- 	}
- };
- 
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 020d758fc0c5..062520a0e74c 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -104,6 +104,8 @@ Boards:
+     compatible = "renesas,salvator-x", "renesas,r8a7796"
+   - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
+     compatible = "renesas,salvator-xs", "renesas,r8a7795"
++  - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
++    compatible = "renesas,salvator-xs", "renesas,r8a7796"
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
+   - SK-RZG1E (YR8A77450S000BE)
 -- 
-2.7.4
+2.11.0
