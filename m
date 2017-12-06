@@ -1,55 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:36984 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbdLFMMD (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:34819 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750812AbdLFMFt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 07:12:03 -0500
-MIME-Version: 1.0
-In-Reply-To: <1512561929-16540-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1512561929-16540-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Dec 2017 13:12:02 +0100
-Message-ID: <CAMuHMdWTepYLpySfo6hq10-9TrGh+o=P9k5RnTYxBTe-eh-pQw@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: r8a7745: Add APMU node and second CPU core
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Wed, 6 Dec 2017 07:05:49 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Chris Paterson <chris.paterson2@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2] ARM: dts: r8a7745: Add APMU node and second CPU core
+Date: Wed,  6 Dec 2017 12:05:29 +0000
+Message-Id: <1512561929-16540-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Dec 6, 2017 at 1:05 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
->
-> Add DT node for the Advanced Power Management Unit (APMU), add the
-> second CPU core, and use "renesas,apmu" as "enable-method".
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-> v2:
-> - rebased against renesas-devel-20171205-v4.15-rc2
+Add DT node for the Advanced Power Management Unit (APMU), add the
+second CPU core, and use "renesas,apmu" as "enable-method".
 
-Seems my
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-was not added.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+Dear All,
 
-Gr{oetje,eeting}s,
+I am reposting this patch now that its dependecy ("ARM: shmobile: rcar-gen2:
+Make sure CNTVOFF is initialized on CA7/15") is part of v4.15-rc1, similarly
+to patch "ARM: dts: r8a7794: Add SMP support".
 
-                        Geert
+v2:
+- rebased against renesas-devel-20171205-v4.15-rc2
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Thanks
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ arch/arm/boot/dts/r8a7745.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index de13e15..0fa7861 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -38,6 +38,7 @@
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "renesas,apmu";
+ 
+ 		cpu0: cpu@0 {
+ 			device_type = "cpu";
+@@ -49,6 +50,15 @@
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7745_PD_CA7_CPU1>;
++			next-level-cache = <&L2_CA7>;
++		};
++
+ 		L2_CA7: cache-controller-0 {
+ 			compatible = "cache";
+ 			cache-unified;
+@@ -65,6 +75,12 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		apmu@e6151000 {
++			compatible = "renesas,r8a7745-apmu", "renesas,apmu";
++			reg = <0 0xe6151000 0 0x188>;
++			cpus = <&cpu0 &cpu1>;
++		};
++
+ 		gic: interrupt-controller@f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
+-- 
+2.7.4
