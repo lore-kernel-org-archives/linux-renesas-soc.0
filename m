@@ -1,50 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34946 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbdLSVW6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754872AbdLFKYM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 16:22:58 -0500
-Received: by mail-lf0-f65.google.com with SMTP id j124so21741355lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Dec 2017 13:22:58 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 0/3] phy: core: Re-work runtime PM deployment and fix an issue
-Date: Tue, 19 Dec 2017 22:22:28 +0100
-Message-Id: <1513718551-28624-1-git-send-email-ulf.hansson@linaro.org>
+        Wed, 6 Dec 2017 05:24:12 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/61] ARM: dts: r8a7745: Use R-Car SDHI Gen2 fallback compat string
+Date: Wed,  6 Dec 2017 11:22:15 +0100
+Message-Id: <35098dd2e37d51cdab26637479fb892c254c2555.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The intend of this series is to simplify the runtime PM deployment in the phy
-core, but while doing that fixing a related problem for a Renesas SoC making use
-of a phy. This issue was raised by Geert Uytterhoeven and Yoshihiro Shimoda, due
-to a changed behaviour in the runtime PM core.
+Use newly added R-Car SDHI Gen2 fallback compat string
+in the DT of the r8a7745 SoC.
 
-The commit in question is f8817f61e821 (PM / runtime: Drop children check from
-__pm_runtime_set_status()). However, it turned out that the problem existed
-already prior this change, only that the error was printed instead of giving a
-WARN splat.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-More details about the changes are available in each change log. For additional
-background, please have look at the link below.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7745.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-https://patchwork.kernel.org/patch/10086651/
-
-Ulf Hansson (3):
-  phy: core: Move runtime PM reference counting to the parent device
-  phy: core: Drop unused runtime PM APIs
-  phy: core: Update the runtime PM section in the docs to reflect
-    changes
-
- Documentation/phy.txt   | 28 +++++++-------
- drivers/phy/phy-core.c  | 99 +++++++------------------------------------------
- include/linux/phy/phy.h | 45 ----------------------
- 3 files changed, 28 insertions(+), 144 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 16dc4895b455..846c27a00c54 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -870,7 +870,8 @@
+ 		};
+ 
+ 		sdhi0: sd@ee100000 {
+-			compatible = "renesas,sdhi-r8a7745";
++			compatible = "renesas,sdhi-r8a7745",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee100000 0 0x328>;
+ 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 314>;
+@@ -884,7 +885,8 @@
+ 		};
+ 
+ 		sdhi1: sd@ee140000 {
+-			compatible = "renesas,sdhi-r8a7745";
++			compatible = "renesas,sdhi-r8a7745",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee140000 0 0x100>;
+ 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 312>;
+@@ -898,7 +900,8 @@
+ 		};
+ 
+ 		sdhi2: sd@ee160000 {
+-			compatible = "renesas,sdhi-r8a7745";
++			compatible = "renesas,sdhi-r8a7745",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee160000 0 0x100>;
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 311>;
 -- 
-2.7.4
+2.11.0
