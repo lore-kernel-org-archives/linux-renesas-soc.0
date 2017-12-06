@@ -1,51 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44208 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752837AbdLDMhh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754916AbdLFKYK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 07:37:37 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Claudio Foellmi <claudio.foellmi@ergon.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 4/6] i2c: ensure SDA is released in recovery if SDA is controllable
-Date: Mon,  4 Dec 2017 13:36:38 +0100
-Message-Id: <20171204123640.3382-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
-References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
+        Wed, 6 Dec 2017 05:24:10 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 61/61] ARM: dts: alt: Convert to named i2c-gpio bindings
+Date: Wed,  6 Dec 2017 11:22:56 +0100
+Message-Id: <7f32eddb81ecc06131a643babe2d0f961fbd7f08.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If we have a function to control SDA, we should ensure that SDA is not
-held down by us. So, release the GPIO in this case.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cc: Phil Reid <preid@electromag.com.au>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Claudio Foellmi <claudio.foellmi@ergon.ch>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
+named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
+gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
+more error-prone unnamed variant.
+
+Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
+flags, which were implicitly assumed before.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/i2c-core-base.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7794-alt.dts | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index f4313801a0aaba..dae7f4a783dbe4 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -170,6 +170,8 @@ int i2c_generic_scl_recovery(struct i2c_adapter *adap)
- 		bri->prepare_recovery(adap);
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index bd98790d964e..60c6515c4996 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -143,9 +143,8 @@
+ 		#size-cells = <0>;
+ 		compatible = "i2c-gpio";
+ 		status = "disabled";
+-		gpios = <&gpio4 9 GPIO_ACTIVE_HIGH /* sda */
+-			 &gpio4 8 GPIO_ACTIVE_HIGH /* scl */
+-			>;
++		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&gpio4 8 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 		i2c-gpio,delay-us = <5>;
+ 	};
  
- 	bri->set_scl(adap, val);
-+	if (bri->set_sda)
-+		bri->set_sda(adap, 1);
- 	ndelay(RECOVERY_NDELAY);
- 
- 	/*
 -- 
 2.11.0
