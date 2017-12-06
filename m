@@ -1,34 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:51244 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754449AbdLFBCX (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:39680 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753465AbdLFIWv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 20:02:23 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-pm@vger.kernel.org, Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] PM / core: Re-factor some code dealing with parents in __device_suspend()
-Date: Wed, 06 Dec 2017 02:01:48 +0100
-Message-ID: <2050610.MHQahEpVux@aspire.rjw.lan>
-In-Reply-To: <1510588003-16650-2-git-send-email-ulf.hansson@linaro.org>
-References: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org> <1510588003-16650-2-git-send-email-ulf.hansson@linaro.org>
+        Wed, 6 Dec 2017 03:22:51 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/3] usb: renesas_usbhs: use PIPEnCLR.ACLRM instead of {C,Dn}FIFOCTR.BCLR in usbhs_pkt_pop()
+Date: Wed,  6 Dec 2017 17:18:33 +0900
+Message-Id: <1512548313-20175-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1512548313-20175-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1512548313-20175-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Monday, November 13, 2017 4:46:41 PM CET Ulf Hansson wrote:
-> Let's make the code a bit more readable by moving some of the code, which
-> deals with adjustments for parent devices in __device_suspend(), into its
-> own function.
-> 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch uses usbhs_pipe_clear_without_sequence() instead of
+usbhsf_fifo_clear() because usbhsf_fifo_clear() may not clear the pipe
+buffer completely. This patch also changes the clearing condition from
+DMA only to both DMA and PIO.
 
-Applied, thanks!
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/renesas_usbhs/fifo.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index ff96c2e..5925d11 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -94,8 +94,6 @@ static struct usbhs_pkt *__usbhsf_pkt_get(struct usbhs_pipe *pipe)
+ 	return list_first_entry_or_null(&pipe->list, struct usbhs_pkt, node);
+ }
+ 
+-static void usbhsf_fifo_clear(struct usbhs_pipe *pipe,
+-			      struct usbhs_fifo *fifo);
+ static void usbhsf_fifo_unselect(struct usbhs_pipe *pipe,
+ 				 struct usbhs_fifo *fifo);
+ static struct dma_chan *usbhsf_dma_chan_get(struct usbhs_fifo *fifo,
+@@ -124,10 +122,11 @@ struct usbhs_pkt *usbhs_pkt_pop(struct usbhs_pipe *pipe, struct usbhs_pkt *pkt)
+ 			chan = usbhsf_dma_chan_get(fifo, pkt);
+ 		if (chan) {
+ 			dmaengine_terminate_all(chan);
+-			usbhsf_fifo_clear(pipe, fifo);
+ 			usbhsf_dma_unmap(pkt);
+ 		}
+ 
++		usbhs_pipe_clear_without_sequence(pipe, 0, 0);
++
+ 		__usbhsf_pkt_del(pkt);
+ 	}
+ 
+-- 
+1.9.1
