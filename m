@@ -1,61 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35071 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753757AbdL1OBm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754973AbdLFKYf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Dec 2017 09:01:42 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/9] include: media: Add Renesas CEU driver interface
-Date: Thu, 28 Dec 2017 15:01:14 +0100
-Message-Id: <1514469681-15602-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 6 Dec 2017 05:24:35 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 59/61] ARM: dts: lager: Convert to named i2c-gpio bindings
+Date: Wed,  6 Dec 2017 11:22:54 +0100
+Message-Id: <e99185b298ba0288e88ea0a935342f01c8387b76.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add renesas-ceu header file.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Do not remove the existing sh_mobile_ceu.h one as long as the original
-driver does not go away.
+Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
+named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
+gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
+more error-prone unnamed variant.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
+flags, which were implicitly assumed before.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/media/drv-intf/renesas-ceu.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 include/media/drv-intf/renesas-ceu.h
+ arch/arm/boot/dts/r8a7790-lager.dts | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/include/media/drv-intf/renesas-ceu.h b/include/media/drv-intf/renesas-ceu.h
-new file mode 100644
-index 0000000..7470c3f
---- /dev/null
-+++ b/include/media/drv-intf/renesas-ceu.h
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+#ifndef __ASM_RENESAS_CEU_H__
-+#define __ASM_RENESAS_CEU_H__
-+
-+#define CEU_MAX_SUBDEVS		2
-+
-+struct ceu_async_subdev {
-+	unsigned long flags;
-+	unsigned char bus_width;
-+	unsigned char bus_shift;
-+	unsigned int i2c_adapter_id;
-+	unsigned int i2c_address;
-+};
-+
-+struct ceu_info {
-+	unsigned int num_subdevs;
-+	struct ceu_async_subdev subdevs[CEU_MAX_SUBDEVS];
-+};
-+
-+#endif /* __ASM_RENESAS_CEU_H__ */
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index e3d27783b6b5..f2ea632381e7 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -272,9 +272,8 @@
+ 		#size-cells = <0>;
+ 		compatible = "i2c-gpio";
+ 		status = "disabled";
+-		gpios = <&gpio1 17 GPIO_ACTIVE_HIGH /* sda */
+-			 &gpio1 16 GPIO_ACTIVE_HIGH /* scl */
+-			>;
++		sda-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&gpio1 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 		i2c-gpio,delay-us = <5>;
+ 	};
+ 
 -- 
-2.7.4
+2.11.0
