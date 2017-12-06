@@ -1,51 +1,65 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 2/3] ARM: dts: r8a7791: Correct critical CPU temperature
-Date: Thu, 14 Dec 2017 09:08:40 +0000
-Message-Id: <1513242521-11236-3-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com>
-References: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:39056 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753176AbdLFIWu (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 6 Dec 2017 03:22:50 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/3] usb: renesas_usbhs: remove redundant polling in usbhsf_fifo_barrier()
+Date: Wed,  6 Dec 2017 17:18:31 +0900
+Message-Id: <1512548313-20175-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1512548313-20175-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1512548313-20175-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car M2W hardware manual states that Tc = –40°C to +105°C. The
-thermal sensor has an accuracy of ±5°C and there can be a temperature
-difference of 1 or 2 degrees between Tjmax and the thermal sensor due
-to the location of the latter.
+The datasheet doesn't mention that needs to poll of FRDY is set or not.
+So, this patch removes such handling in the usbhsf_fifo_barrier().
 
-This means that 95°C is a safer value to use.
-
-Fixes: cac68a56e34b9810 ("ARM: dts: r8a7791: enable to use thermal-zone")
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/renesas_usbhs/fifo.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index dfc1c406179fbf3a..008a260f86a565c6 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -92,7 +92,7 @@
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index 2d24ef3..ff96c2e 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -256,15 +256,9 @@ static void usbhsf_send_terminator(struct usbhs_pipe *pipe,
+ static int usbhsf_fifo_barrier(struct usbhs_priv *priv,
+ 			       struct usbhs_fifo *fifo)
+ {
+-	int timeout = 1024;
+-
+-	do {
+-		/* The FIFO port is accessible */
+-		if (usbhs_read(priv, fifo->ctr) & FRDY)
+-			return 0;
+-
+-		udelay(10);
+-	} while (timeout--);
++	/* The FIFO port is accessible */
++	if (usbhs_read(priv, fifo->ctr) & FRDY)
++		return 0;
  
- 			trips {
- 				cpu-crit {
--					temperature	= <115000>;
-+					temperature	= <95000>;
- 					hysteresis	= <0>;
- 					type		= "critical";
- 				};
+ 	return -EBUSY;
+ }
+@@ -278,8 +272,8 @@ static void usbhsf_fifo_clear(struct usbhs_pipe *pipe,
+ 	if (!usbhs_pipe_is_dcp(pipe)) {
+ 		/*
+ 		 * This driver checks the pipe condition first to avoid -EBUSY
+-		 * from usbhsf_fifo_barrier() with about 10 msec delay in
+-		 * the interrupt handler if the pipe is RX direction and empty.
++		 * from usbhsf_fifo_barrier() if the pipe is RX direction and
++		 * empty.
+ 		 */
+ 		if (usbhs_pipe_is_dir_in(pipe))
+ 			ret = usbhs_pipe_is_accessible(pipe);
 -- 
 1.9.1
-
