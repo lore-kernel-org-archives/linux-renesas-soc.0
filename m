@@ -1,53 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757850AbdLVK3d (ORCPT
+        with ESMTP id S1754878AbdLFKXp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:29:33 -0500
+        Wed, 6 Dec 2017 05:23:45 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/11] arm64: dts: renesas: ulcb: Add EthernetAVB PHY reset
-Date: Fri, 22 Dec 2017 11:29:14 +0100
-Message-Id: <ef4a3bc8dab721a3dbea871f35e0217643aa860c.1513936761.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513936760.git.horms+renesas@verge.net.au>
-References: <cover.1513936760.git.horms+renesas@verge.net.au>
+Subject: [PATCH 26/61] ARM: dts: r8a7793: Use R-Car SDHI Gen2 fallback compat string
+Date: Wed,  6 Dec 2017 11:22:21 +0100
+Message-Id: <21b997ea9dcabe7af05eb0c7272955f95b473452.1512555546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
+References: <cover.1512555546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Use newly added R-Car SDHI Gen2 fallback compat string
+in the DT of the r8a7793 SoC.
 
-Describe the GPIO used to reset the Ethernet PHY for EthernetAVB.
-This allows the driver to reset the PHY during probe and after system
-resume.
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-On ULCB, the enable pin of the regulator providing PHY power is always
-pulled high, but the driver may still need to reset the PHY if this
-wasn't done by the bootloader before.
-
-Inspired by patches in the BSP for the individual Salvator-X/XS boards
-by Kazuya Mizuguchi.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7793.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 0d85b315ce71..be91016e0b48 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -154,6 +154,7 @@
- 		reg = <0>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 196afec766c6..6e74d0855931 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -562,7 +562,8 @@
  	};
- };
  
+ 	sdhi0: sd@ee100000 {
+-		compatible = "renesas,sdhi-r8a7793";
++		compatible = "renesas,sdhi-r8a7793",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 314>;
+@@ -576,7 +577,8 @@
+ 	};
+ 
+ 	sdhi1: sd@ee140000 {
+-		compatible = "renesas,sdhi-r8a7793";
++		compatible = "renesas,sdhi-r8a7793",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 312>;
+@@ -590,7 +592,8 @@
+ 	};
+ 
+ 	sdhi2: sd@ee160000 {
+-		compatible = "renesas,sdhi-r8a7793";
++		compatible = "renesas,sdhi-r8a7793",
++			     "renesas,rcar-gen2-sdhi";
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 311>;
 -- 
 2.11.0
