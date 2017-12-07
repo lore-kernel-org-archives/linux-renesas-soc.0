@@ -1,101 +1,56 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 20 Dec 2017 12:44:29 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/4] arm64: dts: renesas: r8a7796: add usb3_phy node
-Message-ID: <20171220114429.vgb3hbnlgwue2432@verge.net.au>
-References: <1512640542-10380-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1512640542-10380-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1512640542-10380-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
-List-ID: <linux-renesas-soc.vger.kernel.org>
-
-On Thu, Dec 07, 2017 at 06:55:40PM +0900, Yoshihiro Shimoda wrote:
-> This patch adds USB3.0 PHY node for r8a7796.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> index cc0cca7c..cee50e8 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> @@ -166,6 +166,19 @@
->  		clock-frequency = <0>;
->  	};
->  
-> +	/* External USB clocks - can be overridden by the board */
-> +	usb3s0_clk: usb3s0 {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <0>;
-> +	};
-> +
-> +	usb_extal_clk: usb_extal {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <0>;
-> +	};
-> +
->  	soc {
->  		compatible = "simple-bus";
->  		interrupt-parent = <&gic>;
-> @@ -1419,6 +1432,19 @@
->  			status = "disabled";
->  		};
->  
-> +		usb3_phy0: usb-phy@e65ee000 {
-> +			compatible = "renesas,r8a7796-usb3-phy",
-> +				     "renesas,rcar-gen3-usb3-phy";
-> +			reg = <0 0xe65ee000 0 0x90>;
-> +			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
-> +				 <&usb_extal_clk>;
-> +			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
-> +			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-> +			resets = <&cpg 328>;
-> +			#phy-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
->  		xhci0: usb@ee000000 {
->  			compatible = "renesas,xhci-r8a7796",
->  				     "renesas,rcar-gen3-xhci";
-
-Hi Shimoda-san,
-
-I have applied this patch with a minor update.
-
-* I shifted the _clk nodes to the bottom of the file to
-  preserve alphabetical order of the sub-nodes of the root node.
-  This ordering is new and probably was not the case when you submitted
-  the patch.
-
-What I have applied is as follows:
-
-
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:51711 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751001AbdLGJ77 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 7 Dec 2017 04:59:59 -0500
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] arm64: dts: renesas: r8a7796: add usb3_phy node
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/4] arm64: dts: renesas: r8a7796: add usb3_phy node
+Date: Thu,  7 Dec 2017 18:55:40 +0900
+Message-Id: <1512640542-10380-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1512640542-10380-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1512640542-10380-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
+List-ID: <linux-renesas-soc.vger.kernel.org>
 
 This patch adds USB3.0 PHY node for r8a7796.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 26 ++++++++++++++++++++++++++
  1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index a339047acdc7..c5192d513d7d 100644
+index cc0cca7c..cee50e8 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1403,6 +1403,19 @@
+@@ -166,6 +166,19 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	/* External USB clocks - can be overridden by the board */
++	usb3s0_clk: usb3s0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+@@ -1419,6 +1432,19 @@
  			status = "disabled";
  		};
  
@@ -115,24 +70,5 @@ index a339047acdc7..c5192d513d7d 100644
  		xhci0: usb@ee000000 {
  			compatible = "renesas,xhci-r8a7796",
  				     "renesas,rcar-gen3-xhci";
-@@ -2021,4 +2034,17 @@
- 			};
- 		};
- 	};
-+
-+	/* External USB clocks - can be overridden by the board */
-+	usb3s0_clk: usb3s0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
- };
 -- 
-2.11.0
-
+1.9.1
