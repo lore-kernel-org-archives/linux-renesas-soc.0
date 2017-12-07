@@ -1,138 +1,144 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33806 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbdLNLuX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35713 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752151AbdLGJym (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 06:50:23 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: Avoid writing to registers from spi_master.setup()" to the spi tree
-In-Reply-To: <1513191913-10612-2-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1ePS1r-0005XK-Bd@debutante>
-Date: Thu, 14 Dec 2017 11:50:19 +0000
+        Thu, 7 Dec 2017 04:54:42 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/54] arm64: dts: renesas: r8a7796: Add IPMMU device nodes
+Date: Thu,  7 Dec 2017 10:53:11 +0100
+Message-Id: <389baa409617cda237ae8ae6dd4e897a2d072710.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Magnus Damm <damm+renesas@opensource.se>
 
-   spi: sh-msiof: Avoid writing to registers from spi_master.setup()
+Add r8a7796 IPMMU nodes and keep all disabled by default.
 
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 7ff0b53c4051145d1cf992d2f60987e6447eed4f Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 13 Dec 2017 20:05:10 +0100
-Subject: [PATCH] spi: sh-msiof: Avoid writing to registers from
- spi_master.setup()
-
-The spi_master.setup() callback must not change configuration registers,
-as that could corrupt I/O that is in progress for other SPI slaves.
-
-The only exception is the configuration of the native chip select
-polarity in SPI master mode, as a wrong chip select polarity will cause
-havoc during all future transfers to any other SPI slave.
-
-Hence stop writing to registers in sh_msiof_spi_setup(), unless it is
-the first call for a controller using a native chip select, or unless
-native chip select polarity has changed (note that you'll loose anyway
-if I/O is in progress).  Even then, only do what is strictly necessary,
-instead of calling sh_msiof_spi_set_pin_regs().
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/spi/spi-sh-msiof.c | 35 ++++++++++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 100 +++++++++++++++++++++++++++++++
+ 1 file changed, 100 insertions(+)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 81a9144f5442..2704abb11ea4 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -55,6 +55,8 @@ struct sh_msiof_spi_priv {
- 	void *rx_dma_page;
- 	dma_addr_t tx_dma_addr;
- 	dma_addr_t rx_dma_addr;
-+	bool native_cs_inited;
-+	bool native_cs_high;
- 	bool slave_aborted;
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 8c94a313d9e1..9e7604108215 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -357,6 +357,106 @@
+ 					     <&a53_3>;
+ 		};
  
-@@ -528,8 +530,7 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- {
- 	struct device_node	*np = spi->master->dev.of_node;
- 	struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
--
--	pm_runtime_get_sync(&p->pdev->dev);
-+	u32 clr, set, tmp;
- 
- 	if (!np) {
- 		/*
-@@ -539,19 +540,31 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- 		spi->cs_gpio = (uintptr_t)spi->controller_data;
- 	}
- 
--	/* Configure pins before deasserting CS */
--	sh_msiof_spi_set_pin_regs(p, !!(spi->mode & SPI_CPOL),
--				  !!(spi->mode & SPI_CPHA),
--				  !!(spi->mode & SPI_3WIRE),
--				  !!(spi->mode & SPI_LSB_FIRST),
--				  !!(spi->mode & SPI_CS_HIGH));
--
--	if (spi->cs_gpio >= 0)
-+	if (spi->cs_gpio >= 0) {
- 		gpio_set_value(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
-+		return 0;
-+	}
- 
-+	if (spi_controller_is_slave(p->master))
-+		return 0;
- 
--	pm_runtime_put(&p->pdev->dev);
-+	if (p->native_cs_inited &&
-+	    (p->native_cs_high == !!(spi->mode & SPI_CS_HIGH)))
-+		return 0;
- 
-+	/* Configure native chip select mode/polarity early */
-+	clr = MDR1_SYNCMD_MASK;
-+	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
-+	if (spi->mode & SPI_CS_HIGH)
-+		clr |= BIT(MDR1_SYNCAC_SHIFT);
-+	else
-+		set |= BIT(MDR1_SYNCAC_SHIFT);
-+	pm_runtime_get_sync(&p->pdev->dev);
-+	tmp = sh_msiof_read(p, TMDR1) & ~clr;
-+	sh_msiof_write(p, TMDR1, tmp | set);
-+	pm_runtime_put(&p->pdev->dev);
-+	p->native_cs_high = spi->mode & SPI_CS_HIGH;
-+	p->native_cs_inited = true;
- 	return 0;
- }
- 
++		ipmmu_vi0: mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xfebd0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 9>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_vc0: mmu@fe6b0000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xfe6b0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 8>;
++			power-domains = <&sysc R8A7796_PD_A3VC>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_pv0: mmu@fd800000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xfd800000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 5>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_pv1: mmu@fd950000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xfd950000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 6>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ir: mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xff8b0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 3>;
++			power-domains = <&sysc R8A7796_PD_A3IR>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_hc: mmu@e6570000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xe6570000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 2>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_rt: mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xffc80000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 7>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mp: mmu@ec670000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xec670000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 4>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds0: mmu@e6740000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xe6740000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 0>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds1: mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xe7740000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 1>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mm: mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a7796";
++			reg = <0 0xe67b0000 0 0x1000>;
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7796-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
 -- 
-2.15.1
+2.11.0
