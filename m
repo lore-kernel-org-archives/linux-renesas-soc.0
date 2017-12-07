@@ -1,47 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36472 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750922AbdLGKBE (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:49208 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750879AbdLGJ74 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 05:01:04 -0500
-Date: Thu, 7 Dec 2017 11:00:45 +0100
-From: Simon Horman <horms@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4] arm64: dts: renesas: r8a7795: Move nodes which have
- no reg property out of bus
-Message-ID: <20171207100040.kv4mf2bbwvw2hnj2@verge.net.au>
-References: <20171130102539.19130-1-horms+renesas@verge.net.au>
+        Thu, 7 Dec 2017 04:59:56 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/4] arm64: dts: renesas: r8a779[56] and salvator-common: add usb3_phy and enable usb3_peri0
+Date: Thu,  7 Dec 2017 18:55:38 +0900
+Message-Id: <1512640542-10380-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171130102539.19130-1-horms+renesas@verge.net.au>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 30, 2017 at 11:25:39AM +0100, Simon Horman wrote:
-> Move pmu_a5[73], timer and thermal-zones nodes from soc node to root node.
-> The nodes that have been moved do not have any register properties and thus
-> shouldn't be placed on the bus.
-> 
-> This problem is flagged by the compiler as follows:
+This patch set is based on the renesas.git / renesas-devel-20171205-v4.15-rc2
+tag.
 
-...
+Yoshihiro Shimoda (4):
+  arm64: dts: renesas: r8a7795: add usb3_phy node
+  arm64: dts: renesas: r8a7796: add usb3_phy node
+  arm64: dts: renesas: salvator-common: enable usb3_phy0 node
+  arm64: dts: renesas: salvator-common: enable usb3_peri0
 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> v4
-> * Use interrupts-extended rather than interrupt-parent + interrupts
->   in /pmu_* and /timer nodes as seems to be preferred.
-> v3
-> * Add interrupt-parent property to /pmu_* and /timer nodes as
->   it is no longer inherited from the parent node
-> v2
-> * Preserve alphabetical order of nodes present in root node.
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi         | 26 ++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi         | 26 ++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 19 +++++++++++++++++
+ 3 files changed, 71 insertions(+)
 
-I have applied this with Geert's review tag from v2.
+-- 
+1.9.1
