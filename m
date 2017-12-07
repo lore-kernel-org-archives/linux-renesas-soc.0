@@ -1,51 +1,130 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:35908 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753786AbdLMTFX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751942AbdLGJzk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 14:05:23 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] spi: sh-msiof: Document hardware limitations related to chip selects
-Date: Wed, 13 Dec 2017 20:05:13 +0100
-Message-Id: <1513191913-10612-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1513191913-10612-1-git-send-email-geert+renesas@glider.be>
-References: <1513191913-10612-1-git-send-email-geert+renesas@glider.be>
+        Thu, 7 Dec 2017 04:55:40 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 53/54] arm64: dts: renesas: r8a77970: use CPG core clock macros
+Date: Thu,  7 Dec 2017 10:53:56 +0100
+Message-Id: <e221dab085d89bbd49ed6713b07201a5262aad7f.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Guide users to maintain the proper balance between native and GPIO chip
-selects.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Now that the commit ecadea00f588 ("dt-bindings: clock: Add R8A77970 CPG
+core clock definitions") has hit Linus' tree, we  can replace the bare
+numbers (we had to use to avoid a cross tree dependency) with these macro
+definitions...
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index bc8c16a6cfc82685..80710f0f04489174 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -41,6 +41,16 @@ Optional properties:
- 			   0: MSIOF_SYNC
- 			   1: MSIOF_SS1
- 			   2: MSIOF_SS2
-+			 Hardware limitations related to chip selects:
-+			   - Native chip selects are always deasserted in
-+			     between transfers that are part of the same
-+			     message.  Use cs-gpios to work around this.
-+			   - All slaves using native chip selects must use the
-+			     same spi-cs-high configuration.  Use cs-gpios to
-+			     work around this.
-+			   - When using GPIO chip selects, at least one native
-+			     chip select must be left unused, as it will be
-+			     driven anyway.
- - dmas                 : Must contain a list of two references to DMA
- 			 specifiers, one for transmission, and one for
- 			 reception.
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 636b57a2edde..7bb224595c95 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -9,7 +9,7 @@
+  * kind, whether express or implied.
+  */
+ 
+-#include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <dt-bindings/clock/r8a77970-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/power/r8a77970-sysc.h>
+@@ -32,7 +32,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0>;
+-			clocks = <&cpg CPG_CORE 0>;
++			clocks = <&cpg CPG_CORE R8A77970_CLK_Z2>;
+ 			power-domains = <&sysc 5>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+@@ -262,7 +262,7 @@
+ 			reg = <0 0xe6540000 0 96>;
+ 			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 520>,
+-				 <&cpg CPG_CORE 9>,
++				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
+@@ -280,7 +280,7 @@
+ 			reg = <0 0xe6550000 0 96>;
+ 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 519>,
+-				 <&cpg CPG_CORE 9>,
++				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
+@@ -298,7 +298,7 @@
+ 			reg = <0 0xe6560000 0 96>;
+ 			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 518>,
+-				 <&cpg CPG_CORE 9>,
++				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
+@@ -315,7 +315,7 @@
+ 			reg = <0 0xe66a0000 0 96>;
+ 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 517>,
+-				 <&cpg CPG_CORE 9>,
++				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
+@@ -333,7 +333,7 @@
+ 			reg = <0 0xe6e60000 0 64>;
+ 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 207>,
+-				 <&cpg CPG_CORE 9>,
++				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
+@@ -351,7 +351,7 @@
+ 			reg = <0 0xe6e68000 0 64>;
+ 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 206>,
+-				 <&cpg CPG_CORE 9>,
++				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
+@@ -369,7 +369,7 @@
+ 			reg = <0 0xe6c50000 0 64>;
+ 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 204>,
+-				 <&cpg CPG_CORE 9>,
++				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
+@@ -386,7 +386,7 @@
+ 			reg = <0 0xe6c40000 0 64>;
+ 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 203>,
+-				 <&cpg CPG_CORE 9>,
++				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
 -- 
-2.7.4
+2.11.0
