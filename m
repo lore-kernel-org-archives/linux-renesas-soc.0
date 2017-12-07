@@ -1,81 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39105 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753633AbdLUUXu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751958AbdLGJzE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 15:23:50 -0500
-Received: by mail-lf0-f65.google.com with SMTP id m20so16142002lfi.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Dec 2017 12:23:49 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171221202343.596842084@cogentembedded.com>
-Date: Thu, 21 Dec 2017 23:23:30 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] drm: rcar-du: lvds: fix LVDCR1 for R-Car gen3
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=drm-rcar-du-lvds-fix-LVDCR1-for-R-Car-gen3.patch
+        Thu, 7 Dec 2017 04:55:04 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 25/54] arm64: dts: renesas: r8a7795: Point FDP1 via FCPF to IPMMU-VP0/1
+Date: Thu,  7 Dec 2017 10:53:28 +0100
+Message-Id: <afdeb149aaecdd7151f4e43f2531dee59e53ced0.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The LVDCR1 register for the R-Car gen3 SoCs was documented as having the
-layout different from the gen2 SoCs in  the early R-Car gen3 manuals but
-since v0.52 the LVDCR1 layout is described as being the same as on the gen2
-SoCs; the old CHn control values are said to be prohibited now (and there
-seems to be no valid output signal when they are used).
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Fixes: 6bc2e15cf21c ("drm: rcar-du: lvds: Add R-Car Gen3 support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hook up the FCPF devices to allow use of FDP1 with IPMMU-VP.
 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |   10 ++++------
- drivers/gpu/drm/rcar-du/rcar_lvds_regs.h  |    6 ++----
- 2 files changed, 6 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 ++
+ 2 files changed, 6 insertions(+)
 
-Index: linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-===================================================================
---- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-+++ linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-@@ -70,9 +70,8 @@ static void rcar_du_lvdsenc_start_gen2(s
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 1eafa5382e86..6b4dfa42f5b2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -150,6 +150,10 @@
+ 	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
+ };
  
- 	/* Turn all the channels on. */
- 	rcar_lvds_write(lvds, LVDCR1,
--			LVDCR1_CHSTBY_GEN2(3) | LVDCR1_CHSTBY_GEN2(2) |
--			LVDCR1_CHSTBY_GEN2(1) | LVDCR1_CHSTBY_GEN2(0) |
--			LVDCR1_CLKSTBY_GEN2);
-+			LVDCR1_CHSTBY(3) | LVDCR1_CHSTBY(2) |
-+			LVDCR1_CHSTBY(1) | LVDCR1_CHSTBY(0) | LVDCR1_CLKSTBY);
++&fcpf1 {
++	iommus = <&ipmmu_vp0 1>;
++};
++
+ &fcpvd2 {
+ 	iommus = <&ipmmu_vi0 10>;
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 6187e9c33e88..f7d7c98a7f73 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2070,6 +2070,7 @@
+ 			clocks = <&cpg CPG_MOD 615>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 			resets = <&cpg 615>;
++			iommus = <&ipmmu_vp0 0>;
+ 		};
  
- 	/*
- 	 * Turn the PLL on, wait for the startup delay, and turn the output
-@@ -109,9 +108,8 @@ static void rcar_du_lvdsenc_start_gen3(s
+ 		fcpf1: fcp@fe951000 {
+@@ -2078,6 +2079,7 @@
+ 			clocks = <&cpg CPG_MOD 614>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 			resets = <&cpg 614>;
++			iommus = <&ipmmu_vp1 1>;
+ 		};
  
- 	/* Turn all the channels on. */
- 	rcar_lvds_write(lvds, LVDCR1,
--			LVDCR1_CHSTBY_GEN3(3) | LVDCR1_CHSTBY_GEN3(2) |
--			LVDCR1_CHSTBY_GEN3(1) | LVDCR1_CHSTBY_GEN3(0) |
--			LVDCR1_CLKSTBY_GEN3);
-+			LVDCR1_CHSTBY(3) | LVDCR1_CHSTBY(2) |
-+			LVDCR1_CHSTBY(1) | LVDCR1_CHSTBY(0) | LVDCR1_CLKSTBY);
- 
- 	/*
- 	 * Turn the PLL on, set it to LVDS normal mode, wait for the startup
-Index: linux/drivers/gpu/drm/rcar-du/rcar_lvds_regs.h
-===================================================================
---- linux.orig/drivers/gpu/drm/rcar-du/rcar_lvds_regs.h
-+++ linux/drivers/gpu/drm/rcar-du/rcar_lvds_regs.h
-@@ -26,10 +26,8 @@
- 
- #define LVDCR1				0x0004
- #define LVDCR1_CKSEL			(1 << 15)		/* Gen2 only */
--#define LVDCR1_CHSTBY_GEN2(n)		(3 << (2 + (n) * 2))	/* Gen2 only */
--#define LVDCR1_CHSTBY_GEN3(n)		(1 << (2 + (n) * 2))	/* Gen3 only */
--#define LVDCR1_CLKSTBY_GEN2		(3 << 0)		/* Gen2 only */
--#define LVDCR1_CLKSTBY_GEN3		(1 << 0)		/* Gen3 only */
-+#define LVDCR1_CHSTBY(n)		(3 << (2 + (n) * 2))
-+#define LVDCR1_CLKSTBY			(3 << 0)
- 
- #define LVDPLLCR			0x0008
- #define LVDPLLCR_CEEN			(1 << 14)
+ 		vspbd: vsp@fe960000 {
+-- 
+2.11.0
