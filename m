@@ -1,32 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44661 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752470AbdLDPDF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752472AbdLGJyz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 10:03:05 -0500
-Date: Mon, 4 Dec 2017 16:02:55 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 03/22] mmc: renesas_sdhi: remove eprobe jump label
-Message-ID: <20171204150248.qil4xc2qfgjodnfh@ninjato>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-4-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-4-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 7 Dec 2017 04:54:55 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/54] arm64: dts: renesas: ulcb-kf: add dr_mode property for USB2.0 channel 0
+Date: Thu,  7 Dec 2017 10:53:19 +0100
+Message-Id: <499468cf063923dbcbab92c4916b6183348c551f.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Nov 25, 2017 at 01:24:38AM +0900, Masahiro Yamada wrote:
-> "goto eprobe" does nothing.  Return directly.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+ULCB-KF has a USB2.0 dual-role channel (CN13).
+This adds dr_mode property for USB2.0 channel 0 (EHCI/OHCI and HS-USB)
+as "otg".
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index 48a2e8f48e3f..a4e715cbde87 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -29,6 +29,7 @@
+ };
+ 
+ &ehci0 {
++	dr_mode = "otg";
+ 	status = "okay";
+ };
+ 
+@@ -41,6 +42,7 @@
+ };
+ 
+ &hsusb {
++	dr_mode = "otg";
+ 	status = "okay";
+ };
+ 
+@@ -133,6 +135,7 @@
+ };
+ 
+ &ohci0 {
++	dr_mode = "otg";
+ 	status = "okay";
+ };
+ 
+-- 
+2.11.0
