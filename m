@@ -1,119 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:53496 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753452AbdLDKfG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752310AbdLGJzW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 05:35:06 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 0/4] Teach phylib hard-resetting devices
-Date: Mon,  4 Dec 2017 11:34:48 +0100
-Message-Id: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
+        Thu, 7 Dec 2017 04:55:22 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 41/54] arm64: dts: renesas: r8a77995: Add CAN FD support
+Date: Thu,  7 Dec 2017 10:53:44 +0100
+Message-Id: <e2767b0f21d95e3df33b290e1cf79f295c02e44f.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi David, Andrew, Florian, Simon, Magnus,
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-This patch series adds optional PHY reset support to phylib.
+Adds CAN FD controller node for r8a77995.
 
-The first two patches are destined for David's net-next tree. They add
-core PHY reset code, and update a driver that currently uses its own
-reset code.
+Based on a patch for r8a7796 by Chris Paterson.
 
-The last two patches are destined for Simon's renesas tree.  They add
-properties to describe the EthernetAVB PHY reset topology to the common
-Salvator-X/XS and ULCB DTS files, which solves two issues:
-  1. On Salvator-XS, the enable pin of the regulator providing PHY power
-     is connected to PRESETn, and PSCI powers down the SoC during system
-     suspend.  Hence a PHY reset is needed to restore network
-     functionality after system resume.
-  2. Linux should not rely on the boot loader having reset the PHY, but
-     should reset the PHY during driver probe.
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Changes compared to v3:
-  - Remove Florian's Acked-by,
-  - Add missing #include <linux/gpio/consumer.h>,
-  - Re-add the gpiod check, as the dummy gpiod_set_value() for !GPIOLIB
-    does not ignore NULL, and calls WARN_ON(1),
-  - Do not reassert the reset signal if {mdio,phy}_probe() or
-    phy_device_register() succeeded, as that may destroy initial setup,
-  - Do not deassert the reset signal in {mdio,phy}_remove(), as it
-    should already be deasserted,
-  - Bring the PHY back into reset state in phy_device_remove(),
-  - Move/consolidate GPIO descriptor acquiring code from
-    of_mdiobus_register_phy() and of_mdiobus_register_device() to
-    mdiobus_register_device().
-    Note that this changes behavior slightly, in that the reset signal
-    is now also asserted when called from of_mdiobus_register_device().
-  - Add Reviewed-by,
-
-Changes compared to v2, as sent by Sergei Shtylyov:
-  - Fix fwnode_get_named_gpiod() call due to added parameters (which
-    allowed to eliminate the gpiod_direction_output() call),
-  - Rebased, refreshed, reworded,
-  - Take over from Sergei,
-  - Add Acked-by,
-  - Remove unneeded gpiod check, as gpiod_set_value() handles NULL fine,
-  - Handle fwnode_get_named_gpiod() errors correctly:
-      - -ENOENT is ignored (the GPIO is optional), and turned into NULL,
-	which allowed to remove all later !IS_ERR() checks,
-      - Other errors (incl. -EPROBE_DEFER) are propagated,
-  - Extract DTS patches from series "[PATCH 0/4] ravb: Add PHY reset
-    support" (https://www.spinics.net/lists/netdev/msg457308.html), and
-    incorporate in this series, after moving reset-gpios from the
-    ethernet to the ethernet-phy node.
-
-Given (1) the new reset-gpios DT property in the PHY node follows
-established practises, (2) the DT binding change in the first patch has
-been acked by Rob, and (3) the DTS patch does not cause any regressions
-if it is applied before the PHY driver patches, the DTS patches can be
-applied independently.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  arm64: dts: renesas: salvator-common: Add EthernetAVB PHY reset
-  arm64: dts: renesas: ulcb: Add EthernetAVB PHY reset
-
-Sergei Shtylyov (2):
-  phylib: Add device reset GPIO support
-  macb: Kill PHY reset code
-
- Documentation/devicetree/bindings/net/phy.txt    |  2 ++
- arch/arm64/boot/dts/renesas/salvator-common.dtsi |  1 +
- arch/arm64/boot/dts/renesas/ulcb.dtsi            |  1 +
- drivers/net/ethernet/cadence/macb.h              |  1 -
- drivers/net/ethernet/cadence/macb_main.c         | 21 ----------------
- drivers/net/phy/at803x.c                         | 18 +++----------
- drivers/net/phy/mdio_bus.c                       | 21 ++++++++++++++++
- drivers/net/phy/mdio_device.c                    | 25 ++++++++++++++++--
- drivers/net/phy/phy_device.c                     | 32 ++++++++++++++++++++++--
- include/linux/mdio.h                             |  3 +++
- include/linux/phy.h                              |  5 ++++
- 11 files changed, 89 insertions(+), 41 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index b2c8db15db53..73149c73ef87 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -378,6 +378,31 @@
+ 			status = "disabled";
+ 		};
+ 
++		canfd: can@e66c0000 {
++			compatible = "renesas,r8a77995-canfd",
++				     "renesas,rcar-gen3-canfd";
++			reg = <0 0xe66c0000 0 0x8000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 914>,
++			       <&cpg CPG_CORE R8A77995_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A77995_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 914>;
++			status = "disabled";
++
++			channel0 {
++				status = "disabled";
++			};
++
++			channel1 {
++				status = "disabled";
++			};
++		};
++
+ 		avb: ethernet@e6800000 {
+ 			compatible = "renesas,etheravb-r8a77995",
+ 				     "renesas,etheravb-rcar-gen3";
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
