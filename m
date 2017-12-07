@@ -1,232 +1,117 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v9 26/28] rcar-vin: enable support for r8a7795
-Date: Fri,  8 Dec 2017 02:08:40 +0100
-Message-Id: <20171208010842.20047-27-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752484AbdLGJy4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 7 Dec 2017 04:54:56 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 17/54] arm64: dts: renesas: r8a77995: add SYS-DMAC nodes
+Date: Thu,  7 Dec 2017 10:53:20 +0100
+Message-Id: <942164ca49897397a9f21048d83517ea8af6d044.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a7795 ES1.x and ES2.0.
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Differs from other Gen3 SoCs in that each controller only supports eight
+channels.
+
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/Kconfig     |   2 +-
- drivers/media/platform/rcar-vin/rcar-core.c | 150 ++++++++++++++++++++++++++++
- 2 files changed, 151 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 72 +++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
---- a/drivers/media/platform/rcar-vin/Kconfig
-+++ b/drivers/media/platform/rcar-vin/Kconfig
-@@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
- 	select V4L2_FWNODE
- 	---help---
- 	  Support for Renesas R-Car Video Input (VIN) driver.
--	  Supports R-Car Gen2 SoCs.
-+	  Supports R-Car Gen2 and Gen3 SoCs.
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 788e3afae6e3..04a392a9d9de 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -155,6 +155,78 @@
+ 			resets = <&cpg 407>;
+ 		};
  
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rcar-vin.
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 09ebeff1580556dc..66a8144fbba437d3 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -21,6 +21,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- 
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
-@@ -956,6 +957,134 @@ static const struct rvin_info rcar_info_gen2 = {
- 	.max_height = 2048,
- };
- 
-+static const struct rvin_info rcar_info_r8a7795 = {
-+	.chip = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
++		dmac0: dma-controller@e6700000 {
++			compatible = "renesas,dmac-r8a77995",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6700000 0 0x10000>;
++			interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7";
++			clocks = <&cpg CPG_MOD 219>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 219>;
++			#dma-cells = <1>;
++			dma-channels = <8>;
++		};
 +
-+	.num_chsels = 5,
-+	.chsels = {
-+		{
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+		}, {
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+		},
-+	},
-+};
++		dmac1: dma-controller@e7300000 {
++			compatible = "renesas,dmac-r8a77995",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe7300000 0 0x10000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7";
++			clocks = <&cpg CPG_MOD 218>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 218>;
++			#dma-cells = <1>;
++			dma-channels = <8>;
++		};
 +
-+static const struct rvin_info rcar_info_r8a7795es1 = {
-+	.chip = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
++		dmac2: dma-controller@e7310000 {
++			compatible = "renesas,dmac-r8a77995",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe7310000 0 0x10000>;
++			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7";
++			clocks = <&cpg CPG_MOD 217>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 217>;
++			#dma-cells = <1>;
++			dma-channels = <8>;
++		};
 +
-+	.num_chsels = 6,
-+	.chsels = {
-+		{
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI21, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+			{ .csi = RVIN_CSI21, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI21, .chan = 1 },
-+			{ .csi = RVIN_CSI40, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+			{ .csi = RVIN_CSI21, .chan = 3 },
-+		}, {
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI21, .chan = 1 },
-+		}, {
-+			{ .csi = RVIN_CSI21, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 0 },
-+			{ .csi = RVIN_CSI20, .chan = 0 },
-+			{ .csi = RVIN_CSI41, .chan = 2 },
-+			{ .csi = RVIN_CSI20, .chan = 2 },
-+			{ .csi = RVIN_CSI21, .chan = 2 },
-+		}, {
-+			{ .csi = RVIN_CSI41, .chan = 1 },
-+			{ .csi = RVIN_CSI20, .chan = 1 },
-+			{ .csi = RVIN_CSI21, .chan = 1 },
-+			{ .csi = RVIN_CSI41, .chan = 3 },
-+			{ .csi = RVIN_CSI20, .chan = 3 },
-+			{ .csi = RVIN_CSI21, .chan = 3 },
-+		},
-+	},
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -985,12 +1114,25 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,rcar-gen2-vin",
- 		.data = &rcar_info_gen2,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a7795",
-+		.data = &rcar_info_r8a7795,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
- 
-+static const struct soc_device_attribute r8a7795es1[] = {
-+	{
-+		.soc_id = "r8a7795", .revision = "ES1.*",
-+		.data = &rcar_info_r8a7795es1,
-+	},
-+	{ /* sentinel */ }
-+};
-+
- static int rcar_vin_probe(struct platform_device *pdev)
- {
-+	const struct soc_device_attribute *attr;
- 	struct rvin_dev *vin;
- 	struct resource *mem;
- 	int irq, ret;
-@@ -1002,6 +1144,14 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	vin->dev = &pdev->dev;
- 	vin->info = of_device_get_match_data(&pdev->dev);
- 
-+	/*
-+	 * Special care is needed on r8a7795 ES1.x since it
-+	 * uses different routing than r8a7795 ES2.0.
-+	 */
-+	attr = soc_device_match(r8a7795es1);
-+	if (attr)
-+		vin->info = attr->data;
-+
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (mem == NULL)
- 		return -EINVAL;
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a77995",
+ 				     "renesas,rcar-gen3-gpio",
 -- 
-2.15.0
+2.11.0
