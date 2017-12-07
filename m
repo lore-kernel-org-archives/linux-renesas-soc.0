@@ -1,71 +1,78 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH/RFC v2 14/15] adv748x: csi2: add get_routing support
-Date: Thu, 14 Dec 2017 20:08:34 +0100
-Message-Id: <20171214190835.7672-15-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752501AbdLGJzH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 7 Dec 2017 04:55:07 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 23/54] arm64: dts: renesas: r8a7795: Point DU/VSPD via FCPVD to IPMMU-VI0/1
+Date: Thu,  7 Dec 2017 10:53:26 +0100
+Message-Id: <45b894a9fc324291adabaeadb5e9e0d28192860d.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To support multiplexed streams the internal routing between the
-adv748x sink pad and its source pad needs to be described.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hook up the FCPVD devices to allow use of the VSP and DU
+together with IPMMU-VI1 and IPMMU-VI1.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/i2c/adv748x/adv748x-csi2.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 3 +++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 291b35bef49d41fb..dbefb53f5b8c414d 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -262,10 +262,32 @@ static int adv748x_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
- 	return 0;
- }
- 
-+static int adv748x_csi2_get_routing(struct v4l2_subdev *subdev,
-+				    struct v4l2_subdev_routing *routing)
-+{
-+	struct v4l2_subdev_route *r = routing->routes;
-+
-+	if (routing->num_routes < 1) {
-+		routing->num_routes = 1;
-+		return -ENOSPC;
-+	}
-+
-+	routing->num_routes = 1;
-+
-+	r->sink_pad = ADV748X_CSI2_SINK;
-+	r->sink_stream = 0;
-+	r->source_pad = ADV748X_CSI2_SOURCE;
-+	r->source_stream = 0;
-+	r->flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE | V4L2_SUBDEV_ROUTE_FL_IMMUTABLE;
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
- 	.get_fmt = adv748x_csi2_get_format,
- 	.set_fmt = adv748x_csi2_set_format,
- 	.get_frame_desc = adv748x_csi2_get_frame_desc,
-+	.get_routing = adv748x_csi2_get_routing,
- 	.s_stream = adv748x_csi2_s_stream,
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 2dfe8108072c..71499d193ddb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -149,6 +149,10 @@
+ 	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
  };
  
++&fcpvd2 {
++	iommus = <&ipmmu_vi0 10>;
++};
++
+ &du {
+ 	vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 2ca746c304d5..6187e9c33e88 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2154,6 +2154,7 @@
+ 			clocks = <&cpg CPG_MOD 603>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 603>;
++			iommus = <&ipmmu_vi0 8>;
+ 		};
+ 
+ 		vspd1: vsp@fea28000 {
+@@ -2173,6 +2174,7 @@
+ 			clocks = <&cpg CPG_MOD 602>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 602>;
++			iommus = <&ipmmu_vi0 9>;
+ 		};
+ 
+ 		vspd2: vsp@fea30000 {
+@@ -2192,6 +2194,7 @@
+ 			clocks = <&cpg CPG_MOD 601>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 601>;
++			iommus = <&ipmmu_vi1 10>;
+ 		};
+ 
+ 		fdp1@fe940000 {
 -- 
-2.15.1
+2.11.0
