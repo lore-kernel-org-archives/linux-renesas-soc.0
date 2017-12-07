@@ -1,146 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754785AbdLFKXS (ORCPT
+        with ESMTP id S1752257AbdLGJza (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:18 -0500
+        Thu, 7 Dec 2017 04:55:30 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/61] ARM: dts: iwg22d-sodimm: sort dt nodes
-Date: Wed,  6 Dec 2017 11:22:08 +0100
-Message-Id: <738a368d558f24d2c34ef420fc0d8ab8499b0ebe.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+Subject: [PATCH 44/54] arm64: dts: renesas: r8a77995: add DMA for SCIF2
+Date: Thu,  7 Dec 2017 10:53:47 +0100
+Message-Id: <af2ea3df851ffa68ad07ff59d4dabadbf33b45ef.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Improve the layout of r8a7745-iwg22d-sodimm.dts by sorting the
-nodes alphabetically.
+Tested on Draak.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 62 ++++++++++++++---------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 82587d7b2056..3eb4f83297d4 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -16,9 +16,9 @@
- 	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
- 
- 	aliases {
-+		ethernet0 = &avb;
- 		serial3 = &scif4;
- 		serial5 = &hscif1;
--		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -40,6 +40,25 @@
- 	};
- };
- 
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy@3 {
-+	/*
-+	 * On some older versions of the platform (before R4.0) the phy address
-+	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
-+	 */
-+		reg = <3>;
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
- &hscif1 {
- 	pinctrl-0 = <&hscif1_pins>;
- 	pinctrl-names = "default";
-@@ -48,7 +67,18 @@
- 	status = "okay";
- };
- 
-+&pci1 {
-+	status = "okay";
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+};
-+
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii";
-+		function = "avb";
-+	};
-+
- 	hscif1_pins: hscif1 {
- 		groups = "hscif1_data", "hscif1_ctrl";
- 		function = "hscif1";
-@@ -59,11 +89,6 @@
- 		function = "scif4";
- 	};
- 
--	avb_pins: avb {
--		groups = "avb_mdio", "avb_gmii";
--		function = "avb";
--	};
--
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -83,25 +108,6 @@
- 	status = "okay";
- };
- 
--&avb {
--	pinctrl-0 = <&avb_pins>;
--	pinctrl-names = "default";
--
--	phy-handle = <&phy3>;
--	phy-mode = "gmii";
--	renesas,no-ether-link;
--	status = "okay";
--
--	phy3: ethernet-phy@3 {
--	/*
--	 * On some older versions of the platform (before R4.0) the phy address
--	 * may be 1 or 3. The address is fixed to 3 for R4.0 onwards.
--	 */
--		reg = <3>;
--		micrel,led-mode = <1>;
--	};
--};
--
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
-@@ -112,12 +118,6 @@
- 	status = "okay";
- };
- 
--&pci1 {
--	status = "okay";
--	pinctrl-0 = <&usb1_pins>;
--	pinctrl-names = "default";
--};
--
- &usbphy {
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 73149c73ef87..21b832fb20b2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -457,6 +457,9 @@
+ 				 <&cpg CPG_CORE R8A77995_CLK_S3D1C>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x13>, <&dmac1 0x12>,
++			       <&dmac2 0x13>, <&dmac2 0x12>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+ 			resets = <&cpg 310>;
+ 			status = "disabled";
 -- 
 2.11.0
