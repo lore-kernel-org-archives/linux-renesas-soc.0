@@ -1,72 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44767 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751463AbdLDPZ5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35658 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752481AbdLGJyY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 10:25:57 -0500
-Date: Mon, 4 Dec 2017 16:25:33 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 02/22] mmc: renesas_sdhi: remove wrong depends on to
- enable compile test
-Message-ID: <20171204152533.w5ykfqtkk6kzydet@ninjato>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-3-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="palh3n6aloi4bzu6"
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-3-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 7 Dec 2017 04:54:24 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 02/54] arm64: dts: renesas: r8a7795: Use R-Car SDHI Gen3 fallback compat string
+Date: Thu,  7 Dec 2017 10:53:05 +0100
+Message-Id: <e4428a726d57fb6068346a736c79953657bc8da6.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Use newly added R-Car SDHI Gen3 fallback compat string
+in the DT of the r8a7795 SoC.
 
---palh3n6aloi4bzu6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This should have no run-time effect as the driver matches against
+the per-SoC compat string before considering the fallback compat string.
 
-On Sat, Nov 25, 2017 at 01:24:37AM +0900, Masahiro Yamada wrote:
-> ARCH_RENESAS is a stronger condition than (ARM || ARM64).
-> If ARCH_RENESAS is enabled, (ARM || ARM64) is met as well.
->=20
-> What is worse, the first depends on line prevents COMPILE_TEST from
-> enabling this driver.  It should be removed.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Because COMPILE_TEST now works, buildbot spotted something:
-
-https://www.spinics.net/lists/linux-i2c/msg32556.html
-
-Likely, we should include linux/io.h in the header?
-
-
---palh3n6aloi4bzu6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlolaO0ACgkQFA3kzBSg
-KbYmog/+KW+pbfK6SEf+7qBqUj9mHi6wdUR9W161pSr5yBNOMT0y5bDYbQQ+5OiX
-HjKCvUwijSmtOy93EqBrR9PDXKzMujqwmXnzYalGgJMQo43rcpQtmSaY8OeVF1Jm
-0JauudgwFoU1sbRRijCjVTLt2069GrRtxYyMwceaCovz1WcFHgdITHyfxODjlZlS
-OBoqQu9Yws8S/LCpcXi3+krrO61mXnP+IdoE8t9oyNpFq5TWPQMePtHMYNKYZsco
-kiEKMUDyiRlVNbrZiURzUdMic2KlvcG/P5XhVX8V2yUm6HZM4RQ/+yI3yclmbe3T
-x9a1taNsqLdWs1Nl7vMQ5fVeNNyIFt4SkM2u2LUyUTPfig5W2VIBKO48X7iakC1m
-/gfzuYkv71hhOm7CPHWuQ29TPq5EYWdJuwx449cse1xUWPAVYMfZbBwDU6a6JrEo
-nikrOPpRBBNTDxvZrs4d+6ZnhY1JYVcunmtj0J9y90cfprI4DL5YlzVPtww6CXwB
-nkJ6X3m51B3WCoqLIJ9lBjJr//mzmm2E5UcrluuFm/ITb6n/KaGXYejVw0vOxRD8
-9Yaozw95mFuJ4AVjBc0WxThYHWQiIkhWADoZmcP4gXF0mVArJKAe3ex6HVS7s70h
-PVIKZ4d9umAfdl+5xQ4pnnsQiZYoy1525uFBkitjM6ogtsIpXIk=
-=EV3L
------END PGP SIGNATURE-----
-
---palh3n6aloi4bzu6--
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 15ef292a8d9f..42c51f2ec30b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1539,7 +1539,8 @@
+ 		};
+ 
+ 		sdhi0: sd@ee100000 {
+-			compatible = "renesas,sdhi-r8a7795";
++			compatible = "renesas,sdhi-r8a7795",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee100000 0 0x2000>;
+ 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 314>;
+@@ -1550,7 +1551,8 @@
+ 		};
+ 
+ 		sdhi1: sd@ee120000 {
+-			compatible = "renesas,sdhi-r8a7795";
++			compatible = "renesas,sdhi-r8a7795",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee120000 0 0x2000>;
+ 			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 313>;
+@@ -1561,7 +1563,8 @@
+ 		};
+ 
+ 		sdhi2: sd@ee140000 {
+-			compatible = "renesas,sdhi-r8a7795";
++			compatible = "renesas,sdhi-r8a7795",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee140000 0 0x2000>;
+ 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 312>;
+@@ -1572,7 +1575,8 @@
+ 		};
+ 
+ 		sdhi3: sd@ee160000 {
+-			compatible = "renesas,sdhi-r8a7795";
++			compatible = "renesas,sdhi-r8a7795",
++				     "renesas,rcar-gen3-sdhi";
+ 			reg = <0 0xee160000 0 0x2000>;
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 311>;
+-- 
+2.11.0
