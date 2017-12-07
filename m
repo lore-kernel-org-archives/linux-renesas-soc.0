@@ -1,51 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:54764 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751950AbdLDOSP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35777 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752472AbdLGJyx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 09:18:15 -0500
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thu, 7 Dec 2017 04:54:53 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH 0/2] net: sh_eth: add support for SH7786 and big-endian
-Date: Mon,  4 Dec 2017 15:17:42 +0100
-Message-Id: <20171204141744.18599-1-thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 15/54] arm64: dts: renesas: ulcb-kf: enable USB2 PHY of channel 0
+Date: Thu,  7 Dec 2017 10:53:18 +0100
+Message-Id: <80785024767c03ff28861db0faf274fffb8d713a.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-I've recently been working on an SH7786 based platform, which uses the
-sh_eth network controller. One peculiarity of my setup is that the CPU
-is configured big-endian (even though little-endian is more
-traditional in the Linux SuperH world), and the sh_eth driver was not
-ready for this.
+This supports USB2 PHY channel #0 on ULCB Kingfisher board
 
-The first patch simply adds the sh_eth_cpu_data structure that
-describes the SH7786 controller.
+The dedicated USB0_PWEN pin is used to control CN13 VBUS source from U43
+power supply.
+MAX3355 can also provide VBUS, hence it should be disabled via OTG_OFFVBUSn
+node coming from gpio expander TCA9539.
+Set MAX3355 enabled using OTG_EXTLPn node to be able to read OTG ID of
+CN13.
 
-The second patch fixes the driver for big-endian operation. However,
-I'd like this patch to be carefully reviewed by Sergei Shtylyov who
-already did some endianness related changes in this driver. Indeed, my
-change is based on the assumption that the DMA descriptors are in the
-native endianness of the CPU.
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Thanks,
-
-Thomas
-
-Thomas Petazzoni (2):
-  net: sh_eth: add support for SH7786
-  net: sh_eth: make work on big endian systems
-
- drivers/net/ethernet/renesas/sh_eth.c | 89 ++++++++++++++++++++++-------------
- 1 file changed, 55 insertions(+), 34 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index 657ad1041965..48a2e8f48e3f 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -67,6 +67,20 @@
+ 			output-high;
+ 			line-name = "HUB rst";
+ 		};
++
++		otg_offvbusn {
++			gpio-hog;
++			gpios = <8 GPIO_ACTIVE_HIGH>;
++			output-low;
++			line-name = "OTG OFFVBUSn";
++		};
++
++		otg_extlpn {
++			gpio-hog;
++			gpios = <9 GPIO_ACTIVE_HIGH>;
++			output-high;
++			line-name = "OTG EXTLPn";
++		};
+ 	};
+ 
+ 	gpio_exp_75: gpio@75 {
+@@ -154,6 +168,11 @@
+ 		groups = "scif1_data_b", "scif1_ctrl";
+ 		function = "scif1";
+ 	};
++
++	usb0_pins: usb0 {
++		groups = "usb0";
++		function = "usb0";
++	};
+ };
+ 
+ &scif1 {
+@@ -164,6 +183,13 @@
+ 	status = "okay";
+ };
+ 
++&usb2_phy0 {
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &xhci0 {
+ 	status = "okay";
+ };
 -- 
-2.13.6
+2.11.0
