@@ -1,44 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752342AbdLGJzV (ORCPT
+        with ESMTP id S1752413AbdLGJz0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:21 -0500
+        Thu, 7 Dec 2017 04:55:26 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 38/54] arm64: dts: renesas: r8a7795-salvator-xs: Add SoC name to file header
-Date: Thu,  7 Dec 2017 10:53:41 +0100
-Message-Id: <61799464a4c01139fefe11aca2533e97ac579e00.1512640145.git.horms+renesas@verge.net.au>
+Subject: [PATCH 45/54] arm64: dts: renesas: r8a77970: Add IPMMU device nodes
+Date: Thu,  7 Dec 2017 10:53:48 +0100
+Message-Id: <ce3b52a1595b25b05df86388d08aa454a885349d.1512640145.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
 References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add r8a77970 IPMMU nodes and keep all disabled by default.
 
-Document clearly which SoC this DTS applies to, to distinguish from
-Salvator-XS boards equipped with other SoCs.
+Based on work for the r8a7796 by Magnus Damm
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 47 +++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 7675de5d4f2c..8b50ceb746e8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -1,5 +1,5 @@
- /*
-- * Device Tree Source for the Salvator-X 2nd version board
-+ * Device Tree Source for the Salvator-X 2nd version board with R-Car H3 ES2.0
-  *
-  * Copyright (C) 2015-2017 Renesas Electronics Corp.
-  *
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 8b97842aedb7..5f73ee2dfd6d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -12,6 +12,7 @@
+ #include <dt-bindings/clock/renesas-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a77970-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a77970";
+@@ -134,6 +135,52 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		ipmmu_vi0: mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xfebd0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 9>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ir: mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xff8b0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 3>;
++			power-domains = <&sysc R8A77970_PD_A3IR>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_rt: mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xffc80000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 7>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds1: mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xe7740000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 1>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mm: mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xe67b0000 0 0x1000>;
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a77970", "renesas,irqc";
+ 			#interrupt-cells = <2>;
 -- 
 2.11.0
