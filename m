@@ -1,77 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:64433 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752131AbdLLSt4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752484AbdLGJzB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 13:49:56 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 7 Dec 2017 04:55:01 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] ARM: dts: r8a7745: Add CMT SoC specific support
-Date: Tue, 12 Dec 2017 18:49:39 +0000
-Message-Id: <1513104579-6333-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/54] arm64: dts: renesas: r8a7795-es1: Add IPMMU device nodes
+Date: Thu,  7 Dec 2017 10:53:23 +0100
+Message-Id: <e4b9a493df45075bf3ae2d41fdc1a29e57fe024b.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add CMT[01] support to SoC DT.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Add r8a7795 ES1.x IPMMU nodes and keep all disabled by default.
+
+This is a follow-up to a patch that adds IPMMU device nodes that
+are common to r8a7795 ES1.x and ES2.0
+
+Power domains are omitted as they appear to be undocumented.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 0fa7861..765a80d 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -235,6 +235,36 @@
- 						  IRQ_TYPE_LEVEL_LOW)>;
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 246323eacb56..38b7cfb3b428 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -26,6 +26,22 @@
+ 	/delete-node/ mmu@fd960000;
+ 	/delete-node/ mmu@fd970000;
  
-+		cmt0: timer@ffca0000 {
-+			compatible = "renesas,r8a7745-cmt0",
-+				     "renesas,rcar-gen2-cmt0";
-+			reg = <0 0xffca0000 0 0x1004>;
-+			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 124>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 124>;
-+		};
++	ipmmu_mp1: mmu@ec680000 {
++		compatible = "renesas,ipmmu-r8a7795";
++		reg = <0 0xec680000 0 0x1000>;
++		renesas,ipmmu-main = <&ipmmu_mm 5>;
++		#iommu-cells = <1>;
++		status = "disabled";
++	};
 +
-+		cmt1: timer@e6130000 {
-+			compatible = "renesas,r8a7745-cmt1",
-+				     "renesas,rcar-gen2-cmt1";
-+			reg = <0 0xe6130000 0 0x1004>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 329>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 329>;
-+		};
++	ipmmu_sy: mmu@e7730000 {
++		compatible = "renesas,ipmmu-r8a7795";
++		reg = <0 0xe7730000 0 0x1000>;
++		renesas,ipmmu-main = <&ipmmu_mm 8>;
++		#iommu-cells = <1>;
++		status = "disabled";
++	};
 +
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7745-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+ 	/delete-node/ usb-phy@ee0e0200;
+ 	/delete-node/ usb@ee0e0100;
+ 	/delete-node/ usb@ee0e0000;
 -- 
-2.7.4
+2.11.0
