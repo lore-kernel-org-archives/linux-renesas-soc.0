@@ -1,83 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35713 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:35765 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752576AbdLGJyn (ORCPT
+        with ESMTP id S1752472AbdLGJyv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:54:43 -0500
+        Thu, 7 Dec 2017 04:54:51 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/54] arm64: dts: renesas: r8a7796: Tie SYS-DMAC to IPMMU-DS0/1
-Date: Thu,  7 Dec 2017 10:53:12 +0100
-Message-Id: <24120522e6ebd3bcf61c84766943a42dec7fad32.1512640145.git.horms+renesas@verge.net.au>
+Subject: [PATCH 10/54] arm64: dts: renesas: r8a7796: Tie Audio-DMAC to IPMMU-MP
+Date: Thu,  7 Dec 2017 10:53:13 +0100
+Message-Id: <13312527a220d077984cc1d20d1ec73db22a866a.1512640145.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
 References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hook up r8a7796 Audio-DMAC nodes to the IPMMU-MP.
 
-Hook up r8a7796 DMAC nodes to the IPMMUs. In particular SYS-DMAC0
-gets tied to IPMMU-DS0, and SYS-DMAC1 and SYS-DMAC2 get tied to IPMMU-DS1.
+Based on work for the r8a7795 by Magnus Damm.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 9e7604108215..84f38056f8e6 100644
+index 84f38056f8e6..fd875b5ea861 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1201,6 +1201,14 @@
- 			resets = <&cpg 219>;
+@@ -1327,6 +1327,14 @@
+ 			resets = <&cpg 502>;
  			#dma-cells = <1>;
  			dma-channels = <16>;
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
-+			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
-+			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
-+			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
-+			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
++			iommus = <&ipmmu_mp 0>, <&ipmmu_mp 1>,
++			       <&ipmmu_mp 2>, <&ipmmu_mp 3>,
++			       <&ipmmu_mp 4>, <&ipmmu_mp 5>,
++			       <&ipmmu_mp 6>, <&ipmmu_mp 7>,
++			       <&ipmmu_mp 8>, <&ipmmu_mp 9>,
++			       <&ipmmu_mp 10>, <&ipmmu_mp 11>,
++			       <&ipmmu_mp 12>, <&ipmmu_mp 13>,
++			       <&ipmmu_mp 14>, <&ipmmu_mp 15>;
  		};
  
- 		dmac1: dma-controller@e7300000 {
-@@ -1235,6 +1243,14 @@
- 			resets = <&cpg 218>;
+ 		audma1: dma-controller@ec720000 {
+@@ -1361,6 +1369,14 @@
+ 			resets = <&cpg 501>;
  			#dma-cells = <1>;
  			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
-+			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
-+			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
-+			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
-+			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
++			iommus = <&ipmmu_mp 16>, <&ipmmu_mp 17>,
++			       <&ipmmu_mp 18>, <&ipmmu_mp 19>,
++			       <&ipmmu_mp 20>, <&ipmmu_mp 21>,
++			       <&ipmmu_mp 22>, <&ipmmu_mp 23>,
++			       <&ipmmu_mp 24>, <&ipmmu_mp 25>,
++			       <&ipmmu_mp 26>, <&ipmmu_mp 27>,
++			       <&ipmmu_mp 28>, <&ipmmu_mp 29>,
++			       <&ipmmu_mp 30>, <&ipmmu_mp 31>;
  		};
  
- 		dmac2: dma-controller@e7310000 {
-@@ -1269,6 +1285,14 @@
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
-+			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
-+			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
-+			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
-+			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
- 		};
- 
- 		audma0: dma-controller@ec700000 {
+ 		usb_dmac0: dma-controller@e65a0000 {
 -- 
 2.11.0
