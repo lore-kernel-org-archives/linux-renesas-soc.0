@@ -1,89 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36918 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754853AbdLFKXW (ORCPT
+        with ESMTP id S1752296AbdLGKTw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:22 -0500
+        Thu, 7 Dec 2017 05:19:52 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/61] ARM: dts: r8a7745: Add IIC cores to dtsi
-Date: Wed,  6 Dec 2017 11:22:13 +0100
-Message-Id: <0ee0aff583ddb6e92a5d05a1f2147a772413ab40.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] ARM: dts: r8a7743: move timer node out of bus
+Date: Thu,  7 Dec 2017 11:19:23 +0100
+Message-Id: <20171207101923.19846-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171207101923.19846-1-horms+renesas@verge.net.au>
+References: <20171207101923.19846-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+The timer node does not have any register properties and thus shouldn't be
+placed on the bus.
 
-Add iic0 and iic1 nodes to SoC dtsi. Also, define aliases i2c6
-and i2c7. Board specific DT files will enable the interfaces
-if needed.
+This problem is flagged by the compiler as follows:
+$ make
+  DTC     arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb
+arch/arm/boot/dts/r8a7743-iwg20d-q7.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+  DTC     arch/arm/boot/dts/r8a7743-sk-rzg1m.dtb
+arch/arm/boot/dts/r8a7743-sk-rzg1m.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 948dd1fc2d9c..16dc4895b455 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -25,6 +25,8 @@
- 		i2c3 = &i2c3;
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
-+		i2c6 = &iic0;
-+		i2c7 = &iic1;
- 		spi0 = &qspi;
- 		spi1 = &msiof0;
- 		spi2 = &msiof1;
-@@ -753,6 +755,40 @@
- 			status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 2fe852bb10cd..f1c77f0b5e69 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -281,18 +281,6 @@
+ 			resets = <&cpg 407>;
  		};
  
-+		iic0: i2c@e6500000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a7745",
-+				     "renesas,rcar-gen2-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe6500000 0 0x425>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 318>;
-+			dmas = <&dmac0 0x61>, <&dmac0 0x62>,
-+			       <&dmac1 0x61>, <&dmac1 0x62>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 318>;
-+			status = "disabled";
-+		};
+-		timer {
+-			compatible = "arm,armv7-timer";
+-			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>;
+-		};
+-
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7743-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
+@@ -1261,6 +1249,22 @@
+ 		};
+ 	};
+ 
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts-extended = <&gic GIC_PPI 13
++				       (GIC_CPU_MASK_SIMPLE(2) |
++				        IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14
++				       (GIC_CPU_MASK_SIMPLE(2) |
++				        IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11
++				       (GIC_CPU_MASK_SIMPLE(2) |
++				        IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10
++				       (GIC_CPU_MASK_SIMPLE(2) |
++				        IRQ_TYPE_LEVEL_LOW)>;
++	};
 +
-+		iic1: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a7745",
-+				     "renesas,rcar-gen2-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe6510000 0 0x425>;
-+			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 323>;
-+			dmas = <&dmac0 0x65>, <&dmac0 0x66>,
-+			       <&dmac1 0x65>, <&dmac1 0x66>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 323>;
-+			status = "disabled";
-+		};
-+
- 		mmcif0: mmc@ee200000 {
- 			compatible = "renesas,mmcif-r8a7745",
- 				     "renesas,sh-mmcif";
+ 	/* External USB clock - can be overridden by the board */
+ 	usb_extal_clk: usb_extal {
+ 		compatible = "fixed-clock";
 -- 
 2.11.0
