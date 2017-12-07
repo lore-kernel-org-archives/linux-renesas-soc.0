@@ -1,108 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:45174 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752481AbdLHBJI (ORCPT
+Received: from sauhun.de ([88.99.104.3]:55696 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752643AbdLGLE3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 20:09:08 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v9 28/28] rcar-vin: enable support for r8a77970
-Date: Fri,  8 Dec 2017 02:08:42 +0100
-Message-Id: <20171208010842.20047-29-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 7 Dec 2017 06:04:29 -0500
+Date: Thu, 7 Dec 2017 12:04:27 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Clemens Gruber <clemens.gruber@pqgruber.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] i2c: imx: use proper GPIO directions for recovery
+Message-ID: <20171207110427.eszvw3kpj3thgggr@ninjato>
+References: <20171204123154.3233-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3ii2zrl4qrg2oo3g"
+Content-Disposition: inline
+In-Reply-To: <20171204123154.3233-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a77970.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- .../devicetree/bindings/media/rcar_vin.txt         |  1 +
- drivers/media/platform/rcar-vin/rcar-core.c        | 40 ++++++++++++++++++++++
- 2 files changed, 41 insertions(+)
+--3ii2zrl4qrg2oo3g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 314743532bbb4523..6b98f8a3398fa493 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -21,6 +21,7 @@ on Gen3 to a CSI-2 receiver.
-    - "renesas,vin-r8a7794" for the R8A7794 device
-    - "renesas,vin-r8a7795" for the R8A7795 device
-    - "renesas,vin-r8a7796" for the R8A7796 device
-+   - "renesas,vin-r8a77970" for the R8A77970 device
-    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
-      device.
-    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index ed7fbb58ad6846c1..136179ffeebf6862 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1145,6 +1145,42 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 	},
- };
- 
-+static const struct rvin_info rcar_info_r8a77970 = {
-+	.chip = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+
-+	.num_chsels = 5,
-+	.chsels = {
-+		{
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 2 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+		}, {
-+			{ .csi = RVIN_CSI40, .chan = 1 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+			{ .csi = RVIN_CSI40, .chan = 3 },
-+			{ .csi = RVIN_NC, .chan = 0 },
-+		},
-+	},
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -1182,6 +1218,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,vin-r8a7796",
- 		.data = &rcar_info_r8a7796,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a77970",
-+		.data = &rcar_info_r8a77970,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
--- 
-2.15.0
+On Mon, Dec 04, 2017 at 01:31:54PM +0100, Wolfram Sang wrote:
+> When converting to GPIOD, the GPIO directions of SCL/SDA have been
+> swapped. Fix it!
+>=20
+> Fixes: ad36a27959cabb ("i2c: imx: switch to using gpiod for bus recovery =
+gpios")
+> Cc: Clemens Gruber <clemens.gruber@pqgruber.com>
+> Cc: Phil Reid <preid@electromag.com.au>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-next, thanks!
+
+
+--3ii2zrl4qrg2oo3g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlopIDsACgkQFA3kzBSg
+KbYdMQ/9GfqsbhpNgphZkVJyB5DJUVOz31H6ui7/YufTv99BXuULvJC45uPnUxs2
+Bdtgha2DkIDWFs6FvoSjIJ0XnZVssVsClu3dKOWw9z7LZbt2K6adDNMV1gN/r83/
+qL1cIXnNjayjuqLOK/Md9ysZBYLTctl/VR0Q5Bhy6vCqA6E6j354WPYV93W/13v8
+CIv3HUFfCMnEwAXiPzTmDJhXpYjglIb6VK4pwAYFATuH1rCFLAAw8q/W8TjlIob0
+pKQ8XOaiVkjJ6TeW0zO5+kVd5S8sC3KzbnJ2TaVNpwTt8mG0u16+smFHieQKzxx9
+vXrhVUd/Bd0vAPNJSlofaf3r0tUnFcq6zV4yVNzkt2oFxQQBxXSnu4simg82J6Y7
+3FciDjmZ8uxa4nqC7b1hh6NE6XM0Be8/pCXDoDuo2A0SdxdwuOcZw/IbFznx+n7J
+L5T8016rtgEzgQudT1jzel1vOP9FMdnXp+42nID161kdErgbn88hI3fd0Az3L9Tp
+G79+wNJaqo/RZThY1d3xNT9oD6R5SdznFjh1muZOAlzIin3384WZ5Q1KikOgVkYD
+sLnT6XibCKEDDPwlQBIu/ebRTTgd2ZxHnFK7KJg577wdRLd2aYtmOay9kwBvV/DA
+mu7Wcz7LMycu69S3joTy8a4ImqRQ4Dj1f6nYWxX4KfLN0r+mZbs=
+=Qd8J
+-----END PGP SIGNATURE-----
+
+--3ii2zrl4qrg2oo3g--
