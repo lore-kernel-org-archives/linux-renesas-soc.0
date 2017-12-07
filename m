@@ -1,38 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:10327 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751049AbdLMGb6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752501AbdLGJzM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 01:31:58 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/5] phy: renesas: rcar-gen3-usb2: add gpio handling for R-Car D3
-Date: Wed, 13 Dec 2017 15:27:35 +0900
-Message-Id: <1513146460-20326-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 7 Dec 2017 04:55:12 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 32/54] arm64: dts: renesas: r8a7795-es1: Enable IPMMU-MP1
+Date: Thu,  7 Dec 2017 10:53:35 +0100
+Message-Id: <0e467ade5e289625a637ebf3255f99c77d6192a5.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the latest linux-phy / next branch
-(commit id = 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323).
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This new feature will be used by the renesas_usbhs driver on R-Car D3.
+Enable the r8a7795 ES1.x device node for IPMMU-MP1.
 
-Yoshihiro Shimoda (5):
-  phy: renesas: rcar-gen3-usb2: call INIT_WORK() anyway
-  phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
-  phy: renesas: rcar-gen3-usb2: use prefix "has_otg_pins_" for dedicated
-    pins handling
-  phy: renesas: rcar-gen3-usb2: add rcar_gen3_role_swap_ops
-  phy: renesas: rcar-gen3-usb2: add gpio handlings
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
- .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |   2 +
- drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 262 ++++++++++++++++-----
- 2 files changed, 206 insertions(+), 58 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 6713eeeab52a..29b52d89c78a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -31,7 +31,6 @@
+ 		reg = <0 0xec680000 0 0x1000>;
+ 		renesas,ipmmu-main = <&ipmmu_mm 5>;
+ 		#iommu-cells = <1>;
+-		status = "disabled";
+ 	};
+ 
+ 	ipmmu_sy: mmu@e7730000 {
 -- 
-1.9.1
+2.11.0
