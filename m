@@ -1,100 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40907 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965342AbdLRV6K (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35713 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752573AbdLGJyk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 16:58:10 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 5/7] i2c: sh_mobile: add helper to check frequency calculations
-Date: Mon, 18 Dec 2017 22:58:00 +0100
-Message-Id: <20171218215802.28591-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
-References: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
+        Thu, 7 Dec 2017 04:54:40 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/54] arm64: dts: renesas: Add support for Salvator-XS with R-Car M3-W
+Date: Thu,  7 Dec 2017 10:53:10 +0100
+Message-Id: <79eba26e170dbb9dc381e5d842da06394ad17c59.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Because we will add a second formula soon, put the sanity checks for the
-computed results into a seperate function.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add initial support for the Renesas Salvator-XS (Salvator-X 2nd version)
+development board equipped with an R-Car M3-W SiP.
+
+Based on work for the Salvator-X and -XS boards with M3-W resp. H3 SiPs.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 49 +++++++++++++++++++++-----------------
- 1 file changed, 27 insertions(+), 22 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ .../arm64/boot/dts/renesas/r8a7796-salvator-xs.dts | 58 ++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index f1a9b971e2c14a..b111191a449a69 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -246,11 +246,36 @@ static u32 sh_mobile_i2c_icch(unsigned long count_khz, u32 tHIGH, u32 tf)
- 	return (((count_khz * (tHIGH + tf)) + 5000) / 10000);
- }
- 
-+static int sh_mobile_i2c_check_timing(struct sh_mobile_i2c_data *pd)
-+{
-+	u16 max_val = pd->flags & IIC_FLAG_HAS_ICIC67 ? 0x1ff : 0xff;
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 646198d82903..7f13e014d0aa 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -6,5 +6,6 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-salvator-x.dtb r8a7795-es1-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
++dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
+new file mode 100644
+index 000000000000..2c37055efa94
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
+@@ -0,0 +1,58 @@
++/*
++ * Device Tree Source for the Salvator-X 2nd version board with R-Car M3-W
++ *
++ * Copyright (C) 2015-2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
 +
-+	if (pd->iccl > max_val || pd->icch > max_val) {
-+		dev_err(pd->dev, "timing values out of range: L/H=0x%x/0x%x\n",
-+			pd->iccl, pd->icch);
-+		return -EINVAL;
-+	}
++/dts-v1/;
++#include "r8a7796.dtsi"
++#include "salvator-xs.dtsi"
 +
-+	/* one more bit of ICCL in ICIC */
-+	if (pd->iccl & 0x100)
-+		pd->icic |= ICIC_ICCLB8;
-+	else
-+		pd->icic &= ~ICIC_ICCLB8;
++/ {
++	model = "Renesas Salvator-X 2nd version board based on r8a7796";
++	compatible = "renesas,salvator-xs", "renesas,r8a7796";
 +
-+	/* one more bit of ICCH in ICIC */
-+	if (pd->icch & 0x100)
-+		pd->icic |= ICIC_ICCHB8;
-+	else
-+		pd->icic &= ~ICIC_ICCHB8;
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
 +
-+	dev_dbg(pd->dev, "timing values: L/H=0x%x/0x%x\n", pd->iccl, pd->icch);
-+	return 0;
-+}
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x80000000>;
++	};
++};
 +
- static int sh_mobile_i2c_init(struct sh_mobile_i2c_data *pd)
- {
- 	unsigned long i2c_clk_khz;
- 	u32 tHIGH, tLOW, tf;
--	uint16_t max_val;
- 
- 	i2c_clk_khz = clk_get_rate(pd->clk) / 1000 / pd->clks_per_count;
- 
-@@ -271,27 +296,7 @@ static int sh_mobile_i2c_init(struct sh_mobile_i2c_data *pd)
- 	pd->iccl = sh_mobile_i2c_iccl(i2c_clk_khz, tLOW, tf);
- 	pd->icch = sh_mobile_i2c_icch(i2c_clk_khz, tHIGH, tf);
- 
--	max_val = pd->flags & IIC_FLAG_HAS_ICIC67 ? 0x1ff : 0xff;
--	if (pd->iccl > max_val || pd->icch > max_val) {
--		dev_err(pd->dev, "timing values out of range: L/H=0x%x/0x%x\n",
--			pd->iccl, pd->icch);
--		return -EINVAL;
--	}
--
--	/* one more bit of ICCL in ICIC */
--	if (pd->iccl & 0x100)
--		pd->icic |= ICIC_ICCLB8;
--	else
--		pd->icic &= ~ICIC_ICCLB8;
--
--	/* one more bit of ICCH in ICIC */
--	if (pd->icch & 0x100)
--		pd->icic |= ICIC_ICCHB8;
--	else
--		pd->icic &= ~ICIC_ICCHB8;
--
--	dev_dbg(pd->dev, "timing values: L/H=0x%x/0x%x\n", pd->iccl, pd->icch);
--	return 0;
-+	return sh_mobile_i2c_check_timing(pd);
- }
- 
- static unsigned char i2c_op(struct sh_mobile_i2c_data *pd,
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 727>,
++		 <&versaclock6 1>,
++		 <&x21_clk>,
++		 <&versaclock6 2>;
++	clock-names = "du.0", "du.1", "du.2", "lvds.0",
++		      "dclkin.0", "dclkin.1", "dclkin.2";
++};
++
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi0_con {
++	remote-endpoint = <&rcar_dw_hdmi0_out>;
++};
 -- 
 2.11.0
