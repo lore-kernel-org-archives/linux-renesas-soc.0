@@ -1,130 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:35643 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751942AbdLGJzk (ORCPT
+        with ESMTP id S1752481AbdLGJyV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:40 -0500
+        Thu, 7 Dec 2017 04:54:21 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 53/54] arm64: dts: renesas: r8a77970: use CPG core clock macros
-Date: Thu,  7 Dec 2017 10:53:56 +0100
-Message-Id: <e221dab085d89bbd49ed6713b07201a5262aad7f.1512640145.git.horms+renesas@verge.net.au>
+Subject: [PATCH 04/54] arm64: dts: renesas: r8a77970: Add RWDT node
+Date: Thu,  7 Dec 2017 10:53:07 +0100
+Message-Id: <206d082e55850797b7152a7c56ccc5c4a41b72ee.1512640145.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
 References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Now that the commit ecadea00f588 ("dt-bindings: clock: Add R8A77970 CPG
-core clock definitions") has hit Linus' tree, we  can replace the bare
-numbers (we had to use to avoid a cross tree dependency) with these macro
-definitions...
+Add a device node for the Watchdog Timer (WDT) controller on the
+Renesas R-Car V3M (r8a77970) SoC.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 636b57a2edde..7bb224595c95 100644
+index 97e6981938e7..75d09f1724f0 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -9,7 +9,7 @@
-  * kind, whether express or implied.
-  */
+@@ -103,6 +103,16 @@
+ 						  IRQ_TYPE_LEVEL_LOW)>;
+ 		};
  
--#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/clock/r8a77970-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/power/r8a77970-sysc.h>
-@@ -32,7 +32,7 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0>;
--			clocks = <&cpg CPG_CORE 0>;
-+			clocks = <&cpg CPG_CORE R8A77970_CLK_Z2>;
- 			power-domains = <&sysc 5>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-@@ -262,7 +262,7 @@
- 			reg = <0 0xe6540000 0 96>;
- 			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 520>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-@@ -280,7 +280,7 @@
- 			reg = <0 0xe6550000 0 96>;
- 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 519>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-@@ -298,7 +298,7 @@
- 			reg = <0 0xe6560000 0 96>;
- 			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 518>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-@@ -315,7 +315,7 @@
- 			reg = <0 0xe66a0000 0 96>;
- 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 517>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
-@@ -333,7 +333,7 @@
- 			reg = <0 0xe6e60000 0 64>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 207>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-@@ -351,7 +351,7 @@
- 			reg = <0 0xe6e68000 0 64>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 206>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-@@ -369,7 +369,7 @@
- 			reg = <0 0xe6c50000 0 64>;
- 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 204>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
-@@ -386,7 +386,7 @@
- 			reg = <0 0xe6c40000 0 64>;
- 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 203>,
--				 <&cpg CPG_CORE 9>,
-+				 <&cpg CPG_CORE R8A77970_CLK_S2D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a77970-wdt",
++				     "renesas,rcar-gen3-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a77970-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
 -- 
 2.11.0
