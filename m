@@ -1,52 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754955AbdLFKY0 (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:34868 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752240AbdLGKJc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:24:26 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 40/61] ARM: dts: iwg20d-q7: Enable PCIe Controller
-Date: Wed,  6 Dec 2017 11:22:35 +0100
-Message-Id: <b3a0317e312cc6d6359c7a0854d763cde528391d.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Thu, 7 Dec 2017 05:09:32 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] spi: rspi: Do not set SPCR_SPE in qspi_set_config_register()
+Date: Thu,  7 Dec 2017 11:09:21 +0100
+Message-Id: <1512641361-4128-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+The R-Car Gen2 Hardware User Manual Rev. 2.00 states:
 
-Enable PCIe Controller & set PCIe bus clock frequency.
+    If the master/slave mode select bit (MSTR) is modified while the SPI
+    function enable bit (SPE) is set to 1 (that is, this module is
+    enabled), the subsequent operation cannot be guaranteed.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Hence do not set SPCR_SPE when setting SPCR_MSTR, just like the
+.set_config_register() implementations for other RSPI variants do.
+
+Note that when booted from QSPI, the boot loader will have set SPCR_MSTR
+already, hence usually the bit is never modified by the Linux driver.
+
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/spi/spi-rspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 3e4bc4d6b9d3..54470c6de891 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -96,6 +96,14 @@
- 	pinctrl-names = "default";
- };
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index c96eab723fd3fdb7..8ef05c9568ced5d7 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -377,8 +377,8 @@ static int qspi_set_config_register(struct rspi_data *rspi, int access_size)
+ 	/* Sets SPCMD */
+ 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
  
-+&pcie_bus_clk {
-+	clock-frequency = <100000000>;
-+};
-+
-+&pciec {
-+	status = "okay";
-+};
-+
- &pfc {
- 	can0_pins: can0 {
- 		groups = "can0_data_d";
+-	/* Enables SPI function in master mode */
+-	rspi_write8(rspi, SPCR_SPE | SPCR_MSTR, RSPI_SPCR);
++	/* Sets RSPI mode */
++	rspi_write8(rspi, SPCR_MSTR, RSPI_SPCR);
+ 
+ 	return 0;
+ }
 -- 
-2.11.0
+2.7.4
