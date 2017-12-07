@@ -1,83 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:46540 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751689AbdLALRb (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752366AbdLGJzX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Dec 2017 06:17:31 -0500
-Received: by mail-io0-f196.google.com with SMTP id x129so10832541iod.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Dec 2017 03:17:30 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1510588003-16650-3-git-send-email-ulf.hansson@linaro.org>
-References: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org> <1510588003-16650-3-git-send-email-ulf.hansson@linaro.org>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 1 Dec 2017 12:17:09 +0100
-Message-ID: <CAKfTPtAyn-SZL6hq3nrUbWhccjKxx3EHdvD7stf1RnqMTQ4-xQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] PM / core: Add IN_BAND_WAKEUP driver flag
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thu, 7 Dec 2017 04:55:23 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 42/54] arm64: dts: renesas: r8a7795: Increase the number of GPIO bank 1 ports to 29
+Date: Thu,  7 Dec 2017 10:53:45 +0100
+Message-Id: <eb14ed1ad7b6750b6b82e7f556f2c1c340f35b8f.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-you have left some old naming WAKEUP_POWERED in your patch
+This patch changes the number of GPIO bank 1 ports to 29 because GP-1-28
+port pin of R8A7795 ES2.0 SoC support was added.
 
-On 13 November 2017 at 16:46, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> For some bus types and PM domains, it's not sufficient to only check the
-> return value from device_may_wakeup(), to fully understand how to configure
-> wakeup settings for the device during system suspend.
->
-[snip]
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Fixes: 291e0c4994d0813f ("arm64: dts: r8a7795: Add support for R-Car H3 ES2.0")
+[geert: Keep 28 GPIOs on H3 ES1.x after r8a7795.dtsi sharing]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> index 65d3911..4efb16a 100644
-> --- a/include/linux/pm.h
-> +++ b/include/linux/pm.h
-> @@ -559,6 +559,7 @@ struct pm_subsys_data {
->   * NEVER_SKIP: Do not skip system suspend/resume callbacks for the device.
->   * SMART_PREPARE: Check the return value of the driver's ->prepare callback.
->   * SMART_SUSPEND: No need to resume the device from runtime suspend.
-> + * WAKEUP_POWERED: Keep the device powered if it has wakeup enabled.
-
-it should be IN_BAND_WAKEUP ?
-
->   *
->   * Setting SMART_PREPARE instructs bus types and PM domains which may want
->   * system suspend/resume callbacks to be skipped for the device to return 0 from
-> @@ -572,10 +573,14 @@ struct pm_subsys_data {
->   * necessary from the driver's perspective.  It also may cause them to skip
->   * invocations of the ->suspend_late and ->suspend_noirq callbacks provided by
->   * the driver if they decide to leave the device in runtime suspend.
-> + *
-> + * Setting WAKEUP_POWERED instructs bus types and PM domains that the device
-
-it should be IN_BAND_WAKEUP ?
-
-> + * needs to remain powered in system suspend, in case wakeup is enabled for it.
->   */
->  #define DPM_FLAG_NEVER_SKIP    BIT(0)
->  #define DPM_FLAG_SMART_PREPARE BIT(1)
->  #define DPM_FLAG_SMART_SUSPEND BIT(2)
-> +#define DPM_FLAG_IN_BAND_WAKEUP        BIT(3)
->
->  struct dev_pm_info {
->         pm_message_t            power_state;
-> @@ -595,6 +600,7 @@ struct dev_pm_info {
->         struct completion       completion;
->         struct wakeup_source    *wakeup;
->         bool                    wakeup_path:1;
-> +       bool                    wakeup_path_in_band:1;
->         bool                    syscore:1;
->         bool                    no_pm_callbacks:1;      /* Owned by the PM core */
->  #else
-> --
-> 2.7.4
->
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 29b52d89c78a..26769a11a190 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -109,6 +109,10 @@
+ 	};
+ };
+ 
++&gpio1 {
++	gpio-ranges = <&pfc 0 32 28>;
++};
++
+ &ipmmu_vi0 {
+ 	renesas,ipmmu-main = <&ipmmu_mm 11>;
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index a438d58f1b50..6db4f10376a1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -240,7 +240,7 @@
+ 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
+-			gpio-ranges = <&pfc 0 32 28>;
++			gpio-ranges = <&pfc 0 32 29>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 911>;
+-- 
+2.11.0
