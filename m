@@ -1,83 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755229AbdLVKbk (ORCPT
+        with ESMTP id S1750919AbdLGJzA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:31:40 -0500
+        Thu, 7 Dec 2017 04:55:00 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Fixes for v4.15
-Date: Fri, 22 Dec 2017 11:30:28 +0100
-Message-Id: <cover.1513938447.git.horms+renesas@verge.net.au>
+Subject: [PATCH 22/54] arm64: dts: renesas: r8a7795: Tie Audio-DMAC to IPMMU-MP0/1
+Date: Thu,  7 Dec 2017 10:53:25 +0100
+Message-Id: <c2b57f76a725b65a24bae0fd1486b58addb7d75f.1512640145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Please consider these Renesas ARM based SoC fixes for v4.15.
+Hook up r8a7795 ES2.0 Audio-DMAC nodes to the IPMMU-MP0.
+Hook up r8a7795 ES1.x Audio-DMAC nodes to the IPMMU-MP1.
 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 22 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 16 ++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
-
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes-for-v4.15
-
-for you to fetch changes up to 7d2901f809c110bd9a261e879d59efe62e3bc758:
-
-  arm64: dts: renesas: ulcb: Remove renesas, no-ether-link property (2017-12-22 09:39:17 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Fixes for v4.15
-
-Vladimir Zapolskiy says:
-
-The present change is a bug fix for AVB link iteratively up/down.
-
-Steps to reproduce:
-- start AVB TX stream (Using aplay via MSE),
-- disconnect+reconnect the eth cable,
-- after a reconnection the eth connection goes iteratively up/down
-  without user interaction,
-- this may heal after some seconds or even stay for minutes.
-
-As the documentation specifies, the "renesas,no-ether-link" option
-should be used when a board does not provide a proper AVB_LINK signal.
-There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
-and ULCB starter kits since the AVB_LINK is correctly handled by HW.
-
-Choosing to keep or remove the "renesas,no-ether-link" option will
-have impact on the code flow in the following ways:
-- keeping this option enabled may lead to unexpected behavior since
-  the RX & TX are enabled/disabled directly from adjust_link function
-  without any HW interrogation,
-- removing this option, the RX & TX will only be enabled/disabled after
-  HW interrogation. The HW check is made through the LMON pin in PSR
-  register which specifies AVB_LINK signal value (0 - at low level;
-  1 - at high level).
-
-In conclusion, the change is also a safety improvement because it
-removes the "renesas,no-ether-link" option leading to a proper way
-of detecting the link state based on HW interrogation and not on
-software heuristic.
-
-Note that DTS files for V3M Starter Kit, Draak and Eagle boards
-contain the same property, the files are untouched due to unavailable
-schematics to verify if the fix applies to these boards as well.
-
-----------------------------------------------------------------
-Bogdan Mirea (2):
-      arm64: dts: renesas: salvator-x: Remove renesas, no-ether-link property
-      arm64: dts: renesas: ulcb: Remove renesas, no-ether-link property
-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 -
- arch/arm64/boot/dts/renesas/ulcb.dtsi            | 1 -
- 2 files changed, 2 deletions(-)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 38b7cfb3b428..2dfe8108072c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -127,6 +127,28 @@
+ 	renesas,ipmmu-main = <&ipmmu_mm 7>;
+ };
+ 
++&audma0 {
++	iommus = <&ipmmu_mp1 0>, <&ipmmu_mp1 1>,
++	       <&ipmmu_mp1 2>, <&ipmmu_mp1 3>,
++	       <&ipmmu_mp1 4>, <&ipmmu_mp1 5>,
++	       <&ipmmu_mp1 6>, <&ipmmu_mp1 7>,
++	       <&ipmmu_mp1 8>, <&ipmmu_mp1 9>,
++	       <&ipmmu_mp1 10>, <&ipmmu_mp1 11>,
++	       <&ipmmu_mp1 12>, <&ipmmu_mp1 13>,
++	       <&ipmmu_mp1 14>, <&ipmmu_mp1 15>;
++};
++
++&audma1 {
++	iommus = <&ipmmu_mp1 16>, <&ipmmu_mp1 17>,
++	       <&ipmmu_mp1 18>, <&ipmmu_mp1 19>,
++	       <&ipmmu_mp1 20>, <&ipmmu_mp1 21>,
++	       <&ipmmu_mp1 22>, <&ipmmu_mp1 23>,
++	       <&ipmmu_mp1 24>, <&ipmmu_mp1 25>,
++	       <&ipmmu_mp1 26>, <&ipmmu_mp1 27>,
++	       <&ipmmu_mp1 28>, <&ipmmu_mp1 29>,
++	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
++};
++
+ &du {
+ 	vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index af200aa55fce..2ca746c304d5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -724,6 +724,14 @@
+ 			resets = <&cpg 502>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
++			iommus = <&ipmmu_mp0 0>, <&ipmmu_mp0 1>,
++			       <&ipmmu_mp0 2>, <&ipmmu_mp0 3>,
++			       <&ipmmu_mp0 4>, <&ipmmu_mp0 5>,
++			       <&ipmmu_mp0 6>, <&ipmmu_mp0 7>,
++			       <&ipmmu_mp0 8>, <&ipmmu_mp0 9>,
++			       <&ipmmu_mp0 10>, <&ipmmu_mp0 11>,
++			       <&ipmmu_mp0 12>, <&ipmmu_mp0 13>,
++			       <&ipmmu_mp0 14>, <&ipmmu_mp0 15>;
+ 		};
+ 
+ 		audma1: dma-controller@ec720000 {
+@@ -758,6 +766,14 @@
+ 			resets = <&cpg 501>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
++			iommus = <&ipmmu_mp0 16>, <&ipmmu_mp0 17>,
++			       <&ipmmu_mp0 18>, <&ipmmu_mp0 19>,
++			       <&ipmmu_mp0 20>, <&ipmmu_mp0 21>,
++			       <&ipmmu_mp0 22>, <&ipmmu_mp0 23>,
++			       <&ipmmu_mp0 24>, <&ipmmu_mp0 25>,
++			       <&ipmmu_mp0 26>, <&ipmmu_mp0 27>,
++			       <&ipmmu_mp0 28>, <&ipmmu_mp0 29>,
++			       <&ipmmu_mp0 30>, <&ipmmu_mp0 31>;
+ 		};
+ 
+ 		avb: ethernet@e6800000 {
+-- 
+2.11.0
