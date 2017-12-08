@@ -1,44 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752506AbdLGJzT (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:45174 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752481AbdLHBJI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:19 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 36/54] arm64: dts: renesas: r8a7795-salvator-x: Add SoC name to file header
-Date: Thu,  7 Dec 2017 10:53:39 +0100
-Message-Id: <3d5863e6112adb8265456ca201d90bd9dc4eb886.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Thu, 7 Dec 2017 20:09:08 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v9 28/28] rcar-vin: enable support for r8a77970
+Date: Fri,  8 Dec 2017 02:08:42 +0100
+Message-Id: <20171208010842.20047-29-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the SoC specific information for Renesas r8a77970.
 
-Document clearly which SoC this DTS applies to, to distinguish from
-Salvator-X boards equipped with other SoCs.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/media/rcar_vin.txt         |  1 +
+ drivers/media/platform/rcar-vin/rcar-core.c        | 40 ++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 17953070f38d..af467419266a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -1,5 +1,5 @@
- /*
-- * Device Tree Source for the Salvator-X board
-+ * Device Tree Source for the Salvator-X board with R-Car H3 ES2.0
-  *
-  * Copyright (C) 2015 Renesas Electronics Corp.
-  *
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index 314743532bbb4523..6b98f8a3398fa493 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -21,6 +21,7 @@ on Gen3 to a CSI-2 receiver.
+    - "renesas,vin-r8a7794" for the R8A7794 device
+    - "renesas,vin-r8a7795" for the R8A7795 device
+    - "renesas,vin-r8a7796" for the R8A7796 device
++   - "renesas,vin-r8a77970" for the R8A77970 device
+    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
+      device.
+    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index ed7fbb58ad6846c1..136179ffeebf6862 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -1145,6 +1145,42 @@ static const struct rvin_info rcar_info_r8a7796 = {
+ 	},
+ };
+ 
++static const struct rvin_info rcar_info_r8a77970 = {
++	.chip = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++
++	.num_chsels = 5,
++	.chsels = {
++		{
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_NC, .chan = 0 },
++			{ .csi = RVIN_NC, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_NC, .chan = 0 },
++		}, {
++			{ .csi = RVIN_NC, .chan = 0 },
++			{ .csi = RVIN_NC, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_NC, .chan = 0 },
++		}, {
++			{ .csi = RVIN_NC, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 0 },
++			{ .csi = RVIN_NC, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 2 },
++			{ .csi = RVIN_NC, .chan = 0 },
++		}, {
++			{ .csi = RVIN_CSI40, .chan = 1 },
++			{ .csi = RVIN_NC, .chan = 0 },
++			{ .csi = RVIN_NC, .chan = 0 },
++			{ .csi = RVIN_CSI40, .chan = 3 },
++			{ .csi = RVIN_NC, .chan = 0 },
++		},
++	},
++};
++
+ static const struct of_device_id rvin_of_id_table[] = {
+ 	{
+ 		.compatible = "renesas,vin-r8a7778",
+@@ -1182,6 +1218,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,vin-r8a7796",
+ 		.data = &rcar_info_r8a7796,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a77970",
++		.data = &rcar_info_r8a77970,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
 -- 
-2.11.0
+2.15.0
