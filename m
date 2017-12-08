@@ -1,281 +1,199 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Subject: Re: [PATCH v8 04/28] rcar-vin: move subdevice handling to async
- callbacks
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:47035 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752481AbdLHIHv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 8 Dec 2017 03:07:51 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-References: <20171129194342.26239-1-niklas.soderlund+renesas@ragnatech.se>
- <20171129194342.26239-5-niklas.soderlund+renesas@ragnatech.se>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <eaae0c05-dcbe-165e-c20e-e71ba0cc6c29@xs4all.nl>
-Date: Mon, 4 Dec 2017 10:47:46 +0100
+Subject: Re: [PATCH v9 05/28] rcar-vin: move chip information to own struct
+Date: Fri, 08 Dec 2017 10:08:08 +0200
+Message-ID: <25215448.lzARv6kaXr@avalon>
+In-Reply-To: <20171208010842.20047-6-niklas.soderlund+renesas@ragnatech.se>
+References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se> <20171208010842.20047-6-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20171129194342.26239-5-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 11/29/2017 08:43 PM, Niklas Söderlund wrote:
-> In preparation for Gen3 support move the subdevice initialization and
-> clean up from rvin_v4l2_{register,unregister}() directly to the async
-> callbacks. This simplifies the addition of Gen3 support as the
-> rvin_v4l2_register() can be shared for both Gen2 and Gen3 while direct
-> subdevice control are only used on Gen2.
-> 
-> While moving this code drop a large comment which is copied from the
-> framework documentation and fold rvin_mbus_supported() into its only
-> caller.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi Niklas,
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Thank you for the patch.
 
-Regards,
+On Friday, 8 December 2017 03:08:19 EET Niklas S=F6derlund wrote:
+> When Gen3 support is added to the driver more than chip ID will be
+> different for the different SoCs. To avoid a lot of if statements in the
+> code create a struct chip_info to store this information.
 
-	Hans
+The structure is called rvin_info.
 
+> And while we are at it sort the compatible string entries and make use
+> of of_device_get_match_data() which will always work as the driver is DT
+> only, so there's always a valid match.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 > ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 105 ++++++++++++++++++----------
->  drivers/media/platform/rcar-vin/rcar-v4l2.c |  35 ----------
->  2 files changed, 67 insertions(+), 73 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index 6d99542ec74b49a7..6ab51acd676641ec 100644
+>  drivers/media/platform/rcar-vin/rcar-core.c | 54 +++++++++++++++++++++--=
+=2D--
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c |  3 +-
+>  drivers/media/platform/rcar-vin/rcar-vin.h  | 12 +++++--
+>  3 files changed, 53 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> b/drivers/media/platform/rcar-vin/rcar-core.c index
+> 6ab51acd676641ec..73c1700a409bfd35 100644
 > --- a/drivers/media/platform/rcar-vin/rcar-core.c
 > +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -46,47 +46,11 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
->  	return -EINVAL;
->  }
->  
-> -static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
-> -{
-> -	struct v4l2_subdev *sd = entity->subdev;
-> -	struct v4l2_subdev_mbus_code_enum code = {
-> -		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> -	};
-> -
-> -	code.index = 0;
-> -	code.pad = entity->source_pad;
-> -	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
-> -		code.index++;
-> -		switch (code.code) {
-> -		case MEDIA_BUS_FMT_YUYV8_1X16:
-> -		case MEDIA_BUS_FMT_UYVY8_2X8:
-> -		case MEDIA_BUS_FMT_UYVY10_2X10:
-> -		case MEDIA_BUS_FMT_RGB888_1X24:
-> -			entity->code = code.code;
-> -			return true;
-> -		default:
-> -			break;
-> -		}
-> -	}
-> -
-> -	return false;
-> -}
-> -
->  static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
->  {
->  	struct rvin_dev *vin = notifier_to_vin(notifier);
->  	int ret;
->  
-> -	/* Verify subdevices mbus format */
-> -	if (!rvin_mbus_supported(vin->digital)) {
-> -		vin_err(vin, "Unsupported media bus format for %s\n",
-> -			vin->digital->subdev->name);
-> -		return -EINVAL;
-> -	}
-> -
-> -	vin_dbg(vin, "Found media bus format for %s: %d\n",
-> -		vin->digital->subdev->name, vin->digital->code);
-> -
->  	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
->  	if (ret < 0) {
->  		vin_err(vin, "Failed to register subdev nodes\n");
-> @@ -103,8 +67,16 @@ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
->  	struct rvin_dev *vin = notifier_to_vin(notifier);
->  
->  	vin_dbg(vin, "unbind digital subdev %s\n", subdev->name);
+> @@ -230,21 +230,53 @@ static int rvin_digital_graph_init(struct rvin_dev
+> *vin) * Platform Device Driver
+>   */
+>=20
+> +static const struct rvin_info rcar_info_h1 =3D {
+> +	.chip =3D RCAR_H1,
+> +};
 > +
-> +	mutex_lock(&vin->lock);
+> +static const struct rvin_info rcar_info_m1 =3D {
+> +	.chip =3D RCAR_M1,
+> +};
 > +
->  	rvin_v4l2_unregister(vin);
-> +	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> +static const struct rvin_info rcar_info_gen2 =3D {
+> +	.chip =3D RCAR_GEN2,
+> +};
 > +
-> +	vin->vdev.ctrl_handler = NULL;
->  	vin->digital->subdev = NULL;
-> +
-> +	mutex_unlock(&vin->lock);
->  }
->  
->  static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
-> @@ -112,12 +84,14 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
->  				     struct v4l2_async_subdev *asd)
->  {
->  	struct rvin_dev *vin = notifier_to_vin(notifier);
-> +	struct v4l2_subdev_mbus_code_enum code = {
-> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> +	};
->  	int ret;
->  
->  	v4l2_set_subdev_hostdata(subdev, vin);
->  
->  	/* Find source and sink pad of remote subdevice */
-> -
->  	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SOURCE);
->  	if (ret < 0)
->  		return ret;
-> @@ -126,21 +100,74 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
->  	ret = rvin_find_pad(subdev, MEDIA_PAD_FL_SINK);
->  	vin->digital->sink_pad = ret < 0 ? 0 : ret;
->  
-> +	/* Find compatible subdevices mbus format */
-> +	vin->digital->code = 0;
-> +	code.index = 0;
-> +	code.pad = vin->digital->source_pad;
-> +	while (!vin->digital->code &&
-> +	       !v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL, &code)) {
-> +		code.index++;
-> +		switch (code.code) {
-> +		case MEDIA_BUS_FMT_YUYV8_1X16:
-> +		case MEDIA_BUS_FMT_UYVY8_2X8:
-> +		case MEDIA_BUS_FMT_UYVY10_2X10:
-> +		case MEDIA_BUS_FMT_RGB888_1X24:
-> +			vin->digital->code = code.code;
-> +			vin_dbg(vin, "Found media bus format for %s: %d\n",
-> +				subdev->name, vin->digital->code);
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!vin->digital->code) {
-> +		vin_err(vin, "Unsupported media bus format for %s\n",
-> +			subdev->name);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Read tvnorms */
-> +	ret = v4l2_subdev_call(subdev, video, g_tvnorms, &vin->vdev.tvnorms);
-> +	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
-> +		return ret;
-> +
-> +	mutex_lock(&vin->lock);
-> +
-> +	/* Add the controls */
-> +	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
-> +	if (ret < 0)
-> +		goto err;
-> +
-> +	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, subdev->ctrl_handler,
-> +				    NULL);
-> +	if (ret < 0)
-> +		goto err_ctrl;
-> +
-> +	vin->vdev.ctrl_handler = &vin->ctrl_handler;
-> +
->  	vin->digital->subdev = subdev;
->  
-> +	mutex_unlock(&vin->lock);
-> +
->  	vin_dbg(vin, "bound subdev %s source pad: %u sink pad: %u\n",
->  		subdev->name, vin->digital->source_pad,
->  		vin->digital->sink_pad);
->  
->  	return 0;
-> +err_ctrl:
-> +	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-> +err:
-> +	mutex_unlock(&vin->lock);
-> +	return ret;
->  }
-> +
->  static const struct v4l2_async_notifier_operations rvin_digital_notify_ops = {
->  	.bound = rvin_digital_notify_bound,
->  	.unbind = rvin_digital_notify_unbind,
->  	.complete = rvin_digital_notify_complete,
+>  static const struct of_device_id rvin_of_id_table[] =3D {
+> -	{ .compatible =3D "renesas,vin-r8a7794", .data =3D (void *)RCAR_GEN2 },
+> -	{ .compatible =3D "renesas,vin-r8a7793", .data =3D (void *)RCAR_GEN2 },
+> -	{ .compatible =3D "renesas,vin-r8a7791", .data =3D (void *)RCAR_GEN2 },
+> -	{ .compatible =3D "renesas,vin-r8a7790", .data =3D (void *)RCAR_GEN2 },
+> -	{ .compatible =3D "renesas,vin-r8a7779", .data =3D (void *)RCAR_H1 },
+> -	{ .compatible =3D "renesas,vin-r8a7778", .data =3D (void *)RCAR_M1 },
+> -	{ .compatible =3D "renesas,rcar-gen2-vin", .data =3D (void *)RCAR_GEN2 =
+},
+> +	{
+> +		.compatible =3D "renesas,vin-r8a7778",
+> +		.data =3D &rcar_info_m1,
+> +	},
+> +	{
+> +		.compatible =3D "renesas,vin-r8a7779",
+> +		.data =3D &rcar_info_h1,
+> +	},
+> +	{
+> +		.compatible =3D "renesas,vin-r8a7790",
+> +		.data =3D &rcar_info_gen2,
+> +	},
+> +	{
+> +		.compatible =3D "renesas,vin-r8a7791",
+> +		.data =3D &rcar_info_gen2,
+> +	},
+> +	{
+> +		.compatible =3D "renesas,vin-r8a7793",
+> +		.data =3D &rcar_info_gen2,
+> +	},
+> +	{
+> +		.compatible =3D "renesas,vin-r8a7794",
+> +		.data =3D &rcar_info_gen2,
+> +	},
+> +	{
+> +		.compatible =3D "renesas,rcar-gen2-vin",
+> +		.data =3D &rcar_info_gen2,
+> +	},
+>  	{ },
+
+{ /* Sentinel */ } is usually used to emphasize the need of an empty entry.
+
 >  };
->  
+>  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+>=20
+>  static int rcar_vin_probe(struct platform_device *pdev)
+>  {
+> -	const struct of_device_id *match;
+>  	struct rvin_dev *vin;
+>  	struct resource *mem;
+>  	int irq, ret;
+> @@ -253,12 +285,8 @@ static int rcar_vin_probe(struct platform_device *pd=
+ev)
+> if (!vin)
+>  		return -ENOMEM;
+>=20
+> -	match =3D of_match_device(of_match_ptr(rvin_of_id_table), &pdev->dev);
+> -	if (!match)
+> -		return -ENODEV;
 > -
->  static int rvin_digital_parse_v4l2(struct device *dev,
->  				   struct v4l2_fwnode_endpoint *vep,
->  				   struct v4l2_async_subdev *asd)
-> @@ -277,6 +304,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
->  	v4l2_async_notifier_unregister(&vin->notifier);
->  	v4l2_async_notifier_cleanup(&vin->notifier);
->  
-> +	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-> +
->  	rvin_dma_unregister(vin);
->  
->  	return 0;
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index 32a658214f48fa49..4a0610a6b4503501 100644
+>  	vin->dev =3D &pdev->dev;
+> -	vin->chip =3D (enum chip_id)match->data;
+> +	vin->info =3D of_device_get_match_data(&pdev->dev);
+>=20
+>  	mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	if (mem =3D=3D NULL)
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> 4a0610a6b4503501..b1caa04921aa23bb 100644
 > --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
 > +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -847,9 +847,6 @@ void rvin_v4l2_unregister(struct rvin_dev *vin)
->  	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
->  		  video_device_node_name(&vin->vdev));
->  
-> -	/* Checks internaly if handlers have been init or not */
-> -	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-> -
->  	/* Checks internaly if vdev have been init or not */
->  	video_unregister_device(&vin->vdev);
->  }
-> @@ -872,41 +869,10 @@ static void rvin_notify(struct v4l2_subdev *sd,
->  int rvin_v4l2_register(struct rvin_dev *vin)
->  {
->  	struct video_device *vdev = &vin->vdev;
-> -	struct v4l2_subdev *sd = vin_to_source(vin);
->  	int ret;
->  
-> -	v4l2_set_subdev_hostdata(sd, vin);
-> -
->  	vin->v4l2_dev.notify = rvin_notify;
->  
-> -	ret = v4l2_subdev_call(sd, video, g_tvnorms, &vin->vdev.tvnorms);
-> -	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
-> -		return ret;
-> -
-> -	if (vin->vdev.tvnorms == 0) {
-> -		/* Disable the STD API if there are no tvnorms defined */
-> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_G_STD);
-> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_S_STD);
-> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_QUERYSTD);
-> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_ENUMSTD);
-> -	}
-> -
-> -	/* Add the controls */
-> -	/*
-> -	 * Currently the subdev with the largest number of controls (13) is
-> -	 * ov6550. So let's pick 16 as a hint for the control handler. Note
-> -	 * that this is a hint only: too large and you waste some memory, too
-> -	 * small and there is a (very) small performance hit when looking up
-> -	 * controls in the internal hash.
-> -	 */
-> -	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, sd->ctrl_handler, NULL);
-> -	if (ret < 0)
-> -		return ret;
-> -
->  	/* video node */
->  	vdev->fops = &rvin_fops;
->  	vdev->v4l2_dev = &vin->v4l2_dev;
-> @@ -915,7 +881,6 @@ int rvin_v4l2_register(struct rvin_dev *vin)
->  	vdev->release = video_device_release_empty;
->  	vdev->ioctl_ops = &rvin_ioctl_ops;
->  	vdev->lock = &vin->lock;
-> -	vdev->ctrl_handler = &vin->ctrl_handler;
->  	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
->  		V4L2_CAP_READWRITE;
->  
-> 
+> @@ -266,7 +266,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+>  	pix->sizeimage =3D max_t(u32, pix->sizeimage,
+>  			       rvin_format_sizeimage(pix));
+>=20
+> -	if (vin->chip =3D=3D RCAR_M1 && pix->pixelformat =3D=3D V4L2_PIX_FMT_XB=
+GR32) {
+> +	if (vin->info->chip =3D=3D RCAR_M1 &&
+> +	    pix->pixelformat =3D=3D V4L2_PIX_FMT_XBGR32) {
+>  		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+>  		return -EINVAL;
+>  	}
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
+> b/drivers/media/platform/rcar-vin/rcar-vin.h index
+> 85cb7ec53d2b08b5..0d3949c8c08c8f63 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -88,11 +88,19 @@ struct rvin_graph_entity {
+>  	unsigned int sink_pad;
+>  };
+>=20
+> +/**
+> + * struct rvin_info - Information about the particular VIN implementation
+> + * @chip:		type of VIN chip
+
+While at it, how about also renaming "chip" to something more appropriate, =
+as=20
+the VIN isn't a chip ? Maybe "model" ?
+
+With this fixed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> + */
+> +struct rvin_info {
+> +	enum chip_id chip;
+> +};
+> +
+>  /**
+>   * struct rvin_dev - Renesas VIN device structure
+>   * @dev:		(OF) device
+>   * @base:		device I/O register space remapped to virtual memory
+> - * @chip:		type of VIN chip
+> + * @info:		info about VIN instance
+>   *
+>   * @vdev:		V4L2 video device associated with VIN
+>   * @v4l2_dev:		V4L2 device
+> @@ -120,7 +128,7 @@ struct rvin_graph_entity {
+>  struct rvin_dev {
+>  	struct device *dev;
+>  	void __iomem *base;
+> -	enum chip_id chip;
+> +	const struct rvin_info *info;
+>=20
+>  	struct video_device vdev;
+>  	struct v4l2_device v4l2_dev;
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
