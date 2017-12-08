@@ -1,108 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:44876 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752377AbdLHBJE (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52239 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750951AbdLHUhe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 20:09:04 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        Fri, 8 Dec 2017 15:37:34 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v9 20/28] rcar-vin: prepare for media controller mode initialization
-Date: Fri,  8 Dec 2017 02:08:34 +0100
-Message-Id: <20171208010842.20047-21-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v9 22/28] rcar-vin: add chsel information to rvin_info
+Date: Fri, 08 Dec 2017 22:37:32 +0200
+Message-ID: <3365456.tkQHTjy9nj@avalon>
+In-Reply-To: <20171208010842.20047-23-niklas.soderlund+renesas@ragnatech.se>
+References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se> <20171208010842.20047-23-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When running in media controller mode a media pad is needed, register
-one. Also set the media bus format to CSI-2.
+Hi Niklas,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 24 ++++++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
- 2 files changed, 26 insertions(+), 2 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 61f48ecc1ab815ec..45de4079fd835759 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
-@@ -226,6 +230,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	return 0;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Group async notifier
-+ */
-+
-+static int rvin_group_init(struct rvin_dev *vin)
-+{
-+	/* All our sources are CSI-2 */
-+	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-+	vin->mbus_cfg.flags = 0;
-+
-+	vin->pad.flags = MEDIA_PAD_FL_SINK;
-+	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -314,8 +332,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	platform_set_drvdata(pdev, vin);
--
--	ret = rvin_digital_graph_init(vin);
-+	if (vin->info->use_mc)
-+		ret = rvin_group_init(vin);
-+	else
-+		ret = rvin_digital_graph_init(vin);
- 	if (ret < 0)
- 		goto error;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index fd3cd781be0ab1cf..07d270a976893cdb 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -103,6 +103,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @pad:		pad for media controller
-+ *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
-  *
-@@ -132,6 +134,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct media_pad pad;
-+
- 	struct mutex lock;
- 	struct vb2_queue queue;
- 
--- 
-2.15.0
+On Friday, 8 December 2017 03:08:36 EET Niklas S=F6derlund wrote:
+> Each Gen3 SoC has a limited set of predefined routing possibilities for
+> which CSI-2 device and virtual channel can be routed to which VIN
+> instance. Prepare to store this information in the struct rvin_info.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-vin.h | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
+> b/drivers/media/platform/rcar-vin/rcar-vin.h index
+> 5f736a3500b6e10f..41bf24aa8a1a0aed 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -35,6 +35,9 @@
+>  /* Max number on VIN instances that can be in a system */
+>  #define RCAR_VIN_NUM 8
+>=20
+> +/* Max number of CHSEL values for any Gen3 SoC */
+> +#define RCAR_CHSEL_MAX 6
+> +
+>  enum chip_id {
+>  	RCAR_H1,
+>  	RCAR_M1,
+> @@ -91,6 +94,22 @@ struct rvin_graph_entity {
+>=20
+>  struct rvin_group;
+>=20
+> +/** struct rvin_group_chsel - Map a CSI-2 receiver and channel to a CHSEL
+> value
+> + * @csi:		VIN internal number for CSI-2 device
+> + * @chan:		Output channel of the CSI-2 receiver. Each R-Car CSI-2
+> + *			receiver has four output channels facing the VIN
+> + *			devices, each channel can carry one CSI-2 Virtual
+> + *			Channel (VC) and there are no correlation between
+> + *			output channel number and CSI-2 VC. It's up to the
+> + *			CSI-2 receiver driver to configure which VC is
+> + *			outputted on which channel, the VIN devices only
+> + *			cares about output channels.
+> + */
+> +struct rvin_group_chsel {
+> +	enum rvin_csi_id csi;
+> +	unsigned int chan;
+> +};
+> +
+>  /**
+>   * struct rvin_info - Information about the particular VIN implementation
+>   * @chip:		type of VIN chip
+> @@ -98,6 +117,9 @@ struct rvin_group;
+>   *
+>   * max_width:		max input width the VIN supports
+>   * max_height:		max input height the VIN supports
+> + *
+> + * num_chsels:		number of possible chsel values for this VIN
+> + * chsels:		routing table VIN <-> CSI-2 for the chsel values
+>   */
+>  struct rvin_info {
+>  	enum chip_id chip;
+> @@ -105,6 +127,9 @@ struct rvin_info {
+>=20
+>  	unsigned int max_width;
+>  	unsigned int max_height;
+> +
+> +	unsigned int num_chsels;
+> +	struct rvin_group_chsel chsels[RCAR_VIN_NUM][RCAR_CHSEL_MAX];
+
+That will result in a quite sparse array. I wonder whether we couldn't inst=
+ead=20
+have an array of num_chsels elements storing the CSI receiver ID, the CSI=20
+receiver output channel, and the VIN ID.
+
+=46urthermore, shouldn't the CSI receiver ID be specified in DT using the=20
+renesas,id property like we do for the VIN instances, instead of through th=
+e=20
+endpoint number ? I know this will require a bit of refactoring, but I thin=
+k=20
+it would stimplify both the DT bindings and the code as we wouldn't hardcod=
+e a=20
+fixed set of CSI receivers.
+
+>  };
+>=20
+>  /**
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
