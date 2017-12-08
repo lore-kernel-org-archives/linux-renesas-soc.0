@@ -1,55 +1,79 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756590AbdLVKag (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:30:36 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/37] ARM: dts: r8a7791: Correct critical CPU temperature
-Date: Fri, 22 Dec 2017 11:29:44 +0100
-Message-Id: <e4fdf59bcce3b490bbc7197145bcb9f9d5a18cd3.1513938145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
-References: <cover.1513938145.git.horms+renesas@verge.net.au>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v9 10/28] rcar-vin: do not reset crop and compose when setting format
+Date: Fri,  8 Dec 2017 02:08:24 +0100
+Message-Id: <20171208010842.20047-11-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Paterson <chris.paterson2@renesas.com>
+It was a bad idea to reset the crop and compose settings when a new
+format is set. This would overwrite any crop/compose set by s_select and
+cause unexpected behaviors, remove it. Also fold the reset helper in to
+the only remaining caller.
 
-The R-Car M2W hardware manual states that Tc = –40°C to +105°C. The
-thermal sensor has an accuracy of ±5°C and there can be a temperature
-difference of 1 or 2 degrees between Tjmax and the thermal sensor due
-to the location of the latter.
-
-This means that 95°C is a safer value to use.
-
-Fixes: cac68a56e34b9810 ("ARM: dts: r8a7791: enable to use thermal-zone")
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index dfc1c406179f..008a260f86a5 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -92,7 +92,7 @@
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 1c5e7f6d5b963740..254fa1c8770275a5 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -90,17 +90,6 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
+  * V4L2
+  */
  
- 			trips {
- 				cpu-crit {
--					temperature	= <115000>;
-+					temperature	= <95000>;
- 					hysteresis	= <0>;
- 					type		= "critical";
- 				};
+-static void rvin_reset_crop_compose(struct rvin_dev *vin)
+-{
+-	vin->crop.top = vin->crop.left = 0;
+-	vin->crop.width = vin->source.width;
+-	vin->crop.height = vin->source.height;
+-
+-	vin->compose.top = vin->compose.left = 0;
+-	vin->compose.width = vin->format.width;
+-	vin->compose.height = vin->format.height;
+-}
+-
+ static int rvin_reset_format(struct rvin_dev *vin)
+ {
+ 	struct v4l2_subdev_format fmt = {
+@@ -147,7 +136,13 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 		break;
+ 	}
+ 
+-	rvin_reset_crop_compose(vin);
++	vin->crop.top = vin->crop.left = 0;
++	vin->crop.width = mf->width;
++	vin->crop.height = mf->height;
++
++	vin->compose.top = vin->compose.left = 0;
++	vin->compose.width = mf->width;
++	vin->compose.height = mf->height;
+ 
+ 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
+ 	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
+@@ -317,8 +312,6 @@ static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
+ 
+ 	vin->format = f->fmt.pix;
+ 
+-	rvin_reset_crop_compose(vin);
+-
+ 	return 0;
+ }
+ 
 -- 
-2.11.0
+2.15.0
