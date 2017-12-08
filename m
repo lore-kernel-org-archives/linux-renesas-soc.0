@@ -1,249 +1,96 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:57860 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751026AbdLNAZT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 19:25:19 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
-Cc: Kieran Bingham <kieran@ksquared.org.uk>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [RFC PATCH 3/3] tests: Add a DU->VIN loopback test
-Date: Thu, 14 Dec 2017 00:25:09 +0000
-Message-Id: <7903d343ead0b1e53689814dc1d5ce4f0df7c634.1513211056.git-series.kieran@bingham.xyz>
-In-Reply-To: <cover.417c1b91fc9842fb290756d5ad23bdc16970b1e1.1513211056.git-series.kieran@bingham.xyz>
-References: <cover.417c1b91fc9842fb290756d5ad23bdc16970b1e1.1513211056.git-series.kieran@bingham.xyz>
-In-Reply-To: <cover.417c1b91fc9842fb290756d5ad23bdc16970b1e1.1513211056.git-series.kieran@bingham.xyz>
-References: <cover.417c1b91fc9842fb290756d5ad23bdc16970b1e1.1513211056.git-series.kieran@bingham.xyz>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v4.1] phylib: Add device reset GPIO support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1512383692-14009-2-git-send-email-geert+renesas@glider.be>
+ <1512390905-28094-1-git-send-email-geert+renesas@glider.be>
+ <69fe9a6d-4039-6f80-b80d-7dc0de31e5bf@cogentembedded.com>
+ <CAMuHMdWv6CiCihjFHn-k2=3PC+-bRQaKMsZcsx51MYpynTLO4A@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <837cb555-f747-e8a8-ac1a-aa25ad213c0a@cogentembedded.com>
+Date: Fri, 8 Dec 2017 20:20:09 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWv6CiCihjFHn-k2=3PC+-bRQaKMsZcsx51MYpynTLO4A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran@bingham.xyz>
+Hello!
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 12/08/2017 12:53 PM, Geert Uytterhoeven wrote:
 
-Provide an initial test which outputs an image over HDMI using the R-Car DU,
-and captures from HDMI-in on the same board.
+>> On 12/04/2017 03:35 PM, Geert Uytterhoeven wrote:
+>>> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>> The PHY devices sometimes do have their reset signal (maybe even power
+>>> supply?) tied to some GPIO and sometimes it also does happen that a boot
+>>> loader does not leave it deasserted. So far this issue has been attacked
+>>> from (as I believe) a wrong angle: by teaching the MAC driver to
+>>> manipulate
+>>> the GPIO in question; that solution, when applied to the device trees, led
+>>> to adding the PHY reset GPIO properties to the MAC device node, with one
+>>> exception: Cadence MACB driver which could handle the "reset-gpios" prop
+>>> in a PHY device subnode. I believe that the correct approach is to teach
+>>> the 'phylib' to get the MDIO device reset GPIO from the device tree node
+>>> corresponding to this device -- which this patch is doing...
+>>>
+>>> Note that I had to modify the AT803x PHY driver as it would stop working
+>>> otherwise -- it made use of the reset GPIO for its own purposes...
+>>>
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>> Acked-by: Rob Herring <robh@kernel.org>
+>>> [geert: Propagate actual errors from fwnode_get_named_gpiod()]
+>>> [geert: Avoid destroying initial setup]
+>>> [geert: Consolidate GPIO descriptor acquiring code]
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> [...]
+>>>
+>>> diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+>>> index 2df7b62c1a36811e..8f8b7747c54bc478 100644
+>>> --- a/drivers/net/phy/mdio_bus.c
+>>> +++ b/drivers/net/phy/mdio_bus.c
+>>
+>> [...]
+>>>
+>>> @@ -48,9 +49,26 @@
+>>>      int mdiobus_register_device(struct mdio_device *mdiodev)
+>>>    {
+>>> +       struct gpio_desc *gpiod = NULL;
+>>> +
+>>>          if (mdiodev->bus->mdio_map[mdiodev->addr])
+>>>                  return -EBUSY;
+>>>    +     /* Deassert the optional reset signal */
+>>
+>>
+>>     Umm, but why deassert it here for such a short time?
+> 
+> That's a consequence of moving it from drivers/of/of_mdio.c to here.
 
-This test is targetted specifically to the Salvator-X(S) with an ADV748x
-HDMI input, and the R-Car VIN driver as a capture interface.
+    Well, you shouldn't do code moves without some thinking. ;-)
 
-Whilst the media device to collect frames from is automatically detected, the
-media controller links and formats are not automatically set up, and thus the
-capture pipeline must be correctly defined before running the test.
+> Not that it was deasserted that much longer in drivers/of/of_mdio.c, though...
 
-This can be done using the helper script 'yavta-hdmi.sh' in vin-tests.
+    There it had a reason, here I'm not seeing one. Perhaps using GPIOD_ASIS 
+(or GPIOD_OUT_HIGH) instead of GPIOD_OUT_LOW and dropping 
+mdio_device_reset(mdiodev, 1) afterwards would make more sense here?
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- tests/kms-test-vin-loopback.py | 198 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 198 insertions(+)
- create mode 100755 tests/kms-test-vin-loopback.py
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
 
-diff --git a/tests/kms-test-vin-loopback.py b/tests/kms-test-vin-loopback.py
-new file mode 100755
-index 000000000000..f77ce290efab
---- /dev/null
-+++ b/tests/kms-test-vin-loopback.py
-@@ -0,0 +1,198 @@
-+#!/usr/bin/python3
-+
-+import kmstest
-+import pykms
-+import selectors
-+
-+from rcar_vin import RCar_VIN_G3
-+
-+class VINLoopbackTest(kmstest.KMSTest):
-+    """ Output a test image on a specific HDMI connector and capture using an HDMI
-+        cable looped back to the VIN HDMI input device. """
-+
-+    def handle_page_flip(self, frame, time):
-+        if self.flips == 1:
-+            self.logger.log("first page flip frame %u time %f" % (frame, time))
-+            self.frame_start = frame
-+            self.time_start = time
-+
-+        if self.stop_requested:
-+            self.logger.log("last page flip frame %u time %f" % (frame, time))
-+            self.frame_end = frame
-+            self.time_end = time
-+            self.loop.stop()
-+            self.stop_requested = False
-+            return
-+
-+        # Flip between two constant (identical) pre-created buffers
-+        fb = self.fbs[self.front_buf]
-+        self.front_buf = self.front_buf ^ 1
-+
-+        source = kmstest.Rect(0, 0, fb.width, fb.height)
-+        destination = kmstest.Rect(0, 0, fb.width, fb.height)
-+        self.atomic_plane_set(self.plane, self.crtc, source, destination, fb)
-+
-+    def stop_page_flip(self):
-+        self.stop_requested = True
-+        self.cap.stream_off()
-+
-+    def configure_vin(self, mode):
-+        vin = RCar_VIN_G3().vin_v4l2_device(0)
-+        self.logger.log("Using VIN : " + vin)
-+
-+        # Capture frames using VIN
-+        self.vid = pykms.VideoDevice(vin)
-+        self.cap = self.vid.capture_streamer
-+        self.cap.set_port(0)
-+        self.cap.set_format(self.pixfmt, mode.hdisplay, mode.vdisplay)
-+        self.cap.set_queue_size(len(self.vin))
-+        self.captured = 0
-+        self.failures = 0
-+
-+        for fb in self.vin:
-+            self.cap.queue(fb)
-+
-+        self.cap.stream_on()
-+
-+        self.loop.register(self.cap.fd, selectors.EVENT_READ, self.handle_frame_capture)
-+
-+
-+    def handle_frame_capture(self, fileobj, events):
-+        if self.stop_requested:
-+            return
-+
-+        fb = self.cap.dequeue()
-+        diff = pykms.compare_framebuffers(fb, self.fbs[self.front_buf])
-+
-+        self.logger.log("Frame Capture: " + str(self.captured) + " with difference " + str(diff))
-+
-+        if diff:
-+            filename = "/tmp/captured{}.{}x{}.raw".format(str(self.captured), str(self.mode.hdisplay), str(self.mode.vdisplay))
-+            pykms.save_raw_frame(fb, filename)
-+            self.logger.log("Corrupt frame written to " + filename)
-+            self.failures += 1
-+
-+        self.cap.queue(fb)
-+        self.captured += 1
-+
-+        # Stop capturing after 10 frames
-+        if self.captured >= 10:
-+            self.stop_page_flip()
-+
-+
-+    def get_connector(self, name):
-+        for connector in self.card.connectors:
-+            # Skip unless we are HDMI-A-1
-+            if connector.fullname == "HDMI-A-1":
-+                return connector
-+
-+    def main(self):
-+        connector_name = "HDMI-A-1"
-+
-+        self.start("VIN Loopback on connector %s" % connector_name)
-+
-+        connector = self.get_connector(connector_name)
-+        if connector is None:
-+            self.skip("HDMI output connector not found")
-+            return
-+
-+        # Skip disconnected connectors
-+        if not connector.connected():
-+            self.skip("unconnected connector")
-+            return
-+
-+        # Find a CRTC suitable for the connector
-+        crtc = connector.get_current_crtc()
-+        if not crtc:
-+            crtcs = connector.get_possible_crtcs()
-+            if len(crtcs) == 0:
-+                self.skip("No CRTC available")
-+                return
-+
-+            crtc = crtcs[0]
-+
-+        self.crtc = crtc
-+
-+        # Find a plane suitable for the CRTC
-+        for plane in self.card.planes:
-+            if plane.supports_crtc(crtc):
-+                self.plane = plane
-+                break
-+        else:
-+            self.skip("no plane available for CRTC %u" % crtc.id)
-+            return
-+
-+        # Get the default mode for the connector
-+        try:
-+            mode = connector.get_default_mode()
-+        except ValueError:
-+            self.skip("no mode available")
-+            return
-+
-+        self.mode = mode
-+
-+        self.logger.log("Testing connector %s, CRTC %u, plane %u, mode %s" % \
-+              (connector.fullname, crtc.id, self.plane.id, mode.name))
-+
-+        # Create two frame buffers each for output and capture
-+        self.fbs = []
-+        self.vin = []
-+        self.pixfmt = pykms.PixelFormat.XRGB8888
-+
-+        for i in range(2):
-+            self.fbs.append(pykms.DumbFramebuffer(self.card, mode.hdisplay, mode.vdisplay, self.pixfmt))
-+            self.vin.append(pykms.DumbFramebuffer(self.card, mode.hdisplay, mode.vdisplay, self.pixfmt))
-+
-+        # Draw test patterns on the output frame buffers
-+        # We don't (yet) support comparing against changing patterns
-+        pykms.draw_test_pattern(self.fbs[0])
-+        pykms.draw_test_pattern(self.fbs[1])
-+
-+        # Set the mode and perform the initial page flip
-+        ret = self.atomic_crtc_mode_set(crtc, connector, mode, self.fbs[0])
-+        if ret < 0:
-+            self.fail("atomic mode set failed with %d" % ret)
-+            return
-+
-+        # Configure
-+
-+        # Flip pages for 10s
-+        self.front_buf = 0
-+        self.frame_start = 0
-+        self.frame_end = 0
-+        self.time_start = 0
-+        self.time_end = 0
-+        self.stop_requested = False
-+
-+        # Allow the output to settle before capturing
-+        # VIN currently does not support dynamic input change
-+        self.run(1)
-+
-+        self.configure_vin(mode)
-+
-+        # Set timeout at 5 seconds.
-+        # We stop after capturing 10 frames
-+        self.loop.add_timer(5, self.stop_page_flip)
-+        self.run(6)
-+
-+        if not self.captured:
-+            self.fail("No frames captured")
-+            return
-+
-+        if self.failures:
-+            self.fail("Frame comparisons failed")
-+            self.logger.log("Saving output image as /tmp/original.bin")
-+            pykms.save_raw_frame(self.fbs[0], "/tmp/original.bin")
-+            return
-+
-+        if not self.flips:
-+            self.fail("No page flip registered")
-+            return
-+
-+        if self.stop_requested:
-+            self.fail("Last page flip not registered")
-+            return
-+
-+        self.success()
-+
-+VINLoopbackTest().execute()
--- 
-git-series 0.9.1
+MBR, Sergei
