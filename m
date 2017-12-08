@@ -1,43 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751942AbdLGJzi (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:53856 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753193AbdLHNNH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:38 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 47/54] arm64: dts: renesas: r8a77970: Connect Ethernet-AVB to IPMMU-RT
-Date: Thu,  7 Dec 2017 10:53:50 +0100
-Message-Id: <0639be574ea246d65565b0bfe490a84baaee3d61.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Fri, 8 Dec 2017 08:13:07 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] of: overlay: Fix out-of-bounds write in init_overlay_changeset()
+Date: Fri,  8 Dec 2017 14:13:02 +0100
+Message-Id: <1512738783-17452-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1512738783-17452-1-git-send-email-geert+renesas@glider.be>
+References: <1512738783-17452-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add IPMMU-RT to the Ethernet-AVB device node.
+If an overlay has no "__symbols__" node, but it has nodes without
+"__overlay__" subnodes at the end (e.g. a "__fixups__" node), after
+filling in all fragments for nodes with "__overlay__" subnodes,
+"fragment = &fragments[cnt]" will point beyond the end of the allocated
+array.
 
-Based on work by Magnus Damm for the r8a7795.
+Hence writing to "fragment->overlay" will overwrite unallocated memory,
+which may lead to a crash later.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fix this by deferring both the assignment to "fragment" and the
+offending write afterwards until we know for sure the node has an
+"__overlay__" subnode, and thus a valid entry in "fragments[]".
+
+Fixes: 61b4de4e0b384f4a ("of: overlay: minor restructuring")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--
+This applies to both v4.15-rc2 and Rob's for-next branch.
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/of/overlay.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 108c6159c847..0f93484e650a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -440,6 +440,7 @@
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii-id";
-+			iommus = <&ipmmu_rt 3>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 		};
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index b8918e92d5a5268f..49b8939af6b201ca 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -572,9 +572,10 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs,
+ 
+ 	cnt = 0;
+ 	for_each_child_of_node(tree, node) {
+-		fragment = &fragments[cnt];
+-		fragment->overlay = of_get_child_by_name(node, "__overlay__");
+-		if (fragment->overlay) {
++		overlay_node = of_get_child_by_name(node, "__overlay__");
++		if (overlay_node) {
++			fragment = &fragments[cnt];
++			fragment->overlay = overlay_node;
+ 			fragment->target = find_target_node(node);
+ 			if (!fragment->target) {
+ 				of_node_put(fragment->overlay);
 -- 
-2.11.0
+2.7.4
