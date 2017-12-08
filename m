@@ -1,78 +1,300 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752151AbdLGJzU (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:47013 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750788AbdLHIDg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:20 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 40/54] arm64: dts: renesas: r8a77995: Add CAN support
-Date: Thu,  7 Dec 2017 10:53:43 +0100
-Message-Id: <acaa51a35828d1188e1917d08a3c8c0447d3109b.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Fri, 8 Dec 2017 03:03:36 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v9 04/28] rcar-vin: move subdevice handling to async callbacks
+Date: Fri, 08 Dec 2017 10:03:54 +0200
+Message-ID: <24014872.yB9kxvWvsF@avalon>
+In-Reply-To: <20171208010842.20047-5-niklas.soderlund+renesas@ragnatech.se>
+References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se> <20171208010842.20047-5-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Hi Niklas,
 
-Adds CAN controller nodes for r8a77995.
+Thank you for the patch.
 
-Based on a patch for r8a7796 by Chris Paterson.
+On Friday, 8 December 2017 03:08:18 EET Niklas S=F6derlund wrote:
+> In preparation for Gen3 support move the subdevice initialization and
+> clean up from rvin_v4l2_{register,unregister}() directly to the async
+> callbacks. This simplifies the addition of Gen3 support as the
+> rvin_v4l2_register() can be shared for both Gen2 and Gen3 while direct
+> subdevice control are only used on Gen2.
+>=20
+> While moving this code drop a large comment which is copied from the
+> framework documentation and fold rvin_mbus_supported() into its only
+> caller.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 32 +++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+I'd really move the initialization and cleanup code to two separate functio=
+ns,=20
+it's getting hard to read. This is especially true for the initialization=20
+code, but I'd do the same for the cleanup code as well even if it's just a=
+=20
+matter of calling v4l2_ctrl_handler_free().
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 0f78592d993c..b2c8db15db53 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -346,6 +346,38 @@
- 			resets = <&cpg 906>;
- 		};
- 
-+		can0: can@e6c30000 {
-+			compatible = "renesas,can-r8a77995",
-+				     "renesas,rcar-gen3-can";
-+			reg = <0 0xe6c30000 0 0x1000>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>,
-+			       <&cpg CPG_CORE R8A77995_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A77995_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 916>;
-+			status = "disabled";
-+		};
-+
-+		can1: can@e6c38000 {
-+			compatible = "renesas,can-r8a77995",
-+				     "renesas,rcar-gen3-can";
-+			reg = <0 0xe6c38000 0 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>,
-+			       <&cpg CPG_CORE R8A77995_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A77995_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 915>;
-+			status = "disabled";
-+		};
-+
- 		avb: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a77995",
- 				     "renesas,etheravb-rcar-gen3";
--- 
-2.11.0
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 105 ++++++++++++++++------=
+=2D-
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c |  35 ----------
+>  2 files changed, 67 insertions(+), 73 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> b/drivers/media/platform/rcar-vin/rcar-core.c index
+> 6d99542ec74b49a7..6ab51acd676641ec 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -46,47 +46,11 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int
+> direction) return -EINVAL;
+>  }
+>=20
+> -static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
+> -{
+> -	struct v4l2_subdev *sd =3D entity->subdev;
+> -	struct v4l2_subdev_mbus_code_enum code =3D {
+> -		.which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
+> -	};
+> -
+> -	code.index =3D 0;
+> -	code.pad =3D entity->source_pad;
+> -	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
+> -		code.index++;
+> -		switch (code.code) {
+> -		case MEDIA_BUS_FMT_YUYV8_1X16:
+> -		case MEDIA_BUS_FMT_UYVY8_2X8:
+> -		case MEDIA_BUS_FMT_UYVY10_2X10:
+> -		case MEDIA_BUS_FMT_RGB888_1X24:
+> -			entity->code =3D code.code;
+> -			return true;
+> -		default:
+> -			break;
+> -		}
+> -	}
+> -
+> -	return false;
+> -}
+> -
+>  static int rvin_digital_notify_complete(struct v4l2_async_notifier
+> *notifier) {
+>  	struct rvin_dev *vin =3D notifier_to_vin(notifier);
+>  	int ret;
+>=20
+> -	/* Verify subdevices mbus format */
+> -	if (!rvin_mbus_supported(vin->digital)) {
+> -		vin_err(vin, "Unsupported media bus format for %s\n",
+> -			vin->digital->subdev->name);
+> -		return -EINVAL;
+> -	}
+> -
+> -	vin_dbg(vin, "Found media bus format for %s: %d\n",
+> -		vin->digital->subdev->name, vin->digital->code);
+> -
+>  	ret =3D v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
+>  	if (ret < 0) {
+>  		vin_err(vin, "Failed to register subdev nodes\n");
+> @@ -103,8 +67,16 @@ static void rvin_digital_notify_unbind(struct
+> v4l2_async_notifier *notifier, struct rvin_dev *vin =3D
+> notifier_to_vin(notifier);
+>=20
+>  	vin_dbg(vin, "unbind digital subdev %s\n", subdev->name);
+> +
+> +	mutex_lock(&vin->lock);
+> +
+>  	rvin_v4l2_unregister(vin);
+> +	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> +
+> +	vin->vdev.ctrl_handler =3D NULL;
+>  	vin->digital->subdev =3D NULL;
+> +
+> +	mutex_unlock(&vin->lock);
+>  }
+>=20
+>  static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifie=
+r,
+> @@ -112,12 +84,14 @@ static int rvin_digital_notify_bound(struct
+> v4l2_async_notifier *notifier, struct v4l2_async_subdev *asd)
+>  {
+>  	struct rvin_dev *vin =3D notifier_to_vin(notifier);
+> +	struct v4l2_subdev_mbus_code_enum code =3D {
+> +		.which =3D V4L2_SUBDEV_FORMAT_ACTIVE,
+> +	};
+>  	int ret;
+>=20
+>  	v4l2_set_subdev_hostdata(subdev, vin);
+>=20
+>  	/* Find source and sink pad of remote subdevice */
+> -
+>  	ret =3D rvin_find_pad(subdev, MEDIA_PAD_FL_SOURCE);
+>  	if (ret < 0)
+>  		return ret;
+> @@ -126,21 +100,74 @@ static int rvin_digital_notify_bound(struct
+> v4l2_async_notifier *notifier, ret =3D rvin_find_pad(subdev,
+> MEDIA_PAD_FL_SINK);
+>  	vin->digital->sink_pad =3D ret < 0 ? 0 : ret;
+>=20
+> +	/* Find compatible subdevices mbus format */
+> +	vin->digital->code =3D 0;
+> +	code.index =3D 0;
+> +	code.pad =3D vin->digital->source_pad;
+> +	while (!vin->digital->code &&
+> +	       !v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL, &code)) {
+> +		code.index++;
+> +		switch (code.code) {
+> +		case MEDIA_BUS_FMT_YUYV8_1X16:
+> +		case MEDIA_BUS_FMT_UYVY8_2X8:
+> +		case MEDIA_BUS_FMT_UYVY10_2X10:
+> +		case MEDIA_BUS_FMT_RGB888_1X24:
+> +			vin->digital->code =3D code.code;
+> +			vin_dbg(vin, "Found media bus format for %s: %d\n",
+> +				subdev->name, vin->digital->code);
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!vin->digital->code) {
+> +		vin_err(vin, "Unsupported media bus format for %s\n",
+> +			subdev->name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Read tvnorms */
+> +	ret =3D v4l2_subdev_call(subdev, video, g_tvnorms, &vin->vdev.tvnorms);
+> +	if (ret < 0 && ret !=3D -ENOIOCTLCMD && ret !=3D -ENODEV)
+> +		return ret;
+> +
+> +	mutex_lock(&vin->lock);
+> +
+> +	/* Add the controls */
+> +	ret =3D v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
+> +	if (ret < 0)
+> +		goto err;
+> +
+> +	ret =3D v4l2_ctrl_add_handler(&vin->ctrl_handler, subdev->ctrl_handler,
+> +				    NULL);
+> +	if (ret < 0)
+> +		goto err_ctrl;
+> +
+> +	vin->vdev.ctrl_handler =3D &vin->ctrl_handler;
+> +
+>  	vin->digital->subdev =3D subdev;
+>=20
+> +	mutex_unlock(&vin->lock);
+> +
+>  	vin_dbg(vin, "bound subdev %s source pad: %u sink pad: %u\n",
+>  		subdev->name, vin->digital->source_pad,
+>  		vin->digital->sink_pad);
+>=20
+>  	return 0;
+> +err_ctrl:
+> +	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> +err:
+> +	mutex_unlock(&vin->lock);
+> +	return ret;
+>  }
+> +
+>  static const struct v4l2_async_notifier_operations rvin_digital_notify_o=
+ps
+> =3D { .bound =3D rvin_digital_notify_bound,
+>  	.unbind =3D rvin_digital_notify_unbind,
+>  	.complete =3D rvin_digital_notify_complete,
+>  };
+>=20
+> -
+>  static int rvin_digital_parse_v4l2(struct device *dev,
+>  				   struct v4l2_fwnode_endpoint *vep,
+>  				   struct v4l2_async_subdev *asd)
+> @@ -277,6 +304,8 @@ static int rcar_vin_remove(struct platform_device *pd=
+ev)
+> v4l2_async_notifier_unregister(&vin->notifier);
+>  	v4l2_async_notifier_cleanup(&vin->notifier);
+>=20
+> +	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> +
+>  	rvin_dma_unregister(vin);
+>=20
+>  	return 0;
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> 32a658214f48fa49..4a0610a6b4503501 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -847,9 +847,6 @@ void rvin_v4l2_unregister(struct rvin_dev *vin)
+>  	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+>  		  video_device_node_name(&vin->vdev));
+>=20
+> -	/* Checks internaly if handlers have been init or not */
+> -	v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> -
+>  	/* Checks internaly if vdev have been init or not */
+>  	video_unregister_device(&vin->vdev);
+>  }
+> @@ -872,41 +869,10 @@ static void rvin_notify(struct v4l2_subdev *sd,
+>  int rvin_v4l2_register(struct rvin_dev *vin)
+>  {
+>  	struct video_device *vdev =3D &vin->vdev;
+> -	struct v4l2_subdev *sd =3D vin_to_source(vin);
+>  	int ret;
+>=20
+> -	v4l2_set_subdev_hostdata(sd, vin);
+> -
+>  	vin->v4l2_dev.notify =3D rvin_notify;
+>=20
+> -	ret =3D v4l2_subdev_call(sd, video, g_tvnorms, &vin->vdev.tvnorms);
+> -	if (ret < 0 && ret !=3D -ENOIOCTLCMD && ret !=3D -ENODEV)
+> -		return ret;
+> -
+> -	if (vin->vdev.tvnorms =3D=3D 0) {
+> -		/* Disable the STD API if there are no tvnorms defined */
+> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_G_STD);
+> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_S_STD);
+> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_QUERYSTD);
+> -		v4l2_disable_ioctl(&vin->vdev, VIDIOC_ENUMSTD);
+> -	}
+> -
+> -	/* Add the controls */
+> -	/*
+> -	 * Currently the subdev with the largest number of controls (13) is
+> -	 * ov6550. So let's pick 16 as a hint for the control handler. Note
+> -	 * that this is a hint only: too large and you waste some memory, too
+> -	 * small and there is a (very) small performance hit when looking up
+> -	 * controls in the internal hash.
+> -	 */
+> -	ret =3D v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	ret =3D v4l2_ctrl_add_handler(&vin->ctrl_handler, sd->ctrl_handler, NUL=
+L);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	/* video node */
+>  	vdev->fops =3D &rvin_fops;
+>  	vdev->v4l2_dev =3D &vin->v4l2_dev;
+> @@ -915,7 +881,6 @@ int rvin_v4l2_register(struct rvin_dev *vin)
+>  	vdev->release =3D video_device_release_empty;
+>  	vdev->ioctl_ops =3D &rvin_ioctl_ops;
+>  	vdev->lock =3D &vin->lock;
+> -	vdev->ctrl_handler =3D &vin->ctrl_handler;
+>  	vdev->device_caps =3D V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+>  		V4L2_CAP_READWRITE;
+
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
