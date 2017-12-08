@@ -1,75 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:38545 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753567AbdLHPYD (ORCPT
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:35732 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753760AbdLHPLQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Dec 2017 10:24:03 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171208151114.ly7sqymznmeme4w4@rob-hp-laptop>
-References: <1512738783-17452-1-git-send-email-geert+renesas@glider.be> <20171208151114.ly7sqymznmeme4w4@rob-hp-laptop>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 8 Dec 2017 16:24:02 +0100
-Message-ID: <CAMuHMdWWnbaVPbBHkONcJTn1RATCy6kwQ+MFnqbYO=koACqvow@mail.gmail.com>
-Subject: Re: [PATCH 0/2] of: overlay: Crash fix and improvement
-To: Rob Herring <robh@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Fri, 8 Dec 2017 10:11:16 -0500
+Date: Fri, 8 Dec 2017 09:11:14 -0600
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         Frank Rowand <frowand.list@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] of: overlay: Crash fix and improvement
+Message-ID: <20171208151114.ly7sqymznmeme4w4@rob-hp-laptop>
+References: <1512738783-17452-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1512738783-17452-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
+On Fri, Dec 08, 2017 at 02:13:01PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Pantelis, Rob, Frank,
+> 
+> This patch series fixes memory corruption when applying overlays.
+> 
+> I first noticed this when using OF configfs.  After lots of failed
+> debugging attempts, I bisected it to "of: overlay: add per overlay sysfs
+> attributes", which is not upstream.  But that was a red herring: that
+> commit enlarged struct fragment to exactly 64-bytes, which just made it
+> more likely to cause random corruption when writing beyond the end of an
+> array of fragment structures.  With the smaller structure size before,
+> such writes usually ended up in the unused holes between allocated
+> blocks, causing no harm.
+> 
+> The first patch is the real fix, and applies to both v4.15-rc2 and Rob's
+> for-next branch.
+> The second patch is a small improvement, and applies to Rob's for-next
+> branch only.
+> 
+> I've updated my topic/overlays and topic/renesas-overlays branches at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+> accordingly.
+> 
+> Thanks!
+> 
+> Geert Uytterhoeven (2):
+>   of: overlay: Fix out-of-bounds write in init_overlay_changeset()
+>   of: overlay: Make node skipping in init_overlay_changeset() clearer
 
-On Fri, Dec 8, 2017 at 4:11 PM, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Dec 08, 2017 at 02:13:01PM +0100, Geert Uytterhoeven wrote:
->> This patch series fixes memory corruption when applying overlays.
->>
->> I first noticed this when using OF configfs.  After lots of failed
->> debugging attempts, I bisected it to "of: overlay: add per overlay sysfs
->> attributes", which is not upstream.  But that was a red herring: that
->> commit enlarged struct fragment to exactly 64-bytes, which just made it
->> more likely to cause random corruption when writing beyond the end of an
->> array of fragment structures.  With the smaller structure size before,
->> such writes usually ended up in the unused holes between allocated
->> blocks, causing no harm.
->>
->> The first patch is the real fix, and applies to both v4.15-rc2 and Rob's
->> for-next branch.
->> The second patch is a small improvement, and applies to Rob's for-next
->> branch only.
->>
->> I've updated my topic/overlays and topic/renesas-overlays branches at
->> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
->> accordingly.
->>
->> Thanks!
->>
->> Geert Uytterhoeven (2):
->>   of: overlay: Fix out-of-bounds write in init_overlay_changeset()
->>   of: overlay: Make node skipping in init_overlay_changeset() clearer
->
-> I've applied both and am updating my pull req to Linus. I hope that's
-> the end of it. If further fixes can't be reproduced with mainline, I'm
-> not going to be inclined to take them for 4.15.
+I've applied both and am updating my pull req to Linus. I hope that's 
+the end of it. If further fixes can't be reproduced with mainline, I'm 
+not going to be inclined to take them for 4.15.
 
-Tahnks!
-
-BTW, seems I accidentally used "--" instead of "---" as a separator, so the
-commit message
-https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/commit/?h=dt/linus&id=efb72067c287cd6aba8eb434bd5bdc1ae0af6ed7
-contains a few more lines than intended.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
