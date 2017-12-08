@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35652 "EHLO
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36532 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751578AbdLSLj5 (ORCPT
+        id S1752500AbdLHK3k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 06:39:57 -0500
-Date: Tue, 19 Dec 2017 11:40:42 +0000
+        Fri, 8 Dec 2017 05:29:40 -0500
+Date: Fri, 8 Dec 2017 10:30:17 +0000
 From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Simon Horman <horms@verge.net.au>,
@@ -15,7 +15,7 @@ Cc: Simon Horman <horms@verge.net.au>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/2] PCI: rcar: Handle
  rcar_pcie_parse_request_of_pci_ranges() failures
-Message-ID: <20171219114042.GB19911@red-moon>
+Message-ID: <20171208103017.GB26816@red-moon>
 References: <1512641720-4715-1-git-send-email-geert+renesas@glider.be>
  <1512641720-4715-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
@@ -37,10 +37,7 @@ On Thu, Dec 07, 2017 at 11:15:20AM +0100, Geert Uytterhoeven wrote:
 >  drivers/pci/host/pcie-rcar.c | 5 ++++-
 >  1 file changed, 4 insertions(+), 1 deletion(-)
 
-Applied to pci/rcar for v4.16.
-
-Thanks,
-Lorenzo
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 
 > diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
 > index 52ab3cb0a0bfe065..95ca4a1feba4b759 100644
