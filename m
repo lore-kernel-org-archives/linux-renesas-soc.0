@@ -1,203 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47435 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754697AbdLFKXB (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51582 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752259AbdLHTIC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:01 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Updates for v4.16
-Date: Wed,  6 Dec 2017 11:22:38 +0100
-Message-Id: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Fri, 8 Dec 2017 14:08:02 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v9 03/28] rcar-vin: unregister video device on driver removal
+Date: Fri, 08 Dec 2017 21:07:59 +0200
+Message-ID: <7105914.vch11FvaiR@avalon>
+In-Reply-To: <20171208130921.GN31989@bigcity.dyn.berto.se>
+References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se> <1762416.X4GW5MWmCZ@avalon> <20171208130921.GN31989@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Niklas,
 
-Please consider these Renesas ARM based SoC DT updates for v4.16.
+On Friday, 8 December 2017 15:09:21 EET Niklas S=F6derlund wrote:
+> On 2017-12-08 09:54:31 +0200, Laurent Pinchart wrote:
+> > On Friday, 8 December 2017 03:08:17 EET Niklas S=F6derlund wrote:
+> >> If the video device was registered by the complete() callback it should
+> >> be unregistered when the driver is removed.
+> >=20
+> > The .remove() operation indicates device removal, not driver removal (o=
+r,
+> > the be more precise, it indicates that the device is unbound from the
+> > driver). I'd update the commit message accordingly.
+>=20
+> I'm not sure I fully understand this comment.
+>=20
+> My take is that .remove() indicates that the device is removed and not
+> the driver itself, as the driver might be used by multiple devices and
+> the .remove() function is therefor not an indication that the driver is
+> being unloaded.
+>=20
+> So if I understood you correctly the following would be a better to go
+> in the commit message:
+>=20
+> "If the video device was registered by the complete() callback it should
+> be unregistered when a device is unbound from the driver."
 
+Perfect :-)
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+> >> Protect from printing an uninitialized video device node name by adding
+> >> a check in rvin_v4l2_unregister() to identify that the video device is
+> >> registered.
+> >>=20
+> >> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> >> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+> >> ---
+> >>=20
+> >>  drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
+> >>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 +++
+> >>  2 files changed, 5 insertions(+)
+> >>=20
+> >> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> >> b/drivers/media/platform/rcar-vin/rcar-core.c index
+> >> f7a4c21909da6923..6d99542ec74b49a7 100644
+> >> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> >> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> >> @@ -272,6 +272,8 @@ static int rcar_vin_remove(struct platform_device
+> >> *pdev)> >=20
+> >>  	pm_runtime_disable(&pdev->dev);
+> >>=20
+> >> +	rvin_v4l2_unregister(vin);
+> >=20
+> > Unless I'm mistaken, you're unregistering the video device both here and
+> > in the unbound() function. That's messy, but it's not really your fault,
+> > the V4L2 core is very messy in the first place, and registering video
+> > devices in the complete() handler is a bad idea. As that can't be fixed
+> > for now,
+> >=20
+> > Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>=20
+> Big thanks for this :-)
+>=20
+> > Hans, I still would like to hear your opinion on how this should be
+> > solved.
+> > You've voiced a few weeks ago that register video devices at probe() ti=
+me
+> > isn't a good idea but you've never explained how we should fix the
+> > problem. I still firmly believe that video devices should be registered
+> > at probe time, and we need to reach an agreement on a technical solution
+> > to this problem.
+> >=20
+> >>  	v4l2_async_notifier_unregister(&vin->notifier);
+> >>  	v4l2_async_notifier_cleanup(&vin->notifier);
+> >>=20
+> >> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> >> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> >> 178aecc94962abe2..32a658214f48fa49 100644
+> >> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> >> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> >> @@ -841,6 +841,9 @@ static const struct v4l2_file_operations rvin_fops=
+ =3D
+> >> {
+> >>=20
+> >>  void rvin_v4l2_unregister(struct rvin_dev *vin)
+> >>  {
+> >> +	if (!video_is_registered(&vin->vdev))
+> >> +		return;
+> >> +
+> >>  	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+> >>  		  video_device_node_name(&vin->vdev));
 
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+=2D-=20
+Regards,
 
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-for-v4.16
-
-for you to fetch changes up to 7f32eddb81ecc06131a643babe2d0f961fbd7f08:
-
-  ARM: dts: alt: Convert to named i2c-gpio bindings (2017-12-04 09:34:53 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Updates for v4.16
-
-* Convert to named i2c-gpio bindings
-
-  Geert Uytterhoeven says "Commits 7d29f509d2cfd807 ("dt-bindings: i2c:
-  i2c-gpio: Add support for named gpios") and 05c74778858d7d99 ("i2c: gpio:
-  Add support for named gpios in DT") introduced named i2c-gpio DT
-  bindings, and deprecated the more error-prone unnamed variant.
-
-  This patch series switches all Renesas boards to the new bindings, and
-  adds the missing GPIO_OPEN_DRAIN I/O flags, which were implicitly
-  assumed before..."
-
-  ...  Note that after this series is applied, the i2c-gpio buses are no
-  longer detected when booting new DTBs on old (v4.14 and older) kernels,
-  which should not be an issue.  Booting old DTBs on new kernels is not
-  affected."
-
-* Update DTS for CMT DT binding rework
-
-  Geert Uytterhoeven says "This patch series updates the CMT device nodes
-  in the various Renesas DTS files sh_cmt clocksource driver for the recent
-  DT binding rework that was merged in v4.14-rc1 and v4.15-rc1..."
-
-* Add SMP support to r8a7794 (R-Car E2) SoC
-
-  Sergei Shtylyov says "Add the device tree node for the Advanced Power
-  Management Unit (APMU).  Use the "enable-method" prop to  point out that
-  the APMU should be used for the SMP support."
-
-* Correct primary compatible value for eeprom
-  on r7s72100 (RZ/A1H) genmai and r8a7791 (R-Car M2-W) koelsh boards
-
-  Geert Uytterhoeven says "The Renesas part numbers of the two-wire serial
-  interface EEPROMs do not follow the 24Cxx pattern, but the R1EX24xxx
-  pattern.
-
-  Hence change the primary compatible values to the appropriate variant of
-  "renesas,r1ex24xxx", like is already done on Gose.""
-
-* Move cec_clock to root node on r8a7791 (R-Car M2-W) koelsh board
-  r8a7791 (R-Car M2-W) koelsh board
-
-* Use R-Car SDHI and Ether Gen1 and 2 fallback compat strings
-
-  Use recently posted R-Car SDHI and Ether Gen 1 and 2 fallback
-  compat strings in the DT of Renesas ARM based SoCs.
-
-* Add IIC cores to dtsi of r8a7745 (RZ/G1E) SoC
-
-* Rework DT architecture for r8a7745 (RZ/G1E) iW-RainboW-G22D development
-  platform and add serial support.
-
-  Fabrizio Castro says "... define a new DT architecture for the
-  iW-RainboW-G22D SODIMM Development Platform to include the configuration
-  with the HDMI daughter board and to define the serial interfaces."
-
-* Add USB function support to
-  r8a7745 (RZ/G1E) iW-RainboW-G22D development platform
-
-* Add PCIEC and ttySC3 support to r8a7743 (RZ/G1M) iW-RainboW-G20M-Qseven SoM
-
-* Add VIN support to r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs
-
-* Add CAN and HDMI support to r8a7743 (RZ/G1M) iW-RainboW-G20D-Qseven and
-  r8a7745 (RZ/G1E) iW-RainboW-G22D development platforms
-
-----------------------------------------------------------------
-Biju Das (7):
-      ARM: dts: r8a7745: Add HS-USB device node
-      ARM: dts: r8a7745: Add USB-DMAC device nodes
-      ARM: dts: r8a7745: Enable DMA for HSUSB
-      ARM: dts: iwg22d-sodimm: Enable HS-USB
-      ARM: dts: r8a7743: Add default PCIe bus clock
-      ARM: dts: r8a7743: Add PCIe Controller device node
-      ARM: dts: iwg20d-q7: Enable PCIe Controller
-
-Fabrizio Castro (18):
-      ARM: dts: r8a7743: Add DU support
-      ARM: dts: iwg20d-q7-dbcm-ca: Add HDMI video output
-      ARM: dts: iwg22d: Use /dev/ttySC3 as debug console
-      ARM: dts: iwg22d: Add /dev/ttySC5 support
-      ARM: dts: iwg22d-sodimm-dbhd-ca: Add device tree for HDMI DB
-      ARM: dts: iwg22d-sodimm: sort dt nodes
-      ARM: dts: r8a7745: Add IIC cores to dtsi
-      ARM: dts: iwg20d-q7: Add support for ttySC3
-      ARM: dts: r8a7745: Add DU support
-      ARM: dts: iwg22d-sodimm-dbhd-ca: Add HDMI video output
-      ARM: dts: r8a7745: Add CAN[01] SoC support
-      ARM: dts: iwg22d-sodimm: Add can0 support to carrier board
-      ARM: dts: iwg22d-sodimm-dbhd-ca: Add can1 support to HDMI DB
-      ARM: dts: r8a7743: Add CAN[01] SoC support
-      ARM: dts: iwg20d-q7-common: Add can0 support to carrier board
-      ARM: dts: iwg20d-q7-dbcm-ca: Add can1 support to camera DB
-      ARM: dts: r8a7743: add VIN dt support
-      ARM: dts: r8a7745: add VIN dt support
-
-Geert Uytterhoeven (6):
-      ARM: dts: koelsch: Correct primary compatible value for eeprom
-      ARM: dts: genmai: Correct primary compatible value for eeprom
-      ARM: dts: armadillo800eva: Convert to named i2c-gpio bindings
-      ARM: dts: lager: Convert to named i2c-gpio bindings
-      ARM: dts: koelsch: Convert to named i2c-gpio bindings
-      ARM: dts: alt: Convert to named i2c-gpio bindings
-
-Magnus Damm (12):
-      ARM: dts: r8a73a4: Update CMT compat string
-      ARM: dts: r8a7790: Update CMT compat strings
-      ARM: dts: r8a7791: Update CMT compat strings
-      ARM: dts: r8a7793: Update CMT compat strings
-      ARM: dts: r8a7794: Update CMT compat strings
-      ARM: dts: r8a73a4: Remove CMT renesas,channels-mask
-      ARM: dts: r8a7740: Remove CMT renesas,channels-mask
-      ARM: dts: r8a7790: Remove CMT renesas,channels-mask
-      ARM: dts: r8a7791: Remove CMT renesas,channels-mask
-      ARM: dts: r8a7793: Remove CMT renesas,channels-mask
-      ARM: dts: r8a7794: Remove CMT renesas,channels-mask
-      ARM: dts: sh73a0: Remove CMT renesas,channels-mask
-
-Sergei Shtylyov (1):
-      ARM: dts: r8a7794: Add SMP support
-
-Simon Horman (17):
-      ARM: dts: r8a7743: Use R-Car Gen2 Ether fallback compat string
-      ARM: dts: r8a7745: Use R-Car Gen2 Ether fallback compat string
-      ARM: dts: r8a7778: Use R-Car Gen1 Ether fallback compat string
-      ARM: dts: r8a7790: Use R-Car Gen2 Ether fallback compat string
-      ARM: dts: r8a7791: Use R-Car Gen2 Ether fallback compat string
-      ARM: dts: r8a7793: Use R-Car Gen2 Ether fallback compat string
-      ARM: dts: r8a7794: Use R-Car Gen2 Ether fallback compat string
-      ARM: dts: r8a7743: Use R-Car SDHI Gen2 fallback compat string
-      ARM: dts: r8a7745: Use R-Car SDHI Gen2 fallback compat string
-      ARM: dts: r8a7778: Use R-Car SDHI Gen1 fallback compat string
-      ARM: dts: r8a7779: Use R-Car SDHI Gen1 fallback compat string
-      ARM: dts: r8a7790: Use R-Car SDHI Gen2 fallback compat string
-      ARM: dts: r8a7791: Use R-Car SDHI Gen2 fallback compat string
-      ARM: dts: r8a7792: Use R-Car SDHI Gen2 fallback compat string
-      ARM: dts: r8a7793: Use R-Car SDHI Gen2 fallback compat string
-      ARM: dts: r8a7794: Use R-Car SDHI Gen2 fallback compat string
-      ARM: dts: koelsch: Move cec_clock to root node
-
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/iwg20d-q7-common.dtsi            |  34 ++++
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi           |  87 ++++++++++
- arch/arm/boot/dts/r7s72100-genmai.dts              |   2 +-
- arch/arm/boot/dts/r8a73a4.dtsi                     |   5 +-
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts      |   5 +-
- arch/arm/boot/dts/r8a7740.dtsi                     |   3 -
- arch/arm/boot/dts/r8a7743.dtsi                     | 149 ++++++++++++++++-
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 158 ++++++++++++++++++
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts        |  99 ++++++++----
- arch/arm/boot/dts/r8a7745.dtsi                     | 180 ++++++++++++++++++++-
- arch/arm/boot/dts/r8a7778.dtsi                     |  12 +-
- arch/arm/boot/dts/r8a7779.dtsi                     |  12 +-
- arch/arm/boot/dts/r8a7790-lager.dts                |   5 +-
- arch/arm/boot/dts/r8a7790.dtsi                     |  23 +--
- arch/arm/boot/dts/r8a7791-koelsch.dts              |  19 ++-
- arch/arm/boot/dts/r8a7791.dtsi                     |  20 +--
- arch/arm/boot/dts/r8a7792.dtsi                     |   3 +-
- arch/arm/boot/dts/r8a7793.dtsi                     |  20 +--
- arch/arm/boot/dts/r8a7794-alt.dts                  |   5 +-
- arch/arm/boot/dts/r8a7794.dtsi                     |  27 ++--
- arch/arm/boot/dts/sh73a0.dtsi                      |   3 -
- 22 files changed, 753 insertions(+), 119 deletions(-)
- create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+Laurent Pinchart
