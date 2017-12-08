@@ -1,235 +1,220 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:65195 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933394AbdLRSHE (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:44794 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751288AbdLHBI5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 13:07:04 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+        Thu, 7 Dec 2017 20:08:57 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 1/4] pinctrl: sh-pfc: r8a7794: Add PWM[0123456] support
-Date: Mon, 18 Dec 2017 18:06:48 +0000
-Message-Id: <1513620411-17478-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513620411-17478-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513620411-17478-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v9 00/28] rcar-vin: Add Gen3 with media controller
+Date: Fri,  8 Dec 2017 02:08:14 +0100
+Message-Id: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds PFC PWM[0123456] pin groups and functions, enabling
-PWM on the r8a7794 and r8a7745.
+Hi,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2:
-* No change
+This series adds Gen3 VIN support to rcar-vin driver for Renesas r8a7795,
+r8a7796 and r8a77970. It is based on the media-tree and depends on some 
+of Fabrizio Castro patches as they touches the order of the compatible 
+strings in the documentation to reduce merge conflicts. The dependencies 
+are:
 
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 165 +++++++++++++++++++++++++++++++++++
- 1 file changed, 165 insertions(+)
+[PATCH v2 1/4] dt-bindings: media: rcar_vin: Reverse SoC part number list
+[PATCH v2 2/4] dt-bindings: media: rcar_vin: add device tree support for r8a774[35]
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index c557bc8..dccc20a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -2546,6 +2546,109 @@ static const unsigned int msiof2_tx_b_pins[] = {
- static const unsigned int msiof2_tx_b_mux[] = {
- 	MSIOF2_TXD_B_MARK,
- };
-+/* - PWM -------------------------------------------------------------------- */
-+static const unsigned int pwm0_pins[] = {
-+	RCAR_GP_PIN(1, 14),
-+};
-+static const unsigned int pwm0_mux[] = {
-+	PWM0_MARK,
-+};
-+static const unsigned int pwm0_b_pins[] = {
-+	RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int pwm0_b_mux[] = {
-+	PWM0_B_MARK,
-+};
-+static const unsigned int pwm1_pins[] = {
-+	RCAR_GP_PIN(4, 5),
-+};
-+static const unsigned int pwm1_mux[] = {
-+	PWM1_MARK,
-+};
-+static const unsigned int pwm1_b_pins[] = {
-+	RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int pwm1_b_mux[] = {
-+	PWM1_B_MARK,
-+};
-+static const unsigned int pwm1_c_pins[] = {
-+	RCAR_GP_PIN(1, 18),
-+};
-+static const unsigned int pwm1_c_mux[] = {
-+	PWM1_C_MARK,
-+};
-+static const unsigned int pwm2_pins[] = {
-+	RCAR_GP_PIN(4, 10),
-+};
-+static const unsigned int pwm2_mux[] = {
-+	PWM2_MARK,
-+};
-+static const unsigned int pwm2_b_pins[] = {
-+	RCAR_GP_PIN(5, 17),
-+};
-+static const unsigned int pwm2_b_mux[] = {
-+	PWM2_B_MARK,
-+};
-+static const unsigned int pwm2_c_pins[] = {
-+	RCAR_GP_PIN(0, 13),
-+};
-+static const unsigned int pwm2_c_mux[] = {
-+	PWM2_C_MARK,
-+};
-+static const unsigned int pwm3_pins[] = {
-+	RCAR_GP_PIN(4, 13),
-+};
-+static const unsigned int pwm3_mux[] = {
-+	PWM3_MARK,
-+};
-+static const unsigned int pwm3_b_pins[] = {
-+	RCAR_GP_PIN(0, 16),
-+};
-+static const unsigned int pwm3_b_mux[] = {
-+	PWM3_B_MARK,
-+};
-+static const unsigned int pwm4_pins[] = {
-+	RCAR_GP_PIN(1, 3),
-+};
-+static const unsigned int pwm4_mux[] = {
-+	PWM4_MARK,
-+};
-+static const unsigned int pwm4_b_pins[] = {
-+	RCAR_GP_PIN(0, 21),
-+};
-+static const unsigned int pwm4_b_mux[] = {
-+	PWM4_B_MARK,
-+};
-+static const unsigned int pwm5_pins[] = {
-+	RCAR_GP_PIN(3, 30),
-+};
-+static const unsigned int pwm5_mux[] = {
-+	PWM5_MARK,
-+};
-+static const unsigned int pwm5_b_pins[] = {
-+	RCAR_GP_PIN(4, 0),
-+};
-+static const unsigned int pwm5_b_mux[] = {
-+	PWM5_B_MARK,
-+};
-+static const unsigned int pwm5_c_pins[] = {
-+	RCAR_GP_PIN(0, 10),
-+};
-+static const unsigned int pwm5_c_mux[] = {
-+	PWM5_C_MARK,
-+};
-+static const unsigned int pwm6_pins[] = {
-+	RCAR_GP_PIN(4, 8),
-+};
-+static const unsigned int pwm6_mux[] = {
-+	PWM6_MARK,
-+};
-+static const unsigned int pwm6_b_pins[] = {
-+	RCAR_GP_PIN(0, 7),
-+};
-+static const unsigned int pwm6_b_mux[] = {
-+	PWM6_B_MARK,
-+};
- /* - QSPI ------------------------------------------------------------------- */
- static const unsigned int qspi_ctrl_pins[] = {
- 	/* SPCLK, SSL */
-@@ -3689,6 +3792,23 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(msiof2_ss2_b),
- 	SH_PFC_PIN_GROUP(msiof2_rx_b),
- 	SH_PFC_PIN_GROUP(msiof2_tx_b),
-+	SH_PFC_PIN_GROUP(pwm0),
-+	SH_PFC_PIN_GROUP(pwm0_b),
-+	SH_PFC_PIN_GROUP(pwm1),
-+	SH_PFC_PIN_GROUP(pwm1_b),
-+	SH_PFC_PIN_GROUP(pwm1_c),
-+	SH_PFC_PIN_GROUP(pwm2),
-+	SH_PFC_PIN_GROUP(pwm2_b),
-+	SH_PFC_PIN_GROUP(pwm2_c),
-+	SH_PFC_PIN_GROUP(pwm3),
-+	SH_PFC_PIN_GROUP(pwm3_b),
-+	SH_PFC_PIN_GROUP(pwm4),
-+	SH_PFC_PIN_GROUP(pwm4_b),
-+	SH_PFC_PIN_GROUP(pwm5),
-+	SH_PFC_PIN_GROUP(pwm5_b),
-+	SH_PFC_PIN_GROUP(pwm5_c),
-+	SH_PFC_PIN_GROUP(pwm6),
-+	SH_PFC_PIN_GROUP(pwm6_b),
- 	SH_PFC_PIN_GROUP(qspi_ctrl),
- 	SH_PFC_PIN_GROUP(qspi_data2),
- 	SH_PFC_PIN_GROUP(qspi_data4),
-@@ -4050,6 +4170,44 @@ static const char * const msiof2_groups[] = {
- 	"msiof2_tx_b",
- };
- 
-+static const char * const pwm0_groups[] = {
-+	"pwm0",
-+	"pwm0_b",
-+};
-+
-+static const char * const pwm1_groups[] = {
-+	"pwm1",
-+	"pwm1_b",
-+	"pwm1_c",
-+};
-+
-+static const char * const pwm2_groups[] = {
-+	"pwm2",
-+	"pwm2_b",
-+	"pwm2_c",
-+};
-+
-+static const char * const pwm3_groups[] = {
-+	"pwm3",
-+	"pwm3_b",
-+};
-+
-+static const char * const pwm4_groups[] = {
-+	"pwm4",
-+	"pwm4_b",
-+};
-+
-+static const char * const pwm5_groups[] = {
-+	"pwm5",
-+	"pwm5_b",
-+	"pwm5_c",
-+};
-+
-+static const char * const pwm6_groups[] = {
-+	"pwm6",
-+	"pwm6_b",
-+};
-+
- static const char * const qspi_groups[] = {
- 	"qspi_ctrl",
- 	"qspi_data2",
-@@ -4284,6 +4442,13 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(msiof0),
- 	SH_PFC_FUNCTION(msiof1),
- 	SH_PFC_FUNCTION(msiof2),
-+	SH_PFC_FUNCTION(pwm0),
-+	SH_PFC_FUNCTION(pwm1),
-+	SH_PFC_FUNCTION(pwm2),
-+	SH_PFC_FUNCTION(pwm3),
-+	SH_PFC_FUNCTION(pwm4),
-+	SH_PFC_FUNCTION(pwm5),
-+	SH_PFC_FUNCTION(pwm6),
- 	SH_PFC_FUNCTION(qspi),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
+The driver is tested on Renesas H3 (r8a7795, ES2.0),
+M3-W (r8a7796) together with the rcar-csi2 driver (posted separately and
+not yet upstream) and the Salvator-X onboard ADV7482. It is also tested 
+on the V3M (r8a77970) on the Eagle board together with its expansion 
+board with a ADV7482.
+
+It is possible to capture both CVBS and HDMI video streams,
+v4l2-compliance passes with no errors and media-ctl can be used to
+change the routing and formats for the different entities in the media
+graph.
+
+Gen2 compatibility is verified on Koelsch and no problems where found,
+video can be captured just like before and v4l2-compliance passes
+without errors or warnings just like before this series.
+
+I have started on a very basic test suite for the VIN driver at:
+
+  https://git.ragnatech.se/vin-tests
+
+And as before the state of the driver and information about how to test
+it can be found on the elinux wiki:
+
+  http://elinux.org/R-Car/Tests:rcar-vin
+
+* Changes since b8
+- Fixed issue in rvin_group_init() where rvin_group_update_links() was 
+  called, but after moving the video device registration to the 
+  complete() callback this is now invalid.
+- Fixed spelling in commit messages.
+- Added review and acks from Hans, Kieran and Rob.
+
+* Changes since v7
+- Dropped '[PATCH v7 02/25] rcar-vin: register the video device at probe time'
+- Add patch which renames four badly name functions. Some of the 
+  renaming was in v7 part of the dropped patch 02/25. Make it a own 
+  patch and rename all badly named functions in one patch.
+- Add patch to replace part of the functionality of the dropped patch v7 
+  02/25. The new patch keeps the subdevice (un)registration calls in the 
+  async callbacks bind() and unbind() but moves the direct subdevice 
+  initialization which only is used on Gen2 from the Gen2 and Gen3 
+  shared rvin_v4l2_register().
+- Add patch to enable Renesas V3M (r8a77970)
+- Patch 'rcar-vin: parse Gen3 OF and setup media graph' have had code 
+  additions since v7 since it now registers the video devices in the 
+  async complete() callback instead of at probe time as an effect of 
+  dropping v7 02/25.
+  - The complete() callback now register all video devices.
+  - The unbind() callback now unregister all video devices.
+  - A new member '*notifier' is added to struct rvin_group which keeps 
+    track of which rcar-vin instance have registered its notifier on the 
+    groups behalf.
+  For the reason above all Reviewed-by tags have been dropped for this 
+  patch.
+- Replaced all kernel messages which used of_node_full_name() as now 
+  only returns the basename and not till full path, thanks Geert.
+
+    printk("%s", of_node_full_name(ep)); -> printk("%pOF", ep);
+
+- Added Reviewed-by tags from Hans, big thanks!
+
+* Changes since v6
+- Rebase ontop of latest media-tree which brings in the use of the
+  fwnode async helpers for Gen2.
+- Updated DT binding documentation, thanks Laurent for very helpful
+  input!
+- Removed help text which where copied in from v4l2_ctrl_handler_init()
+  documentation when moving that code block, this was a residue from the
+  soc_camera conversion and should have been removed at that time.
+- Removed bad check of tvnorms which disables IOCTLs if it's not set,
+  this was a residue from soc_camera conversion and have use in the
+  current driver.
+- Moved all subdevice initialization from complete to bound handler
+  while improving the unbind handler. With this move all operations of
+  the ctrl_handler from the subdevice is handled in either bound or
+  unbind removing races pointed out by Laurent.
+- Renamed rvin_v4l2_probe() -> rvin_v4l2_register() and
+  rvin_v4l2_remove() -> rvin_v4l2_unregister().
+- Fold rvin_mbus_supported() into its only caller.
+- Sort compatible string entries in ascending order.
+- Improved documentation for struct rvin_group_chsel.
+- Clarify comment in rvin_group_csi_pad_to_chan().
+- Make use of of_device_get_match_data() as suggested by Geert.
+- Fixed spelling mistakes.
+- Added review tags from Hans.
+
+* Changes since v5
+- Extract and make use of common format checking for both Gen2 and Gen3.
+- Assign pad at declaration time in rvin_get_sd_format()
+- Always call pm_runtime_{get_sync,put}() and v4l2_pipeline_pm_use()
+  when opening/closing a video device, remove the check of
+  v4l2_fh_is_singular_file().
+- Make rvin_set_chsel() return void instead of int since it always
+  return 0.
+- Simplify the VIN group allocator functions.
+- Make the group notifier callbacks and setup more robust.
+- Moved the video device registration back to probe time.
+- Add H3 ES2.0 support.
+- Fix handling of single field formats (top, bottom, alternate) as this
+  was obviously wrong before but hidden by the Gen2 scaler support.
+- Added review tags from Kieran.
+
+* Changes since v4 (Not posted to ML)
+- Updated to the new fwnode functions.
+- Moved the registration of the video devices to the async notification
+  callback.
+
+* Changes since v3
+- Only add neighboring subdevices to the async notifier. Instead of
+  parsing the whole OF graph depend on incremental async subnotifier to
+  discover the whole pipeline. This is needed to support arbitrarily
+  long graphs and support the new ADV7482 prototype driver which Kieran
+  is working on.
+- Fix warning from lockdep, reported by Kieran.
+- Fix commit messages from feedback from Sergei, thanks.
+- Fix chip info an OF device ids sorting order, thanks Geert.
+- Use subdev->of_node instead of subdev->dev->of_node, thanks Kieran.
+
+* Changes since v2
+- Do not try to control the subdevices in the media graph from the rcar-vin
+  driver. Have user-space configure to format in the pipeline instead.
+- Add link validation before starting the stream.
+- Rework on how the subdevices are and the video node behave by defining
+  specific V4L2 operations for the MC mode of operation, this simplified
+  the driver quit a bit, thanks Laurent!
+- Add a new 'renesas,id' DT property which is needed to to be able to
+  keep the VIN to CSI-2 routing table inside the driver. Previously this
+  information was taken from the CSI-2 DT node which is obviously the
+  wrong way to do things. Thanks Laurent for pointing this out.
+- Fixed a memory leek in the group allocator function.
+- Return -EMLINK instead of -EBUSY if a MC link is not possible given
+  the current routing setup.
+- Add comments to clarify that the 4 channels from the CSI-2 node is not
+  directly related to CSI-2 virtual channels, the CSI-2 node can output
+  any VC on any of its output channels.
+
+* Changes since v1
+- Remove unneeded casts as pointed out by Geert.
+- Fix spelling and DT documentation as pointed out by Geert and Sergei,
+  thanks!
+- Refresh patch 2/32 with an updated version, thanks Sakari for pointing
+  this out.
+- Add Sakaris Ack to patch 1/32.
+- Rebase on top of v4.9-rc1 instead of v4.9-rc3 to ease integration
+  testing together with renesas-drivers tree.
+
+Niklas Söderlund (28):
+  rcar-vin: add Gen3 devicetree bindings documentation
+  rcar-vin: rename poorly named initialize and cleanup functions
+  rcar-vin: unregister video device on driver removal
+  rcar-vin: move subdevice handling to async callbacks
+  rcar-vin: move chip information to own struct
+  rcar-vin: move max width and height information to chip information
+  rcar-vin: change name of video device
+  rcar-vin: move functions regarding scaling
+  rcar-vin: all Gen2 boards can scale simplify logic
+  rcar-vin: do not reset crop and compose when setting format
+  rcar-vin: do not allow changing scaling and composing while streaming
+  rcar-vin: read subdevice format for crop only when needed
+  rcar-vin: fix handling of single field frames (top, bottom and
+    alternate fields)
+  rcar-vin: move media bus configuration to struct rvin_info
+  rcar-vin: enable Gen3 hardware configuration
+  rcar-vin: add function to manipulate Gen3 chsel value
+  rcar-vin: add flag to switch to media controller mode
+  rcar-vin: break out format alignment and checking
+  rcar-vin: use different v4l2 operations in media controller mode
+  rcar-vin: prepare for media controller mode initialization
+  rcar-vin: add group allocator functions
+  rcar-vin: add chsel information to rvin_info
+  rcar-vin: parse Gen3 OF and setup media graph
+  rcar-vin: add link notify for Gen3
+  rcar-vin: extend {start,stop}_streaming to work with media controller
+  rcar-vin: enable support for r8a7795
+  rcar-vin: enable support for r8a7796
+  rcar-vin: enable support for r8a77970
+
+ .../devicetree/bindings/media/rcar_vin.txt         |  118 +-
+ drivers/media/platform/rcar-vin/Kconfig            |    2 +-
+ drivers/media/platform/rcar-vin/rcar-core.c        | 1159 ++++++++++++++++++--
+ drivers/media/platform/rcar-vin/rcar-dma.c         |  990 ++++++++++-------
+ drivers/media/platform/rcar-vin/rcar-v4l2.c        |  445 +++++---
+ drivers/media/platform/rcar-vin/rcar-vin.h         |  131 ++-
+ 6 files changed, 2143 insertions(+), 702 deletions(-)
+
 -- 
-2.7.4
+2.15.0
