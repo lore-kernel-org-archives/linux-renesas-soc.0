@@ -1,78 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:57832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750737AbdLNAZO (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42641 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751750AbdLJMqI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 19:25:14 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
-Cc: Kieran Bingham <kieran@ksquared.org.uk>
-Subject: [RFC PATCH 0/3] [RFC] Video HDMI Loop-back Test
-Date: Thu, 14 Dec 2017 00:25:06 +0000
-Message-Id: <cover.417c1b91fc9842fb290756d5ad23bdc16970b1e1.1513211056.git-series.kieran@bingham.xyz>
+        Sun, 10 Dec 2017 07:46:08 -0500
+Received: by mail-lf0-f68.google.com with SMTP id i2so16257694lfe.9
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 10 Dec 2017 04:46:08 -0800 (PST)
+Subject: Re: [PATCH 1/2] net: sh_eth: add support for SH7786
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20171204141744.18599-1-thomas.petazzoni@free-electrons.com>
+ <20171204141744.18599-2-thomas.petazzoni@free-electrons.com>
+ <86b47029-6474-31c9-b48a-9f5215b73378@cogentembedded.com>
+Message-ID: <8df2f650-a9de-9129-6a64-b6583ba14fad@cogentembedded.com>
+Date: Sun, 10 Dec 2017 15:46:04 +0300
+MIME-Version: 1.0
+In-Reply-To: <86b47029-6474-31c9-b48a-9f5215b73378@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran@bingham.xyz>
+On 12/10/2017 03:20 PM, Sergei Shtylyov wrote:
 
-This short series works towards providing automated system validation by
-introducing the ability to capture frames using the R-Car VIN device with an
-HDMI cable connected to our HDMI output of the DU.
+>> This commit adds the sh_eth_cpu_data structure that describes the
+>> SH7786 variant of the IP.
+>>
+>> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+>> ---
+>>   drivers/net/ethernet/renesas/sh_eth.c | 25 +++++++++++++++++++++++++
+>>   1 file changed, 25 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/renesas/sh_eth.c 
+>> b/drivers/net/ethernet/renesas/sh_eth.c
+>> index 0074c5998481..a3c48b2a713c 100644
+>> --- a/drivers/net/ethernet/renesas/sh_eth.c
+>> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+>> @@ -710,6 +710,30 @@ static struct sh_eth_cpu_data sh7724_data = {
+>>       .rpadir_value    = 0x00020000, /* NET_IP_ALIGN assumed to be 2 */
+>>   };
+>> +static struct sh_eth_cpu_data sh7786_data = {
+>> +    .set_duplex    = sh_eth_set_duplex,
+> 
+>     Hm, no bitrate switching?
+>     (ECMR.OLB is said to be unused indeed in the manual...)
 
-To support this test, relevant patches and support must be provided by kmsxx
-which has been posted separately [0]:
- [PATCH 0/4] kms++util: Provide validation helpers
+    I meant CXR20.OLB -- as it's called in the SH7786 and R-Car manuals.
 
-This series provides an rcar_vin module to assist in detecting and identifying
-the correct video device to use for the video capture device.
-
-The rcar_vin module provides a lot of code which is not used specifically by
-the following kms-test-vin-loopback test but is kept in the module as an RFC
-and to stimulate discussion on implementing convenient helpers to wrap our
-R-Car interfaces in python modules, especially as so much platform knowledge is
-required to set up a capture.
-
-Finally the VIN loopback test is added which uses two pre-filled display
-buffers to simulate an active running display but with constant content.
-
-The display output is then captured by setting up a VideoDevice interface and
-registering a handler (handle_frame_capture) to process buffers when the are
-presented by the VIN driver.
-
-The captured frames are compared against the constant output buffer - and
-written to file in the event that there are any differences to allow for visual
-inspection and analysis.
-
-This test currently highlights potential colour space conversion issues in YUYV
-pipelines, and a non-determined error in ARGB configured pipelines which will
-be investigated separately.
-
-Further future possibilities here:
- - Automatically configure the media device and links with a media-ctl abstraction
- - Add meta-data into the output frames so that they can be correctly matched
-   against incoming captured frames. (I'm thinking adding a QR code to each frame)
-
---
-Regards
-
-Kieran
-
-[0] https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg21303.html
-
-Kieran Bingham (3):
-  kms-tests: Provide .gitignore
-  rcar_vin: Provide VIN configuration helpers
-  tests: Add a DU->VIN loopback test
-
- .gitignore                     |   4 +-
- tests/kms-test-vin-loopback.py | 198 ++++++++++++++++++++++++++++++++++-
- tests/rcar_vin.py              | 107 ++++++++++++++++++-
- 3 files changed, 309 insertions(+)
- create mode 100644 .gitignore
- create mode 100755 tests/kms-test-vin-loopback.py
- create mode 100755 tests/rcar_vin.py
-
-base-commit: 724e38e6c5f511030d7cbdcd40ccc3d0f8749981
--- 
-git-series 0.9.1
+MBR, Sergei
