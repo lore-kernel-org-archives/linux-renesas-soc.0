@@ -1,127 +1,86 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57720 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752243AbdLLIYu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 03:24:50 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/3] arm64: dts: renesas: r8a7796: sort subnodes of root node alphabetically
-Date: Tue, 12 Dec 2017 09:24:34 +0100
-Message-Id: <20171212082436.12210-2-horms+renesas@verge.net.au>
-In-Reply-To: <20171212082436.12210-1-horms+renesas@verge.net.au>
-References: <20171212082436.12210-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 02/10] include: media: Add Renesas CEU driver interface
+Date: Mon, 11 Dec 2017 16:32:04 +0200
+Message-ID: <2289038.W10jS6Ac5K@avalon>
+In-Reply-To: <1534914.aSna2J79oD@avalon>
+References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org> <20171115123633.zvkokelhwwyro42y@valkosipuli.retiisi.org.uk> <1534914.aSna2J79oD@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort root sub-nodes alphabetically for allow for easier maintenance
-of this file.
+Hi Jacopo,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 66 ++++++++++++++++----------------
- 1 file changed, 33 insertions(+), 33 deletions(-)
+On Monday, 11 December 2017 16:26:27 EET Laurent Pinchart wrote:
+> On Wednesday, 15 November 2017 14:36:33 EET Sakari Ailus wrote:
+> > On Wed, Nov 15, 2017 at 11:55:55AM +0100, Jacopo Mondi wrote:
+> >> Add renesas-ceu header file.
+> >> 
+> >> Do not remove the existing sh_mobile_ceu.h one as long as the original
+> >> driver does not go away.
+> > 
+> > Hmm. This isn't really not about not removing a file but adding a new one.
+> > Do you really need it outside the driver's own directory?
+> 
+> The file defines platform data structures that are needed for arch/sh/.
+> 
+> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >> ---
+> >> 
+> >>  include/media/drv-intf/renesas-ceu.h | 23 +++++++++++++++++++++++
+> >>  1 file changed, 23 insertions(+)
+> >>  create mode 100644 include/media/drv-intf/renesas-ceu.h
+> >> 
+> >> diff --git a/include/media/drv-intf/renesas-ceu.h
+> >> b/include/media/drv-intf/renesas-ceu.h new file mode 100644
+> >> index 0000000..f2da78c
+> >> --- /dev/null
+> >> +++ b/include/media/drv-intf/renesas-ceu.h
+> >> @@ -0,0 +1,23 @@
+> >> +// SPDX-License-Identifier: GPL-2.0+
+> >> +#ifndef __ASM_RENESAS_CEU_H__
+> >> +#define __ASM_RENESAS_CEU_H__
+> >> +
+> >> +#include <media/v4l2-mediabus.h>
+> 
+> I don't think you need this.
+> 
+> > > +#define CEU_FLAG_PRIMARY_SENS	BIT(0)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index cc0cca7c0494..c1b0d0344329 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -30,9 +30,34 @@
- 		i2c7 = &i2c_dvfs;
- 	};
- 
--	psci {
--		compatible = "arm,psci-1.0", "arm,psci-0.2";
--		method = "smc";
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
- 	};
- 
- 	cpus {
-@@ -122,34 +147,16 @@
- 		clock-frequency = <0>;
- 	};
- 
--	/*
--	 * The external audio clocks are configured as 0 Hz fixed frequency
--	 * clocks by default.
--	 * Boards that provide audio clocks should override them.
--	 */
--	audio_clk_a: audio_clk_a {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
--	audio_clk_b: audio_clk_b {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
--	audio_clk_c: audio_clk_c {
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <0>;
- 	};
- 
--	/* External CAN clock - to be overridden by boards that provide it */
--	can_clk: can {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
- 	};
- 
- 	/* External SCIF clock - to be overridden by boards that provide it */
-@@ -159,13 +166,6 @@
- 		clock-frequency = <0>;
- 	};
- 
--	/* External PCIe clock - can be overridden by the board */
--	pcie_bus_clk: pcie_bus {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
+I forgot to mention that this flag should be renamed as well, but couldn't we 
+get rid of it completely by mandating that the first subdev in the subdevs 
+array should be the primary one ?
+
+> > > +#define CEU_MAX_SENS		2
+> 
+> I assume SENS stands for sensor. As other sources than sensors can be
+> supported (video decoders for instance), I would name this CEU_MAX_SUBDEVS,
+> CEU_MAX_INPUTS or something similar.
+> 
+> >> +
+> >> +struct ceu_async_subdev {
+> >> +	unsigned long flags;
+> >> +	unsigned char bus_width;
+> >> +	unsigned char bus_shift;
+> >> +	unsigned int i2c_adapter_id;
+> >> +	unsigned int i2c_address;
+> >> +};
+> >> +
+> >> +struct ceu_info {
+> >> +	unsigned int num_subdevs;
+> >> +	struct ceu_async_subdev subdevs[CEU_MAX_SENS];
+> >> +};
+> >> +
+> >> +#endif /* __ASM_RENESAS_CEU_H__ */
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
