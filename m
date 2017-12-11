@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40896 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57384 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750853AbdLLKAn (ORCPT
+        with ESMTP id S1751379AbdLKOgf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 05:00:43 -0500
+        Mon, 11 Dec 2017 09:36:35 -0500
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: magnus.damm@gmail.com, geert@glider.be, mchehab@kernel.org,
@@ -11,8 +11,8 @@ Cc: magnus.damm@gmail.com, geert@glider.be, mchehab@kernel.org,
         linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v1 05/10] arch: sh: migor: Use new renesas-ceu camera driver
-Date: Tue, 12 Dec 2017 12:00:43 +0200
-Message-ID: <1742042.6TTT7UTHfg@avalon>
+Date: Mon, 11 Dec 2017 16:36:35 +0200
+Message-ID: <4183102.bdehOrmzvR@avalon>
 In-Reply-To: <1510743363-25798-6-git-send-email-jacopo+renesas@jmondi.org>
 References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org> <1510743363-25798-6-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
@@ -143,36 +143,9 @@ On Wednesday, 15 November 2017 12:55:58 EET Jacopo Mondi wrote:
 >  	return 0;
 >  }
 
-After studying the schematics, and if you can confirm that R26 is not mounted 
-on the panel board, I think all this could be handled by the OV7720 and TW9910 
-drivers.
-
-The clock is easy, it's used by the OV7720 only, just expose it as the input 
-clock for that device. On a side note, your ov772x driver in this series tries 
-to get a clock named "mclk", but it should be named "xclk" as that's how the 
-chip's input signal is named. The TW9910 has its own crystal oscillator so it 
-won't be affected. As a bonus point the clock will remain off when capturing 
-from the TW9910.
-
-The TV_IN_EN and CAM_EN signals (PTT2 and PTT0 GPIOs respectively) shouldn't 
-be difficult either. You can expose them as the PDN and PWDN GPIOs for the 
-OV7720 and TW9910 and handle them in the respective drivers. CAM_EN also 
-controls the digital video bus multiplexing, and unless I'm mistaken it will 
-just work as a side effect of power down signal control as long as you make 
-sure that the OV7720 remains in power down when not selected as the CEU input.
-
-The VIO_RST signal (PTT3 GPIO) is a bit more annoying, as it is shared by both 
-the OV7720 and TW9910 as their reset signal, and as far as I know GPIOs can't 
-be easily shared between drivers.
-
-Using a reset controller might be an option but I can't see any reset 
-controller driver for GPIOs. https://patchwork.kernel.org/patch/3978091/ seems 
-not to have been merged. This being said, having to instantiate a reset 
-controller to share a GPIO is annoying, I wonder if it would make sense to add 
-support for shared GPIOs in the GPIO core.
-
-Another option could be to only request the reset GPIO when needed instead of 
-doing so at probe time.
+Can't all these be moved to drivers by using the GPIO, clock and regulator 
+APIs ? We should really try to get rid of platform callbacks. Apart from the 
+patch patch looks good to me.
 
 > -static struct sh_mobile_ceu_info sh_mobile_ceu_info = {
 > -	.flags = SH_CEU_FLAG_USE_8BIT_BUS,
