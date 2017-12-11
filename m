@@ -1,157 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45547 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751815AbdLFStA (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:36670 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752720AbdLKQyL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 13:49:00 -0500
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mon, 11 Dec 2017 11:54:11 -0500
+Date: Mon, 11 Dec 2017 11:54:06 -0500 (EST)
+Message-Id: <20171211.115406.1236867479446845607.davem@davemloft.net>
+To: thomas.petazzoni@free-electrons.com
+Cc: sergei.shtylyov@cogentembedded.com,
+        niklas.soderlund+renesas@ragnatech.se, geert+renesas@glider.be,
+        horms+renesas@verge.net.au, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] gpio: gpio-rcar: Support S2RAM
-Date: Thu,  7 Dec 2017 03:48:35 +0900
-Message-Id: <1512586115-4698-1-git-send-email-ykaneko0929@gmail.com>
+Subject: Re: [PATCH v3] net: sh_eth: do not advertise Gigabit capabilities
+ when not available
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20171208153540.3323-1-thomas.petazzoni@free-electrons.com>
+References: <20171208153540.3323-1-thomas.petazzoni@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hien Dang <hien.dang.eb@renesas.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Date: Fri,  8 Dec 2017 16:35:40 +0100
 
-This patch adds an implementation that saves and restores the state of
-GPIO configuration on suspend and resume.
+> Not all variants of the sh_eth hardware have Gigabit
+> support. Unfortunately, the current driver doesn't tell the PHY about
+> the limited MAC capabilities. Due to this, if you have a Gigabit
+> capable PHY, the PHY will advertise its Gigabit capability and
+> establish a link at 1Gbit/s, even though the MAC doesn't support it.
+> 
+> In order to avoid this, we use the recently introduced
+> phy_set_max_speed() to tell the PHY to not advertise speed higher than
+> 100 MBit/s.
+> 
+> Tested on a SH7786 platform, with a Gigabit PHY.
+> 
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-
-This patch is based on the for-next branch of linux-gpio tree.
-
- drivers/gpio/gpio-rcar.c | 89 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
-
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index e76de57..c99a2c5 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -31,6 +31,16 @@
- #include <linux/spinlock.h>
- #include <linux/slab.h>
- 
-+struct gpio_rcar_bank_info {
-+	bool iointsel;
-+	bool inoutsel;
-+	bool outdt;
-+	bool active_high_rising_edge;
-+	bool level_trigger;
-+	bool both;
-+	bool intmsk;
-+};
-+
- struct gpio_rcar_priv {
- 	void __iomem *base;
- 	spinlock_t lock;
-@@ -41,6 +51,7 @@ struct gpio_rcar_priv {
- 	unsigned int irq_parent;
- 	bool has_both_edge_trigger;
- 	bool needs_clk;
-+	struct gpio_rcar_bank_info bank_info[32];
- };
- 
- #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-@@ -415,6 +426,83 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int gpio_rcar_suspend(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+	int offset;
-+	u32 bit_mask;
-+	struct gpio_rcar_bank_info *bank_info;
-+
-+	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
-+		bank_info = &p->bank_info[offset];
-+		bit_mask = BIT(offset);
-+		bank_info->iointsel = !!(gpio_rcar_read(p, IOINTSEL) &
-+					 bit_mask);
-+
-+		/* I/O pin  */
-+		if (!bank_info->iointsel) {
-+			bank_info->inoutsel = !!(gpio_rcar_read(p, INOUTSEL) &
-+						 bit_mask);
-+			bank_info->outdt = !!(gpio_rcar_read(p, OUTDT) &
-+					      bit_mask);
-+		/* Interrupt pin  */
-+		} else {
-+			bank_info->intmsk = !!(gpio_rcar_read(p, INTMSK) &
-+					       bit_mask);
-+			bank_info->active_high_rising_edge =
-+				!(!!(gpio_rcar_read(p, POSNEG) & bit_mask));
-+			bank_info->level_trigger =
-+				!(!!(gpio_rcar_read(p, EDGLEVEL) & bit_mask));
-+			bank_info->both = !!(gpio_rcar_read(p, BOTHEDGE) &
-+					     bit_mask);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int gpio_rcar_resume(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+	int offset;
-+	struct gpio_rcar_bank_info *bank_info;
-+
-+	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
-+		bank_info = &p->bank_info[offset];
-+		/* I/O pin  */
-+		if (!bank_info->iointsel) {
-+			if (bank_info->inoutsel)
-+				gpio_rcar_direction_output(&p->gpio_chip,
-+							   offset,
-+							   bank_info->outdt);
-+			else
-+				gpio_rcar_direction_input(&p->gpio_chip,
-+							  offset);
-+		/* Interrupt pin  */
-+		} else {
-+			gpio_rcar_config_interrupt_input_mode(
-+				p,
-+				offset,
-+				bank_info->active_high_rising_edge,
-+				bank_info->level_trigger,
-+				bank_info->both);
-+
-+			if (bank_info->intmsk)
-+				gpio_rcar_write(p, MSKCLR, BIT(offset));
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops,
-+		gpio_rcar_suspend, gpio_rcar_resume);
-+#define DEV_PM_OPS (&gpio_rcar_pm_ops)
-+#else
-+#define DEV_PM_OPS NULL
-+#endif /* CONFIG_PM_SLEEP*/
-+
- static int gpio_rcar_probe(struct platform_device *pdev)
- {
- 	struct gpio_rcar_priv *p;
-@@ -536,6 +624,7 @@ static int gpio_rcar_remove(struct platform_device *pdev)
- 	.remove		= gpio_rcar_remove,
- 	.driver		= {
- 		.name	= "gpio_rcar",
-+		.pm     = DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(gpio_rcar_of_table),
- 	}
- };
--- 
-1.9.1
+Applied, thanks.
