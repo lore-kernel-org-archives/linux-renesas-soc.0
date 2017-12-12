@@ -1,45 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:45372 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751779AbdLBPZh (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:35569 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752204AbdLLS1Q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Dec 2017 10:25:37 -0500
-Received: by mail-it0-f68.google.com with SMTP id z6so5598940iti.4
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 02 Dec 2017 07:25:37 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1512046646-15253-5-git-send-email-geert+renesas@glider.be>
-References: <1512046646-15253-1-git-send-email-geert+renesas@glider.be> <1512046646-15253-5-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 2 Dec 2017 16:25:36 +0100
-Message-ID: <CACRpkdbRnjcE==krPo5U3wA9hwA0y_umB=-j9zn_wuJvoON3GQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] ARM: dts: alt: Convert to named i2c-gpio bindings
-To: Geert Uytterhoeven <geert+renesas@glider.be>
+        Tue, 12 Dec 2017 13:27:16 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
 Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-i2c@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 2/5] ARM: dts: r8a7743: Add audio clocks
+Date: Tue, 12 Dec 2017 18:25:08 +0000
+Message-Id: <1513103111-45830-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
+References: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 30, 2017 at 1:57 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+Describe the external audio clocks required by the sound driver.
+Boards that provide audio clocks need to override the clock frequencies.
 
-> Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
-> named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
-> gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
-> more error-prone unnamed variant.
->
-> Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
-> flags, which were implicitly assumed before.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index c09c667..2f0ec9d 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -1238,6 +1238,29 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	/* External USB clock - can be overridden by the board */
+ 	usb_extal_clk: usb_extal {
+ 		compatible = "fixed-clock";
+-- 
+1.9.1
