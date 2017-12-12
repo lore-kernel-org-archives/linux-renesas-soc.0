@@ -1,65 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:38258 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750819AbdLMGvb (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:41640 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752066AbdLLSBW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 01:51:31 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/4] usb: renesas_usbhs: Add a function to write the UGCTRL2 register
-Date: Wed, 13 Dec 2017 15:46:57 +0900
-Message-Id: <1513147620-20925-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 12 Dec 2017 13:01:22 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20171207102746.6cwj4nufuemi3so3@verge.net.au>
+References: <1512586115-4698-1-git-send-email-ykaneko0929@gmail.com>
+ <CAMuHMdXRLuXeVmE9UAFGMdKV4gFSNO3kiVkh-q2MYM8spPkF7Q@mail.gmail.com>
+ <20171207090810.zzltv5567d62w4ka@verge.net.au> <CAMuHMdVZuUmy-X5hwYO4SBB_dEQC5Fk2_sWhunojgcOKc1d7rw@mail.gmail.com>
+ <CAMuHMdX05GAXX3b-kcZ0yEBR_+3i0zbRgzZ0VnFXWP90wiRjoQ@mail.gmail.com> <20171207102746.6cwj4nufuemi3so3@verge.net.au>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Date: Wed, 13 Dec 2017 03:01:20 +0900
+Message-ID: <CAH1o70JPNdc_Pffiy94-yAeuWB8XRE0HuWLWO4VLvT8n1=S86w@mail.gmail.com>
+Subject: Re: [PATCH] gpio: gpio-rcar: Support S2RAM
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To cleanup the code, this patch adds a function to write the UGCTRL2
-register.
+Hi Simon-san, Geert-san,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/rcar3.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+I am sorry for my late reply.
 
-diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
-index c929d29..50e5fb5 100644
---- a/drivers/usb/renesas_usbhs/rcar3.c
-+++ b/drivers/usb/renesas_usbhs/rcar3.c
-@@ -44,13 +44,17 @@ static u32 usbhs_read32(struct usbhs_priv *priv, u32 reg)
- 	return ioread32(priv->base + reg);
- }
- 
-+static void usbhs_rcar3_set_ugctrl2(struct usbhs_priv *priv, u32 val)
-+{
-+	usbhs_write32(priv, UGCTRL2, val | UGCTRL2_RESERVED_3);
-+}
-+
- static int usbhs_rcar3_power_ctrl(struct platform_device *pdev,
- 				void __iomem *base, int enable)
- {
- 	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
- 
--	usbhs_write32(priv, UGCTRL2, UGCTRL2_RESERVED_3 | UGCTRL2_USB0SEL_OTG |
--		      UGCTRL2_VBUSSEL);
-+	usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_OTG | UGCTRL2_VBUSSEL);
- 
- 	if (enable) {
- 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
-@@ -73,8 +77,7 @@ static int usbhs_rcar3_power_and_pll_ctrl(struct platform_device *pdev,
- 
- 	if (enable) {
- 		usbhs_write32(priv, UGCTRL, 0);	/* release PLLRESET */
--		usbhs_write32(priv, UGCTRL2, UGCTRL2_RESERVED_3 |
--			      UGCTRL2_USB0SEL_HSUSB);
-+		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_HSUSB);
- 
- 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
- 		do {
--- 
-1.9.1
+2017-12-07 19:27 GMT+09:00 Simon Horman <horms@verge.net.au>:
+> On Thu, Dec 07, 2017 at 10:26:53AM +0100, Geert Uytterhoeven wrote:
+>> On Thu, Dec 7, 2017 at 10:21 AM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>> >>> >  struct gpio_rcar_priv {
+>> >>> >         void __iomem *base;
+>> >>> >         spinlock_t lock;
+>> >>> > @@ -41,6 +51,7 @@ struct gpio_rcar_priv {
+>> >>> >         unsigned int irq_parent;
+>> >>> >         bool has_both_edge_trigger;
+>> >>> >         bool needs_clk;
+>> >>> > +       struct gpio_rcar_bank_info bank_info[32];
+>> >>>
+>> >>> That's 32 x 7 = 224 bytes in total.
+>> >>>
+>> >>> What about just using 7 u32s instead, one for each register to save?
+>> >>> That way you only need 7 x 4 = 28 bytes, and you can probably optimize
+>> >>> the code to just save/restore the whole register at once.
+>> >>
+>> >> So the suggestion is to use a u32 instead of struct gpio_rcar_bank_info,
+>> >> and for each field of struct gpio_rcar_bank_info use a bit in the u32?
+>> >>
+>> >> If so, probably one could go a step further and use a u8 as there are
+>> >> currently only 7 fields, thus using 32 x 1 = 32 bytes rather than
+>> >> 32 x 4 = 128 bytes.
+>> >
+>> > I think you misunderstood.
+>> > The patch has one gpio_rcar_bank_info for each GPIO.
+>> > Each bank has 7 bits (bools), one for each register.
+>> > Indexing is done through bank_info[<gpio>].<reg>.
+>> > Saving/restoring bits requires converting from hardware register layout to
+>> > stored layout ("transposing a 32 x 7 matrix to a 7 x 32 matrix").
+>> >
+>> > I proposed 7 u32s, one for each register, storing the similar bits for all
+>> > 32 GPIOs.
+>> > So indexing is reversed, becoming regs[<reg>] & BIT(<gpio>), which is
+>> > similar to how the data is stored in hardware registers.
+>> > Storing all bits related to a single register in a single u32 may allow to
+>> > save/restore all bits of the register in a single operation.
+>>
+>> More clarification: it's the difference between "int array[7][32]" and
+>> "int array[32][7]".  Both store the same amount of data.
+>> But if the hardware uses the former organization, you want to
+>> save/restore using the same organization, else it requires an expensive
+>> transformation.
+>
+> Thanks, you are correct that I misunderstood.
+> I understand now.
+>
+> Kaneko-san, could you take a look at switching this around and posting an RFT?
+
+Sure, will do.
+
+Thanks,
+Kaneko
