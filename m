@@ -1,45 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f181.google.com ([209.85.216.181]:35348 "EHLO
-        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751234AbdLLJag (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57720 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752243AbdLLIYu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 04:30:36 -0500
-Received: by mail-qt0-f181.google.com with SMTP id u10so45648131qtg.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Dec 2017 01:30:35 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20171212082436.12210-2-horms+renesas@verge.net.au>
-References: <20171212082436.12210-1-horms+renesas@verge.net.au> <20171212082436.12210-2-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 12 Dec 2017 10:30:34 +0100
-Message-ID: <CAMuHMdW8OJ91FrbUV98iSNd6S3GcLg0b4qRjn2vhtjs7amg++g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: renesas: r8a7796: sort subnodes of root
- node alphabetically
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        Tue, 12 Dec 2017 03:24:50 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/3] arm64: dts: renesas: r8a7796: sort subnodes of root node alphabetically
+Date: Tue, 12 Dec 2017 09:24:34 +0100
+Message-Id: <20171212082436.12210-2-horms+renesas@verge.net.au>
+In-Reply-To: <20171212082436.12210-1-horms+renesas@verge.net.au>
+References: <20171212082436.12210-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Dec 12, 2017 at 9:24 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Sort root sub-nodes alphabetically for allow for easier maintenance
-> of this file.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Sort root sub-nodes alphabetically for allow for easier maintenance
+of this file.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 66 ++++++++++++++++----------------
+ 1 file changed, 33 insertions(+), 33 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index cc0cca7c0494..c1b0d0344329 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -30,9 +30,34 @@
+ 		i2c7 = &i2c_dvfs;
+ 	};
+ 
+-	psci {
+-		compatible = "arm,psci-1.0", "arm,psci-0.2";
+-		method = "smc";
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External CAN clock - to be overridden by boards that provide it */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
+ 	};
+ 
+ 	cpus {
+@@ -122,34 +147,16 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	/*
+-	 * The external audio clocks are configured as 0 Hz fixed frequency
+-	 * clocks by default.
+-	 * Boards that provide audio clocks should override them.
+-	 */
+-	audio_clk_a: audio_clk_a {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	audio_clk_b: audio_clk_b {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	audio_clk_c: audio_clk_c {
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	/* External CAN clock - to be overridden by boards that provide it */
+-	can_clk: can {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
++	psci {
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
++		method = "smc";
+ 	};
+ 
+ 	/* External SCIF clock - to be overridden by boards that provide it */
+@@ -159,13 +166,6 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	/* External PCIe clock - can be overridden by the board */
+-	pcie_bus_clk: pcie_bus {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+-- 
+2.11.0
