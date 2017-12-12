@@ -1,87 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44690 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750785AbdLMIid (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:22631 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752131AbdLLStw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 03:38:33 -0500
-Date: Wed, 13 Dec 2017 09:38:29 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Tue, 12 Dec 2017 13:49:52 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] ARM: dts: r8a7743: Add CMT SoC specific support
-Message-ID: <20171213083829.ptdeggbon3szmko4@verge.net.au>
+Subject: [PATCH 2/3] ARM: dts: r8a7743: Add CMT SoC specific support
+Date: Tue, 12 Dec 2017 18:49:38 +0000
+Message-Id: <1513104579-6333-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1513104579-6333-3-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1513104579-6333-3-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Dec 12, 2017 at 06:49:38PM +0000, Fabrizio Castro wrote:
-> Add CMT[01] support to SoC DT.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
->  arch/arm/boot/dts/r8a7743.dtsi | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+Add CMT[01] support to SoC DT.
 
-I was expecting the cmt nodes to be "disabled" in the SoC file
-and then enabled selectively in board files. Am I missing something?
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-Otherwise this patch looks good to me.
-
-> diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-> index 59860c8..0e2834a 100644
-> --- a/arch/arm/boot/dts/r8a7743.dtsi
-> +++ b/arch/arm/boot/dts/r8a7743.dtsi
-> @@ -262,6 +262,36 @@
->  						  IRQ_TYPE_LEVEL_LOW)>;
->  		};
->  
-> +		cmt0: timer@ffca0000 {
-> +			compatible = "renesas,r8a7743-cmt0",
-> +				     "renesas,rcar-gen2-cmt0";
-> +			reg = <0 0xffca0000 0 0x1004>;
-> +			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 124>;
-> +			clock-names = "fck";
-> +			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-> +			resets = <&cpg 124>;
-> +		};
-> +
-> +		cmt1: timer@e6130000 {
-> +			compatible = "renesas,r8a7743-cmt1",
-> +				     "renesas,rcar-gen2-cmt1";
-> +			reg = <0 0xe6130000 0 0x1004>;
-> +			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 329>;
-> +			clock-names = "fck";
-> +			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-> +			resets = <&cpg 329>;
-> +		};
-> +
->  		cpg: clock-controller@e6150000 {
->  			compatible = "renesas,r8a7743-cpg-mssr";
->  			reg = <0 0xe6150000 0 0x1000>;
-> -- 
-> 2.7.4
-> 
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 59860c8..0e2834a 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -262,6 +262,36 @@
+ 						  IRQ_TYPE_LEVEL_LOW)>;
+ 		};
+ 
++		cmt0: timer@ffca0000 {
++			compatible = "renesas,r8a7743-cmt0",
++				     "renesas,rcar-gen2-cmt0";
++			reg = <0 0xffca0000 0 0x1004>;
++			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 124>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 124>;
++		};
++
++		cmt1: timer@e6130000 {
++			compatible = "renesas,r8a7743-cmt1",
++				     "renesas,rcar-gen2-cmt1";
++			reg = <0 0xe6130000 0 0x1004>;
++			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 329>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 329>;
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7743-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-- 
+2.7.4
