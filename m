@@ -1,95 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53344 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754070AbdLTJ6L (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:39648 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752259AbdLLS1Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 04:58:11 -0500
-Date: Wed, 20 Dec 2017 10:58:06 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Tue, 12 Dec 2017 13:27:25 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/5] ARM: dts: iwg20d-q7-common: Enable SGTL5000 audio
- codec
-Message-ID: <20171220095806.jqtkmximxybsq6tr@verge.net.au>
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 5/5] ARM: dts: iwg20d-q7-common: Enable SGTL5000 audio codec
+Date: Tue, 12 Dec 2017 18:25:11 +0000
+Message-Id: <1513103111-45830-6-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
 References: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
- <1513103111-45830-6-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1513103111-45830-6-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Dec 12, 2017 at 06:25:11PM +0000, Biju Das wrote:
-> This patch enables SGTL5000 audio codec on the carrier board.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This patch enables SGTL5000 audio codec on the carrier board.
 
-Somehow I missed applying this one.
-I have now done so with the minor update noted below.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-> ---
->  arch/arm/boot/dts/iwg20d-q7-common.dtsi | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-> index 54470c6..2070b14 100644
-> --- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-> +++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-> @@ -20,6 +20,20 @@
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> +	audio_clock: audio_clock {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <26000000>;
-> +	};
-> +
-> +	reg_1p5v: 1p5v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "1P5V";
-> +		regulator-min-microvolt = <1500000>;
-> +		regulator-max-microvolt = <1500000>;
-> +		regulator-always-on;
-> +	};
-> +
->  	vcc_sdhi1: regulator-vcc-sdhi1 {
->  		compatible = "regulator-fixed";
->  
-> @@ -83,6 +97,16 @@
->  		compatible = "ti,bq32000";
->  		reg = <0x68>;
->  	};
-> +
-> +	sgtl5000: codec@0a {
-
-s/@0a/@a/
-
-Base addresses should not have a leading 0.
-
-# make dtbs W=1
-DTC     arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb
-arch/arm/boot/dts/r8a7743-iwg20d-q7.dtb: Warning (unit_address_format): Node /soc/i2c@e6530000/codec@0a unit name should not have leading 0s
-
-> +		compatible = "fsl,sgtl5000";
-> +		#sound-dai-cells = <0>;
-> +		reg = <0x0a>;
-> +		clocks = <&audio_clock>;
-> +		VDDA-supply = <&reg_3p3v>;
-> +		VDDIO-supply = <&reg_3p3v>;
-> +		VDDD-supply = <&reg_1p5v>;
-> +	};
->  };
->  
->  &pci0 {
-> -- 
-> 1.9.1
-> 
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 54470c6..2070b14 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -20,6 +20,20 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	audio_clock: audio_clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++	};
++
++	reg_1p5v: 1p5v {
++		compatible = "regulator-fixed";
++		regulator-name = "1P5V";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		regulator-always-on;
++	};
++
+ 	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -83,6 +97,16 @@
+ 		compatible = "ti,bq32000";
+ 		reg = <0x68>;
+ 	};
++
++	sgtl5000: codec@0a {
++		compatible = "fsl,sgtl5000";
++		#sound-dai-cells = <0>;
++		reg = <0x0a>;
++		clocks = <&audio_clock>;
++		VDDA-supply = <&reg_3p3v>;
++		VDDIO-supply = <&reg_3p3v>;
++		VDDD-supply = <&reg_1p5v>;
++	};
+ };
+ 
+ &pci0 {
+-- 
+1.9.1
