@@ -1,74 +1,103 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:56016 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750922AbdLGSc6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 13:32:58 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH] kmstest.py: Update to th latest kmsxx Python bindings
-Date: Thu,  7 Dec 2017 20:33:12 +0200
-Message-Id: <20171207183312.27962-1-laurent.pinchart@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 3/5] ARM: dts: r8a7743: Add audio DMAC support
+Date: Tue, 12 Dec 2017 18:25:09 +0000
+Message-Id: <1513103111-45830-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
+References: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 706a44abb3aa ("Update to latest pybind11") of kmsxx broke the
-test suite by changing the signature of the AtomicRequest::commit
-function. Update the test suite accordingly.
+Instantiate the two audio DMA controllers on the r8a7743 device tree.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- tests/kmstest.py | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 62 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-The aforementioned commit also broke the test suite due to two other issues
-that need to be fixed in kmsxx. Two patches have been submitted for upstream
-inclusion, they can in the meantime be found at
-
-	git://git.ideasonboard.com/renesas/kmsxx.git master
-
-diff --git a/tests/kmstest.py b/tests/kmstest.py
-index 45d619c7a9be..7de785edd1e3 100755
---- a/tests/kmstest.py
-+++ b/tests/kmstest.py
-@@ -238,7 +238,7 @@ class KMSTest(object):
-         if sync:
-             return req.commit_sync(True)
-         else:
--            return req.commit(self, True)
-+            return req.commit(0, True)
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 2f0ec9d..b60527a 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -359,6 +359,68 @@
+ 			dma-channels = <15>;
+ 		};
  
-     def atomic_crtc_mode_set(self, crtc, connector, mode, fb=None, sync=False):
-         """Perform a mode set on the given connector and CRTC. The framebuffer,
-@@ -268,7 +268,7 @@ class KMSTest(object):
-         if sync:
-             return req.commit_sync(True)
-         else:
--            return req.commit(self, True)
-+            return req.commit(0, True)
- 
-     def atomic_plane_set(self, plane, crtc, source, destination, fb, sync=False):
-         req = pykms.AtomicReq(self.card)
-@@ -287,7 +287,7 @@ class KMSTest(object):
-         if sync:
-             return req.commit_sync()
-         else:
--            return req.commit(self)
-+            return req.commit(0)
- 
-     def atomic_planes_disable(self, sync=True):
-         req = pykms.AtomicReq(self.card)
-@@ -297,7 +297,7 @@ class KMSTest(object):
-         if sync:
-             return req.commit_sync()
-         else:
--            return req.commit(self)
-+            return req.commit(0)
- 
-     def __handle_page_flip(self, frame, time):
-         self.flips += 1
++		audma0: dma-controller@ec700000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xec700000 0 0x10000>;
++			interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12";
++			clocks = <&cpg CPG_MOD 502>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 502>;
++			#dma-cells = <1>;
++			dma-channels = <13>;
++		};
++
++		audma1: dma-controller@ec720000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xec720000 0 0x10000>;
++			interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12";
++			clocks = <&cpg CPG_MOD 501>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 501>;
++			#dma-cells = <1>;
++			dma-channels = <13>;
++		};
++
+ 		usb_dmac0: dma-controller@e65a0000 {
+ 			compatible = "renesas,r8a7743-usb-dmac",
+ 				     "renesas,usb-dmac";
 -- 
-Regards,
+1.9.1
 
-Laurent Pinchart
