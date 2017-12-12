@@ -1,77 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:38258 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750886AbdLMGvc (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47852 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752141AbdLLSJ0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 01:51:32 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/4] usb: renesas_usbhs: set the mode by using extcon state for non-otg channel
-Date: Wed, 13 Dec 2017 15:46:59 +0900
-Message-Id: <1513147620-20925-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 12 Dec 2017 13:09:26 -0500
+Date: Tue, 12 Dec 2017 18:10:05 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] PCI: rcar: Misc error path fixes
+Message-ID: <20171212181005.GB22805@red-moon>
+References: <1512641720-4715-1-git-send-email-geert+renesas@glider.be>
+ <20171212171658.GA53955@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171212171658.GA53955@bhelgaas-glaptop.roam.corp.google.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The usbhs_rcar3_power_and_pll_ctrl() will be used by non-otg channel
-(e.g. R-Car D3) and the previous code has hardcoded as peripheral mode.
-So, this patch sets the mode by using extcon state.
-If the channel doesn't get any extcon devices, this driver's behavior
-is the same as before.
+On Tue, Dec 12, 2017 at 11:16:58AM -0600, Bjorn Helgaas wrote:
+> On Thu, Dec 07, 2017 at 11:15:18AM +0100, Geert Uytterhoeven wrote:
+> > 	Hi Simon, Lorenzo, Bjorn,
+> > 
+> > This patch series fixes two issues in the error path for the R-Car PCIe
+> > host bridge driver.
+> > 
+> > The first issue is triggered easily by not having a PCIe card inserted,
+> > and may cause a crash.
+> > 
+> > Thanks!
+> > 
+> > Geert Uytterhoeven (2):
+> >   PCI: rcar: Fix use-after-free in probe error path
+> >   PCI: rcar: Handle rcar_pcie_parse_request_of_pci_ranges() failures
+> > 
+> >  drivers/pci/host/pcie-rcar.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> The first fixes ddd535f1ea3eb27e, which appeared in v4.14-rc1.  The
+> second fixes 5d2917d469faab72, which appeared in v4.5-rc1.
+> 
+> After the merge window I normally just pull in critical fixes and
+> fixes to things we merged during the window.
+> 
+> I think the first makes sense for v4.15 because it can cause a crash
+> with no obvious way to debug it.  The second one feels like v4.16
+> material to me.
+> 
+> Thoughts?  We're trying to sort out how to handle this sort of thing
+> between Lorenzo and myself, so I apologize for the confusion here.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/rcar3.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+This sounds absolutely reasonable for me.
 
-diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
-index 50e5fb5..b9a8453 100644
---- a/drivers/usb/renesas_usbhs/rcar3.c
-+++ b/drivers/usb/renesas_usbhs/rcar3.c
-@@ -27,6 +27,7 @@
-  * Remarks: bit[31:11] and bit[9:6] should be 0
-  */
- #define UGCTRL2_RESERVED_3	0x00000001	/* bit[3:0] should be B'0001 */
-+#define UGCTRL2_USB0SEL_EHCI	0x00000010
- #define UGCTRL2_USB0SEL_HSUSB	0x00000020
- #define UGCTRL2_USB0SEL_OTG	0x00000030
- #define UGCTRL2_VBUSSEL		0x00000400
-@@ -49,6 +50,14 @@ static void usbhs_rcar3_set_ugctrl2(struct usbhs_priv *priv, u32 val)
- 	usbhs_write32(priv, UGCTRL2, val | UGCTRL2_RESERVED_3);
- }
- 
-+static void usbhs_rcar3_set_usbsel(struct usbhs_priv *priv, bool ehci)
-+{
-+	if (ehci)
-+		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_EHCI);
-+	else
-+		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_HSUSB);
-+}
-+
- static int usbhs_rcar3_power_ctrl(struct platform_device *pdev,
- 				void __iomem *base, int enable)
- {
-@@ -74,10 +83,14 @@ static int usbhs_rcar3_power_and_pll_ctrl(struct platform_device *pdev,
- 	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
- 	u32 val;
- 	int timeout = 1000;
-+	bool is_host = false;
- 
- 	if (enable) {
- 		usbhs_write32(priv, UGCTRL, 0);	/* release PLLRESET */
--		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_HSUSB);
-+		if (priv->edev)
-+			is_host = extcon_get_state(priv->edev, EXTCON_USB_HOST);
-+
-+		usbhs_rcar3_set_usbsel(priv, is_host);
- 
- 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
- 		do {
--- 
-1.9.1
+Thanks !
+Lorenzo
