@@ -1,165 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:61844 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751839AbdLNMmI (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48524 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751609AbdLLPcW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 07:42:08 -0500
-Date: Thu, 14 Dec 2017 14:42:05 +0200
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>,
+        Tue, 12 Dec 2017 10:32:22 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Hans Verkuil <hans.verkuil@cisco.com>
-Subject: Re: [PATCH/RFC 1/2] v4l: v4l2-dev: Add infrastructure to protect
- device unplug race
-Message-ID: <20171214124205.g6zftaqqcm3jvpyu@paasikivi.fi.intel.com>
-References: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com>
- <20171116003349.19235-2-laurent.pinchart+renesas@ideasonboard.com>
- <20171116123236.kqvpoglodhs45x6l@valkosipuli.retiisi.org.uk>
- <2047593.6mOerD5o8g@avalon>
+Subject: Re: [PATCH/RFC 1/2] v4l: v4l2-dev: Add infrastructure to protect device unplug race
+Date: Tue, 12 Dec 2017 17:32:24 +0200
+Message-ID: <2042086.mPSt6QL5YS@avalon>
+In-Reply-To: <20171212103932.73c542ce@vento.lan>
+References: <20171116003349.19235-1-laurent.pinchart+renesas@ideasonboard.com> <20171123142101.GA5155@kroah.com> <20171212103932.73c542ce@vento.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2047593.6mOerD5o8g@avalon>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Mauro,
 
-On Tue, Dec 12, 2017 at 04:42:23PM +0200, Laurent Pinchart wrote:
-...
-> > > diff --git a/drivers/media/v4l2-core/v4l2-dev.c
-> > > b/drivers/media/v4l2-core/v4l2-dev.c index c647ba648805..c73c6d49e7cf
-> > > 100644
-> > > --- a/drivers/media/v4l2-core/v4l2-dev.c
-> > > +++ b/drivers/media/v4l2-core/v4l2-dev.c
-> > > @@ -156,6 +156,52 @@ void video_device_release_empty(struct video_device
-> > > *vdev)> 
-> > >  }
-> > >  EXPORT_SYMBOL(video_device_release_empty);
-> > > 
-> > > +int video_device_enter(struct video_device *vdev)
-> > > +{
-> > > +	bool unplugged;
-> > > +
-> > > +	spin_lock(&vdev->unplug_lock);
-> > > +	unplugged = vdev->unplugged;
-> > > +	if (!unplugged)
-> > > +		vdev->access_refcount++;
-> > > +	spin_unlock(&vdev->unplug_lock);
-> > > +
-> > > +	return unplugged ? -ENODEV : 0;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(video_device_enter);
-> > > +
-> > > +void video_device_exit(struct video_device *vdev)
-> > > +{
-> > > +	bool wake_up;
-> > > +
-> > > +	spin_lock(&vdev->unplug_lock);
-> > > +	WARN_ON(--vdev->access_refcount < 0);
-> > > +	wake_up = vdev->access_refcount == 0;
-> > > +	spin_unlock(&vdev->unplug_lock);
-> > > +
-> > > +	if (wake_up)
-> > > +		wake_up(&vdev->unplug_wait);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(video_device_exit);
+On Tuesday, 12 December 2017 14:39:32 EET Mauro Carvalho Chehab wrote:
+> Em Thu, 23 Nov 2017 15:21:01 +0100 Greg Kroah-Hartman escreveu:
+> > On Thu, Nov 23, 2017 at 11:07:51AM -0200, Mauro Carvalho Chehab wrote:
+> >> Em Thu, 16 Nov 2017 02:33:48 +0200 Laurent Pinchart escreveu:
+> >>> Device unplug being asynchronous, it naturally races with operations
+> >>> performed by userspace through ioctls or other file operations on
+> >>> video device nodes.
+> >>> 
+> >>> This leads to potential access to freed memory or to other resources
+> >>> during device access if unplug occurs during device access. To solve
+> >>> this, we need to wait until all device access completes when
+> >>> unplugging the device, and block all further access when the device is
+> >>> being unplugged.
+> >>> 
+> >>> Three new functions are introduced. The video_device_enter() and
+> >>> video_device_exit() functions must be used to mark entry and exit from
+> >>> all code sections where the device can be accessed. The
+> >>> video_device_unplug() function is then used in the unplug handler to
+> >>> mark the device as being unplugged and wait for all access to
+> >>> complete.
+> >>> 
+> >>> As an example mark the ioctl handler as a device access section. Other
+> >>> file operations need to be protected too, and blocking ioctls (such as
+> >>> VIDIOC_DQBUF) need to be handled as well.
+> >>> 
+> >>> Signed-off-by: Laurent Pinchart
+> >>> <laurent.pinchart+renesas@ideasonboard.com>
+> >>> ---
+> >>> 
+> >>>  drivers/media/v4l2-core/v4l2-dev.c | 57 ++++++++++++++++++++++++++++++
+> >>>  include/media/v4l2-dev.h           | 47 ++++++++++++++++++++++++++++++
+> >>>  2 files changed, 104 insertions(+)
+
+[snip]
+
+> >> I'm c/c Greg here, as I don't think, that, the way it is, it
+> >> belongs at V4L2 core.
+> >> 
+> >> I mean: if this is a problem that affects all drivers, it would should,
+> >> instead, be sitting at the driver's core.
 > > 
-> > Is there a need to export the two, i.e. wouldn't you only call them from
-> > the framework, or the same module?
-> 
-> There could be a need to call these functions from entry points that are not 
-> controlled by the V4L2 core, such as sysfs or debugfs. We could keep the 
-> functions internal for now and only export them when the need arises, but if 
-> we want to document how drivers need to handle race conditions between device 
-> access and device unbind, we need to have them exported.
-
-Ack.
-
-> 
-> > > +
-> > > +void video_device_unplug(struct video_device *vdev)
-> > > +{
-> > > +	bool unplug_blocked;
-> > > +
-> > > +	spin_lock(&vdev->unplug_lock);
-> > > +	unplug_blocked = vdev->access_refcount > 0;
-> > > +	vdev->unplugged = true;
+> > What "problem" is trying to be solved here?  One where your specific
+> > device type races with your specific user api?  Doesn't sound very
+> > driver-core specific to me :)
 > > 
-> > Shouldn't this be set to false in video_register_device()?
+> > As an example, what other bus/device type needs this?  If you can see
+> > others that do, then sure, move it into the core.  But for just one, I
+> > don't know if that's really needed here, do you?
 > 
-> Yes it should. I currently rely on the fact that the memory is zeroed when 
-> allocated, but I shouldn't. I'll fix that.
+> The problem that this patch is trying to solve is related to
+> hot-unplugging a platform device[1]. Quoting Laurent's comments about
+> it on IRC:
 > 
-> > > +	spin_unlock(&vdev->unplug_lock);
-> > > +
-> > > +	if (!unplug_blocked)
-> > > +		return;
-> > 
-> > Not necessary, wait_event_timeout() handles this already.
+> 	"it applies to all platform devices at least"
+
+Note how I said "at least" :-) I2C, SPI and PCI devices are affected too, and 
+after a closer look at USB today I believe USB devices are affected as well.
+
+> 	"I'm actually considering moving that code to the device core as
+> 	 it applies to all drivers that have device nodes, but I'm not
+> 	 sure that will be feasible it won't hurt other devices
+> 	 it applies to I2C and SPI as well at least and PCI too"
 > 
-> I'll fix this as well.
+> [1] https://linuxtv.org/irc/irclogger_log/media-maint?date=2017-11-23,Thu
 > 
-> > > +
-> > > +	if (!wait_event_timeout(vdev->unplug_wait, !vdev->access_refcount,
-> > > +				msecs_to_jiffies(150000)))
-> > > +		WARN(1, "Timeout waiting for device access to complete\n");
-> > 
-> > Why a timeout? Does this get somehow less problematic over time? :-)
-> 
-> Not quite :-) This should never happen, but driver and/or core bugs could 
-> cause a timeout. In that case I think proceeding after a timeout is a better 
-> option than deadlocking forever.
+> For USB drivers, hot-unplug seems to work fine for media drivers,
+> although keeping it working require tests from time to time, as
+> it is not hard to break hotplug support. so, currently, I don't see
+> the need of anything like that for non-platform drivers.
 
-This also depends on the frame rate; you could have a very low frame rate
-configured on a sensor and the device could be actually in middle of a DMA
-operation while the timeout is hit.
+I2C, SPI and PCI are non-platform drivers, and USB seems to be affected too. 
+The race window is small, making it difficult to reproduce the problem, but 
+with carefully placed delays it gets much easier to hit the race.
 
-I'm not sure if there's a number that can be said to be safe here.
+> My point here is that adding a new lock inside the media core that
+> would be used for all media drivers, including the ones that don't need
+> doesn't sound a good idea.
 
-Wouldn't it be better to kill the user space process using the device
-instead? Naturally the wait will have to be interruptible.
+Why not, if it doesn't affect performances (or anything else) negatively ?
 
-...
+> So, if this is something that applies to all platform drivers (including
+> non-media ones), or if are there anything that can be done at driver's core
+> that would improve hotplug support for all buses, making it more stable or
+> easier to implement, then it would make sense to improve the driver's core.
+> If not, this sounds a driver-specific issue whose fix doesn't belong to the
+> media core.
 
-> > > @@ -221,6 +228,12 @@ struct video_device
-> > > 
-> > >  	u32 device_caps;
-> > > 
-> > > +	/* unplug handling */
-> > > +	bool unplugged;
-> > > +	int access_refcount;
-> > 
-> > Could you use refcount_t instead, to avoid integer overflow issues?
-> 
-> I'd love to, but refcount_t has no provision for refcounts that start at 0.
-> 
-> void refcount_inc(refcount_t *r)
-> {
->         WARN_ONCE(!refcount_inc_not_zero(r), "refcount_t: increment on 0; use-
-> after-free.\n");
-> }
-> EXPORT_SYMBOL(refcount_inc);
+It's clearly not a driver-specific issue as most, if not all, drivers are 
+affected.
 
-Ah. I wonder if you could simply initialise in probe and decrement it again
-in remove?
-
-You could use refcount_inc_not_zero directly, too.
-
-> 
-> > > +	spinlock_t unplug_lock;
-> > > +	wait_queue_head_t unplug_wait;
-> > > +
-> > >  	/* sysfs */
-> > >  	struct device dev;
-> > >  	struct cdev *cdev;
+I've replied to Greg's e-mail in this thread with more details, let's try to 
+keep the discussion there to avoid splitting it in multiple sub-threads.
 
 -- 
-Kind regards,
+Regards,
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Laurent Pinchart
