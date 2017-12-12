@@ -1,21 +1,24 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:32904 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751181AbdLNKwg (ORCPT
+Received: from mail-it0-f53.google.com ([209.85.214.53]:45336 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752243AbdLLOU6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 05:52:36 -0500
+        Tue, 12 Dec 2017 09:20:58 -0500
+Received: by mail-it0-f53.google.com with SMTP id z6so24867465iti.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Dec 2017 06:20:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoey_kSf0OE7OmHCX4H4VFQcWOU6NE4suZ9=9stZVQNpQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdX4jNL7Md5rgUj63sBC1KUqYa5K-cbxM+ineW9KkB9r=g@mail.gmail.com>
 References: <1510588003-16650-1-git-send-email-ulf.hansson@linaro.org>
  <1510588003-16650-3-git-send-email-ulf.hansson@linaro.org>
  <1926914.PsNMcYBlGW@aspire.rjw.lan> <CAMuHMdUE+fdbS+HDxbcWNHaTZubnrQ7ai4bkOsBpLriG1y-gZg@mail.gmail.com>
  <CAPDyKFoAY7yZJz9obke5DeqadpqJ0MEKPQJvxibpq85f+==BBA@mail.gmail.com>
- <CAMuHMdXk9GaExvYbdSfV0bf4Kh1TNrZDKtAfTDaDfWFMvk6Snw@mail.gmail.com> <CAPDyKFoey_kSf0OE7OmHCX4H4VFQcWOU6NE4suZ9=9stZVQNpQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Dec 2017 11:52:35 +0100
-Message-ID: <CAMuHMdXqK4QA=rqWpBMPmXY7vb2Feoncb4wym0C9y7tvV71zBw@mail.gmail.com>
+ <CAMuHMdXk9GaExvYbdSfV0bf4Kh1TNrZDKtAfTDaDfWFMvk6Snw@mail.gmail.com>
+ <CAPDyKFoey_kSf0OE7OmHCX4H4VFQcWOU6NE4suZ9=9stZVQNpQ@mail.gmail.com> <CAMuHMdX4jNL7Md5rgUj63sBC1KUqYa5K-cbxM+ineW9KkB9r=g@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 12 Dec 2017 15:20:56 +0100
+Message-ID: <CAPDyKFo-QtiBc-DmXAJO26eo0_WHA=_8YdOb8HzKc7t2q1zagg@mail.gmail.com>
 Subject: Re: [PATCH v2 2/3] PM / core: Add IN_BAND_WAKEUP driver flag
-To: Ulf Hansson <ulf.hansson@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Linux PM list <linux-pm@vger.kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
@@ -28,53 +31,29 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf,
-
-On Mon, Dec 11, 2017 at 9:59 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 11 December 2017 at 11:48, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Mon, Dec 11, 2017 at 11:24 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> On 10 December 2017 at 11:16, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->>>> To complicate matters, some drivers may be used on SoCs where the device
->>>> needs to be kept running (clock and/or power domain), and on SoCs where the
->>>> device is always running. This difference is typically handled by genpd,
->>>> and the device driver may not even be aware. Of course the driver can just
->>>> set IN_BAND_WAKEUP regardless, (else it has to check for the presence of
->>>> clocks and/or power-domains properties itself, duplicating genpd
->>>> core/driver code).
->>>>
->>>> So what about
->>>>
->>>>          if (IN_BAND_WAKEUP ||
->>>>             (GENPD_FLAG_ACTIVE_WAKEUP && !OUT_BAND_WAKEUP)) {
->>>
->>> We don't want to suspend the device in case of IN_BAND_WAKEUP, right!?
->>>
->>>>                 ... suspend device...
->>>>         }
->>
->> Oops, inverted logic. I should not write technical emails on Sunday morning.
->>
->> Yes, the device must be kept awake if either IN_BAND_WAKEUP is set, or
->> if GENPD_FLAG_ACTIVE_WAKEUP is set but OUT_BAND_WAKEUP isn't.
+On 12 December 2017 at 09:16, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Ulf,
 >
-> Putting together the pieces of information received here, you have
-> convinced me that we should stick to use the current
-> GENPD_FLAG_ACTIVE_WAKEUP for now, which allows genpds to opt-in for
-> start dealing with in-band-wakeups.
+> On Mon, Dec 11, 2017 at 9:59 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> That together with an option of allowing "consumed resource-devices"
+>> (irqchip) to be included in the wakeup path. I am thinking, perhaps
+>> another driver PM flag (DPM_FLAG_WAKEUP_PATH), that the PM core looks
+>> at and sets ->power.wakeup_path flag for the device and its parents.
+>
+> This is complicated by the fact that currently the device and irq
+> subsystems don't really share data. E.g. {en,dis}able_irq_wake() and
+> irq_set_irq_wake() don't take a device parameter, only an interrupt number,
+> and conversion from interrupt numbers to devices is non-trivial.
+> That's why I handled it in the irqchip drivers in the series referenced
+> below.
 
-Thank you!
+Yes, that seems like a good way forward for now.
 
-So I'll move forward with "[PATCH v2 0/3] PM / Domain: renesas: Fix active
-wakeup behavior"
-(https://www.spinics.net/lists/linux-renesas-soc/msg19941.html)
+We can always look into how to extend the irq subsystem to deal with
+this internally, but I rather leave that to be done as a separate
+task.
 
-Gr{oetje,eeting}s,
+[...]
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind regards
+Uffe
