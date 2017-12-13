@@ -1,79 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44729 "EHLO pokefinder.org"
+Received: from mga01.intel.com ([192.55.52.88]:19189 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752768AbdLDPNk (ORCPT
+        id S1752292AbdLMPhs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 10:13:40 -0500
-Date: Mon, 4 Dec 2017 16:13:21 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 10/22] mmc: tmio: support IP-builtin card detection
- logic
-Message-ID: <20171204151320.4ypa2y5r335hcg7j@ninjato>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dxnfmsw3nw7oplap"
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 13 Dec 2017 10:37:48 -0500
+Message-ID: <1513179014.7000.44.camel@linux.intel.com>
+Subject: Re: [PATCH 3/6] i2c: add 'set_sda' to bus_recovery_info
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Reid <preid@electromag.com.au>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Claudio Foellmi <claudio.foellmi@ergon.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Date: Wed, 13 Dec 2017 17:30:14 +0200
+In-Reply-To: <CACRpkdYuHit1w1_d4h++vOuSWosf+iBdgimtCUbmic3mkbm1Wg@mail.gmail.com>
+References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
+         <20171204123640.3382-4-wsa+renesas@sang-engineering.com>
+         <CACRpkdZzwo9UhT08VDHXg6=eXdK80Pt1omZ4Xda_HFwguyNpaw@mail.gmail.com>
+         <20171205133848.nzrhysiz2twvlamx@ninjato>
+         <CACRpkdYuHit1w1_d4h++vOuSWosf+iBdgimtCUbmic3mkbm1Wg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---dxnfmsw3nw7oplap
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-> +static int tmio_mmc_get_cd(struct mmc_host *mmc)
-> +{
-> +	struct tmio_mmc_host *host = mmc_priv(mmc);
-> +	int ret;
-> +
-> +	ret = mmc_gpio_get_cd(mmc);
-> +	if (ret >= 0)
-> +		return ret;
-> +
-> +	return !!(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
-> +							TMIO_STAT_SIGSTATE);
-> +}
-
-I wonder if we shouldn't do something like:
-
-	if (mmc_can_gpio_cd())
-		return mmc_gpio_get_cd()
-	else
-		return !!(sd_ctrl_read16_and_16_as_32...)
-
-If we have a GPIO CD defined, I think we want the value of
-mmc_gpio_get_cd() in all cases. It makes clearer that this is an
-'either-or' case and not a fallback mechanism.
+On Tue, 2017-12-05 at 16:31 +0100, Linus Walleij wrote:
+> On Tue, Dec 5, 2017 at 2:38 PM, Wolfram Sang <wsa@the-dreams.de>
+> wrote:
+> 
 
 
---dxnfmsw3nw7oplap
-Content-Type: application/pgp-signature; name="signature.asc"
+> Two statice inlines in <linux/gpio/consumer.h>
+> named
+> 
+> int gpiod_is output()
+> int gpiod_is_input()
 
------BEGIN PGP SIGNATURE-----
+Ha, just proposed similar.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlolZgwACgkQFA3kzBSg
-KbZ7HA/9HySQY4HYCrUYbbOVC54LDCPJ8qOOAOF7UP+P26LRujbvc8LX136dZCbP
-qu9U3jdQCl88yt6f1VTLvTcx6MtJLNaluhFEy0YCwFetnaYeYx1E+NA7n7feOKep
-dcV2Pwigz4eap13Qoce03wwqBCPKoHV/HEBSSRP55C2eQyTOBRJTYKsaEYDReCgV
-vDrpC/+SPFkoLoYbVoKepqPxKjXFy17jwYKroGSG4D/ROFj3gWV58S34TsGcGcFZ
-+LovrHYlYnaz3JxdE1M1JZ+q83b/yIQMfdu2uWdu0LBA9kuLXVCmyrd1xTyvtqyv
-vaIICxUGs5UVmdFopvIJcAvGLE38NBEW45E29O+QE3DXdHDc+EUmn4kYAnr0B7bQ
-rEAg0GtB2VaawtLrp1TvBEE6CgHPh42RO+PeD3e3jnkVuOkuktxeIfiL83QV6upv
-B+bu7wLK+9DH99UYJvufJi1K9B4h71lxj/3D9ggTTr/7HqfGn3tfdm14mgp5vgUB
-6Saa/y1abSaJfWnHt001ef6yAj2vrcgHLmWKB0qQPaZQj2YdMPoEKkXTk6/Qg66X
-pumE8Dqd/ikkjnOxEaQQjvaZjAGNe3Dsz0lYQll9NExZH6CFyM4bqay5oI//o4Q6
-iTI/MIk2skeoEvW7TkznLNQviMPjC3dcVeAc3j0T8yNu0KkVVNU=
-=8lQp
------END PGP SIGNATURE-----
+> 
+> should conform to Rusty Russell's API hierarchy.
+> 
+> Interested in fixing it, or should I?
+> I can almost ACK it before you write the patch.
 
---dxnfmsw3nw7oplap--
+I vote for this type of API, and agree with Wolfram !_get_direction() is
+confusing.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
