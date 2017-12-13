@@ -1,67 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:59610 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751226AbdLNJpB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 04:45:01 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 5/5] phy: renesas: rcar-gen3-usb2: add gpio handling
-Date: Thu, 14 Dec 2017 09:44:57 +0000
-Message-ID: <TY1PR06MB099286FD9833ED7F7F259B5BD80A0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1513146460-20326-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1513146460-20326-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <1513146460-20326-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdU2YhLC3VPV8=KDw7U2=eudk35TmW7VfLYBDXrooQbx-g@mail.gmail.com>
-In-Reply-To: <CAMuHMdU2YhLC3VPV8=KDw7U2=eudk35TmW7VfLYBDXrooQbx-g@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Dec 2017 09:55:16 +0100
+Message-ID: <CAMuHMdU2YhLC3VPV8=KDw7U2=eudk35TmW7VfLYBDXrooQbx-g@mail.gmail.com>
+Subject: Re: [PATCH 5/5] phy: renesas: rcar-gen3-usb2: add gpio handling
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVz
-ZGF5LCBEZWNlbWJlciAxMywgMjAxNyA1OjU1IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4g
-DQo+IE9uIFdlZCwgRGVjIDEzLCAyMDE3IGF0IDc6MjcgQU0sIFlvc2hpaGlybyBTaGltb2RhDQo+
-IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gU29tZSBSLUNh
-ciBTb0NzIChlLmcuIFItQ2FyIEQzKSBkb2Vzbid0IGhhdmUgZGVkaWNhdGVkIHBpbnMgb2YgVkJV
-Uw0KPiA+IGFuZCBJRC4gU28sIHRoZXkgbWF5IGJlIGNvbm5lY3RlZCB0byBncGlvIHBpbnMuIFRv
-IGhhbmRsZSB0aGUgZ3Bpbw0KPiA+IHBpbnMsIHRoaXMgcGF0Y2ggYWRkcyB0aGUgaGFuZGxpbmcg
-b2YgVkJVUyBhbmQgSUQgcGlucyBpbnN0ZWFkIG9mDQo+ID4gZGVkaWNhdGVkIHBpbnMuDQo+ID4N
-Cj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEu
-dWhAcmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bo
-eS9yY2FyLWdlbjMtcGh5LXVzYjIudHh0IHwgIDIgKw0KPiA+ICBkcml2ZXJzL3BoeS9yZW5lc2Fz
-L3BoeS1yY2FyLWdlbjMtdXNiMi5jICAgICAgICAgICB8IDc3ICsrKysrKysrKysrKysrKysrKysr
-LS0NCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA3MiBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygt
-KQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy9waHkvcmNhci1nZW4zLXBoeS11c2IyLnR4dA0KPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9waHkvcmNhci1nZW4zLXBoeS11c2IyLnR4dA0KPiA+IGluZGV4IDk5YjY1MWIu
-Ljg1MTU4MmYgMTAwNjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL3BoeS9yY2FyLWdlbjMtcGh5LXVzYjIudHh0DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9yY2FyLWdlbjMtcGh5LXVzYjIudHh0DQo+ID4gQEAgLTI3
-LDYgKzI3LDggQEAgY2hhbm5lbCBhcyBVU0IgT1RHOg0KPiA+ICAtIGludGVycnVwdHM6IGludGVy
-cnVwdCBzcGVjaWZpZXIgZm9yIHRoZSBQSFkuDQo+ID4gIC0gdmJ1cy1zdXBwbHk6IFBoYW5kbGUg
-dG8gYSByZWd1bGF0b3IgdGhhdCBwcm92aWRlcyBwb3dlciB0byB0aGUgVkJVUy4gVGhpcw0KPiA+
-ICAgICAgICAgICAgICAgIHJlZ3VsYXRvciB3aWxsIGJlIG1hbmFnZWQgZHVyaW5nIHRoZSBQSFkg
-cG93ZXIgb24vb2ZmIHNlcXVlbmNlLg0KPiA+ICstIHJlbmVzYXMsdmJ1cy1ncGlvczogdXNlIGdw
-aW8gdG8gY29udHJvbCB2YnVzIGluc3RlYWQgb2YgZGVkaWNhdGVkIHBpbi4NCj4gPiArLSByZW5l
-c2FzLGlkLWdwaW9zOiB1c2UgZ3BpbyB0byBkZXRlY3QgaWQgaW5zdGVhZCBvZiBkZWRpY2F0ZWQg
-cGluLg0KPiANCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9icmNtLG5z
-Mi1kcmQtcGh5LnR4dCBhbHJlYWR5IHVzZXMNCj4gInZidXMtZ3Bpb3MiIGFuZCAiaWQtZ3Bpb3Mi
-IHdpdGhvdXQgdmVuZG9yLXNwZWNpZmljIHByZWZpeGVzLCBzbyBwZXJoYXBzDQo+IHRoZSAicmVu
-ZXNhcywiIGNhbiBiZSBkcm9wcGVkPw0KDQpUaGFuayB5b3UgZm9yIHRoZSBjb21tZW50cy4gSSBh
-Z3JlZSB3aXRoIHlvdS4gU28sIEknbGwgZHJvcCAicmVuZXNhcywiIGluIHYyLg0KDQpCZXN0IHJl
-Z2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhv
-ZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgt
-bTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwg
-cGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0
-byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0
-aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRz
-DQo=
+Hi Shimoda-san,
+
+On Wed, Dec 13, 2017 at 7:27 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Some R-Car SoCs (e.g. R-Car D3) doesn't have dedicated pins of VBUS
+> and ID. So, they may be connected to gpio pins. To handle the gpio
+> pins, this patch adds the handling of VBUS and ID pins instead of
+> dedicated pins.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 77 ++++++++++++++++++++--
+>  2 files changed, 72 insertions(+), 7 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+> index 99b651b..851582f 100644
+> --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+> +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+> @@ -27,6 +27,8 @@ channel as USB OTG:
+>  - interrupts: interrupt specifier for the PHY.
+>  - vbus-supply: Phandle to a regulator that provides power to the VBUS. This
+>                regulator will be managed during the PHY power on/off sequence.
+> +- renesas,vbus-gpios: use gpio to control vbus instead of dedicated pin.
+> +- renesas,id-gpios: use gpio to detect id instead of dedicated pin.
+
+Documentation/devicetree/bindings/phy/brcm,ns2-drd-phy.txt already uses
+"vbus-gpios" and "id-gpios" without vendor-specific prefixes, so perhaps
+the "renesas," can be dropped?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
