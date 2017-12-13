@@ -1,76 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754853AbdLFKXn (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:45709 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753011AbdLMK7y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:43 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 13 Dec 2017 05:59:54 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 23/61] ARM: dts: r8a7790: Use R-Car SDHI Gen2 fallback compat string
-Date: Wed,  6 Dec 2017 11:22:18 +0100
-Message-Id: <e0ac55614d1013efcd46e018612a7a11ea79f1c1.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 0/2]  Add thermal support for iWave RZ/G1M board
+Date: Wed, 13 Dec 2017 10:57:51 +0000
+Message-Id: <1513162673-31531-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SDHI Gen2 fallback compat string
-in the DT of the r8a7790 SoC.
+This series aims to add thermal support for iWave RZ/G1M board.
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+This patch series based on renesas tag renesas-devel-20171211-v4.15-rc3.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Biju Das (2):
+  dt-bindings: thermal: rcar: Add device tree support for r8a7743
+  ARM: dts: r8a7743: Add thermal device to DT
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 4fc607e8e40c..6ea06455c0d1 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -662,7 +662,8 @@
- 	};
- 
- 	sdhi0: sd@ee100000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 314>;
-@@ -676,7 +677,8 @@
- 	};
- 
- 	sdhi1: sd@ee120000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee120000 0 0x328>;
- 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 313>;
-@@ -690,7 +692,8 @@
- 	};
- 
- 	sdhi2: sd@ee140000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 312>;
-@@ -704,7 +707,8 @@
- 	};
- 
- 	sdhi3: sd@ee160000 {
--		compatible = "renesas,sdhi-r8a7790";
-+		compatible = "renesas,sdhi-r8a7790",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 311>;
+ .../devicetree/bindings/thermal/rcar-thermal.txt   |  1 +
+ arch/arm/boot/dts/r8a7743.dtsi                     | 32 ++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
+
 -- 
-2.11.0
+1.9.1
