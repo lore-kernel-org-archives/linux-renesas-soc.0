@@ -1,69 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:51350 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750745AbdLMXRx (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:33388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750819AbdLMXKR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 18:17:53 -0500
-Subject: Re: [PATCH 0/4] kms++util: Provide validation helpers
-To: Kieran Bingham <kbingham@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: laurent.pinchart@ideasonboard.com
-References: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <9c4ae2e3-267a-59e7-39e9-1412b6170e27@ideasonboard.com>
-Date: Wed, 13 Dec 2017 23:17:50 +0000
-MIME-Version: 1.0
-In-Reply-To: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Wed, 13 Dec 2017 18:10:17 -0500
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-renesas-soc@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 0/4] kms++util: Provide validation helpers
+Date: Wed, 13 Dec 2017 23:10:08 +0000
+Message-Id: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Tomi,
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Apologies that I didn't make it particularly clear, but I should have prefixed
-this series title with a nice big [RFC] :-D
+Our kms-tests test suite for verifying the R-Car DU is based on kmsxx.
 
-This is ongoing work to support loop-back validation on our platforms.
+We are implementing a 'loop-back' validator, by providing an HDMI cable from
+the display output directly into the HDMI receiver on the same development
+board.
 
-Regards
+By using the existing VideoStreamer and pyvid objects, we can capture the output
+and compare to provide automated display validation.
 
-Kieran
+As an effort to commence this process, this series implements a basic frame
+buffer comparison, which expects identical frame sizes to operate.
 
-On 13/12/17 23:10, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
-> Our kms-tests test suite for verifying the R-Car DU is based on kmsxx.
-> 
-> We are implementing a 'loop-back' validator, by providing an HDMI cable from
-> the display output directly into the HDMI receiver on the same development
-> board.
-> 
-> By using the existing VideoStreamer and pyvid objects, we can capture the output
-> and compare to provide automated display validation.
-> 
-> As an effort to commence this process, this series implements a basic frame
-> buffer comparison, which expects identical frame sizes to operate.
-> 
-> This could be could be expanded upon later to provide a more detailed
-> comparison at the pixel level later, but this serves as an initial starting
-> point to quickly verify if the data captured matches the data that we expected.
-> 
-> Kieran Bingham (4):
->   videodevice: Fix minor spacing
->   py: pyvid: Provide stream_off binding
->   kms++util: Add verification module
->   kms++util: Add frame compare functionality
-> 
->  kms++util/inc/kms++util/kms++util.h |  3 ++-
->  kms++util/src/verification.cpp      | 52 ++++++++++++++++++++++++++++++-
->  kms++util/src/videodevice.cpp       |  2 +-
->  py/pykms/pykmsutil.cpp              |  7 ++++-
->  py/pykms/pyvid.cpp                  |  1 +-
->  5 files changed, 64 insertions(+), 1 deletion(-)
->  create mode 100644 kms++util/src/verification.cpp
-> 
-> base-commit: fee73296cae1a4984e18c8d8ee8e50ab217b1e4a
-> 
+This could be could be expanded upon later to provide a more detailed
+comparison at the pixel level later, but this serves as an initial starting
+point to quickly verify if the data captured matches the data that we expected.
+
+Kieran Bingham (4):
+  videodevice: Fix minor spacing
+  py: pyvid: Provide stream_off binding
+  kms++util: Add verification module
+  kms++util: Add frame compare functionality
+
+ kms++util/inc/kms++util/kms++util.h |  3 ++-
+ kms++util/src/verification.cpp      | 52 ++++++++++++++++++++++++++++++-
+ kms++util/src/videodevice.cpp       |  2 +-
+ py/pykms/pykmsutil.cpp              |  7 ++++-
+ py/pykms/pyvid.cpp                  |  1 +-
+ 5 files changed, 64 insertions(+), 1 deletion(-)
+ create mode 100644 kms++util/src/verification.cpp
+
+base-commit: fee73296cae1a4984e18c8d8ee8e50ab217b1e4a
+-- 
+git-series 0.9.1
