@@ -1,89 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53030 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753218AbdLGMfN (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:41170 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753824AbdLMTFY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 07:35:13 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: rspi: Do not set SPCR_SPE in qspi_set_config_register()" to the spi tree
-In-Reply-To: <1512641361-4128-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1eMvOP-0006Bd-8M@debutante>
-Date: Thu, 07 Dec 2017 12:35:09 +0000
+        Wed, 13 Dec 2017 14:05:24 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] spi: sh-msiof: Multi-slave enhancements
+Date: Wed, 13 Dec 2017 20:05:09 +0100
+Message-Id: <1513191913-10612-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+	Hi Mark², Rob,
 
-   spi: rspi: Do not set SPCR_SPE in qspi_set_config_register()
+This patch series enhances the Renesas MSIOF SPI controller driver for
+multiple SPI slave devices.
 
-has been applied to the spi tree at
+The first patch fixes the classical pitfall of writing to configuration
+registers from the spi_master.setup() callback, where possible.
+The second patch extends support from 1 to 3 native chip selects,
+The third patch fixes the use of GPIOs as chip selects on modern
+platform using DT instead of board code.
+The last patch documents hardware limitations related to chip selects,
+to guide board designers and DTS writers.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+This has been tested with:
+  - Three 25LC040 SPI EEPROMs, using GPIO chip selects due to MSIOF
+    hardware limitations (verified with a logic analyzer),
+  - Multiple 74HC595 shift registers feeding lots of blinkenlights,
+    using only native chipselects, only GPIO chip selects, and a healthy
+    mix of both.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Thanks for your comments!
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Geert Uytterhoeven (4):
+  spi: sh-msiof: Avoid writing to registers from spi_master.setup()
+  spi: sh-msiof: Extend support to 3 native chip selects
+  spi: sh-msiof: Implement cs-gpios configuration
+  spi: sh-msiof: Document hardware limitations related to chip selects
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+ Documentation/devicetree/bindings/spi/sh-msiof.txt |  16 ++-
+ drivers/spi/spi-sh-msiof.c                         | 111 +++++++++++++++++----
+ 2 files changed, 107 insertions(+), 20 deletions(-)
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From b458a3490e46dddd5b63f59b458c9b6d2284a63f Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Thu, 7 Dec 2017 11:09:21 +0100
-Subject: [PATCH] spi: rspi: Do not set SPCR_SPE in qspi_set_config_register()
-
-The R-Car Gen2 Hardware User Manual Rev. 2.00 states:
-
-    If the master/slave mode select bit (MSTR) is modified while the SPI
-    function enable bit (SPE) is set to 1 (that is, this module is
-    enabled), the subsequent operation cannot be guaranteed.
-
-Hence do not set SPCR_SPE when setting SPCR_MSTR, just like the
-.set_config_register() implementations for other RSPI variants do.
-
-Note that when booted from QSPI, the boot loader will have set SPCR_MSTR
-already, hence usually the bit is never modified by the Linux driver.
-
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-rspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 2ce875764ca6..0835a8d88fb8 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -377,8 +377,8 @@ static int qspi_set_config_register(struct rspi_data *rspi, int access_size)
- 	/* Sets SPCMD */
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
--	/* Enables SPI function in master mode */
--	rspi_write8(rspi, SPCR_SPE | SPCR_MSTR, RSPI_SPCR);
-+	/* Sets RSPI mode */
-+	rspi_write8(rspi, SPCR_MSTR, RSPI_SPCR);
- 
- 	return 0;
- }
 -- 
-2.15.0
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
