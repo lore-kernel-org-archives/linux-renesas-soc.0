@@ -1,50 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:57018 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753018AbdLMK75 (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37316 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752751AbdLMNpa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 05:59:57 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+        Wed, 13 Dec 2017 08:45:30 -0500
+Received: by mail-lf0-f68.google.com with SMTP id a12so2700391lfe.4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Dec 2017 05:45:29 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1513172158-60367-1-git-send-email-biju.das@bp.renesas.com>
+References: <1513102155-47925-1-git-send-email-biju.das@bp.renesas.com> <1513172158-60367-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Dec 2017 14:45:28 +0100
+Message-ID: <CAMuHMdX+DZd5KwmCib+DBifbuc=tp=0cs7ctGtJEJz85sEKr4w@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: rsnd: Add device tree support for r8a774[35]
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 1/2] dt-bindings: thermal: rcar: Add device tree support for r8a7743
-Date: Wed, 13 Dec 2017 10:57:52 +0000
-Message-Id: <1513162673-31531-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513162673-31531-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513162673-31531-1-git-send-email-biju.das@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add thermal sensor support for r8a7743 SoC. The Renesas RZ/G1M
-(r8a7743) thermal sensor module is identical to the R-Car Gen2 family.
+On Wed, Dec 13, 2017 at 2:35 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Document r8a774[35] specific compatible strings. The Renesas RZ/G1[ME]
+> (r8a774[35]) sound modules are identical to the R-Car Gen2 family.
+> No driver change is needed as the fallback compatible string
+> "renesas,rcar_sound-gen2" activates the right code in the driver.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-No driver change is needed due to the fallback compatible value
-"renesas,rcar-gen2-thermal".
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-index a8e52c8..349e635 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-@@ -6,6 +6,7 @@ Required properties:
- 			   "renesas,rcar-thermal" (without thermal-zone) as fallback.
- 			  Examples with soctypes are:
- 			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
-+			    - "renesas,thermal-r8a7743" (RZ/G1M)
- 			    - "renesas,thermal-r8a7779" (R-Car H1)
- 			    - "renesas,thermal-r8a7790" (R-Car H2)
- 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
