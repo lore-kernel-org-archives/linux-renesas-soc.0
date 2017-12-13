@@ -1,60 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754911AbdLFKYI (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:15874 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750880AbdLMGvc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:24:08 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 56/61] ARM: dts: r8a7794: Remove CMT renesas,channels-mask
-Date: Wed,  6 Dec 2017 11:22:51 +0100
-Message-Id: <bc28e52b4d5ec51d9bde87838a1ab1673807536c.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Wed, 13 Dec 2017 01:51:32 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/4] usb: renesas_usbhs: add a new callback for extcon notifier
+Date: Wed, 13 Dec 2017 15:46:58 +0900
+Message-Id: <1513147620-20925-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+To set host/peripheral mode by using extcon notifier, this patch
+adds a new callback as "notifier" in renesas_usbhs_platform_callback.
 
-Update the DTS to remove the now deprecated "renesas,channels-mask"
-property.
-
-The channel information is now kept in the device driver and can easily
-be determined based on the compat string.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 4 ----
- 1 file changed, 4 deletions(-)
+ include/linux/usb/renesas_usbhs.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 67aa409b32bf..96e405e70d9a 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -197,8 +197,6 @@
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		resets = <&cpg 124>;
+diff --git a/include/linux/usb/renesas_usbhs.h b/include/linux/usb/renesas_usbhs.h
+index 67102f3..9482735 100644
+--- a/include/linux/usb/renesas_usbhs.h
++++ b/include/linux/usb/renesas_usbhs.h
+@@ -17,6 +17,7 @@
+  */
+ #ifndef RENESAS_USB_H
+ #define RENESAS_USB_H
++#include <linux/notifier.h>
+ #include <linux/platform_device.h>
+ #include <linux/usb/ch9.h>
  
--		renesas,channels-mask = <0x60>;
--
- 		status = "disabled";
- 	};
+@@ -98,6 +99,13 @@ struct renesas_usbhs_platform_callback {
+ 	 * VBUS control is needed for Host
+ 	 */
+ 	int (*set_vbus)(struct platform_device *pdev, int enable);
++
++	/*
++	 * option:
++	 * extcon notifier to set host/peripheral mode.
++	 */
++	int (*notifier)(struct notifier_block *nb, unsigned long event,
++			void *data);
+ };
  
-@@ -218,8 +216,6 @@
- 		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		resets = <&cpg 329>;
- 
--		renesas,channels-mask = <0xff>;
--
- 		status = "disabled";
- 	};
- 
+ /*
 -- 
-2.11.0
+1.9.1
