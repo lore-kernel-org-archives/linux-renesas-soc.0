@@ -1,103 +1,100 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 3/5] ARM: dts: r8a7743: Add audio DMAC support
-Date: Tue, 12 Dec 2017 18:25:09 +0000
-Message-Id: <1513103111-45830-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/4] spi: sh-msiof: Avoid writing to registers from spi_master.setup()
+Date: Wed, 13 Dec 2017 20:05:10 +0100
+Message-Id: <1513191913-10612-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1513191913-10612-1-git-send-email-geert+renesas@glider.be>
+References: <1513191913-10612-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instantiate the two audio DMA controllers on the r8a7743 device tree.
+The spi_master.setup() callback must not change configuration registers,
+as that could corrupt I/O that is in progress for other SPI slaves.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+The only exception is the configuration of the native chip select
+polarity in SPI master mode, as a wrong chip select polarity will cause
+havoc during all future transfers to any other SPI slave.
+
+Hence stop writing to registers in sh_msiof_spi_setup(), unless it is
+the first call for a controller using a native chip select, or unless
+native chip select polarity has changed (note that you'll loose anyway
+if I/O is in progress).  Even then, only do what is strictly necessary,
+instead of calling sh_msiof_spi_set_pin_regs().
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 62 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ drivers/spi/spi-sh-msiof.c | 35 ++++++++++++++++++++++++-----------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 2f0ec9d..b60527a 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -359,6 +359,68 @@
- 			dma-channels = <15>;
- 		};
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 81a9144f5442cdb4..2704abb11ea41fd0 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -55,6 +55,8 @@ struct sh_msiof_spi_priv {
+ 	void *rx_dma_page;
+ 	dma_addr_t tx_dma_addr;
+ 	dma_addr_t rx_dma_addr;
++	bool native_cs_inited;
++	bool native_cs_high;
+ 	bool slave_aborted;
+ };
  
-+		audma0: dma-controller@ec700000 {
-+			compatible = "renesas,dmac-r8a7743",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xec700000 0 0x10000>;
-+			interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12";
-+			clocks = <&cpg CPG_MOD 502>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 502>;
-+			#dma-cells = <1>;
-+			dma-channels = <13>;
-+		};
-+
-+		audma1: dma-controller@ec720000 {
-+			compatible = "renesas,dmac-r8a7743",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xec720000 0 0x10000>;
-+			interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12";
-+			clocks = <&cpg CPG_MOD 501>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 501>;
-+			#dma-cells = <1>;
-+			dma-channels = <13>;
-+		};
-+
- 		usb_dmac0: dma-controller@e65a0000 {
- 			compatible = "renesas,r8a7743-usb-dmac",
- 				     "renesas,usb-dmac";
+@@ -528,8 +530,7 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+ {
+ 	struct device_node	*np = spi->master->dev.of_node;
+ 	struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
+-
+-	pm_runtime_get_sync(&p->pdev->dev);
++	u32 clr, set, tmp;
+ 
+ 	if (!np) {
+ 		/*
+@@ -539,19 +540,31 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+ 		spi->cs_gpio = (uintptr_t)spi->controller_data;
+ 	}
+ 
+-	/* Configure pins before deasserting CS */
+-	sh_msiof_spi_set_pin_regs(p, !!(spi->mode & SPI_CPOL),
+-				  !!(spi->mode & SPI_CPHA),
+-				  !!(spi->mode & SPI_3WIRE),
+-				  !!(spi->mode & SPI_LSB_FIRST),
+-				  !!(spi->mode & SPI_CS_HIGH));
+-
+-	if (spi->cs_gpio >= 0)
++	if (spi->cs_gpio >= 0) {
+ 		gpio_set_value(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
++		return 0;
++	}
+ 
++	if (spi_controller_is_slave(p->master))
++		return 0;
+ 
+-	pm_runtime_put(&p->pdev->dev);
++	if (p->native_cs_inited &&
++	    (p->native_cs_high == !!(spi->mode & SPI_CS_HIGH)))
++		return 0;
+ 
++	/* Configure native chip select mode/polarity early */
++	clr = MDR1_SYNCMD_MASK;
++	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
++	if (spi->mode & SPI_CS_HIGH)
++		clr |= BIT(MDR1_SYNCAC_SHIFT);
++	else
++		set |= BIT(MDR1_SYNCAC_SHIFT);
++	pm_runtime_get_sync(&p->pdev->dev);
++	tmp = sh_msiof_read(p, TMDR1) & ~clr;
++	sh_msiof_write(p, TMDR1, tmp | set);
++	pm_runtime_put(&p->pdev->dev);
++	p->native_cs_high = spi->mode & SPI_CS_HIGH;
++	p->native_cs_inited = true;
+ 	return 0;
+ }
+ 
 -- 
-1.9.1
+2.7.4
 
