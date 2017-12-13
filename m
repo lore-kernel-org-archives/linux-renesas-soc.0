@@ -1,87 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:44573 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754846AbdLFKXe (ORCPT
+        with ESMTP id S1750737AbdLMI3i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:34 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 35/61] ARM: dts: r8a7743: Add CAN[01] SoC support
-Date: Wed,  6 Dec 2017 11:22:30 +0100
-Message-Id: <6ee6959fb85c3e03ec0674d329dc96c733f51dce.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Wed, 13 Dec 2017 03:29:38 -0500
+Date: Wed, 13 Dec 2017 09:29:34 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: rcar: Fix use-after-free in probe error path
+Message-ID: <20171213082933.dpswh3x234bu4dhu@verge.net.au>
+References: <1512641720-4715-1-git-send-email-geert+renesas@glider.be>
+ <1512641720-4715-2-git-send-email-geert+renesas@glider.be>
+ <20171212192942.GE53955@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171212192942.GE53955@bhelgaas-glaptop.roam.corp.google.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Tue, Dec 12, 2017 at 01:29:42PM -0600, Bjorn Helgaas wrote:
+> On Thu, Dec 07, 2017 at 11:15:19AM +0100, Geert Uytterhoeven wrote:
+> > If CONFIG_DEBUG_SLAB=y, and no PCIe card is inserted, the kernel crashes
+> > during probe on r8a7791/koelsch:
+> > 
+> >     rcar-pcie fe000000.pcie: PCIe link down
+> >     Unable to handle kernel paging request at virtual address 6b6b6b6b
+> > 
+> > (seeing this message requires earlycon and keep_bootcon).
+> > 
+> > Indeed, pci_free_host_bridge() frees the PCI host bridge, including the
+> > embedded rcar_pcie object, so pci_free_resource_list() must not be
+> > called afterwards.
+> > 
+> > To fix this, move the call to pci_free_resource_list() up, and update the
+> > label name accordingly.
+> > 
+> > Fixes: ddd535f1ea3eb27e ("PCI: rcar: Fix memory leak when no PCIe card is inserted")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Applied with Simon's and Lorenzo's acks to for-linus for v4.15, thanks!
+> 
+> I'll leave the second patch up to Lorenzo for v4.16, since it doesn't seem
+> as critical.
 
-Add the definitions for can0 and can1 to the SoC .dtsi.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 6aa86b75b80c..12c7b9267fd7 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1067,6 +1067,34 @@
- 			};
- 		};
- 
-+		can0: can@e6e80000 {
-+			compatible = "renesas,can-r8a7743",
-+				     "renesas,rcar-gen2-can";
-+			reg = <0 0xe6e80000 0 0x1000>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>,
-+				 <&cpg CPG_CORE R8A7743_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 916>;
-+			status = "disabled";
-+		};
-+
-+		can1: can@e6e88000 {
-+			compatible = "renesas,can-r8a7743",
-+				     "renesas,rcar-gen2-can";
-+			reg = <0 0xe6e88000 0 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>,
-+				 <&cpg CPG_CORE R8A7743_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 915>;
-+			status = "disabled";
-+		};
-+
- 		pci0: pci@ee090000 {
- 			compatible = "renesas,pci-r8a7743",
- 				     "renesas,pci-rcar-gen2";
-@@ -1153,6 +1181,14 @@
- 		clock-frequency = <48000000>;
- 	};
- 
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
- 	/* External SCIF clock */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
--- 
-2.11.0
+Thanks Bjorn, that's fine by me.
