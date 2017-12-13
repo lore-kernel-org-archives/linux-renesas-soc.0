@@ -1,57 +1,194 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57720 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752247AbdLLIYt (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50175 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750737AbdLMWq0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 03:24:49 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/3] arm64: dts: renesas: r8a7796: cleanup of make dtb W=1
-Date: Tue, 12 Dec 2017 09:24:33 +0100
-Message-Id: <20171212082436.12210-1-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 13 Dec 2017 17:46:26 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH/RFC v1.1] drm: rcar-du: Allow importing non-contiguous dma-buf with VSP
+Date: Thu, 14 Dec 2017 00:46:27 +0200
+Message-Id: <20171213224627.15738-1-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20171113103228.23312-3-laurent.pinchart+renesas@ideasonboard.com>
+References: <20171113103228.23312-3-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+When the DU sources its frames from a VSP, it performs no memory access
+and thus has no requirements on imported dma-buf memory types. In
+particular the DU could import a physically non-contiguous buffer that
+would later be mapped contiguously through the VSP IOMMU.
 
-this short series makes make dtb W=1 builds clean.
+This use case isn't supported at the moment as the GEM CMA helpers will
+reject any non-contiguous buffer, and the DU isn't connected to an IOMMU
+that can make the buffer contiguous for DMA. Fix this by implementing a
+custom .gem_prime_import_sg_table() operation that accepts all imported
+dma-buf regardless of the number of scatterlist entries.
 
-Patch 1 sorts subnodes of the root node into alphabetical order
-to... well bring some order to things.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v1:
 
-Patch 2 moves nodes without reg properties out of the SoC bus,
-this is in keeping with recent work for the r8a7795 SoC.
+- Duplicate the imported scatter gather table in
+  rcar_du_vsp_plane_prepare_fb()
 
-Patch 3 adds reg property to the place holder peciec[01] nodes
+This patch fixes a bug of the previous version and is posted in case anyone
+would like to test the implementation. I still plan to give Noralf's GEM
+library a try as an alternative approach to this series.
 
-Et voilà, make dtb W=1 no longer emits warnings.
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c |  2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 39 +++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_kms.h |  7 +++++++
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 34 ++++++++++++++++++++++++++----
+ 4 files changed, 77 insertions(+), 5 deletions(-)
 
-$ aarch64-linux-gnu-gcc --version
-aarch64-linux-gnu-gcc (Linaro GCC 5.4-2017.05) 5.4.1 20170404
-Copyright (C) 2015 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-
-Based on renesas-devel-20171211-v4.15-rc3
-
-Simon Horman (3):
-  arm64: dts: renesas: r8a7796: sort subnodes of root node
-    alphabetically
-  arm64: dts: renesas: r8a7796: move nodes which have no reg property
-    out of bus
-  arm64: dts: renesas: r8a7796: add reg properties to pciec[01] nodes
-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 216 ++++++++++++++++---------------
- 1 file changed, 111 insertions(+), 105 deletions(-)
-
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 48c166f925a3..d999231f98c7 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -289,7 +289,7 @@ static struct drm_driver rcar_du_driver = {
+ 	.gem_prime_import	= drm_gem_prime_import,
+ 	.gem_prime_export	= drm_gem_prime_export,
+ 	.gem_prime_get_sg_table	= drm_gem_cma_prime_get_sg_table,
+-	.gem_prime_import_sg_table = drm_gem_cma_prime_import_sg_table,
++	.gem_prime_import_sg_table = rcar_du_gem_prime_import_sg_table,
+ 	.gem_prime_vmap		= drm_gem_cma_prime_vmap,
+ 	.gem_prime_vunmap	= drm_gem_cma_prime_vunmap,
+ 	.gem_prime_mmap		= drm_gem_cma_prime_mmap,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 566d1a948c8f..2dd0c2ba047d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -20,6 +20,7 @@
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ 
++#include <linux/dma-buf.h>
+ #include <linux/of_graph.h>
+ #include <linux/wait.h>
+ 
+@@ -148,6 +149,44 @@ const struct rcar_du_format_info *rcar_du_format_info(u32 fourcc)
+  * Frame buffer
+  */
+ 
++struct drm_gem_object *rcar_du_gem_prime_import_sg_table(struct drm_device *dev,
++				struct dma_buf_attachment *attach,
++				struct sg_table *sgt)
++{
++	struct rcar_du_device *rcdu = dev->dev_private;
++	struct drm_gem_cma_object *cma_obj;
++	struct drm_gem_object *gem_obj;
++	int ret;
++
++	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE))
++		return drm_gem_cma_prime_import_sg_table(dev, attach, sgt);
++
++	/* Create a CMA GEM buffer. */
++	cma_obj = kzalloc(sizeof(*cma_obj), GFP_KERNEL);
++	if (!cma_obj)
++		return ERR_PTR(-ENOMEM);
++	gem_obj = &cma_obj->base;
++
++	ret = drm_gem_object_init(dev, gem_obj, attach->dmabuf->size);
++	if (ret)
++		goto error;
++
++	ret = drm_gem_create_mmap_offset(gem_obj);
++	if (ret) {
++		drm_gem_object_release(gem_obj);
++		goto error;
++	}
++
++	cma_obj->paddr = 0;
++	cma_obj->sgt = sgt;
++
++	return gem_obj;
++
++error:
++	kfree(cma_obj);
++	return ERR_PTR(ret);
++}
++
+ int rcar_du_dumb_create(struct drm_file *file, struct drm_device *dev,
+ 			struct drm_mode_create_dumb *args)
+ {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.h b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
+index 07951d5fe38b..10b2bb0f0df9 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
+@@ -16,10 +16,13 @@
+ 
+ #include <linux/types.h>
+ 
++struct dma_buf_attachment;
+ struct drm_file;
+ struct drm_device;
++struct drm_gem_object;
+ struct drm_mode_create_dumb;
+ struct rcar_du_device;
++struct sg_table;
+ 
+ struct rcar_du_format_info {
+ 	u32 fourcc;
+@@ -36,4 +39,8 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu);
+ int rcar_du_dumb_create(struct drm_file *file, struct drm_device *dev,
+ 			struct drm_mode_create_dumb *args);
+ 
++struct drm_gem_object *rcar_du_gem_prime_import_sg_table(struct drm_device *dev,
++				struct dma_buf_attachment *attach,
++				struct sg_table *sgt);
++
+ #endif /* __RCAR_DU_KMS_H__ */
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index 2c260c33840b..73fdc814aa39 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -224,10 +224,36 @@ static int rcar_du_vsp_plane_prepare_fb(struct drm_plane *plane,
+ 			drm_fb_cma_get_gem_obj(state->fb, i);
+ 		struct sg_table *sgt = &rstate->sg_tables[i];
+ 
+-		ret = dma_get_sgtable(rcdu->dev, sgt, gem->vaddr, gem->paddr,
+-				      gem->base.size);
+-		if (ret)
+-			goto fail;
++		if (gem->sgt) {
++			struct scatterlist *src;
++			struct scatterlist *dst;
++
++			/*
++			 * If the GEM buffer has a scatter gather table, it has
++			 * been imported from a dma-buf and has no physical
++			 * address as it might not be physically contiguous.
++			 * Copy the original scatter gather table to map it to
++			 * the VSP.
++			 */
++			ret = sg_alloc_table(sgt, gem->sgt->orig_nents,
++					     GFP_KERNEL);
++			if (ret)
++				goto fail;
++
++			src = gem->sgt->sgl;
++			dst = sgt->sgl;
++			for (i = 0; i < gem->sgt->orig_nents; ++i) {
++				sg_set_page(dst, sg_page(src), src->length,
++					    src->offset);
++				src = sg_next(src);
++				dst = sg_next(dst);
++			}
++		} else {
++			ret = dma_get_sgtable(rcdu->dev, sgt, gem->vaddr,
++					      gem->paddr, gem->base.size);
++			if (ret)
++				goto fail;
++		}
+ 
+ 		ret = vsp1_du_map_sg(vsp->vsp, sgt);
+ 		if (!ret) {
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
