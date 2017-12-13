@@ -1,37 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:56717 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752426AbdLSNTi (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 08:19:38 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 13 Dec 2017 09:42:08 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 0/2] Add thermal support for iWave RZ/G1M board
-Date: Tue, 19 Dec 2017 13:17:27 +0000
-Message-Id: <1513689449-2700-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/3] ARM: dts: r8a7745: Add CMT SoC specific support
+Message-ID: <20171213084207.dejnwj3fciudjse7@verge.net.au>
+References: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513104579-6333-4-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513104579-6333-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series aims to add thermal support for iWave RZ/G1M board.
+On Tue, Dec 12, 2017 at 06:49:39PM +0000, Fabrizio Castro wrote:
+> Add CMT[01] support to SoC DT.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  arch/arm/boot/dts/r8a7745.dtsi | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
 
-This patch series based on renesas tag renesas-devel-20171218-v4.15-rc4 
-
-Biju Das (2):
-  dt-bindings: thermal: rcar: Add device tree support for r8a7743
-  ARM: dts: r8a7743: Add thermal device to DT
-
- .../devicetree/bindings/thermal/rcar-thermal.txt   |  1 +
- arch/arm/boot/dts/r8a7743.dtsi                     | 32 ++++++++++++++++++++++
- 2 files changed, 33 insertions(+)
-
--- 
-1.9.1
+Please see my review of the r8a7743 patch in this series.
