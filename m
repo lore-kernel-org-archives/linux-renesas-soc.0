@@ -1,59 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:10739 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750825AbdLNJsN (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33961 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752320AbdLMJJo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 04:48:13 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 2/5] phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
-Date: Thu, 14 Dec 2017 09:48:08 +0000
-Message-ID: <TY1PR06MB099253E9C9DA5B47130609D5D80A0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+        Wed, 13 Dec 2017 04:09:44 -0500
+Received: by mail-lf0-f67.google.com with SMTP id x20so1798475lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Dec 2017 01:09:43 -0800 (PST)
+Subject: Re: [PATCH 2/5] phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 References: <1513146460-20326-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <1513146460-20326-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <7e7953b2-e94d-ded8-2278-6259a1457881@cogentembedded.com>
-In-Reply-To: <7e7953b2-e94d-ded8-2278-6259a1457881@cogentembedded.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <7e7953b2-e94d-ded8-2278-6259a1457881@cogentembedded.com>
+Date: Wed, 13 Dec 2017 12:09:40 +0300
 MIME-Version: 1.0
+In-Reply-To: <1513146460-20326-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8hDQoNCj4gRnJvbTogU2VyZ2VpIFNodHlseW92LCBTZW50OiBXZWRuZXNkYXksIERlY2Vt
-YmVyIDEzLCAyMDE3IDY6MTAgUE0NCj4gDQo+IEhlbGxvIQ0KPiANCj4gT24gMTIvMTMvMjAxNyA5
-OjI3IEFNLCBZb3NoaWhpcm8gU2hpbW9kYSB3cm90ZToNCj4gDQo+ID4gVGhpcyBwYXRjaCB1bmlm
-aWVzIHRoZSBPQklOVEVOIGhhbmRsaW5nIHRvIGNsZWFuLXVwIHRoZSBjb2RlLg0KPiA+DQo+ID4g
-U2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5zaGltb2RhLnVoQHJl
-bmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+ICAgZHJpdmVycy9waHkvcmVuZXNhcy9waHktcmNhci1n
-ZW4zLXVzYjIuYyB8IDIzICsrKysrKysrKysrKysrKy0tLS0tLS0tDQo+ID4gICAxIGZpbGUgY2hh
-bmdlZCwgMTUgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMtdXNiMi5jIGIvZHJpdmVycy9w
-aHkvcmVuZXNhcy9waHktcmNhci1nZW4zLXVzYjIuYw0KPiA+IGluZGV4IGMyMmQ2NWEuLmJlZWFh
-MzAgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9waHkvcmVuZXNhcy9waHktcmNhci1nZW4zLXVz
-YjIuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcGh5L3JlbmVzYXMvcGh5LXJjYXItZ2VuMy11c2IyLmMN
-Cj4gPiBAQCAtMTQ3LDYgKzE0NywxOCBAQCBzdGF0aWMgdm9pZCByY2FyX2dlbjNfZW5hYmxlX3Zi
-dXNfY3RybChzdHJ1Y3QgcmNhcl9nZW4zX2NoYW4gKmNoLCBpbnQgdmJ1cykNCj4gPiAgIAl3cml0
-ZWwodmFsLCB1c2IyX2Jhc2UgKyBVU0IyX0FEUENUUkwpOw0KPiA+ICAgfQ0KPiA+DQo+ID4gK3N0
-YXRpYyB2b2lkIHJjYXJfZ2VuM19lbmFibGVfb3RnX2lycShzdHJ1Y3QgcmNhcl9nZW4zX2NoYW4g
-KmNoLCBpbnQgZW5hYmxlKQ0KPiANCj4gICAgIElmIGl0IGJvdGggZW5hYmxlcyBhbmQgZGlzYWJs
-ZXMsIHJjYXJfZ2VuM19jb250cm9sX290Z19pcnEoKSB3b3VsZCBzZWVtIGENCj4gYmV0dGVyIG5h
-bWUuLi4NCg0KVGhhbmsgeW91IGZvciB0aGUgY29tbWVudCEgSSB0aGluayBzby4gU28sIEknbGwg
-Y2hhbmdlIHRoZSBuYW1lIGluIHYyLg0KSSdsbCBhbHNvIGNoYW5nZSB0aGUgbmFtZXMgb2YgImVu
-YWJsZV92YnVzX2N0cmwiIGFuZCBtZW1iZXJzIG9mDQpyY2FyX2dlbjNfcm9sZV9zd2FwX29wcyBp
-biB0aGUgcGF0Y2ggNA0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+ID4g
-K3sNCj4gPiArCXZvaWQgX19pb21lbSAqdXNiMl9iYXNlID0gY2gtPmJhc2U7DQo+ID4gKwl1MzIg
-dmFsID0gcmVhZGwodXNiMl9iYXNlICsgVVNCMl9PQklOVEVOKTsNCj4gPiArDQo+ID4gKwlpZiAo
-ZW5hYmxlKQ0KPiA+ICsJCXZhbCB8PSBVU0IyX09CSU5UX0JJVFM7DQo+ID4gKwllbHNlDQo+ID4g
-KwkJdmFsICY9IH5VU0IyX09CSU5UX0JJVFM7DQo+ID4gKwl3cml0ZWwodmFsLCB1c2IyX2Jhc2Ug
-KyBVU0IyX09CSU5URU4pOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICAgc3RhdGljIHZvaWQgcmNhcl9n
-ZW4zX2luaXRfZm9yX2hvc3Qoc3RydWN0IHJjYXJfZ2VuM19jaGFuICpjaCkNCj4gPiAgIHsNCj4g
-PiAgIAlyY2FyX2dlbjNfc2V0X2xpbmVjdHJsKGNoLCAxLCAxKTsNCj4gWy4uLl0NCj4gDQo+IE1C
-UiwgU2VyZ2VpDQo=
+Hello!
+
+On 12/13/2017 9:27 AM, Yoshihiro Shimoda wrote:
+
+> This patch unifies the OBINTEN handling to clean-up the code.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>   drivers/phy/renesas/phy-rcar-gen3-usb2.c | 23 +++++++++++++++--------
+>   1 file changed, 15 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> index c22d65a..beeaa30 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -147,6 +147,18 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+>   	writel(val, usb2_base + USB2_ADPCTRL);
+>   }
+>   
+> +static void rcar_gen3_enable_otg_irq(struct rcar_gen3_chan *ch, int enable)
+
+    If it both enables and disables, rcar_gen3_control_otg_irq() would seem a 
+better name...
+
+> +{
+> +	void __iomem *usb2_base = ch->base;
+> +	u32 val = readl(usb2_base + USB2_OBINTEN);
+> +
+> +	if (enable)
+> +		val |= USB2_OBINT_BITS;
+> +	else
+> +		val &= ~USB2_OBINT_BITS;
+> +	writel(val, usb2_base + USB2_OBINTEN);
+> +}
+> +
+>   static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
+>   {
+>   	rcar_gen3_set_linectrl(ch, 1, 1);
+[...]
+
+MBR, Sergei
