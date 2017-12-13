@@ -1,83 +1,63 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 02/10] include: media: Add Renesas CEU driver interface
-Date: Mon, 11 Dec 2017 16:26:27 +0200
-Message-ID: <1534914.aSna2J79oD@avalon>
-In-Reply-To: <20171115123633.zvkokelhwwyro42y@valkosipuli.retiisi.org.uk>
-References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org> <1510743363-25798-3-git-send-email-jacopo+renesas@jmondi.org> <20171115123633.zvkokelhwwyro42y@valkosipuli.retiisi.org.uk>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37459 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752683AbdLMNDc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 13 Dec 2017 08:03:32 -0500
+Received: by mail-wm0-f68.google.com with SMTP id f140so4949458wmd.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Dec 2017 05:03:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <1510743363-25798-8-git-send-email-jacopo+renesas@jmondi.org>
+References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org> <1510743363-25798-8-git-send-email-jacopo+renesas@jmondi.org>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Wed, 13 Dec 2017 14:02:50 +0100
+Message-ID: <CAOFm3uHvU6W8FDsO8zH7+akJfALedQvbXwtfLsUQ-RRt7iWv5g@mail.gmail.com>
+Subject: Re: [PATCH v1 07/10] v4l: i2c: Copy ov772x soc_camera sensor driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        magnus.damm@gmail.com, geert@glider.be,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-sh@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sakari,
+Jacopo,
 
-On Wednesday, 15 November 2017 14:36:33 EET Sakari Ailus wrote:
-> On Wed, Nov 15, 2017 at 11:55:55AM +0100, Jacopo Mondi wrote:
-> > Add renesas-ceu header file.
-> > 
-> > Do not remove the existing sh_mobile_ceu.h one as long as the original
-> > driver does not go away.
-> 
-> Hmm. This isn't really not about not removing a file but adding a new one.
-> Do you really need it outside the driver's own directory?
+On Wed, Nov 15, 2017 at 11:56 AM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
+> Copy the soc_camera based driver in v4l2 sensor driver directory.
+> This commit just copies the original file without modifying it.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-The file defines platform data structures that are needed for arch/sh/.
+<snip>
 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> > 
-> >  include/media/drv-intf/renesas-ceu.h | 23 +++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> >  create mode 100644 include/media/drv-intf/renesas-ceu.h
-> > 
-> > diff --git a/include/media/drv-intf/renesas-ceu.h
-> > b/include/media/drv-intf/renesas-ceu.h new file mode 100644
-> > index 0000000..f2da78c
-> > --- /dev/null
-> > +++ b/include/media/drv-intf/renesas-ceu.h
-> > @@ -0,0 +1,23 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +#ifndef __ASM_RENESAS_CEU_H__
-> > +#define __ASM_RENESAS_CEU_H__
-> > +
-> > +#include <media/v4l2-mediabus.h>
+> --- /dev/null
+> +++ b/drivers/media/i2c/ov772x.c
+> @@ -0,0 +1,1124 @@
+> +/*
+> + * ov772x Camera Driver
+> + *
+> + * Copyright (C) 2008 Renesas Solutions Corp.
+> + * Kuninori Morimoto <morimoto.kuninori@renesas.com>
+> + *
+> + * Based on ov7670 and soc_camera_platform driver,
+> + *
+> + * Copyright 2006-7 Jonathan Corbet <corbet@lwn.net>
+> + * Copyright (C) 2008 Magnus Damm
+> + * Copyright (C) 2008, Guennadi Liakhovetski <kernel@pengutronix.de>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
 
-I don't think you need this.
-
-> > +#define CEU_FLAG_PRIMARY_SENS	BIT(0)
-> > +#define CEU_MAX_SENS		2
-
-I assume SENS stands for sensor. As other sources than sensors can be 
-supported (video decoders for instance), I would name this CEU_MAX_SUBDEVS, 
-CEU_MAX_INPUTS or something similar.
-
-> > +
-> > +struct ceu_async_subdev {
-> > +	unsigned long flags;
-> > +	unsigned char bus_width;
-> > +	unsigned char bus_shift;
-> > +	unsigned int i2c_adapter_id;
-> > +	unsigned int i2c_address;
-> > +};
-> > +
-> > +struct ceu_info {
-> > +	unsigned int num_subdevs;
-> > +	struct ceu_async_subdev subdevs[CEU_MAX_SENS];
-> > +};
-> > +
-> > +#endif /* __ASM_RENESAS_CEU_H__ */
-> > --
-> > 2.7.4
-
-
+You may want to use the new SPDX ids as documented in Thomas doc
+patches instead of the loner legalese?
 -- 
-Regards,
-
-Laurent Pinchart
+Cordially
+Philippe Ombredanne
