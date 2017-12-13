@@ -1,69 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:44550 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756739AbdLOPQI (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:60973 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753011AbdLMS0b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 10:16:08 -0500
-Received: by mail-wm0-f68.google.com with SMTP id t8so18090561wmc.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 07:16:07 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/7] up-port of out-of-tree GSX GPU driver for r8a7796
-Date: Fri, 15 Dec 2017 16:15:38 +0100
-Message-Id: <1513350945-2642-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Wed, 13 Dec 2017 13:26:31 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: sakari.ailus@linux.intel.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund@ragnatech.se, kieran.bingham@ideasonboard.com,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/5] Add debug output to v4l2-async
+Date: Wed, 13 Dec 2017 19:26:15 +0100
+Message-Id: <1513189580-32202-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Hello Sakari,
+   while testing rcar-vin setup on top of your RFC (included in the series)
+that moves the framework to perform endpoint matching, I realized how hard is
+to follow what happens with asynchronous notifiers, sub-notifiers and
+sub-devices.
 
-This is a set of patches to the out-of-tree driver for the PowerVR GX6650
-GPU used in the R-Car M3-W SoC that is required to make it work on mainline.
+In order to better understand what happens and ease debug of v4l2-async
+operations I have introduced some dev_dbg() output, protected by a Kconfig
+option.
 
-The driver source can be downloaded here:
-https://www.renesas.com/en-us/solutions/automotive/rcar-demoboard.html
+Before being able to properly identify (sub-)notifiers and subdevices I had to
+extend fwnode_* framework to support a new .get_name() operation, and modify
+v4l2_async to make sure notifiers always have a valid fwnode_handle field to
+be identified with.
 
-The patched driver can also be found at
-https://github.com/uli/r8a7796-gpu
+I have tested this only with not yet mainlined drivers (rcar-vin, rcar-csi2,
+max9286) each of them performing non-trivial endpoint matching. Also I only
+tested this on OF based systems (not tested on ACPI).
+This considered, I am copying linux-media anyhow for feedbacks.
 
-The OpenCL tests and various others that are supplied with the "R-Car H3
-Evaluation Software Package for Linux for Yocto v2.23.0" at
-https://www.renesas.com/en-us/solutions/automotive/rcar-opencl.html
-pass. Anything that relies on EGL, however, fails early with an error
-from eglInitialize(). I suspect this to be an incompatibility of the binary
-blob libraries with my user space and will look into it further.
+Thanks
+   j
 
-A description of the test setup and some test results can be found here:
-https://www.elinux.org/User:Uli/R-Car_M3-W_Mainline_GPU_Test
+Jacopo Mondi (4):
+  device property: Add fwnode_get_name() operation
+  include: v4l2_async: Add 'owner' field to notifier
+  v4l2: async: Postpone subdev_notifier registration
+  v4l2: async: Add debug output to v4l2-async module
 
-This relies on the series "r8a7796 bits required for out-of-tree GSX module"
-for the DT and clock driver bits.
+Sakari Ailus (1):
+  v4l: async: Use endpoint node, not device node, for fwnode match
 
-CU
-Uli
+ drivers/acpi/property.c                        |   6 +
+ drivers/base/property.c                        |  12 ++
+ drivers/media/platform/am437x/am437x-vpfe.c    |   2 +-
+ drivers/media/platform/atmel/atmel-isc.c       |   2 +-
+ drivers/media/platform/atmel/atmel-isi.c       |   2 +-
+ drivers/media/platform/davinci/vpif_capture.c  |   2 +-
+ drivers/media/platform/exynos4-is/media-dev.c  |  14 ++-
+ drivers/media/platform/pxa_camera.c            |   2 +-
+ drivers/media/platform/qcom/camss-8x16/camss.c |   2 +-
+ drivers/media/platform/rcar_drif.c             |   2 +-
+ drivers/media/platform/stm32/stm32-dcmi.c      |   2 +-
+ drivers/media/platform/ti-vpe/cal.c            |   2 +-
+ drivers/media/platform/xilinx/xilinx-vipp.c    |  16 ++-
+ drivers/media/v4l2-core/Kconfig                |   8 ++
+ drivers/media/v4l2-core/v4l2-async.c           | 152 +++++++++++++++++++++----
+ drivers/media/v4l2-core/v4l2-fwnode.c          |   2 +-
+ drivers/of/property.c                          |   6 +
+ include/linux/fwnode.h                         |   2 +
+ include/linux/property.h                       |   1 +
+ include/media/v4l2-async.h                     |   4 +
+ 20 files changed, 200 insertions(+), 41 deletions(-)
 
-
-Ulrich Hecht (7):
-  drm/img-rogue: adapt to changed fence API
-  drm/img-rogue: change #include <asm/uaccess.h> to <linux/uaccess.h>
-  drm/img-rogue: #include <linux/sched/clock.h> in osfunc.c
-  drm/img-rogue: dma_buf_ops .kmap_* are now .map_*
-  drm/img-rogue: dma_ops->sync_single_for_*() -> dma_sync_single_for_*()
-  drm/img-rogue: init_timer() -> setup_timer()
-  drm/img-rogue: replace call to obsolete drm_platform_init()
-
- include/drm/pvr_drm.h                            |  2 +
- kernel/drivers/staging/imgtec/pvr_buffer_sync.c  | 38 ++++++-------
- kernel/drivers/staging/imgtec/pvr_drm.c          | 23 +-------
- kernel/drivers/staging/imgtec/pvr_fence.c        | 68 ++++++++++++------------
- kernel/drivers/staging/imgtec/pvr_fence.h        | 20 +++----
- kernel/drivers/staging/imgtec/pvr_platform_drv.c | 19 ++++++-
- services/server/env/linux/osfunc.c               | 13 ++---
- services/server/env/linux/osfunc_arm64.c         | 24 ++-------
- services/server/env/linux/physmem_dmabuf.c       |  4 +-
- services/server/env/linux/pvr_uaccess.h          |  2 +-
- 10 files changed, 96 insertions(+), 117 deletions(-)
-
--- 
+--
 2.7.4
