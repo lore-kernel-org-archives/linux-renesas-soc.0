@@ -1,60 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754897AbdLFKX7 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:24870 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750748AbdLMGvd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:59 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 48/61] ARM: dts: r8a7791: Update CMT compat strings
-Date: Wed,  6 Dec 2017 11:22:43 +0100
-Message-Id: <bf50e0ab4f5062bb9d4bb5dcb81a6673ea7e2473.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Wed, 13 Dec 2017 01:51:33 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4/4] usb: renesas_usbhs: add extcon notifier to set mode for non-otg channel
+Date: Wed, 13 Dec 2017 15:47:00 +0900
+Message-Id: <1513147620-20925-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+This patch adds extcon notifier callback to set the mode of
+host/peripheral by using extcon state (e.g phy-rcar-gen3-usb2) for
+non-otg channel (e.g. R-Car D3).
 
-Use recently updated R-Car Gen2 CMT0 and CMT1 compat strings.
-
-With this change in place we can keep device-specific configuration in
-the driver and the driver can be able to support CMT1 specific features.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/renesas_usbhs/common.c |  9 +++++++++
+ drivers/usb/renesas_usbhs/common.h |  1 +
+ drivers/usb/renesas_usbhs/rcar3.c  | 11 +++++++++++
+ 3 files changed, 21 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index e888b5b0e135..a69d6f883b34 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -257,7 +257,7 @@
- 	};
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 56079bb..c5289b3 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -581,6 +581,15 @@ static int usbhs_probe(struct platform_device *pdev)
+ 		break;
+ 	case USBHS_TYPE_RCAR_GEN3_WITH_PLL:
+ 		priv->pfunc = usbhs_rcar3_with_pll_ops;
++		if (!IS_ERR_OR_NULL(priv->edev)) {
++			priv->nb.notifier_call = priv->pfunc.notifier;
++			ret = devm_extcon_register_notifier(&pdev->dev,
++							    priv->edev,
++							    EXTCON_USB_HOST,
++							    &priv->nb);
++			if (ret < 0)
++				dev_err(&pdev->dev, "no notifier registered\n");
++		}
+ 		break;
+ 	default:
+ 		if (!info->platform_callback.get_id) {
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index 6479778..c9747f0 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -249,6 +249,7 @@ struct usbhs_priv {
+ 	struct platform_device *pdev;
  
- 	cmt0: timer@ffca0000 {
--		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7791-cmt0", "renesas,rcar-gen2-cmt0";
- 		reg = <0 0xffca0000 0 0x1004>;
- 		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-@@ -272,7 +272,7 @@
- 	};
+ 	struct extcon_dev *edev;
++	struct notifier_block nb;
  
- 	cmt1: timer@e6130000 {
--		compatible = "renesas,cmt-48-r8a7791", "renesas,cmt-48-gen2";
-+		compatible = "renesas,r8a7791-cmt1", "renesas,rcar-gen2-cmt1";
- 		reg = <0 0xe6130000 0 0x1004>;
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+ 	spinlock_t		lock;
+ 
+diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
+index b9a8453..d657309 100644
+--- a/drivers/usb/renesas_usbhs/rcar3.c
++++ b/drivers/usb/renesas_usbhs/rcar3.c
+@@ -112,6 +112,16 @@ static int usbhs_rcar3_get_id(struct platform_device *pdev)
+ 	return USBHS_GADGET;
+ }
+ 
++int usbhs_rcar3_notifier(struct notifier_block *nb, unsigned long event,
++			 void *data)
++{
++	struct usbhs_priv *priv = container_of(nb, struct usbhs_priv, nb);
++
++	usbhs_rcar3_set_usbsel(priv, !!event);
++
++	return NOTIFY_DONE;
++}
++
+ const struct renesas_usbhs_platform_callback usbhs_rcar3_ops = {
+ 	.power_ctrl = usbhs_rcar3_power_ctrl,
+ 	.get_id = usbhs_rcar3_get_id,
+@@ -120,4 +130,5 @@ static int usbhs_rcar3_get_id(struct platform_device *pdev)
+ const struct renesas_usbhs_platform_callback usbhs_rcar3_with_pll_ops = {
+ 	.power_ctrl = usbhs_rcar3_power_and_pll_ctrl,
+ 	.get_id = usbhs_rcar3_get_id,
++	.notifier = usbhs_rcar3_notifier,
+ };
 -- 
-2.11.0
+1.9.1
