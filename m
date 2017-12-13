@@ -1,66 +1,289 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754855AbdLFKXf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:35 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 27/61] ARM: dts: r8a7794: Use R-Car SDHI Gen2 fallback compat string
-Date: Wed,  6 Dec 2017 11:22:22 +0100
-Message-Id: <53b2d8f7e8a18232f513c7bafa90d7fda9b36062.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v1 10/10] media: i2c: tw9910: Remove soc_camera
+ dependencies
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org
+References: <1510743363-25798-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1510743363-25798-11-git-send-email-jacopo+renesas@jmondi.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <1c6e7110-5639-6af7-99c7-c6fafe55e056@xs4all.nl>
+Date: Wed, 13 Dec 2017 13:13:42 +0100
+MIME-Version: 1.0
+In-Reply-To: <1510743363-25798-11-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SDHI Gen2 fallback compat string
-in the DT of the r8a7794 SoC.
+On 15/11/17 11:56, Jacopo Mondi wrote:
+> Remove soc_camera framework dependencies from tw9910 sensor driver.
+> - Handle clock directly
+> - Register async subdevice
+> - Add platform specific enable/disable functions
+> - Adjust build system
+> 
+> This commit does not remove the original soc_camera based driver.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/i2c/Kconfig  |  9 ++++++
+>  drivers/media/i2c/Makefile |  1 +
+>  drivers/media/i2c/tw9910.c | 80 ++++++++++++++++++++++++++++++++++------------
+>  include/media/i2c/tw9910.h |  6 ++++
+>  4 files changed, 75 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index ff251ce..bbd77ee 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -415,6 +415,15 @@ config VIDEO_TW9906
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called tw9906.
+> 
+> +config VIDEO_TW9910
+> +	tristate "Techwell TW9910 video decoder"
+> +	depends on VIDEO_V4L2 && I2C
+> +	---help---
+> +	  Support for Techwell TW9910 NTSC/PAL/SECAM video decoder.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called tw9910.
+> +
+>  config VIDEO_VPX3220
+>  	tristate "vpx3220a, vpx3216b & vpx3214c video decoders"
+>  	depends on VIDEO_V4L2 && I2C
+> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+> index b2459a1..835784a 100644
+> --- a/drivers/media/i2c/Makefile
+> +++ b/drivers/media/i2c/Makefile
+> @@ -48,6 +48,7 @@ obj-$(CONFIG_VIDEO_TVP7002) += tvp7002.o
+>  obj-$(CONFIG_VIDEO_TW2804) += tw2804.o
+>  obj-$(CONFIG_VIDEO_TW9903) += tw9903.o
+>  obj-$(CONFIG_VIDEO_TW9906) += tw9906.o
+> +obj-$(CONFIG_VIDEO_TW9910) += tw9910.o
+>  obj-$(CONFIG_VIDEO_CS3308) += cs3308.o
+>  obj-$(CONFIG_VIDEO_CS5345) += cs5345.o
+>  obj-$(CONFIG_VIDEO_CS53L32A) += cs53l32a.o
+> diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
+> index bdb5e0a..f422da2 100644
+> --- a/drivers/media/i2c/tw9910.c
+> +++ b/drivers/media/i2c/tw9910.c
+> @@ -16,6 +16,7 @@
+>   * published by the Free Software Foundation.
+>   */
+> 
+> +#include <linux/clk.h>
+>  #include <linux/init.h>
+>  #include <linux/module.h>
+>  #include <linux/i2c.h>
+> @@ -25,9 +26,7 @@
+>  #include <linux/v4l2-mediabus.h>
+>  #include <linux/videodev2.h>
+> 
+> -#include <media/soc_camera.h>
+>  #include <media/i2c/tw9910.h>
+> -#include <media/v4l2-clk.h>
+>  #include <media/v4l2-subdev.h>
+> 
+>  #define GET_ID(val)  ((val & 0xF8) >> 3)
+> @@ -228,7 +227,7 @@ struct tw9910_scale_ctrl {
+> 
+>  struct tw9910_priv {
+>  	struct v4l2_subdev		subdev;
+> -	struct v4l2_clk			*clk;
+> +	struct clk			*clk;
+>  	struct tw9910_video_info	*info;
+>  	const struct tw9910_scale_ctrl	*scale;
+>  	v4l2_std_id			norm;
+> @@ -582,13 +581,40 @@ static int tw9910_s_register(struct v4l2_subdev *sd,
+>  }
+>  #endif
+> 
+> +static int tw9910_power_on(struct tw9910_priv *priv)
+> +{
+> +	int ret;
+> +
+> +	if (priv->info->platform_enable) {
+> +		ret = priv->info->platform_enable();
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (priv->clk)
+> +		return clk_enable(priv->clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tw9910_power_off(struct tw9910_priv *priv)
+> +{
+> +	if (priv->info->platform_enable)
+> +		priv->info->platform_disable();
+> +
+> +	if (priv->clk)
+> +		clk_disable(priv->clk);
+> +
+> +	return 0;
+> +}
+> +
+>  static int tw9910_s_power(struct v4l2_subdev *sd, int on)
+>  {
+>  	struct i2c_client *client = v4l2_get_subdevdata(sd);
+> -	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+>  	struct tw9910_priv *priv = to_tw9910(client);
+> 
+> -	return soc_camera_set_power(&client->dev, ssdd, priv->clk, on);
+> +	return on ? tw9910_power_on(priv) :
+> +		    tw9910_power_off(priv);
+>  }
+> 
+>  static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
+> @@ -614,7 +640,7 @@ static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
+>  	 * set bus width
+>  	 */
+>  	val = 0x00;
+> -	if (SOCAM_DATAWIDTH_16 == priv->info->buswidth)
+> +	if (priv->info->buswidth == TW9910_DATAWIDTH_16)
+>  		val = LEN;
+> 
+>  	ret = tw9910_mask_set(client, OPFORM, LEN, val);
+> @@ -799,8 +825,8 @@ static int tw9910_video_probe(struct i2c_client *client)
+>  	/*
+>  	 * tw9910 only use 8 or 16 bit bus width
+>  	 */
+> -	if (SOCAM_DATAWIDTH_16 != priv->info->buswidth &&
+> -	    SOCAM_DATAWIDTH_8  != priv->info->buswidth) {
+> +	if (priv->info->buswidth != TW9910_DATAWIDTH_16 &&
+> +	    priv->info->buswidth != TW9910_DATAWIDTH_8) {
+>  		dev_err(&client->dev, "bus width error\n");
+>  		return -ENODEV;
+>  	}
+> @@ -859,15 +885,11 @@ static int tw9910_enum_mbus_code(struct v4l2_subdev *sd,
+>  static int tw9910_g_mbus_config(struct v4l2_subdev *sd,
+>  				struct v4l2_mbus_config *cfg)
+>  {
+> -	struct i2c_client *client = v4l2_get_subdevdata(sd);
+> -	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+> -
+>  	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
+>  		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_VSYNC_ACTIVE_LOW |
+>  		V4L2_MBUS_HSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_LOW |
+>  		V4L2_MBUS_DATA_ACTIVE_HIGH;
+>  	cfg->type = V4L2_MBUS_PARALLEL;
+> -	cfg->flags = soc_camera_apply_board_flags(ssdd, cfg);
+> 
+>  	return 0;
+>  }
+> @@ -876,9 +898,8 @@ static int tw9910_s_mbus_config(struct v4l2_subdev *sd,
+>  				const struct v4l2_mbus_config *cfg)
+>  {
+>  	struct i2c_client *client = v4l2_get_subdevdata(sd);
+> -	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+>  	u8 val = VSSL_VVALID | HSSL_DVALID;
+> -	unsigned long flags = soc_camera_apply_board_flags(ssdd, cfg);
+> +	unsigned long flags = cfg->flags;
+> 
+>  	/*
+>  	 * set OUTCTR1
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+As mentioned elsewhere, drop support for g/s_mbus_config, use the DT instead.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> @@ -935,15 +956,14 @@ static int tw9910_probe(struct i2c_client *client,
+>  	struct tw9910_video_info	*info;
+>  	struct i2c_adapter		*adapter =
+>  		to_i2c_adapter(client->dev.parent);
+> -	struct soc_camera_subdev_desc	*ssdd = soc_camera_i2c_to_desc(client);
+>  	int ret;
+> 
+> -	if (!ssdd || !ssdd->drv_priv) {
+> +	if (!client->dev.platform_data) {
+>  		dev_err(&client->dev, "TW9910: missing platform data!\n");
+>  		return -EINVAL;
+>  	}
+> 
+> -	info = ssdd->drv_priv;
+> +	info = client->dev.platform_data;
+> 
+>  	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
+>  		dev_err(&client->dev,
+> @@ -959,13 +979,27 @@ static int tw9910_probe(struct i2c_client *client,
+> 
+>  	v4l2_i2c_subdev_init(&priv->subdev, client, &tw9910_subdev_ops);
+> 
+> -	priv->clk = v4l2_clk_get(&client->dev, "mclk");
+> -	if (IS_ERR(priv->clk))
+> +	priv->clk = clk_get(&client->dev, "mclk");
+> +	if (PTR_ERR(priv->clk) == -ENOENT) {
+> +		priv->clk = NULL;
+> +	} else if (IS_ERR(priv->clk)) {
+> +		dev_err(&client->dev, "Unable to get mclk clock\n");
+>  		return PTR_ERR(priv->clk);
+> +	}
+> 
+>  	ret = tw9910_video_probe(client);
+>  	if (ret < 0)
+> -		v4l2_clk_put(priv->clk);
+> +		goto error_put_clk;
+> +
+> +	ret = v4l2_async_register_subdev(&priv->subdev);
+> +	if (ret)
+> +		goto error_put_clk;
+> +
+> +	return ret;
+> +
+> +error_put_clk:
+> +	if (priv->clk)
+> +		clk_put(priv->clk);
+> 
+>  	return ret;
+>  }
+> @@ -973,7 +1007,11 @@ static int tw9910_probe(struct i2c_client *client,
+>  static int tw9910_remove(struct i2c_client *client)
+>  {
+>  	struct tw9910_priv *priv = to_tw9910(client);
+> -	v4l2_clk_put(priv->clk);
+> +
+> +	if (priv->clk)
+> +		clk_put(priv->clk);
+> +	v4l2_device_unregister_subdev(&priv->subdev);
+> +
+>  	return 0;
+>  }
+> 
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 148c2567a6ce..95206c25e6a1 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -792,7 +792,8 @@
- 	};
- 
- 	sdhi0: sd@ee100000 {
--		compatible = "renesas,sdhi-r8a7794";
-+		compatible = "renesas,sdhi-r8a7794",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 314>;
-@@ -806,7 +807,8 @@
- 	};
- 
- 	sdhi1: sd@ee140000 {
--		compatible = "renesas,sdhi-r8a7794";
-+		compatible = "renesas,sdhi-r8a7794",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 312>;
-@@ -820,7 +822,8 @@
- 	};
- 
- 	sdhi2: sd@ee160000 {
--		compatible = "renesas,sdhi-r8a7794";
-+		compatible = "renesas,sdhi-r8a7794",
-+			     "renesas,rcar-gen2-sdhi";
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 311>;
--- 
-2.11.0
+Also update MODULE_DESCRIPTION.
+
+> diff --git a/include/media/i2c/tw9910.h b/include/media/i2c/tw9910.h
+> index 90bcf1f..b80e45c 100644
+> --- a/include/media/i2c/tw9910.h
+> +++ b/include/media/i2c/tw9910.h
+> @@ -18,6 +18,9 @@
+> 
+>  #include <media/soc_camera.h>
+> 
+> +#define TW9910_DATAWIDTH_8	BIT(0)
+> +#define TW9910_DATAWIDTH_16	BIT(1)
+> +
+>  enum tw9910_mpout_pin {
+>  	TW9910_MPO_VLOSS,
+>  	TW9910_MPO_HLOCK,
+> @@ -32,6 +35,9 @@ enum tw9910_mpout_pin {
+>  struct tw9910_video_info {
+>  	unsigned long		buswidth;
+>  	enum tw9910_mpout_pin	mpout;
+> +
+> +	int (*platform_enable)(void);
+> +	void (*platform_disable)(void);
+>  };
+> 
+> 
+> --
+> 2.7.4
+> 
+
+Regards,
+
+	Hans
