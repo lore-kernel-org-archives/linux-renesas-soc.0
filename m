@@ -1,96 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:44896 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752035AbdLHBJB (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:38258 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750819AbdLMGvb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 20:09:01 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v9 16/28] rcar-vin: add function to manipulate Gen3 chsel value
-Date: Fri,  8 Dec 2017 02:08:30 +0100
-Message-Id: <20171208010842.20047-17-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 13 Dec 2017 01:51:31 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/4] usb: renesas_usbhs: Add a function to write the UGCTRL2 register
+Date: Wed, 13 Dec 2017 15:46:57 +0900
+Message-Id: <1513147620-20925-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
-feature of this register is that it's only present in the VIN0 and VIN4
-instances. The register in VIN0 controls the routing for VIN0-3 and the
-register in VIN4 controls routing for VIN4-7.
+To cleanup the code, this patch adds a function to write the UGCTRL2
+register.
 
-To be able to control routing from a media device this function is need
-to control runtime PM for the subgroup master (VIN0 and VIN4). The
-subgroup master must be switched on before the register is manipulated,
-once the operation is complete it's safe to switch the master off and
-the new routing will still be in effect.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 25 +++++++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
- 2 files changed, 27 insertions(+)
+ drivers/usb/renesas_usbhs/rcar3.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index ace95d5b543a17e3..d2788d8bb9565aaa 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-+#include <linux/pm_runtime.h>
- 
- #include <media/videobuf2-dma-contig.h>
- 
-@@ -1228,3 +1229,27 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
- 
- 	return ret;
+diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
+index c929d29..50e5fb5 100644
+--- a/drivers/usb/renesas_usbhs/rcar3.c
++++ b/drivers/usb/renesas_usbhs/rcar3.c
+@@ -44,13 +44,17 @@ static u32 usbhs_read32(struct usbhs_priv *priv, u32 reg)
+ 	return ioread32(priv->base + reg);
  }
-+
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CHSEL manipulation
-+ */
-+
-+void rvin_set_chsel(struct rvin_dev *vin, u8 chsel)
+ 
++static void usbhs_rcar3_set_ugctrl2(struct usbhs_priv *priv, u32 val)
 +{
-+	u32 ifmd, vnmc;
-+
-+	pm_runtime_get_sync(vin->dev);
-+
-+	/* Make register writes take effect immediately */
-+	vnmc = rvin_read(vin, VNMC_REG) & ~VNMC_VUP;
-+	rvin_write(vin, vnmc, VNMC_REG);
-+
-+	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
-+		VNCSI_IFMD_CSI_CHSEL(chsel);
-+
-+	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
-+
-+	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
-+
-+	pm_runtime_put(vin->dev);
++	usbhs_write32(priv, UGCTRL2, val | UGCTRL2_RESERVED_3);
 +}
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index a440effe4b86af31..7819c760c2c13422 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -163,4 +163,6 @@ void rvin_v4l2_unregister(struct rvin_dev *vin);
- 
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
-+void rvin_set_chsel(struct rvin_dev *vin, u8 chsel);
 +
- #endif
+ static int usbhs_rcar3_power_ctrl(struct platform_device *pdev,
+ 				void __iomem *base, int enable)
+ {
+ 	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
+ 
+-	usbhs_write32(priv, UGCTRL2, UGCTRL2_RESERVED_3 | UGCTRL2_USB0SEL_OTG |
+-		      UGCTRL2_VBUSSEL);
++	usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_OTG | UGCTRL2_VBUSSEL);
+ 
+ 	if (enable) {
+ 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
+@@ -73,8 +77,7 @@ static int usbhs_rcar3_power_and_pll_ctrl(struct platform_device *pdev,
+ 
+ 	if (enable) {
+ 		usbhs_write32(priv, UGCTRL, 0);	/* release PLLRESET */
+-		usbhs_write32(priv, UGCTRL2, UGCTRL2_RESERVED_3 |
+-			      UGCTRL2_USB0SEL_HSUSB);
++		usbhs_rcar3_set_ugctrl2(priv, UGCTRL2_USB0SEL_HSUSB);
+ 
+ 		usbhs_bset(priv, LPSTS, LPSTS_SUSPM, LPSTS_SUSPM);
+ 		do {
 -- 
-2.15.0
+1.9.1
