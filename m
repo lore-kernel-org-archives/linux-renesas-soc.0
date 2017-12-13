@@ -1,11 +1,19 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB0895B34EFC2A48F49AFF0694C0350@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513104579-6333-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20171213083829.ptdeggbon3szmko4@verge.net.au> <TY1PR06MB0895B34EFC2A48F49AFF0694C0350@TY1PR06MB0895.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Dec 2017 11:05:23 +0100
+Message-ID: <CAMuHMdWEFttz_Shve+D1Ku2NoUYX-AomzXY9JFGRjzzM=hOc_A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: r8a7743: Add CMT SoC specific support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
-        "Magnus Damm" <magnus.damm@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         "linux-renesas-soc@vger.kernel.org"
@@ -13,64 +21,42 @@ CC: Simon Horman <horms@verge.net.au>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 2/3] ARM: dts: r8a7743: Add CMT SoC specific support
-Date: Wed, 13 Dec 2017 10:15:39 +0000
-Message-ID: <TY1PR06MB08954C04D41BDA8EFA04E1DFC0350@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1513104579-6333-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <20171213083829.ptdeggbon3szmko4@verge.net.au>
- <TY1PR06MB0895B34EFC2A48F49AFF0694C0350@TY1PR06MB0895.apcprd06.prod.outlook.com>
- <CAMuHMdWEFttz_Shve+D1Ku2NoUYX-AomzXY9JFGRjzzM=hOc_A@mail.gmail.com>
-In-Reply-To: <CAMuHMdWEFttz_Shve+D1Ku2NoUYX-AomzXY9JFGRjzzM=hOc_A@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNCnRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4NCg0KPiBIaSBGYWJy
-aXppbywNCj4NCj4gT24gV2VkLCBEZWMgMTMsIDIwMTcgYXQgMTA6NDIgQU0sIEZhYnJpemlvIENh
-c3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPj4gT24g
-VHVlLCBEZWMgMTIsIDIwMTcgYXQgMDY6NDk6MzhQTSArMDAwMCwgRmFicml6aW8gQ2FzdHJvIHdy
-b3RlOg0KPiA+PiA+IEFkZCBDTVRbMDFdIHN1cHBvcnQgdG8gU29DIERULg0KPiA+PiA+IFNpZ25l
-ZC1vZmYtYnk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29t
-Pg0KPiA+PiA+IFJldmlld2VkLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+
-DQo+ID4+ID4gLS0tDQo+ID4+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3NDMuZHRzaSB8IDMw
-ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+PiA+ICAxIGZpbGUgY2hhbmdlZCwg
-MzAgaW5zZXJ0aW9ucygrKQ0KPiA+Pg0KPiA+PiBJIHdhcyBleHBlY3RpbmcgdGhlIGNtdCBub2Rl
-cyB0byBiZSAiZGlzYWJsZWQiIGluIHRoZSBTb0MgZmlsZQ0KPiA+PiBhbmQgdGhlbiBlbmFibGVk
-IHNlbGVjdGl2ZWx5IGluIGJvYXJkIGZpbGVzLiBBbSBJIG1pc3Npbmcgc29tZXRoaW5nPw0KPiA+
-DQo+ID4gU2luY2UgdGhpcyBjb21wb25lbnQgaXMganVzdCBhIGNvbXBhcmUgYW5kIG1hdGNoIHRp
-bWVyLCBJICB0aG91Z2h0IHRoZXJlIHdhcyBubyBoYXJtIGluIGVuYWJsaW5nIGl0IGJ5IGRlZmF1
-bHQgaW4gdGhlIFNvQyBzcGVjaWZpYyBEVC4NCj4gPiBUaGUgc3lzdGVtIHdpbGwgcGFyayBpdCBh
-bmQgbGVhdmUgaXRzIGNsb2NrIGRpc2FibGVkIHVudGlsIGFjdHVhbGx5IG5lZWRlZCBmb3Igc29t
-ZXRoaW5nLg0KPiA+IFRoZSB1c2VyIGNhbiBzdGlsbCBkaXNhYmxlIGl0IGluIHRoZSBib2FyZCBz
-cGVjaWZpYyBEVCBpZiBoZS9zaGUgZG9lc24ndCBtZWFuIHRvIGV2ZW4gaGF2ZSB0aGUgb3B0aW9u
-IHRvIHVzZSBpdC4gRG8geW91IHByZWZlciBJIGxlZnQgaXQNCj4gZGlzYWJsZWQgYnkgZGVmYXVs
-dD8NCj4NCj4gSXQncyBkZWJhdGFibGUgKHRodXMgdXAgdG8gU2ltb24gdGhlIG1haW50YWluZXIg
-Oy0pLg0KPiBGb3IgSS9PIGRldmljZXMsIHdlIGRpc2FibGUgdGhlbSBpbiB0aGUgU29DIC5kdHNp
-IGZpbGUuDQo+IEZvciBjb3JlIGluZnJhc3RydWN0dXJlIGxpa2UgaW50ZXJydXB0LCBETUEsIGFu
-ZCBHUElPIGNvbnRyb2xsZXJzLCB3ZSBrZWVwDQo+IHRoZW0gZW5hYmxlZC4NCj4NCj4gVGltZXJz
-IGFyZSBjb3JlIGZ1bmN0aW9uYWxpdHksIGJ1dCB3aG8ncyBhY3R1YWxseSB1c2luZyB0aGVzZSB0
-aW1lcnM/DQoNCkkgZG9uJ3QgaGF2ZSBhIHVzZSBjYXNlIGluIG1pbmQgdW5mb3J0dW5hdGVseSwg
-YnV0IGl0J3Mgc3RpbGwgY29yZSBmdW5jdGlvbmFsaXR5IGFuZCBwcmV0dHkgaGFybWxlc3MgYXMg
-ZmFyIGFzIEkgY2FuIHRlbGwuIExldCdzIHNlZSB3aGF0IFNpbW9uIHRoaW5rcyBhYm91dCB0aGlz
-Lg0KDQpUaGFua3MsDQpGYWINCg0KPg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4NCj4gICAgICAg
-ICAgICAgICAgICAgICAgICAgR2VlcnQNCj4NCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0t
-IFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9y
-Zw0KPg0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwg
-SSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5h
-bGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNClto
-dHRwczovL3d3dzIucmVuZXNhcy5ldS9tZWRpYS9lbWFpbC91bmljZWZfMjAxNy5qcGddDQoNClRo
-aXMgQ2hyaXN0bWFzLCBpbnN0ZWFkIG9mIHNlbmRpbmcgb3V0IGNhcmRzLCBSZW5lc2FzIEVsZWN0
-cm9uaWNzIEV1cm9wZSBoYXZlIGRlY2lkZWQgdG8gc3VwcG9ydCBVbmljZWYgd2l0aCBhIGRvbmF0
-aW9uLiBGb3IgZnVydGhlciBkZXRhaWxzIGNsaWNrIGhlcmU8aHR0cHM6Ly93d3cudW5pY2VmLm9y
-Zy8+IHRvIGZpbmQgb3V0IGFib3V0IHRoZSB2YWx1YWJsZSB3b3JrIHRoZXkgZG8sIGhlbHBpbmcg
-Y2hpbGRyZW4gYWxsIG92ZXIgdGhlIHdvcmxkLg0KV2Ugd291bGQgbGlrZSB0byB0YWtlIHRoaXMg
-b3Bwb3J0dW5pdHkgdG8gd2lzaCB5b3UgYSBNZXJyeSBDaHJpc3RtYXMgYW5kIGEgcHJvc3Blcm91
-cyBOZXcgWWVhci4NCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMg
-TWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDgg
-NUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBO
-by4gMDQ1ODY3MDkuDQo=
+Hi Fabrizio,
+
+On Wed, Dec 13, 2017 at 10:42 AM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+>> On Tue, Dec 12, 2017 at 06:49:38PM +0000, Fabrizio Castro wrote:
+>> > Add CMT[01] support to SoC DT.
+>> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+>> > ---
+>> >  arch/arm/boot/dts/r8a7743.dtsi | 30 ++++++++++++++++++++++++++++++
+>> >  1 file changed, 30 insertions(+)
+>>
+>> I was expecting the cmt nodes to be "disabled" in the SoC file
+>> and then enabled selectively in board files. Am I missing something?
+>
+> Since this component is just a compare and match timer, I  thought there was no harm in enabling it by default in the SoC specific DT. The system will park it and leave its clock disabled until actually needed for something.
+> The user can still disable it in the board specific DT if he/she doesn't mean to even have the option to use it. Do you prefer I left it disabled by default?
+
+It's debatable (thus up to Simon the maintainer ;-).
+For I/O devices, we disable them in the SoC .dtsi file.
+For core infrastructure like interrupt, DMA, and GPIO controllers, we keep
+them enabled.
+
+Timers are core functionality, but who's actually using these timers?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
