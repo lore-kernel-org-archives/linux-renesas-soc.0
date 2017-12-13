@@ -1,27 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:46166 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932215AbdLOOKz (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51350 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbdLMXRx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 09:10:55 -0500
+        Wed, 13 Dec 2017 18:17:53 -0500
 Subject: Re: [PATCH 0/4] kms++util: Provide validation helpers
 To: Kieran Bingham <kbingham@kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-CC: <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
+        linux-renesas-soc@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: laurent.pinchart@ideasonboard.com
 References: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <6977594a-ebd8-63b3-b470-b58fa663ccb6@ti.com>
-Date: Fri, 15 Dec 2017 16:10:49 +0200
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <9c4ae2e3-267a-59e7-39e9-1412b6170e27@ideasonboard.com>
+Date: Wed, 13 Dec 2017 23:17:50 +0000
 MIME-Version: 1.0
 In-Reply-To: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 14/12/17 01:10, Kieran Bingham wrote:
+Hi Tomi,
+
+Apologies that I didn't make it particularly clear, but I should have prefixed
+this series title with a nice big [RFC] :-D
+
+This is ongoing work to support loop-back validation on our platforms.
+
+Regards
+
+Kieran
+
+On 13/12/17 23:10, Kieran Bingham wrote:
 > From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 > 
 > Our kms-tests test suite for verifying the R-Car DU is based on kmsxx.
@@ -41,13 +52,18 @@ On 14/12/17 01:10, Kieran Bingham wrote:
 > point to quickly verify if the data captured matches the data that we expected.
 > 
 > Kieran Bingham (4):
->    videodevice: Fix minor spacing
->    py: pyvid: Provide stream_off binding
-
-Thanks, I've picked up the first two patches.
-
-  Tomi
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. 
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>   videodevice: Fix minor spacing
+>   py: pyvid: Provide stream_off binding
+>   kms++util: Add verification module
+>   kms++util: Add frame compare functionality
+> 
+>  kms++util/inc/kms++util/kms++util.h |  3 ++-
+>  kms++util/src/verification.cpp      | 52 ++++++++++++++++++++++++++++++-
+>  kms++util/src/videodevice.cpp       |  2 +-
+>  py/pykms/pykmsutil.cpp              |  7 ++++-
+>  py/pykms/pyvid.cpp                  |  1 +-
+>  5 files changed, 64 insertions(+), 1 deletion(-)
+>  create mode 100644 kms++util/src/verification.cpp
+> 
+> base-commit: fee73296cae1a4984e18c8d8ee8e50ab217b1e4a
+> 
