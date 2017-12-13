@@ -1,120 +1,75 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:44744 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750916AbdLMIkw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 13 Dec 2017 03:40:52 -0500
+Date: Wed, 13 Dec 2017 09:40:48 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Chris Paterson" <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 1/3] dt-bindings: timer: renesas, cmt: Document r8a774[35]
- CMT support
-Date: Wed, 13 Dec 2017 09:50:16 +0000
-Message-ID: <TY1PR06MB0895BBA53926995AE47757A9C0350@TY1PR06MB0895.apcprd06.prod.outlook.com>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: timer: renesas, cmt: Document
+ r8a774[35] CMT support
+Message-ID: <20171213084048.jxofa3hinb6gm2ax@verge.net.au>
 References: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1513104579-6333-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <20171213084048.jxofa3hinb6gm2ax@verge.net.au>
-In-Reply-To: <20171213084048.jxofa3hinb6gm2ax@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513104579-6333-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Simon,
+On Tue, Dec 12, 2017 at 06:49:37PM +0000, Fabrizio Castro wrote:
+> Document SoC specific compatible strings for r8a7743 and r8a7745.
+> No driver change is needed as the fallback strings will activate
+> the right code.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/timer/renesas,cmt.txt | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+> index d740989..1e4fe98 100644
+> --- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+> +++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+> @@ -22,6 +22,10 @@ Required Properties:
+>  
+>      - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8a73a4.
+>      - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8a73a4.
+> +    - "renesas,r8a7743-cmt0" for the 32-bit CMT0 device included in r8a7743.
+> +    - "renesas,r8a7743-cmt1" for the 48-bit CMT1 device included in r8a7743.
+> +    - "renesas,r8a7745-cmt0" for the 32-bit CMT0 device included in r8a7745.
+> +    - "renesas,r8a7745-cmt1" for the 48-bit CMT1 device included in r8a7745.
+>      - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
+>      - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7790.
+>      - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7791.
+> @@ -31,9 +35,11 @@ Required Properties:
+>      - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7794.
+>      - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8a7794.
+>  
+> -    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2.
+> -    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2.
+> -		These are fallbacks for r8a73a4 and all the R-Car Gen2
+> +    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2 or
 
-thank you for the feedback.
-I'll apply your comments to V2, but I'll wait for your reply on the CMT "en=
-able by default" issue.
+nit: or -> and ?
 
-Thanks,
-Fab
+> +		RZ/G1.
+> +    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2 or
+> +		RZ/G1.
+> +		These are fallbacks for r8a73a4, all the R-Car Gen2 and RZ/G1
+>  		entries	listed above.
 
-> Subject: Re: [PATCH 1/3] dt-bindings: timer: renesas, cmt: Document r8a77=
-4[35] CMT support
->
-> On Tue, Dec 12, 2017 at 06:49:37PM +0000, Fabrizio Castro wrote:
-> > Document SoC specific compatible strings for r8a7743 and r8a7745.
-> > No driver change is needed as the fallback strings will activate
-> > the right code.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> > ---
-> >  Documentation/devicetree/bindings/timer/renesas,cmt.txt | 12 +++++++++=
----
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-> b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-> > index d740989..1e4fe98 100644
-> > --- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-> > +++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-> > @@ -22,6 +22,10 @@ Required Properties:
-> >
-> >      - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8=
-a73a4.
-> >      - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8=
-a73a4.
-> > +    - "renesas,r8a7743-cmt0" for the 32-bit CMT0 device included in r8=
-a7743.
-> > +    - "renesas,r8a7743-cmt1" for the 48-bit CMT1 device included in r8=
-a7743.
-> > +    - "renesas,r8a7745-cmt0" for the 32-bit CMT0 device included in r8=
-a7745.
-> > +    - "renesas,r8a7745-cmt1" for the 48-bit CMT1 device included in r8=
-a7745.
-> >      - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8=
-a7790.
-> >      - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8=
-a7790.
-> >      - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8=
-a7791.
-> > @@ -31,9 +35,11 @@ Required Properties:
-> >      - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8=
-a7794.
-> >      - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8=
-a7794.
-> >
-> > -    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-C=
-ar Gen2.
-> > -    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-C=
-ar Gen2.
-> > -These are fallbacks for r8a73a4 and all the R-Car Gen2
-> > +    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-C=
-ar Gen2 or
->
-> nit: or -> and ?
->
-> > +RZ/G1.
-> > +    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-C=
-ar Gen2 or
-> > +RZ/G1.
-> > +These are fallbacks for r8a73a4, all the R-Car Gen2 and RZ/G1
-> >  entrieslisted above.
->
-> nit: all the R-Car -> R-Car
->
-> >    - reg: base address and length of the registers block for the timer =
-module.
+nit: all the R-Car -> R-Car
 
-
-[https://www2.renesas.eu/media/email/unicef_2017.jpg]
-
-This Christmas, instead of sending out cards, Renesas Electronics Europe ha=
-ve decided to support Unicef with a donation. For further details click her=
-e<https://www.unicef.org/> to find out about the valuable work they do, hel=
-ping children all over the world.
-We would like to take this opportunity to wish you a Merry Christmas and a =
-prosperous New Year.
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+>    - reg: base address and length of the registers block for the timer module.
