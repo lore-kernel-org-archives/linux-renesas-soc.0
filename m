@@ -1,56 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54300 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751816AbdLNLpt (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:35908 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753786AbdLMTFX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 06:45:49 -0500
-Date: Thu, 14 Dec 2017 11:45:44 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 4/4] spi: sh-msiof: Document hardware limitations related
- to chip selects
-Message-ID: <20171214114544.GC9788@sirena.org.uk>
+        Wed, 13 Dec 2017 14:05:23 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/4] spi: sh-msiof: Document hardware limitations related to chip selects
+Date: Wed, 13 Dec 2017 20:05:13 +0100
+Message-Id: <1513191913-10612-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1513191913-10612-1-git-send-email-geert+renesas@glider.be>
 References: <1513191913-10612-1-git-send-email-geert+renesas@glider.be>
- <1513191913-10612-5-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="KDt/GgjP6HVcx58l"
-Content-Disposition: inline
-In-Reply-To: <1513191913-10612-5-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Guide users to maintain the proper balance between native and GPIO chip
+selects.
 
---KDt/GgjP6HVcx58l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/spi/sh-msiof.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-On Wed, Dec 13, 2017 at 08:05:13PM +0100, Geert Uytterhoeven wrote:
-
-> +			 Hardware limitations related to chip selects:
-> +			   - Native chip selects are always deasserted in
-> +			     between transfers that are part of the same
-> +			     message.  Use cs-gpios to work around this.
-
-Ideally the driver would be generating an error when it sees
-multi-transfer messages.
-
---KDt/GgjP6HVcx58l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloyZGcACgkQJNaLcl1U
-h9AT7Af/TK1+7gMVOO2nLm4h2HMrGHPUHeUhJJgnR7vsZozlcCnsq0/bxn0NXB56
-1PbwCYZvC2QrfsvHI7AvO+R/XnORlFzGgvHF3i95+S4zkP3Bwpg/11tsgKOHeRxK
-E0csFyJZAD0+8gGnTGNRMaLLmudUSJxJ9wNWSw94fMMrzbdlXoC3rjlrczJ0snkk
-MBawsXyfVDQb6rG1UvY3jCf6scZvhjF2D1rrmh9BnzB0A/prc6DoO5wdXrKBOxTb
-G0Tb+BAuDDn2CmgoEqCfYLK6/rhU+E5MoknJuVFny3WXD5QXdAMiaB6U54l9CkYM
-eppmnsSjtjRs/K32pH7q9r0Y1CcpIw==
-=p2YY
------END PGP SIGNATURE-----
-
---KDt/GgjP6HVcx58l--
+diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+index bc8c16a6cfc82685..80710f0f04489174 100644
+--- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
++++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
+@@ -41,6 +41,16 @@ Optional properties:
+ 			   0: MSIOF_SYNC
+ 			   1: MSIOF_SS1
+ 			   2: MSIOF_SS2
++			 Hardware limitations related to chip selects:
++			   - Native chip selects are always deasserted in
++			     between transfers that are part of the same
++			     message.  Use cs-gpios to work around this.
++			   - All slaves using native chip selects must use the
++			     same spi-cs-high configuration.  Use cs-gpios to
++			     work around this.
++			   - When using GPIO chip selects, at least one native
++			     chip select must be left unused, as it will be
++			     driven anyway.
+ - dmas                 : Must contain a list of two references to DMA
+ 			 specifiers, one for transmission, and one for
+ 			 reception.
+-- 
+2.7.4
