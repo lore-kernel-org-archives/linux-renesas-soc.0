@@ -1,70 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:45870 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755265AbdLOJSr (ORCPT
+Received: from sauhun.de ([88.99.104.3]:50127 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752811AbdLMQwX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 04:18:47 -0500
-Received: by mail-it0-f67.google.com with SMTP id z6so17963656iti.4
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 01:18:47 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1513132380-7421-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1513132380-7421-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 15 Dec 2017 10:18:46 +0100
-Message-ID: <CAPDyKFoKdQ4YU9nCe2P1dwp1jV=bhRWRZGGPk62FuJE=PnZ5ig@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi: Add MODULE_LICENSE
+        Wed, 13 Dec 2017 11:52:23 -0500
+Date: Wed, 13 Dec 2017 17:52:21 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "# 4.0+" <stable@vger.kernel.org>,
+Cc: wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        stable@vger.kernel.org,
         Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] mmc: renesas_sdhi: Add MODULE_LICENSE
+Message-ID: <20171213165221.zu6o676d4lsjvwh5@ninjato>
+References: <1513132380-7421-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qvrjf257zbsnyamo"
+Content-Disposition: inline
+In-Reply-To: <1513132380-7421-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 13 December 2017 at 03:33, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
+
+--qvrjf257zbsnyamo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Dec 13, 2017 at 11:33:00AM +0900, Yoshihiro Shimoda wrote:
 > From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
->
+>=20
 > The following error occurs when loading renesas_sdhi_core.c module,
 > so add MODULE_LICENSE("GPL v2").
->
+>=20
 >  renesas_sdhi_core: module license 'unspecified' taints kernel.
->
+>=20
 > Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-> Fixes: 9d08428afb72 ("mmc: renesas-sdhi: make renesas_sdhi_sys_dmac main module file")
+> Fixes: 9d08428afb72 ("mmc: renesas-sdhi: make renesas_sdhi_sys_dmac main =
+module file")
 > Cc: <stable@vger.kernel.org> # v4.13+
 > [Shimoda: Added Fixes tag and Cc to the stable ML]
 > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Thanks, applied for fixes!
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Kind regards
-Uffe
 
-> ---
->  drivers/mmc/host/renesas_sdhi_core.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index fcf7235..157e1d9 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -24,6 +24,7 @@
->  #include <linux/kernel.h>
->  #include <linux/clk.h>
->  #include <linux/slab.h>
-> +#include <linux/module.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/mmc/host.h>
-> @@ -667,3 +668,5 @@ int renesas_sdhi_remove(struct platform_device *pdev)
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(renesas_sdhi_remove);
-> +
-> +MODULE_LICENSE("GPL v2");
-> --
-> 1.9.1
->
+--qvrjf257zbsnyamo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloxWsIACgkQFA3kzBSg
+KbYbjw/+MzXbIoebzd9TGz1s37K5twXXS9Tga+kvrIPts0GBJ0tm1+QG4nifZ4Eg
+jP/auYH61vkjKCWPmHOVWvBPbGxBXqObgguxV6qDN6WL4kaXy1L0lH0EOi/8LEEY
+n5a3qB4EC6OeQApX+URhFT7FQqNBWNY245ew0b3BtMw38rZhVRjljJDkpsQ4DhfO
+gluGYUYNkKw93tjTKRSaBJyAIKMhKTDr32Q6rNCVVj84p+ajYQPw8fBU/ndWfses
+MtNBNN3kb/dKiAPpvuYiXbTPMPhzL5UJZzBR/XJnsaL/gZFIz06+pixuLNwYO1Z9
+gUDjP1pH2iSdmF/7bxn7OErATHvX6zj5MsklysKFRSwhcptd5Hms2PffoT0ZTHzv
+Ehw7RMHR+ilCudEdAr+GtUZ+idnqdeFTUD8yYOAqL1g5abSCr92qrztJRHKeer7q
+w0anUUe9OX4pNCFrvQGZhxR9sdfbfOA6JJovVUuViaS6e+TUpIeFM481qcLU9xXv
+XaDmPZpjkgv6YTX8AcOQvC1rpupTwJu41HdtmTqNJYewOjUzEWxlOJYZKycclHhx
+4t1nS+aFW7Y2sCUZLdwJwjF7y2cxwi3NID5TyZcFLVsZiiZpRfu0zMxU4vLsOP8+
+V3TTQXWJZXd5hO29JnI4wFYU0Iwtir91G8QqCYJ/aeowFLLOiA4=
+=o3yS
+-----END PGP SIGNATURE-----
+
+--qvrjf257zbsnyamo--
