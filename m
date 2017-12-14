@@ -1,21 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:46427 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753077AbdLNPoZ (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34721 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752355AbdLNOLS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 10:44:25 -0500
+        Thu, 14 Dec 2017 09:11:18 -0500
+Received: by mail-it0-f66.google.com with SMTP id m11so25319054iti.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2017 06:11:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFr6=od_PL=Y_N4OB_+wkZumb=aEV4_x7Z5J4jTL-C1aDg@mail.gmail.com>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
- <1510234022-29442-3-git-send-email-geert+renesas@glider.be> <CAPDyKFr6=od_PL=Y_N4OB_+wkZumb=aEV4_x7Z5J4jTL-C1aDg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Dec 2017 16:44:23 +0100
-Message-ID: <CAMuHMdXEhDMSmL4owVYvUbJuCQ65pF+-pXpt2RhxRqa2dqL7jQ@mail.gmail.com>
+In-Reply-To: <1510234022-29442-3-git-send-email-geert+renesas@glider.be>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be> <1510234022-29442-3-git-send-email-geert+renesas@glider.be>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 14 Dec 2017 15:11:17 +0100
+Message-ID: <CAPDyKFr6=od_PL=Y_N4OB_+wkZumb=aEV4_x7Z5J4jTL-C1aDg@mail.gmail.com>
 Subject: Re: [PATCH v2 2/3] clk: renesas: cpg-mssr: Keep wakeup sources active
  during system suspend
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
@@ -28,32 +28,46 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Dec 14, 2017 at 3:11 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->> If a device is part of the CPG/MSSR Clock Domain and to be used as a
->> wakeup source, it must be kept active during system suspend.
->>
->> Currently this is handled in device-specific drivers by explicitly
->> increasing the use count of the module clock when the device is
->> configured as a wakeup source.  However, the proper way to prevent the
->> device from being stopped is to inform this requirement to the genpd
->> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
->>
->> Note that this will only affect devices configured as wakeup sources.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> If a device is part of the CPG/MSSR Clock Domain and to be used as a
+> wakeup source, it must be kept active during system suspend.
 >
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Currently this is handled in device-specific drivers by explicitly
+> increasing the use count of the module clock when the device is
+> configured as a wakeup source.  However, the proper way to prevent the
+> device from being stopped is to inform this requirement to the genpd
+> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+>
+> Note that this will only affect devices configured as wakeup sources.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thank you, queued in clk-renesas-for-v4.16.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Gr{oetje,eeting}s,
+Kind regards
+Uffe
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+> v2:
+>   - Integrate "clk: renesas: cpg-mssr: Use GENPD_FLAG_ACTIVE_WAKEUP",
+> ---
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+> index e580a5e6346c2533..99699b715d7cf2de 100644
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -500,7 +500,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+>
+>         genpd = &pd->genpd;
+>         genpd->name = np->name;
+> -       genpd->flags = GENPD_FLAG_PM_CLK;
+> +       genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+>         genpd->attach_dev = cpg_mssr_attach_dev;
+>         genpd->detach_dev = cpg_mssr_detach_dev;
+>         pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
+> --
+> 2.7.4
+>
