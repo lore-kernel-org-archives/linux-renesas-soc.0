@@ -1,281 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54478 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754058AbdLNWbJ (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:34324 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754272AbdLNTJW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 17:31:09 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 8/9] ARM: dts: gose: use demuxer for I2C2
-Date: Thu, 14 Dec 2017 23:31:00 +0100
-Message-Id: <20171214223101.16450-9-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
-References: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
+        Thu, 14 Dec 2017 14:09:22 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH/RFC v2 11/15] adv748x: csi2: implement get_frame_desc
+Date: Thu, 14 Dec 2017 20:08:31 +0100
+Message-Id: <20171214190835.7672-12-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C2 and provide fallback to GPIO.
+Provide CSI-2 bus information for the multiplexed source pad using the
+frame descriptor.
 
-Based on work for the r8a7790/lager by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, corrected board name in subject, fixed aliases, switched
-to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 218 ++++++++++++++++++++-----------------
- 1 file changed, 121 insertions(+), 97 deletions(-)
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 51b3ffac8efaad..2b330ef71f4c17 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -48,6 +48,8 @@
- 	aliases {
- 		serial0 = &scif0;
- 		serial1 = &scif1;
-+		i2c9 = &gpioi2c2;
-+		i2c11 = &i2chdmi;
- 	};
+diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+index a2a6d93077204731..a43b251d0bc67a43 100644
+--- a/drivers/media/i2c/adv748x/adv748x-csi2.c
++++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+@@ -225,9 +225,37 @@ static int adv748x_csi2_set_format(struct v4l2_subdev *sd,
+ 	return ret;
+ }
  
- 	chosen {
-@@ -296,6 +298,124 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <148500000>;
- 	};
++static int adv748x_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
++				       struct v4l2_mbus_frame_desc *fd)
++{
++	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
++	struct v4l2_mbus_framefmt *mbusformat;
 +
-+	gpioi2c2: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio2 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio2 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
++	memset(fd, 0, sizeof(*fd));
 +
-+	/*
-+	 * A fallback to GPIO is provided for I2C2.
-+	 */
-+	i2chdmi: i2c-11 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c2>, <&gpioi2c2>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	if (pad != ADV748X_CSI2_SOURCE)
++		return -EINVAL;
 +
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
++	mbusformat = adv748x_csi2_get_pad_format(sd, NULL, ADV748X_CSI2_SINK,
++						 V4L2_SUBDEV_FORMAT_ACTIVE);
++	if (!mbusformat)
++		return -EINVAL;
 +
-+		composite-in@20 {
-+			compatible = "adi,adv7180cp";
-+			reg = <0x20>;
-+			remote = <&vin1>;
++	fd->entry->stream = 0;
++	fd->entry->bus.csi2.channel = tx->vc;
++	fd->entry->bus.csi2.data_type =
++		adv748x_csi2_code_to_datatype(mbusformat->code);
 +
-+			port {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
++	fd->num_entries = 1;
 +
-+				port@0 {
-+					reg = <0>;
-+					adv7180_in: endpoint {
-+						remote-endpoint = <&composite_con_in>;
-+					};
-+				};
++	return 0;
++}
 +
-+				port@3 {
-+					reg = <3>;
-+					adv7180_out: endpoint {
-+						bus-width = <8>;
-+						remote-endpoint = <&vin1ep>;
-+					};
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio3>;
-+			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		hdmi-in@4c {
-+			compatible = "adi,adv7612";
-+			reg = <0x4c>;
-+			interrupt-parent = <&gpio4>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+			default-input = <0>;
-+
-+			port {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7612_in: endpoint {
-+						remote-endpoint = <&hdmi_con_in>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					adv7612_out: endpoint {
-+						remote-endpoint = <&vin0ep2>;
-+					};
-+				};
-+			};
-+		};
-+
-+		eeprom@50 {
-+			compatible = "renesas,r1ex24002", "atmel,24c02";
-+			reg = <0x50>;
-+			pagesize = <16>;
-+		};
-+	};
+ static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
+ 	.get_fmt = adv748x_csi2_get_format,
+ 	.set_fmt = adv748x_csi2_set_format,
++	.get_frame_desc = adv748x_csi2_get_frame_desc,
  };
  
- &du {
-@@ -544,107 +664,11 @@
- 
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
- 	status = "okay";
- 	clock-frequency = <100000>;
- 
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180cp";
--		reg = <0x20>;
--		remote = <&vin1>;
--
--		port {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7180_in: endpoint {
--					remote-endpoint = <&composite_con_in>;
--				};
--			};
--
--			port@3 {
--				reg = <3>;
--				adv7180_out: endpoint {
--					bus-width = <8>;
--					remote-endpoint = <&vin1ep>;
--				};
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio3>;
--		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con_out>;
--				};
--			};
--		};
--	};
--
--	hdmi-in@4c {
--		compatible = "adi,adv7612";
--		reg = <0x4c>;
--		interrupt-parent = <&gpio4>;
--		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
--		default-input = <0>;
--
--		port {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7612_in: endpoint {
--					remote-endpoint = <&hdmi_con_in>;
--				};
--			};
--
--			port@2 {
--				reg = <2>;
--				adv7612_out: endpoint {
--					remote-endpoint = <&vin0ep2>;
--				};
--			};
--		};
--	};
--
--	eeprom@50 {
--		compatible = "renesas,r1ex24002", "atmel,24c02";
--		reg = <0x50>;
--		pagesize = <16>;
--	};
- };
- 
- &i2c6 {
+ /* -----------------------------------------------------------------------------
 -- 
-2.11.0
+2.15.1
