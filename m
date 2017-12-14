@@ -1,194 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50175 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57351 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750737AbdLMWq0 (ORCPT
+        with ESMTP id S1754125AbdLNXMo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 17:46:26 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
+        Thu, 14 Dec 2017 18:12:44 -0500
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH/RFC v2 12/15] adv748x: csi2: switch to pad and stream
+ aware s_stream
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH/RFC v1.1] drm: rcar-du: Allow importing non-contiguous dma-buf with VSP
-Date: Thu, 14 Dec 2017 00:46:27 +0200
-Message-Id: <20171213224627.15738-1-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20171113103228.23312-3-laurent.pinchart+renesas@ideasonboard.com>
-References: <20171113103228.23312-3-laurent.pinchart+renesas@ideasonboard.com>
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171214190835.7672-13-niklas.soderlund+renesas@ragnatech.se>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <bf2f7b88-e3d0-b318-5b49-3dae9ad096ba@ideasonboard.com>
+Date: Thu, 14 Dec 2017 23:12:39 +0000
+MIME-Version: 1.0
+In-Reply-To: <20171214190835.7672-13-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the DU sources its frames from a VSP, it performs no memory access
-and thus has no requirements on imported dma-buf memory types. In
-particular the DU could import a physically non-contiguous buffer that
-would later be mapped contiguously through the VSP IOMMU.
+Hi Niklas,
 
-This use case isn't supported at the moment as the GEM CMA helpers will
-reject any non-contiguous buffer, and the DU isn't connected to an IOMMU
-that can make the buffer contiguous for DMA. Fix this by implementing a
-custom .gem_prime_import_sg_table() operation that accepts all imported
-dma-buf regardless of the number of scatterlist entries.
+On 14/12/17 19:08, Niklas Söderlund wrote:
+> Switch the driver to implement the pad and stream aware s_stream
+> operation. This is needed to enable to support to start and stop
+> individual streams on a multiplexed pad
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v1:
+"This is needed to enable support for starting and stopping individual streams
+on a multiplexed pad."
 
-- Duplicate the imported scatter gather table in
-  rcar_du_vsp_plane_prepare_fb()
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-This patch fixes a bug of the previous version and is posted in case anyone
-would like to test the implementation. I still plan to give Noralf's GEM
-library a try as an alternative approach to this series.
+Otherwise,
 
- drivers/gpu/drm/rcar-du/rcar_du_drv.c |  2 +-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 39 +++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_kms.h |  7 +++++++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 34 ++++++++++++++++++++++++++----
- 4 files changed, 77 insertions(+), 5 deletions(-)
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 48c166f925a3..d999231f98c7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -289,7 +289,7 @@ static struct drm_driver rcar_du_driver = {
- 	.gem_prime_import	= drm_gem_prime_import,
- 	.gem_prime_export	= drm_gem_prime_export,
- 	.gem_prime_get_sg_table	= drm_gem_cma_prime_get_sg_table,
--	.gem_prime_import_sg_table = drm_gem_cma_prime_import_sg_table,
-+	.gem_prime_import_sg_table = rcar_du_gem_prime_import_sg_table,
- 	.gem_prime_vmap		= drm_gem_cma_prime_vmap,
- 	.gem_prime_vunmap	= drm_gem_cma_prime_vunmap,
- 	.gem_prime_mmap		= drm_gem_cma_prime_mmap,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 566d1a948c8f..2dd0c2ba047d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -20,6 +20,7 @@
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- 
-+#include <linux/dma-buf.h>
- #include <linux/of_graph.h>
- #include <linux/wait.h>
- 
-@@ -148,6 +149,44 @@ const struct rcar_du_format_info *rcar_du_format_info(u32 fourcc)
-  * Frame buffer
-  */
- 
-+struct drm_gem_object *rcar_du_gem_prime_import_sg_table(struct drm_device *dev,
-+				struct dma_buf_attachment *attach,
-+				struct sg_table *sgt)
-+{
-+	struct rcar_du_device *rcdu = dev->dev_private;
-+	struct drm_gem_cma_object *cma_obj;
-+	struct drm_gem_object *gem_obj;
-+	int ret;
-+
-+	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE))
-+		return drm_gem_cma_prime_import_sg_table(dev, attach, sgt);
-+
-+	/* Create a CMA GEM buffer. */
-+	cma_obj = kzalloc(sizeof(*cma_obj), GFP_KERNEL);
-+	if (!cma_obj)
-+		return ERR_PTR(-ENOMEM);
-+	gem_obj = &cma_obj->base;
-+
-+	ret = drm_gem_object_init(dev, gem_obj, attach->dmabuf->size);
-+	if (ret)
-+		goto error;
-+
-+	ret = drm_gem_create_mmap_offset(gem_obj);
-+	if (ret) {
-+		drm_gem_object_release(gem_obj);
-+		goto error;
-+	}
-+
-+	cma_obj->paddr = 0;
-+	cma_obj->sgt = sgt;
-+
-+	return gem_obj;
-+
-+error:
-+	kfree(cma_obj);
-+	return ERR_PTR(ret);
-+}
-+
- int rcar_du_dumb_create(struct drm_file *file, struct drm_device *dev,
- 			struct drm_mode_create_dumb *args)
- {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.h b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
-index 07951d5fe38b..10b2bb0f0df9 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
-@@ -16,10 +16,13 @@
- 
- #include <linux/types.h>
- 
-+struct dma_buf_attachment;
- struct drm_file;
- struct drm_device;
-+struct drm_gem_object;
- struct drm_mode_create_dumb;
- struct rcar_du_device;
-+struct sg_table;
- 
- struct rcar_du_format_info {
- 	u32 fourcc;
-@@ -36,4 +39,8 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu);
- int rcar_du_dumb_create(struct drm_file *file, struct drm_device *dev,
- 			struct drm_mode_create_dumb *args);
- 
-+struct drm_gem_object *rcar_du_gem_prime_import_sg_table(struct drm_device *dev,
-+				struct dma_buf_attachment *attach,
-+				struct sg_table *sgt);
-+
- #endif /* __RCAR_DU_KMS_H__ */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 2c260c33840b..73fdc814aa39 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -224,10 +224,36 @@ static int rcar_du_vsp_plane_prepare_fb(struct drm_plane *plane,
- 			drm_fb_cma_get_gem_obj(state->fb, i);
- 		struct sg_table *sgt = &rstate->sg_tables[i];
- 
--		ret = dma_get_sgtable(rcdu->dev, sgt, gem->vaddr, gem->paddr,
--				      gem->base.size);
--		if (ret)
--			goto fail;
-+		if (gem->sgt) {
-+			struct scatterlist *src;
-+			struct scatterlist *dst;
-+
-+			/*
-+			 * If the GEM buffer has a scatter gather table, it has
-+			 * been imported from a dma-buf and has no physical
-+			 * address as it might not be physically contiguous.
-+			 * Copy the original scatter gather table to map it to
-+			 * the VSP.
-+			 */
-+			ret = sg_alloc_table(sgt, gem->sgt->orig_nents,
-+					     GFP_KERNEL);
-+			if (ret)
-+				goto fail;
-+
-+			src = gem->sgt->sgl;
-+			dst = sgt->sgl;
-+			for (i = 0; i < gem->sgt->orig_nents; ++i) {
-+				sg_set_page(dst, sg_page(src), src->length,
-+					    src->offset);
-+				src = sg_next(src);
-+				dst = sg_next(dst);
-+			}
-+		} else {
-+			ret = dma_get_sgtable(rcdu->dev, sgt, gem->vaddr,
-+					      gem->paddr, gem->base.size);
-+			if (ret)
-+				goto fail;
-+		}
- 
- 		ret = vsp1_du_map_sg(vsp->vsp, sgt);
- 		if (!ret) {
--- 
-Regards,
-
-Laurent Pinchart
+> ---
+>  drivers/media/i2c/adv748x/adv748x-csi2.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> index a43b251d0bc67a43..39f993282dd3bb5c 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> @@ -128,22 +128,26 @@ static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
+>   * v4l2_subdev_video_ops
+>   */
+>  
+> -static int adv748x_csi2_s_stream(struct v4l2_subdev *sd, int enable)
+> +static int adv748x_csi2_s_stream(struct v4l2_subdev *sd, unsigned int pad,
+> +				 unsigned int stream, int enable)
+>  {
+>  	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
+> +	struct adv748x_state *state = tx->state;
+>  	struct v4l2_subdev *src;
+>  
+> +	if (pad != ADV748X_CSI2_SOURCE || stream != 0)
+> +		return -EINVAL;
+> +
+>  	src = adv748x_get_remote_sd(&tx->pads[ADV748X_CSI2_SINK]);
+>  	if (!src)
+>  		return -EPIPE;
+>  
+> +	adv_dbg(state, "%s: pad: %u stream: %u enable: %d\n", sd->name,
+> +		pad, stream, enable);
+> +
+>  	return v4l2_subdev_call(src, video, s_stream, enable);
+>  }
+>  
+> -static const struct v4l2_subdev_video_ops adv748x_csi2_video_ops = {
+> -	.s_stream = adv748x_csi2_s_stream,
+> -};
+> -
+>  /* -----------------------------------------------------------------------------
+>   * v4l2_subdev_pad_ops
+>   *
+> @@ -256,6 +260,7 @@ static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
+>  	.get_fmt = adv748x_csi2_get_format,
+>  	.set_fmt = adv748x_csi2_set_format,
+>  	.get_frame_desc = adv748x_csi2_get_frame_desc,
+> +	.s_stream = adv748x_csi2_s_stream,
+>  };
+>  
+>  /* -----------------------------------------------------------------------------
+> @@ -263,7 +268,6 @@ static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
+>   */
+>  
+>  static const struct v4l2_subdev_ops adv748x_csi2_ops = {
+> -	.video = &adv748x_csi2_video_ops,
+>  	.pad = &adv748x_csi2_pad_ops,
+>  };
+>  
+> 
