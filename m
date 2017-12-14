@@ -1,61 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:5842 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751049AbdLNK5Y (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:59610 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751226AbdLNJpB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 05:57:24 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+        Thu, 14 Dec 2017 04:45:01 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 4/4] ARM: dts: r8a7745: Add TPU support
-Date: Thu, 14 Dec 2017 10:57:06 +0000
-Message-Id: <1513249026-26759-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513249026-26759-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513249026-26759-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 5/5] phy: renesas: rcar-gen3-usb2: add gpio handling
+Date: Thu, 14 Dec 2017 09:44:57 +0000
+Message-ID: <TY1PR06MB099286FD9833ED7F7F259B5BD80A0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1513146460-20326-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1513146460-20326-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdU2YhLC3VPV8=KDw7U2=eudk35TmW7VfLYBDXrooQbx-g@mail.gmail.com>
+In-Reply-To: <CAMuHMdU2YhLC3VPV8=KDw7U2=eudk35TmW7VfLYBDXrooQbx-g@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add TPU support to SoC DT.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-
-This patch depends on:
-* "dt-bindings: pwm: renesas-tpu: Document r8a774[35]"
-
- arch/arm/boot/dts/r8a7745.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index b945300..85f7875 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -1043,6 +1043,16 @@
- 			status = "disabled";
- 		};
- 
-+		tpu: pwm@e60f0000 {
-+			compatible = "renesas,tpu-r8a7745", "renesas,tpu";
-+			reg = <0 0xe60f0000 0 0x148>;
-+			clocks = <&cpg CPG_MOD 304>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 304>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7745",
- 				     "renesas,rcar-gen2-sdhi";
--- 
-2.7.4
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVz
+ZGF5LCBEZWNlbWJlciAxMywgMjAxNyA1OjU1IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4g
+DQo+IE9uIFdlZCwgRGVjIDEzLCAyMDE3IGF0IDc6MjcgQU0sIFlvc2hpaGlybyBTaGltb2RhDQo+
+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gU29tZSBSLUNh
+ciBTb0NzIChlLmcuIFItQ2FyIEQzKSBkb2Vzbid0IGhhdmUgZGVkaWNhdGVkIHBpbnMgb2YgVkJV
+Uw0KPiA+IGFuZCBJRC4gU28sIHRoZXkgbWF5IGJlIGNvbm5lY3RlZCB0byBncGlvIHBpbnMuIFRv
+IGhhbmRsZSB0aGUgZ3Bpbw0KPiA+IHBpbnMsIHRoaXMgcGF0Y2ggYWRkcyB0aGUgaGFuZGxpbmcg
+b2YgVkJVUyBhbmQgSUQgcGlucyBpbnN0ZWFkIG9mDQo+ID4gZGVkaWNhdGVkIHBpbnMuDQo+ID4N
+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEu
+dWhAcmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bo
+eS9yY2FyLWdlbjMtcGh5LXVzYjIudHh0IHwgIDIgKw0KPiA+ICBkcml2ZXJzL3BoeS9yZW5lc2Fz
+L3BoeS1yY2FyLWdlbjMtdXNiMi5jICAgICAgICAgICB8IDc3ICsrKysrKysrKysrKysrKysrKysr
+LS0NCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA3MiBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygt
+KQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9waHkvcmNhci1nZW4zLXBoeS11c2IyLnR4dA0KPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9waHkvcmNhci1nZW4zLXBoeS11c2IyLnR4dA0KPiA+IGluZGV4IDk5YjY1MWIu
+Ljg1MTU4MmYgMTAwNjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL3BoeS9yY2FyLWdlbjMtcGh5LXVzYjIudHh0DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9yY2FyLWdlbjMtcGh5LXVzYjIudHh0DQo+ID4gQEAgLTI3
+LDYgKzI3LDggQEAgY2hhbm5lbCBhcyBVU0IgT1RHOg0KPiA+ICAtIGludGVycnVwdHM6IGludGVy
+cnVwdCBzcGVjaWZpZXIgZm9yIHRoZSBQSFkuDQo+ID4gIC0gdmJ1cy1zdXBwbHk6IFBoYW5kbGUg
+dG8gYSByZWd1bGF0b3IgdGhhdCBwcm92aWRlcyBwb3dlciB0byB0aGUgVkJVUy4gVGhpcw0KPiA+
+ICAgICAgICAgICAgICAgIHJlZ3VsYXRvciB3aWxsIGJlIG1hbmFnZWQgZHVyaW5nIHRoZSBQSFkg
+cG93ZXIgb24vb2ZmIHNlcXVlbmNlLg0KPiA+ICstIHJlbmVzYXMsdmJ1cy1ncGlvczogdXNlIGdw
+aW8gdG8gY29udHJvbCB2YnVzIGluc3RlYWQgb2YgZGVkaWNhdGVkIHBpbi4NCj4gPiArLSByZW5l
+c2FzLGlkLWdwaW9zOiB1c2UgZ3BpbyB0byBkZXRlY3QgaWQgaW5zdGVhZCBvZiBkZWRpY2F0ZWQg
+cGluLg0KPiANCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9icmNtLG5z
+Mi1kcmQtcGh5LnR4dCBhbHJlYWR5IHVzZXMNCj4gInZidXMtZ3Bpb3MiIGFuZCAiaWQtZ3Bpb3Mi
+IHdpdGhvdXQgdmVuZG9yLXNwZWNpZmljIHByZWZpeGVzLCBzbyBwZXJoYXBzDQo+IHRoZSAicmVu
+ZXNhcywiIGNhbiBiZSBkcm9wcGVkPw0KDQpUaGFuayB5b3UgZm9yIHRoZSBjb21tZW50cy4gSSBh
+Z3JlZSB3aXRoIHlvdS4gU28sIEknbGwgZHJvcCAicmVuZXNhcywiIGluIHYyLg0KDQpCZXN0IHJl
+Z2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhv
+ZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgt
+bTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwg
+cGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0
+byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0
+aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRz
+DQo=
