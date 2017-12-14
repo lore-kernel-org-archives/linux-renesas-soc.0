@@ -1,36 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr20083.outbound.protection.outlook.com ([40.107.2.83]:53152
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752671AbdLNPYi (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:43238 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752777AbdLNPQl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 10:24:38 -0500
-Date: Thu, 14 Dec 2017 15:24:32 +0000
-From: Dave P Martin <Dave.Martin@arm.com>
+        Thu, 14 Dec 2017 10:16:41 -0500
+Date: Thu, 14 Dec 2017 15:16:49 +0000
+From: Will Deacon <will.deacon@arm.com>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Subject: Re: arm64: unhandled level 0 translation fault
-Message-ID: <20171214152431.GC12608@e103592.cambridge.arm.com>
+Message-ID: <20171214151649.GA4527@arm.com>
 References: <CAMuHMdXh_6FaV-SFGWxcBb1-NNGYngDrYnnWA=9Y6xmRAkcxqg@mail.gmail.com>
  <CAMuHMdWH=3kRmwjDHsTzUVmB7=s5cnY16Ujfroe_B6dawGSDfw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <CAMuHMdWH=3kRmwjDHsTzUVmB7=s5cnY16Ujfroe_B6dawGSDfw@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Dec 14, 2017 at 02:34:50PM +0000, Geert Uytterhoeven wrote:
-> Hi Catalin, Will, Dave,
->
+Hi Geert,
+
+On Thu, Dec 14, 2017 at 03:34:50PM +0100, Geert Uytterhoeven wrote:
 > On Tue, Dec 12, 2017 at 11:20 AM, Geert Uytterhoeven
 > <geert@linux-m68k.org> wrote:
 > > During userspace (Debian jessie NFS root) boot on arm64:
@@ -39,11 +36,12 @@ On Thu, Dec 14, 2017 at 02:34:50PM +0000, Geert Uytterhoeven wrote:
 > > esr 0x92000004, in dash[aaaaadf77000+1a000]
 > > CPU: 0 PID: 1083 Comm: rpcbind Not tainted
 > > 4.15.0-rc3-arm64-renesas-02176-g14f9a1826e48e355 #51
-> > Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES=
-2.0+ (DT)
->
+> > Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
+> 
 > This is a quad Cortex A57.
->
+
+It's so bizarre that nobody else is running into this!
+
 > > pstate: 80000000 (Nzcv daif -PAN -UAO)
 > > pc : 0xaaaaadf8a51c
 > > lr : 0xaaaaadf8ac08
@@ -64,8 +62,7 @@ On Thu, Dec 14, 2017 at 02:34:50PM +0000, Geert Uytterhoeven wrote:
 > > x3 : 0000aaaaadfa2338 x2 : 0000000000000000
 > > x1 : 0000aaaaadfa28b0 x0 : 0000aaaaadfa4c30
 > >
-> > Sometimes it happens with other processes, but the main address, esr, a=
-nd
+> > Sometimes it happens with other processes, but the main address, esr, and
 > > pstate values are always the same.
 > >
 > > I regularly run arm64/for-next/core (through bi-weekly renesas-drivers
@@ -75,33 +72,23 @@ nd
 > > cumbersome to bisect.
 > >
 > > My first guess was UNMAP_KERNEL_AT_EL0, but even after disabling that,
-> > and even without today's arm64/for-next/core merged in, I still managed=
- to
+> > and even without today's arm64/for-next/core merged in, I still managed to
 > > reproduce the issue, so I believe it was introduced in v4.15-rc2 or
 > > v4.15-rc3.
 > >
 > > Once, when the kernel message above wasn't shown, I got an error from
 > > userspace, which may be related:
 > > *** Error in `/bin/sh': free(): invalid pointer: 0x0000aaaadd970988 ***
->
-> With more boots (10 instead of 6) to declare a kernel good, I bisected th=
-is
+> 
+> With more boots (10 instead of 6) to declare a kernel good, I bisected this
 > to commit 9de52a755cfb6da5 ("arm64: fpsimd: Fix failure to restore FPSIMD
 > state after signals").
->
+> 
 > Reverting that commit on top of v4.15-rc3 fixed the issue for me.
 
-Good work on the bisect -- I'll need to have a think about this...
+Thanks for persevering with the bisect. We'll get this fixed ASAP, but we'll
+be relying on you to test the patch we come up with.
 
-That patch fixes a genuine problem so we can't just revert it.
+Cheers,
 
-
-What if you revert _just this function_ back to what it was in v4.14?
-
-Cheers
----Dave
-IMPORTANT NOTICE: The contents of this email and any attachments are confid=
-ential and may also be privileged. If you are not the intended recipient, p=
-lease notify the sender immediately and do not disclose the contents to any=
- other person, use it for any purpose, or store or copy the information in =
-any medium. Thank you.
+Will
