@@ -1,46 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753466AbdLVKbQ (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:42343 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753077AbdLNPoC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:31:16 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 14 Dec 2017 10:44:02 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFq7dBHk9AhyMc1x+dJPmDJQ0osR4WkbT0wUR=hZMBScyw@mail.gmail.com>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+ <1510234022-29442-2-git-send-email-geert+renesas@glider.be> <CAPDyKFq7dBHk9AhyMc1x+dJPmDJQ0osR4WkbT0wUR=hZMBScyw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 14 Dec 2017 16:43:59 +0100
+Message-ID: <CAMuHMdUdnXCLfd1meFj40e0_9PtPiPqUob5YUhbg5RPbRL_q5w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: renesas: mstp: Keep wakeup sources active
+ during system suspend
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 37/37] ARM: dts: r8a7745: Add missing clock for secondary CA7 CPU core
-Date: Fri, 22 Dec 2017 11:30:15 +0100
-Message-Id: <5b062010675b3d74c9a6c6896e2becf932a4ca74.1513938145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
-References: <cover.1513938145.git.horms+renesas@verge.net.au>
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Thu, Dec 14, 2017 at 3:10 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>> If a device is part of the CPG/MSTP Clock Domain and to be used as a
+>> wakeup source, it must be kept active during system suspend.
+>>
+>> Currently this is handled in device-specific drivers by explicitly
+>> increasing the use count of the module clock when the device is
+>> configured as a wakeup source.  However, the proper way to prevent the
+>> device from being stopped is to inform this requirement to the genpd
+>> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+>>
+>> Note that this will only affect devices configured as wakeup sources.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Add the missing clock to CA7 CPU1 node.
+Thank you, queued in clk-renesas-for-v4.16.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 835a2821477b..ae918e9cce21 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -84,6 +84,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			clocks = <&cpg CPG_CORE R8A7745_CLK_Z2>;
- 			power-domains = <&sysc R8A7745_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
- 		};
--- 
-2.11.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
