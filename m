@@ -1,70 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751904AbdLGJzI (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:46427 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753077AbdLNPoZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:08 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 14 Dec 2017 10:44:25 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFr6=od_PL=Y_N4OB_+wkZumb=aEV4_x7Z5J4jTL-C1aDg@mail.gmail.com>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+ <1510234022-29442-3-git-send-email-geert+renesas@glider.be> <CAPDyKFr6=od_PL=Y_N4OB_+wkZumb=aEV4_x7Z5J4jTL-C1aDg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 14 Dec 2017 16:44:23 +0100
+Message-ID: <CAMuHMdXEhDMSmL4owVYvUbJuCQ65pF+-pXpt2RhxRqa2dqL7jQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] clk: renesas: cpg-mssr: Keep wakeup sources active
+ during system suspend
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 27/54] arm64: dts: renesas: r8a7795: Point VSPBC/VSPBD via FCPVB to IPMMU-VP0/1
-Date: Thu,  7 Dec 2017 10:53:30 +0100
-Message-Id: <cdd919ba225433a334b2f2c2ef71c7e70f80173e.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Thu, Dec 14, 2017 at 3:11 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>> If a device is part of the CPG/MSSR Clock Domain and to be used as a
+>> wakeup source, it must be kept active during system suspend.
+>>
+>> Currently this is handled in device-specific drivers by explicitly
+>> increasing the use count of the module clock when the device is
+>> configured as a wakeup source.  However, the proper way to prevent the
+>> device from being stopped is to inform this requirement to the genpd
+>> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+>>
+>> Note that this will only affect devices configured as wakeup sources.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Hook up the FCPVB devices to allow use of VSPBC/VSPBD with
-IPMMU-VP0 and IPMMU-VP1.
+Thank you, queued in clk-renesas-for-v4.16.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 4 ++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 2 ++
- 2 files changed, 6 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 736281335653..3d50627c0670 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -151,6 +151,10 @@
- 	       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
- };
- 
-+&fcpvb1 {
-+	iommus = <&ipmmu_vp0 7>;
-+};
-+
- &fcpf1 {
- 	iommus = <&ipmmu_vp0 1>;
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index f7d7c98a7f73..35efacd1ec21 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2062,6 +2062,7 @@
- 			clocks = <&cpg CPG_MOD 606>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			resets = <&cpg 606>;
-+			iommus = <&ipmmu_vp1 7>;
- 		};
- 
- 		fcpf0: fcp@fe950000 {
-@@ -2099,6 +2100,7 @@
- 			clocks = <&cpg CPG_MOD 607>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			resets = <&cpg 607>;
-+			iommus = <&ipmmu_vp0 5>;
- 		};
- 
- 		vspi0: vsp@fe9a0000 {
--- 
-2.11.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
