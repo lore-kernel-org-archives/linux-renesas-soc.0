@@ -1,60 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f172.google.com ([209.85.216.172]:35027 "EHLO
-        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751121AbdLNKYb (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 05:24:31 -0500
-MIME-Version: 1.0
-In-Reply-To: <1513242521-11236-3-git-send-email-chris.paterson2@renesas.com>
-References: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com> <1513242521-11236-3-git-send-email-chris.paterson2@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Dec 2017 11:24:30 +0100
-Message-ID: <CAMuHMdWwL4xMPRi3wJoBNdjc_UCjVYjqLP=Db-15mqM8FUAo4w@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ARM: dts: r8a7791: Correct critical CPU temperature
-To: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 2/3] ARM: dts: r8a7791: Correct critical CPU temperature
+Date: Thu, 14 Dec 2017 09:08:40 +0000
+Message-Id: <1513242521-11236-3-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com>
+References: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Dec 14, 2017 at 10:08 AM, Chris Paterson
-<chris.paterson2@renesas.com> wrote:
-> The R-Car M2W hardware manual states that Tc =3D =E2=80=9340=C2=B0C to +1=
-05=C2=B0C. The
+The R-Car M2W hardware manual states that Tc = –40°C to +105°C. The
+thermal sensor has an accuracy of ±5°C and there can be a temperature
+difference of 1 or 2 degrees between Tjmax and the thermal sensor due
+to the location of the latter.
 
-M2-W
+This means that 95°C is a safer value to use.
 
-> thermal sensor has an accuracy of =C2=B15=C2=B0C and there can be a tempe=
-rature
-> difference of 1 or 2 degrees between Tjmax and the thermal sensor due
-> to the location of the latter.
->
-> This means that 95=C2=B0C is a safer value to use.
->
-> Fixes: cac68a56e34b9810 ("ARM: dts: r8a7791: enable to use thermal-zone")
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Fixes: cac68a56e34b9810 ("ARM: dts: r8a7791: enable to use thermal-zone")
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index dfc1c406179fbf3a..008a260f86a565c6 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -92,7 +92,7 @@
+ 
+ 			trips {
+ 				cpu-crit {
+-					temperature	= <115000>;
++					temperature	= <95000>;
+ 					hysteresis	= <0>;
+ 					type		= "critical";
+ 				};
+-- 
+1.9.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
