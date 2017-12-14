@@ -1,65 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754891AbdLFKXx (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:10739 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750825AbdLNJsN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:53 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 34/61] ARM: dts: iwg22d-sodimm-dbhd-ca: Add can1 support to HDMI DB
-Date: Wed,  6 Dec 2017 11:22:29 +0100
-Message-Id: <d6033e7c6589c74299635eb3d84c56ccac8db5e4.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Thu, 14 Dec 2017 04:48:13 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 2/5] phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
+Date: Thu, 14 Dec 2017 09:48:08 +0000
+Message-ID: <TY1PR06MB099253E9C9DA5B47130609D5D80A0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1513146460-20326-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1513146460-20326-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <7e7953b2-e94d-ded8-2278-6259a1457881@cogentembedded.com>
+In-Reply-To: <7e7953b2-e94d-ded8-2278-6259a1457881@cogentembedded.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
-CAN1 interface is exposed via connector J1 found on the HDMI daughter
-board. This patch enables can1 DT node from within the daughter board
-specific device tree.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-index a8a4ec87378d..d34de8266ccd 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-@@ -54,6 +54,13 @@
- 	};
- };
- 
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &hscif2 {
- 	pinctrl-0 = <&hscif2_pins>;
- 	pinctrl-names = "default";
-@@ -105,6 +112,11 @@
- };
- 
- &pfc {
-+	can1_pins: can1 {
-+		groups = "can1_data_b";
-+		function = "can1";
-+	};
-+
- 	du0_pins: du0 {
- 		groups = "du0_rgb888", "du0_sync", "du0_disp", "du0_clk0_out";
- 		function = "du0";
--- 
-2.11.0
+SGVsbG8hDQoNCj4gRnJvbTogU2VyZ2VpIFNodHlseW92LCBTZW50OiBXZWRuZXNkYXksIERlY2Vt
+YmVyIDEzLCAyMDE3IDY6MTAgUE0NCj4gDQo+IEhlbGxvIQ0KPiANCj4gT24gMTIvMTMvMjAxNyA5
+OjI3IEFNLCBZb3NoaWhpcm8gU2hpbW9kYSB3cm90ZToNCj4gDQo+ID4gVGhpcyBwYXRjaCB1bmlm
+aWVzIHRoZSBPQklOVEVOIGhhbmRsaW5nIHRvIGNsZWFuLXVwIHRoZSBjb2RlLg0KPiA+DQo+ID4g
+U2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5zaGltb2RhLnVoQHJl
+bmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+ICAgZHJpdmVycy9waHkvcmVuZXNhcy9waHktcmNhci1n
+ZW4zLXVzYjIuYyB8IDIzICsrKysrKysrKysrKysrKy0tLS0tLS0tDQo+ID4gICAxIGZpbGUgY2hh
+bmdlZCwgMTUgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMtdXNiMi5jIGIvZHJpdmVycy9w
+aHkvcmVuZXNhcy9waHktcmNhci1nZW4zLXVzYjIuYw0KPiA+IGluZGV4IGMyMmQ2NWEuLmJlZWFh
+MzAgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9waHkvcmVuZXNhcy9waHktcmNhci1nZW4zLXVz
+YjIuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcGh5L3JlbmVzYXMvcGh5LXJjYXItZ2VuMy11c2IyLmMN
+Cj4gPiBAQCAtMTQ3LDYgKzE0NywxOCBAQCBzdGF0aWMgdm9pZCByY2FyX2dlbjNfZW5hYmxlX3Zi
+dXNfY3RybChzdHJ1Y3QgcmNhcl9nZW4zX2NoYW4gKmNoLCBpbnQgdmJ1cykNCj4gPiAgIAl3cml0
+ZWwodmFsLCB1c2IyX2Jhc2UgKyBVU0IyX0FEUENUUkwpOw0KPiA+ICAgfQ0KPiA+DQo+ID4gK3N0
+YXRpYyB2b2lkIHJjYXJfZ2VuM19lbmFibGVfb3RnX2lycShzdHJ1Y3QgcmNhcl9nZW4zX2NoYW4g
+KmNoLCBpbnQgZW5hYmxlKQ0KPiANCj4gICAgIElmIGl0IGJvdGggZW5hYmxlcyBhbmQgZGlzYWJs
+ZXMsIHJjYXJfZ2VuM19jb250cm9sX290Z19pcnEoKSB3b3VsZCBzZWVtIGENCj4gYmV0dGVyIG5h
+bWUuLi4NCg0KVGhhbmsgeW91IGZvciB0aGUgY29tbWVudCEgSSB0aGluayBzby4gU28sIEknbGwg
+Y2hhbmdlIHRoZSBuYW1lIGluIHYyLg0KSSdsbCBhbHNvIGNoYW5nZSB0aGUgbmFtZXMgb2YgImVu
+YWJsZV92YnVzX2N0cmwiIGFuZCBtZW1iZXJzIG9mDQpyY2FyX2dlbjNfcm9sZV9zd2FwX29wcyBp
+biB0aGUgcGF0Y2ggNA0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+ID4g
+K3sNCj4gPiArCXZvaWQgX19pb21lbSAqdXNiMl9iYXNlID0gY2gtPmJhc2U7DQo+ID4gKwl1MzIg
+dmFsID0gcmVhZGwodXNiMl9iYXNlICsgVVNCMl9PQklOVEVOKTsNCj4gPiArDQo+ID4gKwlpZiAo
+ZW5hYmxlKQ0KPiA+ICsJCXZhbCB8PSBVU0IyX09CSU5UX0JJVFM7DQo+ID4gKwllbHNlDQo+ID4g
+KwkJdmFsICY9IH5VU0IyX09CSU5UX0JJVFM7DQo+ID4gKwl3cml0ZWwodmFsLCB1c2IyX2Jhc2Ug
+KyBVU0IyX09CSU5URU4pOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICAgc3RhdGljIHZvaWQgcmNhcl9n
+ZW4zX2luaXRfZm9yX2hvc3Qoc3RydWN0IHJjYXJfZ2VuM19jaGFuICpjaCkNCj4gPiAgIHsNCj4g
+PiAgIAlyY2FyX2dlbjNfc2V0X2xpbmVjdHJsKGNoLCAxLCAxKTsNCj4gWy4uLl0NCj4gDQo+IE1C
+UiwgU2VyZ2VpDQo=
