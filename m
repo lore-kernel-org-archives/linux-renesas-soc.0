@@ -1,75 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:40534 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750705AbdLZKLH (ORCPT
+Received: from sauhun.de ([88.99.104.3]:54468 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754064AbdLNWbH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Dec 2017 05:11:07 -0500
-Received: by mail-qk0-f193.google.com with SMTP id q14so30269295qke.7
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Dec 2017 02:11:07 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20171214223101.16450-5-wsa+renesas@sang-engineering.com>
-References: <20171214223101.16450-1-wsa+renesas@sang-engineering.com> <20171214223101.16450-5-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 26 Dec 2017 11:11:06 +0100
-Message-ID: <CAMuHMdXnY-zAc-=mBrrDy1XAxZcmvmsVA52D-EeZJT1Ff4Pdyw@mail.gmail.com>
-Subject: Re: [PATCH 4/9] ARM: dts: koelsch: use demuxer for I2C4
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 14 Dec 2017 17:31:07 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH 4/9] ARM: dts: koelsch: use demuxer for I2C4
+Date: Thu, 14 Dec 2017 23:30:56 +0100
+Message-Id: <20171214223101.16450-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
+References: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
 
-On Thu, Dec 14, 2017 at 11:30 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
->
-> This is based on reference work for the I2C0 core of the lager/r8a7790
-> by Wolfram Sang.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> [wsa: rebased, fixed aliases, switched to named GPIOS]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This is based on reference work for the I2C0 core of the lager/r8a7790
+by Wolfram Sang.
 
-> --- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-> +++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, fixed aliases, switched to named GPIOS]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-> @@ -480,6 +504,11 @@
->                 function = "i2c2";
->         };
->
-> +       i2c4_pins: i2c4 {
-> +               groups = "i2c4";
-> +               function = "i2c4";
-> +       };
-
-This change breaks VIN:
-
--rcar-vin e6ef0000.video: Device registered as video25
-+sh-pfc e6060000.pin-controller: pin GP_4_13 already requested by
-e6520000.i2c; cannot claim for e6ef0000.video
-+sh-pfc e6060000.pin-controller: pin-141 (e6ef0000.video) status -22
-+sh-pfc e6060000.pin-controller: could not request pin 141 (GP_4_13)
-from group vin0_data24  on device sh-pfc
-+rcar-vin e6ef0000.video: Error applying setting, reverse things back
-+rcar-vin: probe of e6ef0000.video failed with error -22
-
-I2C4 on Koelsch uses pins GP7_13/14 (group "i2c4_c"), not GP4_13/14
-(group "i2c4").
-
-Fixing it up in today's renesas-drivers release.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 4b20db197de629..8319eff0190ecd 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -52,8 +52,10 @@
+ 		serial1 = &scif1;
+ 		i2c9 = &gpioi2c1;
+ 		i2c10 = &gpioi2c2;
++		i2c11 = &gpioi2c4;
+ 		i2c12 = &i2cexio1;
+ 		i2c13 = &i2chdmi;
++		i2c14 = &i2cexio4;
+ 	};
+ 
+ 	chosen {
+@@ -329,6 +331,16 @@
+ 		i2c-gpio,delay-us = <5>;
+ 	};
+ 
++	gpioi2c4: i2c-11 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio7 13 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio7 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
+ 	/*
+ 	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
+ 	 * A fallback to GPIO is provided.
+@@ -437,6 +449,18 @@
+ 			pagesize = <16>;
+ 		};
+ 	};
++
++	/*
++	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
++	 * A fallback to GPIO is provided.
++	 */
++	i2cexio4: i2c-14 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c4>, <&gpioi2c4>;
++		i2c-bus-name = "i2c-exio4";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
+ 
+ &du {
+@@ -480,6 +504,11 @@
+ 		function = "i2c2";
+ 	};
+ 
++	i2c4_pins: i2c4 {
++		groups = "i2c4";
++		function = "i2c4";
++	};
++
+ 	du_pins: du {
+ 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
+ 		function = "du";
+@@ -735,6 +764,11 @@
+ 	clock-frequency = <100000>;
+ };
+ 
++&i2c4 {
++	pinctrl-0 = <&i2c4_pins>;
++	pinctrl-names = "i2c-exio4";
++};
++
+ &i2c6 {
+ 	status = "okay";
+ 	clock-frequency = <100000>;
+-- 
+2.11.0
