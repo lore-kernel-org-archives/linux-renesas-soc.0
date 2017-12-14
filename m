@@ -1,58 +1,50 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:28661 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751166AbdLNJJD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 14 Dec 2017 04:09:03 -0500
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 2/5] ARM: dts: iwg20d-q7-common: Sound DMA support on DTS
-Date: Mon, 18 Dec 2017 18:22:38 +0000
-Message-Id: <1513621361-10944-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513621361-10944-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513621361-10944-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 0/3] Correct R-Car Gen2 critical CPU temperature
+Date: Thu, 14 Dec 2017 09:08:38 +0000
+Message-Id: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DMA transfer to/from SSI
+The current R-Car Gen2 device trees define the CPU critical
+temperature as 115°C.
 
-     DMA
-[MEM] -> [SSI]
+The R-Car hardware manuals state that Tc = –40°C to +105°C. The
+thermal sensor has an accuracy of ±5°C and there can be a temperature
+difference of 1 or 2 degrees between Tjmax and the thermal sensor due
+to the location of the latter.
 
-     DMA
-[MEM] <- [SSI]
+This means that 95°C is a safer value to use.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
----
-v1->v2
-  * No change
+This value should also apply to r8a7792 but thermal sensor support has
+not been added yet.
 
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Chris Paterson (3):
+  ARM: dts: r8a7790: Correct critical CPU temperature
+  ARM: dts: r8a7791: Correct critical CPU temperature
+  ARM: dts: r8a7793: Correct critical CPU temperature
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index ed67201..bc8d253 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -243,11 +243,11 @@
- };
- 
- &ssi0 {
--	pio-transfer;
-+	no-busif;
- };
- 
- &ssi1 {
--	pio-transfer;
-+	no-busif;
- 	shared-pin;
- };
- 
+ arch/arm/boot/dts/r8a7790.dtsi | 2 +-
+ arch/arm/boot/dts/r8a7791.dtsi | 2 +-
+ arch/arm/boot/dts/r8a7793.dtsi | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
 -- 
 1.9.1
-
