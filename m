@@ -1,100 +1,188 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] spi: sh-msiof: Avoid writing to registers from spi_master.setup()
-Date: Wed, 13 Dec 2017 20:05:10 +0100
-Message-Id: <1513191913-10612-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1513191913-10612-1-git-send-email-geert+renesas@glider.be>
-References: <1513191913-10612-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:54474 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753972AbdLNWbJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 14 Dec 2017 17:31:09 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 7/9] ARM: dts: silk: use demuxer for I2C1
+Date: Thu, 14 Dec 2017 23:30:59 +0100
+Message-Id: <20171214223101.16450-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
+References: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The spi_master.setup() callback must not change configuration registers,
-as that could corrupt I/O that is in progress for other SPI slaves.
+Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
 
-The only exception is the configuration of the native chip select
-polarity in SPI master mode, as a wrong chip select polarity will cause
-havoc during all future transfers to any other SPI slave.
+Based on work for the r8a7790/lager by Wolfram Sang.
 
-Hence stop writing to registers in sh_msiof_spi_setup(), unless it is
-the first call for a controller using a native chip select, or unless
-native chip select polarity has changed (note that you'll loose anyway
-if I/O is in progress).  Even then, only do what is strictly necessary,
-instead of calling sh_msiof_spi_set_pin_regs().
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, fixed aliases, switched to named GPIOs]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/spi/spi-sh-msiof.c | 35 ++++++++++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/r8a7794-silk.dts | 128 ++++++++++++++++++++++---------------
+ 1 file changed, 75 insertions(+), 53 deletions(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 81a9144f5442cdb4..2704abb11ea41fd0 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -55,6 +55,8 @@ struct sh_msiof_spi_priv {
- 	void *rx_dma_page;
- 	dma_addr_t tx_dma_addr;
- 	dma_addr_t rx_dma_addr;
-+	bool native_cs_inited;
-+	bool native_cs_high;
- 	bool slave_aborted;
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index edfad0e5ac53a0..f1afe2dda13a36 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -31,6 +31,8 @@
+ 
+ 	aliases {
+ 		serial0 = &scif2;
++		i2c9 = &gpioi2c1;
++		i2c10 = &i2chdmi;
+ 	};
+ 
+ 	chosen {
+@@ -153,6 +155,78 @@
+ 			clocks = <&x9_clk>;
+ 		};
+ 	};
++
++	gpioi2c1: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C1.
++	 */
++	i2chdmi: i2c-10 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ak4643: codec@12 {
++			compatible = "asahi-kasei,ak4643";
++			#sound-dai-cells = <0>;
++			reg = <0x12>;
++		};
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin0>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin0ep>;
++				};
++			};
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio5>;
++			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_rgb0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con>;
++					};
++				};
++			};
++		};
++	};
  };
  
-@@ -528,8 +530,7 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- {
- 	struct device_node	*np = spi->master->dev.of_node;
- 	struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
+ &extal_clk {
+@@ -268,61 +342,9 @@
+ 
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+-	status = "okay";
+ 	clock-frequency = <400000>;
 -
--	pm_runtime_get_sync(&p->pdev->dev);
-+	u32 clr, set, tmp;
- 
- 	if (!np) {
- 		/*
-@@ -539,19 +540,31 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- 		spi->cs_gpio = (uintptr_t)spi->controller_data;
- 	}
- 
--	/* Configure pins before deasserting CS */
--	sh_msiof_spi_set_pin_regs(p, !!(spi->mode & SPI_CPOL),
--				  !!(spi->mode & SPI_CPHA),
--				  !!(spi->mode & SPI_3WIRE),
--				  !!(spi->mode & SPI_LSB_FIRST),
--				  !!(spi->mode & SPI_CS_HIGH));
+-	ak4643: codec@12 {
+-		compatible = "asahi-kasei,ak4643";
+-		#sound-dai-cells = <0>;
+-		reg = <0x12>;
+-	};
 -
--	if (spi->cs_gpio >= 0)
-+	if (spi->cs_gpio >= 0) {
- 		gpio_set_value(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
-+		return 0;
-+	}
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin0>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio5>;
+-		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_rgb0>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
+-				};
+-			};
+-		};
+-	};
+ };
  
-+	if (spi_controller_is_slave(p->master))
-+		return 0;
- 
--	pm_runtime_put(&p->pdev->dev);
-+	if (p->native_cs_inited &&
-+	    (p->native_cs_high == !!(spi->mode & SPI_CS_HIGH)))
-+		return 0;
- 
-+	/* Configure native chip select mode/polarity early */
-+	clr = MDR1_SYNCMD_MASK;
-+	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
-+	if (spi->mode & SPI_CS_HIGH)
-+		clr |= BIT(MDR1_SYNCAC_SHIFT);
-+	else
-+		set |= BIT(MDR1_SYNCAC_SHIFT);
-+	pm_runtime_get_sync(&p->pdev->dev);
-+	tmp = sh_msiof_read(p, TMDR1) & ~clr;
-+	sh_msiof_write(p, TMDR1, tmp | set);
-+	pm_runtime_put(&p->pdev->dev);
-+	p->native_cs_high = spi->mode & SPI_CS_HIGH;
-+	p->native_cs_inited = true;
- 	return 0;
- }
- 
+ &mmcif0 {
 -- 
-2.7.4
-
+2.11.0
