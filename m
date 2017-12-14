@@ -1,66 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752484AbdLGJzB (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:34970 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754162AbdLNTKF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:01 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 20/54] arm64: dts: renesas: r8a7795-es1: Add IPMMU device nodes
-Date: Thu,  7 Dec 2017 10:53:23 +0100
-Message-Id: <e4b9a493df45075bf3ae2d41fdc1a29e57fe024b.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Thu, 14 Dec 2017 14:10:05 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [RFC 1/2] Synchronize with the Kernel headers for routing operations
+Date: Thu, 14 Dec 2017 20:09:42 +0100
+Message-Id: <20171214190943.8179-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171214190943.8179-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171214190943.8179-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
-
-Add r8a7795 ES1.x IPMMU nodes and keep all disabled by default.
-
-This is a follow-up to a patch that adds IPMMU device nodes that
-are common to r8a7795 ES1.x and ES2.0
-
-Power domains are omitted as they appear to be undocumented.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ include/linux/v4l2-subdev.h | 41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 246323eacb56..38b7cfb3b428 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -26,6 +26,22 @@
- 	/delete-node/ mmu@fd960000;
- 	/delete-node/ mmu@fd970000;
+diff --git a/include/linux/v4l2-subdev.h b/include/linux/v4l2-subdev.h
+index dbce2b554e026869..e19ee64075d6cbdf 100644
+--- a/include/linux/v4l2-subdev.h
++++ b/include/linux/v4l2-subdev.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ /*
+  * V4L2 subdev userspace API
+  *
+@@ -154,6 +155,44 @@ struct v4l2_subdev_selection {
+ 	__u32 reserved[8];
+ };
  
-+	ipmmu_mp1: mmu@ec680000 {
-+		compatible = "renesas,ipmmu-r8a7795";
-+		reg = <0 0xec680000 0 0x1000>;
-+		renesas,ipmmu-main = <&ipmmu_mm 5>;
-+		#iommu-cells = <1>;
-+		status = "disabled";
-+	};
++#define V4L2_SUBDEV_ROUTE_FL_ACTIVE	(1 << 0)
++#define V4L2_SUBDEV_ROUTE_FL_IMMUTABLE	(1 << 1)
 +
-+	ipmmu_sy: mmu@e7730000 {
-+		compatible = "renesas,ipmmu-r8a7795";
-+		reg = <0 0xe7730000 0 0x1000>;
-+		renesas,ipmmu-main = <&ipmmu_mm 8>;
-+		#iommu-cells = <1>;
-+		status = "disabled";
-+	};
++/**
++ * struct v4l2_subdev_route - A signal route inside a subdev
++ * @sink_pad: the sink pad
++ * @sink_stream: the sink stream
++ * @source_pad: the source pad
++ * @source_stream: the source stream
++ * @flags: route flags:
++ *
++ *	V4L2_SUBDEV_ROUTE_FL_ACTIVE: Is the stream in use or not? An
++ *	active stream will start when streaming is enabled on a video
++ *	node. Set by the user.
++ *
++ *	V4L2_SUBDEV_ROUTE_FL_IMMUTABLE: Is the stream immutable, i.e.
++ *	can it be activated and inactivated? Set by the driver.
++ */
++struct v4l2_subdev_route {
++	__u32 sink_pad;
++	__u32 sink_stream;
++	__u32 source_pad;
++	__u32 source_stream;
++	__u32 flags;
++	__u32 reserved[5];
++};
 +
- 	/delete-node/ usb-phy@ee0e0200;
- 	/delete-node/ usb@ee0e0100;
- 	/delete-node/ usb@ee0e0000;
++/**
++ * struct v4l2_subdev_routing - Routing information
++ * @routes: the routes array
++ * @num_routes: the total number of routes in the routes array
++ */
++struct v4l2_subdev_routing {
++	struct v4l2_subdev_route *routes;
++	__u32 num_routes;
++	__u32 reserved[5];
++};
++
+ /* Backwards compatibility define --- to be removed */
+ #define v4l2_subdev_edid v4l2_edid
+ 
+@@ -176,5 +215,7 @@ struct v4l2_subdev_selection {
+ #define VIDIOC_SUBDEV_ENUM_DV_TIMINGS		_IOWR('V', 98, struct v4l2_enum_dv_timings)
+ #define VIDIOC_SUBDEV_QUERY_DV_TIMINGS		_IOR('V', 99, struct v4l2_dv_timings)
+ #define VIDIOC_SUBDEV_DV_TIMINGS_CAP		_IOWR('V', 100, struct v4l2_dv_timings_cap)
++#define VIDIOC_SUBDEV_G_ROUTING			_IOWR('V', 38, struct v4l2_subdev_routing)
++#define VIDIOC_SUBDEV_S_ROUTING			_IOWR('V', 39, struct v4l2_subdev_routing)
+ 
+ #endif
 -- 
-2.11.0
+2.14.2
