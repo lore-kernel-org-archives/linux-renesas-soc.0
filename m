@@ -1,42 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:22644 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752131AbdLLStq (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:34130 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754277AbdLNTJS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 13:49:46 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/3] Add CMT support to r8a774[35]
-Date: Tue, 12 Dec 2017 18:49:36 +0000
-Message-Id: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 14 Dec 2017 14:09:18 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH/RFC v2 04/15] rcar-csi2: switch to pad and stream aware s_stream
+Date: Thu, 14 Dec 2017 20:08:24 +0100
+Message-Id: <20171214190835.7672-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds CMT support for r8a7743 and r8a7745.
+Switch the driver to implement the pad and stream aware s_stream
+operation. This is needed to enable to support to start and stop
+individual streams on a multiplexed pad.
 
-Thanks,
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Fabrizio Castro (3):
-  dt-bindings: timer: renesas, cmt: Document r8a774[35] CMT support
-  ARM: dts: r8a7743: Add CMT SoC specific support
-  ARM: dts: r8a7745: Add CMT SoC specific support
-
- .../devicetree/bindings/timer/renesas,cmt.txt      | 12 ++++++---
- arch/arm/boot/dts/r8a7743.dtsi                     | 30 ++++++++++++++++++++++
- arch/arm/boot/dts/r8a7745.dtsi                     | 30 ++++++++++++++++++++++
- 3 files changed, 69 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index d8751add48fc1322..8ce0bfeef1113f9c 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -625,12 +625,17 @@ static int rcar_csi2_sd_info(struct rcar_csi2 *priv, struct v4l2_subdev **sd)
+ 	return 0;
+ }
+ 
+-static int rcar_csi2_s_stream(struct v4l2_subdev *sd, int enable)
++static int rcar_csi2_s_stream(struct v4l2_subdev *sd, unsigned int pad,
++			      unsigned int stream, int enable)
+ {
+ 	struct rcar_csi2 *priv = sd_to_csi2(sd);
+ 	struct v4l2_subdev *nextsd;
+ 	int ret;
+ 
++	/* Only one stream on each source pad */
++	if (stream != 0)
++		return -EINVAL;
++
+ 	mutex_lock(&priv->lock);
+ 
+ 	ret = rcar_csi2_sd_info(priv, &nextsd);
+@@ -699,17 +704,13 @@ static int rcar_csi2_get_pad_format(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
+-static const struct v4l2_subdev_video_ops rcar_csi2_video_ops = {
+-	.s_stream = rcar_csi2_s_stream,
+-};
+-
+ static const struct v4l2_subdev_pad_ops rcar_csi2_pad_ops = {
+ 	.set_fmt = rcar_csi2_set_pad_format,
+ 	.get_fmt = rcar_csi2_get_pad_format,
++	.s_stream = rcar_csi2_s_stream,
+ };
+ 
+ static const struct v4l2_subdev_ops rcar_csi2_subdev_ops = {
+-	.video	= &rcar_csi2_video_ops,
+ 	.pad	= &rcar_csi2_pad_ops,
+ };
+ 
 -- 
-2.7.4
+2.15.1
