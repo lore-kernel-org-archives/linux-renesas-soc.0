@@ -1,53 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38272 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752219AbdLEVnv (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55452 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750737AbdLNA2p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 16:43:51 -0500
-Received: by mail-lf0-f68.google.com with SMTP id e137so1995113lfg.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Dec 2017 13:43:50 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171205214345.812687071@cogentembedded.com>
-Date: Wed, 06 Dec 2017 00:43:35 +0300
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] clk: renesas: r8a77970: add LVDS clock
+        Wed, 13 Dec 2017 19:28:45 -0500
+Subject: Re: [RFC PATCH 1/3] kms-tests: Provide .gitignore
+To: Kieran Bingham <kbingham@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+References: <cover.417c1b91fc9842fb290756d5ad23bdc16970b1e1.1513211056.git-series.kieran@bingham.xyz>
+ <e5595b1910e29c055c0345b2abf5d730bfaf2e31.1513211056.git-series.kieran@bingham.xyz>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <115be458-f9a7-a06a-9da9-f071a58c865e@ideasonboard.com>
+Date: Thu, 14 Dec 2017 00:28:41 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=clk-renesas-r8a77970-add-LVDS-clock.patch
+In-Reply-To: <e5595b1910e29c055c0345b2abf5d730bfaf2e31.1513211056.git-series.kieran@bingham.xyz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I seem to have omitted the LVDS clock from the R8A77970 CPG/MSSR support
-patch for some reason -- add it back...
+On 14/12/17 00:25, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran@bingham.xyz>
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Ahem - Please excuse that person - he's not meant to be working.
 
-Fixes: 8d46e28fb508 ("clk: renesas: cpg-mssr: Add R8A77970 support")
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
----
-This patch is against the 'clk-renesas' branch of Geert Uytterhoeven's
-'renesas-drivers.git' repo...
+This guy is.
 
- drivers/clk/renesas/r8a77970-cpg-mssr.c |    1 +
- 1 file changed, 1 insertion(+)
+One day I'll acknowledge that my e-mail aliasing is completely overcomplicated.
 
-Index: renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
-===================================================================
---- renesas-drivers.orig/drivers/clk/renesas/r8a77970-cpg-mssr.c
-+++ renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
-@@ -105,6 +105,7 @@ static const struct mssr_mod_clk r8a7797
- 	DEF_MOD("vspd0",		 623,	R8A77970_CLK_S2D1),
- 	DEF_MOD("csi40",		 716,	R8A77970_CLK_CSI0),
- 	DEF_MOD("du0",			 724,	R8A77970_CLK_S2D1),
-+	DEF_MOD("lvds",			 727,	R8A77970_CLK_S2D1),
- 	DEF_MOD("vin3",			 808,	R8A77970_CLK_S2D1),
- 	DEF_MOD("vin2",			 809,	R8A77970_CLK_S2D1),
- 	DEF_MOD("vin1",			 810,	R8A77970_CLK_S2D1),
+--
+George (Must be one of my other alter-egos)
+
+
+
+> 
+> Provide an initial .gitignore file to hide python related
+> files that may be created in an active workspace
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  .gitignore | 4 ++++
+>  1 file changed, 4 insertions(+)
+>  create mode 100644 .gitignore
+> 
+> diff --git a/.gitignore b/.gitignore
+> new file mode 100644
+> index 000000000000..8df6f4ad55ab
+> --- /dev/null
+> +++ b/.gitignore
+> @@ -0,0 +1,4 @@
+> +*.log
+> +*.swp
+> +*.pyc
+> +__pycache__
+> 
