@@ -1,43 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752452AbdLGJzd (ORCPT
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:35027 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751121AbdLNKYb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:33 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 14 Dec 2017 05:24:31 -0500
+MIME-Version: 1.0
+In-Reply-To: <1513242521-11236-3-git-send-email-chris.paterson2@renesas.com>
+References: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com> <1513242521-11236-3-git-send-email-chris.paterson2@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 14 Dec 2017 11:24:30 +0100
+Message-ID: <CAMuHMdWwL4xMPRi3wJoBNdjc_UCjVYjqLP=Db-15mqM8FUAo4w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: r8a7791: Correct critical CPU temperature
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 50/54] arm64: dts: renesas: r8a77995: Connect Ethernet-AVB to IPMMU-RT
-Date: Thu,  7 Dec 2017 10:53:53 +0100
-Message-Id: <2ebdfea2bbf12c7e5c636fbb4d8616f2027e86f7.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add IPMMU-RT to the Ethernet-AVB device node.
+On Thu, Dec 14, 2017 at 10:08 AM, Chris Paterson
+<chris.paterson2@renesas.com> wrote:
+> The R-Car M2W hardware manual states that Tc =3D =E2=80=9340=C2=B0C to +1=
+05=C2=B0C. The
 
-Based on work by Magnus Damm for the r8a7795.
+M2-W
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> thermal sensor has an accuracy of =C2=B15=C2=B0C and there can be a tempe=
+rature
+> difference of 1 or 2 degrees between Tjmax and the thermal sensor due
+> to the location of the latter.
+>
+> This means that 95=C2=B0C is a safer value to use.
+>
+> Fixes: cac68a56e34b9810 ("ARM: dts: r8a7791: enable to use thermal-zone")
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index f02bf81e5a5a..cff42cd1a6c8 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -525,6 +525,7 @@
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii-txid";
-+			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
--- 
-2.11.0
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
