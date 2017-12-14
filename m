@@ -1,142 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33572 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbdLNLuO (ORCPT
+Received: from sauhun.de ([88.99.104.3]:54457 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753972AbdLNWbH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 06:50:14 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: Extend support to 3 native chip selects" to the spi tree
-In-Reply-To: <1513191913-10612-3-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1ePS1i-0005WO-4U@debutante>
-Date: Thu, 14 Dec 2017 11:50:10 +0000
+        Thu, 14 Dec 2017 17:31:07 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/9] ARM: dts: lager: use demuxer for IIC3/I2C3
+Date: Thu, 14 Dec 2017 23:30:54 +0100
+Message-Id: <20171214223101.16450-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
+References: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Create a separate bus for da9063 PMIC and da9210 regulator
+related I2C slaves.
 
-   spi: sh-msiof: Extend support to 3 native chip selects
+Based on similar work for HDMI by Wolfram Sang.
 
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 9cce882bedd2768dc251b73f2ad86a9bfcfd9fc7 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 13 Dec 2017 20:05:11 +0100
-Subject: [PATCH] spi: sh-msiof: Extend support to 3 native chip selects
-
-Currently only the MSIOF_SYNC signal can be used as a native chip
-select.  Extend support to up to 3 native chipselects using the
-MSIOF_SS1 and MSIOF_SS2 signals.
-
-Inspired by a patch in the BSP by Hiromitsu Yamasaki.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, corrected chip name in commit msg, updated aliases]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- Documentation/devicetree/bindings/spi/sh-msiof.txt |  6 +++++-
- drivers/spi/spi-sh-msiof.c                         | 18 +++++++++++++-----
- 2 files changed, 18 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 84 +++++++++++++++++++++++--------------
+ 1 file changed, 53 insertions(+), 31 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index bdd83959019c..bc8c16a6cfc8 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -36,7 +36,11 @@ Required properties:
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index e4050dae7e8e33..6f6e41c9fc4f6c 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -55,6 +55,7 @@
+ 		i2c10 = &i2cexio0;
+ 		i2c11 = &i2cexio1;
+ 		i2c12 = &i2chdmi;
++		i2c13 = &i2cpwr;
+ 	};
  
- Optional properties:
- - clocks               : Must contain a reference to the functional clock.
--- num-cs               : Total number of chip-selects (default is 1)
-+- num-cs               : Total number of chip selects (default is 1).
-+			 Up to 3 native chip selects are supported:
-+			   0: MSIOF_SYNC
-+			   1: MSIOF_SS1
-+			   2: MSIOF_SS2
- - dmas                 : Must contain a list of two references to DMA
- 			 specifiers, one for transmission, and one for
- 			 reception.
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 2704abb11ea4..9bdc292aa050 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -60,6 +60,8 @@ struct sh_msiof_spi_priv {
- 	bool slave_aborted;
+ 	chosen {
+@@ -410,6 +411,46 @@
+ 			};
+ 		};
+ 	};
++
++	/*
++	 * IIC3 and I2C3 may be switched using pinmux.
++	 * IIC3/I2C3 does not appear to support fallback to GPIO.
++	 */
++	i2cpwr: i2c-13 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&iic3>, <&i2c3>;
++		i2c-bus-name = "i2c-pwr";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		pmic@58 {
++			compatible = "dlg,da9063";
++			reg = <0x58>;
++			interrupt-parent = <&irqc0>;
++			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++			interrupt-controller;
++
++			rtc {
++				compatible = "dlg,da9063-rtc";
++			};
++
++			wdt {
++				compatible = "dlg,da9063-watchdog";
++			};
++		};
++
++		vdd_dvfs: regulator@68 {
++			compatible = "dlg,da9210";
++			reg = <0x68>;
++			interrupt-parent = <&irqc0>;
++			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++
++			regulator-min-microvolt = <1000000>;
++			regulator-max-microvolt = <1000000>;
++			regulator-boot-on;
++			regulator-always-on;
++		};
++	};
  };
  
-+#define MAX_SS	3	/* Maximum number of native chip selects */
+ &du {
+@@ -549,6 +590,11 @@
+ 		function = "iic2";
+ 	};
+ 
++	i2c3_pins: i2c3 {
++		groups = "i2c3";
++		function = "i2c3";
++	};
 +
- #define TMDR1	0x00	/* Transmit Mode Register 1 */
- #define TMDR2	0x04	/* Transmit Mode Register 2 */
- #define TMDR3	0x08	/* Transmit Mode Register 3 */
-@@ -93,6 +95,8 @@ struct sh_msiof_spi_priv {
- #define MDR1_XXSTP	 0x00000001 /* Transmission/Reception Stop on FIFO */
- /* TMDR1 */
- #define TMDR1_PCON	 0x40000000 /* Transfer Signal Connection */
-+#define TMDR1_SYNCCH_MASK 0xc000000 /* Synchronization Signal Channel Select */
-+#define TMDR1_SYNCCH_SHIFT	 26 /* 0=MSIOF_SYNC, 1=MSIOF_SS1, 2=MSIOF_SS2 */
+ 	iic3_pins: iic3 {
+ 		groups = "iic3";
+ 		function = "iic3";
+@@ -764,38 +810,14 @@
+ 	clock-frequency = <100000>;
+ };
  
- /* TMDR2 and RMDR2 */
- #define MDR2_BITLEN1(i)	(((i) - 1) << 24) /* Data Size (8-32 bits) */
-@@ -326,7 +330,7 @@ static u32 sh_msiof_spi_get_dtdl_and_syncdl(struct sh_msiof_spi_priv *p)
- 	return val;
- }
+-&iic3 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&iic3_pins>;
+-	status = "okay";
+-
+-	pmic@58 {
+-		compatible = "dlg,da9063";
+-		reg = <0x58>;
+-		interrupt-parent = <&irqc0>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-controller;
+-
+-		rtc {
+-			compatible = "dlg,da9063-rtc";
+-		};
+-
+-		wdt {
+-			compatible = "dlg,da9063-watchdog";
+-		};
+-	};
+-
+-	vdd_dvfs: regulator@68 {
+-		compatible = "dlg,da9210";
+-		reg = <0x68>;
+-		interrupt-parent = <&irqc0>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++&i2c3	{
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "i2c-pwr";
++};
  
--static void sh_msiof_spi_set_pin_regs(struct sh_msiof_spi_priv *p,
-+static void sh_msiof_spi_set_pin_regs(struct sh_msiof_spi_priv *p, u32 ss,
- 				      u32 cpol, u32 cpha,
- 				      u32 tx_hi_z, u32 lsb_first, u32 cs_high)
- {
-@@ -344,10 +348,13 @@ static void sh_msiof_spi_set_pin_regs(struct sh_msiof_spi_priv *p,
- 	tmp |= !cs_high << MDR1_SYNCAC_SHIFT;
- 	tmp |= lsb_first << MDR1_BITLSB_SHIFT;
- 	tmp |= sh_msiof_spi_get_dtdl_and_syncdl(p);
--	if (spi_controller_is_slave(p->master))
-+	if (spi_controller_is_slave(p->master)) {
- 		sh_msiof_write(p, TMDR1, tmp | TMDR1_PCON);
--	else
--		sh_msiof_write(p, TMDR1, tmp | MDR1_TRMD | TMDR1_PCON);
-+	} else {
-+		sh_msiof_write(p, TMDR1,
-+			       tmp | MDR1_TRMD | TMDR1_PCON |
-+			       (ss < MAX_SS ? ss : 0) << TMDR1_SYNCCH_SHIFT);
-+	}
- 	if (p->master->flags & SPI_MASTER_MUST_TX) {
- 		/* These bits are reserved if RX needs TX */
- 		tmp &= ~0x0000ffff;
-@@ -575,7 +582,8 @@ static int sh_msiof_prepare_message(struct spi_master *master,
- 	const struct spi_device *spi = msg->spi;
+-		regulator-min-microvolt = <1000000>;
+-		regulator-max-microvolt = <1000000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+-	};
++&iic3	{
++	pinctrl-0 = <&iic3_pins>;
++	pinctrl-names = "i2c-pwr";
+ };
  
- 	/* Configure pins before asserting CS */
--	sh_msiof_spi_set_pin_regs(p, !!(spi->mode & SPI_CPOL),
-+	sh_msiof_spi_set_pin_regs(p, spi->chip_select,
-+				  !!(spi->mode & SPI_CPOL),
- 				  !!(spi->mode & SPI_CPHA),
- 				  !!(spi->mode & SPI_3WIRE),
- 				  !!(spi->mode & SPI_LSB_FIRST),
+ &pci0 {
 -- 
-2.15.1
+2.11.0
