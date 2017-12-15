@@ -1,12 +1,23 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:53428 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932509AbdLOQhi (ORCPT
+Received: from mail-it0-f46.google.com ([209.85.214.46]:39838 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932364AbdLOQew (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 11:37:38 -0500
-Date: Fri, 15 Dec 2017 17:30:55 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
+        Fri, 15 Dec 2017 11:34:52 -0500
+Received: by mail-it0-f46.google.com with SMTP id 68so20255131ite.4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 08:34:52 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171215163055.vxxiswgsvfybf4hi@katana>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAPDyKFqE7Pg8fJFyOtihdRnma+dFQd3+YPWGn6pXbpzhpERK9Q@mail.gmail.com>
+ <CAK7LNASQfsnQY6henk5RvAysQUh3=cPXV1GPNeWeXgBxZvadAw@mail.gmail.com>
+ <20171215111225.ekrau5e27xknb3jf@ninjato> <CAPDyKFopKm2psU19vGQfGL6WizXQA0vvzQubqsypvytbpRtyAA@mail.gmail.com>
+ <20171215163055.vxxiswgsvfybf4hi@katana>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 15 Dec 2017 17:34:51 +0100
+Message-ID: <CAPDyKFpUE1s8+OXuyyRszFnpt5CN4G8d2vhwRhs-PkaL_VU7oQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/22] mmc: tmio: various fixes and cleanups
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -14,63 +25,33 @@ Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 00/22] mmc: tmio: various fixes and cleanups
-Message-ID: <20171215163055.vxxiswgsvfybf4hi@katana>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <CAPDyKFqE7Pg8fJFyOtihdRnma+dFQd3+YPWGn6pXbpzhpERK9Q@mail.gmail.com>
- <CAK7LNASQfsnQY6henk5RvAysQUh3=cPXV1GPNeWeXgBxZvadAw@mail.gmail.com>
- <20171215111225.ekrau5e27xknb3jf@ninjato>
- <CAPDyKFopKm2psU19vGQfGL6WizXQA0vvzQubqsypvytbpRtyAA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hap2cul7cpxi6p4d"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFopKm2psU19vGQfGL6WizXQA0vvzQubqsypvytbpRtyAA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 15 December 2017 at 17:30, Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+>> > Ulf, this patch then in deed should ideally be applied before 1-8 here.
+>>
+>> Okay, once you post it to linux-mmc I will pick it up, and put it in front.
+>
+> Bad news, that patch didn't help. The problem is that sparc64 doesn't
+> include 'asm-generic/io.h' and also has no own 'readsw'. No surprise
+> that just adding this include will cause lots of redefines which are way
+> too much to handle as a side-task.
+>
+> So, the best option I see here is to drop COMPILE_TEST for now, report
+> this to the sparc64 maintainers (I assume they know already), and see if
+> they can fix it.
 
---hap2cul7cpxi6p4d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Okay!
 
+If some of you send a patch on top, I can fold it into the offending commit.
 
-> > Ulf, this patch then in deed should ideally be applied before 1-8 here.
->=20
-> Okay, once you post it to linux-mmc I will pick it up, and put it in fron=
-t.
+>
+> Other thoughts?
 
-Bad news, that patch didn't help. The problem is that sparc64 doesn't
-include 'asm-generic/io.h' and also has no own 'readsw'. No surprise
-that just adding this include will cause lots of redefines which are way
-too much to handle as a side-task.
+Nope.
 
-So, the best option I see here is to drop COMPILE_TEST for now, report
-this to the sparc64 maintainers (I assume they know already), and see if
-they can fix it.
-
-Other thoughts?
-
-
---hap2cul7cpxi6p4d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloz+LoACgkQFA3kzBSg
-KbYCEQ/9F0JemgG6APDVBDDiD7bdz8pirpaoUI9A3WiyjaospSzaTwO5NTlNEIHc
-qsnzMexXBKjyGQNV0Z/v0NUv5XxaY+LAGvXVOkD6wZ+wjTbw/73yALJ5cVWN4mXC
-WY/MXoCBNvPjHLHY7Ibkf/2axSd3umc4kGqzsPUhLAM4LE/aAOZOBxD0P3PLZEPg
-sYjUwsEzAHRCc6adF2iIS1Rj9R2ZuwJXRqayJ7C3OBlXLxz2TaMv97XA9Ec/t+T9
-H/rrHMtnkrOPi0htzzpTZYerhVTeRxbxfmAW1ikS6FiWg6EEWRJxn5FV1pEHGjnn
-9v0v0vDWHhEan/rl7RiDjfgVfkQ93HGpsMIRHqe9DT9ozqZ8t/eQtCK2GKMk0EYt
-AN1urJ5j1Ut86BHszrOOx95r1wv6R3DywDcWXCGyPgKmqzD1r+iNin00ID1c7hGA
-CqZ7e5jBPMQxdHfo532Cy+PTKMh20jF2JX0EcwCpg/qQG1/WBV8l+l1VSrJOndlJ
-3hrxt8H25bZgrE7eaMyolJx+Ag0PlwgV78suGpBofv69Ye/prQdMNgSORO92MH1g
-JNb4mRdPG7yar7hqyuNNP1UbEPiA5NpN1X6w7lUOiCkgRb/cH+WkwVce1aIkmmxI
-RvOqcsq/c+ZctwsQ/+jKd9TgQ5w5r79BCAXNK5PuhNn3ZbgH2LQ=
-=+uPw
------END PGP SIGNATURE-----
-
---hap2cul7cpxi6p4d--
+Kind regards
+Uffe
