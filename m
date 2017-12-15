@@ -1,150 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:59616 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755406AbdLORLe (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58514 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932480AbdLOQGO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 12:11:34 -0500
-Date: Fri, 15 Dec 2017 17:11:30 +0000
-From: Dave Martin <Dave.Martin@arm.com>
+        Fri, 15 Dec 2017 11:06:14 -0500
+Date: Fri, 15 Dec 2017 16:06:23 +0000
+From: Will Deacon <will.deacon@arm.com>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+Cc: Dave Martin <Dave.Martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
 Subject: Re: arm64: unhandled level 0 translation fault
-Message-ID: <20171215171129.GS22781@e103592.cambridge.arm.com>
+Message-ID: <20171215160623.GQ25650@arm.com>
 References: <CAMuHMdXh_6FaV-SFGWxcBb1-NNGYngDrYnnWA=9Y6xmRAkcxqg@mail.gmail.com>
  <CAMuHMdWH=3kRmwjDHsTzUVmB7=s5cnY16Ujfroe_B6dawGSDfw@mail.gmail.com>
  <20171214152431.GC12608@e103592.cambridge.arm.com>
  <CAMuHMdXx-8+g5Xf0UtuYu71+K8Pz9CyQe=ifzzOWVRB1KpMGcg@mail.gmail.com>
  <20171215112343.GR22781@e103592.cambridge.arm.com>
  <CAMuHMdWio0KnJc3DQeQyf-MHpDC=tc3cJLNK7MmaL=MdDz45UQ@mail.gmail.com>
+ <20171215142732.GL25650@arm.com>
+ <CAMuHMdUaVUrqPUxHkt-FaYkHn9XQzOP3_1YJ+xFHj7id0cMoUA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdWio0KnJc3DQeQyf-MHpDC=tc3cJLNK7MmaL=MdDz45UQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdUaVUrqPUxHkt-FaYkHn9XQzOP3_1YJ+xFHj7id0cMoUA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 15, 2017 at 02:30:00PM +0100, Geert Uytterhoeven wrote:
-> Hi Dave,
-> 
-> On Fri, Dec 15, 2017 at 12:23 PM, Dave Martin <Dave.Martin@arm.com> wrote:
-> > On Thu, Dec 14, 2017 at 07:08:27PM +0100, Geert Uytterhoeven wrote:
-> >> On Thu, Dec 14, 2017 at 4:24 PM, Dave P Martin <Dave.Martin@arm.com> wrote:
-
-[...]
-
-> >> > Good work on the bisect -- I'll need to have a think about this...
+On Fri, Dec 15, 2017 at 04:59:28PM +0100, Geert Uytterhoeven wrote:
+> On Fri, Dec 15, 2017 at 3:27 PM, Will Deacon <will.deacon@arm.com> wrote:
+> > On Fri, Dec 15, 2017 at 02:30:00PM +0100, Geert Uytterhoeven wrote:
+> >> On Fri, Dec 15, 2017 at 12:23 PM, Dave Martin <Dave.Martin@arm.com> wrote:
+> >> > The two important differences here seem to be
 > >> >
-> >> > That patch fixes a genuine problem so we can't just revert it.
+> >> > 1) Staging the state via current->thread.fpsimd_state instead of loading
+> >> > directly:
 > >> >
-> >> > What if you revert _just this function_ back to what it was in v4.14?
+> >> > -       fpsimd_load_state(state);
+> >> > +       current->thread.fpsimd_state = *state;
+> >> > +       fpsimd_load_state(&current->thread.fpsimd_state);
 > >>
-> >> With fpsimd_update_current_state() reverted to v4.14, and
-> >>
-> >> -               __this_cpu_write(fpsimd_last_state, st);
-> >> +               __this_cpu_write(fpsimd_last_state.st, st);
-> >>
-> >> to make it build, the problem seems to be fixed, too.
+> >> The change above introduces the breakage.
+> >
+> > I finally managed to reproduce this, but only by using the exact same
+> > compiler as Geert:
+> >
+> > https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.9.0/x86_64-gcc-4.9.0-nolibc_aarch64-linux.tar.xz
+> >
+> > I then reliably see the problem if I run:
+> >
+> >   # /usr/bin/update-ca-certificates
 > 
-> > Interesting if I apply that to v4.14 and then flatten the new code for CONFIG_ARM64_SVE=n, I get:
-> >
-> > Working:
-> >
-> > void fpsimd_update_current_state(struct fpsimd_state *state)
-> > {
-> >         local_bh_disable();
-> >
-> >         fpsimd_load_state(state);
-> >         if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
-> >                 struct fpsimd_state *st = &current->thread.fpsimd_state;
-> >
-> >                 __this_cpu_write(fpsimd_last_state.st, st);
-> >                 st->cpu = smp_processor_id();
-> >         }
-> >
-> >         local_bh_enable();
-> > }
-> >
-> > Broken:
-> >
-> > void fpsimd_update_current_state(struct fpsimd_state *state)
-> > {
-> >         struct fpsimd_last_state_struct *last;
-> >         struct fpsimd_state *st;
-> >
-> >         local_bh_disable();
-> >
-> >         current->thread.fpsimd_state = *state;
-> >         fpsimd_load_state(&current->thread.fpsimd_state);
-> >
-> >         if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
-> >                 last = this_cpu_ptr(&fpsimd_last_state);
-> >                 st = &current->thread.fpsimd_state;
-> >
-> >                 last->st = st;
-> >                 last->sve_in_use = test_thread_flag(TIF_SVE);
-> >                 st->cpu = smp_processor_id();
-> >         }
-> >
-> >         local_bh_enable();
-> > }
-> >
-> > Can you try my flattened "broken" version by itself and see if that does
-> > reproduce the bug?  If not, my flattening may be making bad assumptions...
-> >
-> > Assuming the "broken" version reproduces the bug, I can't yet see exactly
-> > where the breakage comes from.
+> /usr/sbin/... ?
 > 
-> Correct, above "Working" is working, and "Broken" is broken.
+> > from Debian Jessie.
 > 
-> > The two important differences here seem to be
-> >
-> > 1) Staging the state via current->thread.fpsimd_state instead of loading
-> > directly:
-> >
-> > -       fpsimd_load_state(state);
-> > +       current->thread.fpsimd_state = *state;
-> > +       fpsimd_load_state(&current->thread.fpsimd_state);
+> Funny, I've just got both
 > 
-> The change above introduces the breakage.
+>     *** Error in `/bin/sh': free(): invalid pointer: 0x0000aaaac17d4988 ***
 > 
-> > 2) Using this_cpu_ptr() + assignment instead of __this_cpu_write() when
-> > reassociating the task's fpsimd context with the cpu:
-> >
-> >  {
-> > +       struct fpsimd_last_state_struct *last;
-> > +       struct fpsimd_state *st;
-> >
-> > [...]
-> >
-> >         if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
-> > -               struct fpsimd_state *st = &current->thread.fpsimd_state;
-> > -
-> > -               __this_cpu_write(fpsimd_last_state.st, st);
-> > -               st->cpu = smp_processor_id();
-> > +               last = this_cpu_ptr(&fpsimd_last_state);
-> > +               st = &current->thread.fpsimd_state;
-> > +
-> > +               last->st = st;
-> > +               last->sve_in_use = test_thread_flag(TIF_SVE);
-> > +               st->cpu = smp_processor_id();
-> >         }
+> and
 > 
-> The change above is fine.
+>     mountall.sh[2172]: unhandled level 0 translation fault (11) at
+> 0x0000004d, esr 0x92000004, in dash[aaaace7e5000+1a000]
+> 
+> during boot up, but I can't get update-ca-certificates to fail...
 
-Thanks for this.
+Can you try the diff below, please?
 
-Will came up with a convincing hypothesis for how the dodgy change broke
-things here -- see the diff in his separate reply.
+Will
 
-I'll cook up a more complete fix, but the diff Will provided should at
-least get things working.
+--->8
 
-Cheers
----Dave
+diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+index 540a1e010eb5..fae81f7964b4 100644
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -1043,7 +1043,7 @@ void fpsimd_update_current_state(struct fpsimd_state *state)
+ 
+        local_bh_disable();
+ 
+-       current->thread.fpsimd_state = *state;
++       current->thread.fpsimd_state.user_fpsimd = state->user_fpsimd;
+        if (system_supports_sve() && test_thread_flag(TIF_SVE))
+                fpsimd_to_sve(current);
