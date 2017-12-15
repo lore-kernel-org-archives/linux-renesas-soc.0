@@ -1,61 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:33280 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752425AbdLUOKU (ORCPT
+Received: from sauhun.de ([88.99.104.3]:57143 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932247AbdLOQCE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 09:10:20 -0500
-Received: by mail-qk0-f194.google.com with SMTP id x7so13609492qkb.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Dec 2017 06:10:19 -0800 (PST)
+        Fri, 15 Dec 2017 11:02:04 -0500
+Date: Fri, 15 Dec 2017 17:02:03 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PULL REQUEST] renesas/topic/rcar-i2c-recovery for renesas drivers
+Message-ID: <20171215160159.xonlansqqvevyeze@ninjato>
 MIME-Version: 1.0
-In-Reply-To: <20171215160159.xonlansqqvevyeze@ninjato>
-References: <20171215160159.xonlansqqvevyeze@ninjato>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 21 Dec 2017 15:10:18 +0100
-Message-ID: <CAMuHMdX9U5MNWAb0OJ+cSQ67L8WwsQ_+jZ4-F8m8iQSbtYvo3g@mail.gmail.com>
-Subject: Re: [PULL REQUEST] renesas/topic/rcar-i2c-recovery for renesas drivers
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zfl75qzmnm4gfa2a"
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-On Fri, Dec 15, 2017 at 5:02 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> here is a topic branch for renesas-drivers which enables I2C bus
-> recovery on i2c-rcar IP cores.
->
-> It is based on i2c/for-next + renesas/dt-for-v4.16 +
-> renesas/topc/ip-switch-rework-2017.
->
-> Please pull.
->
-> Kind regards,
->
->    Wolfram
->
->
-> The following changes since commit 62127db8d012c586fdd45d1768261aaa3938c8b7:
->
->   Merge branch 'renesas/topc/ip-switch-rework-2017' into renesas/topic/rcar-i2c-recovery (2017-12-15 16:43:40 +0100)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/rcar-i2c-recovery
->
-> for you to fetch changes up to e5bb5ef5f51d223dfcd188c803e746d445320b92:
->
->   i2c: rcar: implement bus recovery (2017-12-15 16:45:43 +0100)
+--zfl75qzmnm4gfa2a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thank you, merges cleanly into today's linux-next.
+Hi Geert,
 
-Gr{oetje,eeting}s,
+here is a topic branch for renesas-drivers which enables I2C bus
+recovery on i2c-rcar IP cores.
 
-                        Geert
+It is based on i2c/for-next + renesas/dt-for-v4.16 +
+renesas/topc/ip-switch-rework-2017.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Please pull.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind regards,
+
+   Wolfram
+
+
+The following changes since commit 62127db8d012c586fdd45d1768261aaa3938c8b7:
+
+  Merge branch 'renesas/topc/ip-switch-rework-2017' into renesas/topic/rcar-i2c-recovery (2017-12-15 16:43:40 +0100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/rcar-i2c-recovery
+
+for you to fetch changes up to e5bb5ef5f51d223dfcd188c803e746d445320b92:
+
+  i2c: rcar: implement bus recovery (2017-12-15 16:45:43 +0100)
+
+----------------------------------------------------------------
+Wolfram Sang (7):
+      i2c: algo-bit: init the bus to a known state
+      i2c: make kerneldoc about bus recovery more precise
+      i2c: add identifier in declarations for i2c_bus_recovery
+      i2c: add 'set_sda' to bus_recovery_info
+      i2c: ensure SDA is released in recovery if SDA is controllable
+      i2c: send STOP after successful bus recovery
+      i2c: rcar: implement bus recovery
+
+ drivers/i2c/algos/i2c-algo-bit.c |  5 ++++
+ drivers/i2c/busses/i2c-rcar.c    | 54 ++++++++++++++++++++++++++++++++++++++--
+ drivers/i2c/i2c-core-base.c      | 25 ++++++++++++++++++-
+ include/linux/i2c.h              | 20 +++++++++------
+ 4 files changed, 93 insertions(+), 11 deletions(-)
+
+--zfl75qzmnm4gfa2a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloz8fcACgkQFA3kzBSg
+Kbasdw/7BxTWECXIYRknOa2VbSkCYfYUHyXhts3N89i94UpYGV1t+a8G6/mRFxy5
+O+Ei31mIq1XJT7V0+zL+HTeTyMq6CwzssmMMh9xSTAxHOWuwXjTlMw7PnfZA0Jzf
+us8Uu4Uw3KyxMKRBIHp8WCgx+OnjDr7ilqnL6e8VAL5VsV9M5CIfVMj33rR9eDtc
+INc71ypuCCRyIxiWHpU02AcVhh4CHKlAbNRTob6BPmpav/um/lwL7eTRhfZljllx
+KZ9CP2z+qK3ptyrBu4iiYd6ZEPPK5ry7xLxNI6qkubFB6J02VUwPS/y2ArxECV5s
+SnFWnPTeGbQNpVY3HoEjoYDTwEavQmEdxlx2OqNz0ioDIyqKpVu+eCQbQRnv+eUI
+nDE93aOVkW2KvsXnhaq5GDvR5rR0+SxFtEhhlfPG6OdaifdcDjM2dbCR8DmYR8oP
+Shbwijw7DeSJy0g7pfRdtou3lYzDJtkrATBaY5dmGmAXHTCStRCzTQ8xJXEwJgqe
+wLr2C+p/ujUlTQAwF5yrOpotwrwli0u0Pik5CQx/73bIk78xEnRzfPX2AEV1E1iH
+JREGr7Ogr+cqAVNyM0WZjto+f6SYBSfJgaHbZiMHg09g7+7qlHQ7UbfGk1CdfdOk
+mUIXJ0af4KWM5hNCxx/P5ogno4q+lOxn6ErUB2LznlQXfdQqk+w=
+=VyKJ
+-----END PGP SIGNATURE-----
+
+--zfl75qzmnm4gfa2a--
