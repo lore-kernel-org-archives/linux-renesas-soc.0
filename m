@@ -1,45 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751904AbdLGJzD (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46410 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756747AbdLOPQa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:03 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Fri, 15 Dec 2017 10:16:30 -0500
+Received: by mail-wr0-f196.google.com with SMTP id x49so8317554wrb.13
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 07:16:29 -0800 (PST)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/54] arm64: dts: renesas: r8a7795-es1: Point FDP1 via FCPF to IPMMU-VP0
-Date: Thu,  7 Dec 2017 10:53:29 +0100
-Message-Id: <f54d63fe7ed6d37df15ec8903302dd05375168f4.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 6/7] drm/img-rogue: init_timer() -> setup_timer()
+Date: Fri, 15 Dec 2017 16:15:44 +0100
+Message-Id: <1513350945-2642-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1513350945-2642-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1513350945-2642-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
-
-Hook up the FCPF devices to allow use of FDP1 with IPMMU-VP0.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ services/server/env/linux/osfunc.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 6b4dfa42f5b2..736281335653 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -56,6 +56,7 @@
- 		clocks = <&cpg CPG_MOD 613>;
- 		power-domains = <&sysc R8A7795_PD_A3VP>;
- 		resets = <&cpg 613>;
-+		iommus = <&ipmmu_vp0 2>;
- 	};
+diff --git a/services/server/env/linux/osfunc.c b/services/server/env/linux/osfunc.c
+index c222095..b529c63 100644
+--- a/services/server/env/linux/osfunc.c
++++ b/services/server/env/linux/osfunc.c
+@@ -492,7 +492,7 @@ static inline IMG_UINT64 KClockns64(void)
+ {
+ 	ktime_t sTime = ktime_get();
  
- 	vspi2: vsp@fe9c0000 {
+-	return sTime.tv64;
++	return sTime;
+ }
+ 
+ PVRSRV_ERROR OSClockMonotonicns64(IMG_UINT64 *pui64Time)
+@@ -1135,9 +1135,9 @@ static void OSTimerCallbackBody(TIMER_CALLBACK_DATA *psTimerCBData)
+ @Description    OS specific timer callback wrapper function
+ @Input          uData    Timer callback data
+ */ /**************************************************************************/
+-static void OSTimerCallbackWrapper(uintptr_t uData)
++static void OSTimerCallbackWrapper(struct timer_list *t)
+ {
+-	TIMER_CALLBACK_DATA	*psTimerCBData = (TIMER_CALLBACK_DATA*)uData;
++	TIMER_CALLBACK_DATA *psTimerCBData = from_timer(psTimerCBData, t, sTimer);
+ 
+ #if defined(PVR_LINUX_TIMERS_USING_WORKQUEUES) || defined(PVR_LINUX_TIMERS_USING_SHARED_WORKQUEUE)
+ 	int res;
+@@ -1219,12 +1219,8 @@ IMG_HANDLE OSAddTimer(PFN_TIMER_FUNC pfnTimerFunc, void *pvData, IMG_UINT32 ui32
+ 	psTimerCBData->ui32Delay = ((HZ * ui32MsTimeout) < 1000)
+ 								?	1
+ 								:	((HZ * ui32MsTimeout) / 1000);
+-	/* initialise object */
+-	init_timer(&psTimerCBData->sTimer);
+-
+ 	/* setup timer object */
+-	psTimerCBData->sTimer.function = (void *)OSTimerCallbackWrapper;
+-	psTimerCBData->sTimer.data = (uintptr_t)psTimerCBData;
++	timer_setup(&psTimerCBData->sTimer, OSTimerCallbackWrapper, 0);
+ 
+ 	return (IMG_HANDLE)(uintptr_t)(ui32i + 1);
+ }
 -- 
-2.11.0
+2.7.4
