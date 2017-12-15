@@ -1,73 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36452 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752355AbdLNOLk (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:20651 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752181AbdLOFtq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 09:11:40 -0500
-Received: by mail-it0-f67.google.com with SMTP id d16so11408558itj.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Dec 2017 06:11:40 -0800 (PST)
+        Fri, 15 Dec 2017 00:49:46 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 5/6] phy: renesas: rcar-gen3-usb2: add rcar_gen3_role_swap_ops
+Date: Fri, 15 Dec 2017 14:45:25 +0900
+Message-Id: <1513316726-14387-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1513316726-14387-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1513316726-14387-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1510234022-29442-4-git-send-email-geert+renesas@glider.be>
-References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be> <1510234022-29442-4-git-send-email-geert+renesas@glider.be>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 14 Dec 2017 15:11:39 +0100
-Message-ID: <CAPDyKFrxaghoAcWJN1R7d7k5b=QwMpusGFuohVZpTaWngf3aiw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] soc: renesas: rcar-sysc: Keep wakeup sources
- active during system suspend
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> If an R-Car SYSC slave device is part of the CPG/MSTP or CPG/MSSR Clock
-> Domain and to be used as a wakeup source, it must be kept active during
-> system suspend.
->
-> Currently this is handled in device-specific drivers by explicitly
-> increasing the use count of the module clock when the device is
-> configured as a wakeup source.  However, the proper way to prevent the
-> device from being stopped is to inform this requirement to the genpd
-> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
->
-> Note that this will only affect devices configured as wakeup sources.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch add rcar_gen3_role_swap_ops to support other feature
+(e.g. gpio handling) easily.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 51 +++++++++++++++++++++++++++-----
+ 1 file changed, 43 insertions(+), 8 deletions(-)
 
-Kind regards
-Uffe
-
-> ---
-> v2:
->   - Integrate "soc: renesas: rcar-sysc: Use GENPD_FLAG_ACTIVE_WAKEUP",
-> ---
->  drivers/soc/renesas/rcar-sysc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-> index c8406e81640f6560..ac4df1c43b2fbdbe 100644
-> --- a/drivers/soc/renesas/rcar-sysc.c
-> +++ b/drivers/soc/renesas/rcar-sysc.c
-> @@ -224,7 +224,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
->
->         if (!(pd->flags & (PD_CPU | PD_SCU))) {
->                 /* Enable Clock Domain for I/O devices */
-> -               genpd->flags |= GENPD_FLAG_PM_CLK;
-> +               genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
->                 if (has_cpg_mstp) {
->                         genpd->attach_dev = cpg_mstp_attach_dev;
->                         genpd->detach_dev = cpg_mstp_detach_dev;
-> --
-> 2.7.4
->
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index b121f07..f470fb3 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -83,11 +83,23 @@
+ 
+ #define RCAR_GEN3_PHY_HAS_DEDICATED_PINS	1
+ 
++struct rcar_gen3_chan;
++struct rcar_gen3_role_swap_ops {
++	void (*init)(struct rcar_gen3_chan *ch);
++	void (*set_host)(struct rcar_gen3_chan *ch, int host);
++	bool (*is_host)(struct rcar_gen3_chan *ch);
++	void (*set_vbus_ctrl)(struct rcar_gen3_chan *ch, int enable);
++	bool (*check_id)(struct rcar_gen3_chan *ch);
++	void (*control_irq)(struct rcar_gen3_chan *ch, int enable);
++	irqreturn_t (*irq_handler)(struct rcar_gen3_chan *ch);
++};
++
+ struct rcar_gen3_chan {
+ 	void __iomem *base;
+ 	struct extcon_dev *extcon;
+ 	struct phy *phy;
+ 	struct regulator *vbus;
++	const struct rcar_gen3_role_swap_ops *rs_ops;
+ 	struct work_struct work;
+ 	bool extcon_host;
+ 	bool has_otg_pins;
+@@ -203,17 +215,20 @@ static void rcar_gen3_phy_usb2_work(struct work_struct *work)
+ 
+ static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
+ {
+-	has_otg_pins_set_host(ch, host);
++	if (ch->rs_ops && ch->rs_ops->set_host)
++		ch->rs_ops->set_host(ch, host);
+ }
+ 
+ static void rcar_gen3_set_vbus_ctrl(struct rcar_gen3_chan *ch, int enable)
+ {
+-	has_otg_pins_set_vbus_ctrl(ch, enable);
++	if (ch->rs_ops && ch->rs_ops->set_vbus_ctrl)
++		ch->rs_ops->set_vbus_ctrl(ch, enable);
+ }
+ 
+ static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
+ {
+-	has_otg_pins_control_irq(ch, enable);
++	if (ch->rs_ops && ch->rs_ops->control_irq)
++		ch->rs_ops->control_irq(ch, enable);
+ }
+ 
+ static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
+@@ -271,7 +286,10 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+ 
+ static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
+ {
+-	return has_otg_pins_check_id(ch);
++	if (ch->rs_ops && ch->rs_ops->check_id)
++		return ch->rs_ops->check_id(ch);
++
++	return false;
+ }
+ 
+ static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
+@@ -284,7 +302,10 @@ static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
+ 
+ static bool rcar_gen3_is_host(struct rcar_gen3_chan *ch)
+ {
+-	return has_otg_pins_is_host(ch);
++	if (ch->rs_ops && ch->rs_ops->is_host)
++		return ch->rs_ops->is_host(ch);
++
++	return false;
+ }
+ 
+ static enum phy_mode rcar_gen3_get_phy_mode(struct rcar_gen3_chan *ch)
+@@ -350,7 +371,8 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
+ 
+ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
+ {
+-	has_otg_pins_init(ch);
++	if (ch->rs_ops && ch->rs_ops->init)
++		ch->rs_ops->init(ch);
+ 
+ 	rcar_gen3_device_recognition(ch);
+ }
+@@ -425,9 +447,10 @@ static int rcar_gen3_phy_usb2_power_off(struct phy *p)
+ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ {
+ 	struct rcar_gen3_chan *ch = _ch;
+-	irqreturn_t ret;
++	irqreturn_t ret = IRQ_NONE;
+ 
+-	ret = has_otg_pins_irq_handler(ch);
++	if (ch->rs_ops && ch->rs_ops->irq_handler)
++		ret = ch->rs_ops->irq_handler(ch);
+ 	if (ret == IRQ_HANDLED)
+ 		rcar_gen3_device_recognition(ch);
+ 
+@@ -456,6 +479,16 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ 	EXTCON_NONE,
+ };
+ 
++static const struct rcar_gen3_role_swap_ops has_otg_pins_ops = {
++	.init		= has_otg_pins_init,
++	.set_host	= has_otg_pins_set_host,
++	.is_host	= has_otg_pins_is_host,
++	.set_vbus_ctrl	= has_otg_pins_set_vbus_ctrl,
++	.check_id	= has_otg_pins_check_id,
++	.control_irq	= has_otg_pins_control_irq,
++	.irq_handler	= has_otg_pins_irq_handler,
++};
++
+ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -493,6 +526,8 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 		int ret;
+ 
+ 		channel->has_otg_pins = (uintptr_t)of_device_get_match_data(dev);
++		if (channel->has_otg_pins)
++			channel->rs_ops = &has_otg_pins_ops;
+ 		channel->extcon = devm_extcon_dev_allocate(dev,
+ 							rcar_gen3_phy_cable);
+ 		if (IS_ERR(channel->extcon))
+-- 
+1.9.1
