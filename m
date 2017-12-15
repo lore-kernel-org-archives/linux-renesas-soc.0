@@ -1,76 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:39648 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752259AbdLLS1Z (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:43468 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932247AbdLOQCr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 13:27:25 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 5/5] ARM: dts: iwg20d-q7-common: Enable SGTL5000 audio codec
-Date: Tue, 12 Dec 2017 18:25:11 +0000
-Message-Id: <1513103111-45830-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 15 Dec 2017 11:02:47 -0500
+Received: by mail-it0-f65.google.com with SMTP id u62so20668351ita.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 08:02:47 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1513353391-30806-4-git-send-email-ulf.hansson@linaro.org>
+References: <1513353391-30806-1-git-send-email-ulf.hansson@linaro.org> <1513353391-30806-4-git-send-email-ulf.hansson@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 15 Dec 2017 17:02:45 +0100
+Message-ID: <CAPDyKFqoUT6cYoCVyXGj7wsjunKmfUYPLyZ7=9S4LaGEP-F36w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] PM / Domains: Take WAKEUP_PATH driver flag into
+ account in genpd
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables SGTL5000 audio codec on the carrier board.
+On 15 December 2017 at 16:56, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> In case the WAKEUP_PATH flag has been set in a later phase than from the
+> ->suspend() callback, the PM core want set the ->power.wakeup_path status
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+/s/want/don't
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 54470c6..2070b14 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -20,6 +20,20 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	audio_clock: audio_clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+	};
-+
-+	reg_1p5v: 1p5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P5V";
-+		regulator-min-microvolt = <1500000>;
-+		regulator-max-microvolt = <1500000>;
-+		regulator-always-on;
-+	};
-+
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 
-@@ -83,6 +97,16 @@
- 		compatible = "ti,bq32000";
- 		reg = <0x68>;
- 	};
-+
-+	sgtl5000: codec@0a {
-+		compatible = "fsl,sgtl5000";
-+		#sound-dai-cells = <0>;
-+		reg = <0x0a>;
-+		clocks = <&audio_clock>;
-+		VDDA-supply = <&reg_3p3v>;
-+		VDDIO-supply = <&reg_3p3v>;
-+		VDDD-supply = <&reg_1p5v>;
-+	};
- };
- 
- &pci0 {
--- 
-1.9.1
+If another version is needed I fix, else perhaps you can just amend the patch!?
+
+Kind regards
+Uffe
+
+> flag for the device. Therefore, let's be safe and check it explicitly.
+>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/base/power/domain.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index f9dcc98..32b4ba7 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -1038,7 +1038,9 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
+>         if (IS_ERR(genpd))
+>                 return -EINVAL;
+>
+> -       if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
+> +       if ((dev->power.wakeup_path ||
+> +           dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_PATH)) &&
+> +           genpd_is_active_wakeup(genpd))
+>                 return 0;
+>
+>         if (poweroff)
+> @@ -1093,7 +1095,9 @@ static int genpd_resume_noirq(struct device *dev)
+>         if (IS_ERR(genpd))
+>                 return -EINVAL;
+>
+> -       if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
+> +       if ((dev->power.wakeup_path ||
+> +           dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_PATH)) &&
+> +           genpd_is_active_wakeup(genpd))
+>                 return 0;
+>
+>         genpd_lock(genpd);
+> --
+> 2.7.4
+>
