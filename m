@@ -1,105 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:37378 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933188AbdLSD6A (ORCPT
+Received: from sauhun.de ([88.99.104.3]:57605 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755820AbdLOTIu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 22:58:00 -0500
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqE7Pg8fJFyOtihdRnma+dFQd3+YPWGn6pXbpzhpERK9Q@mail.gmail.com>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com> <CAPDyKFqE7Pg8fJFyOtihdRnma+dFQd3+YPWGn6pXbpzhpERK9Q@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 19 Dec 2017 12:56:57 +0900
-Message-ID: <CAK7LNASdJz9LpcCGQJjHU_CkxtXKhTbnRYA2Caq8Ck9OPLHghg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/22] mmc: tmio: various fixes and cleanups
+        Fri, 15 Dec 2017 14:08:50 -0500
+Date: Fri, 15 Dec 2017 20:08:48 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <simon.horman@netronome.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 00/22] mmc: tmio: various fixes and cleanups
+Message-ID: <20171215190848.bgazsmoqeznslv3a@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAPDyKFqE7Pg8fJFyOtihdRnma+dFQd3+YPWGn6pXbpzhpERK9Q@mail.gmail.com>
+ <CAK7LNASQfsnQY6henk5RvAysQUh3=cPXV1GPNeWeXgBxZvadAw@mail.gmail.com>
+ <20171215111225.ekrau5e27xknb3jf@ninjato>
+ <CAPDyKFopKm2psU19vGQfGL6WizXQA0vvzQubqsypvytbpRtyAA@mail.gmail.com>
+ <20171215163055.vxxiswgsvfybf4hi@katana>
+ <CAPDyKFpUE1s8+OXuyyRszFnpt5CN4G8d2vhwRhs-PkaL_VU7oQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uubogp6tuzuz7bos"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpUE1s8+OXuyyRszFnpt5CN4G8d2vhwRhs-PkaL_VU7oQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf,
+
+--uubogp6tuzuz7bos
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
-2017-12-15 18:18 GMT+09:00 Ulf Hansson <ulf.hansson@linaro.org>:
-> On 24 November 2017 at 17:24, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->>
->> I am working on this IP for Socionext SoCs.
->>
->> I was hit by several issues, and noticed various
->> clean-up candidates.
->>
->>  - Fix and clean-up Kconfig
->>  - Fix various card detection problems
->>  - Move Renesas private data out of TMIO core
->>  - Allow to perform platform-specific settings before MMC host starts
->>  - Fix weird IRQ handling
->>
->> I am getting more and more patches for TMIO.
->> I put all in a single series to clarify the patch order.
->>
->> 1, 2, 4, 5, 6, 7 were already acked or reviewed by Wolfram Sang.
->>
->>
->> Masahiro Yamada (22):
->>   mmc: renesas_sdhi: consolidate DMAC CONFIG options
->>   mmc: renesas_sdhi: remove wrong depends on to enable compile test
->>   mmc: renesas_sdhi: remove eprobe jump label
->>   mmc: tmio: set tmio_mmc_host to driver data
->>   mmc: tmio: use devm_ioremap_resource() instead of devm_ioremap()
->>   mmc: tmio: move mmc_host_ops to struct tmio_mmc_host from static data
->>   mmc: tmio, renesas_sdhi: set mmc_host_ops hooks directly
->>   mmc: tmio: move mmc_gpio_request_cd() before mmc_add_host()
->>   mmc: tmio: use mmc_can_gpio_cd() instead of checking
->>     TMIO_MMC_USE_GPIO_CD
->>   mmc: tmio: support IP-builtin card detection logic
->>   mmc: renesas_sdhi: remove always false condition
->>   mmc: tmio,renesas_sdhi: move struct tmio_mmc_dma to renesas_sdhi.h
->>   mmc: tmio,renesas_sdhi: move Renesas-specific DMA data to
->>     renesas_sdhi.h
->>   mmc: tmio,renesas_sdhi: move ssc_tappos to renesas_sdhi.h
->>   mmc: tmio: change bus_shift to unsigned int
->>   mmc: tmio: fix never-detected card insertion bug
->>   mmc: tmio: move TMIO_MASK_{READOP,WRITEOP} handling to correct place
->>   mmc: tmio: remove useless TMIO_MASK_CMD handling in
->>     tmio_mmc_host_probe()
->>   mmc: tmio: ioremap memory resource in tmio_mmc_host_alloc()
->>   mmc: tmio: move clk_enable/disable out of tmio_mmc_host_probe()
->>   mmc: tmio: move {tmio_}mmc_of_parse() to tmio_mmc_host_alloc()
->>   mmc: tmio: remove dma_ops from tmio_mmc_host_probe() argument
->>
->>  drivers/mmc/host/Kconfig                      |   5 +-
->>  drivers/mmc/host/Makefile                     |   8 +-
->>  drivers/mmc/host/renesas_sdhi.h               |  22 ++++
->>  drivers/mmc/host/renesas_sdhi_core.c          |  49 ++++-----
->>  drivers/mmc/host/renesas_sdhi_internal_dmac.c |  14 ++-
->>  drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  35 +++---
->>  drivers/mmc/host/tmio_mmc.c                   |  23 ++--
->>  drivers/mmc/host/tmio_mmc.h                   |  23 +---
->>  drivers/mmc/host/tmio_mmc_core.c              | 149 +++++++++++++-------------
->>  9 files changed, 170 insertions(+), 158 deletions(-)
->>
->> --
->> 2.7.4
->>
->
-> To get this moving, I have applied patch 1->8 for next, thanks!
+> > Other thoughts?
+>=20
+> Nope.
+
+I have :) Another solution seems to be to switch to ioread16_rep and
+friends. Those are defined on sparc64. Compiles locally here, now sent
+it to buildbot.
 
 
-Could you apply 11->15 as well?
-They were reviewed by Wolfram.
+--uubogp6tuzuz7bos
+Content-Type: application/pgp-signature; name="signature.asc"
 
-We can skip 9, 10.
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlo0HbsACgkQFA3kzBSg
+KbaiiBAAoNKL9++dgkoAWR6E/qNQs1e4rkl1e8W1SUbRUpTqotJc2/XQg1FGrNst
+bLz6myWJjHp9t9OxEwm9rpbGUgi232wG7skr7LmwkgkTeE9Pd3/gKfD+FlevGULE
+GYKr62GXfr1+gpvVgAdFYrOvWGj6Oy1CYdXqo21Q9wB0B49ji7DCtbtlVN8wUBh+
+OftQcm507KZZnraqqNhZvtTbUhXXFEFwJXTkW0F8KvhBnAhUgYUgxXPeh7H/1Pfs
+9yDV9dvn6U1BZmOSKJ9kX0zor9f2mlNRr7456JMdxKsV1CVTe0nnafKpthfcpf+X
+3/9JgricV1tcTp2cpZR2PHk0VowsxhCaVKRVoYHTXMjbleORHqXNFPyg/UQdQ2/E
+XbwhSSWSic1m1otyWLvHv51vzwVVxyh+X+v/vj7bbQG78Rf7xjEfaXSH5ZMV/kyx
+CiwyoPErABfCJ70fXPGpKmiArychV5STXfkh+8Gopv0Xsa0iJqD7OhD2Tm3kzF1e
+WNutmo9tzrKY5N/RCtFnr9gAhci33uRPkEwOWkvB/DR2HrqnR5RaasutULWDr5ic
+C4LHeXkCni/Alaa8daZ9nmqv9rv3dSTGqsbHF9RtkaQ70LNPutjdyUTa/oByVf7w
+2pHlBgGBtF2zMpDffzs8cMPWBft5Rg+YGzlOhc4qMLUTpSUBRj0=
+=GTkV
+-----END PGP SIGNATURE-----
 
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--uubogp6tuzuz7bos--
