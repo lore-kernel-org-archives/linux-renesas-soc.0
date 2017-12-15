@@ -1,53 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:50923 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1763230AbdLSN5Z (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:26419 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932136AbdLOOxW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 08:57:25 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rask Ingemann Lambertsen <rask@formelder.dk>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: multi_v7_defconfig: Select PWM_RCAR as module
-Date: Tue, 19 Dec 2017 13:57:17 +0000
-Message-Id: <1513691837-16192-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 15 Dec 2017 09:53:22 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 5/5] ARM: dts: iwg20d-q7-common: Sound DMA support via DVC on DTS
+Date: Fri, 15 Dec 2017 14:50:53 +0000
+Message-Id: <1513349453-54689-6-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
+References: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable PWM support for R-Car and friends by default.
+DMA transfer uses DVC
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+     DMA               DMApp
+[MEM] -> [SRC] -> [DVC] -> [SSIU] -> [SSI]
+
+     DMA               DMApp
+[MEM] <- [DVC] <- [SRC] <- [SSIU] <- [SSI]
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 61509c4..b4c36f9 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -879,6 +879,7 @@ CONFIG_PWM_ATMEL=m
- CONFIG_PWM_ATMEL_HLCDC_PWM=m
- CONFIG_PWM_ATMEL_TCB=m
- CONFIG_PWM_FSL_FTM=m
-+CONFIG_PWM_RCAR=m
- CONFIG_PWM_RENESAS_TPU=y
- CONFIG_PWM_ROCKCHIP=m
- CONFIG_PWM_SAMSUNG=m
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 9f6ec25..ccbdf5a 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -8,6 +8,29 @@
+  * kind, whether express or implied.
+  */
+ 
++/*
++ * SSI-SGTL5000
++ *
++ * This command is required when Playback/Capture
++ *
++ *      amixer set "DVC Out" 100%
++ *      amixer set "DVC In" 100%
++ *
++ * You can use Mute
++ *
++ *      amixer set "DVC Out Mute" on
++ *      amixer set "DVC In Mute" on
++ *
++ * You can use Volume Ramp
++ *
++ *      amixer set "DVC Out Ramp Up Rate"   "0.125 dB/64 steps"
++ *      amixer set "DVC Out Ramp Down Rate" "0.125 dB/512 steps"
++ *      amixer set "DVC Out Ramp" on
++ *      aplay xxx.wav &
++ *      amixer set "DVC Out"  80%  // Volume Down
++ *      amixer set "DVC Out" 100%  // Volume Up
++ */
++
+ / {
+ 	aliases {
+ 		serial0 = &scif0;
+@@ -240,8 +263,8 @@
+ 
+ 	rcar_sound,dai {
+ 		dai0 {
+-			playback = <&ssi1 &src3>;
+-			capture = <&ssi0 &src2>;
++			playback = <&ssi1 &src3 &dvc1>;
++			capture = <&ssi0 &src2 &dvc0>;
+ 		};
+ 	};
+ };
 -- 
-2.7.4
+1.9.1
