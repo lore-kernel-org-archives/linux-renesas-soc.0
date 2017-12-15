@@ -1,81 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:34324 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754272AbdLNTJW (ORCPT
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:37920 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932375AbdLOP4o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 14:09:22 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH/RFC v2 11/15] adv748x: csi2: implement get_frame_desc
-Date: Thu, 14 Dec 2017 20:08:31 +0100
-Message-Id: <20171214190835.7672-12-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 15 Dec 2017 10:56:44 -0500
+Received: by mail-lf0-f42.google.com with SMTP id u127so6894515lff.5
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 07:56:44 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 0/3] PM / core: Extend behaviour for wakeup paths
+Date: Fri, 15 Dec 2017 16:56:28 +0100
+Message-Id: <1513353391-30806-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide CSI-2 bus information for the multiplexed source pad using the
-frame descriptor.
+The generic problem this series intends to solve, is that for some PM domains,
+especially genpd, the current information in the dev->power.wakeup_path, is not
+sufficient for a PM domain to fully understand how to treat devices in the
+wakeup path during system suspend.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/i2c/adv748x/adv748x-csi2.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Particularly this applies to resources being consumed by the driver that has
+configured system wakeup settings for its device. Currently the PM domain lacks
+information about these consumed resources, which means it may decide to power
+of their corresponding device and its attached PM domain, while they actually
+would need to stay powered to allow system wakeup signals to be delivered.
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index a2a6d93077204731..a43b251d0bc67a43 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -225,9 +225,37 @@ static int adv748x_csi2_set_format(struct v4l2_subdev *sd,
- 	return ret;
- }
- 
-+static int adv748x_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-+				       struct v4l2_mbus_frame_desc *fd)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct v4l2_mbus_framefmt *mbusformat;
-+
-+	memset(fd, 0, sizeof(*fd));
-+
-+	if (pad != ADV748X_CSI2_SOURCE)
-+		return -EINVAL;
-+
-+	mbusformat = adv748x_csi2_get_pad_format(sd, NULL, ADV748X_CSI2_SINK,
-+						 V4L2_SUBDEV_FORMAT_ACTIVE);
-+	if (!mbusformat)
-+		return -EINVAL;
-+
-+	fd->entry->stream = 0;
-+	fd->entry->bus.csi2.channel = tx->vc;
-+	fd->entry->bus.csi2.data_type =
-+		adv748x_csi2_code_to_datatype(mbusformat->code);
-+
-+	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-+	fd->num_entries = 1;
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
- 	.get_fmt = adv748x_csi2_get_format,
- 	.set_fmt = adv748x_csi2_set_format,
-+	.get_frame_desc = adv748x_csi2_get_frame_desc,
- };
- 
- /* -----------------------------------------------------------------------------
+Geert Uytterhoeven, has been working on these kind of problems for some Renesas
+SoCs and there have been lots of discussions around this. After some
+consideration I have dropped my first attempt [1] on how to address these
+problems, so here's hopefully a better one.
+
+So far I haven't included any patches for dealing with the "OUT_BAND_WAKEUP"
+thingy, but I suggest we do that in a second separate step, since it's not
+immediately need to fix the problems for the Renesas SoCs.
+
+Geert's Renesas series [2], needs to be re-based on top of this series to make
+it convert to use the new DPM_FLAG_WAKEUP_PATH flag, which is introduced in
+this series. That leads to a tree-wise-dependency, so perhaps Rafael can host
+an immutable branch the Renesas tree can pull in. Let's see.
+
+[1]
+https://www.spinics.net/lists/linux-renesas-soc/msg20122.html
+
+[2]
+https://www.spinics.net/lists/linux-renesas-soc/msg19947.html
+
+Ulf Hansson (3):
+  PM / core: Assign the wakeup_path status flag in __device_prepare()
+  PM / core: Add WAKEUP_PATH driver flag
+  PM / Domains: Take WAKEUP_PATH driver flag into account in genpd
+
+ drivers/base/power/domain.c | 8 ++++++--
+ drivers/base/power/main.c   | 5 ++++-
+ include/linux/pm.h          | 7 +++++++
+ 3 files changed, 17 insertions(+), 3 deletions(-)
+
 -- 
-2.15.1
+2.7.4
