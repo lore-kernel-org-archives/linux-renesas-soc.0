@@ -1,47 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44076 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752118AbdLQNKp (ORCPT
+Received: from mga11.intel.com ([192.55.52.93]:10951 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756692AbdLOPVO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Dec 2017 08:10:45 -0500
+        Fri, 15 Dec 2017 10:21:14 -0500
+Date: Fri, 15 Dec 2017 17:20:40 +0200
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, kieran.bingham@ideasonboard.com,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH 4/5] v4l2: async: Postpone subdev_notifier registration
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        sakari.ailus@linux.intel.com
-Cc: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Message-ID: <20171215152040.nex4jjk7awk4ckg3@paasikivi.fi.intel.com>
 References: <1513189580-32202-1-git-send-email-jacopo+renesas@jmondi.org>
  <1513189580-32202-5-git-send-email-jacopo+renesas@jmondi.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-Message-ID: <fad564c9-c421-3fd2-1e99-652d2b54985e@ideasonboard.com>
-Date: Sun, 17 Dec 2017 13:10:41 +0000
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <1513189580-32202-5-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Jacopo,
 
-Thank you for the patch,
-
-This seems like a good thing to do at a glance here, but I'll leave contextual
-judgement like that to Sakari.
-
-A few minor grammatical nits here and a question on locking.
-
-On 13/12/17 18:26, Jacopo Mondi wrote:
+On Wed, Dec 13, 2017 at 07:26:19PM +0100, Jacopo Mondi wrote:
 > Currently, subdevice notifiers are tested against all available
 > subdevices as soon as they get registered. It often happens anyway
 > that the subdevice they are connected to is not yet initialized, as
 > it usually gets registered later in drivers' code. This makes debug
 > of v4l2_async particularly painful, as identifying a notifier with
 > an unitialized subdevice is tricky as they don't have a valid
-
-uninitialized
-
 > 'struct device *' or 'struct fwnode_handle *' to be identified with.
 > 
 > In order to make sure that the notifier's subdevices is initialized
@@ -49,19 +37,26 @@ uninitialized
 > actual notifier registration at subdevice registration time.
 > 
 > It is worth noting that post-poning registration of a subdevice notifier
-
-postponing is not hyphenated.
-
 > does not impact on the completion of the notifiers chain, as even if a
 > subdev notifier completes as soon as it gets registered, the complete()
 > call chain cannot be upscaled as long as the subdevice the notifiers
-
-Upscaled? Is this the right word here ? perhaps 'processed'?
-
-"the complete() call chain cannot be process before the subdevice to which the
-notifiers belong has been registered"
-
 > belongs to is not registered.
+
+Let me rephrase to make sure I understand the problem correctly ---
+
+A sub-device notifier is registered but the notifier's sub-device is not
+registered yet, and finding a match for this notifier leads, to, well
+problems. Is that the reason for this patch?
+
+I think there could be simpler solutions to address this.
+
+I wonder if we could simply check for sub-device notifier's v4l2_dev field,
+and fail in matching if it's not set. v4l2_device_register_subdev() would
+still need to proceed with calling v4l2_async_notifier_try_all_subdevs()
+and v4l2_async_notifier_try_complete() if that was the case.
+
+What do you think?
+
 > 
 > Also, it is now safe to access a notifier 'struct device *' as we're now
 > sure it is properly initialized when the notifier is actually
@@ -203,12 +198,6 @@ notifiers belong has been registered"
 > -	list_del(&notifier->list);
 > +	notifier->owner = NULL;
 > +	notifier->registered = false;
-
-Do we need any locking of the notifier object now that it uses a flag and an
-'asynchronous' registration ?
-
-It might be OK ... but I haven't processed through the whole usage yet.
-
 >  }
 > 
 >  void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
@@ -218,15 +207,8 @@ It might be OK ... but I haven't processed through the whole usage yet.
 > 
 > +	/*
 > +	 * If the subdevice has an unregisterd notifier, it's now time
-
-unregistered
-
---
-Regards
-
-Kieran
-
-> +	 * to register it.> +	 */
+> +	 * to register it.
+> +	 */
 > +	subdev_notifier = sd->subdev_notifier;
 > +	if (subdev_notifier && !subdev_notifier->registered) {
 > +		ret = __v4l2_async_notifier_register(subdev_notifier);
@@ -272,3 +254,7 @@ Kieran
 > --
 > 2.7.4
 > 
+
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
