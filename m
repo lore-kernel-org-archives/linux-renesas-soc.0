@@ -1,132 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44221 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753327AbdLDMhj (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:32114 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755963AbdLOJsY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 07:37:39 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Claudio Foellmi <claudio.foellmi@ergon.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 6/6] i2c: rcar: implement bus recovery
-Date: Mon,  4 Dec 2017 13:36:40 +0100
-Message-Id: <20171204123640.3382-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
-References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
+        Fri, 15 Dec 2017 04:48:24 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Russell King <linux@armlinux.org.uk>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "Biju Das" <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 1/6] ARM: shmobile: defconfig: Enable PWM
+Date: Fri, 15 Dec 2017 09:48:19 +0000
+Message-ID: <TY1PR06MB0895D343C77D0DB2E9F14680C00B0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513248976-26700-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdWUaQMgT4J0N+hrByAD12K-oO0+iNyDeVczS3nxr5ia9A@mail.gmail.com>
+In-Reply-To: <CAMuHMdWUaQMgT4J0N+hrByAD12K-oO0+iNyDeVczS3nxr5ia9A@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We can force levels of SCL and SDA, so we can use that for bus recovery.
-Note that we cannot read SDA back, because we will only get the internal
-state of the bus free detection.
-
-Cc: Phil Reid <preid@electromag.com.au>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Claudio Foellmi <claudio.foellmi@ergon.ch>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-rcar.c | 54 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 52 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 8a2ae3e6c561c4..d4b7b5380c2983 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -132,6 +132,7 @@ struct rcar_i2c_priv {
- 	int pos;
- 	u32 icccr;
- 	u32 flags;
-+	u8 recovery_icmcr;	/* protected by adapter lock */
- 	enum rcar_i2c_type devtype;
- 	struct i2c_client *slave;
- 
-@@ -158,6 +159,46 @@ static u32 rcar_i2c_read(struct rcar_i2c_priv *priv, int reg)
- 	return readl(priv->io + reg);
- }
- 
-+static int rcar_i2c_get_scl(struct i2c_adapter *adap)
-+{
-+	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
-+
-+	return !!(rcar_i2c_read(priv, ICMCR) & FSCL);
-+
-+};
-+
-+static void rcar_i2c_set_scl(struct i2c_adapter *adap, int val)
-+{
-+	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
-+
-+	if (val)
-+		priv->recovery_icmcr |= FSCL;
-+	else
-+		priv->recovery_icmcr &= ~FSCL;
-+
-+	rcar_i2c_write(priv, ICMCR, priv->recovery_icmcr);
-+};
-+
-+/* No get_sda, because the HW only reports its bus free logic, not SDA itself */
-+
-+static void rcar_i2c_set_sda(struct i2c_adapter *adap, int val)
-+{
-+	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
-+
-+	if (val)
-+		priv->recovery_icmcr |= FSDA;
-+	else
-+		priv->recovery_icmcr &= ~FSDA;
-+
-+	rcar_i2c_write(priv, ICMCR, priv->recovery_icmcr);
-+};
-+
-+static struct i2c_bus_recovery_info rcar_i2c_bri = {
-+	.get_scl = rcar_i2c_get_scl,
-+	.set_scl = rcar_i2c_set_scl,
-+	.set_sda = rcar_i2c_set_sda,
-+	.recover_bus = i2c_generic_scl_recovery,
-+};
- static void rcar_i2c_init(struct rcar_i2c_priv *priv)
- {
- 	/* reset master mode */
-@@ -170,7 +211,7 @@ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
- 
- static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
- {
--	int i;
-+	int i, ret;
- 
- 	for (i = 0; i < LOOP_TIMEOUT; i++) {
- 		/* make sure that bus is not busy */
-@@ -179,7 +220,15 @@ static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
- 		udelay(1);
- 	}
- 
--	return -EBUSY;
-+	/* Waiting did not help, try to recover */
-+	priv->recovery_icmcr = MDBS | OBPC | FSDA | FSCL;
-+	ret = i2c_recover_bus(&priv->adap);
-+
-+	/* No failure when recovering, so check bus busy bit again */
-+	if (ret == 0)
-+		ret = (rcar_i2c_read(priv, ICMCR) & FSDA) ? -EBUSY : 0;
-+
-+	return ret;
- }
- 
- static int rcar_i2c_clock_calculate(struct rcar_i2c_priv *priv, struct i2c_timings *t)
-@@ -851,6 +900,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
- 	adap->retries = 3;
- 	adap->dev.parent = dev;
- 	adap->dev.of_node = dev->of_node;
-+	adap->bus_recovery_info = &rcar_i2c_bri;
- 	i2c_set_adapdata(adap, priv);
- 	strlcpy(adap->name, pdev->name, sizeof(adap->name));
- 
--- 
-2.11.0
+SGkgR2VlcnQsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzZdIEFSTTogc2htb2JpbGU6IGRl
+ZmNvbmZpZzogRW5hYmxlIFBXTQ0KPg0KPiBIaSBGYWJyaXppbywNCj4NCj4gT24gVGh1LCBEZWMg
+MTQsIDIwMTcgYXQgMTE6NTYgQU0sIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJv
+QGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBSWi9HMSBhbmQgUi1DYXIgcGxhdGZvcm1zIGhh
+dmUgUFdNIHRpbWVycy4gVGhpcyBwYXRjaCBlbmFibGVzIFBXTSBzdXBwb3J0DQo+ID4gYnkgZGVm
+YXVsdC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6aW8u
+Y2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPiA+IFJldmlld2VkLWJ5OiBCaWp1IERhcyA8YmlqdS5k
+YXNAYnAucmVuZXNhcy5jb20+DQo+DQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCg0KVGhhbmsg
+eW91IGZvciB5b3VyIGZlZWRiYWNrLg0KDQo+DQo+IElmIEknbSBub3QgbWlzdGFrZW4sIHRoZXJl
+IGFyZSBubyBjdXJyZW50IHVzZXJzIG9mIHRoaXMgUFdNIGJsb2NrIGluIHRoZQ0KPiBjdXJyZW50
+IFItQ2FyIEdlbjIgYW5kIFJaL0cxIERUUyBmaWxlcz8NCg0KUFdNIHN1cHBvcnQgd2lsbCBiZSBu
+ZWVkZWQgdmVyeSBzb29uIGFzIHdlIGFyZSBnb2luZyB0byB1c2UgcHdtMyBvbiB0aGUgaXdnMjBk
+IHBsYXRmb3JtIHRvIGNvbnRyb2wgdGhlIFJHQiBkaXNwbGF5IGJhY2tsaWdodC4NClRoZSB3b3Jr
+IHRvIGFkZCBkaXNwbGF5IHN1cHBvcnQgaXMgaW4gcHJvZ3Jlc3MsIEkgaG9wZSBpdCB3aWxsIGJl
+IHJlYWR5IGJ5IG5leHQgd2Vlaywgd291bGQgeW91IHJhdGhlciBJIHNlbnQgdGhpcyBwYXRjaCB3
+aXRoIHRoZSBzZXJpZXMgdG8gYWRkIGRpc3BsYXkgc3VwcG9ydD8NCg0KVGhhbmtzLA0KRmFiDQoN
+Cj4gSWYgdGhhdCdzIGNvcnJlY3QsIEkgZG9uJ3QgdGhpbmsgaXQgbWFrZXMgbXVjaCBzZW5zZSB0
+byBlbmFibGUgaXQgYWxyZWFkeS4NCj4NCj4gU2ltb246IHdoYXQgZG8geW91IHRoaW5rPw0KPg0K
+PiBHcntvZXRqZSxlZXRpbmd9cywNCj4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQN
+Cj4NCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBi
+ZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPg0KPiBJbiBwZXJzb25hbCBjb252
+ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4g
+QnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3Jh
+bW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCltodHRwczovL3d3dzIucmVuZXNhcy5ldS9t
+ZWRpYS9lbWFpbC91bmljZWZfMjAxNy5qcGddDQoNClRoaXMgQ2hyaXN0bWFzLCBpbnN0ZWFkIG9m
+IHNlbmRpbmcgb3V0IGNhcmRzLCBSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBoYXZlIGRlY2lk
+ZWQgdG8gc3VwcG9ydCBVbmljZWYgd2l0aCBhIGRvbmF0aW9uLiBGb3IgZnVydGhlciBkZXRhaWxz
+IGNsaWNrIGhlcmU8aHR0cHM6Ly93d3cudW5pY2VmLm9yZy8+IHRvIGZpbmQgb3V0IGFib3V0IHRo
+ZSB2YWx1YWJsZSB3b3JrIHRoZXkgZG8sIGhlbHBpbmcgY2hpbGRyZW4gYWxsIG92ZXIgdGhlIHdv
+cmxkLg0KV2Ugd291bGQgbGlrZSB0byB0YWtlIHRoaXMgb3Bwb3J0dW5pdHkgdG8gd2lzaCB5b3Ug
+YSBNZXJyeSBDaHJpc3RtYXMgYW5kIGEgcHJvc3Blcm91cyBOZXcgWWVhci4NCg0KDQoNClJlbmVz
+YXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwg
+Qm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBF
+bmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
