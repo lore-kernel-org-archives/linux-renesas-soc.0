@@ -1,59 +1,91 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35713 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752595AbdLGJyo (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:54:44 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/54] arm64: dts: renesas: r8a7796: Point FDP1 via FCPF to IPMMU-VI0
-Date: Thu,  7 Dec 2017 10:53:14 +0100
-Message-Id: <69490bc9665d08b8ba221542b368c662a550a7a4.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Fri, 15 Dec 2017 15:37:28 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: kieran.bingham@ideasonboard.com
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH/RFC v2 10/15] adv748x: csi2: add translation from
+ pixelcode to CSI-2 datatype
+Message-ID: <20171215143728.GD3375@w540>
+References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171214190835.7672-11-niklas.soderlund+renesas@ragnatech.se>
+ <a41181ea-30a2-7b0d-d836-f4e5c8eba4f6@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a41181ea-30a2-7b0d-d836-f4e5c8eba4f6@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hook up the FCPF devices to allow use of FDP1 with IPMMU-VI0.
+Hi Kieran,
 
-Based on work by Magnus Damm for the r8a7795.
+On Thu, Dec 14, 2017 at 10:25:36PM +0000, Kieran Bingham wrote:
+> Hi Niklas,
+>
+> On 14/12/17 19:08, Niklas Söderlund wrote:
+> > This will be needed to fill out the frame descriptor information
+> > correctly.
+> >
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/media/i2c/adv748x/adv748x-csi2.c | 22 ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> >
+> > diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> > index 2a5dff8c571013bf..a2a6d93077204731 100644
+> > --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
+> > +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> > @@ -18,6 +18,28 @@
+> >
+> >  #include "adv748x.h"
+> >
+> > +struct adv748x_csi2_format {
+> > +	unsigned int code;
+> > +	unsigned int datatype;
+> > +};
+> > +
+> > +static const struct adv748x_csi2_format adv748x_csi2_formats[] = {
+> > +	{ .code = MEDIA_BUS_FMT_RGB888_1X24,    .datatype = 0x24, },
+> > +	{ .code = MEDIA_BUS_FMT_UYVY8_1X16,     .datatype = 0x1e, },
+> > +	{ .code = MEDIA_BUS_FMT_UYVY8_2X8,      .datatype = 0x1e, },
+> > +	{ .code = MEDIA_BUS_FMT_YUYV10_2X10,    .datatype = 0x1e, },
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+YUV 422 10 bit is associated to data type 0x1d in CSI-2 specifications
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index fd875b5ea861..859dde64311e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1903,6 +1903,7 @@
- 			clocks = <&cpg CPG_MOD 603>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 603>;
-+			iommus = <&ipmmu_vi0 8>;
- 		};
- 
- 		vspd1: vsp@fea28000 {
-@@ -1922,6 +1923,7 @@
- 			clocks = <&cpg CPG_MOD 602>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 602>;
-+			iommus = <&ipmmu_vi0 9>;
- 		};
- 
- 		vspd2: vsp@fea30000 {
-@@ -1941,6 +1943,7 @@
- 			clocks = <&cpg CPG_MOD 601>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 601>;
-+			iommus = <&ipmmu_vi0 10>;
- 		};
- 
- 		hdmi0: hdmi@fead0000 {
--- 
-2.11.0
+> > +};
+>
+> Is the datatype mapping specific to the ADV748x here?
+> or are these generic/common CSI2 mappings?
+>
+> What do those datatype magic numbers represent?
+
+They are fixed mappings defined by CSI-2 specifications and they
+should probably be generic to all drivers imho
+
+>
+> --
+> Kieran
+>
+> > +
+> > +static unsigned int adv748x_csi2_code_to_datatype(unsigned int code)
+> > +{
+> > +	unsigned int i;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(adv748x_csi2_formats); i++)
+> > +		if (adv748x_csi2_formats[i].code == code)
+> > +			return adv748x_csi2_formats[i].datatype;
+> > +	return 0;
+> > +}
+> > +
+> >  static bool is_txa(struct adv748x_csi2 *tx)
+> >  {
+> >  	return tx == &tx->state->txa;
+> >
