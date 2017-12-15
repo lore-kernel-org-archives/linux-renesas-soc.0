@@ -1,124 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752335AbdLGJzc (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:45122 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755868AbdLOWv4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:32 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 49/54] arm64: dts: renesas: r8a77995: Add IPMMU device nodes
-Date: Thu,  7 Dec 2017 10:53:52 +0100
-Message-Id: <a3901e7398e1d7045dfb21c607ddc1063600fc6d.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Fri, 15 Dec 2017 17:51:56 -0500
+Date: Fri, 15 Dec 2017 16:51:55 -0600
+From: Rob Herring <robh@kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: timer: renesas, cmt: Document
+ r8a774[35] CMT support
+Message-ID: <20171215225155.4li2rwxxkkmudvpy@rob-hp-laptop>
+References: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513104579-6333-2-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513104579-6333-2-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add r8a77995 IPMMU nodes and keep all disabled by default.
+On Tue, Dec 12, 2017 at 06:49:37PM +0000, Fabrizio Castro wrote:
+> Document SoC specific compatible strings for r8a7743 and r8a7745.
+> No driver change is needed as the fallback strings will activate
+> the right code.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/timer/renesas,cmt.txt | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 
-Based on work for the r8a7795 and r8a7796 by Magnus Damm
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 82 +++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 21b832fb20b2..f02bf81e5a5a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -115,6 +115,88 @@
- 			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xfebd0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 14>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_vp0: mmu@fe990000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xfe990000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 16>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_vc0: mmu@fe6b0000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xfe6b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 12>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_pv0: mmu@fd800000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xfd800000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 6>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_hc: mmu@e6570000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xe6570000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 2>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_rt: mmu@ffc80000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xffc80000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 10>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mp: mmu@ec670000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xec670000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 4>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds0: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xe6740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xe7740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 1>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a77995";
-+			reg = <0 0xe67b0000 0 0x1000>;
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a77995-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
--- 
-2.11.0
+Reviewed-by: Rob Herring <robh@kernel.org>
