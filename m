@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:57605 "EHLO pokefinder.org"
+Received: from www.zeus03.de ([194.117.254.33]:53428 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755820AbdLOTIu (ORCPT
+        id S932509AbdLOQhi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 14:08:50 -0500
-Date: Fri, 15 Dec 2017 20:08:48 +0100
+        Fri, 15 Dec 2017 11:37:38 -0500
+Date: Fri, 15 Dec 2017 17:30:55 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
@@ -15,56 +15,62 @@ Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v2 00/22] mmc: tmio: various fixes and cleanups
-Message-ID: <20171215190848.bgazsmoqeznslv3a@ninjato>
+Message-ID: <20171215163055.vxxiswgsvfybf4hi@katana>
 References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
  <CAPDyKFqE7Pg8fJFyOtihdRnma+dFQd3+YPWGn6pXbpzhpERK9Q@mail.gmail.com>
  <CAK7LNASQfsnQY6henk5RvAysQUh3=cPXV1GPNeWeXgBxZvadAw@mail.gmail.com>
  <20171215111225.ekrau5e27xknb3jf@ninjato>
  <CAPDyKFopKm2psU19vGQfGL6WizXQA0vvzQubqsypvytbpRtyAA@mail.gmail.com>
- <20171215163055.vxxiswgsvfybf4hi@katana>
- <CAPDyKFpUE1s8+OXuyyRszFnpt5CN4G8d2vhwRhs-PkaL_VU7oQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uubogp6tuzuz7bos"
+        protocol="application/pgp-signature"; boundary="hap2cul7cpxi6p4d"
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFpUE1s8+OXuyyRszFnpt5CN4G8d2vhwRhs-PkaL_VU7oQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFopKm2psU19vGQfGL6WizXQA0vvzQubqsypvytbpRtyAA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---uubogp6tuzuz7bos
+--hap2cul7cpxi6p4d
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 
-> > Other thoughts?
+> > Ulf, this patch then in deed should ideally be applied before 1-8 here.
 >=20
-> Nope.
+> Okay, once you post it to linux-mmc I will pick it up, and put it in fron=
+t.
 
-I have :) Another solution seems to be to switch to ioread16_rep and
-friends. Those are defined on sparc64. Compiles locally here, now sent
-it to buildbot.
+Bad news, that patch didn't help. The problem is that sparc64 doesn't
+include 'asm-generic/io.h' and also has no own 'readsw'. No surprise
+that just adding this include will cause lots of redefines which are way
+too much to handle as a side-task.
+
+So, the best option I see here is to drop COMPILE_TEST for now, report
+this to the sparc64 maintainers (I assume they know already), and see if
+they can fix it.
+
+Other thoughts?
 
 
---uubogp6tuzuz7bos
+--hap2cul7cpxi6p4d
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlo0HbsACgkQFA3kzBSg
-KbaiiBAAoNKL9++dgkoAWR6E/qNQs1e4rkl1e8W1SUbRUpTqotJc2/XQg1FGrNst
-bLz6myWJjHp9t9OxEwm9rpbGUgi232wG7skr7LmwkgkTeE9Pd3/gKfD+FlevGULE
-GYKr62GXfr1+gpvVgAdFYrOvWGj6Oy1CYdXqo21Q9wB0B49ji7DCtbtlVN8wUBh+
-OftQcm507KZZnraqqNhZvtTbUhXXFEFwJXTkW0F8KvhBnAhUgYUgxXPeh7H/1Pfs
-9yDV9dvn6U1BZmOSKJ9kX0zor9f2mlNRr7456JMdxKsV1CVTe0nnafKpthfcpf+X
-3/9JgricV1tcTp2cpZR2PHk0VowsxhCaVKRVoYHTXMjbleORHqXNFPyg/UQdQ2/E
-XbwhSSWSic1m1otyWLvHv51vzwVVxyh+X+v/vj7bbQG78Rf7xjEfaXSH5ZMV/kyx
-CiwyoPErABfCJ70fXPGpKmiArychV5STXfkh+8Gopv0Xsa0iJqD7OhD2Tm3kzF1e
-WNutmo9tzrKY5N/RCtFnr9gAhci33uRPkEwOWkvB/DR2HrqnR5RaasutULWDr5ic
-C4LHeXkCni/Alaa8daZ9nmqv9rv3dSTGqsbHF9RtkaQ70LNPutjdyUTa/oByVf7w
-2pHlBgGBtF2zMpDffzs8cMPWBft5Rg+YGzlOhc4qMLUTpSUBRj0=
-=GTkV
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloz+LoACgkQFA3kzBSg
+KbYCEQ/9F0JemgG6APDVBDDiD7bdz8pirpaoUI9A3WiyjaospSzaTwO5NTlNEIHc
+qsnzMexXBKjyGQNV0Z/v0NUv5XxaY+LAGvXVOkD6wZ+wjTbw/73yALJ5cVWN4mXC
+WY/MXoCBNvPjHLHY7Ibkf/2axSd3umc4kGqzsPUhLAM4LE/aAOZOBxD0P3PLZEPg
+sYjUwsEzAHRCc6adF2iIS1Rj9R2ZuwJXRqayJ7C3OBlXLxz2TaMv97XA9Ec/t+T9
+H/rrHMtnkrOPi0htzzpTZYerhVTeRxbxfmAW1ikS6FiWg6EEWRJxn5FV1pEHGjnn
+9v0v0vDWHhEan/rl7RiDjfgVfkQ93HGpsMIRHqe9DT9ozqZ8t/eQtCK2GKMk0EYt
+AN1urJ5j1Ut86BHszrOOx95r1wv6R3DywDcWXCGyPgKmqzD1r+iNin00ID1c7hGA
+CqZ7e5jBPMQxdHfo532Cy+PTKMh20jF2JX0EcwCpg/qQG1/WBV8l+l1VSrJOndlJ
+3hrxt8H25bZgrE7eaMyolJx+Ag0PlwgV78suGpBofv69Ye/prQdMNgSORO92MH1g
+JNb4mRdPG7yar7hqyuNNP1UbEPiA5NpN1X6w7lUOiCkgRb/cH+WkwVce1aIkmmxI
+RvOqcsq/c+ZctwsQ/+jKd9TgQ5w5r79BCAXNK5PuhNn3ZbgH2LQ=
+=+uPw
 -----END PGP SIGNATURE-----
 
---uubogp6tuzuz7bos--
+--hap2cul7cpxi6p4d--
