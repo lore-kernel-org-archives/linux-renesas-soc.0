@@ -1,232 +1,146 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:51758 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751315AbdLOFtr (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53275 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756232AbdLONsv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 00:49:47 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 4/6] phy: renesas: rcar-gen3-usb2: use prefix "has_otg_pins_" for dedicated pins handling
-Date: Fri, 15 Dec 2017 14:45:24 +0900
-Message-Id: <1513316726-14387-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1513316726-14387-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1513316726-14387-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 15 Dec 2017 08:48:51 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH] [kms-tests] tests: Add colorkey test
+Date: Fri, 15 Dec 2017 15:48:48 +0200
+Message-Id: <20171215134848.19680-1-laurent.pinchart@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To support gpio handling in the future, this patch clean-ups the code
-to use prefix "has_otg_pins_" functions.
+The test will display an overlay with large colored boxes on top of the
+root plane and turn the boxes translucent or transparent in sequence
+using color keying.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 130 ++++++++++++++++++++-----------
- 1 file changed, 85 insertions(+), 45 deletions(-)
+ tests/kms-test-colorkey.py | 111 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 111 insertions(+)
+ create mode 100755 tests/kms-test-colorkey.py
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index bca6162..b121f07 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -93,21 +93,21 @@ struct rcar_gen3_chan {
- 	bool has_otg_pins;
- };
- 
--static void rcar_gen3_phy_usb2_work(struct work_struct *work)
-+static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
- {
--	struct rcar_gen3_chan *ch = container_of(work, struct rcar_gen3_chan,
--						 work);
-+	void __iomem *usb2_base = ch->base;
-+	u32 val = readl(usb2_base + USB2_LINECTRL1);
- 
--	if (ch->extcon_host) {
--		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, true);
--		extcon_set_state_sync(ch->extcon, EXTCON_USB, false);
--	} else {
--		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, false);
--		extcon_set_state_sync(ch->extcon, EXTCON_USB, true);
--	}
-+	dev_vdbg(&ch->phy->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
-+	val &= ~(USB2_LINECTRL1_DP_RPD | USB2_LINECTRL1_DM_RPD);
-+	if (dp)
-+		val |= USB2_LINECTRL1_DP_RPD;
-+	if (dm)
-+		val |= USB2_LINECTRL1_DM_RPD;
-+	writel(val, usb2_base + USB2_LINECTRL1);
- }
- 
--static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
-+static void has_otg_pins_set_host(struct rcar_gen3_chan *ch, int host)
- {
- 	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_COMMCTRL);
-@@ -120,21 +120,27 @@ static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
- 	writel(val, usb2_base + USB2_COMMCTRL);
- }
- 
--static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
-+static bool has_otg_pins_is_host(struct rcar_gen3_chan *ch)
-+{
-+	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
-+}
+diff --git a/tests/kms-test-colorkey.py b/tests/kms-test-colorkey.py
+new file mode 100755
+index 000000000000..310165f83b1e
+--- /dev/null
++++ b/tests/kms-test-colorkey.py
+@@ -0,0 +1,111 @@
++#!/usr/bin/python3
 +
-+static irqreturn_t has_otg_pins_irq_handler(struct rcar_gen3_chan *ch)
- {
- 	void __iomem *usb2_base = ch->base;
--	u32 val = readl(usb2_base + USB2_LINECTRL1);
-+	u32 status = readl(usb2_base + USB2_OBINTSTA);
-+	irqreturn_t ret = IRQ_NONE;
- 
--	dev_vdbg(&ch->phy->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
--	val &= ~(USB2_LINECTRL1_DP_RPD | USB2_LINECTRL1_DM_RPD);
--	if (dp)
--		val |= USB2_LINECTRL1_DP_RPD;
--	if (dm)
--		val |= USB2_LINECTRL1_DM_RPD;
--	writel(val, usb2_base + USB2_LINECTRL1);
-+	if (status & USB2_OBINT_BITS) {
-+		dev_vdbg(&ch->phy->dev, "%s: %08x\n", __func__, status);
-+		writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-+		ret = IRQ_HANDLED;
-+	}
++import kmstest
++import pykms
++import time
 +
-+	return ret;
- }
- 
--static void rcar_gen3_set_vbus_ctrl(struct rcar_gen3_chan *ch, int enable)
-+static void has_otg_pins_set_vbus_ctrl(struct rcar_gen3_chan *ch, int enable)
- {
- 	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_ADPCTRL);
-@@ -147,7 +153,7 @@ static void rcar_gen3_set_vbus_ctrl(struct rcar_gen3_chan *ch, int enable)
- 	writel(val, usb2_base + USB2_ADPCTRL);
- }
- 
--static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
-+static void has_otg_pins_control_irq(struct rcar_gen3_chan *ch, int enable)
- {
- 	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_OBINTEN);
-@@ -159,6 +165,57 @@ static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
- 	writel(val, usb2_base + USB2_OBINTEN);
- }
- 
-+static bool has_otg_pins_check_id(struct rcar_gen3_chan *ch)
-+{
-+	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
-+}
++class ColorKeyTest(kmstest.KMSTest):
++    """Test color keying with two planes."""
 +
-+static void has_otg_pins_init(struct rcar_gen3_chan *ch)
-+{
-+	void __iomem *usb2_base = ch->base;
-+	u32 val;
++    def main(self):
++        self.start("color keying")
 +
-+	val = readl(usb2_base + USB2_VBCTRL);
-+	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
-+	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-+	has_otg_pins_control_irq(ch, 1);
-+	val = readl(usb2_base + USB2_ADPCTRL);
-+	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
-+	val = readl(usb2_base + USB2_LINECTRL1);
-+	rcar_gen3_set_linectrl(ch, 0, 0);
-+	writel(val | USB2_LINECTRL1_DPRPD_EN | USB2_LINECTRL1_DMRPD_EN,
-+	       usb2_base + USB2_LINECTRL1);
-+}
++        # Find a CRTC with a connected connector and at least one overlay plane
++        for connector in self.card.connectors:
++            if not connector.connected():
++                continue
 +
-+static void rcar_gen3_phy_usb2_work(struct work_struct *work)
-+{
-+	struct rcar_gen3_chan *ch = container_of(work, struct rcar_gen3_chan,
-+						 work);
++            try:
++                mode = connector.get_default_mode()
++            except ValueError:
++                continue
 +
-+	if (ch->extcon_host) {
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, true);
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB, false);
-+	} else {
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, false);
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB, true);
-+	}
-+}
++            crtcs = connector.get_possible_crtcs()
++            for crtc in crtcs:
++                overlay = None
++                for plane in self.card.planes:
++                    if plane.supports_crtc(crtc) and plane != crtc.primary_plane:
++                        overlay = plane
 +
-+static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
-+{
-+	has_otg_pins_set_host(ch, host);
-+}
++                if overlay:
++                    break
++            else:
++                crtc = None
 +
-+static void rcar_gen3_set_vbus_ctrl(struct rcar_gen3_chan *ch, int enable)
-+{
-+	has_otg_pins_set_vbus_ctrl(ch, enable);
-+}
++            if crtc:
++                break
 +
-+static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
-+{
-+	has_otg_pins_control_irq(ch, enable);
-+}
++        else:
++            self.skip("no CRTC available with connector and at least one overlay plane")
++            return
 +
- static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
- {
- 	rcar_gen3_set_linectrl(ch, 1, 1);
-@@ -214,7 +271,7 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
- 
- static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
- {
--	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
-+	return has_otg_pins_check_id(ch);
- }
- 
- static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
-@@ -227,7 +284,7 @@ static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
- 
- static bool rcar_gen3_is_host(struct rcar_gen3_chan *ch)
- {
--	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
-+	return has_otg_pins_is_host(ch);
- }
- 
- static enum phy_mode rcar_gen3_get_phy_mode(struct rcar_gen3_chan *ch)
-@@ -293,19 +350,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
- 
- static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
- {
--	void __iomem *usb2_base = ch->base;
--	u32 val;
--
--	val = readl(usb2_base + USB2_VBCTRL);
--	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
--	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
--	rcar_gen3_control_otg_irq(ch, 1);
--	val = readl(usb2_base + USB2_ADPCTRL);
--	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
--	val = readl(usb2_base + USB2_LINECTRL1);
--	rcar_gen3_set_linectrl(ch, 0, 0);
--	writel(val | USB2_LINECTRL1_DPRPD_EN | USB2_LINECTRL1_DMRPD_EN,
--	       usb2_base + USB2_LINECTRL1);
-+	has_otg_pins_init(ch);
- 
- 	rcar_gen3_device_recognition(ch);
- }
-@@ -380,16 +425,11 @@ static int rcar_gen3_phy_usb2_power_off(struct phy *p)
- static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- {
- 	struct rcar_gen3_chan *ch = _ch;
--	void __iomem *usb2_base = ch->base;
--	u32 status = readl(usb2_base + USB2_OBINTSTA);
--	irqreturn_t ret = IRQ_NONE;
-+	irqreturn_t ret;
- 
--	if (status & USB2_OBINT_BITS) {
--		dev_vdbg(&ch->phy->dev, "%s: %08x\n", __func__, status);
--		writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-+	ret = has_otg_pins_irq_handler(ch);
-+	if (ret == IRQ_HANDLED)
- 		rcar_gen3_device_recognition(ch);
--		ret = IRQ_HANDLED;
--	}
- 
- 	return ret;
- }
++        self.logger.log("Testing connector %s, CRTC %u, mode %s" % \
++              (connector.fullname, crtc.id, mode.name))
++
++        # Create the frame buffers
++        colors = ((255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255))
++        width = mode.hdisplay
++        height = mode.vdisplay
++        fbs = []
++
++        fb = pykms.DumbFramebuffer(self.card, width, height, "XR24")
++        pykms.draw_test_pattern(fb)
++        fbs.append(fb)
++
++        fb = pykms.DumbFramebuffer(self.card, width, height, "XR24")
++        pykms.draw_rect(fb, 0,          0,           width // 2, height // 2, pykms.RGB(*colors[0]))
++        pykms.draw_rect(fb, width // 2, 0,           width // 2, height // 2, pykms.RGB(*colors[1]))
++        pykms.draw_rect(fb, 0,          height // 2, width // 2, height // 2, pykms.RGB(*colors[2]))
++        pykms.draw_rect(fb, width // 2, height // 2, width // 2, height // 2, pykms.RGB(*colors[3]))
++        fbs.append(fb)
++
++        # Set the mode with the primary plane and add an overlay plane
++        ret = self.atomic_crtc_mode_set(crtc, connector, mode, fbs[0])
++        if ret < 0:
++            self.fail("atomic mode set failed with %d" % ret)
++            return
++
++        self.logger.log("Initial atomic mode set completed")
++
++        # Add the overlay plane to cover the whole CRTC
++        source = kmstest.Rect(0, 0, fbs[1].width, fbs[1].height)
++        destination = kmstest.Rect(0, 0, fbs[1].width, fbs[1].height)
++        ret = self.atomic_plane_set(overlay, crtc, source, destination, fbs[1], sync=True)
++        if ret < 0:
++            self.fail("atomic plane set for overlay plane failed with %d" % ret)
++            return
++
++        self.logger.log("Overlay plane enabled")
++        time.sleep(3)
++
++        # Try to set different minimum and maximum values, this should be
++        # rejected.
++        req = pykms.AtomicReq(self.card)
++        req.add(plane, {"colorkey.min": 1, "colorkey.max": 2})
++        ret = req.commit_sync()
++        if ret >= 0:
++            self.fail("Non-equal colorkey min and max not rejected")
++            return
++
++        self.logger.log("Non-equal colorkey min and max correctly rejected")
++
++        # Cycle over color keys to make the four rectangles in the overlay plane
++        # transparent in turn.
++        for i in range(len(colors)):
++            color = (colors[i][0] << 40) | (colors[i][1] << 24) | (colors[i][2] << 8)
++
++            plane.set_props({
++                    "colorkey.mode": 1,
++                    "colorkey.min": color,
++                    "colorkey.max": color,
++                    "colorkey.value": (255 * (len(colors) - i - 1) // 4) << 56,
++            })
++
++            self.logger.log("Color key set to %s" % repr(colors[i]))
++            time.sleep(3)
++
++        plane.set_prop("colorkey.mode", 0)
++        self.atomic_crtc_disable(crtc)
++        self.success()
++
++ColorKeyTest().execute()
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
