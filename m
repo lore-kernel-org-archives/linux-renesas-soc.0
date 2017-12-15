@@ -1,19 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45049 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756226AbdLOKB3 (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:45134 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754772AbdLOIxM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 05:01:29 -0500
-Received: by mail-qt0-f195.google.com with SMTP id m59so11342369qte.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 02:01:29 -0800 (PST)
+        Fri, 15 Dec 2017 03:53:12 -0500
+Received: by mail-qk0-f193.google.com with SMTP id d141so9497299qkc.12
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 00:53:11 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB0895D343C77D0DB2E9F14680C00B0@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1513248976-26700-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdWUaQMgT4J0N+hrByAD12K-oO0+iNyDeVczS3nxr5ia9A@mail.gmail.com> <TY1PR06MB0895D343C77D0DB2E9F14680C00B0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+In-Reply-To: <1513248976-26700-2-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com> <1513248976-26700-2-git-send-email-fabrizio.castro@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 15 Dec 2017 11:01:28 +0100
-Message-ID: <CAMuHMdW81B=oaf2asCtg8BT6tO97PVXmRN4Skbnm35PB0CLHVw@mail.gmail.com>
+Date: Fri, 15 Dec 2017 09:53:10 +0100
+Message-ID: <CAMuHMdWUaQMgT4J0N+hrByAD12K-oO0+iNyDeVczS3nxr5ia9A@mail.gmail.com>
 Subject: Re: [PATCH 1/6] ARM: shmobile: defconfig: Enable PWM
 To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc: Russell King <linux@armlinux.org.uk>,
@@ -23,43 +21,28 @@ Cc: Russell King <linux@armlinux.org.uk>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Fabrizio,
 
-On Fri, Dec 15, 2017 at 10:48 AM, Fabrizio Castro
+On Thu, Dec 14, 2017 at 11:56 AM, Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
->> Subject: Re: [PATCH 1/6] ARM: shmobile: defconfig: Enable PWM
->> On Thu, Dec 14, 2017 at 11:56 AM, Fabrizio Castro
->> <fabrizio.castro@bp.renesas.com> wrote:
->> > RZ/G1 and R-Car platforms have PWM timers. This patch enables PWM support
->> > by default.
->> >
->> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
->>
->> Thanks for your patch!
+> RZ/G1 and R-Car platforms have PWM timers. This patch enables PWM support
+> by default.
 >
-> Thank you for your feedback.
->
->>
->> If I'm not mistaken, there are no current users of this PWM block in the
->> current R-Car Gen2 and RZ/G1 DTS files?
->
-> PWM support will be needed very soon as we are going to use pwm3 on the iwg20d platform to control the RGB display backlight.
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Good to know, thanks!
+Thanks for your patch!
 
-> The work to add display support is in progress, I hope it will be ready by next week, would you rather I sent this patch with the series to add display support?
+If I'm not mistaken, there are no current users of this PWM block in the
+current R-Car Gen2 and RZ/G1 DTS files?
+If that's correct, I don't think it makes much sense to enable it already.
 
-That's up to Simon.  But I guess it doesn't matter much, as defconfig updates
-are queued in a separate branch anyway.
-
-You may want to send a similar patch for multi_v7_defconfig.
+Simon: what do you think?
 
 Gr{oetje,eeting}s,
 
