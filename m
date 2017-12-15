@@ -1,55 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756590AbdLVKal (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:45445 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756747AbdLOPQX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:30:41 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Fri, 15 Dec 2017 10:16:23 -0500
+Received: by mail-wm0-f66.google.com with SMTP id 9so18084209wme.4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 07:16:22 -0800 (PST)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/37] ARM: dts: r8a7793: Correct critical CPU temperature
-Date: Fri, 22 Dec 2017 11:29:45 +0100
-Message-Id: <1dfc65cef481ac6af64380f26186d5cc585b46eb.1513938145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
-References: <cover.1513938145.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 2/7] drm/img-rogue: change #include <asm/uaccess.h> to <linux/uaccess.h>
+Date: Fri, 15 Dec 2017 16:15:40 +0100
+Message-Id: <1513350945-2642-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1513350945-2642-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1513350945-2642-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Paterson <chris.paterson2@renesas.com>
-
-The R-Car M2N hardware manual states that Tc = –40°C to +105°C. The
-thermal sensor has an accuracy of ±5°C and there can be a temperature
-difference of 1 or 2 degrees between Tjmax and the thermal sensor due
-to the location of the latter.
-
-This means that 95°C is a safer value to use.
-
-Fixes: 57f9156bc620ac56 ("ARM: dts: r8a7793: enable to use thermal-zone")
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 2 +-
+ services/server/env/linux/pvr_uaccess.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index a83c2e9c5723..dbc62e61940d 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -89,7 +89,7 @@
+diff --git a/services/server/env/linux/pvr_uaccess.h b/services/server/env/linux/pvr_uaccess.h
+index 74ddc58..382cca4 100644
+--- a/services/server/env/linux/pvr_uaccess.h
++++ b/services/server/env/linux/pvr_uaccess.h
+@@ -42,7 +42,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ #ifndef __PVR_UACCESS_H__
+ #define __PVR_UACCESS_H__
  
- 			trips {
- 				cpu-crit {
--					temperature	= <115000>;
-+					temperature	= <95000>;
- 					hysteresis	= <0>;
- 					type		= "critical";
- 				};
+-#include <asm/uaccess.h>
++#include <linux/uaccess.h>
+ 
+ static inline unsigned long pvr_copy_to_user(void __user *pvTo, const void *pvFrom, unsigned long ulBytes)
+ {
 -- 
-2.11.0
+2.7.4
