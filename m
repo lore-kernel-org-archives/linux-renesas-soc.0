@@ -1,117 +1,93 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752484AbdLGJy4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:54:56 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/54] arm64: dts: renesas: r8a77995: add SYS-DMAC nodes
-Date: Thu,  7 Dec 2017 10:53:20 +0100
-Message-Id: <942164ca49897397a9f21048d83517ea8af6d044.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 3/6] phy: renesas: rcar-gen3-usb2: change the function name to set_vbus_ctrl()
+Date: Fri, 15 Dec 2017 14:45:23 +0900
+Message-Id: <1513316726-14387-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1513316726-14387-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1513316726-14387-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+This patch changes the function name from rcar_gen3_enable_vbus_ctrl()
+to rcar_gen3_set_vbus_ctrl() because the fucntion both enables and
+disables.
 
-Differs from other Gen3 SoCs in that each controller only supports eight
-channels.
-
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 72 +++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 788e3afae6e3..04a392a9d9de 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -155,6 +155,78 @@
- 			resets = <&cpg 407>;
- 		};
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 480f912..bca6162 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -134,13 +134,13 @@ static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
+ 	writel(val, usb2_base + USB2_LINECTRL1);
+ }
  
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x10000>;
-+			interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a77995",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 217>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77995",
- 				     "renesas,rcar-gen3-gpio",
+-static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
++static void rcar_gen3_set_vbus_ctrl(struct rcar_gen3_chan *ch, int enable)
+ {
+ 	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_ADPCTRL);
+ 
+-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, vbus);
+-	if (vbus)
++	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, enable);
++	if (enable)
+ 		val |= USB2_ADPCTRL_DRVVBUS;
+ 	else
+ 		val &= ~USB2_ADPCTRL_DRVVBUS;
+@@ -163,7 +163,7 @@ static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
+ {
+ 	rcar_gen3_set_linectrl(ch, 1, 1);
+ 	rcar_gen3_set_host_mode(ch, 1);
+-	rcar_gen3_enable_vbus_ctrl(ch, 1);
++	rcar_gen3_set_vbus_ctrl(ch, 1);
+ 
+ 	ch->extcon_host = true;
+ 	schedule_work(&ch->work);
+@@ -173,7 +173,7 @@ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
+ {
+ 	rcar_gen3_set_linectrl(ch, 0, 1);
+ 	rcar_gen3_set_host_mode(ch, 0);
+-	rcar_gen3_enable_vbus_ctrl(ch, 0);
++	rcar_gen3_set_vbus_ctrl(ch, 0);
+ 
+ 	ch->extcon_host = false;
+ 	schedule_work(&ch->work);
+@@ -189,7 +189,7 @@ static void rcar_gen3_init_for_b_host(struct rcar_gen3_chan *ch)
+ 
+ 	rcar_gen3_set_linectrl(ch, 1, 1);
+ 	rcar_gen3_set_host_mode(ch, 1);
+-	rcar_gen3_enable_vbus_ctrl(ch, 0);
++	rcar_gen3_set_vbus_ctrl(ch, 0);
+ 
+ 	val = readl(usb2_base + USB2_LINECTRL1);
+ 	writel(val & ~USB2_LINECTRL1_OPMODE_NODRV, usb2_base + USB2_LINECTRL1);
+@@ -199,14 +199,14 @@ static void rcar_gen3_init_for_a_peri(struct rcar_gen3_chan *ch)
+ {
+ 	rcar_gen3_set_linectrl(ch, 0, 1);
+ 	rcar_gen3_set_host_mode(ch, 0);
+-	rcar_gen3_enable_vbus_ctrl(ch, 1);
++	rcar_gen3_set_vbus_ctrl(ch, 1);
+ }
+ 
+ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+ {
+ 	rcar_gen3_control_otg_irq(ch, 0);
+ 
+-	rcar_gen3_enable_vbus_ctrl(ch, 0);
++	rcar_gen3_set_vbus_ctrl(ch, 0);
+ 	rcar_gen3_init_for_host(ch);
+ 
+ 	rcar_gen3_control_otg_irq(ch, 1);
 -- 
-2.11.0
+1.9.1
+
