@@ -1,86 +1,77 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36918 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752296AbdLGKTw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 05:19:52 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] ARM: dts: r8a7743: move timer node out of bus
-Date: Thu,  7 Dec 2017 11:19:23 +0100
-Message-Id: <20171207101923.19846-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171207101923.19846-1-horms+renesas@verge.net.au>
-References: <20171207101923.19846-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH 2/9] v4l: vsp1: Print the correct blending unit name in
+ debug messages
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <20171203105735.10529-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20171203105735.10529-3-laurent.pinchart+renesas@ideasonboard.com>
+Reply-To: kieran.bingham@ideasonboard.com
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <e20b4d4a-9e97-e825-9c15-824224819156@ideasonboard.com>
+Date: Fri, 15 Dec 2017 10:13:06 +0000
+MIME-Version: 1.0
+In-Reply-To: <20171203105735.10529-3-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The timer node does not have any register properties and thus shouldn't be
-placed on the bus.
+Hi Laurent,
 
-This problem is flagged by the compiler as follows:
-$ make
-  DTC     arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb
-arch/arm/boot/dts/r8a7743-iwg20d-q7.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-  DTC     arch/arm/boot/dts/r8a7743-sk-rzg1m.dtb
-arch/arm/boot/dts/r8a7743-sk-rzg1m.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+On 03/12/17 10:57, Laurent Pinchart wrote:
+> The DRM pipelines can use either the BRU or the BRS for blending. Make
+> sure the right name is used in debugging messages to avoid confusion.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7743.dtsi | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+This could likely tag along with the preceding [PATCH 1/9] on it's short cut to
+mainline before the rest of the CRC series is reviewed.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 2fe852bb10cd..f1c77f0b5e69 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -281,18 +281,6 @@
- 			resets = <&cpg 407>;
- 		};
- 
--		timer {
--			compatible = "arm,armv7-timer";
--			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>;
--		};
--
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7743-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
-@@ -1261,6 +1249,22 @@
- 		};
- 	};
- 
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts-extended = <&gic GIC_PPI 13
-+				       (GIC_CPU_MASK_SIMPLE(2) |
-+				        IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14
-+				       (GIC_CPU_MASK_SIMPLE(2) |
-+				        IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11
-+				       (GIC_CPU_MASK_SIMPLE(2) |
-+				        IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10
-+				       (GIC_CPU_MASK_SIMPLE(2) |
-+				        IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
- 	/* External USB clock - can be overridden by the board */
- 	usb_extal_clk: usb_extal {
- 		compatible = "fixed-clock";
--- 
-2.11.0
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_drm.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+> index ac85942162c1..0fe541084f5c 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> @@ -400,8 +400,11 @@ static int vsp1_du_setup_rpf_pipe(struct vsp1_device *vsp1,
+>  	struct v4l2_subdev_selection sel;
+>  	struct v4l2_subdev_format format;
+>  	const struct v4l2_rect *crop;
+> +	const char *bru_name;
+>  	int ret;
+>  
+> +	bru_name = pipe->bru->type == VSP1_ENTITY_BRU ? "BRU" : "BRS";
+> +
+>  	/*
+>  	 * Configure the format on the RPF sink pad and propagate it up to the
+>  	 * BRU sink pad.
+> @@ -473,9 +476,9 @@ static int vsp1_du_setup_rpf_pipe(struct vsp1_device *vsp1,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on BRU pad %u\n",
+> +	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
+>  		__func__, format.format.width, format.format.height,
+> -		format.format.code, format.pad);
+> +		format.format.code, bru_name, format.pad);
+>  
+>  	sel.pad = bru_input;
+>  	sel.target = V4L2_SEL_TGT_COMPOSE;
+> @@ -486,10 +489,9 @@ static int vsp1_du_setup_rpf_pipe(struct vsp1_device *vsp1,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	dev_dbg(vsp1->dev,
+> -		"%s: set selection (%u,%u)/%ux%u on BRU pad %u\n",
+> +	dev_dbg(vsp1->dev, "%s: set selection (%u,%u)/%ux%u on %s pad %u\n",
+>  		__func__, sel.r.left, sel.r.top, sel.r.width, sel.r.height,
+> -		sel.pad);
+> +		bru_name, sel.pad);
+>  
+>  	return 0;
+>  }
+> 
