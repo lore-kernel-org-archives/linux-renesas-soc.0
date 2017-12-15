@@ -1,71 +1,150 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40900 "EHLO pokefinder.org"
+Received: from foss.arm.com ([217.140.101.70]:59616 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965315AbdLRV6J (ORCPT
+        id S1755406AbdLORLe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 16:58:09 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 3/7] i2c: sh_mobile: require setup callback
-Date: Mon, 18 Dec 2017 22:57:58 +0100
-Message-Id: <20171218215802.28591-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
-References: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
+        Fri, 15 Dec 2017 12:11:34 -0500
+Date: Fri, 15 Dec 2017 17:11:30 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: arm64: unhandled level 0 translation fault
+Message-ID: <20171215171129.GS22781@e103592.cambridge.arm.com>
+References: <CAMuHMdXh_6FaV-SFGWxcBb1-NNGYngDrYnnWA=9Y6xmRAkcxqg@mail.gmail.com>
+ <CAMuHMdWH=3kRmwjDHsTzUVmB7=s5cnY16Ujfroe_B6dawGSDfw@mail.gmail.com>
+ <20171214152431.GC12608@e103592.cambridge.arm.com>
+ <CAMuHMdXx-8+g5Xf0UtuYu71+K8Pz9CyQe=ifzzOWVRB1KpMGcg@mail.gmail.com>
+ <20171215112343.GR22781@e103592.cambridge.arm.com>
+ <CAMuHMdWio0KnJc3DQeQyf-MHpDC=tc3cJLNK7MmaL=MdDz45UQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWio0KnJc3DQeQyf-MHpDC=tc3cJLNK7MmaL=MdDz45UQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Require the setup callback and move the frequency calculation into it.
-This is in preparation for supporting multiple formulas.
+On Fri, Dec 15, 2017 at 02:30:00PM +0100, Geert Uytterhoeven wrote:
+> Hi Dave,
+> 
+> On Fri, Dec 15, 2017 at 12:23 PM, Dave Martin <Dave.Martin@arm.com> wrote:
+> > On Thu, Dec 14, 2017 at 07:08:27PM +0100, Geert Uytterhoeven wrote:
+> >> On Thu, Dec 14, 2017 at 4:24 PM, Dave P Martin <Dave.Martin@arm.com> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-sh_mobile.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+[...]
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index a3a377a10fa789..88af45225003a5 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -771,15 +771,17 @@ static int sh_mobile_i2c_r8a7740_workaround(struct sh_mobile_i2c_data *pd)
- 	iic_wr(pd, ICCR, ICCR_TRS);
- 	udelay(10);
- 
--	return 0;
-+	return sh_mobile_i2c_init(pd);
- }
- 
- static const struct sh_mobile_dt_config default_dt_config = {
- 	.clks_per_count = 1,
-+	.setup = sh_mobile_i2c_init,
- };
- 
- static const struct sh_mobile_dt_config fast_clock_dt_config = {
- 	.clks_per_count = 2,
-+	.setup = sh_mobile_i2c_init,
- };
- 
- static const struct sh_mobile_dt_config r8a7740_dt_config = {
-@@ -882,15 +884,10 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
- 	config = of_device_get_match_data(&dev->dev);
- 	if (config) {
- 		pd->clks_per_count = config->clks_per_count;
--
--		if (config->setup) {
--			ret = config->setup(pd);
--			if (ret)
--				return ret;
--		}
-+		ret = config->setup(pd);
-+	} else {
-+		ret = sh_mobile_i2c_init(pd);
- 	}
--
--	ret = sh_mobile_i2c_init(pd);
- 	if (ret)
- 		return ret;
- 
--- 
-2.11.0
+> >> > Good work on the bisect -- I'll need to have a think about this...
+> >> >
+> >> > That patch fixes a genuine problem so we can't just revert it.
+> >> >
+> >> > What if you revert _just this function_ back to what it was in v4.14?
+> >>
+> >> With fpsimd_update_current_state() reverted to v4.14, and
+> >>
+> >> -               __this_cpu_write(fpsimd_last_state, st);
+> >> +               __this_cpu_write(fpsimd_last_state.st, st);
+> >>
+> >> to make it build, the problem seems to be fixed, too.
+> 
+> > Interesting if I apply that to v4.14 and then flatten the new code for CONFIG_ARM64_SVE=n, I get:
+> >
+> > Working:
+> >
+> > void fpsimd_update_current_state(struct fpsimd_state *state)
+> > {
+> >         local_bh_disable();
+> >
+> >         fpsimd_load_state(state);
+> >         if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
+> >                 struct fpsimd_state *st = &current->thread.fpsimd_state;
+> >
+> >                 __this_cpu_write(fpsimd_last_state.st, st);
+> >                 st->cpu = smp_processor_id();
+> >         }
+> >
+> >         local_bh_enable();
+> > }
+> >
+> > Broken:
+> >
+> > void fpsimd_update_current_state(struct fpsimd_state *state)
+> > {
+> >         struct fpsimd_last_state_struct *last;
+> >         struct fpsimd_state *st;
+> >
+> >         local_bh_disable();
+> >
+> >         current->thread.fpsimd_state = *state;
+> >         fpsimd_load_state(&current->thread.fpsimd_state);
+> >
+> >         if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
+> >                 last = this_cpu_ptr(&fpsimd_last_state);
+> >                 st = &current->thread.fpsimd_state;
+> >
+> >                 last->st = st;
+> >                 last->sve_in_use = test_thread_flag(TIF_SVE);
+> >                 st->cpu = smp_processor_id();
+> >         }
+> >
+> >         local_bh_enable();
+> > }
+> >
+> > Can you try my flattened "broken" version by itself and see if that does
+> > reproduce the bug?  If not, my flattening may be making bad assumptions...
+> >
+> > Assuming the "broken" version reproduces the bug, I can't yet see exactly
+> > where the breakage comes from.
+> 
+> Correct, above "Working" is working, and "Broken" is broken.
+> 
+> > The two important differences here seem to be
+> >
+> > 1) Staging the state via current->thread.fpsimd_state instead of loading
+> > directly:
+> >
+> > -       fpsimd_load_state(state);
+> > +       current->thread.fpsimd_state = *state;
+> > +       fpsimd_load_state(&current->thread.fpsimd_state);
+> 
+> The change above introduces the breakage.
+> 
+> > 2) Using this_cpu_ptr() + assignment instead of __this_cpu_write() when
+> > reassociating the task's fpsimd context with the cpu:
+> >
+> >  {
+> > +       struct fpsimd_last_state_struct *last;
+> > +       struct fpsimd_state *st;
+> >
+> > [...]
+> >
+> >         if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
+> > -               struct fpsimd_state *st = &current->thread.fpsimd_state;
+> > -
+> > -               __this_cpu_write(fpsimd_last_state.st, st);
+> > -               st->cpu = smp_processor_id();
+> > +               last = this_cpu_ptr(&fpsimd_last_state);
+> > +               st = &current->thread.fpsimd_state;
+> > +
+> > +               last->st = st;
+> > +               last->sve_in_use = test_thread_flag(TIF_SVE);
+> > +               st->cpu = smp_processor_id();
+> >         }
+> 
+> The change above is fine.
+
+Thanks for this.
+
+Will came up with a convincing hypothesis for how the dodgy change broke
+things here -- see the diff in his separate reply.
+
+I'll cook up a more complete fix, but the diff Will provided should at
+least get things working.
+
+Cheers
+---Dave
