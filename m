@@ -1,124 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:41209 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:26419 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751761AbdLNK4e (ORCPT
+        by vger.kernel.org with ESMTP id S932067AbdLOOxN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 05:56:34 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+        Fri, 15 Dec 2017 09:53:13 -0500
+From: Biju Das <biju.das@bp.renesas.com>
 To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/6] ARM: dts: r8a7743: Add PWM SoC support
-Date: Thu, 14 Dec 2017 10:56:13 +0000
-Message-Id: <1513248976-26700-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 2/5] ARM: dts: iwg20d-q7-common: Sound DMA support on DTS
+Date: Fri, 15 Dec 2017 14:50:50 +0000
+Message-Id: <1513349453-54689-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
+References: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the definitions for pwm[0123456] to the SoC .dtsi.
+DMA transfer to/from SSI
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+     DMA
+[MEM] -> [SSI]
+
+     DMA
+[MEM] <- [SSI]
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 77 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index e056bc5..6766c76 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1080,6 +1080,83 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 41bc4ed..fd50065 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -247,10 +247,10 @@
+ };
  
-+		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a7743",
-+				     "renesas,pwm-rcar";
-+			reg = <0 0xe6e30000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a7743",
-+				     "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a7743",
-+				     "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a7743",
-+				     "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a7743",
-+				     "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a7743",
-+				     "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a7743",
-+				     "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7743",
- 				     "renesas,rcar-gen2-sdhi";
+ &ssi0 {
+-	pio-transfer;
++	no-busif;
+ };
+ 
+ &ssi1 {
+-	pio-transfer;
++	no-busif;
+ 	shared-pin;
+ };
 -- 
-2.7.4
+1.9.1
