@@ -1,188 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54474 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753972AbdLNWbJ (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43807 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756074AbdLOXGa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 17:31:09 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 15 Dec 2017 18:06:30 -0500
+Date: Fri, 15 Dec 2017 17:06:28 -0600
+From: Rob Herring <robh@kernel.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 7/9] ARM: dts: silk: use demuxer for I2C1
-Date: Thu, 14 Dec 2017 23:30:59 +0100
-Message-Id: <20171214223101.16450-8-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
-References: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: thermal: rcar: Add device tree support
+ for r8a7743
+Message-ID: <20171215230628.5is2s7orogu46cqd@rob-hp-laptop>
+References: <1513162673-31531-1-git-send-email-biju.das@bp.renesas.com>
+ <1513162673-31531-2-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513162673-31531-2-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+On Wed, Dec 13, 2017 at 10:57:52AM +0000, Biju Das wrote:
+> Add thermal sensor support for r8a7743 SoC. The Renesas RZ/G1M
+> (r8a7743) thermal sensor module is identical to the R-Car Gen2 family.
+> 
+> No driver change is needed due to the fallback compatible value
+> "renesas,rcar-gen2-thermal".
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Based on work for the r8a7790/lager by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7794-silk.dts | 128 ++++++++++++++++++++++---------------
- 1 file changed, 75 insertions(+), 53 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index edfad0e5ac53a0..f1afe2dda13a36 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -31,6 +31,8 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		i2c9 = &gpioi2c1;
-+		i2c10 = &i2chdmi;
- 	};
- 
- 	chosen {
-@@ -153,6 +155,78 @@
- 			clocks = <&x9_clk>;
- 		};
- 	};
-+
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-10 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio5>;
-+			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &extal_clk {
-@@ -268,61 +342,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb0>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con>;
--				};
--			};
--		};
--	};
- };
- 
- &mmcif0 {
--- 
-2.11.0
+Reviewed-by: Rob Herring <robh@kernel.org>
