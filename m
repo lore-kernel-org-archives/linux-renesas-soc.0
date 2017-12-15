@@ -1,41 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40931 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756747AbdLOPQZ (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:6837 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932067AbdLOOxR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 10:16:25 -0500
-Received: by mail-wm0-f65.google.com with SMTP id f206so18159370wmf.5
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 07:16:25 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 3/7] drm/img-rogue: #include <linux/sched/clock.h> in osfunc.c
-Date: Fri, 15 Dec 2017 16:15:41 +0100
-Message-Id: <1513350945-2642-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1513350945-2642-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1513350945-2642-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 15 Dec 2017 09:53:17 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 3/5] ARM: dts: iwg20d-q7-common: Sound DMA support via BUSIF on DTS
+Date: Fri, 15 Dec 2017 14:50:51 +0000
+Message-Id: <1513349453-54689-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
+References: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Required for sched_clock()
+DMA transfer to/from SSIU
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+     DMA
+[MEM] -> [SSIU] -> [SSI]
+
+     DMA
+[MEM] <- [SSIU] <- [SSI]
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- services/server/env/linux/osfunc.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/services/server/env/linux/osfunc.c b/services/server/env/linux/osfunc.c
-index 39d4f89..c222095 100644
---- a/services/server/env/linux/osfunc.c
-+++ b/services/server/env/linux/osfunc.c
-@@ -53,6 +53,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- #include <linux/genalloc.h>
- #include <linux/string.h>
- #include <linux/sched.h>
-+#include <linux/sched/clock.h>
- #include <asm/hardirq.h>
- #include <asm/tlbflush.h>
- #include <linux/timer.h>
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index fd50065..38f1e2b 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -246,11 +246,6 @@
+ 	};
+ };
+ 
+-&ssi0 {
+-	no-busif;
+-};
+-
+ &ssi1 {
+-	no-busif;
+ 	shared-pin;
+ };
 -- 
-2.7.4
+1.9.1
