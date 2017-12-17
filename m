@@ -1,239 +1,153 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752484AbdLGJy6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:54:58 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/54] arm64: dts: renesas: r8a7795: Add IPMMU device nodes
-Date: Thu,  7 Dec 2017 10:53:22 +0100
-Message-Id: <3b7e7848f0e88b369519e8f479cdabf6eb998af5.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: sakari.ailus@linux.intel.com, niklas.soderlund@ragnatech.se,
+        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/5] device property: Add fwnode_get_name() operation
+Date: Sun, 17 Dec 2017 18:49:36 +0200
+Message-ID: <2169295.J7lojCvxnY@avalon>
+In-Reply-To: <1513189580-32202-3-git-send-email-jacopo+renesas@jmondi.org>
+References: <1513189580-32202-1-git-send-email-jacopo+renesas@jmondi.org> <1513189580-32202-3-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Jacopo,
 
-Add r8a7795 IPMMU nodes and keep all disabled by default.
+Thank you for the patch.
 
-This includes all IPMMU devices for r8a7795 ES2.0. Those
-not present in r8a7795 ES1.x are removed from the DT for those
-SoCs using delete-node. A follow-up patch will add IPMMU devices
-to ES1.x which are not also present in ES2.0.
+On Wednesday, 13 December 2017 20:26:17 EET Jacopo Mondi wrote:
+> Add operation to retrieve the device name from a fwnode handle.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/acpi/property.c  |  6 ++++++
+>  drivers/base/property.c  | 12 ++++++++++++
+>  drivers/of/property.c    |  6 ++++++
+>  include/linux/fwnode.h   |  2 ++
+>  include/linux/property.h |  1 +
+>  5 files changed, 27 insertions(+)
+> 
+> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+> index e26ea20..1e3971c 100644
+> --- a/drivers/acpi/property.c
+> +++ b/drivers/acpi/property.c
+> @@ -1186,6 +1186,11 @@ acpi_fwnode_property_read_string_array(const struct
+> fwnode_handle *fwnode, val, nval);
+>  }
+> 
+> +static const char *acpi_fwnode_get_name(const struct fwnode_handle *fwnode)
+> +{
+> +	return acpi_dev_name(to_acpi_device_node(fwnode));
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi |  25 +++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 145 +++++++++++++++++++++++++++
- 2 files changed, 170 insertions(+)
+You're returning a name here, but it's not the ACPI fwnode name, it's the name 
+of the corresponding device. This isn't consistent with the OF implementation. 
+As Sakari pointed out, it also won't work for non-device ACPI nodes.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 655dd30639c5..246323eacb56 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -21,6 +21,11 @@
- 		status = "disabled";
- 	};
- 
-+	/delete-node/ mmu@febe0000;
-+	/delete-node/ mmu@fe980000;
-+	/delete-node/ mmu@fd960000;
-+	/delete-node/ mmu@fd970000;
-+
- 	/delete-node/ usb-phy@ee0e0200;
- 	/delete-node/ usb@ee0e0100;
- 	/delete-node/ usb@ee0e0000;
-@@ -86,6 +91,26 @@
- 	};
- };
- 
-+&ipmmu_vi0 {
-+	renesas,ipmmu-main = <&ipmmu_mm 11>;
-+};
-+
-+&ipmmu_vp0 {
-+	renesas,ipmmu-main = <&ipmmu_mm 12>;
-+};
-+
-+&ipmmu_vc0 {
-+	renesas,ipmmu-main = <&ipmmu_mm 9>;
-+};
-+
-+&ipmmu_vc1 {
-+	renesas,ipmmu-main = <&ipmmu_mm 10>;
-+};
-+
-+&ipmmu_rt {
-+	renesas,ipmmu-main = <&ipmmu_mm 7>;
-+};
-+
- &du {
- 	vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 42c51f2ec30b..1a091bb41b7f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -421,6 +421,151 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfebd0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 14>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_vi1: mmu@febe0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfebe0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 15>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_vp0: mmu@fe990000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfe990000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 16>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_vp1: mmu@fe980000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfe980000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 17>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_vc0: mmu@fe6b0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfe6b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 12>;
-+			power-domains = <&sysc R8A7795_PD_A3VC>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_vc1: mmu@fe6f0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfe6f0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 13>;
-+			power-domains = <&sysc R8A7795_PD_A3VC>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_pv0: mmu@fd800000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfd800000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 6>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_pv2: mmu@fd960000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfd960000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 8>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_pv3: mmu@fd970000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfd970000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 9>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ir: mmu@ff8b0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xff8b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 3>;
-+			power-domains = <&sysc R8A7795_PD_A3IR>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_hc: mmu@e6570000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe6570000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 2>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_rt: mmu@ffc80000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xffc80000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 10>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mp0: mmu@ec670000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xec670000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 4>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds0: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe6740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe7740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 1>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe67b0000 0 0x1000>;
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7795",
- 				     "renesas,rcar-dmac";
+> +}
+> +
+>  static struct fwnode_handle *
+>  acpi_fwnode_get_named_child_node(const struct fwnode_handle *fwnode,
+>  				 const char *childname)
+> @@ -1281,6 +1286,7 @@ static int acpi_fwnode_graph_parse_endpoint(const
+> struct fwnode_handle *fwnode, acpi_fwnode_property_read_string_array,		\
+>  		.get_parent = acpi_node_get_parent,			\
+>  		.get_next_child_node = acpi_get_next_subnode,		\
+> +		.get_name = acpi_fwnode_get_name,			\
+>  		.get_named_child_node = acpi_fwnode_get_named_child_node, \
+>  		.get_reference_args = acpi_fwnode_get_reference_args,	\
+>  		.graph_get_next_endpoint =				\
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index 851b1b6..a87b4a9 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -950,6 +950,18 @@ int device_add_properties(struct device *dev,
+>  EXPORT_SYMBOL_GPL(device_add_properties);
+> 
+>  /**
+> + * fwnode_get_name - Return the fwnode_handle name
+> + * @fwnode: Firmware node to get name from
+> + *
+> + * Returns a pointer to the firmware node name
+
+Could you please document the life time constraints of the return pointer ?
+
+> + */
+> +const char *fwnode_get_name(const struct fwnode_handle *fwnode)
+> +{
+> +	return fwnode_call_ptr_op(fwnode, get_name);
+> +}
+> +EXPORT_SYMBOL(fwnode_get_name);
+> +
+> +/**
+>   * fwnode_get_next_parent - Iterate to the node's parent
+>   * @fwnode: Firmware whose parent is retrieved
+>   *
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index 8ad33a4..6c195a8 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -875,6 +875,11 @@ of_fwnode_property_read_string_array(const struct
+> fwnode_handle *fwnode, of_property_count_strings(node, propname);
+>  }
+> 
+> +static const char *of_fwnode_get_name(const struct fwnode_handle *fwnode)
+> +{
+> +	return of_node_full_name(to_of_node(fwnode));
+
+If you're returning the full name shouldn't the operation be called 
+*get_full_name() ?
+
+> +}
+> +
+>  static struct fwnode_handle *
+>  of_fwnode_get_parent(const struct fwnode_handle *fwnode)
+>  {
+> @@ -988,6 +993,7 @@ const struct fwnode_operations of_fwnode_ops = {
+>  	.property_present = of_fwnode_property_present,
+>  	.property_read_int_array = of_fwnode_property_read_int_array,
+>  	.property_read_string_array = of_fwnode_property_read_string_array,
+> +	.get_name = of_fwnode_get_name,
+>  	.get_parent = of_fwnode_get_parent,
+>  	.get_next_child_node = of_fwnode_get_next_child_node,
+>  	.get_named_child_node = of_fwnode_get_named_child_node,
+> diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
+> index 411a84c..5d3a8c6 100644
+> --- a/include/linux/fwnode.h
+> +++ b/include/linux/fwnode.h
+> @@ -57,6 +57,7 @@ struct fwnode_reference_args {
+>   *				 otherwise.
+>   * @property_read_string_array: Read an array of string properties. Return
+> zero *				on success, a negative error code otherwise.
+> + * @get_name: Return the fwnode name.
+>   * @get_parent: Return the parent of an fwnode.
+>   * @get_next_child_node: Return the next child node in an iteration.
+>   * @get_named_child_node: Return a child node with a given name.
+> @@ -81,6 +82,7 @@ struct fwnode_operations {
+>  	(*property_read_string_array)(const struct fwnode_handle *fwnode_handle,
+>  				      const char *propname, const char **val,
+>  				      size_t nval);
+> +	const char *(*get_name)(const struct fwnode_handle *fwnode);
+>  	struct fwnode_handle *(*get_parent)(const struct fwnode_handle *fwnode);
+>  	struct fwnode_handle *
+>  	(*get_next_child_node)(const struct fwnode_handle *fwnode,
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index f6189a3..0fc464f 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -78,6 +78,7 @@ int fwnode_property_get_reference_args(const struct
+> fwnode_handle *fwnode, unsigned int nargs, unsigned int index,
+>  				       struct fwnode_reference_args *args);
+> 
+> +const char *fwnode_get_name(const struct fwnode_handle *fwnode);
+>  struct fwnode_handle *fwnode_get_parent(const struct fwnode_handle
+> *fwnode);
+>  struct fwnode_handle *fwnode_get_next_parent(struct fwnode_handle *fwnode);
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
