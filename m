@@ -1,55 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:28661 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751175AbdLNJJG (ORCPT
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:59462 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754185AbdLQSB4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 04:09:06 -0500
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 1/3] ARM: dts: r8a7790: Correct critical CPU temperature
-Date: Thu, 14 Dec 2017 09:08:39 +0000
-Message-Id: <1513242521-11236-2-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com>
-References: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com>
+        Sun, 17 Dec 2017 13:01:56 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Kevin Hilman <khilman@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] bus: simple-pm-bus: convert bool SIMPLE_PM_BUS to tristate
+Date: Sun, 17 Dec 2017 19:01:08 +0100
+Message-ID: <3708548.hFOf0HkmBe@aspire.rjw.lan>
+In-Reply-To: <20171201070232.v4uilgo5cydaoyqa@verge.net.au>
+References: <1512043020-23452-1-git-send-email-geert+renesas@glider.be> <20171201070232.v4uilgo5cydaoyqa@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car H2 hardware manual states that Tc = –40°C to +105°C. The
-thermal sensor has an accuracy of ±5°C and there can be a temperature
-difference of 1 or 2 degrees between Tjmax and the thermal sensor due
-to the location of the latter.
+On Friday, December 1, 2017 8:02:33 AM CET Simon Horman wrote:
+> On Thu, Nov 30, 2017 at 12:57:00PM +0100, Geert Uytterhoeven wrote:
+> > From: Paul Gortmaker <paul.gortmaker@windriver.com>
+> > 
+> > The Kconfig currently controlling compilation of this code is:
+> > 
+> > config SIMPLE_PM_BUS
+> >         bool "Simple Power-Managed Bus Driver"
+> > 
+> > ...meaning that it currently is not being built as a module by anyone.
+> > 
+> > In removing the orphaned modular support in a previous patch set,
+> > Geert indicated he'd rather see this code converted to tristate.
+> > 
+> > I normally don't do that because it extends functionality that I
+> > can't easily run time test or even know if the use case makes sense,
+> > but since in this case the author has nominated it as such, we do
+> > the conversion here.
+> > 
+> > Note that doesn't change the lack of run time testing ; this change
+> > is only tested for sucessful compile and modpost.
+> > 
+> > [geert: Ethernet is probed successfully on sh73a0/kzm9g after
+> >         insmodding simple-pm-bus.ko]
+> > 
+> > Cc: Kevin Hilman <khilman@linaro.org>
+> > Cc: Simon Horman <horms+renesas@verge.net.au>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-This means that 95°C is a safer value to use.
-
-Fixes: a8b805f3606f7af7 ("ARM: dts: r8a7790: enable to use thermal-zone")
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7790.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 450bfc0e9796a557..ed9a68538a554001 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -168,7 +168,7 @@
- 
- 			trips {
- 				cpu-crit {
--					temperature	= <115000>;
-+					temperature	= <95000>;
- 					hysteresis	= <0>;
- 					type		= "critical";
- 				};
--- 
-1.9.1
+Applied, thanks!
