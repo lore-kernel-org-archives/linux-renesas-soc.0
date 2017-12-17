@@ -1,55 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:32595 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750737AbdLNJJO (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42794 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752461AbdLQL5a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 04:09:14 -0500
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH 3/3] ARM: dts: r8a7793: Correct critical CPU temperature
-Date: Thu, 14 Dec 2017 09:08:41 +0000
-Message-Id: <1513242521-11236-4-git-send-email-chris.paterson2@renesas.com>
-In-Reply-To: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com>
-References: <1513242521-11236-1-git-send-email-chris.paterson2@renesas.com>
+        Sun, 17 Dec 2017 06:57:30 -0500
+Date: Sun, 17 Dec 2017 12:57:31 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        kbuild-all@01.org, linux-serial@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [tty:tty-next 23/34] include/linux/kconfig.h:5:10: fatal error:
+ generated/autoconf.h: No such file or directory
+Message-ID: <20171217115731.GB19641@kroah.com>
+References: <201712161029.StXUUOBC%fengguang.wu@intel.com>
+ <CAMuHMdXNNB7+-J7+M+0k+s=TDvTs_MVM4=AjjSi0x63p2HBaNQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXNNB7+-J7+M+0k+s=TDvTs_MVM4=AjjSi0x63p2HBaNQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car M2N hardware manual states that Tc = –40°C to +105°C. The
-thermal sensor has an accuracy of ±5°C and there can be a temperature
-difference of 1 or 2 degrees between Tjmax and the thermal sensor due
-to the location of the latter.
+On Sun, Dec 17, 2017 at 11:15:37AM +0100, Geert Uytterhoeven wrote:
+> On Sat, Dec 16, 2017 at 3:00 AM, kbuild test robot
+> <fengguang.wu@intel.com> wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-next
+> > head:   38d5583ff8900c543322a74471b436d1b8b4018a
+> > commit: f6731485a51978ca0931c787fcb8a0bc4dcc9303 [23/34] tty: serial: sh-sci: Hide number of ports config question
+> > config: ia64-allyesconfig (attached as .config)
+> > compiler: ia64-linux-gcc (GCC) 7.2.0
+> > reproduce:
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         git checkout f6731485a51978ca0931c787fcb8a0bc4dcc9303
+> >         # save the attached .config to linux build tree
+> >         make.cross ARCH=ia64
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    .config:3814:warning: symbol value '' invalid for SERIAL_SH_SCI_NR_UARTS
+> 
+> config SERIAL_SH_SCI_NR_UARTS
+>         int "Maximum number of SCI(F) serial ports" if EXPERT
+>         depends on SERIAL_SH_SCI
+>         default "3" if H8300
+>         default "10" if SUPERH
+>         default "18" if ARCH_RENESAS
+> 
+> Doh, if test compiling for non-H8300/SUPERH/ARCH_RENESAS, "int" doesn't
+> assign a sane numerical default value to the symbol, but an empty string :-(
+> 
+> So we do need e.g.
+> 
+>         default "2"
+> 
+> at the bottom.
+> 
+> Greg: Do you want a v2, or an incremental patch?
 
-This means that 95°C is a safer value to use.
+Incremental is good, I don't want to have to revert and then add a v2.
 
-Fixes: 57f9156bc620ac56 ("ARM: dts: r8a7793: enable to use thermal-zone")
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7793.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+thanks,
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 61dd291d907da2f5..039b225175262e4b 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -89,7 +89,7 @@
- 
- 			trips {
- 				cpu-crit {
--					temperature	= <115000>;
-+					temperature	= <95000>;
- 					hysteresis	= <0>;
- 					type		= "critical";
- 				};
--- 
-1.9.1
+greg k-h
