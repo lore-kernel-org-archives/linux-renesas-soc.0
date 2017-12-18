@@ -1,83 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752151AbdLGJzP (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40891 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965215AbdLRV6J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:15 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 34/54] arm64: dts: renesas: salvator-common: Add BD9571 PMIC
-Date: Thu,  7 Dec 2017 10:53:37 +0100
-Message-Id: <f80f4920b78dbcbebbe5e0a1383bce7849cd08af.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Mon, 18 Dec 2017 16:58:09 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 1/7] i2c: sh_mobile: move type detection upwards
+Date: Mon, 18 Dec 2017 22:57:56 +0100
+Message-Id: <20171218215802.28591-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
+References: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+For refactoring reasons, we will need this information before the setup
+callback. Also, simplify the comment to a oneliner.
 
-Add a device node for the ROHM BD9571MWV PMIC.
-
-This was based on the example in the DT binding documentation, but using
-IRQ0 instead of a GPIO interrupt, as that matches the schematics, and
-because INTC-EX is a simpler block.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 29 ++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/i2c/busses/i2c-sh_mobile.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 24a32c63ce7c..b9505a65a793 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -355,6 +355,30 @@
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index b01607b4fce2b8..1ac896e46b390c 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -873,6 +873,10 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 	pd->bus_speed = ret ? STANDARD_MODE : bus_speed;
+ 	pd->clks_per_count = 1;
  
- &i2c_dvfs {
- 	status = "okay";
++	/* Newer variants come with two new bits in ICIC */
++	if (resource_size(res) > 0x17)
++		pd->flags |= IIC_FLAG_HAS_ICIC67;
 +
-+	pmic: pmic@30 {
-+		pinctrl-0 = <&irq0_pins>;
-+		pinctrl-names = "default";
-+
-+		compatible = "rohm,bd9571mwv";
-+		reg = <0x30>;
-+		interrupt-parent = <&intc_ex>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		regulators {
-+			dvfs: dvfs {
-+				regulator-name = "dvfs";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <1030000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
- };
+ 	config = of_device_get_match_data(&dev->dev);
+ 	if (config) {
+ 		pd->clks_per_count = config->clks_per_count;
+@@ -881,12 +885,6 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 			config->setup(pd);
+ 	}
  
- &ohci0 {
-@@ -410,6 +434,11 @@
- 		function = "i2c2";
- 	};
- 
-+	irq0_pins: irq0 {
-+		groups = "intc_ex_irq0";
-+		function = "intc_ex";
-+	};
-+
- 	pwm1_pins: pwm1 {
- 		groups = "pwm1_a";
- 		function = "pwm1";
+-	/* The IIC blocks on SH-Mobile ARM processors
+-	 * come with two new bits in ICIC.
+-	 */
+-	if (resource_size(res) > 0x17)
+-		pd->flags |= IIC_FLAG_HAS_ICIC67;
+-
+ 	ret = sh_mobile_i2c_init(pd);
+ 	if (ret)
+ 		return ret;
 -- 
 2.11.0
