@@ -1,125 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:16402 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:28235 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934510AbdLRRwf (ORCPT
+        by vger.kernel.org with ESMTP id S935370AbdLRRNY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 12:52:35 -0500
+        Mon, 18 Dec 2017 12:13:24 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Simon Horman" <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 5/6] pinctrl: sh-pfc: r8a7791: Add tpu groups and function
-Date: Mon, 18 Dec 2017 17:52:07 +0000
-Message-Id: <1513619528-12060-6-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: RE: [PATCH 5/6] pinctrl: sh-pfc: r8a7791: Add tpu groups and function
+Date: Mon, 18 Dec 2017 17:13:14 +0000
+Message-ID: <TY1PR06MB0895578E8217996C8CD517ABC00E0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513248976-26700-6-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdW8tfg9AnJbLF=yMFbS2R=F37tzfcxYpF6yDtm1WLoY7g@mail.gmail.com>
+In-Reply-To: <CAMuHMdW8tfg9AnJbLF=yMFbS2R=F37tzfcxYpF6yDtm1WLoY7g@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds tpu groups and function to r8a7743/r8a7791/r8a7793.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2
-* Reworked sorting
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 42 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index c01ef02d..5811784 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -4145,6 +4145,32 @@ static const unsigned int ssi9_ctrl_b_mux[] = {
- 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
- };
- 
-+/* - TPU -------------------------------------------------------------------- */
-+static const unsigned int tpu_to0_pins[] = {
-+	RCAR_GP_PIN(6, 14),
-+};
-+static const unsigned int tpu_to0_mux[] = {
-+	TPU_TO0_MARK,
-+};
-+static const unsigned int tpu_to1_pins[] = {
-+	RCAR_GP_PIN(1, 17),
-+};
-+static const unsigned int tpu_to1_mux[] = {
-+	TPU_TO1_MARK,
-+};
-+static const unsigned int tpu_to2_pins[] = {
-+	RCAR_GP_PIN(1, 18),
-+};
-+static const unsigned int tpu_to2_mux[] = {
-+	TPU_TO2_MARK,
-+};
-+static const unsigned int tpu_to3_pins[] = {
-+	RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int tpu_to3_mux[] = {
-+	TPU_TO3_MARK,
-+};
-+
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
- 	RCAR_GP_PIN(7, 23), /* PWEN */
-@@ -4431,7 +4457,7 @@ static const unsigned int vin2_clk_mux[] = {
- };
- 
- static const struct {
--	struct sh_pfc_pin_group common[342];
-+	struct sh_pfc_pin_group common[346];
- 	struct sh_pfc_pin_group r8a779x[9];
- } pinmux_groups = {
- 	.common = {
-@@ -4743,6 +4769,10 @@ static const struct {
- 		SH_PFC_PIN_GROUP(ssi9_data_b),
- 		SH_PFC_PIN_GROUP(ssi9_ctrl),
- 		SH_PFC_PIN_GROUP(ssi9_ctrl_b),
-+		SH_PFC_PIN_GROUP(tpu_to0),
-+		SH_PFC_PIN_GROUP(tpu_to1),
-+		SH_PFC_PIN_GROUP(tpu_to2),
-+		SH_PFC_PIN_GROUP(tpu_to3),
- 		SH_PFC_PIN_GROUP(usb0),
- 		SH_PFC_PIN_GROUP(usb1),
- 		VIN_DATA_PIN_GROUP(vin0_data, 24),
-@@ -5278,6 +5308,13 @@ static const char * const ssi_groups[] = {
- 	"ssi9_ctrl_b",
- };
- 
-+static const char * const tpu_groups[] = {
-+	"tpu_to0",
-+	"tpu_to1",
-+	"tpu_to2",
-+	"tpu_to3",
-+};
-+
- static const char * const usb0_groups[] = {
- 	"usb0",
- };
-@@ -5327,7 +5364,7 @@ static const char * const vin2_groups[] = {
- };
- 
- static const struct {
--	struct sh_pfc_function common[57];
-+	struct sh_pfc_function common[58];
- 	struct sh_pfc_function r8a779x[2];
- } pinmux_functions = {
- 	.common = {
-@@ -5383,6 +5420,7 @@ static const struct {
- 		SH_PFC_FUNCTION(sdhi1),
- 		SH_PFC_FUNCTION(sdhi2),
- 		SH_PFC_FUNCTION(ssi),
-+		SH_PFC_FUNCTION(tpu),
- 		SH_PFC_FUNCTION(usb0),
- 		SH_PFC_FUNCTION(usb1),
- 		SH_PFC_FUNCTION(vin0),
--- 
-2.7.4
+SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4NCg0KPiBTdWJqZWN0
+OiBSZTogW1BBVENIIDUvNl0gcGluY3RybDogc2gtcGZjOiByOGE3NzkxOiBBZGQgdHB1IGdyb3Vw
+cyBhbmQgZnVuY3Rpb24NCj4NCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIFRodSwgRGVjIDE0LCAy
+MDE3IGF0IDExOjU2IEFNLCBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ryb0BicC5y
+ZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRzIHRwdSBncm91cHMgYW5kIGZ1
+bmN0aW9uIHRvIHI4YTc3NDMvcjhhNzc5MS9yOGE3NzkzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
+eTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4g
+UmV2aWV3ZWQtYnk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4NCj4gV2l0
+aCB0aGUgc29ydCBvcmRlciBmaXhlZDoNCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZl
+biA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQoNCkknbGwgc2VuZCBhIHYyIHRvIGZpeCB0aGUg
+b3JkZXIuDQoNClRoYW5rcywNCkZhYg0KDQo+DQo+ID4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3No
+LXBmYy9wZmMtcjhhNzc5MS5jDQo+ID4gKysrIGIvZHJpdmVycy9waW5jdHJsL3NoLXBmYy9wZmMt
+cjhhNzc5MS5jDQo+ID4gQEAgLTM4OTIsNiArMzg5MiwzMiBAQCBzdGF0aWMgY29uc3QgdW5zaWdu
+ZWQgaW50IHNkaGkyX3dwX211eFtdID0gew0KPiA+ICAgICAgICAgU0QyX1dQX01BUkssDQo+ID4g
+IH07DQo+ID4NCj4gPiArLyogLSBUUFUgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gKi8NCj4gPiArc3RhdGljIGNvbnN0
+IHVuc2lnbmVkIGludCB0cHVfdG8wX3BpbnNbXSA9IHsNCj4gPiArICAgICAgIFJDQVJfR1BfUElO
+KDYsIDE0KSwNCj4gPiArfTsNCj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCB0cHVfdG8w
+X211eFtdID0gew0KPiA+ICsgICAgICAgVFBVX1RPMF9NQVJLLA0KPiA+ICt9Ow0KPiA+ICtzdGF0
+aWMgY29uc3QgdW5zaWduZWQgaW50IHRwdV90bzFfcGluc1tdID0gew0KPiA+ICsgICAgICAgUkNB
+Ul9HUF9QSU4oMSwgMTcpLA0KPiA+ICt9Ow0KPiA+ICtzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50
+IHRwdV90bzFfbXV4W10gPSB7DQo+ID4gKyAgICAgICBUUFVfVE8xX01BUkssDQo+ID4gK307DQo+
+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgdHB1X3RvMl9waW5zW10gPSB7DQo+ID4gKyAg
+ICAgICBSQ0FSX0dQX1BJTigxLCAxOCksDQo+ID4gK307DQo+ID4gK3N0YXRpYyBjb25zdCB1bnNp
+Z25lZCBpbnQgdHB1X3RvMl9tdXhbXSA9IHsNCj4gPiArICAgICAgIFRQVV9UTzJfTUFSSywNCj4g
+PiArfTsNCj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCB0cHVfdG8zX3BpbnNbXSA9IHsN
+Cj4gPiArICAgICAgIFJDQVJfR1BfUElOKDEsIDI0KSwNCj4gPiArfTsNCj4gPiArc3RhdGljIGNv
+bnN0IHVuc2lnbmVkIGludCB0cHVfdG8zX211eFtdID0gew0KPiA+ICsgICAgICAgVFBVX1RPM19N
+QVJLLA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiAgLyogLSBTU0kgLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gKi8NCj4gPiAg
+c3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBzc2kwX2RhdGFfcGluc1tdID0gew0KPiA+ICAgICAg
+ICAgLyogU0RBVEEgKi8NCj4NCj4gUGxlYXNlIHVzZSBhbHBoYWJldGljYWwgc29ydCBvcmRlciAo
+YWxzbyBiZWxvdykuDQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAg
+ICAgICAgICAgICBHZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUn
+cyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+DQo+
+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwg
+bXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJ
+IGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQoNCg0KW2h0dHBzOi8v
+d3d3Mi5yZW5lc2FzLmV1L21lZGlhL2VtYWlsL3VuaWNlZl8yMDE3LmpwZ10NCg0KVGhpcyBDaHJp
+c3RtYXMsIGluc3RlYWQgb2Ygc2VuZGluZyBvdXQgY2FyZHMsIFJlbmVzYXMgRWxlY3Ryb25pY3Mg
+RXVyb3BlIGhhdmUgZGVjaWRlZCB0byBzdXBwb3J0IFVuaWNlZiB3aXRoIGEgZG9uYXRpb24uIEZv
+ciBmdXJ0aGVyIGRldGFpbHMgY2xpY2sgaGVyZTxodHRwczovL3d3dy51bmljZWYub3JnLz4gdG8g
+ZmluZCBvdXQgYWJvdXQgdGhlIHZhbHVhYmxlIHdvcmsgdGhleSBkbywgaGVscGluZyBjaGlsZHJl
+biBhbGwgb3ZlciB0aGUgd29ybGQuDQpXZSB3b3VsZCBsaWtlIHRvIHRha2UgdGhpcyBvcHBvcnR1
+bml0eSB0byB3aXNoIHlvdSBhIE1lcnJ5IENocmlzdG1hcyBhbmQgYSBwcm9zcGVyb3VzIE5ldyBZ
+ZWFyLg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3cs
+IE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVL
+LiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4
+NjcwOS4NCg==
