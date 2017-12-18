@@ -1,89 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:17383 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1758238AbdLRSZC (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40896 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965312AbdLRV6J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 13:25:02 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 5/5] ARM: dts: iwg20d-q7-common: Sound DMA support via DVC on DTS
-Date: Mon, 18 Dec 2017 18:22:41 +0000
-Message-Id: <1513621361-10944-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513621361-10944-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513621361-10944-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 18 Dec 2017 16:58:09 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 2/7] i2c: sh_mobile: allow setup callback to return errno
+Date: Mon, 18 Dec 2017 22:57:57 +0100
+Message-Id: <20171218215802.28591-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
+References: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DMA transfer uses DVC
+The setup callback will be more generic and, thus, need to be able to
+return error codes. Change the return type to 'int' for that.
 
-     DMA               DMApp
-[MEM] -> [SRC] -> [DVC] -> [SSIU] -> [SSI]
-
-     DMA               DMApp
-[MEM] <- [DVC] <- [SRC] <- [SSIU] <- [SSI]
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v1->v2
- * No change
+ drivers/i2c/busses/i2c-sh_mobile.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 7b283e0..5c604c74 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -8,6 +8,29 @@
-  * kind, whether express or implied.
-  */
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 1ac896e46b390c..a3a377a10fa789 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -149,7 +149,7 @@ struct sh_mobile_i2c_data {
  
-+/*
-+ * SSI-SGTL5000
-+ *
-+ * This command is required when Playback/Capture
-+ *
-+ *      amixer set "DVC Out" 100%
-+ *      amixer set "DVC In" 100%
-+ *
-+ * You can use Mute
-+ *
-+ *      amixer set "DVC Out Mute" on
-+ *      amixer set "DVC In Mute" on
-+ *
-+ * You can use Volume Ramp
-+ *
-+ *      amixer set "DVC Out Ramp Up Rate"   "0.125 dB/64 steps"
-+ *      amixer set "DVC Out Ramp Down Rate" "0.125 dB/512 steps"
-+ *      amixer set "DVC Out Ramp" on
-+ *      aplay xxx.wav &
-+ *      amixer set "DVC Out"  80%  // Volume Down
-+ *      amixer set "DVC Out" 100%  // Volume Up
-+ */
-+
- / {
- 	aliases {
- 		serial0 = &scif0;
-@@ -208,8 +231,8 @@
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi1 &src3>;
--			capture = <&ssi0 &src2>;
-+			playback = <&ssi1 &src3 &dvc1>;
-+			capture = <&ssi0 &src2 &dvc0>;
- 		};
- 	};
+ struct sh_mobile_dt_config {
+ 	int clks_per_count;
+-	void (*setup)(struct sh_mobile_i2c_data *pd);
++	int (*setup)(struct sh_mobile_i2c_data *pd);
  };
+ 
+ #define IIC_FLAG_HAS_ICIC67	(1 << 0)
+@@ -749,7 +749,7 @@ static const struct i2c_algorithm sh_mobile_i2c_algorithm = {
+  * r8a7740 chip has lasting errata on I2C I/O pad reset.
+  * this is work-around for it.
+  */
+-static void sh_mobile_i2c_r8a7740_workaround(struct sh_mobile_i2c_data *pd)
++static int sh_mobile_i2c_r8a7740_workaround(struct sh_mobile_i2c_data *pd)
+ {
+ 	iic_set_clr(pd, ICCR, ICCR_ICE, 0);
+ 	iic_rd(pd, ICCR); /* dummy read */
+@@ -770,6 +770,8 @@ static void sh_mobile_i2c_r8a7740_workaround(struct sh_mobile_i2c_data *pd)
+ 	udelay(10);
+ 	iic_wr(pd, ICCR, ICCR_TRS);
+ 	udelay(10);
++
++	return 0;
+ }
+ 
+ static const struct sh_mobile_dt_config default_dt_config = {
+@@ -881,8 +883,11 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 	if (config) {
+ 		pd->clks_per_count = config->clks_per_count;
+ 
+-		if (config->setup)
+-			config->setup(pd);
++		if (config->setup) {
++			ret = config->setup(pd);
++			if (ret)
++				return ret;
++		}
+ 	}
+ 
+ 	ret = sh_mobile_i2c_init(pd);
 -- 
-1.9.1
+2.11.0
