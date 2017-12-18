@@ -1,79 +1,33 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:27506 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750830AbdLRL2W (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 06:28:22 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 18 Dec 2017 12:22:21 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/5] ARM: dts: iwg20d-q7-common: Sound PIO support
-Date: Mon, 18 Dec 2017 11:28:16 +0000
-Message-ID: <KL1PR06MB1702758CD14985E31CF3EF94B80E0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/5] ARM: dts: iwg20d-q7-common: Sound PIO support
+Message-ID: <20171218112221.krf6bh6sya56du5u@verge.net.au>
 References: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
  <1513349453-54689-2-git-send-email-biju.das@bp.renesas.com>
- <20171218112221.krf6bh6sya56du5u@verge.net.au>
-In-Reply-To: <20171218112221.krf6bh6sya56du5u@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513349453-54689-2-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Fri, Dec 15, 2017 at 02:50:49PM +0000, Biju Das wrote:
+> Enable sound PIO support on carrier board.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
+>  arch/arm/boot/dts/iwg20d-q7-common.dtsi | 46 +++++++++++++++++++++++++++++++++
 
-Thanks. I will send v2.
-
-Regards,
-Biju
-
-> -----Original Message-----
-> From: Simon Horman [mailto:horms@verge.net.au]
-> Sent: 18 December 2017 11:22
-> To: Biju Das <biju.das@bp.renesas.com>
-> Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
-> <mark.rutland@arm.com>; Kuninori Morimoto
-> <kuninori.morimoto.gx@renesas.com>; Magnus Damm
-> <magnus.damm@gmail.com>; Chris Paterson <Chris.Paterson2@renesas.com>;
-> Fabrizio Castro <fabrizio.castro@bp.renesas.com>;
-> devicetree@vger.kernel.org; linux-renesas-soc@vger.kernel.org
-> Subject: Re: [PATCH 1/5] ARM: dts: iwg20d-q7-common: Sound PIO support
->
-> On Fri, Dec 15, 2017 at 02:50:49PM +0000, Biju Das wrote:
-> > Enable sound PIO support on carrier board.
-> >
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > ---
-> >  arch/arm/boot/dts/iwg20d-q7-common.dtsi | 46
-> > +++++++++++++++++++++++++++++++++
->
-> It appears that the nodes in this file are in (or close to in) alphabetic=
-al order.
-> Please add new nodes in a manner that preserves that. If necessary please
-> provide a clean-up patch to shift nodes into alphabetical order.
-
-
-[https://www2.renesas.eu/media/email/unicef_2017.jpg]
-
-This Christmas, instead of sending out cards, Renesas Electronics Europe ha=
-ve decided to support Unicef with a donation. For further details click her=
-e<https://www.unicef.org/> to find out about the valuable work they do, hel=
-ping children all over the world.
-We would like to take this opportunity to wish you a Merry Christmas and a =
-prosperous New Year.
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+It appears that the nodes in this file are in (or close to in) alphabetical
+order. Please add new nodes in a manner that preserves that. If necessary
+please provide a clean-up patch to shift nodes into alphabetical order.
