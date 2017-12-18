@@ -1,63 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:47085 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751443AbdLEUl5 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40886 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965311AbdLRV6J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 15:41:57 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund+renesas@ragnatech.se,
-        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] v4l: rcar-csi2: Don't bail out from probe on no ep
-Date: Tue,  5 Dec 2017 21:41:48 +0100
-Message-Id: <1512506508-17418-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 18 Dec 2017 16:58:09 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 0/7] i2c: sh_mobile: support per-SoC frequency calculation
+Date: Mon, 18 Dec 2017 22:57:55 +0100
+Message-Id: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When rcar-csi interface is not connected to any endpoint, it fails and
-bails out from probe before registering its own video subdevice.
-This prevents rcar-vin registered notifier from completing and no
-subdevice is ever registered, also for other properly connected csi
-interfaces.
+The current calculation for I2C bus speeds does not match the datasheet and is,
+in deed, a little too fast for 100kHz settings (~107kHz have been measured).
 
-Fix this not returning an error when no endpoint is connected to a csi
-interface and let the driver complete its probe function and register its
-own video subdevice.
+This series implements a second calculation according to the datasheet. In
+order to not cause regressions on the various old SoCs, using this new formula
+is opt-in per SoC. Once the new formula has been verified to work, we can
+switch over. By default, the old behaviour is retained.
 
----
-Niklas,
-   please squash this patch in your next rcar-csi2 series (if you like it ;)
+So, the first patches are refactoring the driver to support per-SoC frequency
+calculations. This is done by making the already existing per-SoC
+setup()-callback mandatory and let the frequency calculation be done in there.
 
-As we have discussed this is particularly useful for gmsl setup, where adv748x
-is connected to CSI20 and max9286 to CSI40/CSI41. If we disable adv748x from DTS
-we need CSI20 probe to complete anyhow otherwise no subdevice gets registered
-for the two deserializers.
+This series has been tested on a R-Car H2 Lager board (r8a7790). The computed
+values match the suggested values in the datasheet. Also, measurements showed
+that the bus frequency is now 100kHz. For 400 kHz, the overall bus speed did
+not change much, but the low-to-high relationship is now matching the
+datasheet, too.
 
-Please note we cannot disable CSI20 entirely otherwise VIN's graph parsing
-breaks.
+This series is RFC because I think we need to discuss when to enable a SoC to
+the new formula. For Lager, I did some basic checking but did not run a full
+V4L testsuite or other complex configurations making use of I2C clients. Gen3,
+in theory, should be easier to test because only the PMIC and an EEPROM are
+connected to IIC_DVFS. However, there are no testpoints available for measuring
+on Salvator-X(S). And the suggested values in the datasheet do not match the
+module clock we have. Do ULCB boards maybe have testpoints for IIC_DVFS? For
+Lager, it could be argued that the resulting speed is slower than before which
+should not introduce regressions. But I am open to discussion here.
 
-Thanks
-   j
+A branch can be found here:
 
----
- drivers/media/platform/rcar-vin/rcar-csi2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/iic-refactor
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 2793efb..90c4062 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -928,8 +928,8 @@ static int rcar_csi2_parse_dt(struct rcar_csi2 *priv)
+Thanks, and looking forward to comments
 
- 	ep = of_graph_get_endpoint_by_regs(priv->dev->of_node, 0, 0);
- 	if (!ep) {
--		dev_err(priv->dev, "Not connected to subdevice\n");
--		return -EINVAL;
-+		dev_dbg(priv->dev, "Not connected to subdevice\n");
-+		return 0;
- 	}
+   Wolfram
 
- 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &v4l2_ep);
---
-2.7.4
+
+Wolfram Sang (7):
+  i2c: sh_mobile: move type detection upwards
+  i2c: sh_mobile: allow setup callback to return errno
+  i2c: sh_mobile: require setup callback
+  i2c: sh_mobile: let RuntimePM do the clock handling
+  i2c: sh_mobile: add helper to check frequency calculations
+  i2c: sh_mobile: add new frequency calculation for later SoC
+  i2c: sh_mobile: let r8a7790 (R-Car H2) use the new formula
+
+ drivers/i2c/busses/i2c-sh_mobile.c | 117 ++++++++++++++++++++++---------------
+ 1 file changed, 69 insertions(+), 48 deletions(-)
+
+-- 
+2.11.0
