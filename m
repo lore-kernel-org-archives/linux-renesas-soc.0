@@ -1,45 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:46170 "EHLO
+Received: from andre.telenet-ops.be ([195.130.132.53]:59394 "EHLO
         andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752906AbdLSQCL (ORCPT
+        with ESMTP id S1758200AbdLRJKk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 11:02:11 -0500
+        Mon, 18 Dec 2017 04:10:40 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc: kbuild test robot <fengguang.wu@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] dt-bindings: pwm: renesas-tpu: Correct example TPU register block size
-Date: Tue, 19 Dec 2017 17:02:06 +0100
-Message-Id: <1513699327-27357-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1513699327-27357-1-git-send-email-geert+renesas@glider.be>
-References: <1513699327-27357-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH] tty: serial: sh-sci: Add default for number of ports for compile-testing
+Date: Mon, 18 Dec 2017 09:50:57 +0100
+Message-Id: <1513587057-24355-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Timer Pulse Unit on R-Mobile A1 has registers that lie outside the
-declared register block.  Enlarge the register block size to fix this.
+When compile-testing an allmodconfig kernel for a platform without
+sh-sci serial ports, the SERIAL_SH_SCI_NR_UARTS symbol of type "int"
+doesn't get assigned a numerical default value, but an empty string,
+leading to a build failure:
 
+   .config:3814:warning: symbol value '' invalid for SERIAL_SH_SCI_NR_UARTS
+   ...
+   make[3]: *** [silentoldconfig] Error 1
+
+Fix this by explicitly providing a default value of 2, like before.
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Fixes: f6731485a51978ca ("tty: serial: sh-sci: Hide number of ports config question")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-index 1aadc804dae4e30b..641b5b4c648340ee 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-@@ -22,6 +22,6 @@ Example: R8A7740 (R-Car A1) TPU controller node
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 4e6dfb0a762b5807..3682fd3e960cbd64 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -766,6 +766,7 @@ config SERIAL_SH_SCI_NR_UARTS
+ 	default "3" if H8300
+ 	default "10" if SUPERH
+ 	default "18" if ARCH_RENESAS
++	default "2"
  
- 	tpu: pwm@e6600000 {
- 		compatible = "renesas,tpu-r8a7740", "renesas,tpu";
--		reg = <0xe6600000 0x100>;
-+		reg = <0xe6600000 0x148>;
- 		#pwm-cells = <3>;
- 	};
+ config SERIAL_SH_SCI_CONSOLE
+ 	bool "Support for console on SuperH SCI(F)" if EXPERT
 -- 
 2.7.4
