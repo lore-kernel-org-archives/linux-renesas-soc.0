@@ -1,87 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756810AbdLVKbe (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:16402 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934438AbdLRRw0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:31:34 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Mon, 18 Dec 2017 12:52:26 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 31/37] ARM: dts: iwg22d-sodimm: Enable SGTL5000 audio codec
-Date: Fri, 22 Dec 2017 11:30:09 +0100
-Message-Id: <55e37da0309a2237cc8f14a43ba04b2fd2083c1c.1513938145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
-References: <cover.1513938145.git.horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 2/6] dt-bindings: pwm: rcar: Document r8a774[35] PWM bindings
+Date: Mon, 18 Dec 2017 17:52:04 +0000
+Message-Id: <1513619528-12060-3-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+This patch adds compatible strings specific to r8a774[35], no driver
+change is needed as the fallback compatible string will activate the
+right code. Also, this patch replaces the example with a DT snippet used
+for adding PWM0 support to an r8a7743 based platform.
 
-This patch enables SGTL5000 audio codec on the carrier board.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+v1->v2
+* No change
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 39ce7e7101c7..5d4b7d203f8d 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -26,6 +26,12 @@
- 		stdout-path = "serial3:115200n8";
+ Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
+index 74c1180..f3bba59 100644
+--- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
++++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
+@@ -2,6 +2,8 @@
+ 
+ Required Properties:
+ - compatible: should be "renesas,pwm-rcar" and one of the following.
++ - "renesas,pwm-r8a7743": for RZ/G1M
++ - "renesas,pwm-r8a7745": for RZ/G1E
+  - "renesas,pwm-r8a7778": for R-Car M1A
+  - "renesas,pwm-r8a7779": for R-Car H1
+  - "renesas,pwm-r8a7790": for R-Car H2
+@@ -17,13 +19,15 @@ Required Properties:
+ - pinctrl-0: phandle, referring to a default pin configuration node.
+ - pinctrl-names: Set to "default".
+ 
+-Example: R8A7790 (R-Car H2) PWM Timer node
++Example: R8A7743 (RZ/G1M) PWM Timer node
+ 
+ 	pwm0: pwm@e6e30000 {
+-		compatible = "renesas,pwm-r8a7790", "renesas,pwm-rcar";
++		compatible = "renesas,pwm-r8a7743", "renesas,pwm-rcar";
+ 		reg = <0 0xe6e30000 0 0x8>;
++		clocks = <&cpg CPG_MOD 523>;
++		power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++		resets = <&cpg 523>;
+ 		#pwm-cells = <2>;
+-		clocks = <&mstp5_clks R8A7790_CLK_PWM>;
+ 		pinctrl-0 = <&pwm0_pins>;
+ 		pinctrl-names = "default";
  	};
- 
-+	audio_clock: audio_clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+	};
-+
- 	vccq_sdhi0: regulator-vccq-sdhi0 {
- 		compatible = "regulator-gpio";
- 
-@@ -80,6 +86,23 @@
- 	pinctrl-names = "default";
- };
- 
-+&i2c5 {
-+	pinctrl-0 = <&i2c5_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	sgtl5000: codec@a {
-+		compatible = "fsl,sgtl5000";
-+		#sound-dai-cells = <0>;
-+		reg = <0x0a>;
-+		clocks = <&audio_clock>;
-+		VDDA-supply = <&reg_3p3v>;
-+		VDDIO-supply = <&reg_3p3v>;
-+	};
-+};
-+
- &pci1 {
- 	status = "okay";
- 	pinctrl-0 = <&usb1_pins>;
-@@ -102,6 +125,11 @@
- 		function = "hscif1";
- 	};
- 
-+	i2c5_pins: i2c5 {
-+		groups = "i2c5_b";
-+		function = "i2c5";
-+	};
-+
- 	scif4_pins: scif4 {
- 		groups = "scif4_data_b";
- 		function = "scif4";
 -- 
-2.11.0
+2.7.4
