@@ -1,64 +1,102 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Richard Leitner <richard.leitner@skidata.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 4/4] arm64: dts: renesas: ulcb: Add EthernetAVB PHY reset
-Date: Mon,  4 Dec 2017 11:34:52 +0100
-Message-Id: <1512383692-14009-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
-References: <1512383692-14009-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:47661 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758061AbdLRLDo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 18 Dec 2017 06:03:44 -0500
+Date: Mon, 18 Dec 2017 12:03:22 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a7796: move nodes which have
+ no reg property out of bus
+Message-ID: <20171218110322.3f57s43qwven6xh4@verge.net.au>
+References: <20171212082436.12210-1-horms+renesas@verge.net.au>
+ <20171212082436.12210-3-horms+renesas@verge.net.au>
+ <CAMuHMdVx-cEHwV+mBcZfM903DrkxjyNqOiT6KQvm5fNUpcW2Ww@mail.gmail.com>
+ <20171213082531.ubbp2za2zupqfqk3@verge.net.au>
+ <CAMuHMdUx=MyFZypFpJPwXH-mz1Oz9W-UkEZP4QO3TSGnKEw0Fg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUx=MyFZypFpJPwXH-mz1Oz9W-UkEZP4QO3TSGnKEw0Fg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the GPIO used to reset the Ethernet PHY for EthernetAVB.
-This allows the driver to reset the PHY during probe and after system
-resume.
+On Wed, Dec 13, 2017 at 09:34:15AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Dec 13, 2017 at 9:25 AM, Simon Horman <horms@verge.net.au> wrote:
+> > For now I've applied the following:
+> >
+> > From: Simon Horman <horms+renesas@verge.net.au>
+> > Date: Tue, 12 Dec 2017 09:24:35 +0100
+> > Subject: [PATCH] arm64: dts: renesas: r8a7796: move nodes which have no reg
+> >  property out of bus
+> >
+> > Move pmu_a5[73], timer and thermal-zones nodes from soc node to root node.
+> > The nodes that have been moved do not have any register properties and thus
+> > shouldn't be placed on the bus.
+> 
+> > index c1b0d0344329..e82b4db1ad1a 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > @@ -154,6 +154,23 @@
+> >                 clock-frequency = <0>;
+> >         };
+> >
+> > +       pmu_a57 {
+> > +               compatible = "arm,cortex-a57-pmu";
+> > +               interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                     <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> > +               interrupt-affinity = <&a57_0>,
+> > +                                    <&a57_1>;
+> 
+> Merge?
 
-On ULCB, the enable pin of the regulator providing PHY power is always
-pulled high, but the driver may still need to reset the PHY if this
-wasn't done by the bootloader before.
+Sure, sorry for missing that.
 
-Inspired by patches in the BSP for the individual Salvator-X/XS boards
-by Kazuya Mizuguchi.
+> 
+> > +       };
+> > +
+> > +       pmu_a53 {
+> > +               compatible = "arm,cortex-a53-pmu";
+> > +               interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                     <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                     <&gic GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                     <&gic GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+> > +               interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
+> 
+> Thanks!
+> 
+> > +       };
+> 
+> > @@ -2027,4 +1968,56 @@
+> >                         resets = <&cpg 822>;
+> >                 };
+> >         };
+> > +
+> > +       timer {
+> > +               compatible = "arm,armv8-timer";
+> > +               interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                                     <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                                     <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                                     <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
+> 
+> Much better!
+> 
+> Or even
+> 
+> > +               interrupts-extended =
+> > +                       <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                       <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                       <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                       <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
+> 
+> I don't care that much, it extends beyond 80 characters anyway.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
-
-v4:
-  - No changes,
-
-v3:
-  - Extract from series "[PATCH 0/4] ravb: Add PHY reset support", and
-    incorporate in this series,
-  - Move reset-gpios from the ethernet to the ethernet-phy node.
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 0d85b315ce711c8f..be91016e0b48f196 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -154,6 +154,7 @@
- 		reg = <0>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
- 	};
- };
- 
--- 
-2.7.4
-
+As its over 80 characters anyway lets go with my version.
