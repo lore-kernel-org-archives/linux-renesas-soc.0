@@ -1,52 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:42809 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759441AbdLRNB0 (ORCPT
+Received: from [217.148.43.144] ([217.148.43.144]:42508 "EHLO mnementh.co.uk"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1757734AbdLRA4K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 08:01:26 -0500
-Received: by mail-it0-f43.google.com with SMTP id p139so28260108itb.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Dec 2017 05:01:25 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20171218000021.16655-1-wsa+renesas@sang-engineering.com>
-References: <20171218000021.16655-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 18 Dec 2017 14:01:24 +0100
-Message-ID: <CAPDyKFr5A7Qma_Ef5JMjvG1f_Er+f9K-tnj39_q0Wg2aQ7nY5w@mail.gmail.com>
-Subject: Re: [RFC PATCH] mmc: tmio: use ioread* for repeated access to a register
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Sun, 17 Dec 2017 19:56:10 -0500
+Subject: Re: [RFC PATCH] mmc: tmio: use ioread* for repeated access to a
+ register
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+References: <20171218000021.16655-1-wsa+renesas@sang-engineering.com>
+From: Ian Molton <ian@mnementh.co.uk>
+Message-ID: <748e8a92-1e11-8e37-b01b-c4c56cbb46cd@mnementh.co.uk>
+Date: Mon, 18 Dec 2017 00:13:09 +0000
+MIME-Version: 1.0
+In-Reply-To: <20171218000021.16655-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 18 December 2017 at 01:00, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+On 18/12/17 00:00, Wolfram Sang wrote:
 > Not all archs define reads* and writes*. Switch to ioread*_rep and
 > friends which is defined everywhere, so we can enable COMPILE_TEST after
 > that.
->
+> 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Thanks, applied for next!
-
-I put the patch in front of Yamada-san's patch that made it possible
-to use COMPILE_TEST. Thus avoiding breaking bisecting.
-
 > ---
->
+> 
 > So, I pushed this to buildbot on top of Yamada-san's patch series and there
 > were no complaints, even with COMPILE_TEST enabled. I also did some tests on
 > HW and checksuming huge files on SD cards still works.
->
+> 
 > However, I am not sure about this mixture of read* and ioread* functions. Shall
 > we convert maybe all of those?
 
-Yes, seems like a good idea.
+Might as well. They've been in Linux since what 2.6.9?
 
-[...]
-
-Kind regards
-Uffe
+>  drivers/mmc/host/tmio_mmc.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+> index 76094345cbacf3..03519c4ca0aa1a 100644
+> --- a/drivers/mmc/host/tmio_mmc.h
+> +++ b/drivers/mmc/host/tmio_mmc.h
+> @@ -233,7 +233,7 @@ static inline u16 sd_ctrl_read16(struct tmio_mmc_host *host, int addr)
+>  static inline void sd_ctrl_read16_rep(struct tmio_mmc_host *host, int addr,
+>  				      u16 *buf, int count)
+>  {
+> -	readsw(host->ctl + (addr << host->bus_shift), buf, count);
+> +	ioread16_rep(host->ctl + (addr << host->bus_shift), buf, count);
+>  }
+>  
+>  static inline u32 sd_ctrl_read16_and_16_as_32(struct tmio_mmc_host *host,
+> @@ -246,7 +246,7 @@ static inline u32 sd_ctrl_read16_and_16_as_32(struct tmio_mmc_host *host,
+>  static inline void sd_ctrl_read32_rep(struct tmio_mmc_host *host, int addr,
+>  				      u32 *buf, int count)
+>  {
+> -	readsl(host->ctl + (addr << host->bus_shift), buf, count);
+> +	ioread32_rep(host->ctl + (addr << host->bus_shift), buf, count);
+>  }
+>  
+>  static inline void sd_ctrl_write16(struct tmio_mmc_host *host, int addr,
+> @@ -263,7 +263,7 @@ static inline void sd_ctrl_write16(struct tmio_mmc_host *host, int addr,
+>  static inline void sd_ctrl_write16_rep(struct tmio_mmc_host *host, int addr,
+>  				       u16 *buf, int count)
+>  {
+> -	writesw(host->ctl + (addr << host->bus_shift), buf, count);
+> +	iowrite16_rep(host->ctl + (addr << host->bus_shift), buf, count);
+>  }
+>  
+>  static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host,
+> @@ -276,7 +276,7 @@ static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host,
+>  static inline void sd_ctrl_write32_rep(struct tmio_mmc_host *host, int addr,
+>  				       const u32 *buf, int count)
+>  {
+> -	writesl(host->ctl + (addr << host->bus_shift), buf, count);
+> +	iowrite32_rep(host->ctl + (addr << host->bus_shift), buf, count);
+>  }
+>  
+>  #endif
+> 
