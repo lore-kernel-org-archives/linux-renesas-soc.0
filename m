@@ -1,60 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:37534 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932659AbdLRMGV (ORCPT
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:44394 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758608AbdLRMEv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 07:06:21 -0500
-Received: by mail-qk0-f180.google.com with SMTP id p13so1909453qke.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Dec 2017 04:06:20 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <4127740.6d2LxRg6UI@avalon>
-References: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
- <1593408.WvHWapkjaJ@avalon> <1c133f3a-1619-a23c-03cb-eee0ea52b64b@ti.com> <4127740.6d2LxRg6UI@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Dec 2017 13:06:19 +0100
-Message-ID: <CAMuHMdWb6gUr_9Hnnd7Tn6=8a2NadDyYypH-7F-ehXm0pPgMXQ@mail.gmail.com>
+        Mon, 18 Dec 2017 07:04:51 -0500
 Subject: Re: [PATCH 3/4] kms++util: Add verification module
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+CC: <kieran.bingham@ideasonboard.com>,
+        <linux-renesas-soc@vger.kernel.org>
+References: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
+ <1593408.WvHWapkjaJ@avalon> <1c133f3a-1619-a23c-03cb-eee0ea52b64b@ti.com>
+ <4127740.6d2LxRg6UI@avalon>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <99e99d24-6ee3-884d-edf9-570fcbc5ab14@ti.com>
+Date: Mon, 18 Dec 2017 14:04:45 +0200
+MIME-Version: 1.0
+In-Reply-To: <4127740.6d2LxRg6UI@avalon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+On 18/12/17 13:50, Laurent Pinchart wrote:
 
-On Mon, Dec 18, 2017 at 12:50 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Monday, 18 December 2017 13:46:22 EET Tomi Valkeinen wrote:
->> On 18/12/17 13:36, Laurent Pinchart wrote:
->> > The problem with PNG (or any other format really) is that you not only
->> > need to encode the image into the target format (PNG or JPG would require
->> > external libraries, simpler formats such as BMP or PNM could be handled
->> > internally), but you also need to convert the image to a particular RGB
->> > or YUV format depending on what the output format requires.
->>
->> Yes, that's the "hassle" part I was referring to =).
->>
->> Maybe we need to invent a new file format that can store all kinds of
->> formats? (https://xkcd.com/927/)
->>
->> > If you want to do so, I would like to reuse code from the v4l2convert
->> > library. The code should be moved to a library that doesn't depend on
->> > V4L2, as the current API encapsulate conversion in other operations.
->> > Other tools such as raw2rgbpnm could then be ported to use that library;
->>
->> Yep, so I agree that doing color format conversions shouldn't really be
->> kms++'s job, but at the same time I'd like to be able to export
->> framebuffers.
->>
->> And I'm fine with adding dependencies to kms++, as long as all those are
->> optional.
->>
->> Aren't there "big" image conversion libraries that would do the job?
->> Imagemagick? Or something? I have used "convert" command to do some
->> conversions, that comes from ImageMagick.
->
 > That's an option too. I had a look at the code once to find out how
 > ImageMagick was performing scaling and gave up with a headache soon
 > afterwards. We need more formats than what ImageMagick currently supports
@@ -62,15 +31,29 @@ On Mon, Dec 18, 2017 at 12:50 PM, Laurent Pinchart
 > all kind of RGB, YUV (and ideally Bayer) formats, and I don't think extending
 > ImageMagick would be the way to go.
 
-netpbm is your friend.
+Yep, I can image that ImageMagick can't handle it all. I don't really 
+have much experience with it. I did find that it has enough tunables to 
+manage rgbx8888 with different byte orders and the "extra" alpha channel:
 
-Gr{oetje,eeting}s,
+convert -depth 8 -size $1x$2 -color-matrix "0 0 1 0 1 0 1 0 0" -alpha 
+deactivate rgba:$3 png:-
 
-                        Geert
+But things like argb1555 or yuv422 might prove to be too difficult for 
+ImageMagick.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Where's the source for v4l2convert? What does it do?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I wonder how difficult it would be to create a 
+brute-force-no-optimizations style of a function to which you give the 
+exact bit definition of the buffer's pixel format, and which gives you 
+RGB888 or YUV444, depending on the input format (I presume most image 
+encoders would accept RGB888 & YUV444).
+
+I think the function wouldn't even need to care whether the data is RGB 
+or YUV, it would just unpack it according to the format definition.
+
+  Tomi
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. 
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
