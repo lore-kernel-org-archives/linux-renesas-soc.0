@@ -1,58 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:44394 "EHLO
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:43890 "EHLO
         fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758608AbdLRMEv (ORCPT
+        with ESMTP id S1751775AbdLRLq2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 07:04:51 -0500
+        Mon, 18 Dec 2017 06:46:28 -0500
 Subject: Re: [PATCH 3/4] kms++util: Add verification module
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: <kieran.bingham@ideasonboard.com>,
-        <linux-renesas-soc@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        <kieran.bingham@ideasonboard.com>
+CC: <linux-renesas-soc@vger.kernel.org>
 References: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
- <1593408.WvHWapkjaJ@avalon> <1c133f3a-1619-a23c-03cb-eee0ea52b64b@ti.com>
- <4127740.6d2LxRg6UI@avalon>
+ <0827e08d-3c42-d878-99da-ed7b77776031@ti.com>
+ <b8d5db70-0193-49b7-773b-dcebd9c8cb20@ideasonboard.com>
+ <1593408.WvHWapkjaJ@avalon>
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <99e99d24-6ee3-884d-edf9-570fcbc5ab14@ti.com>
-Date: Mon, 18 Dec 2017 14:04:45 +0200
+Message-ID: <1c133f3a-1619-a23c-03cb-eee0ea52b64b@ti.com>
+Date: Mon, 18 Dec 2017 13:46:22 +0200
 MIME-Version: 1.0
-In-Reply-To: <4127740.6d2LxRg6UI@avalon>
+In-Reply-To: <1593408.WvHWapkjaJ@avalon>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 18/12/17 13:50, Laurent Pinchart wrote:
+On 18/12/17 13:36, Laurent Pinchart wrote:
 
-> That's an option too. I had a look at the code once to find out how
-> ImageMagick was performing scaling and gave up with a headache soon
-> afterwards. We need more formats than what ImageMagick currently supports
-> (it's mostly focused on image file formats instead of raw image formats), with
-> all kind of RGB, YUV (and ideally Bayer) formats, and I don't think extending
-> ImageMagick would be the way to go.
+> The problem with PNG (or any other format really) is that you not only need to
+> encode the image into the target format (PNG or JPG would require external
+> libraries, simpler formats such as BMP or PNM could be handled internally),
+> but you also need to convert the image to a particular RGB or YUV format
+> depending on what the output format requires.
 
-Yep, I can image that ImageMagick can't handle it all. I don't really 
-have much experience with it. I did find that it has enough tunables to 
-manage rgbx8888 with different byte orders and the "extra" alpha channel:
+Yes, that's the "hassle" part I was referring to =).
 
-convert -depth 8 -size $1x$2 -color-matrix "0 0 1 0 1 0 1 0 0" -alpha 
-deactivate rgba:$3 png:-
+Maybe we need to invent a new file format that can store all kinds of 
+formats? (https://xkcd.com/927/)
 
-But things like argb1555 or yuv422 might prove to be too difficult for 
-ImageMagick.
+> If you want to do so, I would like to reuse code from the v4l2convert library.
+> The code should be moved to a library that doesn't depend on V4L2, as the
+> current API encapsulate conversion in other operations. Other tools such as
+> raw2rgbpnm could then be ported to use that library;
 
-Where's the source for v4l2convert? What does it do?
+Yep, so I agree that doing color format conversions shouldn't really be 
+kms++'s job, but at the same time I'd like to be able to export 
+framebuffers.
 
-I wonder how difficult it would be to create a 
-brute-force-no-optimizations style of a function to which you give the 
-exact bit definition of the buffer's pixel format, and which gives you 
-RGB888 or YUV444, depending on the input format (I presume most image 
-encoders would accept RGB888 & YUV444).
+And I'm fine with adding dependencies to kms++, as long as all those are 
+optional.
 
-I think the function wouldn't even need to care whether the data is RGB 
-or YUV, it would just unpack it according to the format definition.
-
-  Tomi
+Aren't there "big" image conversion libraries that would do the job? 
+Imagemagick? Or something? I have used "convert" command to do some 
+conversions, that comes from ImageMagick.
 
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. 
