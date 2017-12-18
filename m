@@ -1,42 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from osg.samsung.com ([64.30.133.232]:61671 "EHLO osg.samsung.com"
+Received: from osg.samsung.com ([64.30.133.232]:50021 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758850AbdLRTyO (ORCPT
+        id S932565AbdLRSn3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 14:54:14 -0500
+        Mon, 18 Dec 2017 13:43:29 -0500
+Date: Mon, 18 Dec 2017 16:43:14 -0200
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-To: Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
         Mats Randgaard <matrandg@cisco.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?=
+        <niklas.soderlund@ragnatech.se>,
         Bhumika Goyal <bhumirks@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Julia Lawall <Julia.Lawall@lip6.fr>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Markus Elfring <elfring@users.sourceforge.net>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Benoit Parrot <bparrot@ti.com>,
         "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
         Petr Cvek <petr.cvek@tul.cz>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         Sebastian Reichel <sre@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5/8] media: v4l2-mediabus: convert flags to enums and document them
-Date: Mon, 18 Dec 2017 17:53:59 -0200
-Message-Id: <9adfe443125040ddef985c698a18a2404e5a638d.1513625884.git.mchehab@s-opensource.com>
-In-Reply-To: <cover.1513625884.git.mchehab@s-opensource.com>
-References: <cover.1513625884.git.mchehab@s-opensource.com>
-In-Reply-To: <cover.1513625884.git.mchehab@s-opensource.com>
-References: <cover.1513625884.git.mchehab@s-opensource.com>
+Subject: Re: [PATCH 04/24] media: v4l2-mediabus: convert flags to enums and
+ document them
+Message-ID: <20171218164307.40a245ee@vento.lan>
+In-Reply-To: <20171011212644.GB32314@amd>
+References: <cover.1507544011.git.mchehab@s-opensource.com>
+        <8d351f92fb18148b4d53acdc7f7c8fb0e9f537d9.1507544011.git.mchehab@s-opensource.com>
+        <20171011212644.GB32314@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
+
+Em Wed, 11 Oct 2017 23:26:44 +0200
+Pavel Machek <pavel@ucw.cz> escreveu:
+
+> On Mon 2017-10-09 07:19:10, Mauro Carvalho Chehab wrote:
+> > There is a mess with media bus flags: there are two sets of
+> > flags, one used by parallel and ITU-R BT.656 outputs,
+> > and another one for CSI2.
+> > 
+> > Depending on the type, the same bit has different meanings.
+> >   
+> 
+> > @@ -86,11 +125,22 @@ enum v4l2_mbus_type {
+> >  /**
+> >   * struct v4l2_mbus_config - media bus configuration
+> >   * @type:	in: interface type
+> > - * @flags:	in / out: configuration flags, depending on @type
+> > + * @pb_flags:	in / out: configuration flags, if @type is
+> > + *		%V4L2_MBUS_PARALLEL or %V4L2_MBUS_BT656.
+> > + * @csi2_flags:	in / out: configuration flags, if @type is
+> > + *		%V4L2_MBUS_CSI2.
+> > + * @flag:	access flags, no matter the @type.
+> > + *		Used just to avoid needing to rewrite the logic inside
+> > + *		soc_camera and pxa_camera drivers. Don't use on newer
+> > + * 		drivers!
+> >   */
+> >  struct v4l2_mbus_config {
+> >  	enum v4l2_mbus_type type;
+> > -	unsigned int flags;
+> > +	union {
+> > +		enum v4l2_mbus_parallel_and_bt656_flags	pb_flags;
+> > +		enum v4l2_mbus_csi2_flags		csi2_flags;
+> > +		unsigned int				flag;
+> > +	};
+> >  };
+> >  
+> >  static inline void v4l2_fill_pix_format(struct v4l2_pix_format
+> >  *pix_fmt,  
+> 
+> The flags->flag conversion is quite subtle, and "flag" is confusing
+> because there is more than one inside. What about something like
+> __legacy_flags?
+
+Good idea.
+
+> 
+> 									Pavel
+
+Thanks,
+Mauro
+
+[PATCH] media: v4l2-mediabus: convert flags to enums and document them
 
 There is a mess with media bus flags: there are two sets of
 flags, one used by parallel and ITU-R BT.656 outputs,
@@ -63,35 +120,6 @@ drivers.
 
 Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
----
- drivers/media/i2c/adv7180.c                        |  10 +-
- drivers/media/i2c/ml86v7667.c                      |   5 +-
- drivers/media/i2c/mt9m111.c                        |   8 +-
- drivers/media/i2c/ov6650.c                         |  19 +--
- drivers/media/i2c/soc_camera/imx074.c              |   6 +-
- drivers/media/i2c/soc_camera/mt9m001.c             |  10 +-
- drivers/media/i2c/soc_camera/mt9t031.c             |  11 +-
- drivers/media/i2c/soc_camera/mt9t112.c             |  11 +-
- drivers/media/i2c/soc_camera/mt9v022.c             |  16 ++-
- drivers/media/i2c/soc_camera/ov5642.c              |   5 +-
- drivers/media/i2c/soc_camera/ov772x.c              |  10 +-
- drivers/media/i2c/soc_camera/ov9640.c              |  10 +-
- drivers/media/i2c/soc_camera/ov9740.c              |  10 +-
- drivers/media/i2c/soc_camera/rj54n1cb0c.c          |  12 +-
- drivers/media/i2c/soc_camera/tw9910.c              |  13 +-
- drivers/media/i2c/tc358743.c                       |  10 +-
- drivers/media/i2c/tvp5150.c                        |   6 +-
- drivers/media/platform/pxa_camera.c                |   8 +-
- drivers/media/platform/rcar-vin/rcar-core.c        |   4 +-
- drivers/media/platform/rcar-vin/rcar-dma.c         |   4 +-
- .../platform/soc_camera/sh_mobile_ceu_camera.c     |   2 +-
- drivers/media/platform/soc_camera/soc_camera.c     |   3 +-
- .../platform/soc_camera/soc_camera_platform.c      |   2 +-
- drivers/media/platform/soc_camera/soc_mediabus.c   |   2 +-
- drivers/media/v4l2-core/v4l2-fwnode.c              |   5 +-
- include/media/v4l2-fwnode.h                        |   4 +-
- include/media/v4l2-mediabus.h                      | 145 ++++++++++++++-------
- 27 files changed, 218 insertions(+), 133 deletions(-)
 
 diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
 index 25d24a3f10a7..4bf25a72ef4f 100644
@@ -682,6 +710,14 @@ index 4d8626c468bc..560e03db0d9b 100644
 - * mode is meant, when the client (e.g., a camera sensor) is producing
 - * horizontal and vertical synchronisation. In "Slave mode" the host is
 - * providing these signals to the slave.
+- */
+-#define V4L2_MBUS_MASTER			BIT(0)
+-#define V4L2_MBUS_SLAVE				BIT(1)
+-/*
+- * Signal polarity flags
+- * Note: in BT.656 mode HSYNC, FIELD, and VSYNC are unused
+- * V4L2_MBUS_[HV]SYNC* flags should be also used for specifying
+- * configuration of hardware that uses [HV]REF signals
 +/**
 + * enum v4l2_mbus_flags - Media bus parallel and polarity flags
 + *
@@ -721,14 +757,6 @@ index 4d8626c468bc..560e03db0d9b 100644
 + *    #) ``V4L2_MBUS_[HV]SYNC*`` flags should be also used for specifying
 + *       configuration of hardware that uses [HV]REF signals
   */
--#define V4L2_MBUS_MASTER			BIT(0)
--#define V4L2_MBUS_SLAVE				BIT(1)
--/*
-- * Signal polarity flags
-- * Note: in BT.656 mode HSYNC, FIELD, and VSYNC are unused
-- * V4L2_MBUS_[HV]SYNC* flags should be also used for specifying
-- * configuration of hardware that uses [HV]REF signals
-- */
 -#define V4L2_MBUS_HSYNC_ACTIVE_HIGH		BIT(2)
 -#define V4L2_MBUS_HSYNC_ACTIVE_LOW		BIT(3)
 -#define V4L2_MBUS_VSYNC_ACTIVE_HIGH		BIT(4)
@@ -843,5 +871,3 @@ index 4d8626c468bc..560e03db0d9b 100644
  };
  
  /**
--- 
-2.14.3
