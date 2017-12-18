@@ -1,49 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:43742 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933954AbdLSJNc (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:8410 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934501AbdLRRjN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 04:13:32 -0500
-Received: by mail-wm0-f66.google.com with SMTP id n138so2125455wmg.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Dec 2017 01:13:32 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org
-Cc: wsa@the-dreams.de, Chris.Paterson2@renesas.com,
-        magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v3] dmaengine: rcar-dmac: Document R-Car D3 bindings
-Date: Tue, 19 Dec 2017 10:13:26 +0100
-Message-Id: <1513674806-4208-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 18 Dec 2017 12:39:13 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 1/3] dt-bindings: timer: renesas, cmt: Document r8a774[35] CMT support
+Date: Mon, 18 Dec 2017 17:39:01 +0000
+Message-Id: <1513618743-4773-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1513618743-4773-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1513618743-4773-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R8A77995's SYS-DMAC is R-Car Gen3-compatible.
+Document SoC specific compatible strings for r8a7743 and r8a7745.
+No driver change is needed as the fallback strings will activate
+the right code.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms@verge.net.au>
 ---
-This revision adds the missing Reviewed-Bys.
+v1->v2:
+* "R-Car Gen2 or RZ/G1." -> "R-Car Gen2 and RZ/G1."
+* "all the R-Car" -> "R-Car"
 
-CU
-Uli
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index 891db41..af071ed 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -26,6 +26,7 @@ Required Properties:
- 		- "renesas,dmac-r8a7795" (R-Car H3)
- 		- "renesas,dmac-r8a7796" (R-Car M3-W)
- 		- "renesas,dmac-r8a77970" (R-Car V3M)
-+		- "renesas,dmac-r8a77995" (R-Car D3)
+diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+index d740989..b40add2 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+@@ -22,6 +22,10 @@ Required Properties:
  
- - reg: base address and length of the registers block for the DMAC
+     - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8a73a4.
+     - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8a73a4.
++    - "renesas,r8a7743-cmt0" for the 32-bit CMT0 device included in r8a7743.
++    - "renesas,r8a7743-cmt1" for the 48-bit CMT1 device included in r8a7743.
++    - "renesas,r8a7745-cmt0" for the 32-bit CMT0 device included in r8a7745.
++    - "renesas,r8a7745-cmt1" for the 48-bit CMT1 device included in r8a7745.
+     - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
+     - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7790.
+     - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7791.
+@@ -31,10 +35,12 @@ Required Properties:
+     - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7794.
+     - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8a7794.
  
+-    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2.
+-    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2.
+-		These are fallbacks for r8a73a4 and all the R-Car Gen2
+-		entries	listed above.
++    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2
++		and RZ/G1.
++    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2
++		and RZ/G1.
++		These are fallbacks for r8a73a4, R-Car Gen2 and RZ/G1 entries
++		listed above.
+ 
+   - reg: base address and length of the registers block for the timer module.
+   - interrupts: interrupt-specifier for the timer, one per channel.
 -- 
 2.7.4
