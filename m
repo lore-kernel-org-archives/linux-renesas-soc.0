@@ -1,112 +1,79 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:27506 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750830AbdLRL2W (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 18 Dec 2017 06:28:22 -0500
 From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+To: Simon Horman <horms@verge.net.au>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 1/5] ARM: dts: iwg20d-q7-common: Sound PIO support
-Date: Mon, 18 Dec 2017 18:22:37 +0000
-Message-Id: <1513621361-10944-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513621361-10944-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513621361-10944-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 1/5] ARM: dts: iwg20d-q7-common: Sound PIO support
+Date: Mon, 18 Dec 2017 11:28:16 +0000
+Message-ID: <KL1PR06MB1702758CD14985E31CF3EF94B80E0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+References: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
+ <1513349453-54689-2-git-send-email-biju.das@bp.renesas.com>
+ <20171218112221.krf6bh6sya56du5u@verge.net.au>
+In-Reply-To: <20171218112221.krf6bh6sya56du5u@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable sound PIO support on carrier board.
+Hi Simon,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
----
-v1-->v2
- * Reworked sorting
+Thanks. I will send v2.
 
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 46 +++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+Regards,
+Biju
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 2070b14..ed67201 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -34,6 +34,22 @@
- 		regulator-always-on;
- 	};
- 
-+	rsnd_sgtl5000: sound {
-+		compatible = "simple-audio-card";
-+
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&sndcodec>;
-+		simple-audio-card,frame-master = <&sndcodec>;
-+
-+		sndcpu: simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		sndcodec: simple-audio-card,codec {
-+			sound-dai = <&sgtl5000>;
-+		};
-+	};
-+
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 
-@@ -166,6 +182,11 @@
- 		power-source = <1800>;
- 	};
- 
-+	sound_pins: sound {
-+		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
-+		function = "ssi";
-+	};
-+
- 	usb0_pins: usb0 {
- 		groups = "usb0";
- 		function = "usb0";
-@@ -177,6 +198,22 @@
- 	};
- };
- 
-+&rcar_sound {
-+	pinctrl-0 = <&sound_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	/* Single DAI */
-+	#sound-dai-cells = <0>;
-+
-+	rcar_sound,dai {
-+		dai0 {
-+			playback = <&ssi1>;
-+			capture = <&ssi0>;
-+		};
-+	};
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>;
- 	pinctrl-names = "default";
-@@ -205,6 +242,15 @@
- 	status = "okay";
- };
- 
-+&ssi0 {
-+	pio-transfer;
-+};
-+
-+&ssi1 {
-+	pio-transfer;
-+	shared-pin;
-+};
-+
- &usbphy {
- 	status = "okay";
- };
--- 
-1.9.1
+> -----Original Message-----
+> From: Simon Horman [mailto:horms@verge.net.au]
+> Sent: 18 December 2017 11:22
+> To: Biju Das <biju.das@bp.renesas.com>
+> Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
+> <mark.rutland@arm.com>; Kuninori Morimoto
+> <kuninori.morimoto.gx@renesas.com>; Magnus Damm
+> <magnus.damm@gmail.com>; Chris Paterson <Chris.Paterson2@renesas.com>;
+> Fabrizio Castro <fabrizio.castro@bp.renesas.com>;
+> devicetree@vger.kernel.org; linux-renesas-soc@vger.kernel.org
+> Subject: Re: [PATCH 1/5] ARM: dts: iwg20d-q7-common: Sound PIO support
+>
+> On Fri, Dec 15, 2017 at 02:50:49PM +0000, Biju Das wrote:
+> > Enable sound PIO support on carrier board.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > ---
+> >  arch/arm/boot/dts/iwg20d-q7-common.dtsi | 46
+> > +++++++++++++++++++++++++++++++++
+>
+> It appears that the nodes in this file are in (or close to in) alphabetic=
+al order.
+> Please add new nodes in a manner that preserves that. If necessary please
+> provide a clean-up patch to shift nodes into alphabetical order.
 
+
+[https://www2.renesas.eu/media/email/unicef_2017.jpg]
+
+This Christmas, instead of sending out cards, Renesas Electronics Europe ha=
+ve decided to support Unicef with a donation. For further details click her=
+e<https://www.unicef.org/> to find out about the valuable work they do, hel=
+ping children all over the world.
+We would like to take this opportunity to wish you a Merry Christmas and a =
+prosperous New Year.
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
