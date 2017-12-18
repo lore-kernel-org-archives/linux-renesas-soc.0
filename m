@@ -1,74 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752224AbdLVK3p (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38572 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932655AbdLRLXL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:29:45 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/11] arm64: dts: renesas: r8a7796: add usb3_phy node
-Date: Fri, 22 Dec 2017 11:29:20 +0100
-Message-Id: <488153d9fb3aa3d5b2e3acac34191917b83dbcd9.1513936761.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513936760.git.horms+renesas@verge.net.au>
-References: <cover.1513936760.git.horms+renesas@verge.net.au>
+        Mon, 18 Dec 2017 06:23:11 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH 1/4] videodevice: Fix minor spacing
+Date: Mon, 18 Dec 2017 13:23:21 +0200
+Message-ID: <2350156.ygCqAgIcf0@avalon>
+In-Reply-To: <494504a89241ba23024e8e125e8d6950fb70a18d.1513206331.git-series.kieran.bingham@ideasonboard.com>
+References: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com> <494504a89241ba23024e8e125e8d6950fb70a18d.1513206331.git-series.kieran.bingham@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hi Kieran,
 
-This patch adds USB3.0 PHY node for r8a7796.
+Thank you for the patch.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+On Thursday, 14 December 2017 01:10:09 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> Provide a space between the return type and the function definition
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index a339047acdc7..c5192d513d7d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1403,6 +1403,19 @@
- 			status = "disabled";
- 		};
- 
-+		usb3_phy0: usb-phy@e65ee000 {
-+			compatible = "renesas,r8a7796-usb3-phy",
-+				     "renesas,rcar-gen3-usb3-phy";
-+			reg = <0 0xe65ee000 0 0x90>;
-+			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
-+				 <&usb_extal_clk>;
-+			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		xhci0: usb@ee000000 {
- 			compatible = "renesas,xhci-r8a7796",
- 				     "renesas,rcar-gen3-xhci";
-@@ -2021,4 +2034,17 @@
- 			};
- 		};
- 	};
-+
-+	/* External USB clocks - can be overridden by the board */
-+	usb3s0_clk: usb3s0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
- };
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  kms++util/src/videodevice.cpp | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kms++util/src/videodevice.cpp b/kms++util/src/videodevice.cpp
+> index e21916bcd06b..efe1678d031e 100644
+> --- a/kms++util/src/videodevice.cpp
+> +++ b/kms++util/src/videodevice.cpp
+> @@ -436,7 +436,7 @@ void VideoStreamer::queue(DumbFramebuffer* fb)
+>  	v4l2_queue_dmabuf(m_fd, idx, fb, get_buf_type(m_type));
+>  }
+> 
+> -DumbFramebuffer*VideoStreamer::dequeue()
+> +DumbFramebuffer* VideoStreamer::dequeue()
+>  {
+>  	uint32_t idx = v4l2_dequeue(m_fd, get_buf_type(m_type));
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
