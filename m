@@ -1,67 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:22644 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752131AbdLLStt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54952 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935302AbdLRVdE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 13:49:49 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: timer: renesas, cmt: Document r8a774[35] CMT support
-Date: Tue, 12 Dec 2017 18:49:37 +0000
-Message-Id: <1513104579-6333-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513104579-6333-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 18 Dec 2017 16:33:04 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] ARM: dts: r8a7792: Timer node nodes out of bus
+Date: Mon, 18 Dec 2017 22:32:31 +0100
+Message-Id: <20171218213233.3373-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document SoC specific compatible strings for r8a7743 and r8a7745.
-No driver change is needed as the fallback strings will activate
-the right code.
+Move the timer node, which have no reg property, out of the root node.
+The nodes that have been moved do not have any register properties and thus
+shouldn't be placed on the bus.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/timer/renesas,cmt.txt | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+In preparation for the above sort nodes in the root node alphabetically.
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-index d740989..1e4fe98 100644
---- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-@@ -22,6 +22,10 @@ Required Properties:
- 
-     - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8a73a4.
-     - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8a73a4.
-+    - "renesas,r8a7743-cmt0" for the 32-bit CMT0 device included in r8a7743.
-+    - "renesas,r8a7743-cmt1" for the 48-bit CMT1 device included in r8a7743.
-+    - "renesas,r8a7745-cmt0" for the 32-bit CMT0 device included in r8a7745.
-+    - "renesas,r8a7745-cmt1" for the 48-bit CMT1 device included in r8a7745.
-     - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
-     - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7790.
-     - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7791.
-@@ -31,9 +35,11 @@ Required Properties:
-     - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7794.
-     - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8a7794.
- 
--    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2.
--    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2.
--		These are fallbacks for r8a73a4 and all the R-Car Gen2
-+    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2 or
-+		RZ/G1.
-+    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2 or
-+		RZ/G1.
-+		These are fallbacks for r8a73a4, all the R-Car Gen2 and RZ/G1
- 		entries	listed above.
- 
-   - reg: base address and length of the registers block for the timer module.
+Based on renesas-devel-20171218-v4.15-rc4
+
+Simon Horman (2):
+  ARM: dts: r8a7792: sort root sub-nodes alphabetically
+  ARM: dts: r8a7792: move timer node out of bus
+
+ arch/arm/boot/dts/r8a7792.dtsi | 64 ++++++++++++++++++++----------------------
+ 1 file changed, 30 insertions(+), 34 deletions(-)
+
 -- 
-2.7.4
+2.11.0
