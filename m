@@ -1,41 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:35569 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751688AbdLLS1K (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 13:27:10 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 0/5] Add Sound support for iWave RZ/G1M board
-Date: Tue, 12 Dec 2017 18:25:06 +0000
-Message-Id: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 4/6] dt-bindings: pwm: renesas-tpu: Document r8a774[35] support
+Date: Mon, 18 Dec 2017 17:52:06 +0000
+Message-Id: <1513619528-12060-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series aims to add sound support for iWave RZ/G1M board.
 
-This patch series has documentation dependency on 
-https://patchwork.kernel.org/patch/10108014/
+Document r8a774[35] specific compatible strings. No driver change is
+needed as the fallback compatible string "renesas,tpu" activates the
+right code in the driver.
 
-Biju Das (5):
-  ARM: shmobile: defconfig: Enable SGTL5000 audio codec
-  ARM: dts: r8a7743: Add audio clocks
-  ARM: dts: r8a7743: Add audio DMAC support
-  ARM: dts: r8a7743: Add sound support
-  ARM: dts: iwg20d-q7-common: Enable SGTL5000 audio codec
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v1->v2
+* No change
 
- arch/arm/boot/dts/iwg20d-q7-common.dtsi |  24 +++
- arch/arm/boot/dts/r8a7743.dtsi          | 270 ++++++++++++++++++++++++++++++++
- arch/arm/configs/shmobile_defconfig     |   1 +
- 3 files changed, 295 insertions(+)
+ Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
+index 1aadc80..16e5748 100644
+--- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
++++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
+@@ -5,8 +5,10 @@ Required Properties:
+   - compatible: should be one of the following.
+     - "renesas,tpu-r8a73a4": for R8A77A4 (R-Mobile APE6) compatible PWM controller.
+     - "renesas,tpu-r8a7740": for R8A7740 (R-Mobile A1) compatible PWM controller.
++    - "renesas,tpu-r8a7743": for R8A7743 (RZ/G1M) compatible PWM controller.
++    - "renesas,tpu-r8a7745": for R8A7745 (RZ/G1E) compatible PWM controller.
+     - "renesas,tpu-r8a7790": for R8A7790 (R-Car H2) compatible PWM controller.
+-    - "renesas,tpu": for generic R-Car TPU PWM controller.
++    - "renesas,tpu": for generic R-Car and RZ/G1 TPU PWM controller.
+ 
+   - reg: Base address and length of each memory resource used by the PWM
+     controller hardware module.
 -- 
-1.9.1
+2.7.4
+
