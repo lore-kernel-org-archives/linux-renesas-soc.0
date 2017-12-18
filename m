@@ -1,80 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:28235 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935370AbdLRRNY (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:41191 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750830AbdLRLPR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 12:13:24 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mon, 18 Dec 2017 06:15:17 -0500
+MIME-Version: 1.0
+In-Reply-To: <1513248976-26700-6-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com> <1513248976-26700-6-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Dec 2017 12:15:16 +0100
+Message-ID: <CAMuHMdW8tfg9AnJbLF=yMFbS2R=F37tzfcxYpF6yDtm1WLoY7g@mail.gmail.com>
+Subject: Re: [PATCH 5/6] pinctrl: sh-pfc: r8a7791: Add tpu groups and function
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        "Simon Horman" <horms@verge.net.au>,
+        Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: RE: [PATCH 5/6] pinctrl: sh-pfc: r8a7791: Add tpu groups and function
-Date: Mon, 18 Dec 2017 17:13:14 +0000
-Message-ID: <TY1PR06MB0895578E8217996C8CD517ABC00E0@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1513248976-26700-6-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdW8tfg9AnJbLF=yMFbS2R=F37tzfcxYpF6yDtm1WLoY7g@mail.gmail.com>
-In-Reply-To: <CAMuHMdW8tfg9AnJbLF=yMFbS2R=F37tzfcxYpF6yDtm1WLoY7g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4NCg0KPiBTdWJqZWN0
-OiBSZTogW1BBVENIIDUvNl0gcGluY3RybDogc2gtcGZjOiByOGE3NzkxOiBBZGQgdHB1IGdyb3Vw
-cyBhbmQgZnVuY3Rpb24NCj4NCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIFRodSwgRGVjIDE0LCAy
-MDE3IGF0IDExOjU2IEFNLCBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ryb0BicC5y
-ZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRzIHRwdSBncm91cHMgYW5kIGZ1
-bmN0aW9uIHRvIHI4YTc3NDMvcjhhNzc5MS9yOGE3NzkzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4g
-UmV2aWV3ZWQtYnk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4NCj4gV2l0
-aCB0aGUgc29ydCBvcmRlciBmaXhlZDoNCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZl
-biA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQoNCkknbGwgc2VuZCBhIHYyIHRvIGZpeCB0aGUg
-b3JkZXIuDQoNClRoYW5rcywNCkZhYg0KDQo+DQo+ID4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3No
-LXBmYy9wZmMtcjhhNzc5MS5jDQo+ID4gKysrIGIvZHJpdmVycy9waW5jdHJsL3NoLXBmYy9wZmMt
-cjhhNzc5MS5jDQo+ID4gQEAgLTM4OTIsNiArMzg5MiwzMiBAQCBzdGF0aWMgY29uc3QgdW5zaWdu
-ZWQgaW50IHNkaGkyX3dwX211eFtdID0gew0KPiA+ICAgICAgICAgU0QyX1dQX01BUkssDQo+ID4g
-IH07DQo+ID4NCj4gPiArLyogLSBUUFUgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gKi8NCj4gPiArc3RhdGljIGNvbnN0
-IHVuc2lnbmVkIGludCB0cHVfdG8wX3BpbnNbXSA9IHsNCj4gPiArICAgICAgIFJDQVJfR1BfUElO
-KDYsIDE0KSwNCj4gPiArfTsNCj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCB0cHVfdG8w
-X211eFtdID0gew0KPiA+ICsgICAgICAgVFBVX1RPMF9NQVJLLA0KPiA+ICt9Ow0KPiA+ICtzdGF0
-aWMgY29uc3QgdW5zaWduZWQgaW50IHRwdV90bzFfcGluc1tdID0gew0KPiA+ICsgICAgICAgUkNB
-Ul9HUF9QSU4oMSwgMTcpLA0KPiA+ICt9Ow0KPiA+ICtzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50
-IHRwdV90bzFfbXV4W10gPSB7DQo+ID4gKyAgICAgICBUUFVfVE8xX01BUkssDQo+ID4gK307DQo+
-ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgdHB1X3RvMl9waW5zW10gPSB7DQo+ID4gKyAg
-ICAgICBSQ0FSX0dQX1BJTigxLCAxOCksDQo+ID4gK307DQo+ID4gK3N0YXRpYyBjb25zdCB1bnNp
-Z25lZCBpbnQgdHB1X3RvMl9tdXhbXSA9IHsNCj4gPiArICAgICAgIFRQVV9UTzJfTUFSSywNCj4g
-PiArfTsNCj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCB0cHVfdG8zX3BpbnNbXSA9IHsN
-Cj4gPiArICAgICAgIFJDQVJfR1BfUElOKDEsIDI0KSwNCj4gPiArfTsNCj4gPiArc3RhdGljIGNv
-bnN0IHVuc2lnbmVkIGludCB0cHVfdG8zX211eFtdID0gew0KPiA+ICsgICAgICAgVFBVX1RPM19N
-QVJLLA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiAgLyogLSBTU0kgLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gKi8NCj4gPiAg
-c3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBzc2kwX2RhdGFfcGluc1tdID0gew0KPiA+ICAgICAg
-ICAgLyogU0RBVEEgKi8NCj4NCj4gUGxlYXNlIHVzZSBhbHBoYWJldGljYWwgc29ydCBvcmRlciAo
-YWxzbyBiZWxvdykuDQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAg
-ICAgICAgICAgICBHZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUn
-cyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+DQo+
-IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwg
-bXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJ
-IGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQoNCg0KW2h0dHBzOi8v
-d3d3Mi5yZW5lc2FzLmV1L21lZGlhL2VtYWlsL3VuaWNlZl8yMDE3LmpwZ10NCg0KVGhpcyBDaHJp
-c3RtYXMsIGluc3RlYWQgb2Ygc2VuZGluZyBvdXQgY2FyZHMsIFJlbmVzYXMgRWxlY3Ryb25pY3Mg
-RXVyb3BlIGhhdmUgZGVjaWRlZCB0byBzdXBwb3J0IFVuaWNlZiB3aXRoIGEgZG9uYXRpb24uIEZv
-ciBmdXJ0aGVyIGRldGFpbHMgY2xpY2sgaGVyZTxodHRwczovL3d3dy51bmljZWYub3JnLz4gdG8g
-ZmluZCBvdXQgYWJvdXQgdGhlIHZhbHVhYmxlIHdvcmsgdGhleSBkbywgaGVscGluZyBjaGlsZHJl
-biBhbGwgb3ZlciB0aGUgd29ybGQuDQpXZSB3b3VsZCBsaWtlIHRvIHRha2UgdGhpcyBvcHBvcnR1
-bml0eSB0byB3aXNoIHlvdSBhIE1lcnJ5IENocmlzdG1hcyBhbmQgYSBwcm9zcGVyb3VzIE5ldyBZ
-ZWFyLg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3cs
-IE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVL
-LiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4
-NjcwOS4NCg==
+Hi Fabrizio,
+
+On Thu, Dec 14, 2017 at 11:56 AM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds tpu groups and function to r8a7743/r8a7791/r8a7793.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+
+With the sort order fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> @@ -3892,6 +3892,32 @@ static const unsigned int sdhi2_wp_mux[] = {
+>         SD2_WP_MARK,
+>  };
+>
+> +/* - TPU -------------------------------------------------------------------- */
+> +static const unsigned int tpu_to0_pins[] = {
+> +       RCAR_GP_PIN(6, 14),
+> +};
+> +static const unsigned int tpu_to0_mux[] = {
+> +       TPU_TO0_MARK,
+> +};
+> +static const unsigned int tpu_to1_pins[] = {
+> +       RCAR_GP_PIN(1, 17),
+> +};
+> +static const unsigned int tpu_to1_mux[] = {
+> +       TPU_TO1_MARK,
+> +};
+> +static const unsigned int tpu_to2_pins[] = {
+> +       RCAR_GP_PIN(1, 18),
+> +};
+> +static const unsigned int tpu_to2_mux[] = {
+> +       TPU_TO2_MARK,
+> +};
+> +static const unsigned int tpu_to3_pins[] = {
+> +       RCAR_GP_PIN(1, 24),
+> +};
+> +static const unsigned int tpu_to3_mux[] = {
+> +       TPU_TO3_MARK,
+> +};
+> +
+>  /* - SSI -------------------------------------------------------------------- */
+>  static const unsigned int ssi0_data_pins[] = {
+>         /* SDATA */
+
+Please use alphabetical sort order (also below).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
