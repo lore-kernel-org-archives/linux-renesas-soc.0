@@ -1,98 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:34970 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754162AbdLNTKF (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43754 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935897AbdLRXYI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 14:10:05 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+        Mon, 18 Dec 2017 18:24:08 -0500
+Received: by mail-lf0-f68.google.com with SMTP id o26so5380956lfc.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Dec 2017 15:24:07 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Tue, 19 Dec 2017 00:24:05 +0100
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Benoit Parrot <bparrot@ti.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [RFC 1/2] Synchronize with the Kernel headers for routing operations
-Date: Thu, 14 Dec 2017 20:09:42 +0100
-Message-Id: <20171214190943.8179-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171214190943.8179-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171214190943.8179-1-niklas.soderlund+renesas@ragnatech.se>
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH/RFC v2 03/15] rcar-vin: use the pad and stream aware
+ s_stream
+Message-ID: <20171218232405.GG32148@bigcity.dyn.berto.se>
+References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171214190835.7672-4-niklas.soderlund+renesas@ragnatech.se>
+ <20171215120739.si2b27npc25zxelv@paasikivi.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171215120739.si2b27npc25zxelv@paasikivi.fi.intel.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/linux/v4l2-subdev.h | 41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+Hej Sakari,
 
-diff --git a/include/linux/v4l2-subdev.h b/include/linux/v4l2-subdev.h
-index dbce2b554e026869..e19ee64075d6cbdf 100644
---- a/include/linux/v4l2-subdev.h
-+++ b/include/linux/v4l2-subdev.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
- /*
-  * V4L2 subdev userspace API
-  *
-@@ -154,6 +155,44 @@ struct v4l2_subdev_selection {
- 	__u32 reserved[8];
- };
- 
-+#define V4L2_SUBDEV_ROUTE_FL_ACTIVE	(1 << 0)
-+#define V4L2_SUBDEV_ROUTE_FL_IMMUTABLE	(1 << 1)
-+
-+/**
-+ * struct v4l2_subdev_route - A signal route inside a subdev
-+ * @sink_pad: the sink pad
-+ * @sink_stream: the sink stream
-+ * @source_pad: the source pad
-+ * @source_stream: the source stream
-+ * @flags: route flags:
-+ *
-+ *	V4L2_SUBDEV_ROUTE_FL_ACTIVE: Is the stream in use or not? An
-+ *	active stream will start when streaming is enabled on a video
-+ *	node. Set by the user.
-+ *
-+ *	V4L2_SUBDEV_ROUTE_FL_IMMUTABLE: Is the stream immutable, i.e.
-+ *	can it be activated and inactivated? Set by the driver.
-+ */
-+struct v4l2_subdev_route {
-+	__u32 sink_pad;
-+	__u32 sink_stream;
-+	__u32 source_pad;
-+	__u32 source_stream;
-+	__u32 flags;
-+	__u32 reserved[5];
-+};
-+
-+/**
-+ * struct v4l2_subdev_routing - Routing information
-+ * @routes: the routes array
-+ * @num_routes: the total number of routes in the routes array
-+ */
-+struct v4l2_subdev_routing {
-+	struct v4l2_subdev_route *routes;
-+	__u32 num_routes;
-+	__u32 reserved[5];
-+};
-+
- /* Backwards compatibility define --- to be removed */
- #define v4l2_subdev_edid v4l2_edid
- 
-@@ -176,5 +215,7 @@ struct v4l2_subdev_selection {
- #define VIDIOC_SUBDEV_ENUM_DV_TIMINGS		_IOWR('V', 98, struct v4l2_enum_dv_timings)
- #define VIDIOC_SUBDEV_QUERY_DV_TIMINGS		_IOR('V', 99, struct v4l2_dv_timings)
- #define VIDIOC_SUBDEV_DV_TIMINGS_CAP		_IOWR('V', 100, struct v4l2_dv_timings_cap)
-+#define VIDIOC_SUBDEV_G_ROUTING			_IOWR('V', 38, struct v4l2_subdev_routing)
-+#define VIDIOC_SUBDEV_S_ROUTING			_IOWR('V', 39, struct v4l2_subdev_routing)
- 
- #endif
+Tack f�r dina kommentarer.
+
+On 2017-12-15 14:07:39 +0200, Sakari Ailus wrote:
+> Hej,
+> 
+> On Thu, Dec 14, 2017 at 08:08:23PM +0100, Niklas S�derlund wrote:
+> > To work with multiplexed streams the pad and stream aware s_stream
+> > operation needs to be used.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-dma.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> > index cf30e5fceb1d493a..8435491535060eae 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> > @@ -1180,7 +1180,7 @@ static int rvin_set_stream(struct rvin_dev *vin, int on)
+> >  
+> >  	if (!on) {
+> >  		media_pipeline_stop(vin->vdev.entity.pads);
+> > -		return v4l2_subdev_call(sd, video, s_stream, 0);
+> > +		return v4l2_subdev_call(sd, pad, s_stream, pad->index, 0, 0);
+> 
+> Have you thought of adding a wrapper for the s_stream callback?
+
+I toyed with the idea, then I reached the same conclusion you do bellow.
+
+> 
+> I think you should either change all s_stream callbacks from video to pad,
+> or add a wrapper which then calls the video op instead of the pad op if the
+> pad op does not exist. Otherwise we again have two non-interoperable
+> classes of drivers for no good reason.
+
+Agreed.
+
+> 
+> Thinking about it, I'm not all that certain changing all instances would be
+> that much work in the end; it should be done anyway. Devices that have a
+> single stream (i.e. everything right now) just don't care about the pad
+> number.
+
+I tried to cover this in the cover-letter, I believe the correct 
+approach is probably to move s_stream() from video ops to pad ops in the 
+long run. I did post a similar patch for this a while ago [1] but I fear 
+it's outdated by now. Before I refreshed that particular patch I was 
+interested on the feedback on this from this series as I don't want to 
+send out a patch touching so many drivers without at least some 
+discussion :-)
+
+I would be find with both the helper and a full conversion approach. Or 
+to do it in stages, add a helper now and slowly convert all drivers and 
+then removing the helper. What would be your preferred way of dealing 
+with this?
+
+1.  http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2016-June/091250.html
+
+> 
+> >  	}
+> >  
+> >  	fmt.pad = pad->index;
+> > @@ -1239,12 +1239,14 @@ static int rvin_set_stream(struct rvin_dev *vin, int on)
+> >  	if (media_pipeline_start(vin->vdev.entity.pads, pipe))
+> >  		return -EPIPE;
+> >  
+> > -	ret = v4l2_subdev_call(sd, video, s_stream, 1);
+> > +	ret = v4l2_subdev_call(sd, pad, s_stream, pad->index, 0, 1);
+> >  	if (ret == -ENOIOCTLCMD)
+> >  		ret = 0;
+> >  	if (ret)
+> >  		media_pipeline_stop(vin->vdev.entity.pads);
+> >  
+> > +	vin_dbg(vin, "pad: %u stream: 0 enable: %d\n", pad->index, on);
+> > +
+> >  	return ret;
+> >  }
+> >  
+> > -- 
+> > 2.15.1
+> > 
+> 
+> -- 
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
+
 -- 
-2.14.2
+Regards,
+Niklas S�derlund
