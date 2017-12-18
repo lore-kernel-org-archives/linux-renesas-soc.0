@@ -1,166 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:59461 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751181AbdLNK5V (ORCPT
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:26092 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752858AbdLRPsf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 05:57:21 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 3/4] pinctrl: sh-pfc: r8a7794: Add tpu groups and function
-Date: Thu, 14 Dec 2017 10:57:05 +0000
-Message-Id: <1513249026-26759-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513249026-26759-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513249026-26759-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 18 Dec 2017 10:48:35 -0500
+Subject: Re: [PATCH 3/4] kms++util: Add verification module
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: <kieran.bingham@ideasonboard.com>,
+        <linux-renesas-soc@vger.kernel.org>
+References: <cover.1a04e7d4a0006d06c345704eb5332e82c73312ee.1513206331.git-series.kieran.bingham@ideasonboard.com>
+ <4127740.6d2LxRg6UI@avalon> <99e99d24-6ee3-884d-edf9-570fcbc5ab14@ti.com>
+ <2040658.4j5LHz4jYX@avalon>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <170c3cec-57a3-d57e-d657-cf8a0590bde3@ti.com>
+Date: Mon, 18 Dec 2017 17:48:28 +0200
+MIME-Version: 1.0
+In-Reply-To: <2040658.4j5LHz4jYX@avalon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds tpu groups and function to r8a7745/r8a7794.
+On 18/12/17 17:41, Laurent Pinchart wrote:
+> Hi Tomi,
+> 
+> On Monday, 18 December 2017 14:04:45 EET Tomi Valkeinen wrote:
+>> On 18/12/17 13:50, Laurent Pinchart wrote:
+>>> That's an option too. I had a look at the code once to find out how
+>>> ImageMagick was performing scaling and gave up with a headache soon
+>>> afterwards. We need more formats than what ImageMagick currently supports
+>>> (it's mostly focused on image file formats instead of raw image formats),
+>>> with all kind of RGB, YUV (and ideally Bayer) formats, and I don't think
+>>> extending ImageMagick would be the way to go.
+>>
+>> Yep, I can image that ImageMagick can't handle it all. I don't really
+>> have much experience with it. I did find that it has enough tunables to
+>> manage rgbx8888 with different byte orders and the "extra" alpha channel:
+>>
+>> convert -depth 8 -size $1x$2 -color-matrix "0 0 1 0 1 0 1 0 0" -alpha
+>> deactivate rgba:$3 png:-
+>>
+>> But things like argb1555 or yuv422 might prove to be too difficult for
+>> ImageMagick.
+>>
+>> Where's the source for v4l2convert? What does it do?
+> 
+> Sorry, it's v4lconvert, not v4l2convert. The library is part of v4l-utils
+> (available at git://linuxtv.org/pinchartl/v4l-utils.git) and is found in the
+> lib/libv4lconvert directory.
+> 
+> The purpose of the library is to convert from lots of weird formats supported
+> by V4L2 to RGB or YUV. It was initially written to handle vendor-specific
+> compression formats used by webcams, has been extended to support Bayer
+> formats and different kind of RGB and YUV formats. The code is simple, I think
+> it could be a good base.
+> 
+>> I wonder how difficult it would be to create a brute-force-no-optimizations
+>> style of a function to which you give the exact bit definition of the
+>> buffer's pixel format, and which gives you RGB888 or YUV444, depending on
+>> the input format (I presume most image encoders would accept RGB888 &
+>> YUV444).
+> 
+> Can you come up with a bit definition format that could describe Bayer or
+> tiled formats without requiring the definition to be written in an interpreted
+> language ? :-)
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 101 +++++++++++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
+I have only worked with RGB and YUV, so that should be enough for 
+everybody. ;)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index dccc20a..455cb02 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -3254,6 +3254,79 @@ static const unsigned int sdhi2_wp_pins[] = {
- static const unsigned int sdhi2_wp_mux[] = {
- 	SD2_WP_MARK,
- };
-+/* - TPU -------------------------------------------------------------------- */
-+static const unsigned int tpu_to0_pins[] = {
-+	RCAR_GP_PIN(3, 31),
-+};
-+static const unsigned int tpu_to0_mux[] = {
-+	TPUTO0_MARK,
-+};
-+static const unsigned int tpu_to0_b_pins[] = {
-+	RCAR_GP_PIN(3, 30),
-+};
-+static const unsigned int tpu_to0_b_mux[] = {
-+	TPUTO0_B_MARK,
-+};
-+static const unsigned int tpu_to0_c_pins[] = {
-+	RCAR_GP_PIN(1, 18),
-+};
-+static const unsigned int tpu_to0_c_mux[] = {
-+	TPUTO0_C_MARK,
-+};
-+static const unsigned int tpu_to1_pins[] = {
-+	RCAR_GP_PIN(4, 9),
-+};
-+static const unsigned int tpu_to1_mux[] = {
-+	TPUTO1_MARK,
-+};
-+static const unsigned int tpu_to1_b_pins[] = {
-+	RCAR_GP_PIN(4, 0),
-+};
-+static const unsigned int tpu_to1_b_mux[] = {
-+	TPUTO1_B_MARK,
-+};
-+static const unsigned int tpu_to1_c_pins[] = {
-+	RCAR_GP_PIN(4, 4),
-+};
-+static const unsigned int tpu_to1_c_mux[] = {
-+	TPUTO1_C_MARK,
-+};
-+static const unsigned int tpu_to2_pins[] = {
-+	RCAR_GP_PIN(1, 3),
-+};
-+static const unsigned int tpu_to2_mux[] = {
-+	TPUTO2_MARK,
-+};
-+static const unsigned int tpu_to2_b_pins[] = {
-+	RCAR_GP_PIN(1, 0),
-+};
-+static const unsigned int tpu_to2_b_mux[] = {
-+	TPUTO2_B_MARK,
-+};
-+static const unsigned int tpu_to2_c_pins[] = {
-+	RCAR_GP_PIN(0, 22),
-+};
-+static const unsigned int tpu_to2_c_mux[] = {
-+	TPUTO2_C_MARK,
-+};
-+static const unsigned int tpu_to3_pins[] = {
-+	RCAR_GP_PIN(1, 14),
-+};
-+static const unsigned int tpu_to3_mux[] = {
-+	TPUTO3_MARK,
-+};
-+static const unsigned int tpu_to3_b_pins[] = {
-+	RCAR_GP_PIN(1, 13),
-+};
-+static const unsigned int tpu_to3_b_mux[] = {
-+	TPUTO3_B_MARK,
-+};
-+static const unsigned int tpu_to3_c_pins[] = {
-+	RCAR_GP_PIN(0, 21),
-+};
-+static const unsigned int tpu_to3_c_mux[] = {
-+	TPUTO3_C_MARK,
-+};
- /* - SSI -------------------------------------------------------------------- */
- static const unsigned int ssi0_data_pins[] = {
- 	/* SDATA0 */
-@@ -3892,6 +3965,18 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(sdhi2_ctrl),
- 	SH_PFC_PIN_GROUP(sdhi2_cd),
- 	SH_PFC_PIN_GROUP(sdhi2_wp),
-+	SH_PFC_PIN_GROUP(tpu_to0),
-+	SH_PFC_PIN_GROUP(tpu_to0_b),
-+	SH_PFC_PIN_GROUP(tpu_to0_c),
-+	SH_PFC_PIN_GROUP(tpu_to1),
-+	SH_PFC_PIN_GROUP(tpu_to1_b),
-+	SH_PFC_PIN_GROUP(tpu_to1_c),
-+	SH_PFC_PIN_GROUP(tpu_to2),
-+	SH_PFC_PIN_GROUP(tpu_to2_b),
-+	SH_PFC_PIN_GROUP(tpu_to2_c),
-+	SH_PFC_PIN_GROUP(tpu_to3),
-+	SH_PFC_PIN_GROUP(tpu_to3_b),
-+	SH_PFC_PIN_GROUP(tpu_to3_c),
- 	SH_PFC_PIN_GROUP(ssi0_data),
- 	SH_PFC_PIN_GROUP(ssi0129_ctrl),
- 	SH_PFC_PIN_GROUP(ssi1_data),
-@@ -4351,6 +4436,21 @@ static const char * const sdhi2_groups[] = {
- 	"sdhi2_wp",
- };
- 
-+static const char * const tpu_groups[] = {
-+	"tpu_to0",
-+	"tpu_to0_b",
-+	"tpu_to0_c",
-+	"tpu_to1",
-+	"tpu_to1_b",
-+	"tpu_to1_c",
-+	"tpu_to2",
-+	"tpu_to2_b",
-+	"tpu_to2_c",
-+	"tpu_to3",
-+	"tpu_to3_b",
-+	"tpu_to3_c",
-+};
-+
- static const char * const ssi_groups[] = {
- 	"ssi0_data",
- 	"ssi0129_ctrl",
-@@ -4469,6 +4569,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi0),
- 	SH_PFC_FUNCTION(sdhi1),
- 	SH_PFC_FUNCTION(sdhi2),
-+	SH_PFC_FUNCTION(tpu),
- 	SH_PFC_FUNCTION(ssi),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
+But more seriously, I think kms++ is mainly for display. Do we have any 
+display devices that support Bayer? And tiled formats sound a bit 
+special platform specific cases.
+
+That said, if we have a library that just does it all, that's obviously 
+the best option.
+
 -- 
-2.7.4
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. 
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
