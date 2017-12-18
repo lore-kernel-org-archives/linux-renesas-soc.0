@@ -1,32 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53039 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754404AbdLTJiW (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:42728 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933335AbdLRPvw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 04:38:22 -0500
-Date: Wed, 20 Dec 2017 10:38:18 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-can@vger.kernel.org,
-        devicetree@vger.kernel.org, wsa@the-dreams.de,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        chris.paterson2@renesas.com,
-        ramesh.shanmugasundaram@bp.renesas.com, robh@kernel.org
-Subject: Re: [PATCH v2 2/2] can: rcar_canfd: document r8a77995 (R-Car D3)
- compatibility strings
-Message-ID: <20171220093817.76pqd6ivqk3qjdyh@verge.net.au>
+        Mon, 18 Dec 2017 10:51:52 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
+        wsa@the-dreams.de, horms@verge.net.au, geert@linux-m68k.org,
+        magnus.damm@gmail.com, chris.paterson2@renesas.com,
+        ramesh.shanmugasundaram@bp.renesas.com, robh@kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 2/2] can: rcar_canfd: document r8a77995 (R-Car D3) compatibility strings
+Date: Mon, 18 Dec 2017 16:51:37 +0100
+Message-Id: <1513612297-10173-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1513612297-10173-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 References: <1513612297-10173-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1513612297-10173-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1513612297-10173-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Dec 18, 2017 at 04:51:37PM +0100, Ulrich Hecht wrote:
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+index 93c3a6a..eeb9fec 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+@@ -6,6 +6,7 @@ Required properties:
+   - "renesas,rcar-gen3-canfd" for R-Car Gen3 compatible controller.
+   - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
+   - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3) compatible controller.
++  - "renesas,r8a77995-canfd" for R8A77995 (R-Car D3) compatible controller.
+ 
+   When compatible with the generic version, nodes must list the
+   SoC-specific version corresponding to the platform first, followed by the
+@@ -24,12 +25,12 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
+ child node supports the "status" property only, which is used to
+ enable/disable the respective channel.
+ 
+-Required properties for "renesas,r8a7795-canfd" and "renesas,r8a7796-canfd"
+-compatible:
+-In R8A7795 and R8A7796 SoCs, canfd clock is a div6 clock and can be used by both
+-CAN and CAN FD controller at the same time. It needs to be scaled to maximum
+-frequency if any of these controllers use it. This is done using the below
+-properties:
++Required properties for "renesas,r8a7795-canfd", "renesas,r8a7796-canfd" and
++"renesas,r8a77995-canfd" compatible:
++In R8A7795, R8A7796 and R8A77995 SoCs, canfd clock is a div6 clock and can
++be used by both CAN and CAN FD controller at the same time. It needs to be
++scaled to maximum frequency if any of these controllers use it. This is
++done using the below properties:
+ 
+ - assigned-clocks: phandle of canfd clock.
+ - assigned-clock-rates: maximum frequency of this clock.
+-- 
+2.7.4
