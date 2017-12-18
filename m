@@ -1,41 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:33905 "EHLO mga03.intel.com"
+Received: from sauhun.de ([88.99.104.3]:40905 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754306AbdLNXoa (ORCPT
+        id S965322AbdLRV6K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 18:44:30 -0500
-Date: Fri, 15 Dec 2017 07:44:21 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: kbuild-all@01.org, linux-renesas-soc@vger.kernel.org
-Subject: [RFC PATCH renesas-drivers] [RFC] of: dead_aliases_lookup can be
- static
-Message-ID: <20171214234421.GA44958@lkp-sb05>
-References: <201712150710.pTXUwb8r%fengguang.wu@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201712150710.pTXUwb8r%fengguang.wu@intel.com>
+        Mon, 18 Dec 2017 16:58:10 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 4/7] i2c: sh_mobile: let RuntimePM do the clock handling
+Date: Mon, 18 Dec 2017 22:57:59 +0100
+Message-Id: <20171218215802.28591-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
+References: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Start RuntimePM a bit earlier, so we can use it to enable the clock
+during probe for frequency calculations. Make sure it is enabled before
+calling setup().
 
-Fixes: 19e0da502da1 ("[RFC] of: Add of_alias_destroy()")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- base.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-sh_mobile.c | 35 +++++++++++++++++------------------
+ 1 file changed, 17 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 5d3a0ad..1f3f84c 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1568,7 +1568,7 @@ void of_alias_create(struct property *pp,
- }
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index 88af45225003a5..f1a9b971e2c14a 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -252,11 +252,7 @@ static int sh_mobile_i2c_init(struct sh_mobile_i2c_data *pd)
+ 	u32 tHIGH, tLOW, tf;
+ 	uint16_t max_val;
  
- #ifdef CONFIG_OF_DYNAMIC
--LIST_HEAD(dead_aliases_lookup);
-+static LIST_HEAD(dead_aliases_lookup);
+-	/* Get clock rate after clock is enabled */
+-	clk_prepare_enable(pd->clk);
+-	i2c_clk_khz = clk_get_rate(pd->clk) / 1000;
+-	clk_disable_unprepare(pd->clk);
+-	i2c_clk_khz /= pd->clks_per_count;
++	i2c_clk_khz = clk_get_rate(pd->clk) / 1000 / pd->clks_per_count;
  
- void of_alias_destroy(const char *name)
- {
+ 	if (pd->bus_speed == STANDARD_MODE) {
+ 		tLOW	= 47;	/* tLOW = 4.7 us */
+@@ -881,6 +877,20 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 	if (resource_size(res) > 0x17)
+ 		pd->flags |= IIC_FLAG_HAS_ICIC67;
+ 
++	/* Enable Runtime PM for this device.
++	 *
++	 * Also tell the Runtime PM core to ignore children
++	 * for this device since it is valid for us to suspend
++	 * this I2C master driver even though the slave devices
++	 * on the I2C bus may not be suspended.
++	 *
++	 * The state of the I2C hardware bus is unaffected by
++	 * the Runtime PM state.
++	 */
++	pm_suspend_ignore_children(&dev->dev, true);
++	pm_runtime_enable(&dev->dev);
++	pm_runtime_get_sync(&dev->dev);
++
+ 	config = of_device_get_match_data(&dev->dev);
+ 	if (config) {
+ 		pd->clks_per_count = config->clks_per_count;
+@@ -888,6 +898,8 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 	} else {
+ 		ret = sh_mobile_i2c_init(pd);
+ 	}
++
++	pm_runtime_put_sync(&dev->dev);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -896,19 +908,6 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 	pd->dma_direction = DMA_NONE;
+ 	pd->dma_rx = pd->dma_tx = ERR_PTR(-EPROBE_DEFER);
+ 
+-	/* Enable Runtime PM for this device.
+-	 *
+-	 * Also tell the Runtime PM core to ignore children
+-	 * for this device since it is valid for us to suspend
+-	 * this I2C master driver even though the slave devices
+-	 * on the I2C bus may not be suspended.
+-	 *
+-	 * The state of the I2C hardware bus is unaffected by
+-	 * the Runtime PM state.
+-	 */
+-	pm_suspend_ignore_children(&dev->dev, true);
+-	pm_runtime_enable(&dev->dev);
+-
+ 	/* setup the private data */
+ 	adap = &pd->adap;
+ 	i2c_set_adapdata(adap, pd);
+-- 
+2.11.0
