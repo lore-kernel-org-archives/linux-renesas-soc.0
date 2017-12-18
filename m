@@ -1,77 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:53034 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752472AbdLGKPZ (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:44870 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933662AbdLRJqa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 05:15:25 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] PCI: rcar: Fix use-after-free in probe error path
-Date: Thu,  7 Dec 2017 11:15:19 +0100
-Message-Id: <1512641720-4715-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512641720-4715-1-git-send-email-geert+renesas@glider.be>
-References: <1512641720-4715-1-git-send-email-geert+renesas@glider.be>
+        Mon, 18 Dec 2017 04:46:30 -0500
+Received: by mail-qk0-f195.google.com with SMTP id h19so17572980qkj.11
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Dec 2017 01:46:30 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1513350890-2446-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1513350890-2446-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1513350890-2446-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Dec 2017 10:46:29 +0100
+Message-ID: <CAMuHMdV4LiHQ16woAMgABgd8hHiei9Kbfkym3ouGAUUtMGUCBA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: renesas: r8a7796: Add ZG clock
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If CONFIG_DEBUG_SLAB=y, and no PCIe card is inserted, the kernel crashes
-during probe on r8a7791/koelsch:
+Hi Uli,
 
-    rcar-pcie fe000000.pcie: PCIe link down
-    Unable to handle kernel paging request at virtual address 6b6b6b6b
+On Fri, Dec 15, 2017 at 4:14 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds ZG clock for R8A7796 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-(seeing this message requires earlycon and keep_bootcon).
+Forgot to add you're own SoB?
 
-Indeed, pci_free_host_bridge() frees the PCI host bridge, including the
-embedded rcar_pcie object, so pci_free_resource_list() must not be
-called afterwards.
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -76,6 +76,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+>         /* Core Clock Outputs */
+>         DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+>         DEF_BASE("z2",          R8A7796_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL2),
+> +       DEF_FIXED("zg",         R8A7796_CLK_ZG,    CLK_PLL4,       4, 1),
 
-To fix this, move the call to pci_free_resource_list() up, and update the
-label name accordingly.
+Shouldn't this be a variable clock of type CLK_TYPE_GEN3_ZG?
+What else is the purpose of "[PATCH 2/4] clk: renesas: rcar-gen3: Add ZG
+clock divider support"?
 
-Fixes: ddd535f1ea3eb27e ("PCI: rcar: Fix memory leak when no PCIe card is inserted")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pci/host/pcie-rcar.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> @@ -117,6 +118,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+>  };
+>
+>  static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+> +       DEF_MOD("3dge",                  112,   R8A7796_CLK_ZG),
+>         DEF_MOD("scif5",                 202,   R8A7796_CLK_S3D4),
+>         DEF_MOD("scif4",                 203,   R8A7796_CLK_S3D4),
+>         DEF_MOD("scif3",                 204,   R8A7796_CLK_S3D4),
+> --
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 12796eccb2befd91..52ab3cb0a0bfe065 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1128,12 +1128,12 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	err = rcar_pcie_get_resources(pcie);
- 	if (err < 0) {
- 		dev_err(dev, "failed to request resources: %d\n", err);
--		goto err_free_bridge;
-+		goto err_free_resource_list;
- 	}
- 
- 	err = rcar_pcie_parse_map_dma_ranges(pcie, dev->of_node);
- 	if (err)
--		goto err_free_bridge;
-+		goto err_free_resource_list;
- 
- 	pm_runtime_enable(dev);
- 	err = pm_runtime_get_sync(dev);
-@@ -1176,9 +1176,9 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- err_pm_disable:
- 	pm_runtime_disable(dev);
- 
--err_free_bridge:
--	pci_free_host_bridge(bridge);
-+err_free_resource_list:
- 	pci_free_resource_list(&pcie->resources);
-+	pci_free_host_bridge(bridge);
- 
- 	return err;
- }
--- 
-2.7.4
+This part is fine.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
