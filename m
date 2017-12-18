@@ -1,62 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:15001 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935326AbdLRRQr (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36364 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756500AbdLRLMf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 12:16:47 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mon, 18 Dec 2017 06:12:35 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVhB7KRD_mR0gmVHnPr+AdqgLN10XmszAs-f4=wnAWKAQ@mail.gmail.com>
+References: <1513249026-26759-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513249026-26759-4-git-send-email-fabrizio.castro@bp.renesas.com> <CAMuHMdVhB7KRD_mR0gmVHnPr+AdqgLN10XmszAs-f4=wnAWKAQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Dec 2017 12:12:34 +0100
+Message-ID: <CAMuHMdUF0TEqhY5-DHpru-9pMvfChCOVjFkNapspdsr=dD4xdg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: r8a7794: Add tpu groups and function
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH 3/4] pinctrl: sh-pfc: r8a7794: Add tpu groups and function
-Date: Mon, 18 Dec 2017 17:16:42 +0000
-Message-ID: <TY1PR06MB0895C87F1306124B4C383DA6C00E0@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1513249026-26759-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1513249026-26759-4-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdVhB7KRD_mR0gmVHnPr+AdqgLN10XmszAs-f4=wnAWKAQ@mail.gmail.com>
- <CAMuHMdUF0TEqhY5-DHpru-9pMvfChCOVjFkNapspdsr=dD4xdg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUF0TEqhY5-DHpru-9pMvfChCOVjFkNapspdsr=dD4xdg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNCnRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4NCg0KPiBTdWJqZWN0
-OiBSZTogW1BBVENIIDMvNF0gcGluY3RybDogc2gtcGZjOiByOGE3Nzk0OiBBZGQgdHB1IGdyb3Vw
-cyBhbmQgZnVuY3Rpb24NCj4NCj4gT24gTW9uLCBEZWMgMTgsIDIwMTcgYXQgMTI6MDkgUE0sIEdl
-ZXJ0IFV5dHRlcmhvZXZlbg0KPiA8Z2VlcnRAbGludXgtbTY4ay5vcmc+IHdyb3RlOg0KPiA+IE9u
-IFRodSwgRGVjIDE0LCAyMDE3IGF0IDExOjU3IEFNLCBGYWJyaXppbyBDYXN0cm8NCj4gPiA8ZmFi
-cml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPj4gVGhpcyBwYXRjaCBhZGRz
-IHRwdSBncm91cHMgYW5kIGZ1bmN0aW9uIHRvIHI4YTc3NDUvcjhhNzc5NC4NCj4gPj4NCj4gPj4g
-U2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNh
-cy5jb20+DQo+ID4+IFJldmlld2VkLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5j
-b20+DQo+ID4NCj4gPiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5l
-c2FzQGdsaWRlci5iZT4NCj4gPiBpLmUuIHdpbGwgcXVldWUgaW4gc2gtcGZjLWZvci12NC4xNi4N
-Cj4NCj4gT29wcywgbWlzc2VkIG9uZSB0aGluZzogcGxlYXNlIHVzZSBhbHBoYWJldGljYWwgc29y
-dCBvcmRlciB3aGVuIGFkZGluZw0KPiBuZXcgZW50cmllcy4NCg0KSSdsbCBzZW5kIGEgdjIgdG8g
-Zml4IHRoZSBvcmRlci4NCg0KVGhhbmtzLA0KRmFiDQoNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMs
-DQo+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5
-dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRA
-bGludXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2hu
-aWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxr
-aW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBs
-aWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9y
-dmFsZHMNCg0KDQpbaHR0cHM6Ly93d3cyLnJlbmVzYXMuZXUvbWVkaWEvZW1haWwvdW5pY2VmXzIw
-MTcuanBnXQ0KDQpUaGlzIENocmlzdG1hcywgaW5zdGVhZCBvZiBzZW5kaW5nIG91dCBjYXJkcywg
-UmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgaGF2ZSBkZWNpZGVkIHRvIHN1cHBvcnQgVW5pY2Vm
-IHdpdGggYSBkb25hdGlvbi4gRm9yIGZ1cnRoZXIgZGV0YWlscyBjbGljayBoZXJlPGh0dHBzOi8v
-d3d3LnVuaWNlZi5vcmcvPiB0byBmaW5kIG91dCBhYm91dCB0aGUgdmFsdWFibGUgd29yayB0aGV5
-IGRvLCBoZWxwaW5nIGNoaWxkcmVuIGFsbCBvdmVyIHRoZSB3b3JsZC4NCldlIHdvdWxkIGxpa2Ug
-dG8gdGFrZSB0aGlzIG9wcG9ydHVuaXR5IHRvIHdpc2ggeW91IGEgTWVycnkgQ2hyaXN0bWFzIGFu
-ZCBhIHByb3NwZXJvdXMgTmV3IFllYXIuDQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9w
-ZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdo
-YW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVy
-IFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
+On Mon, Dec 18, 2017 at 12:09 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, Dec 14, 2017 at 11:57 AM, Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com> wrote:
+>> This patch adds tpu groups and function to r8a7745/r8a7794.
+>>
+>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in sh-pfc-for-v4.16.
+
+Oops, missed one thing: please use alphabetical sort order when adding
+new entries.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
