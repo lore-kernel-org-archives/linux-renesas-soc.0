@@ -1,82 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44135 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965422AbdLSNU0 (ORCPT
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:64305 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935251AbdLRQBy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 08:20:26 -0500
-Date: Tue, 19 Dec 2017 14:20:24 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Mon, 18 Dec 2017 11:01:54 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFr5A7Qma_Ef5JMjvG1f_Er+f9K-tnj39_q0Wg2aQ7nY5w@mail.gmail.com>
+References: <20171218000021.16655-1-wsa+renesas@sang-engineering.com> <CAPDyKFr5A7Qma_Ef5JMjvG1f_Er+f9K-tnj39_q0Wg2aQ7nY5w@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 19 Dec 2017 01:01:06 +0900
+Message-ID: <CAK7LNAS_rRp0RDbmEhahKPkcYJ=Yopj7WGRcuhQLz5WP+FFE1w@mail.gmail.com>
+Subject: Re: [RFC PATCH] mmc: tmio: use ioread* for repeated access to a register
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>
-Subject: Re: [RFC PATCH] mmc: tmio: use ioread* for repeated access to a
- register
-Message-ID: <20171219132024.wa3vbqqbwwrmrb2m@ninjato>
-References: <20171218000021.16655-1-wsa+renesas@sang-engineering.com>
- <CAPDyKFr5A7Qma_Ef5JMjvG1f_Er+f9K-tnj39_q0Wg2aQ7nY5w@mail.gmail.com>
- <CAK7LNAS_rRp0RDbmEhahKPkcYJ=Yopj7WGRcuhQLz5WP+FFE1w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zmhyfsy72dpmylqo"
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAS_rRp0RDbmEhahKPkcYJ=Yopj7WGRcuhQLz5WP+FFE1w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+2017-12-18 22:01 GMT+09:00 Ulf Hansson <ulf.hansson@linaro.org>:
+> On 18 December 2017 at 01:00, Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+>> Not all archs define reads* and writes*. Switch to ioread*_rep and
+>> friends which is defined everywhere, so we can enable COMPILE_TEST after
+>> that.
+>>
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Thanks, applied for next!
+>
+> I put the patch in front of Yamada-san's patch that made it possible
+> to use COMPILE_TEST. Thus avoiding breaking bisecting.
+>
+>> ---
+>>
+>> So, I pushed this to buildbot on top of Yamada-san's patch series and there
+>> were no complaints, even with COMPILE_TEST enabled. I also did some tests on
+>> HW and checksuming huge files on SD cards still works.
+>>
+>> However, I am not sure about this mixture of read* and ioread* functions. Shall
+>> we convert maybe all of those?
+>
+> Yes, seems like a good idea.
+>
+> [...]
+>
 
---zmhyfsy72dpmylqo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+BTW, is ioread* preferred to read*?
 
-Yamada-san,
+We need to eliminate the root cause.
+Other drivers using reads* cannot enable COMPILE_TEST for the same reason.
 
-> BTW, is ioread* preferred to read*?
-
-Technically, yes. In reality, mostly not.
-
-> We need to eliminate the root cause.
-> Other drivers using reads* cannot enable COMPILE_TEST for the same reason.
-
-Sure, I understand this. There are not many left, however. I'd assume
-most switched to io*_rep. The sparc64 issue is known for at least two
-years.
-
-> Wolfram,
-> Can you send a patch for sparc64?
-
-As I wrote here already [1], this is too much of a side task for me. But
-if you like, please have a go...
-
-But I'll send the consistency patch for tmio in a second.
-
-Kind regards,
-
-   Wolfram
+Wolfram,
+Can you send a patch for sparc64?
 
 
-[1] https://lkml.org/lkml/2017/12/15/816
 
---zmhyfsy72dpmylqo
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlo5EhQACgkQFA3kzBSg
-KbaaZBAAhD3QQQhq5VcY9J3VcbM8HWOZC0HoPAtav5qtKII0HsG4ubnlLbsg2wXM
-ga2cLvZKjxIkuTgGh57A7d7ksL2vJAupiEECNc3GVZEr5HsbFD4+pdOJAwxGbyZ0
-7iRMOLBuR53+JshUSqDYc0lKQkgsUedcn9bbbRBxBBx2uJ2Oy2qxi0PgUyG6lmB6
-xp0qhryxZxLPQmOXA69jNoZ1nf68RE64aX2ScLIKCvol8ZhVbJmfkrn2Vv93qepq
-fcyIdHTMYNVLNI3BHevpwi+uPhbLOrQshEEUMU7ijpvWQRW8KK/MQuO30+00nIn9
-CQA4MPP/3NA/p+KAx1ITdHViOMZzwOnm0X0pkYwZiHV+0Pw+YqIBXtubJZh/bFVX
-l/lLaROLagC3aH1wKQia5QieXdrTIzufxbQ+2vcFAcUE/wB3GtuqPGJnLSlbYefl
-eUP/WLQW1nx7zI4OmBQddYNxdou6on/DbIN4Psc1XCLX6fa1weWzQx54Hke1AsAm
-H4D69Gwa6MIMwSahGf9dR+9Tw9oX59j0kUKXY05lQmVCEAVFlnyAy+3Zg45ZAzZN
-DzitoqUHPYkNuoA1tvdXrTQnHKJAG2/mdKdUe9503oydStrIIwweEAkxkYaZSsB3
-EptAO4jIzZBrioskybEV4XPFddTJjQOWhSdmCjeYQmZqyLTVM+4=
-=ygn7
------END PGP SIGNATURE-----
-
---zmhyfsy72dpmylqo--
+-- 
+Best Regards
+Masahiro Yamada
