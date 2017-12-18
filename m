@@ -1,17 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:37357 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936193AbdLRW1H (ORCPT
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:37918 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752101AbdLRUDO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 17:27:07 -0500
-Date: Mon, 18 Dec 2017 23:27:05 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+        Mon, 18 Dec 2017 15:03:14 -0500
+Date: Mon, 18 Dec 2017 14:01:20 -0600
+From: Benoit Parrot <bparrot@ti.com>
 To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+CC: Linux Media Mailing List <linux-media@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
         Songjun Wu <songjun.wu@microchip.com>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -24,7 +25,6 @@ Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
         Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
-        Benoit Parrot <bparrot@ti.com>,
         Hyun Kwon <hyun.kwon@xilinx.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Michal Simek <michal.simek@xilinx.com>,
@@ -39,22 +39,26 @@ Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
         Sebastian Reichel <sre@kernel.org>,
         "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
         Tomasz Figa <tfiga@chromium.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <devel@driverdev.osuosl.org>
 Subject: Re: [PATCH 3/8] media: v4l2-async: simplify v4l2_async_subdev
  structure
-Message-ID: <20171218222705.GK15162@piout.net>
+Message-ID: <20171218200120.GA15588@ti.com>
 References: <cover.1513625884.git.mchehab@s-opensource.com>
  <014b64d13c8b9d516afc3319a9de1a97b2a845de.1513625884.git.mchehab@s-opensource.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 In-Reply-To: <014b64d13c8b9d516afc3319a9de1a97b2a845de.1513625884.git.mchehab@s-opensource.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 18/12/2017 at 17:53:57 -0200, Mauro Carvalho Chehab wrote:
+For am437x/am437x-vpfe.c & ti-vpe/cal.c
+
+Acked-by: Benoit Parrot <bparrot@ti.com>
+
+Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote on Mon [2017-Dec-18 17:53:57 -0200]:
 > The V4L2_ASYNC_MATCH_FWNODE match criteria requires just one
 > struct to be filled (struct fwnode_handle). The V4L2_ASYNC_MATCH_DEVNAME
 > match criteria requires just a device name.
@@ -67,10 +71,6 @@ On 18/12/2017 at 17:53:57 -0200, Mauro Carvalho Chehab wrote:
 > 
 > At drivers, this makes even clearer about the match criteria.
 > 
-
-For atmel:
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-
 > Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 > ---
@@ -453,8 +453,3 @@ Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 > -- 
 > 2.14.3
 > 
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
