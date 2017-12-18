@@ -1,61 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:64518 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1763078AbdLSNfX (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34576 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756500AbdLRLFm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 08:35:23 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Mon, 18 Dec 2017 06:05:42 -0500
+MIME-Version: 1.0
+In-Reply-To: <1513249026-26759-2-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1513249026-26759-1-git-send-email-fabrizio.castro@bp.renesas.com> <1513249026-26759-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Dec 2017 12:05:41 +0100
+Message-ID: <CAMuHMdU1pbNnV_ed+kc8K8c2kyTkEMXcnO6Lqx5eWNnVc80sKw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] pinctrl: sh-pfc: r8a7794: Add PWM[0123456] support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v3 5/5] ARM: dts: r8a7743: Add TPU support
-Date: Tue, 19 Dec 2017 13:35:00 +0000
-Message-Id: <1513690500-12165-6-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513690500-12165-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513690500-12165-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add TPU support to SoC DT.
+On Thu, Dec 14, 2017 at 11:57 AM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds PFC PWM[0123456] pin groups and functions, enabling
+> PWM on the r8a7794 and r8a7745.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2->v3:
-* No change
+i.e. will queue in sh-pfc-for-v4.16.
 
- arch/arm/boot/dts/r8a7743.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 282ba5a..f24f36d 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1152,6 +1152,16 @@
- 			status = "disabled";
- 		};
- 
-+		tpu: pwm@e60f0000 {
-+			compatible = "renesas,tpu-r8a7743", "renesas,tpu";
-+			reg = <0 0xe60f0000 0 0x148>;
-+			clocks = <&cpg CPG_MOD 304>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 304>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7743",
- 				     "renesas,rcar-gen2-sdhi";
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
