@@ -1,37 +1,47 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 20 Dec 2017 10:24:55 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:37515 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933910AbdLSLVN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 19 Dec 2017 06:21:13 -0500
+MIME-Version: 1.0
+In-Reply-To: <1513618743-4773-4-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1513618743-4773-1-git-send-email-fabrizio.castro@bp.renesas.com> <1513618743-4773-4-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Dec 2017 12:21:12 +0100
+Message-ID: <CAMuHMdV-sM833JqN-UD8sBYc-bVS-3zWanaQTL-OUgpvKh_uXA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] ARM: dts: r8a7745: Add CMT SoC specific support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v2 3/3] ARM: dts: r8a7745: Add CMT SoC specific support
-Message-ID: <20171220092455.377qvogubl4kz5mn@verge.net.au>
-References: <1513618743-4773-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1513618743-4773-4-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdV-sM833JqN-UD8sBYc-bVS-3zWanaQTL-OUgpvKh_uXA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV-sM833JqN-UD8sBYc-bVS-3zWanaQTL-OUgpvKh_uXA@mail.gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Dec 19, 2017 at 12:21:12PM +0100, Geert Uytterhoeven wrote:
-> On Mon, Dec 18, 2017 at 6:39 PM, Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com> wrote:
-> > Add CMT[01] support to SoC DT.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, Dec 18, 2017 at 6:39 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Add CMT[01] support to SoC DT.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Thanks, applied.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
