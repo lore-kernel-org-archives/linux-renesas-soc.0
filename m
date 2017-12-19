@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:48297 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751152AbdLSKro (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:65319 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1759552AbdLSKR7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 05:47:44 -0500
-Subject: Re: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can
- support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 19 Dec 2017 05:17:59 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+CC: Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
@@ -16,84 +15,91 @@ Cc: Simon Horman <horms@verge.net.au>,
         <linux-renesas-soc@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
+        "Fabrizio Castro" <fabrizio.castro@bp.renesas.com>,
         Wolfgang Grandegger <wg@grandegger.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
+Subject: RE: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can
+ support
+Date: Tue, 19 Dec 2017 10:17:53 +0000
+Message-ID: <TY1PR06MB08953B33F245840430CD3DABC00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
 References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <TY1PR06MB08953B33F245840430CD3DABC00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Message-ID: <64f340ec-42e4-36d1-9902-7e15dbc8577c@pengutronix.de>
-Date: Tue, 19 Dec 2017 11:47:18 +0100
+In-Reply-To: <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB08953B33F245840430CD3DABC00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="kEBiJ5ErOkCrqaedtx5QaeP4N5OgbPfh1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---kEBiJ5ErOkCrqaedtx5QaeP4N5OgbPfh1
-Content-Type: multipart/mixed; boundary="AedCBdxFJ217NNaCT70eHj5omrmpJHQvr";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- Chris Paterson <Chris.Paterson2@renesas.com>,
- Biju Das <biju.das@bp.renesas.com>, Wolfgang Grandegger <wg@grandegger.com>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Message-ID: <64f340ec-42e4-36d1-9902-7e15dbc8577c@pengutronix.de>
-Subject: Re: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can
- support
-References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <TY1PR06MB08953B33F245840430CD3DABC00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
-In-Reply-To: <TY1PR06MB08953B33F245840430CD3DABC00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+Hello Marc,
 
---AedCBdxFJ217NNaCT70eHj5omrmpJHQvr
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+does this patch look ok to you?
 
-On 12/19/2017 11:17 AM, Fabrizio Castro wrote:
-> Hello Marc,
->=20
-> does this patch look ok to you?
+Thanks,
+Fab
 
-Yes, Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> Subject: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can =
+support
+>
+> Document "renesas,can-r8a7743" and "renesas,can-r8a7745" compatible
+> strings. Since the fallback compatible string ("renesas,rcar-gen2-can")
+> activates the right code in the driver, no driver change is needed.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/net/can/rcar_can.txt | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Doc=
+umentation/devicetree/bindings/net/can/rcar_can.txt
+> index 06bb7cc..94a7f33 100644
+> --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> @@ -2,7 +2,9 @@ Renesas R-Car CAN controller Device Tree Bindings
+>  -------------------------------------------------
+>
+>  Required properties:
+> -- compatible: "renesas,can-r8a7778" if CAN controller is a part of R8A77=
+78 SoC.
+> +- compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A77=
+43 SoC.
+> +      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
+> +      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
+>        "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
+>        "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
+>        "renesas,can-r8a7791" if CAN controller is a part of R8A7791 SoC.
+> @@ -12,7 +14,8 @@ Required properties:
+>        "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
+>        "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
+>        "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device=
+.
+> -      "renesas,rcar-gen2-can" for a generic R-Car Gen2 compatible device=
+.
+> +      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
+> +      compatible device.
+>        "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device=
+.
+>        When compatible with the generic version, nodes must list the
+>        SoC-specific version corresponding to the platform first
+> --
+> 2.7.4
 
-Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
 
---AedCBdxFJ217NNaCT70eHj5omrmpJHQvr--
+[https://www2.renesas.eu/media/email/unicef_2017.jpg]
 
---kEBiJ5ErOkCrqaedtx5QaeP4N5OgbPfh1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+This Christmas, instead of sending out cards, Renesas Electronics Europe ha=
+ve decided to support Unicef with a donation. For further details click her=
+e<https://www.unicef.org/> to find out about the valuable work they do, hel=
+ping children all over the world.
+We would like to take this opportunity to wish you a Merry Christmas and a =
+prosperous New Year.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEE4bay/IylYqM/npjQHv7KIOw4HPYFAlo47jYACgkQHv7KIOw4
-HPZaawgApNNKe+XNFS3M3yvf86OKqqEQrSO9Q9XtE7xczMmWaJXQWX4F8vcfCyaL
-ZEcYAdIaFkbu7TqAel9kIK+F/d0kysuwWx/t5dBkZX14SZaHibPcmuhC9w5ey2UQ
-jGG5MC8KjAhnkXay3Tk9j8nU16oYnAVizjscHYglEaWyNY3ZhEh3VGU8at1Ud+P+
-ED6mRX26nx2ddctO1yYAlb6kJwN6I9pIHvhPYirTVyU6YefWp9s3KanBjfDVcNIB
-OgHQpwm1yVTRqB2kFf6ujH9xIKfhabu/HNxwJuNrBqJGem4ZGfCcn1H0NMEw6x4v
-CFSzEjzl6K1PhgGc5lcZbVM4o8Y7fg==
-=CPyw
------END PGP SIGNATURE-----
 
---kEBiJ5ErOkCrqaedtx5QaeP4N5OgbPfh1--
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
