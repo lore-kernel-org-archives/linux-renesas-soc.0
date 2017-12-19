@@ -1,38 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55092 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933574AbdLRVlN (ORCPT
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:37181 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933300AbdLSJPF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 16:41:13 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 0/2] ARM: dts: r8a7743: move timer nodes nodes out of bus
-Date: Mon, 18 Dec 2017 22:40:41 +0100
-Message-Id: <20171218214043.10796-1-horms+renesas@verge.net.au>
+        Tue, 19 Dec 2017 04:15:05 -0500
+MIME-Version: 1.0
+In-Reply-To: <1513620411-17478-4-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1513620411-17478-1-git-send-email-fabrizio.castro@bp.renesas.com> <1513620411-17478-4-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Dec 2017 10:15:04 +0100
+Message-ID: <CAMuHMdXamiNr3OxnWqsXToFdcP5dwBRaHzeQ32rEUtBBghyAjQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] pinctrl: sh-pfc: r8a7794: Add tpu groups and function
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the timer node, which have no reg property, out of the root node.
-The nodes that have been moved do not have any register properties and thus
-shouldn't be placed on the bus.
+On Mon, Dec 18, 2017 at 7:06 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds tpu groups and function to r8a7745/r8a7794.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v1->v2:
+> * Reworked sorting
 
-In preparation for the above sort nodes in the root node alphabetically.
+Thanks for the update, will queue in sh-pfc-for-v4.16.
 
-Based renesas-devel-20171218-v4.15-rc4
+Gr{oetje,eeting}s,
 
-Changes since v1:
-* Rebase
-* Avoid line-wrapping nodes
+                        Geert
 
-Simon Horman (2):
-  ARM: dts: r8a7743: sort root sub-nodes alphabetically
-  ARM: dts: r8a7743: move timer node out of bus
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- arch/arm/boot/dts/r8a7743.dtsi | 116 +++++++++++++++++++++--------------------
- 1 file changed, 60 insertions(+), 56 deletions(-)
-
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
