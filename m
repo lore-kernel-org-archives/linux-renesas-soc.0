@@ -1,72 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44045 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756125AbdLOKMe (ORCPT
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:47093 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1762424AbdLSLta (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 05:12:34 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] Display CRC calculation support
-Date: Fri, 15 Dec 2017 12:12:42 +0200
-Message-ID: <2645075.ThVs6ruk3K@avalon>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 19 Dec 2017 06:49:30 -0500
+Message-ID: <1513684129.7538.11.camel@pengutronix.de>
+Subject: Re: [PATCH v2 5/8] media: v4l2-mediabus: convert flags to enums and
+ document them
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+        Mats Randgaard <matrandg@cisco.com>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Petr Cvek <petr.cvek@tul.cz>, Rob Herring <robh@kernel.org>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org
+Date: Tue, 19 Dec 2017 12:48:49 +0100
+In-Reply-To: <3c5e8bd156d0481410f7cc2352670fc65a99d756.1513682135.git.mchehab@s-opensource.com>
+References: <cover.1513682135.git.mchehab@s-opensource.com>
+         <3c5e8bd156d0481410f7cc2352670fc65a99d756.1513682135.git.mchehab@s-opensource.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Tue, 2017-12-19 at 09:18 -0200, Mauro Carvalho Chehab wrote:
+> There is a mess with media bus flags: there are two sets of
+> flags, one used by parallel and ITU-R BT.656 outputs,
+> and another one for CSI2.
+> 
+> Depending on the type, the same bit has different meanings.
+> 
+> That's very confusing, and counter-intuitive. So, split them
+> into two sets of flags, inside an enum.
+> 
+> This way, it becomes clearer that there are two separate sets
+> of flags. It also makes easier if CSI1, CSP, CSI3, etc. would
+> need a different set of flags.
+> 
+> As a side effect, enums can be documented via kernel-docs,
+> so there will be an improvement at flags documentation.
+> 
+> Unfortunately, soc_camera and pxa_camera do a mess with
+> the flags, using either one set of flags without proper
+> checks about the type. That could be fixed, but, as both drivers
+> are obsolete and in the process of cleanings, I opted to just
+> keep the behavior, using an unsigned int inside those two
+> drivers.
+> 
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-The following changes since commit 0f2278cc90181f0e1d938ba9d20928eaf1fd31ce:
+For imx-media,
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-  Merge branch 'drm/next/base' into vsp1/base (2017-12-14 01:11:25 +0200)
-
-are available in the git repository at:
-
-  git://linuxtv.org/pinchartl/media.git tags/vsp1-discom-v1-20171215
-
-for you to fetch changes up to cef620afa09ca165cbcdbdedbff0120e409ad946:
-
-  drm: rcar-du: Add support for CRC computation (2017-12-14 01:11:50 +0200)
-
-This will pull in the -next branches of the Linux media and DRM trees.
-
-----------------------------------------------------------------
-Laurent Pinchart (9):
-      v4l: vsp1: Fix display stalls when requesting too many inputs
-      v4l: vsp1: Print the correct blending unit name in debug messages
-      v4l: vsp1: Share the CLU, LIF and LUT set_fmt pad operation code
-      v4l: vsp1: Reset the crop and compose rectangles in the set_fmt helper
-      v4l: vsp1: Document the vsp1_du_atomic_config structure
-      v4l: vsp1: Extend the DU API to support CRC computation
-      v4l: vsp1: Add support for the DISCOM entity
-      v4l: vsp1: Integrate DISCOM in display pipeline
-      drm: rcar-du: Add support for CRC computation
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 148 +++++++++++++++++++-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h    |  19 +++
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c     |  13 +-
- drivers/media/platform/vsp1/Makefile      |   2 +-
- drivers/media/platform/vsp1/vsp1.h        |   4 +
- drivers/media/platform/vsp1/vsp1_clu.c    |  65 ++-------
- drivers/media/platform/vsp1/vsp1_drm.c    | 138 +++++++++++++++++--
- drivers/media/platform/vsp1/vsp1_drm.h    |  14 +-
- drivers/media/platform/vsp1/vsp1_drv.c    |  20 +++
- drivers/media/platform/vsp1/vsp1_entity.c |  97 ++++++++++++++
- drivers/media/platform/vsp1/vsp1_entity.h |   7 +
- drivers/media/platform/vsp1/vsp1_histo.c  |  59 +-------
- drivers/media/platform/vsp1/vsp1_lif.c    |  65 ++-------
- drivers/media/platform/vsp1/vsp1_lut.c    |  65 ++-------
- drivers/media/platform/vsp1/vsp1_regs.h   |  41 ++++++
- drivers/media/platform/vsp1/vsp1_uif.c    | 275 +++++++++++++++++++++++++++++
- drivers/media/platform/vsp1/vsp1_uif.h    |  36 +++++
- include/media/vsp1.h                      |  39 +++++-
- 18 files changed, 870 insertions(+), 237 deletions(-)
- create mode 100644 drivers/media/platform/vsp1/vsp1_uif.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_uif.h
-
--- 
-Regards,
-
-Laurent Pinchart
+thanks
+Philipp
