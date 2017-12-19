@@ -1,54 +1,188 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47381 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754836AbdLFKWA (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:42776 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751305AbdLSVXB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:22:00 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Updates for v4.16
-Date: Wed,  6 Dec 2017 11:21:52 +0100
-Message-Id: <cover.1512553442.git.horms+renesas@verge.net.au>
+        Tue, 19 Dec 2017 16:23:01 -0500
+Received: by mail-lf0-f66.google.com with SMTP id e30so4843840lfb.9
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Dec 2017 13:23:01 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 2/3] phy: core: Drop unused runtime PM APIs
+Date: Tue, 19 Dec 2017 22:22:30 +0100
+Message-Id: <1513718551-28624-3-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <1513718551-28624-1-git-send-email-ulf.hansson@linaro.org>
+References: <1513718551-28624-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+The phy core already deploys runtime PM management, so there seems to be no
+reason for having a separate option of controlling runtime PM for phys via
+the phy runtime PM APIs.
 
-Please consider these Renesas ARM based SoC updates for v4.16.
+Moreover, since previous changes moved the runtime PM reference counting
+onto the parent provider device, which also avoid to enabled runtime PM for
+the phy child device, the APIs becomes NOOP. Therefore, let's remove them
+altogether.
 
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/phy/phy-core.c  | 66 -------------------------------------------------
+ include/linux/phy/phy.h | 45 ---------------------------------
+ 2 files changed, 111 deletions(-)
 
-The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
-
-  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc-for-v4.16
-
-for you to fetch changes up to 90f0d2b344313a8a4c366ef60d0df33008d2be84:
-
-  soc: renesas: Identify R-Car M3-W ES1.1 (2017-11-27 11:40:57 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Updates for v4.16
-
-* Identify R-Car M3-W ES1.1
-
-  Geert Uytterhoeven says "The Product Register of R-Car M3-W ES1.1
-  incorrectly identifies the SoC revision as ES2.0.  Add a workaround to
-  fix this."
-
-  It is my understanding that this is likely to be forwards-compatibile.
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      soc: renesas: Identify R-Car M3-W ES1.1
-
- drivers/soc/renesas/renesas-soc.c | 3 +++
- 1 file changed, 3 insertions(+)
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 9fa3f13..60818e1 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -149,72 +149,6 @@ static struct phy_provider *of_phy_provider_lookup(struct device_node *node)
+ 	return ERR_PTR(-EPROBE_DEFER);
+ }
+ 
+-int phy_pm_runtime_get(struct phy *phy)
+-{
+-	int ret;
+-
+-	if (!pm_runtime_enabled(&phy->dev))
+-		return -ENOTSUPP;
+-
+-	ret = pm_runtime_get(&phy->dev);
+-	if (ret < 0 && ret != -EINPROGRESS)
+-		pm_runtime_put_noidle(&phy->dev);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_get);
+-
+-int phy_pm_runtime_get_sync(struct phy *phy)
+-{
+-	int ret;
+-
+-	if (!pm_runtime_enabled(&phy->dev))
+-		return -ENOTSUPP;
+-
+-	ret = pm_runtime_get_sync(&phy->dev);
+-	if (ret < 0)
+-		pm_runtime_put_sync(&phy->dev);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_get_sync);
+-
+-int phy_pm_runtime_put(struct phy *phy)
+-{
+-	if (!pm_runtime_enabled(&phy->dev))
+-		return -ENOTSUPP;
+-
+-	return pm_runtime_put(&phy->dev);
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_put);
+-
+-int phy_pm_runtime_put_sync(struct phy *phy)
+-{
+-	if (!pm_runtime_enabled(&phy->dev))
+-		return -ENOTSUPP;
+-
+-	return pm_runtime_put_sync(&phy->dev);
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_put_sync);
+-
+-void phy_pm_runtime_allow(struct phy *phy)
+-{
+-	if (!pm_runtime_enabled(&phy->dev))
+-		return;
+-
+-	pm_runtime_allow(&phy->dev);
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_allow);
+-
+-void phy_pm_runtime_forbid(struct phy *phy)
+-{
+-	if (!pm_runtime_enabled(&phy->dev))
+-		return;
+-
+-	pm_runtime_forbid(&phy->dev);
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_forbid);
+-
+ int phy_init(struct phy *phy)
+ {
+ 	int ret;
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index 4f8423a..29871aaa 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -17,7 +17,6 @@
+ #include <linux/err.h>
+ #include <linux/of.h>
+ #include <linux/device.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+ 
+ struct phy;
+@@ -133,12 +132,6 @@ static inline void *phy_get_drvdata(struct phy *phy)
+ }
+ 
+ #if IS_ENABLED(CONFIG_GENERIC_PHY)
+-int phy_pm_runtime_get(struct phy *phy);
+-int phy_pm_runtime_get_sync(struct phy *phy);
+-int phy_pm_runtime_put(struct phy *phy);
+-int phy_pm_runtime_put_sync(struct phy *phy);
+-void phy_pm_runtime_allow(struct phy *phy);
+-void phy_pm_runtime_forbid(struct phy *phy);
+ int phy_init(struct phy *phy);
+ int phy_exit(struct phy *phy);
+ int phy_power_on(struct phy *phy);
+@@ -187,44 +180,6 @@ void devm_of_phy_provider_unregister(struct device *dev,
+ int phy_create_lookup(struct phy *phy, const char *con_id, const char *dev_id);
+ void phy_remove_lookup(struct phy *phy, const char *con_id, const char *dev_id);
+ #else
+-static inline int phy_pm_runtime_get(struct phy *phy)
+-{
+-	if (!phy)
+-		return 0;
+-	return -ENOSYS;
+-}
+-
+-static inline int phy_pm_runtime_get_sync(struct phy *phy)
+-{
+-	if (!phy)
+-		return 0;
+-	return -ENOSYS;
+-}
+-
+-static inline int phy_pm_runtime_put(struct phy *phy)
+-{
+-	if (!phy)
+-		return 0;
+-	return -ENOSYS;
+-}
+-
+-static inline int phy_pm_runtime_put_sync(struct phy *phy)
+-{
+-	if (!phy)
+-		return 0;
+-	return -ENOSYS;
+-}
+-
+-static inline void phy_pm_runtime_allow(struct phy *phy)
+-{
+-	return;
+-}
+-
+-static inline void phy_pm_runtime_forbid(struct phy *phy)
+-{
+-	return;
+-}
+-
+ static inline int phy_init(struct phy *phy)
+ {
+ 	if (!phy)
+-- 
+2.7.4
