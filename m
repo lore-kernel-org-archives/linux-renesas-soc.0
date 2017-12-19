@@ -1,50 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58882 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756209AbdLVULv (ORCPT
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:48297 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751152AbdLSKro (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 15:11:51 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3] arm64: dts: renesas: salvator-common: add GPIO extender
-Date: Fri, 22 Dec 2017 21:11:46 +0100
-Message-Id: <20171222201146.8414-1-wsa+renesas@sang-engineering.com>
+        Tue, 19 Dec 2017 05:47:44 -0500
+Subject: Re: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can
+ support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR06MB08953B33F245840430CD3DABC00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <64f340ec-42e4-36d1-9902-7e15dbc8577c@pengutronix.de>
+Date: Tue, 19 Dec 2017 11:47:18 +0100
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB08953B33F245840430CD3DABC00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="kEBiJ5ErOkCrqaedtx5QaeP4N5OgbPfh1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We need to configure its GPIOs later.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--kEBiJ5ErOkCrqaedtx5QaeP4N5OgbPfh1
+Content-Type: multipart/mixed; boundary="AedCBdxFJ217NNaCT70eHj5omrmpJHQvr";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ Chris Paterson <Chris.Paterson2@renesas.com>,
+ Biju Das <biju.das@bp.renesas.com>, Wolfgang Grandegger <wg@grandegger.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Message-ID: <64f340ec-42e4-36d1-9902-7e15dbc8577c@pengutronix.de>
+Subject: Re: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can
+ support
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR06MB08953B33F245840430CD3DABC00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+In-Reply-To: <TY1PR06MB08953B33F245840430CD3DABC00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--AedCBdxFJ217NNaCT70eHj5omrmpJHQvr
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-Changes since V2:
-* added two more required properties (Thanks Geert!)
+On 12/19/2017 11:17 AM, Fabrizio Castro wrote:
+> Hello Marc,
+>=20
+> does this patch look ok to you?
 
-And no dependency anymore (my statement for V2 was wrong).
+Yes, Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Marc
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index a298df74ca6c03..7d43ec24cf9fd0 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -338,6 +338,13 @@
- &i2c4 {
- 	status = "okay";
- 
-+	pca9654: gpio@20 {
-+		compatible = "onnn,pca9654";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
- 	csa_vdd: adc@7c {
- 		compatible = "maxim,max9611";
- 		reg = <0x7c>;
--- 
-2.11.0
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--AedCBdxFJ217NNaCT70eHj5omrmpJHQvr--
+
+--kEBiJ5ErOkCrqaedtx5QaeP4N5OgbPfh1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEE4bay/IylYqM/npjQHv7KIOw4HPYFAlo47jYACgkQHv7KIOw4
+HPZaawgApNNKe+XNFS3M3yvf86OKqqEQrSO9Q9XtE7xczMmWaJXQWX4F8vcfCyaL
+ZEcYAdIaFkbu7TqAel9kIK+F/d0kysuwWx/t5dBkZX14SZaHibPcmuhC9w5ey2UQ
+jGG5MC8KjAhnkXay3Tk9j8nU16oYnAVizjscHYglEaWyNY3ZhEh3VGU8at1Ud+P+
+ED6mRX26nx2ddctO1yYAlb6kJwN6I9pIHvhPYirTVyU6YefWp9s3KanBjfDVcNIB
+OgHQpwm1yVTRqB2kFf6ujH9xIKfhabu/HNxwJuNrBqJGem4ZGfCcn1H0NMEw6x4v
+CFSzEjzl6K1PhgGc5lcZbVM4o8Y7fg==
+=CPyw
+-----END PGP SIGNATURE-----
+
+--kEBiJ5ErOkCrqaedtx5QaeP4N5OgbPfh1--
