@@ -1,86 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:65246 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965422AbdLSNTp (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:62059 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1762587AbdLSML3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 08:19:45 -0500
+        Tue, 19 Dec 2017 07:11:29 -0500
 From: Biju Das <biju.das@bp.renesas.com>
-To: Zhang Rui <rui.zhang@intel.com>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 2/2] ARM: dts: r8a7743: Add thermal device to DT
-Date: Tue, 19 Dec 2017 13:17:29 +0000
-Message-Id: <1513689449-2700-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513689449-2700-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513689449-2700-1-git-send-email-biju.das@bp.renesas.com>
+        "Chris Paterson" <Chris.Paterson2@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: RE: [PATCH 2/2] ARM: dts: r8a7743: Add thermal device to DT
+Date: Tue, 19 Dec 2017 12:11:25 +0000
+Message-ID: <KL1PR06MB17028B45996F222F98D4248EB80F0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+References: <1513162673-31531-1-git-send-email-biju.das@bp.renesas.com>
+ <1513162673-31531-3-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdUiabbd-Ry8AhZsfMiwVBBqYKaZEM_ROxCF-xJDkBgp1Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdUiabbd-Ry8AhZsfMiwVBBqYKaZEM_ROxCF-xJDkBgp1Q@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch instantiates the thermal sensor module with thermal-zone
-support.
-
-This patch is based on the commit cac68a56e34b
-("ARM: dts: r8a7791: enable to use thermal-zone") by Kuninori Morimoto.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2
- * Fixed the size.
-
- arch/arm/boot/dts/r8a7743.dtsi | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index f250147..6a6c40c 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -250,6 +250,38 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		thermal: thermal@e61f0000 {
-+			compatible = "renesas,thermal-r8a7743",
-+				     "renesas,rcar-gen2-thermal",
-+				     "renesas,rcar-thermal";
-+			reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
-+		thermal-zones {
-+			cpu_thermal: cpu-thermal {
-+				polling-delay-passive = <0>;
-+				polling-delay = <0>;
-+
-+				thermal-sensors = <&thermal>;
-+
-+				trips {
-+					cpu-crit {
-+						temperature = <95000>;
-+						hysteresis = <0>;
-+						type = "critical";
-+					};
-+				};
-+
-+				cooling-maps {
-+				};
-+			};
-+		};
-+
- 		timer {
- 			compatible = "arm,armv7-timer";
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
--- 
-1.9.1
+SGkgR2VlcnQsDQoNClRoYW5rcywgSSB3aWxsIHNlbmQgdjIuDQoNClJlZ2FyZHMsDQpCaWp1DQoN
+Cj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogZ2VlcnQudXl0dGVyaG9ldmVu
+QGdtYWlsLmNvbSBbbWFpbHRvOmdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb21dDQo+IE9uIEJl
+aGFsZiBPZiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4gU2VudDogMTkgRGVjZW1iZXIgMjAxNyAxMTo0
+NQ0KPiBUbzogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiBDYzogUm9iIEhl
+cnJpbmcgPHJvYmgrZHRAa2VybmVsLm9yZz47IE1hcmsgUnV0bGFuZA0KPiA8bWFyay5ydXRsYW5k
+QGFybS5jb20+OyBaaGFuZyBSdWkgPHJ1aS56aGFuZ0BpbnRlbC5jb20+OyBFZHVhcmRvDQo+IFZh
+bGVudGluIDxlZHViZXp2YWxAZ21haWwuY29tPjsgU2ltb24gSG9ybWFuIDxob3Jtc0B2ZXJnZS5u
+ZXQuYXU+Ow0KPiBNYWdudXMgRGFtbSA8bWFnbnVzLmRhbW1AZ21haWwuY29tPjsgQ2hyaXMgUGF0
+ZXJzb24NCj4gPENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT47IGRldmljZXRyZWVAdmdlci5r
+ZXJuZWwub3JnOyBMaW51eC1SZW5lc2FzDQo+IDxsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5l
+bC5vcmc+OyBMaW51eCBQTSBsaXN0IDxsaW51eC0NCj4gcG1Admdlci5rZXJuZWwub3JnPg0KPiBT
+dWJqZWN0OiBSZTogW1BBVENIIDIvMl0gQVJNOiBkdHM6IHI4YTc3NDM6IEFkZCB0aGVybWFsIGRl
+dmljZSB0byBEVA0KPg0KPiBPbiBXZWQsIERlYyAxMywgMjAxNyBhdCAxMTo1NyBBTSwgQmlqdSBE
+YXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiB3cm90ZToNCj4gPiBUaGlzIHBhdGNoIGlu
+c3RhbnRpYXRlcyB0aGUgdGhlcm1hbCBzZW5zb3IgbW9kdWxlIHdpdGggdGhlcm1hbC16b25lDQo+
+ID4gc3VwcG9ydC4NCj4gPg0KPiA+IFRoaXMgcGF0Y2ggaXMgYmFzZWQgb24gdGhlIGNvbW1pdCBj
+YWM2OGE1NmUzNGINCj4gPiAoIkFSTTogZHRzOiByOGE3NzkxOiBlbmFibGUgdG8gdXNlIHRoZXJt
+YWwtem9uZSIpIGJ5IEt1bmlub3JpIE1vcmltb3RvLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
+QmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiA+IFJldmlld2VkLWJ5OiBGYWJy
+aXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4NCj4gUmV2aWV3
+ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+DQo+
+IE1pbm9yIG5pdCBiZWxvdy4uLg0KPg0KPiA+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3
+NDMuZHRzaQ0KPiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3NDMuZHRzaQ0KPiA+IEBA
+IC0yNTAsNiArMjUwLDM4IEBADQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcmVzZXRzID0g
+PCZjcGcgNDA3PjsNCj4gPiAgICAgICAgICAgICAgICAgfTsNCj4gPg0KPiA+ICsgICAgICAgICAg
+ICAgICB0aGVybWFsOiB0aGVybWFsQGU2MWYwMDAwIHsNCj4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMsdGhlcm1hbC1yOGE3NzQzIiwNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgInJlbmVzYXMscmNhci1nZW4yLXRoZXJtYWwi
+LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAicmVuZXNhcyxyY2Fy
+LXRoZXJtYWwiOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwwIDB4ZTYxZjAw
+MDAgMCAweDE0PiwgPDAgMHhlNjFmMDEwMCAwDQo+ID4gKyAweDM4PjsNCj4NCj4gPDAgMHhlNjFm
+MDAwMCAwIDB4MTA+Pw0KPg0KPiBUaGUgcmVnaXN0ZXIgYXQgb2Zmc2V0IDB4MTAgc2VlbXMgdG8g
+ZXhpc3Qgb24gUi1Nb2JpbGUgQVBFNiBvbmx5LCBidXQgYWxsIFItQ2FyDQo+IEdlbjIgLmR0c2lz
+IGluY2x1ZGUgaXQgaW4gdGhlIHJhbmdlLi4uDQo+DQo+IE5vdCB0aGF0IGl0IG1hdHRlcnMgbXVj
+aCwgbWFwcGluZyBncmFudWxhcml0eSBpcyBQQUdFX1NJWkUgYW55d2F5Li4uDQo+DQo+IEdye29l
+dGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPg0KPiAt
+LQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBp
+YTMyIC0tIGdlZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPg0KPiBJbiBwZXJzb25hbCBjb252ZXJz
+YXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0
+IHdoZW4NCj4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1l
+ciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCltodHRwczovL3d3dzIucmVuZXNhcy5ldS9tZWRp
+YS9lbWFpbC91bmljZWZfMjAxNy5qcGddDQoNClRoaXMgQ2hyaXN0bWFzLCBpbnN0ZWFkIG9mIHNl
+bmRpbmcgb3V0IGNhcmRzLCBSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBoYXZlIGRlY2lkZWQg
+dG8gc3VwcG9ydCBVbmljZWYgd2l0aCBhIGRvbmF0aW9uLiBGb3IgZnVydGhlciBkZXRhaWxzIGNs
+aWNrIGhlcmU8aHR0cHM6Ly93d3cudW5pY2VmLm9yZy8+IHRvIGZpbmQgb3V0IGFib3V0IHRoZSB2
+YWx1YWJsZSB3b3JrIHRoZXkgZG8sIGhlbHBpbmcgY2hpbGRyZW4gYWxsIG92ZXIgdGhlIHdvcmxk
+Lg0KV2Ugd291bGQgbGlrZSB0byB0YWtlIHRoaXMgb3Bwb3J0dW5pdHkgdG8gd2lzaCB5b3UgYSBN
+ZXJyeSBDaHJpc3RtYXMgYW5kIGEgcHJvc3Blcm91cyBOZXcgWWVhci4NCg0KDQoNClJlbmVzYXMg
+RWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91
+cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmds
+YW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
