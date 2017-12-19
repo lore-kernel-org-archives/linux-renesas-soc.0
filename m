@@ -1,79 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:61097 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751542AbdLSLnS (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 06:43:18 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Rob Herring <robh@kernel.org>
-CC: "kishon@ti.com" <kishon@ti.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB0981CC4061F538B7ADFE48FDD80E0@SG2PR06MB0981.apcprd06.prod.outlook.com>
+References: <1513316726-14387-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1513316726-14387-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20171216180510.qh5uiu5kwz5mx7zi@rob-hp-laptop> <SG2PR06MB0981CC4061F538B7ADFE48FDD80E0@SG2PR06MB0981.apcprd06.prod.outlook.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 18 Dec 2017 18:09:31 -0600
+Message-ID: <CAL_Jsq+JE0tR9ezR+MUOh1wKi8r0kUzxPQRfrG6qd+1YOBiqpw@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] phy: renesas: rcar-gen3-usb2: add gpio handling
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: "kishon@ti.com" <kishon@ti.com>,
         "mark.rutland@arm.com" <mark.rutland@arm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 6/6] phy: renesas: rcar-gen3-usb2: add gpio handling
-Date: Tue, 19 Dec 2017 11:43:15 +0000
-Message-ID: <TY1PR06MB0992FB35978EA8F17322BB19D80F0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1513316726-14387-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1513316726-14387-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20171216180510.qh5uiu5kwz5mx7zi@rob-hp-laptop>
- <SG2PR06MB0981CC4061F538B7ADFE48FDD80E0@SG2PR06MB0981.apcprd06.prod.outlook.com>
- <CAL_Jsq+JE0tR9ezR+MUOh1wKi8r0kUzxPQRfrG6qd+1YOBiqpw@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+JE0tR9ezR+MUOh1wKi8r0kUzxPQRfrG6qd+1YOBiqpw@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgUm9iLA0KDQo+IEZyb206IFJvYiBIZXJyaW5nLCBTZW50OiBUdWVzZGF5LCBEZWNlbWJlciAx
-OSwgMjAxNyA5OjEwIEFNDQo+IA0KPiBPbiBTdW4sIERlYyAxNywgMjAxNyBhdCAxMToxNiBQTSwg
-WW9zaGloaXJvIFNoaW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3
-cm90ZToNCj4gPiBIaSBSb2IsDQo+ID4NCj4gPiBUaGFuayB5b3UgZm9yIHlvdXIgY29tbWVudHMh
-DQo+ID4NCj4gPj4gRnJvbTogUm9iIEhlcnJpbmcsIFNlbnQ6IFN1bmRheSwgRGVjZW1iZXIgMTcs
-IDIwMTcgMzowNSBBTQ0KPiA+Pg0KPiA+PiBPbiBGcmksIERlYyAxNSwgMjAxNyBhdCAwMjo0NToy
-NlBNICswOTAwLCBZb3NoaWhpcm8gU2hpbW9kYSB3cm90ZToNCj4gPj4gPiBTb21lIFItQ2FyIFNv
-Q3MgKGUuZy4gUi1DYXIgRDMpIGRvZXNuJ3QgaGF2ZSBkZWRpY2F0ZWQgcGlucyBvZiBWQlVTDQo+
-ID4+ID4gYW5kIElELiBTbywgdGhleSBtYXkgYmUgY29ubmVjdGVkIHRvIGdwaW8gcGlucy4gVG8g
-aGFuZGxlIHRoZSBncGlvDQo+ID4+ID4gcGlucywgdGhpcyBwYXRjaCBhZGRzIHRoZSBoYW5kbGlu
-ZyBvZiBWQlVTIGFuZCBJRCBwaW5zIGluc3RlYWQgb2YNCj4gPj4gPiBkZWRpY2F0ZWQgcGlucy4N
-Cj4gPj4gPg0KPiA+PiA+IFNpZ25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhp
-cm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gPj4gPiAtLS0NCj4gPj4gPiAgLi4uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvcGh5L3JjYXItZ2VuMy1waHktdXNiMi50eHQgfCAgMiArDQo+ID4+ID4g
-IGRyaXZlcnMvcGh5L3JlbmVzYXMvcGh5LXJjYXItZ2VuMy11c2IyLmMgICAgICAgICAgIHwgNzcg
-KysrKysrKysrKysrKysrKysrKystLQ0KPiA+PiA+ICAyIGZpbGVzIGNoYW5nZWQsIDcyIGluc2Vy
-dGlvbnMoKyksIDcgZGVsZXRpb25zKC0pDQo+ID4+ID4NCj4gPj4gPiBkaWZmIC0tZ2l0IGEvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9yY2FyLWdlbjMtcGh5LXVzYjIudHh0
-DQo+ID4+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9yY2FyLWdlbjMt
-cGh5LXVzYjIudHh0DQo+ID4+ID4gaW5kZXggOTliNjUxYi4uOTk5YTZlZiAxMDA2NDQNCj4gPj4g
-PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3JjYXItZ2VuMy1w
-aHktdXNiMi50eHQNCj4gPj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvcGh5L3JjYXItZ2VuMy1waHktdXNiMi50eHQNCj4gPj4gPiBAQCAtMjcsNiArMjcsOCBAQCBj
-aGFubmVsIGFzIFVTQiBPVEc6DQo+ID4+ID4gIC0gaW50ZXJydXB0czogaW50ZXJydXB0IHNwZWNp
-ZmllciBmb3IgdGhlIFBIWS4NCj4gPj4gPiAgLSB2YnVzLXN1cHBseTogUGhhbmRsZSB0byBhIHJl
-Z3VsYXRvciB0aGF0IHByb3ZpZGVzIHBvd2VyIHRvIHRoZSBWQlVTLiBUaGlzDQo+ID4+ID4gICAg
-ICAgICAgICByZWd1bGF0b3Igd2lsbCBiZSBtYW5hZ2VkIGR1cmluZyB0aGUgUEhZIHBvd2VyIG9u
-L29mZiBzZXF1ZW5jZS4NCj4gPj4gPiArLSB2YnVzLWdwaW9zOiB1c2UgZ3BpbyB0byBjb250cm9s
-IHZidXMgaW5zdGVhZCBvZiBkZWRpY2F0ZWQgcGluLg0KPiA+Pg0KPiA+PiBIb3cgZG9lcyB0aGlz
-IHJlbGF0ZSB0byB2YnVzLXN1cHBseT8gQSBncGlvLXJlZ3VsYXRvciBkb2Vzbid0IHdvcmsgaGVy
-ZT8NCj4gPg0KPiA+IFRoYW5rIHlvdSBmb3IgdGhlIHBvaW50ZWQgb3V0LiBZb3UncmUgY29ycmVj
-dC4gQSBncGlvLXJlZ3VsYXRvciBjYW4gd29yayBpbnRlYWQgb2YgInZidXMtZ3Bpb3MiLg0KPiA+
-IFNvLCBJIHdpbGwgZHJvcCB0aGlzLg0KPiA+DQo+ID4+ID4gKy0gaWQtZ3Bpb3M6IHVzZSBncGlv
-IHRvIGRldGVjdCBpZCBpbnN0ZWFkIG9mIGRlZGljYXRlZCBwaW4uDQo+ID4+DQo+ID4+IFRoZXNl
-IGFyZW4ndCBwYXJ0IG9mIHRoZSBwaHksIGJ1dCByZWFsbHkgYmVsb25nIGluIGEgY29ubmVjdG9y
-IG5vZGUuDQo+ID4NCj4gPiBJJ20gYWZyYWlkIGJ1dCBJIGRvbid0IHVuZGVyc3RhbmQgImEgY29u
-bmVjdG9yIG5vZGUiIG1lYW4uDQo+ID4gSXMgaXQgYW4gZXh0Y29uIGRldmljZSBmb3IgaW5zdGFu
-Y2U/DQo+ID4gSWYgc28sIEknbGwgdHJ5IHRvIHVzZSBleHRjb24tdXNiLWdwaW8uYyBpbnN0ZWFk
-IG9mIG93biBncGlvIGhhbmRsaW5nIG9uIHRoZSBkcml2ZXIuDQo+IA0KPiBObywgZXh0Y29uIGJp
-bmRpbmcgaGFzIGEgbG90IG9mIExpbnV4aXNtcyBpbiBpdC4gSSBtZWFuIHNvbWV0aGluZyBsaWtl
-DQo+IGhkbWktY29ubmVjdG9yIGJpbmRpbmcuDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJlcGx5ISBJ
-IHVuZGVyc3Rvb2QgaXQuIFRoZSBoZG1pLWNvbm5lY3RvciBiaW5kaW5nIGhhcyAiaGRwLWdwaW9z
-Ii4NCkFuZCwgdGhpcyBpcyBzaW1pbGFyIHdpdGggImlkLWdwaW9zIiBvZiB1c2IuDQoNCj4gVGhl
-cmUncyBiZWVuIHNvbWUgYXR0ZW1wdHNbMV0gZm9yIFVTQiBjb25uZWN0b3JzLCBidXQgbm90aGlu
-ZyBmaW5hbGl6ZWQuDQo+IA0KPiBSb2INCj4gDQo+IFsxXSBodHRwczovL3d3dy5zcGluaWNzLm5l
-dC9saXN0cy9saW51eC11c2IvbXNnMTYxMTA0Lmh0bWwNCg0KVGhpcyBtZWFucyBJIHNob3VsZCBm
-aW5hbGl6ZSB0aGUgVVNCIGNvbm5lY3RvcnMgYmluZGluZyBhdCBmaXJzdD8NCkkgY2hlY2tlZCB0
-aGUgZW1haWwgYXJjaGl2ZSwgYnV0IGl0IHNlZW1zIGhhcmQgdG8gZmluYWxpemUgdGhvdWdoLi4u
-DQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCg==
+On Sun, Dec 17, 2017 at 11:16 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Hi Rob,
+>
+> Thank you for your comments!
+>
+>> -----Original Message-----
+>> From: Rob Herring, Sent: Sunday, December 17, 2017 3:05 AM
+>>
+>> On Fri, Dec 15, 2017 at 02:45:26PM +0900, Yoshihiro Shimoda wrote:
+>> > Some R-Car SoCs (e.g. R-Car D3) doesn't have dedicated pins of VBUS
+>> > and ID. So, they may be connected to gpio pins. To handle the gpio
+>> > pins, this patch adds the handling of VBUS and ID pins instead of
+>> > dedicated pins.
+>> >
+>> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>> > ---
+>> >  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
+>> >  drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 77 ++++++++++++++++++++--
+>> >  2 files changed, 72 insertions(+), 7 deletions(-)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+>> b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+>> > index 99b651b..999a6ef 100644
+>> > --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+>> > +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+>> > @@ -27,6 +27,8 @@ channel as USB OTG:
+>> >  - interrupts: interrupt specifier for the PHY.
+>> >  - vbus-supply: Phandle to a regulator that provides power to the VBUS. This
+>> >            regulator will be managed during the PHY power on/off sequence.
+>> > +- vbus-gpios: use gpio to control vbus instead of dedicated pin.
+>>
+>> How does this relate to vbus-supply? A gpio-regulator doesn't work here?
+>
+> Thank you for the pointed out. You're correct. A gpio-regulator can work intead of "vbus-gpios".
+> So, I will drop this.
+>
+>> > +- id-gpios: use gpio to detect id instead of dedicated pin.
+>>
+>> These aren't part of the phy, but really belong in a connector node.
+>
+> I'm afraid but I don't understand "a connector node" mean.
+> Is it an extcon device for instance?
+> If so, I'll try to use extcon-usb-gpio.c instead of own gpio handling on the driver.
+
+No, extcon binding has a lot of Linuxisms in it. I mean something like
+hdmi-connector binding. There's been some attempts[1] for USB
+connectors, but nothing finalized.
+
+Rob
+
+[1] https://www.spinics.net/lists/linux-usb/msg161104.html
