@@ -1,12 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:62059 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1762587AbdLSML1 (ORCPT
+Received: from mail-qt0-f175.google.com ([209.85.216.175]:39024 "EHLO
+        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751789AbdLSLwg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 07:11:27 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+        Tue, 19 Dec 2017 06:52:36 -0500
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB089542724CCC3530DD4677F5C00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513619528-12060-4-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdVEgBq+eZqAeas3kf3ARHegSQK9xyVrTDHRyctyTK87QQ@mail.gmail.com> <TY1PR06MB089542724CCC3530DD4677F5C00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Dec 2017 12:52:35 +0100
+Message-ID: <CAMuHMdVb6jpF_HbJMapFTJs285_GOdXVPsACHBasy5Cy5ZZ18g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] ARM: dts: r8a7743: Add PWM SoC support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         Simon Horman <horms@verge.net.au>,
@@ -17,59 +25,49 @@ CC: Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        "Biju Das" <biju.das@bp.renesas.com>
-Subject: RE: [PATCH v2 3/6] ARM: dts: r8a7743: Add PWM SoC support
-Date: Tue, 19 Dec 2017 12:11:19 +0000
-Message-ID: <TY1PR06MB08955D4F4D430E71646AA0E2C00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1513619528-12060-4-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdVEgBq+eZqAeas3kf3ARHegSQK9xyVrTDHRyctyTK87QQ@mail.gmail.com>
- <TY1PR06MB089542724CCC3530DD4677F5C00F0@TY1PR06MB0895.apcprd06.prod.outlook.com>
- <CAMuHMdVb6jpF_HbJMapFTJs285_GOdXVPsACHBasy5Cy5ZZ18g@mail.gmail.com>
-In-Reply-To: <CAMuHMdVb6jpF_HbJMapFTJs285_GOdXVPsACHBasy5Cy5ZZ18g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAzLzZdIEFSTTogZHRzOiBy
-OGE3NzQzOiBBZGQgUFdNIFNvQyBzdXBwb3J0DQo+DQo+IEhpIEZhYnJpemlvLA0KPg0KPiBPbiBU
-dWUsIERlYyAxOSwgMjAxNyBhdCAxMjozNyBQTSwgRmFicml6aW8gQ2FzdHJvDQo+IDxmYWJyaXpp
-by5jYXN0cm9AYnAucmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiBTdWJqZWN0OiBSZTogW1BBVENI
-IHYyIDMvNl0gQVJNOiBkdHM6IHI4YTc3NDM6IEFkZCBQV00gU29DIHN1cHBvcnQNCj4gPj4NCj4g
-Pj4gT24gTW9uLCBEZWMgMTgsIDIwMTcgYXQgNjo1MiBQTSwgRmFicml6aW8gQ2FzdHJvDQo+ID4+
-IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiA+IEFkZCB0aGUg
-ZGVmaW5pdGlvbnMgZm9yIHB3bVswMTIzNDU2XSB0byB0aGUgU29DIC5kdHNpLg0KPiA+PiA+DQo+
-ID4+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAu
-cmVuZXNhcy5jb20+DQo+ID4+ID4gUmV2aWV3ZWQtYnk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5y
-ZW5lc2FzLmNvbT4NCj4gPj4NCj4gPj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8
-Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+ID4+DQo+ID4+ID4gLS0tIGEvYXJjaC9hcm0vYm9v
-dC9kdHMvcjhhNzc0My5kdHNpDQo+ID4+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc0
-My5kdHNpDQo+ID4+ID4gQEAgLTEwODIsNiArMTA4Miw4MyBAQA0KPiA+PiA+ICAgICAgICAgICAg
-ICAgICAgICAgICAgIHN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4+ID4gICAgICAgICAgICAgICAg
-IH07DQo+ID4+ID4NCj4gPj4gPiArICAgICAgICAgICAgICAgcHdtMDogcHdtQGU2ZTMwMDAwIHsN
-Cj4gPj4gPiArICAgICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMscHdt
-LXI4YTc3NDMiLA0KPiA+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAi
-cmVuZXNhcyxwd20tcmNhciI7DQo+ID4+DQo+ID4+IEkgdGhpbmsgdGhlIGFib3ZlIGNhbiBmaXQg
-aW4gb25lIGxpbmUuDQo+ID4NCj4gPiBkbyB5b3UgdGhpbmsgdGhpcyBkZXNlcnZlcyBhIHYzPw0K
-Pg0KPiBUaGF0IGRlcGVuZHMgb24gdGhlIGZ1enppbmVzcy1hY2NlcHRhbmNlIGxldmVsIG9mIFNp
-bW9uLi4uDQoNCkknbGwgc2VuZCBhIHYzIHRoZW4uDQoNClRoYW5rcywNCkZhYg0KDQo+DQo+IEdy
-e29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPg0K
-PiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9u
-ZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+DQo+IEluIHBlcnNvbmFsIGNvbnZlcnNh
-dGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQN
-Cj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVy
-IiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIC0tIExpbnVzIFRvcnZhbGRzDQoNCg0KW2h0dHBzOi8vd3d3Mi5yZW5lc2FzLmV1L21lZGlh
-L2VtYWlsL3VuaWNlZl8yMDE3LmpwZ10NCg0KVGhpcyBDaHJpc3RtYXMsIGluc3RlYWQgb2Ygc2Vu
-ZGluZyBvdXQgY2FyZHMsIFJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIGhhdmUgZGVjaWRlZCB0
-byBzdXBwb3J0IFVuaWNlZiB3aXRoIGEgZG9uYXRpb24uIEZvciBmdXJ0aGVyIGRldGFpbHMgY2xp
-Y2sgaGVyZTxodHRwczovL3d3dy51bmljZWYub3JnLz4gdG8gZmluZCBvdXQgYWJvdXQgdGhlIHZh
-bHVhYmxlIHdvcmsgdGhleSBkbywgaGVscGluZyBjaGlsZHJlbiBhbGwgb3ZlciB0aGUgd29ybGQu
-DQpXZSB3b3VsZCBsaWtlIHRvIHRha2UgdGhpcyBvcHBvcnR1bml0eSB0byB3aXNoIHlvdSBhIE1l
-cnJ5IENocmlzdG1hcyBhbmQgYSBwcm9zcGVyb3VzIE5ldyBZZWFyLg0KDQoNCg0KUmVuZXNhcyBF
-bGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3Vy
-bmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xh
-bmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
+Hi Fabrizio,
+
+On Tue, Dec 19, 2017 at 12:37 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+>> Subject: Re: [PATCH v2 3/6] ARM: dts: r8a7743: Add PWM SoC support
+>>
+>> On Mon, Dec 18, 2017 at 6:52 PM, Fabrizio Castro
+>> <fabrizio.castro@bp.renesas.com> wrote:
+>> > Add the definitions for pwm[0123456] to the SoC .dtsi.
+>> >
+>> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> > --- a/arch/arm/boot/dts/r8a7743.dtsi
+>> > +++ b/arch/arm/boot/dts/r8a7743.dtsi
+>> > @@ -1082,6 +1082,83 @@
+>> >                         status = "disabled";
+>> >                 };
+>> >
+>> > +               pwm0: pwm@e6e30000 {
+>> > +                       compatible = "renesas,pwm-r8a7743",
+>> > +                                    "renesas,pwm-rcar";
+>>
+>> I think the above can fit in one line.
+>
+> do you think this deserves a v3?
+
+That depends on the fuzziness-acceptance level of Simon...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
