@@ -1,66 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:7888 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:50959 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756083AbdLTUEq (ORCPT
+        by vger.kernel.org with ESMTP id S964871AbdLSBqt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 15:04:46 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Mon, 18 Dec 2017 20:46:49 -0500
+From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 1/9] ARM: dts: r8a7745: Add audio clocks
-Date: Wed, 20 Dec 2017 20:01:57 +0000
-Message-Id: <1513800125-53213-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
+        TAKESHI KIHARA <takeshi.kihara.df@renesas.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        TAKAHIKO GOMI <takahiko.gomi.yn@renesas.com>
+Subject: RE: [PATCH 4/4] arm64: dts: r8a7796: Add DEVFREQ support for GSX
+Date: Tue, 19 Dec 2017 01:46:42 +0000
+Message-ID: <HK2PR06MB081940C355A553E5DC84F59E810F0@HK2PR06MB0819.apcprd06.prod.outlook.com>
+References: <1513350890-2446-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1513350890-2446-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <CAMuHMdVYoUUAPtRer8RSOtf3JQW2X=9V8VP9SvSc6hRj8OLLbQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVYoUUAPtRer8RSOtf3JQW2X=9V8VP9SvSc6hRj8OLLbQ@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the external audio clocks required by the sound driver.
-Boards that provide audio clocks need to override the clock frequencies.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7745.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 2be7485..6d085f0 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -35,6 +35,27 @@
- 		vin1 = &vin1;
- 	};
- 
-+	/*
-+	 * The external audio clocks are configured  as 0 Hz fixed
-+	 * frequency clocks by default.  Boards that provide audio
-+	 * clocks should override them.
-+	 */
-+	audio_clka: audio_clka {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkb: audio_clkb {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clkc: audio_clkc {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	/* External CAN clock */
- 	can_clk: can {
- 		compatible = "fixed-clock";
--- 
-1.9.1
+SGkgR2VlcnQtc2FuLCBVbHJpY2gtc2FuLA0KDQo+IERvIHRoZXkgcmVhbGx5IGFsbCB1c2UgdGhl
+IHNhbWUgdm9sdGFnZT8NCj4NCj4gQW5kIEFGQUlVLCBEVkZTIGlzIHNoYXJlZCBiZXR3ZWVuIENQ
+VSBhbmQgR1BVLg0KDQpXZSBzdXBwb3J0IHRoZSBvcHAgdGFibGUgb2YgR1BVIHdpdGggdGhlIHNh
+bWUgdm9sdGFnZSBmb3IgZWFjaCBpbg0KUi1DYXIgSDMvTTMuIEFzIHlvdSBrbm93LCBEVkZTIGlz
+IHNoYXJlZCBiZXR3ZWVuIENBNTcgYW5kIEdQVS4NCldlIHVuZGVyc3RhbmQgdGhhdCBhcmJpdHJh
+dGlvbiBjb250cm9sIG9mIHRoZSB2b2x0YWdlIGZyb20gYm90aA0KY29yZXMgY2FuJ3QgYmUgcmVh
+bGl6ZWQgd2l0aCB0aGUgY3VycmVudCBDUFVGUkVRIGFuZCBERVZGUkVRDQpmcmFtZXdvcmsuIFRo
+ZXJlZm9yZSwgd2UgaGF2ZSBpbXBsZW1lbnRlZCBhcyBhYm92ZSBub3cuDQoNCkluIG91ciB0ZXN0
+IHdpdGggR1BVIHRlYW0sIGl0IGlzIGZpbmUgZXhjZXB0IHBvd2VyIGNvbnN1bXB0aW9uLg0KDQpS
+ZWdhcmRzLA0KSW5hbWkNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IGdlZXJ0
+LnV5dHRlcmhvZXZlbkBnbWFpbC5jb20gW21haWx0bzpnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwu
+Y29tXSBPbiBCZWhhbGYgT2YgR2VlcnQgVXl0dGVyaG9ldmVuDQpTZW50OiBNb25kYXksIERlY2Vt
+YmVyIDE4LCAyMDE3IDc6MjcgUE0NClRvOiBVbHJpY2ggSGVjaHQgPHVscmljaC5oZWNodCtyZW5l
+c2FzQGdtYWlsLmNvbT4NCkNjOiBMaW51eC1SZW5lc2FzIDxsaW51eC1yZW5lc2FzLXNvY0B2Z2Vy
+Lmtlcm5lbC5vcmc+OyBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25i
+b2FyZC5jb20+OyBNYWdudXMgRGFtbSA8bWFnbnVzLmRhbW1AZ21haWwuY29tPjsgR2FrdSBJbmFt
+aSA8Z2FrdS5pbmFtaS54d0BicC5yZW5lc2FzLmNvbT47IFRBS0VTSEkgS0lIQVJBIDx0YWtlc2hp
+LmtpaGFyYS5kZkByZW5lc2FzLmNvbT47IEhpZW4gRGFuZyA8aGllbi5kYW5nLmViQHJlbmVzYXMu
+Y29tPg0KU3ViamVjdDogUmU6IFtQQVRDSCA0LzRdIGFybTY0OiBkdHM6IHI4YTc3OTY6IEFkZCBE
+RVZGUkVRIHN1cHBvcnQgZm9yIEdTWA0KDQpIaSBVbGksDQoNCk9uIEZyaSwgRGVjIDE1LCAyMDE3
+IGF0IDQ6MTQgUE0sIFVscmljaCBIZWNodCA8dWxyaWNoLmhlY2h0K3JlbmVzYXNAZ21haWwuY29t
+PiB3cm90ZToNCj4gRnJvbTogR2FrdSBJbmFtaSA8Z2FrdS5pbmFtaS54d0BicC5yZW5lc2FzLmNv
+bT4NCj4NCj4gVGhpcyBwYXRjaCBzdXBwb3J0cyBHU1ggZnJlcXVlbmN5IHNjYWxpbmcgdXNpbmcg
+ZGV2ZnJlcS4NCj4NCj4gSW5jbHVkZXMgdXBkYXRlIG9mIHRoZSBPUFAgdGFibGVzIGZvciBHU1gg
+YmVjYXVzZSB0aGUgdHlwaWNhbCB2b2x0YWdlIA0KPiBvZiBWRERfRFZGUyAocG93ZXIgb3B0aW1p
+emVkKSB3YXMgdXBkYXRlZCB0byAwLjgzViBieSBSLUNhciBHZW4zIEVDIA0KPiBSZXYwLjU0RSBz
+cGVjaWZpY2F0aW9uLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBHYWt1IEluYW1pIDxnYWt1LmluYW1p
+Lnh3QGJwLnJlbmVzYXMuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBUYWtlc2hpIEtpaGFyYSA8dGFr
+ZXNoaS5raWhhcmEuZGZAcmVuZXNhcy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEhpZW4gRGFuZyA8
+aGllbi5kYW5nLmViQHJlbmVzYXMuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBVbHJpY2ggSGVjaHQg
+PHVscmljaC5oZWNodCtyZW5lc2FzQGdtYWlsLmNvbT4NCg0KVGhhbmtzIGZvciB5b3VyIHBhdGNo
+IQ0KDQo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy9yOGE3Nzk2LmR0c2kNCj4g
+KysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9yZW5lc2FzL3I4YTc3OTYuZHRzaQ0KPiBAQCAtMTY2
+LDYgKzE2NiwyNyBAQA0KPiAgICAgICAgICAgICAgICAgfTsNCj4gICAgICAgICB9Ow0KPg0KPiAr
+ICAgICAgIGdzeF9vcHBfdGFibGU6IGdzeF9vcHBfdGFibGUgew0KPiArICAgICAgICAgICAgICAg
+Y29tcGF0aWJsZSA9ICJvcGVyYXRpbmctcG9pbnRzLXYyIjsNCj4gKw0KPiArICAgICAgICAgICAg
+ICAgb3BwQDIwMDAwMDAwMCB7DQoNCm9wcC0yMDAwMDAwMDAgKHRyeSAibWFrZSBkdGJzIFc9MSIp
+DQoNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgb3BwLWh6ID0gL2JpdHMvIDY0IDwyMDAwMDAw
+MDA+Ow0KPiArICAgICAgICAgICAgICAgICAgICAgICBvcHAtbWljcm92b2x0ID0gPDgzMDAwMD47
+DQo+ICsgICAgICAgICAgICAgICB9Ow0KPiArICAgICAgICAgICAgICAgb3BwQDMwMDAwMDAwMCB7
+DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIG9wcC1oeiA9IC9iaXRzLyA2NCA8MzAwMDAwMDAw
+PjsNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgb3BwLW1pY3Jvdm9sdCA9IDw4MzAwMDA+Ow0K
+PiArICAgICAgICAgICAgICAgfTsNCj4gKyAgICAgICAgICAgICAgIG9wcEA0MDAwMDAwMDAgew0K
+PiArICAgICAgICAgICAgICAgICAgICAgICBvcHAtaHogPSAvYml0cy8gNjQgPDQwMDAwMDAwMD47
+DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIG9wcC1taWNyb3ZvbHQgPSA8ODMwMDAwPjsNCj4g
+KyAgICAgICAgICAgICAgIH07DQo+ICsgICAgICAgICAgICAgICBvcHBANjAwMDAwMDAwIHsNCj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgb3BwLWh6ID0gL2JpdHMvIDY0IDw2MDAwMDAwMDA+Ow0K
+PiArICAgICAgICAgICAgICAgICAgICAgICBvcHAtbWljcm92b2x0ID0gPDgzMDAwMD47DQoNCkRv
+IHRoZXkgcmVhbGx5IGFsbCB1c2UgdGhlIHNhbWUgdm9sdGFnZT8NCg0KQW5kIEFGQUlVLCBEVkZT
+IGlzIHNoYXJlZCBiZXR3ZWVuIENQVSBhbmQgR1BVLg0KDQpHcntvZXRqZSxlZXRpbmd9cywNCg0K
+ICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCg0KLS0NCkdlZXJ0IFV5dHRlcmhvZXZlbiAt
+LSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5v
+cmcNCg0KSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkg
+Y2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dCB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3Rz
+IEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQogICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
