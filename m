@@ -1,153 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52990 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754565AbdLTJfm (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44051 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933739AbdLSJ1v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 04:35:42 -0500
-Date: Wed, 20 Dec 2017 10:35:38 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
+        Tue, 19 Dec 2017 04:27:51 -0500
+Received: by mail-wr0-f194.google.com with SMTP id l41so6046108wre.11
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Dec 2017 01:27:51 -0800 (PST)
 Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: sort root sub-nodes alphabetically
-Message-ID: <20171220093538.e5t3ujc5vjoerv5d@verge.net.au>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
 References: <20171218213233.3373-1-horms+renesas@verge.net.au>
  <20171218213233.3373-2-horms+renesas@verge.net.au>
- <14c60234-3755-3b06-64fc-e3943d8b5293@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <14c60234-3755-3b06-64fc-e3943d8b5293@cogentembedded.com>
+Date: Tue, 19 Dec 2017 12:27:48 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14c60234-3755-3b06-64fc-e3943d8b5293@cogentembedded.com>
+In-Reply-To: <20171218213233.3373-2-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Dec 19, 2017 at 12:27:48PM +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 12/19/2017 12:32 AM, Simon Horman wrote:
-> 
-> > Sort root sub-nodes alphabetically for allow for easier maintenance
-> 
->    s/for/to/?
-> 
-> > of this file.
-> > 
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > ---
-> >   arch/arm/boot/dts/r8a7792.dtsi | 48 +++++++++++++++++++++---------------------
-> >   1 file changed, 24 insertions(+), 24 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-> > index ac05fdb91798..d31258958c36 100644
-> > --- a/arch/arm/boot/dts/r8a7792.dtsi
-> > +++ b/arch/arm/boot/dts/r8a7792.dtsi
-> > @@ -36,6 +36,22 @@
-> >   		vin5 = &vin5;
-> >   	};
-> > +	/* External root clock */
-> > +	extal_clk: extal {
-> > +		compatible = "fixed-clock";
-> > +		#clock-cells = <0>;
-> > +		/* This value must be overridden by the board. */
-> > +		clock-frequency = <0>;
-> > +	};
-> > +
-> > +	/* External CAN clock */
-> > +	can_clk: can {
-> > +		compatible = "fixed-clock";
-> > +		#clock-cells = <0>;
-> > +		/* This value must be overridden by the board. */
-> > +		clock-frequency = <0>;
-> > +	};
-> > +
-> 
->    C predates E in my alphabet. :-)
+Hello!
 
-Thanks, I have applied the following:
+On 12/19/2017 12:32 AM, Simon Horman wrote:
 
-From: Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: dts: r8a7792: sort root sub-nodes alphabetically
+> Sort root sub-nodes alphabetically for allow for easier maintenance
 
-Sort root sub-nodes alphabetically to allow for easier maintenance
-of this file.
+    s/for/to/?
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7792.dtsi | 48 +++++++++++++++++++++---------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+> of this file.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>   arch/arm/boot/dts/r8a7792.dtsi | 48 +++++++++++++++++++++---------------------
+>   1 file changed, 24 insertions(+), 24 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+> index ac05fdb91798..d31258958c36 100644
+> --- a/arch/arm/boot/dts/r8a7792.dtsi
+> +++ b/arch/arm/boot/dts/r8a7792.dtsi
+> @@ -36,6 +36,22 @@
+>   		vin5 = &vin5;
+>   	};
+>   
+> +	/* External root clock */
+> +	extal_clk: extal {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		/* This value must be overridden by the board. */
+> +		clock-frequency = <0>;
+> +	};
+> +
+> +	/* External CAN clock */
+> +	can_clk: can {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		/* This value must be overridden by the board. */
+> +		clock-frequency = <0>;
+> +	};
+> +
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 7b394273031e..b0013e5fcf47 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -36,6 +36,14 @@
- 		vin5 = &vin5;
- 	};
- 
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -69,6 +77,22 @@
- 		};
- 	};
- 
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -832,28 +856,4 @@
- 			#power-domain-cells = <0>;
- 		};
- 	};
--
--	/* External root clock */
--	extal_clk: extal {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
--
--	/* External SCIF clock */
--	scif_clk: scif {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
--
--	/* External CAN clock */
--	can_clk: can {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
- };
--- 
-2.11.0
+    C predates E in my alphabet. :-)
+
+>   	cpus {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+[...]
+
+MBR, Sergei
