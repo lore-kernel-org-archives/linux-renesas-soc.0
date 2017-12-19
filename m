@@ -1,66 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52041 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932185AbdLTI10 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:56717 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752426AbdLSNTl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 03:27:26 -0500
-Date: Wed, 20 Dec 2017 09:27:20 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
+        Tue, 19 Dec 2017 08:19:41 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: thermal: rcar: Add device tree
- support for r8a7743
-Message-ID: <20171220082720.7wmxidiyfzgr5pck@verge.net.au>
+        linux-pm@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v2 1/2] dt-bindings: thermal: rcar: Add device tree support for r8a7743
+Date: Tue, 19 Dec 2017 13:17:28 +0000
+Message-Id: <1513689449-2700-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1513689449-2700-1-git-send-email-biju.das@bp.renesas.com>
 References: <1513689449-2700-1-git-send-email-biju.das@bp.renesas.com>
- <1513689449-2700-2-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1513689449-2700-2-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Dec 19, 2017 at 01:17:28PM +0000, Biju Das wrote:
-> Add thermal sensor support for r8a7743 SoC. The Renesas RZ/G1M
-> (r8a7743) thermal sensor module is identical to the R-Car Gen2 family.
-> 
-> No driver change is needed due to the fallback compatible value
-> "renesas,rcar-gen2-thermal".
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Add thermal sensor support for r8a7743 SoC. The Renesas RZ/G1M
+(r8a7743) thermal sensor module is identical to the R-Car Gen2 family.
 
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
+No driver change is needed due to the fallback compatible value
+"renesas,rcar-gen2-thermal".
 
-> ---
-> v1->v2
->   * No Change
-> 
->  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-> index a8e52c8..349e635 100644
-> --- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-> +++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-> @@ -6,6 +6,7 @@ Required properties:
->  			   "renesas,rcar-thermal" (without thermal-zone) as fallback.
->  			  Examples with soctypes are:
->  			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
-> +			    - "renesas,thermal-r8a7743" (RZ/G1M)
->  			    - "renesas,thermal-r8a7779" (R-Car H1)
->  			    - "renesas,thermal-r8a7790" (R-Car H2)
->  			    - "renesas,thermal-r8a7791" (R-Car M2-W)
-> -- 
-> 1.9.1
-> 
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+v1->v2
+  * No Change
+
+ Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+index a8e52c8..349e635 100644
+--- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+@@ -6,6 +6,7 @@ Required properties:
+ 			   "renesas,rcar-thermal" (without thermal-zone) as fallback.
+ 			  Examples with soctypes are:
+ 			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
++			    - "renesas,thermal-r8a7743" (RZ/G1M)
+ 			    - "renesas,thermal-r8a7779" (R-Car H1)
+ 			    - "renesas,thermal-r8a7790" (R-Car H2)
+ 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
+-- 
+1.9.1
