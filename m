@@ -1,72 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54944 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934777AbdLRVdB (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44135 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965422AbdLSNU0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 16:33:01 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] ARM: dts: r8a7792: move timer node out of bus
-Date: Mon, 18 Dec 2017 22:32:33 +0100
-Message-Id: <20171218213233.3373-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171218213233.3373-1-horms+renesas@verge.net.au>
-References: <20171218213233.3373-1-horms+renesas@verge.net.au>
+        Tue, 19 Dec 2017 08:20:26 -0500
+Date: Tue, 19 Dec 2017 14:20:24 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Subject: Re: [RFC PATCH] mmc: tmio: use ioread* for repeated access to a
+ register
+Message-ID: <20171219132024.wa3vbqqbwwrmrb2m@ninjato>
+References: <20171218000021.16655-1-wsa+renesas@sang-engineering.com>
+ <CAPDyKFr5A7Qma_Ef5JMjvG1f_Er+f9K-tnj39_q0Wg2aQ7nY5w@mail.gmail.com>
+ <CAK7LNAS_rRp0RDbmEhahKPkcYJ=Yopj7WGRcuhQLz5WP+FFE1w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zmhyfsy72dpmylqo"
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAS_rRp0RDbmEhahKPkcYJ=Yopj7WGRcuhQLz5WP+FFE1w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The timer node does not have any register properties and thus shouldn't be
-placed on the bus.
 
-This problem is flagged by the compiler as follows:
-$ make dtbs W=1
-...
-  DTC     arch/arm/boot/dts/r8a7792-wheat.dtb
-arch/arm/boot/dts/r8a7792-blanche.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm/boot/dts/r8a7792-wheat.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+--zmhyfsy72dpmylqo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+Yamada-san,
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index d31258958c36..5317e353569f 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -137,18 +137,6 @@
- 			resets = <&cpg 407>;
- 		};
- 
--		timer {
--			compatible = "arm,armv7-timer";
--			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
--				      IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
--				      IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
--				      IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
--				      IRQ_TYPE_LEVEL_LOW)>;
--		};
--
- 		rst: reset-controller@e6160000 {
- 			compatible = "renesas,r8a7792-rst";
- 			reg = <0 0xe6160000 0 0x0100>;
-@@ -857,4 +845,12 @@
- 			#reset-cells = <1>;
- 		};
- 	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
- };
--- 
-2.11.0
+> BTW, is ioread* preferred to read*?
+
+Technically, yes. In reality, mostly not.
+
+> We need to eliminate the root cause.
+> Other drivers using reads* cannot enable COMPILE_TEST for the same reason.
+
+Sure, I understand this. There are not many left, however. I'd assume
+most switched to io*_rep. The sparc64 issue is known for at least two
+years.
+
+> Wolfram,
+> Can you send a patch for sparc64?
+
+As I wrote here already [1], this is too much of a side task for me. But
+if you like, please have a go...
+
+But I'll send the consistency patch for tmio in a second.
+
+Kind regards,
+
+   Wolfram
+
+
+[1] https://lkml.org/lkml/2017/12/15/816
+
+--zmhyfsy72dpmylqo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlo5EhQACgkQFA3kzBSg
+KbaaZBAAhD3QQQhq5VcY9J3VcbM8HWOZC0HoPAtav5qtKII0HsG4ubnlLbsg2wXM
+ga2cLvZKjxIkuTgGh57A7d7ksL2vJAupiEECNc3GVZEr5HsbFD4+pdOJAwxGbyZ0
+7iRMOLBuR53+JshUSqDYc0lKQkgsUedcn9bbbRBxBBx2uJ2Oy2qxi0PgUyG6lmB6
+xp0qhryxZxLPQmOXA69jNoZ1nf68RE64aX2ScLIKCvol8ZhVbJmfkrn2Vv93qepq
+fcyIdHTMYNVLNI3BHevpwi+uPhbLOrQshEEUMU7ijpvWQRW8KK/MQuO30+00nIn9
+CQA4MPP/3NA/p+KAx1ITdHViOMZzwOnm0X0pkYwZiHV+0Pw+YqIBXtubJZh/bFVX
+l/lLaROLagC3aH1wKQia5QieXdrTIzufxbQ+2vcFAcUE/wB3GtuqPGJnLSlbYefl
+eUP/WLQW1nx7zI4OmBQddYNxdou6on/DbIN4Psc1XCLX6fa1weWzQx54Hke1AsAm
+H4D69Gwa6MIMwSahGf9dR+9Tw9oX59j0kUKXY05lQmVCEAVFlnyAy+3Zg45ZAzZN
+DzitoqUHPYkNuoA1tvdXrTQnHKJAG2/mdKdUe9503oydStrIIwweEAkxkYaZSsB3
+EptAO4jIzZBrioskybEV4XPFddTJjQOWhSdmCjeYQmZqyLTVM+4=
+=ygn7
+-----END PGP SIGNATURE-----
+
+--zmhyfsy72dpmylqo--
