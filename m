@@ -1,59 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:55280 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752457AbdLGKPZ (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:9853 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1763056AbdLSNfI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 05:15:25 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] PCI: rcar: Handle rcar_pcie_parse_request_of_pci_ranges() failures
-Date: Thu,  7 Dec 2017 11:15:20 +0100
-Message-Id: <1512641720-4715-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512641720-4715-1-git-send-email-geert+renesas@glider.be>
-References: <1512641720-4715-1-git-send-email-geert+renesas@glider.be>
+        Tue, 19 Dec 2017 08:35:08 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH v3 0/5] Add PWM and TPU support to r8a7743
+Date: Tue, 19 Dec 2017 13:34:55 +0000
+Message-Id: <1513690500-12165-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-rcar_pcie_parse_request_of_pci_ranges() can fail and return an error
-code, but this is not checked nor handled.
+Dear All,
 
-Fix this by adding the missing error handling.
+this series includes all that is required to add PWM and TPU SoC specific
+support for the r8a7743.
 
-Fixes: 5d2917d469faab72 ("PCI: rcar: Convert to DT resource parsing API")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pci/host/pcie-rcar.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 52ab3cb0a0bfe065..95ca4a1feba4b759 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1123,7 +1123,9 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 
- 	INIT_LIST_HEAD(&pcie->resources);
- 
--	rcar_pcie_parse_request_of_pci_ranges(pcie);
-+	err = rcar_pcie_parse_request_of_pci_ranges(pcie);
-+	if (err)
-+		goto err_free_bridge;
- 
- 	err = rcar_pcie_get_resources(pcie);
- 	if (err < 0) {
-@@ -1178,6 +1180,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 
- err_free_resource_list:
- 	pci_free_resource_list(&pcie->resources);
-+err_free_bridge:
- 	pci_free_host_bridge(bridge);
- 
- 	return err;
+Fabrizio Castro (5):
+  ARM: shmobile: defconfig: Enable PWM
+  dt-bindings: pwm: rcar: Document r8a774[35] PWM bindings
+  ARM: dts: r8a7743: Add PWM SoC support
+  dt-bindings: pwm: renesas-tpu: Document r8a774[35] support
+  ARM: dts: r8a7743: Add TPU support
+
+ .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   | 10 ++-
+ .../devicetree/bindings/pwm/renesas,tpu-pwm.txt    |  4 +-
+ arch/arm/boot/dts/r8a7743.dtsi                     | 80 ++++++++++++++++++++++
+ arch/arm/configs/shmobile_defconfig                |  1 +
+ 4 files changed, 91 insertions(+), 4 deletions(-)
+
 -- 
 2.7.4
