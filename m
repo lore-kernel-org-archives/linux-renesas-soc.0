@@ -1,47 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:9853 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1763056AbdLSNfI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53024 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754389AbdLTJiG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 08:35:08 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v3 0/5] Add PWM and TPU support to r8a7743
-Date: Tue, 19 Dec 2017 13:34:55 +0000
-Message-Id: <1513690500-12165-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 20 Dec 2017 04:38:06 -0500
+Date: Wed, 20 Dec 2017 10:38:02 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-can@vger.kernel.org,
+        devicetree@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        chris.paterson2@renesas.com,
+        ramesh.shanmugasundaram@bp.renesas.com, robh@kernel.org
+Subject: Re: [PATCH v2 1/2] can: rcar_can: document r8a77995 (R-Car D3)
+ compatibility strings
+Message-ID: <20171220093802.lcl23lzj5qruiovn@verge.net.au>
+References: <1513612297-10173-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1513612297-10173-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513612297-10173-2-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+On Mon, Dec 18, 2017 at 04:51:36PM +0100, Ulrich Hecht wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-this series includes all that is required to add PWM and TPU SoC specific
-support for the r8a7743.
-
-Thanks,
-
-Fabrizio Castro (5):
-  ARM: shmobile: defconfig: Enable PWM
-  dt-bindings: pwm: rcar: Document r8a774[35] PWM bindings
-  ARM: dts: r8a7743: Add PWM SoC support
-  dt-bindings: pwm: renesas-tpu: Document r8a774[35] support
-  ARM: dts: r8a7743: Add TPU support
-
- .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   | 10 ++-
- .../devicetree/bindings/pwm/renesas,tpu-pwm.txt    |  4 +-
- arch/arm/boot/dts/r8a7743.dtsi                     | 80 ++++++++++++++++++++++
- arch/arm/configs/shmobile_defconfig                |  1 +
- 4 files changed, 91 insertions(+), 4 deletions(-)
-
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
