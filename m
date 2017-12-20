@@ -1,58 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56322 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757886AbdLVK3h (ORCPT
+        with ESMTP id S1755023AbdLTMOw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:29:37 -0500
+        Wed, 20 Dec 2017 07:14:52 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/11] arm64: dts: renesas: r8a7795: sort subnodes of root node alphabetically
-Date: Fri, 22 Dec 2017 11:29:15 +0100
-Message-Id: <86af5aac311733d11c1c965522bd3d7fc6ee51c6.1513936761.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513936760.git.horms+renesas@verge.net.au>
-References: <cover.1513936760.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] ARM: dts: r8a7791: Reduce size of thermal registers
+Date: Wed, 20 Dec 2017 13:14:44 +0100
+Message-Id: <20171220121445.31896-3-horms+renesas@verge.net.au>
+In-Reply-To: <20171220121445.31896-1-horms+renesas@verge.net.au>
+References: <20171220121445.31896-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort root sub-nodes alphabetically for allow for easier maintenance
-of this file.
+Reduce size of thermal registers in DT for r8a7791 (R-Car M3-W) SoC.
+
+According to the "User's Manual: Hardware" v2.00 the registers at base
+0xe61f0000 extend to an offset of 0x10, rather than 0x14 which is the case
+on the r8a73a4 (R-Mobile APE6).
+
+This should not have any runtime affect as mapping granularity is PAGE_SIZE.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a851c88e1e04..62dfc7781cc1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -30,11 +30,6 @@
- 		i2c7 = &i2c_dvfs;
- 	};
- 
--	psci {
--		compatible = "arm,psci-1.0", "arm,psci-0.2";
--		method = "smc";
--	};
--
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -208,6 +203,11 @@
- 				     <&a53_3>;
- 	};
- 
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 008a260f86a5..8266a9b7cafd 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -240,7 +240,7 @@
+ 		compatible =	"renesas,thermal-r8a7791",
+ 				"renesas,rcar-gen2-thermal",
+ 				"renesas,rcar-thermal";
+-		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
++		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 522>;
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
 -- 
 2.11.0
