@@ -1,124 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54472 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753881AbdLNWbI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56329 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755023AbdLTMOx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 17:31:08 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+        Wed, 20 Dec 2017 07:14:53 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/9] ARM: dts: alt: use demuxer for I2C1
-Date: Thu, 14 Dec 2017 23:30:58 +0100
-Message-Id: <20171214223101.16450-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
-References: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 3/3] ARM: dts: r8a7793: Reduce size of thermal registers
+Date: Wed, 20 Dec 2017 13:14:45 +0100
+Message-Id: <20171220121445.31896-4-horms+renesas@verge.net.au>
+In-Reply-To: <20171220121445.31896-1-horms+renesas@verge.net.au>
+References: <20171220121445.31896-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+Reduce size of thermal registers in DT for r8a7793 (R-Car M3-N) SoC.
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+According to the "User's Manual: Hardware" v2.00 the registers at base
+0xe61f0000 extend to an offset of 0x10, rather than 0x14 which is the case
+on the r8a73a4 (R-Mobile APE6).
+
+This should not have any runtime affect as mapping granularity is PAGE_SIZE.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 53 +++++++++++++++++++++++++++------------
- 1 file changed, 37 insertions(+), 16 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 60c6515c499660..26a883484ea814 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -18,7 +18,9 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		i2c9 = &gpioi2c1;
- 		i2c10 = &gpioi2c4;
-+		i2c11 = &i2chdmi;
- 		i2c12 = &i2cexio4;
- 	};
- 
-@@ -138,17 +140,50 @@
- 		clock-frequency = <148500000>;
- 	};
- 
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	};
-+
- 	gpioi2c4: i2c-10 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
- 		status = "disabled";
--		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		scl-gpios = <&gpio4 8 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
- 	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-11 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+	};
-+
-+	/*
- 	 * I2C4 is routed to EXIO connector B, pins 73 (SCL) + 74 (SDA).
- 	 * A fallback to GPIO is provided.
- 	 */
-@@ -324,23 +359,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
- };
- 
- &i2c4 {
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 039b22517526..e95f4fb44dc4 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -231,7 +231,7 @@
+ 		compatible =	"renesas,thermal-r8a7793",
+ 				"renesas,rcar-gen2-thermal",
+ 				"renesas,rcar-thermal";
+-		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
++		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 522>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
 -- 
 2.11.0
