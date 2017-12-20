@@ -1,163 +1,130 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39176 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755393AbdLTOJb (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36304 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753868AbdLTMhs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 09:09:31 -0500
-Received: by mail-lf0-f68.google.com with SMTP id m20so11075587lfi.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 06:09:30 -0800 (PST)
+        Wed, 20 Dec 2017 07:37:48 -0500
+Received: by mail-io0-f193.google.com with SMTP id l10so17172008ioc.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 04:37:48 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFqEyk5TZZk3bo9hvfBZ=j-1k0YJ9Ux3YHpvHOhrOuK-xw@mail.gmail.com>
+References: <1513718551-28624-1-git-send-email-ulf.hansson@linaro.org>
+ <1513718551-28624-2-git-send-email-ulf.hansson@linaro.org>
+ <ced99cd1-d52c-ea76-332d-6c0492f256a8@ti.com> <CAPDyKFoy7AkAyA9boAakr1m5Y7+r2KMqbLR7KmHZThPRXoKMRA@mail.gmail.com>
+ <0c0cf0ba-e729-a1d8-ac0a-38c8eb13a5c6@ti.com> <CAPDyKFqEyk5TZZk3bo9hvfBZ=j-1k0YJ9Ux3YHpvHOhrOuK-xw@mail.gmail.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+Date: Wed, 20 Dec 2017 13:37:47 +0100
+Message-ID: <CAPDyKFpzFFJzbjMPHVPRTakriL+J8F_X3nX9gNsut2EA3mpXTQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] phy: core: Move runtime PM reference counting to the
+ parent device
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 1/3] phy: core: Move runtime PM reference counting to the parent device
-Date: Wed, 20 Dec 2017 15:09:18 +0100
-Message-Id: <1513778960-10073-2-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
-References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The runtime PM deployment in the phy core is deployed using the phy core
-device, which is created by the phy core and assigned as a child device of
-the phy provider device.
+On 20 December 2017 at 13:08, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 20 December 2017 at 10:02, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>> Hi Ulf,
+>>
+>> On Wednesday 20 December 2017 02:05 PM, Ulf Hansson wrote:
+>>> On 20 December 2017 at 07:42, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>>> Hi Ulf,
+>>>>
+>>>> On Wednesday 20 December 2017 02:52 AM, Ulf Hansson wrote:
+>>>>> The runtime PM deployment in the phy core is a bit unnecessary complicated
+>>>>> and the main reason is because it operates on the phy device, which is
+>>>>> created by the phy core and assigned as a child device of the phy provider
+>>>>> device.
+>>>>>
+>>>>> Let's simplify the code, by replacing the existing calls to
+>>>>> phy_pm_runtime_get_sync() and phy_pm_runtime_put(), with regular calls to
+>>>>> pm_runtime_get_sync() and pm_runtime_put(). While doing that, let's also
+>>>>> change to give the phy provider device as the parameter to the runtime PM
+>>>>> calls. This together with adding error paths, that allows the phy
+>>>>> provider device to be runtime PM disabled, enables further clean up the
+>>>>> code. More precisely, we can simply avoid to enable runtime PM for the phy
+>>>>> device altogether, so let's do that as well.
+>>>>>
+>>>>> More importantly, this change also fixes an issue for system suspend.
+>>>>> Especially in those cases when the phy provider device gets put into a low
+>>>>> power state via calling the pm_runtime_force_suspend() helper, as is the
+>>>>> case for a Renesas SoC, which has the phy provider device attached to the
+>>>>> generic PM domain.
+>>>>>
+>>>>> The problem in this case, is that pm_runtime_force_suspend() expects the
+>>>>> child device of the provider device to be runtime suspended, else this will
+>>>>> trigger a WARN splat (correctly) when runtime PM gets re-enabled at system
+>>>>> resume.
+>>>>>
+>>>>> In the current case, even if phy_power_off() triggers a pm_runtime_put()
+>>>>> during system suspend the phy device (child) doesn't get runtime suspended,
+>>>>> because that is prevented in the system suspend phases. However, by
+>>>>> avoiding to enable runtime PM, this problem goes away.
+>>>>>
+>>>>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>>>> ---
+>>>>>  drivers/phy/phy-core.c | 33 +++++++++++++--------------------
+>>>>>  1 file changed, 13 insertions(+), 20 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+>>>>> index b4964b0..9fa3f13 100644
+>>>>> --- a/drivers/phy/phy-core.c
+>>>>> +++ b/drivers/phy/phy-core.c
+>>>>> @@ -222,10 +222,10 @@ int phy_init(struct phy *phy)
+>>>>>       if (!phy)
+>>>>>               return 0;
+>>>>>
+>>>>> -     ret = phy_pm_runtime_get_sync(phy);
+>>>>> -     if (ret < 0 && ret != -ENOTSUPP)
+>>>>> +     ret = pm_runtime_get_sync(phy->dev.parent);
+>>>>
+>>>> Won't this make phy-core manage pm_runtime of phy_provider even though the
+>>>> phy_provider might not intend it?
+>>>
+>>> No it shouldn't.
+>>>
+>>> There are two cases to consider around this.
+>>>
+>>> 1) CONFIG_PM is unset. In this case pm_runtime_get_sync() will return
+>>> 1, which is treated as succeeds by the error path.
+>>>
+>>> 2) CONFIG_PM is set, but the phy provider don't use runtime PM, thus
+>>> it hasn't called pm_runtime_enable() for its device. In this case,
+>>> pm_runtime_get_sync() returns -EACCES, which is also treated as
+>>> success by the error path.
+>>
+>> There can be a case where the phy_provider uses runtime PM but doesn't want
+>> phy-core to manage it.
+>
+> Ah, so you mean there are cases when the provider driver calls
+> pm_runtime_enable() *after* it calls phy_create()/dev_phy_create()
+> instead of before?
 
-The behaviour around the runtime PM deployment cause some issues during
-system suspend, in cases when the phy provider device is put into a low
-power state via a call to the pm_runtime_force_suspend() helper, as is the
-case for a Renesas SoC, which has its phy provider device attached to the
-generic PM domain.
+Okay so I found an example, thanks for pointing it out!
 
-In more detail, the problem in this case is that pm_runtime_force_suspend()
-expects the child device of the provider device, which is the phy core
-device, to be runtime suspended, else a WARN splat will be printed
-(correctly) when runtime PM gets re-enabled at system resume.
+drivers/phy/ti/phy-twl4030-usb.c
 
-In the current scenario, even if a call to phy_power_off() triggers it to
-invoke pm_runtime_put() during system suspend, the phy core device doesn't
-get runtime suspended, because this is prevented in the system suspend
-phases by the PM core.
+>
+> I am not really sure I understand *why* a provider driver wants to do
+> that though, do you have more details?
+> I mean, even if the phy core handles runtime PM, additional management
+> can be done on top in the phy provider, there is nothing preventing
+> that, but I guess that isn't sufficient?
 
-To solve this problem, let's move the runtime PM deployment from the phy
-core device to the phy provider device, as this provides the similar
-behaviour. Changing this makes it redundant to enable runtime PM for the
-phy core device, so let's avoid doing that.
+In the above example, I guess the reason is related to the use of
+usb_add_phy_dev().
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/phy/phy-core.c  | 33 +++++++++++++++------------------
- include/linux/phy/phy.h |  1 +
- 2 files changed, 16 insertions(+), 18 deletions(-)
+I must say, the code in drivers/phy/ti/phy-twl4030-usb.c dealing with
+these things looks a bit fragile, from a runtime PM point view.
+However that's different story. :-)
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index b4964b0..09588ec 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -153,12 +153,12 @@ int phy_pm_runtime_get(struct phy *phy)
- {
- 	int ret;
- 
--	if (!pm_runtime_enabled(&phy->dev))
-+	if (!phy->use_runtime_pm)
- 		return -ENOTSUPP;
- 
--	ret = pm_runtime_get(&phy->dev);
-+	ret = pm_runtime_get(phy->dev.parent);
- 	if (ret < 0 && ret != -EINPROGRESS)
--		pm_runtime_put_noidle(&phy->dev);
-+		pm_runtime_put_noidle(phy->dev.parent);
- 
- 	return ret;
- }
-@@ -168,12 +168,12 @@ int phy_pm_runtime_get_sync(struct phy *phy)
- {
- 	int ret;
- 
--	if (!pm_runtime_enabled(&phy->dev))
-+	if (!phy->use_runtime_pm)
- 		return -ENOTSUPP;
- 
--	ret = pm_runtime_get_sync(&phy->dev);
-+	ret = pm_runtime_get_sync(phy->dev.parent);
- 	if (ret < 0)
--		pm_runtime_put_sync(&phy->dev);
-+		pm_runtime_put_sync(phy->dev.parent);
- 
- 	return ret;
- }
-@@ -181,37 +181,37 @@ EXPORT_SYMBOL_GPL(phy_pm_runtime_get_sync);
- 
- int phy_pm_runtime_put(struct phy *phy)
- {
--	if (!pm_runtime_enabled(&phy->dev))
-+	if (!phy->use_runtime_pm)
- 		return -ENOTSUPP;
- 
--	return pm_runtime_put(&phy->dev);
-+	return pm_runtime_put(phy->dev.parent);
- }
- EXPORT_SYMBOL_GPL(phy_pm_runtime_put);
- 
- int phy_pm_runtime_put_sync(struct phy *phy)
- {
--	if (!pm_runtime_enabled(&phy->dev))
-+	if (!phy->use_runtime_pm)
- 		return -ENOTSUPP;
- 
--	return pm_runtime_put_sync(&phy->dev);
-+	return pm_runtime_put_sync(phy->dev.parent);
- }
- EXPORT_SYMBOL_GPL(phy_pm_runtime_put_sync);
- 
- void phy_pm_runtime_allow(struct phy *phy)
- {
--	if (!pm_runtime_enabled(&phy->dev))
-+	if (!phy->use_runtime_pm)
- 		return;
- 
--	pm_runtime_allow(&phy->dev);
-+	pm_runtime_allow(phy->dev.parent);
- }
- EXPORT_SYMBOL_GPL(phy_pm_runtime_allow);
- 
- void phy_pm_runtime_forbid(struct phy *phy)
- {
--	if (!pm_runtime_enabled(&phy->dev))
-+	if (!phy->use_runtime_pm)
- 		return;
- 
--	pm_runtime_forbid(&phy->dev);
-+	pm_runtime_forbid(phy->dev.parent);
- }
- EXPORT_SYMBOL_GPL(phy_pm_runtime_forbid);
- 
-@@ -774,10 +774,7 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
- 	if (ret)
- 		goto put_dev;
- 
--	if (pm_runtime_enabled(dev)) {
--		pm_runtime_enable(&phy->dev);
--		pm_runtime_no_callbacks(&phy->dev);
--	}
-+	phy->use_runtime_pm = pm_runtime_enabled(dev);
- 
- 	return phy;
- 
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 4f8423a..b4298a1 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -83,6 +83,7 @@ struct phy {
- 	int			power_count;
- 	struct phy_attrs	attrs;
- 	struct regulator	*pwr;
-+	bool			use_runtime_pm;
- };
- 
- /**
--- 
-2.7.4
+Let me re-spin this, taking care of the problem you pointed out!
+
+Kind regards
+Uffe
