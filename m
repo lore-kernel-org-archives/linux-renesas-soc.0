@@ -1,88 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38583 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750814AbdL2Nbz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56347 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755085AbdLTMO5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Dec 2017 08:31:55 -0500
-Received: by mail-lf0-f68.google.com with SMTP id w196so30184999lff.5
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Dec 2017 05:31:55 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] renesas: irqchip: Use WAKEUP_PATH driver PM flag
-Date: Fri, 29 Dec 2017 14:31:41 +0100
-Message-Id: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
+        Wed, 20 Dec 2017 07:14:57 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/3] ARM: dts: renesas: Reduce size of thermal registers
+Date: Wed, 20 Dec 2017 13:14:42 +0100
+Message-Id: <20171220121445.31896-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Reduce size of thermal registers in DT for the following SoCs:
+* r8a7790 (R-Car H2)
+* r8a7791 (R-Car M3-W)
+* r8a7793 (R-Car M3-N)
 
-Changes in v2: [By Ulf Hansson]
-	- I have picked up the series from Geert [1] and converted it into use
-	the WAKEUP_PATH driver PM flag. This includes some minor changes to each
-	patch and updates to the changelogs.
-	- An important note, the WAKEUP_PATH driver PM flag is introduced in a
-	separate series [2], not yet applied, so @subject series depends on it.
-	- One more note, two of the patches has a checkpatch error, however I
-	did not fix them, becuase I think that should be done separate.
+According to the "User's Manual: Hardware" v2.00 the registers at base
+0xe61f0000 extend to an offset of 0x10, rather than 0x14 which is the case
+on the r8a73a4 (R-Mobile APE6).
 
-[1]
-https://lkml.org/lkml/2017/11/9/382
-[2]
-https://marc.info/?l=linux-pm&m=151454744124661&w=2
+This should not have any runtime affect as mapping granularity is PAGE_SIZE.
 
-More information below, picked from Geert's previous cover letter.
+As pointed out by Geert Uytterhoeven.
 
-Kind regards
-Uffe
+Based on renesas-devel-20171220-v4.15-rc4
 
+Simon Horman (3):
+  ARM: dts: r8a7790: Reduce size of thermal registers
+  ARM: dts: r8a7791: Reduce size of thermal registers
+  ARM: dts: r8a7793: Reduce size of thermal registers
 
-Hi all,
-
-If an interrupt controller in a Renesas ARM SoC is part of a Clock
-Domain, and it is part of the wakeup path, it must be kept active during
-system suspend.
-
-Currently this is handled in all interrupt controller drivers by
-explicitly increasing the use count of the module clock when the device
-is part of the wakeup path.  However, this explicit clock handling is
-merely a workaround for a failure to properly communicate wakeup
-information to the device core.
-
-Hence this series fixes the affected drivers by setting the devices'
-power.wakeup_path fields instead, to indicate they are part of the
-wakeup path.  Depending on the PM Domain's active_wakeup configuration,
-the genpd core code will keep the device enabled (and the clock running)
-during system suspend when needed.
-
-Note that most of these patches depend on the series "[PATCH v2 0/3] PM
-/ Domain: renesas: Fix active wakeup behavior", hence they should not be
-applied yet.
-
-This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
-r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7796/salvator-x, and
-sh73a0/kzm9g.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  irqchip/renesas-intc-irqpin: Use WAKEUP_PATH driver PM flag
-  irqchip/renesas-irqc: Use WAKEUP_PATH driver PM flag
-  gpio: rcar: Use WAKEUP_PATH driver PM flag
-
- drivers/gpio/gpio-rcar.c                  | 40 +++++++++++------------------
- drivers/irqchip/irq-renesas-intc-irqpin.c | 42 +++++++++++--------------------
- drivers/irqchip/irq-renesas-irqc.c        | 32 +++++++++++------------
- 3 files changed, 45 insertions(+), 69 deletions(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 2 +-
+ arch/arm/boot/dts/r8a7791.dtsi | 2 +-
+ arch/arm/boot/dts/r8a7793.dtsi | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
 -- 
-2.7.4
+2.11.0
