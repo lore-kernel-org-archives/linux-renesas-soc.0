@@ -1,198 +1,190 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:45374 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752404AbdLUKdg (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34873 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755287AbdLTOJc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 05:33:36 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Wed, 20 Dec 2017 09:09:32 -0500
+Received: by mail-lf0-f65.google.com with SMTP id j124so24199850lfg.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 06:09:31 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 2/3] phy: core: Drop unused runtime PM APIs
-Date: Thu, 21 Dec 2017 10:33:31 +0000
-Message-ID: <TY1PR06MB0992E87FAA770B745DCBA690D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 2/3] phy: core: Drop unused runtime PM APIs
+Date: Wed, 20 Dec 2017 15:09:19 +0100
+Message-Id: <1513778960-10073-3-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
 References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
- <1513778960-10073-3-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1513778960-10073-3-git-send-email-ulf.hansson@linaro.org>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf-san,
+The phy core already deploys runtime PM support, so there seems to be no
+obvious reason for having dedicated APIs to control runtime PM for phys.
 
-> -----Original Message-----
-> From: Ulf Hansson, Sent: Wednesday, December 20, 2017 11:09 PM
-<snip>
-> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-> index b4298a1..050b620 100644
-> --- a/include/linux/phy/phy.h
-> +++ b/include/linux/phy/phy.h
-> @@ -17,7 +17,6 @@
->  #include <linux/err.h>
->  #include <linux/of.h>
->  #include <linux/device.h>
-> -#include <linux/pm_runtime.h>
+Therefore, let's remove the APIs altogether and instead convert internal
+needed functions to be static.
 
-After I applied this patch, some ata and gpu drivers causes build error [1]=
-.
-So, we should fix the drivers at first...
-
-Best regards,
-Yoshihiro Shimoda
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
-[1]
-drivers/ata/ahci_qoriq.c: In function 'ahci_qoriq_resume':
-drivers/ata/ahci_qoriq.c:318:2: error: implicit declaration of function 'pm=
-_runtime_disable' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_disable(dev);
-  ^
-drivers/ata/ahci_qoriq.c:319:2: error: implicit declaration of function 'pm=
-_runtime_set_active' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_set_active(dev);
-  ^
-drivers/ata/ahci_qoriq.c:320:2: error: implicit declaration of function 'pm=
-_runtime_enable' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_enable(dev);
-  ^
-drivers/ata/ahci.c: In function 'ahci_init_one':
-drivers/ata/ahci.c:1761:2: error: implicit declaration of function 'pm_runt=
-ime_put_noidle' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_put_noidle(&pdev->dev);
-  ^
-drivers/ata/ahci.c: In function 'ahci_remove_one':
-drivers/ata/ahci.c:1767:2: error: implicit declaration of function 'pm_runt=
-ime_get_noresume' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_get_noresume(&pdev->dev);
-  ^
-drivers/ata/libahci.c: In function 'ahci_rpm_get_port':
-drivers/ata/libahci.c:239:9: error: implicit declaration of function 'pm_ru=
-ntime_get_sync' [-Werror=3Dimplicit-function-declaration]
-  return pm_runtime_get_sync(ap->dev);
-         ^
-drivers/ata/libahci.c: In function 'ahci_rpm_put_port':
-drivers/ata/libahci.c:251:2: error: implicit declaration of function 'pm_ru=
-ntime_put' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_put(ap->dev);
-  ^
-drivers/ata/ahci_ceva.c: In function 'ceva_ahci_resume':
-drivers/ata/ahci_ceva.c:326:2: error: implicit declaration of function 'pm_=
-runtime_disable' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_disable(dev);
-  ^
-drivers/ata/ahci_ceva.c:327:2: error: implicit declaration of function 'pm_=
-runtime_set_active' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_set_active(dev);
-  ^
-drivers/ata/ahci_ceva.c:328:2: error: implicit declaration of function 'pm_=
-runtime_enable' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_enable(dev);
-  ^
-cc1: some warnings being treated as errors
-make[2]: *** [drivers/ata/ahci_qoriq.o] Error 1
-make[2]: *** Waiting for unfinished jobs....
-cc1: some warnings being treated as errors
-make[2]: *** [drivers/ata/ahci_ceva.o] Error 1
-cc1: some warnings being treated as errors
-make[2]: *** [drivers/ata/ahci.o] Error 1
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c: In function 'analogix_d=
-p_get_modes':
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:949:3: error: implicit d=
-eclaration of function 'pm_runtime_get_sync' [-Werror=3Dimplicit-function-d=
-eclaration]
-   pm_runtime_get_sync(dp->dev);
-   ^
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:951:3: error: implicit d=
-eclaration of function 'pm_runtime_put' [-Werror=3Dimplicit-function-declar=
-ation]
-   pm_runtime_put(dp->dev);
-   ^
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c: In function 'analogix_d=
-p_bridge_disable':
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1120:2: error: implicit =
-declaration of function 'pm_runtime_put_sync' [-Werror=3Dimplicit-function-=
-declaration]
-  pm_runtime_put_sync(dp->dev);
-  ^
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c: In function 'analogix_d=
-p_bind':
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1387:2: error: implicit =
-declaration of function 'pm_runtime_enable' [-Werror=3Dimplicit-function-de=
-claration]
-  pm_runtime_enable(dev);
-  ^
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1431:2: error: implicit =
-declaration of function 'pm_runtime_disable' [-Werror=3Dimplicit-function-d=
-eclaration]
-  pm_runtime_disable(dev);
-  ^
-drivers/gpu/drm/exynos/exynos_drm_dsi.c: In function 'exynos_dsi_enable':
-drivers/gpu/drm/exynos/exynos_drm_dsi.c:1385:2: error: implicit declaration=
- of function 'pm_runtime_get_sync' [-Werror=3Dimplicit-function-declaration=
-]
-  pm_runtime_get_sync(dsi->dev);
-  ^
-drivers/gpu/drm/exynos/exynos_drm_dsi.c:1392:3: error: implicit declaration=
- of function 'pm_runtime_put_sync' [-Werror=3Dimplicit-function-declaration=
-]
-   pm_runtime_put_sync(dsi->dev);
-   ^
-drivers/gpu/drm/exynos/exynos_drm_dsi.c: In function 'exynos_dsi_probe':
-drivers/gpu/drm/exynos/exynos_drm_dsi.c:1797:2: error: implicit declaration=
- of function 'pm_runtime_enable' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_enable(dev);
-  ^
-drivers/gpu/drm/exynos/exynos_drm_dsi.c: In function 'exynos_dsi_remove':
-drivers/gpu/drm/exynos/exynos_drm_dsi.c:1808:2: error: implicit declaration=
- of function 'pm_runtime_disable' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_disable(&pdev->dev);
-  ^
-drivers/gpu/drm/rockchip/cdn-dp-core.c: In function 'cdn_dp_clk_enable':
-drivers/gpu/drm/rockchip/cdn-dp-core.c:111:8: error: implicit declaration o=
-f function 'pm_runtime_get_sync' [-Werror=3Dimplicit-function-declaration]
-  ret =3D pm_runtime_get_sync(dp->dev);
-        ^
-drivers/gpu/drm/rockchip/cdn-dp-core.c:137:2: error: implicit declaration o=
-f function 'pm_runtime_put' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_put(dp->dev);
-  ^
-drivers/gpu/drm/rockchip/cdn-dp-core.c: In function 'cdn_dp_clk_disable':
-drivers/gpu/drm/rockchip/cdn-dp-core.c:148:2: error: implicit declaration o=
-f function 'pm_runtime_put_sync' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_put_sync(dp->dev);
-  ^
-drivers/gpu/drm/rockchip/cdn-dp-core.c: In function 'cdn_dp_bind':
-drivers/gpu/drm/rockchip/cdn-dp-core.c:1094:2: error: implicit declaration =
-of function 'pm_runtime_enable' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_enable(dev);
-  ^
-drivers/gpu/drm/rockchip/cdn-dp-core.c: In function 'cdn_dp_unbind':
-drivers/gpu/drm/rockchip/cdn-dp-core.c:1118:2: error: implicit declaration =
-of function 'pm_runtime_disable' [-Werror=3Dimplicit-function-declaration]
-  pm_runtime_disable(dev);
-  ^
-cc1: some warnings being treated as errors
-make[2]: *** [drivers/ata/libahci.o] Error 1
-make[1]: *** [drivers/ata] Error 2
-make[1]: *** Waiting for unfinished jobs....
-cc1: some warnings being treated as errors
-make[5]: *** [drivers/gpu/drm/bridge/analogix/analogix_dp_core.o] Error 1
-make[4]: *** [drivers/gpu/drm/bridge/analogix] Error 2
-make[3]: *** [drivers/gpu/drm/bridge] Error 2
-make[3]: *** Waiting for unfinished jobs....
-cc1: some warnings being treated as errors
-make[4]: *** [drivers/gpu/drm/exynos/exynos_drm_dsi.o] Error 1
-make[3]: *** [drivers/gpu/drm/exynos] Error 2
-cc1: some warnings being treated as errors
-make[4]: *** [drivers/gpu/drm/rockchip/cdn-dp-core.o] Error 1
-make[3]: *** [drivers/gpu/drm/rockchip] Error 2
-make[2]: *** [drivers/gpu/drm] Error 2
-make[1]: *** [drivers/gpu] Error 2
-make: *** [drivers] Error 2
+ drivers/phy/phy-core.c  | 50 +++----------------------------------------------
+ include/linux/phy/phy.h | 45 --------------------------------------------
+ 2 files changed, 3 insertions(+), 92 deletions(-)
+
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 09588ec..1621625 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -149,22 +149,7 @@ static struct phy_provider *of_phy_provider_lookup(struct device_node *node)
+ 	return ERR_PTR(-EPROBE_DEFER);
+ }
+ 
+-int phy_pm_runtime_get(struct phy *phy)
+-{
+-	int ret;
+-
+-	if (!phy->use_runtime_pm)
+-		return -ENOTSUPP;
+-
+-	ret = pm_runtime_get(phy->dev.parent);
+-	if (ret < 0 && ret != -EINPROGRESS)
+-		pm_runtime_put_noidle(phy->dev.parent);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_get);
+-
+-int phy_pm_runtime_get_sync(struct phy *phy)
++static int phy_pm_runtime_get_sync(struct phy *phy)
+ {
+ 	int ret;
+ 
+@@ -177,43 +162,14 @@ int phy_pm_runtime_get_sync(struct phy *phy)
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_get_sync);
+ 
+-int phy_pm_runtime_put(struct phy *phy)
++static int phy_pm_runtime_put(struct phy *phy)
+ {
+ 	if (!phy->use_runtime_pm)
+ 		return -ENOTSUPP;
+ 
+ 	return pm_runtime_put(phy->dev.parent);
+ }
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_put);
+-
+-int phy_pm_runtime_put_sync(struct phy *phy)
+-{
+-	if (!phy->use_runtime_pm)
+-		return -ENOTSUPP;
+-
+-	return pm_runtime_put_sync(phy->dev.parent);
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_put_sync);
+-
+-void phy_pm_runtime_allow(struct phy *phy)
+-{
+-	if (!phy->use_runtime_pm)
+-		return;
+-
+-	pm_runtime_allow(phy->dev.parent);
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_allow);
+-
+-void phy_pm_runtime_forbid(struct phy *phy)
+-{
+-	if (!phy->use_runtime_pm)
+-		return;
+-
+-	pm_runtime_forbid(phy->dev.parent);
+-}
+-EXPORT_SYMBOL_GPL(phy_pm_runtime_forbid);
+ 
+ int phy_init(struct phy *phy)
+ {
+@@ -306,7 +262,7 @@ int phy_power_on(struct phy *phy)
+ 
+ err_pwr_on:
+ 	mutex_unlock(&phy->mutex);
+-	phy_pm_runtime_put_sync(phy);
++	phy_pm_runtime_put(phy);
+ err_pm_sync:
+ 	if (phy->pwr)
+ 		regulator_disable(phy->pwr);
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index b4298a1..050b620 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -17,7 +17,6 @@
+ #include <linux/err.h>
+ #include <linux/of.h>
+ #include <linux/device.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+ 
+ struct phy;
+@@ -134,12 +133,6 @@ static inline void *phy_get_drvdata(struct phy *phy)
+ }
+ 
+ #if IS_ENABLED(CONFIG_GENERIC_PHY)
+-int phy_pm_runtime_get(struct phy *phy);
+-int phy_pm_runtime_get_sync(struct phy *phy);
+-int phy_pm_runtime_put(struct phy *phy);
+-int phy_pm_runtime_put_sync(struct phy *phy);
+-void phy_pm_runtime_allow(struct phy *phy);
+-void phy_pm_runtime_forbid(struct phy *phy);
+ int phy_init(struct phy *phy);
+ int phy_exit(struct phy *phy);
+ int phy_power_on(struct phy *phy);
+@@ -188,44 +181,6 @@ void devm_of_phy_provider_unregister(struct device *dev,
+ int phy_create_lookup(struct phy *phy, const char *con_id, const char *dev_id);
+ void phy_remove_lookup(struct phy *phy, const char *con_id, const char *dev_id);
+ #else
+-static inline int phy_pm_runtime_get(struct phy *phy)
+-{
+-	if (!phy)
+-		return 0;
+-	return -ENOSYS;
+-}
+-
+-static inline int phy_pm_runtime_get_sync(struct phy *phy)
+-{
+-	if (!phy)
+-		return 0;
+-	return -ENOSYS;
+-}
+-
+-static inline int phy_pm_runtime_put(struct phy *phy)
+-{
+-	if (!phy)
+-		return 0;
+-	return -ENOSYS;
+-}
+-
+-static inline int phy_pm_runtime_put_sync(struct phy *phy)
+-{
+-	if (!phy)
+-		return 0;
+-	return -ENOSYS;
+-}
+-
+-static inline void phy_pm_runtime_allow(struct phy *phy)
+-{
+-	return;
+-}
+-
+-static inline void phy_pm_runtime_forbid(struct phy *phy)
+-{
+-	return;
+-}
+-
+ static inline int phy_init(struct phy *phy)
+ {
+ 	if (!phy)
+-- 
+2.7.4
