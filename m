@@ -1,77 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:36200 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755427AbdLTOJe (ORCPT
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44815 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754337AbdLTMZH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 09:09:34 -0500
-Received: by mail-lf0-f66.google.com with SMTP id c19so4311020lfg.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 06:09:33 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: [PATCH v2 3/3] phy: core: Update the runtime PM section in the docs to reflect changes
-Date: Wed, 20 Dec 2017 15:09:20 +0100
-Message-Id: <1513778960-10073-4-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
-References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
+        Wed, 20 Dec 2017 07:25:07 -0500
+Received: by mail-pl0-f65.google.com with SMTP id n13so8895369plp.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 04:25:07 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 20 Dec 2017 21:24:04 +0900
+Message-Id: <151377264404.17613.15104906014272414275.sendpatchset@little-apple>
+In-Reply-To: <151377262568.17613.8610167192375932687.sendpatchset@little-apple>
+References: <151377262568.17613.8610167192375932687.sendpatchset@little-apple>
+Subject: [PATCH/RFC 02/03] iommu/ipmmu-vmsa: Detect r8a77965 compat strings
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Let's update and clarify he phy documentation, to reflect the latest
-changes around the runtime PM deployment in the phy core.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Match on the r8a77965 SoC in the IPMMU driver. Software wise the same
+IPMMU driver can be used as for other R-Car Gen3 SoCs, however the
+hardware contains certain changes so using separate SoC compat strings
+will allow us more fine grained control of features in the future.
+
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- Documentation/phy.txt | 29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/phy.txt b/Documentation/phy.txt
-index 457c3e0..1c2c761 100644
---- a/Documentation/phy.txt
-+++ b/Documentation/phy.txt
-@@ -160,19 +160,22 @@ associated with this PHY.
- PM Runtime
- ==========
- 
--This subsystem is pm runtime enabled. So while creating the PHY,
--pm_runtime_enable of the phy device created by this subsystem is called and
--while destroying the PHY, pm_runtime_disable is called. Note that the phy
--device created by this subsystem will be a child of the device that calls
--phy_create (PHY provider device).
--
--So pm_runtime_get_sync of the phy_device created by this subsystem will invoke
--pm_runtime_get_sync of PHY provider device because of parent-child relationship.
--It should also be noted that phy_power_on and phy_power_off performs
--phy_pm_runtime_get_sync and phy_pm_runtime_put respectively.
--There are exported APIs like phy_pm_runtime_get, phy_pm_runtime_get_sync,
--phy_pm_runtime_put, phy_pm_runtime_put_sync, phy_pm_runtime_allow and
--phy_pm_runtime_forbid for performing PM operations.
-+This subsystem deploys runtime PM support. More precisely, calls to
-+pm_runtime_get_sync() and to pm_runtime_put() surrounds calls to the phy
-+provider callbacks, ->init|exit(), in phy_init|exit(). At phy_power_on(), the
-+runtime PM usage count is raised again, via pm_runtime_get_sync(). The usage
-+count remain raised, until the internal phy power on count reaches zero in
-+phy_power_off(), at which point pm_runtime_put() is called to restore the
-+runtime PM usage count. In this way, the device is guranteed to stay runtime
-+resumed as long as the phy is powered on.
-+
-+In regards to the runtime PM deployment in the phy core, it should also be
-+noted that it's deployed for the phy provider device, which is the parent of
-+the phy child device. In other words, the phy device created by the phy core
-+remains runtime PM disabled. Of course, whether runtime PM is really used or
-+not, depends on whether the phy provider driver has enabled runtime PM for its
-+provider device. More exactly, pm_runtime_enable() needs to be called prior
-+calling phy_create() or devm_phy_create().
- 
- PHY Mappings
- ============
--- 
-2.7.4
+ drivers/iommu/ipmmu-vmsa.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- 0001/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-11-22 13:16:08.600607110 +0900
+@@ -763,6 +763,7 @@ static bool ipmmu_slave_whitelist(struct
+ static const struct soc_device_attribute soc_rcar_gen3[] = {
+ 	{ .soc_id = "r8a7795", },
+ 	{ .soc_id = "r8a7796", },
++	{ .soc_id = "r8a77965", },
+ 	{ .soc_id = "r8a77970", },
+ 	{ .soc_id = "r8a77995", },
+ 	{ /* sentinel */ }
+@@ -945,6 +946,9 @@ static const struct of_device_id ipmmu_o
+ 		.compatible = "renesas,ipmmu-r8a7796",
+ 		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
++		.compatible = "renesas,ipmmu-r8a77965",
++		.data = &ipmmu_features_rcar_gen3,
++	}, {
+ 		.compatible = "renesas,ipmmu-r8a77970",
+ 		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
+@@ -1137,6 +1141,8 @@ IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of,
+ 		 ipmmu_vmsa_iommu_of_setup);
+ IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796",
+ 		 ipmmu_vmsa_iommu_of_setup);
++IOMMU_OF_DECLARE(ipmmu_r8a77965_iommu_of, "renesas,ipmmu-r8a77965",
++		 ipmmu_vmsa_iommu_of_setup);
+ IOMMU_OF_DECLARE(ipmmu_r8a77970_iommu_of, "renesas,ipmmu-r8a77970",
+ 		 ipmmu_vmsa_iommu_of_setup);
+ IOMMU_OF_DECLARE(ipmmu_r8a77995_iommu_of, "renesas,ipmmu-r8a77995",
