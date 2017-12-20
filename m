@@ -1,103 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:23386 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752886AbdLTJCN (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36600 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753886AbdLTIfj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 04:02:13 -0500
+        Wed, 20 Dec 2017 03:35:39 -0500
+Received: by mail-it0-f65.google.com with SMTP id d16so5949775itj.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 00:35:38 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <ced99cd1-d52c-ea76-332d-6c0492f256a8@ti.com>
+References: <1513718551-28624-1-git-send-email-ulf.hansson@linaro.org>
+ <1513718551-28624-2-git-send-email-ulf.hansson@linaro.org> <ced99cd1-d52c-ea76-332d-6c0492f256a8@ti.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 20 Dec 2017 09:35:37 +0100
+Message-ID: <CAPDyKFoy7AkAyA9boAakr1m5Y7+r2KMqbLR7KmHZThPRXoKMRA@mail.gmail.com>
 Subject: Re: [PATCH 1/3] phy: core: Move runtime PM reference counting to the
  parent device
-To: Ulf Hansson <ulf.hansson@linaro.org>
-References: <1513718551-28624-1-git-send-email-ulf.hansson@linaro.org>
- <1513718551-28624-2-git-send-email-ulf.hansson@linaro.org>
- <ced99cd1-d52c-ea76-332d-6c0492f256a8@ti.com>
- <CAPDyKFoy7AkAyA9boAakr1m5Y7+r2KMqbLR7KmHZThPRXoKMRA@mail.gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <0c0cf0ba-e729-a1d8-ac0a-38c8eb13a5c6@ti.com>
-Date: Wed, 20 Dec 2017 14:32:01 +0530
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoy7AkAyA9boAakr1m5Y7+r2KMqbLR7KmHZThPRXoKMRA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf,
-
-On Wednesday 20 December 2017 02:05 PM, Ulf Hansson wrote:
-> On 20 December 2017 at 07:42, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->> Hi Ulf,
+On 20 December 2017 at 07:42, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> Hi Ulf,
+>
+> On Wednesday 20 December 2017 02:52 AM, Ulf Hansson wrote:
+>> The runtime PM deployment in the phy core is a bit unnecessary complicated
+>> and the main reason is because it operates on the phy device, which is
+>> created by the phy core and assigned as a child device of the phy provider
+>> device.
 >>
->> On Wednesday 20 December 2017 02:52 AM, Ulf Hansson wrote:
->>> The runtime PM deployment in the phy core is a bit unnecessary complicated
->>> and the main reason is because it operates on the phy device, which is
->>> created by the phy core and assigned as a child device of the phy provider
->>> device.
->>>
->>> Let's simplify the code, by replacing the existing calls to
->>> phy_pm_runtime_get_sync() and phy_pm_runtime_put(), with regular calls to
->>> pm_runtime_get_sync() and pm_runtime_put(). While doing that, let's also
->>> change to give the phy provider device as the parameter to the runtime PM
->>> calls. This together with adding error paths, that allows the phy
->>> provider device to be runtime PM disabled, enables further clean up the
->>> code. More precisely, we can simply avoid to enable runtime PM for the phy
->>> device altogether, so let's do that as well.
->>>
->>> More importantly, this change also fixes an issue for system suspend.
->>> Especially in those cases when the phy provider device gets put into a low
->>> power state via calling the pm_runtime_force_suspend() helper, as is the
->>> case for a Renesas SoC, which has the phy provider device attached to the
->>> generic PM domain.
->>>
->>> The problem in this case, is that pm_runtime_force_suspend() expects the
->>> child device of the provider device to be runtime suspended, else this will
->>> trigger a WARN splat (correctly) when runtime PM gets re-enabled at system
->>> resume.
->>>
->>> In the current case, even if phy_power_off() triggers a pm_runtime_put()
->>> during system suspend the phy device (child) doesn't get runtime suspended,
->>> because that is prevented in the system suspend phases. However, by
->>> avoiding to enable runtime PM, this problem goes away.
->>>
->>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->>> ---
->>>  drivers/phy/phy-core.c | 33 +++++++++++++--------------------
->>>  1 file changed, 13 insertions(+), 20 deletions(-)
->>>
->>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
->>> index b4964b0..9fa3f13 100644
->>> --- a/drivers/phy/phy-core.c
->>> +++ b/drivers/phy/phy-core.c
->>> @@ -222,10 +222,10 @@ int phy_init(struct phy *phy)
->>>       if (!phy)
->>>               return 0;
->>>
->>> -     ret = phy_pm_runtime_get_sync(phy);
->>> -     if (ret < 0 && ret != -ENOTSUPP)
->>> +     ret = pm_runtime_get_sync(phy->dev.parent);
+>> Let's simplify the code, by replacing the existing calls to
+>> phy_pm_runtime_get_sync() and phy_pm_runtime_put(), with regular calls to
+>> pm_runtime_get_sync() and pm_runtime_put(). While doing that, let's also
+>> change to give the phy provider device as the parameter to the runtime PM
+>> calls. This together with adding error paths, that allows the phy
+>> provider device to be runtime PM disabled, enables further clean up the
+>> code. More precisely, we can simply avoid to enable runtime PM for the phy
+>> device altogether, so let's do that as well.
 >>
->> Won't this make phy-core manage pm_runtime of phy_provider even though the
->> phy_provider might not intend it?
-> 
-> No it shouldn't.
-> 
-> There are two cases to consider around this.
-> 
-> 1) CONFIG_PM is unset. In this case pm_runtime_get_sync() will return
-> 1, which is treated as succeeds by the error path.
-> 
-> 2) CONFIG_PM is set, but the phy provider don't use runtime PM, thus
-> it hasn't called pm_runtime_enable() for its device. In this case,
-> pm_runtime_get_sync() returns -EACCES, which is also treated as
-> success by the error path.
+>> More importantly, this change also fixes an issue for system suspend.
+>> Especially in those cases when the phy provider device gets put into a low
+>> power state via calling the pm_runtime_force_suspend() helper, as is the
+>> case for a Renesas SoC, which has the phy provider device attached to the
+>> generic PM domain.
+>>
+>> The problem in this case, is that pm_runtime_force_suspend() expects the
+>> child device of the provider device to be runtime suspended, else this will
+>> trigger a WARN splat (correctly) when runtime PM gets re-enabled at system
+>> resume.
+>>
+>> In the current case, even if phy_power_off() triggers a pm_runtime_put()
+>> during system suspend the phy device (child) doesn't get runtime suspended,
+>> because that is prevented in the system suspend phases. However, by
+>> avoiding to enable runtime PM, this problem goes away.
+>>
+>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> ---
+>>  drivers/phy/phy-core.c | 33 +++++++++++++--------------------
+>>  1 file changed, 13 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+>> index b4964b0..9fa3f13 100644
+>> --- a/drivers/phy/phy-core.c
+>> +++ b/drivers/phy/phy-core.c
+>> @@ -222,10 +222,10 @@ int phy_init(struct phy *phy)
+>>       if (!phy)
+>>               return 0;
+>>
+>> -     ret = phy_pm_runtime_get_sync(phy);
+>> -     if (ret < 0 && ret != -ENOTSUPP)
+>> +     ret = pm_runtime_get_sync(phy->dev.parent);
+>
+> Won't this make phy-core manage pm_runtime of phy_provider even though the
+> phy_provider might not intend it?
 
-There can be a case where the phy_provider uses runtime PM but doesn't want
-phy-core to manage it.
+No it shouldn't.
 
-Thanks
-Kishon
+There are two cases to consider around this.
+
+1) CONFIG_PM is unset. In this case pm_runtime_get_sync() will return
+1, which is treated as succeeds by the error path.
+
+2) CONFIG_PM is set, but the phy provider don't use runtime PM, thus
+it hasn't called pm_runtime_enable() for its device. In this case,
+pm_runtime_get_sync() returns -EACCES, which is also treated as
+success by the error path.
+
+Does it make sense?
+
+Kind regards
+Uffe
