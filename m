@@ -1,68 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:34420 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753115AbdLHNNH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56076 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754746AbdLTLxx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Dec 2017 08:13:07 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] of: overlay: Make node skipping in init_overlay_changeset() clearer
-Date: Fri,  8 Dec 2017 14:13:03 +0100
-Message-Id: <1512738783-17452-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1512738783-17452-1-git-send-email-geert+renesas@glider.be>
-References: <1512738783-17452-1-git-send-email-geert+renesas@glider.be>
+        Wed, 20 Dec 2017 06:53:53 -0500
+Date: Wed, 20 Dec 2017 12:53:48 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7792: move timer node out of bus
+Message-ID: <20171220115347.dgg4imm36w6frw4f@verge.net.au>
+References: <20171218213233.3373-1-horms+renesas@verge.net.au>
+ <20171218213233.3373-3-horms+renesas@verge.net.au>
+ <CAMuHMdXRCvw3mMd4uWapin70_3h4F964qbD-xMkfF2MxgLafdA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXRCvw3mMd4uWapin70_3h4F964qbD-xMkfF2MxgLafdA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it more clear that nodes without "__overlay__" subnodes are
-skipped, by reverting the logic and using continue.
-This also reduces indentation level.
+On Tue, Dec 19, 2017 at 09:39:56AM +0100, Geert Uytterhoeven wrote:
+> On Mon, Dec 18, 2017 at 10:32 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > The timer node does not have any register properties and thus shouldn't be
+> > placed on the bus.
+> >
+> > This problem is flagged by the compiler as follows:
+> > $ make dtbs W=1
+> > ...
+> >   DTC     arch/arm/boot/dts/r8a7792-wheat.dtb
+> > arch/arm/boot/dts/r8a7792-blanche.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+> > arch/arm/boot/dts/r8a7792-wheat.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This applies to Rob's for-next branch only.
----
- drivers/of/overlay.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 49b8939af6b201ca..54a73bd771fe27b7 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -573,18 +573,19 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs,
- 	cnt = 0;
- 	for_each_child_of_node(tree, node) {
- 		overlay_node = of_get_child_by_name(node, "__overlay__");
--		if (overlay_node) {
--			fragment = &fragments[cnt];
--			fragment->overlay = overlay_node;
--			fragment->target = find_target_node(node);
--			if (!fragment->target) {
--				of_node_put(fragment->overlay);
--				ret = -EINVAL;
--				goto err_free_fragments;
--			}
-+		if (!overlay_node)
-+			continue;
- 
--			cnt++;
-+		fragment = &fragments[cnt];
-+		fragment->overlay = overlay_node;
-+		fragment->target = find_target_node(node);
-+		if (!fragment->target) {
-+			of_node_put(fragment->overlay);
-+			ret = -EINVAL;
-+			goto err_free_fragments;
- 		}
-+
-+		cnt++;
- 	}
- 
- 	/*
--- 
-2.7.4
+Thanks, applied.
