@@ -1,52 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:53550 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754904AbdLFKYD (ORCPT
+        with ESMTP id S1754673AbdLTKLk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:24:03 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 20 Dec 2017 05:11:40 -0500
+Date: Wed, 20 Dec 2017 11:11:36 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 51/61] ARM: dts: r8a73a4: Remove CMT renesas,channels-mask
-Date: Wed,  6 Dec 2017 11:22:46 +0100
-Message-Id: <287883993e3e98579bdaa92ce6136a9d25ce0be9.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 5/5] ARM: dts: iwg20d-q7-common: Enable SGTL5000 audio
+ codec
+Message-ID: <20171220101136.kl4ffzw7fcf6ct55@verge.net.au>
+References: <1513103111-45830-1-git-send-email-biju.das@bp.renesas.com>
+ <1513103111-45830-6-git-send-email-biju.das@bp.renesas.com>
+ <20171220095806.jqtkmximxybsq6tr@verge.net.au>
+ <KL1PR06MB1702453058AFB66AA8110825B80C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <KL1PR06MB1702453058AFB66AA8110825B80C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Wed, Dec 20, 2017 at 10:02:54AM +0000, Biju Das wrote:
+> Thanks Simon for this information.
+> 
+> Next time I will make sure that  compiler won't give any warning message with make dtbs W=1
 
-Update the DTS to remove the now deprecated "renesas,channels-mask"
-property.
-
-The channel information is now kept in the device driver and can easily
-be determined based on the compat string.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a73a4.dtsi | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 805b0fd70f53..8e48090e4fdc 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -138,9 +138,6 @@
- 		clocks = <&mstp3_clks R8A73A4_CLK_CMT1>;
- 		clock-names = "fck";
- 		power-domains = <&pd_c5>;
--
--		renesas,channels-mask = <0xff>;
--
- 		status = "disabled";
- 	};
- 
--- 
-2.11.0
+Thanks, I've been on a bit of a mission to clean up such warnings of late.
