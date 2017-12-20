@@ -1,93 +1,213 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:57047 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932168AbdLOPdV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53473 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753911AbdLTKGV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 10:33:21 -0500
-Date: Fri, 15 Dec 2017 16:33:19 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PULL REQUEST] renesas/topc/ip-switch-rework-2017 for renesas drivers
-Message-ID: <20171215153315.nxuujm4xeglmrvqo@ninjato>
+        Wed, 20 Dec 2017 05:06:21 -0500
+Date: Wed, 20 Dec 2017 11:06:17 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 1/2] ARM: dts: r8a7743: sort root sub-nodes
+ alphabetically
+Message-ID: <20171220100616.pgtfnjis4wlkw2ud@verge.net.au>
+References: <20171218214043.10796-1-horms+renesas@verge.net.au>
+ <20171218214043.10796-2-horms+renesas@verge.net.au>
+ <CAMuHMdVNCyW=QU08eg=1j8Xyq1wBhsY6KxmpjCLi8X7mZD8YCw@mail.gmail.com>
+ <20171220100131.u5bjyce3mp2rj7cx@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="j2mlvgueoedqg7gp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20171220100131.u5bjyce3mp2rj7cx@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Wed, Dec 20, 2017 at 11:01:32AM +0100, Simon Horman wrote:
+> On Tue, Dec 19, 2017 at 09:43:06AM +0100, Geert Uytterhoeven wrote:
+> > Hi Simon,
+> > 
+> > On Mon, Dec 18, 2017 at 10:40 PM, Simon Horman
+> > <horms+renesas@verge.net.au> wrote:
+> > > Sort root sub-nodes alphabetically for allow for easier maintenance
+> > 
+> > to allow for
+> > 
+> > > of this file.
+> > >
+> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > 
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > 
+> > > --- a/arch/arm/boot/dts/r8a7743.dtsi
+> > > +++ b/arch/arm/boot/dts/r8a7743.dtsi
+> > 
+> > >         cpus {
+> > >                 #address-cells = <1>;
+> > >                 #size-cells = <0>;
+> > > @@ -79,6 +102,37 @@
+> > >                 };
+> > >         };
+> > >
+> > > +       /* External CAN clock */
+> > > +       can_clk: can {
+> > 
+> > Doesn't look alphabetically to me...
+> 
+> Thanks, I have applied the following:
 
---j2mlvgueoedqg7gp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yikes, that left a duplicate extal node.
+I now have this:
 
-Hi Geert,
+From: Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: dts: r8a7743: sort root sub-nodes alphabetically
 
-Here is the the topic branch to add the I2C IP core switcher to all
-busses of Gen2 boards where some kind of switching is possible (mostly
-to/from GPIO).
+Sort root sub-nodes alphabetically to allow for easier maintenance
+of this file.
 
-It is based on v4.15-rc1 + renesas/dt-for-v4.16 merged in.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 108 ++++++++++++++++++++---------------------
+ 1 file changed, 54 insertions(+), 54 deletions(-)
 
-Please pull.
-
-Kind regards,
-
-   Wolfram
-
-
-The following changes since commit ea648c135fcb40f864f0c898b94ecd39782d895c:
-
-  Merge tag 'renesas-dt-fixes-for-v4.15' into renesas/topc/ip-switch-rework-2017 (2017-12-08 12:17:55 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topc/ip-switch-rework-2017
-
-for you to fetch changes up to bec727d32dc69bdba3b4ea0b10a3b09461be6a9e:
-
-  ARM: dts: gose: use demuxer for I2C4 (2017-12-08 14:54:43 +0100)
-
-----------------------------------------------------------------
-Wolfram Sang (9):
-      ARM: dts: lager: use demuxer for IIC2/I2C2
-      ARM: dts: lager: use demuxer for IIC3/I2C3
-      ARM: dts: koelsch: use demuxer for I2C2
-      ARM: dts: koelsch: use demuxer for I2C4
-      ARM: dts: porter: use demuxer for I2C2
-      ARM: dts: alt: use demuxer for I2C1
-      ARM: dts: silk: use demuxer for I2C1
-      ARM: dts: gose: use demuxer for I2C2
-      ARM: dts: gose: use demuxer for I2C4
-
- arch/arm/boot/dts/r8a7790-lager.dts   | 279 ++++++++++++++++++++--------------
- arch/arm/boot/dts/r8a7791-koelsch.dts | 232 +++++++++++++++++-----------
- arch/arm/boot/dts/r8a7791-porter.dts  | 128 +++++++++-------
- arch/arm/boot/dts/r8a7793-gose.dts    | 252 ++++++++++++++++++------------
- arch/arm/boot/dts/r8a7794-alt.dts     |  53 +++++--
- arch/arm/boot/dts/r8a7794-silk.dts    | 128 +++++++++-------
- 6 files changed, 654 insertions(+), 418 deletions(-)
-
---j2mlvgueoedqg7gp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAloz6zYACgkQFA3kzBSg
-KbaGww//Z0KpADRUuSdJ4cVe+DeUxiZu56Ea9GONwxxr56a/gd4LrItCi4tUzRKS
-f+qP/dul8aPdJHlXkdDgRwY0iSug79Ezd53aKIPkIQ3rCIcBd62IWhdVZ++3ljXw
-ZVVI12DnduS/rfUOrzHjJUq26m35muimfDyrJJOv3mHmSIykSAKZMx2EPRQzSH9n
-FSRZL8x/ear1qiSzcLVNoPtF5DosbXpPR/PdmP2eDDpLTCOMlv38LtP2XKLwnt0+
-bddZUn1p91cryawAfq6BJhncJuS1FF0QumJ+2k1e4Ii2TkEFzr20ykR9vbS4KjpL
-YwriuAj0VEwJ+oDjEusJKTeV4FpcaPNSB1y7BLoc5jYE6upxonD8Duk5BIpPCUDO
-oy+SCUMijX1KwJiWqz+JQ9QTbfSPU7GqkO+k1GpN+5eQq6alyn6zaKDTlV4nXaIx
-OEPMSPNQngetx7OMDUHcKAu05NTk3xM9yTItUjwsxC6fiigxe8jiPzcBHaEChVeX
-KxakFugQJoqmmf00ghik7Tp3kUlyW+h97fzkH6o8gs3nK47PuYB1ZQnVncWC6/98
-WQw1DDSmfMbE0hVN4NBucYIGM5ZLW7vJ2nptSPYvbUspsNUSX5jf714UtKRzSFiL
-ENVHWitUJZFEVFO4L+lG6YENfDvH4RSz9tvD3J5leBak/kDW5mM=
-=pq0P
------END PGP SIGNATURE-----
-
---j2mlvgueoedqg7gp--
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index f24f36d50e40..ecbd39e5f630 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -37,6 +37,37 @@
+ 		vin2 = &vin2;
+ 	};
+ 
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -79,6 +110,29 @@
+ 		};
+ 	};
+ 
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+@@ -1621,64 +1675,10 @@
+ 		};
+ 	};
+ 
+-	/* External root clock */
+-	extal_clk: extal {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+-
+-	/*
+-	 * The external audio clocks are configured as 0 Hz fixed frequency
+-	 * clocks by default.
+-	 * Boards that provide audio clocks should override them.
+-	 */
+-	audio_clk_a: audio_clk_a {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	audio_clk_b: audio_clk_b {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	audio_clk_c: audio_clk_c {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+ 	/* External USB clock - can be overridden by the board */
+ 	usb_extal_clk: usb_extal {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <48000000>;
+ 	};
+-
+-	/* External CAN clock */
+-	can_clk: can {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+-
+-	/* External PCIe clock - can be overridden by the board */
+-	pcie_bus_clk: pcie_bus {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	/* External SCIF clock */
+-	scif_clk: scif {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+ };
+-- 
+2.11.0
