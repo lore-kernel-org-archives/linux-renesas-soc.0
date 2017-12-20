@@ -1,59 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45839 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752816AbdLDV3D (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51732 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754168AbdLTIMo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 16:29:03 -0500
-Date: Mon, 4 Dec 2017 22:29:00 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: horms@verge.net.au, geert@linux-m68k.org,
-        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        linux-mmc@vger.kernel.org, marek.vasut@gmail.com
-Subject: Re: [PATCH v2 2/2] arm64: dts: r8a77995: draak: enable SDHI2
-Message-ID: <20171204212900.g75ahagudgzcsiyw@ninjato>
-References: <1511971606-580-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1511971606-580-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Wed, 20 Dec 2017 03:12:44 -0500
+Date: Wed, 20 Dec 2017 09:12:39 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: sh-pfc: Correct SoC family name
+ for R8A7778
+Message-ID: <20171220081238.xcwacfxfxjxoowt6@verge.net.au>
+References: <1513699496-27931-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dn5tqgnrf43ueszv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1511971606-580-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1513699496-27931-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Tue, Dec 19, 2017 at 05:04:56PM +0100, Geert Uytterhoeven wrote:
+> R8A7778 is R-Car (not R-Mobile) M1.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
---dn5tqgnrf43ueszv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 29, 2017 at 05:06:46PM +0100, Ulrich Hecht wrote:
-> The single SDHI controller is connected to eMMC.
->=20
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---dn5tqgnrf43ueszv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlolvhwACgkQFA3kzBSg
-KbbEwQ//e/4O7pwUlPSLdCQMQT5y64gm8zfc1GZiNq22cDm9PgBySB+9Zmu8NOIF
-fiLapWXSatnIUAsJA9niCvQshug7qSANujrHT91z3Dfc1YNfHydv7Xg6eeo++MDO
-xvqJcVLW/sstuG/K5Xu4KK8tQn096sicADes7/sSOU5Swmq6RgtSCv5/vprDyjNg
-81f0WHn9txmCftM7oJmXWksqU24Xx4ZhdqHAqP8Rl0hFNvGhnEH+0YSpcKZq2pBt
-dsXrDx/5tPKpmm3mNum1dvh8zM9VW4f27C10wtmiUM+kRuu+idM+59Cq7Lakw16Z
-H19Ck+2uBdB2obAoBbktGofu2lDUNk3zmLo+ahbnbsHyEOywFAFyKzKekmc0ZEG8
-9NLQvJAke27COToRBc8VRkWjG6f0jn6ms4tj0qnr9VWoRXdG5YvoHCqfblxmdkD5
-nZfhjdbBRe+CwqeWw3NiZU8Zm8RhqZZhXJWIedH3+vOgnV4f+WaVpFZQe9xs07Oo
-dmBOJFEzLG0erxfD6lw/h1IOEJZFD+OM+WliKXgswhoDUbCgKI//5lkYzOwk2Bue
-COwhL/b1nbZuiBPoFMF4IoCfAFJ/KDD3VKtgKIQ8jaqNrCRAD5XFXhJYEit0Nqje
-pBe6lUx8sPwXB0JGNSE6bETC15iQ81PhqQRaAKNlCYll8ssEQKk=
-=tV5Y
------END PGP SIGNATURE-----
-
---dn5tqgnrf43ueszv--
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
