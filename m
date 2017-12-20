@@ -1,61 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45834 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752713AbdLDV2v (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 16:28:51 -0500
-Date: Mon, 4 Dec 2017 22:28:48 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: horms@verge.net.au, geert@linux-m68k.org,
-        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        linux-mmc@vger.kernel.org, marek.vasut@gmail.com
-Subject: Re: [PATCH v2 1/2] mmc: renesas_sdhi: enable R-Car D3 (r8a77995)
- support
-Message-ID: <20171204212847.cjrf6u2s5tok2xku@ninjato>
-References: <1511971606-580-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1511971606-580-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 20 Dec 2017 10:49:14 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] ARM: dts: iwg20d-q7-common: Sound PIO support
+Message-ID: <20171220094914.ogtz3bh3nmnjwngg@verge.net.au>
+References: <1513621361-10944-1-git-send-email-biju.das@bp.renesas.com>
+ <1513621361-10944-2-git-send-email-biju.das@bp.renesas.com>
+ <20171220094128.cffetpgij42m57kq@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="o4rkgbwxep4b3vem"
-Content-Disposition: inline
-In-Reply-To: <1511971606-580-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-List-ID: <linux-renesas-soc.vger.kernel.org>
-
-
---o4rkgbwxep4b3vem
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20171220094128.cffetpgij42m57kq@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
+List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 29, 2017 at 05:06:45PM +0100, Ulrich Hecht wrote:
-> Whitelists for internal DMAC implementation.
->=20
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Dec 20, 2017 at 10:41:28AM +0100, Simon Horman wrote:
+> On Mon, Dec 18, 2017 at 06:22:37PM +0000, Biju Das wrote:
+> > Enable sound PIO support on carrier board.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > ---
+> > v1-->v2
+> >  * Reworked sorting
+> > 
+> >  arch/arm/boot/dts/iwg20d-q7-common.dtsi | 46 +++++++++++++++++++++++++++++++++
+> >  1 file changed, 46 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+> > index 2070b14..ed67201 100644
+> > --- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+> > +++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+> > @@ -34,6 +34,22 @@
+> >  		regulator-always-on;
+> >  	};
+> >  
+> > +	rsnd_sgtl5000: sound {
+> > +		compatible = "simple-audio-card";
+> > +
+> > +		simple-audio-card,format = "i2s";
+> > +		simple-audio-card,bitclock-master = <&sndcodec>;
+> > +		simple-audio-card,frame-master = <&sndcodec>;
+> > +
+> > +		sndcpu: simple-audio-card,cpu {
+> > +			sound-dai = <&rcar_sound>;
+> > +		};
+> > +
+> > +		sndcodec: simple-audio-card,codec {
+> > +			sound-dai = <&sgtl5000>;
+> 
+> I'm sorry for not noticing this earlier but with this patch applied
+> (and none of the others in this series) I see the following error:
+> 
+> arch/arm/boot/dts/r8a7743-iwg20d-q7.dtb: ERROR (phandle_references):
+> Reference to non-existent node or label "sgtl5000"
+> 
+> At the very least this will break bisection.
+> Please find a way to avoid this.
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Sorry for the false alarm!!!
 
-
---o4rkgbwxep4b3vem
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlolvg8ACgkQFA3kzBSg
-KbYOLA/+IKEYakXJ1xj5GyNrMWDq3S/gyJKa+T2NUwOHQrVSSt/PJWhl0gbPLrjo
-y7iuvj0fK+R4mmdsJwP5Gv0vqrJsD2DFl+Pmbh4aWJA+zfFdCdZ5+Cs2bNagHPTi
-Wkz+3woM2svR2HU+I9bj1tMtnU7EAf+bxn4YOT53gXzKU0s0wm2m6q9TFJ4g2r2j
-rFcPdEWftn6atCOM6HXOwVvs2wZQzpw/9tIToEOdxemCzhr6g/h5kBh0rmrkbzq2
-HA5qRxaxz+pd68+osK/8vDJvhJamfLPY7B3rOb/bSHM9t2ZFSpw3raAnuLofZg0B
-4Lca4YVzyNN9nyE6iBubD1DCiZVzpZdaw8GqLdUPBxg9BhPDJRu7I20BJmvl3IzF
-JDpAG4yqnyQO1u1RgWjqEmDcaCzmDH+24OULzDTPT1EdkTQW1cD9Xc6/YwEYSZ0p
-zZC46T3/xC/CjU+3/XmLDTMCSJ10gecH1vZZcG3SWcv+dpF3EjZCF1ZcGSlYCpiV
-gxP90G+Kd58poqZrpNcRXB2AlR/Tpn/n5pVAPPd0bNAB/ygISyGzUZlm1Jo1M2Mv
-dsL7WZ2QPC3deGSX3yVo41tCwIGMnzbqmtlxo4B0QhT8eV4hmo0vyuQcANNELoUH
-vfZNVb4aaTrnLlYlzbivIM2cohZ4aIiGudhunJOuURL5dobQO9Y=
-=nQAv
------END PGP SIGNATURE-----
-
---o4rkgbwxep4b3vem--
+It looks like "ARM: dts: iwg20d-q7-common: Enable SGTL5000 audio codec"
+was missing from my tree and all is well with that patch present.
