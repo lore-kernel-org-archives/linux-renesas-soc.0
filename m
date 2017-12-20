@@ -1,15 +1,15 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 20 Dec 2017 15:19:05 -0600
-From: Rob Herring <robh@kernel.org>
+Date: Wed, 20 Dec 2017 09:21:08 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH 2/3] dt-bindings: pwm: renesas-tpu: Correct example TPU
  register block size
-Message-ID: <20171220211905.sfmnofkbz54zyumb@rob-hp-laptop>
+Message-ID: <20171220082107.qvyihzicuyavekej@verge.net.au>
 References: <1513699327-27357-1-git-send-email-geert+renesas@glider.be>
  <1513699327-27357-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
@@ -24,8 +24,7 @@ On Tue, Dec 19, 2017 at 05:02:06PM +0100, Geert Uytterhoeven wrote:
 > declared register block.  Enlarge the register block size to fix this.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+
+With reference to "User's Manual: Hardware" v2.00.
