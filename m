@@ -1,190 +1,153 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34873 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755287AbdLTOJc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52990 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754565AbdLTJfm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 09:09:32 -0500
-Received: by mail-lf0-f65.google.com with SMTP id j124so24199850lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 06:09:31 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 2/3] phy: core: Drop unused runtime PM APIs
-Date: Wed, 20 Dec 2017 15:09:19 +0100
-Message-Id: <1513778960-10073-3-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
-References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
+        Wed, 20 Dec 2017 04:35:42 -0500
+Date: Wed, 20 Dec 2017 10:35:38 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: sort root sub-nodes alphabetically
+Message-ID: <20171220093538.e5t3ujc5vjoerv5d@verge.net.au>
+References: <20171218213233.3373-1-horms+renesas@verge.net.au>
+ <20171218213233.3373-2-horms+renesas@verge.net.au>
+ <14c60234-3755-3b06-64fc-e3943d8b5293@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14c60234-3755-3b06-64fc-e3943d8b5293@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The phy core already deploys runtime PM support, so there seems to be no
-obvious reason for having dedicated APIs to control runtime PM for phys.
+On Tue, Dec 19, 2017 at 12:27:48PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 12/19/2017 12:32 AM, Simon Horman wrote:
+> 
+> > Sort root sub-nodes alphabetically for allow for easier maintenance
+> 
+>    s/for/to/?
+> 
+> > of this file.
+> > 
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> >   arch/arm/boot/dts/r8a7792.dtsi | 48 +++++++++++++++++++++---------------------
+> >   1 file changed, 24 insertions(+), 24 deletions(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+> > index ac05fdb91798..d31258958c36 100644
+> > --- a/arch/arm/boot/dts/r8a7792.dtsi
+> > +++ b/arch/arm/boot/dts/r8a7792.dtsi
+> > @@ -36,6 +36,22 @@
+> >   		vin5 = &vin5;
+> >   	};
+> > +	/* External root clock */
+> > +	extal_clk: extal {
+> > +		compatible = "fixed-clock";
+> > +		#clock-cells = <0>;
+> > +		/* This value must be overridden by the board. */
+> > +		clock-frequency = <0>;
+> > +	};
+> > +
+> > +	/* External CAN clock */
+> > +	can_clk: can {
+> > +		compatible = "fixed-clock";
+> > +		#clock-cells = <0>;
+> > +		/* This value must be overridden by the board. */
+> > +		clock-frequency = <0>;
+> > +	};
+> > +
+> 
+>    C predates E in my alphabet. :-)
 
-Therefore, let's remove the APIs altogether and instead convert internal
-needed functions to be static.
+Thanks, I have applied the following:
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+From: Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: dts: r8a7792: sort root sub-nodes alphabetically
+
+Sort root sub-nodes alphabetically to allow for easier maintenance
+of this file.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/phy/phy-core.c  | 50 +++----------------------------------------------
- include/linux/phy/phy.h | 45 --------------------------------------------
- 2 files changed, 3 insertions(+), 92 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi | 48 +++++++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index 09588ec..1621625 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -149,22 +149,7 @@ static struct phy_provider *of_phy_provider_lookup(struct device_node *node)
- 	return ERR_PTR(-EPROBE_DEFER);
- }
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 7b394273031e..b0013e5fcf47 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -36,6 +36,14 @@
+ 		vin5 = &vin5;
+ 	};
  
--int phy_pm_runtime_get(struct phy *phy)
--{
--	int ret;
--
--	if (!phy->use_runtime_pm)
--		return -ENOTSUPP;
--
--	ret = pm_runtime_get(phy->dev.parent);
--	if (ret < 0 && ret != -EINPROGRESS)
--		pm_runtime_put_noidle(phy->dev.parent);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(phy_pm_runtime_get);
--
--int phy_pm_runtime_get_sync(struct phy *phy)
-+static int phy_pm_runtime_get_sync(struct phy *phy)
- {
- 	int ret;
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -69,6 +77,22 @@
+ 		};
+ 	};
  
-@@ -177,43 +162,14 @@ int phy_pm_runtime_get_sync(struct phy *phy)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(phy_pm_runtime_get_sync);
- 
--int phy_pm_runtime_put(struct phy *phy)
-+static int phy_pm_runtime_put(struct phy *phy)
- {
- 	if (!phy->use_runtime_pm)
- 		return -ENOTSUPP;
- 
- 	return pm_runtime_put(phy->dev.parent);
- }
--EXPORT_SYMBOL_GPL(phy_pm_runtime_put);
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+@@ -832,28 +856,4 @@
+ 			#power-domain-cells = <0>;
+ 		};
+ 	};
 -
--int phy_pm_runtime_put_sync(struct phy *phy)
--{
--	if (!phy->use_runtime_pm)
--		return -ENOTSUPP;
+-	/* External root clock */
+-	extal_clk: extal {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
 -
--	return pm_runtime_put_sync(phy->dev.parent);
--}
--EXPORT_SYMBOL_GPL(phy_pm_runtime_put_sync);
+-	/* External SCIF clock */
+-	scif_clk: scif {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
 -
--void phy_pm_runtime_allow(struct phy *phy)
--{
--	if (!phy->use_runtime_pm)
--		return;
--
--	pm_runtime_allow(phy->dev.parent);
--}
--EXPORT_SYMBOL_GPL(phy_pm_runtime_allow);
--
--void phy_pm_runtime_forbid(struct phy *phy)
--{
--	if (!phy->use_runtime_pm)
--		return;
--
--	pm_runtime_forbid(phy->dev.parent);
--}
--EXPORT_SYMBOL_GPL(phy_pm_runtime_forbid);
- 
- int phy_init(struct phy *phy)
- {
-@@ -306,7 +262,7 @@ int phy_power_on(struct phy *phy)
- 
- err_pwr_on:
- 	mutex_unlock(&phy->mutex);
--	phy_pm_runtime_put_sync(phy);
-+	phy_pm_runtime_put(phy);
- err_pm_sync:
- 	if (phy->pwr)
- 		regulator_disable(phy->pwr);
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index b4298a1..050b620 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -17,7 +17,6 @@
- #include <linux/err.h>
- #include <linux/of.h>
- #include <linux/device.h>
--#include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- 
- struct phy;
-@@ -134,12 +133,6 @@ static inline void *phy_get_drvdata(struct phy *phy)
- }
- 
- #if IS_ENABLED(CONFIG_GENERIC_PHY)
--int phy_pm_runtime_get(struct phy *phy);
--int phy_pm_runtime_get_sync(struct phy *phy);
--int phy_pm_runtime_put(struct phy *phy);
--int phy_pm_runtime_put_sync(struct phy *phy);
--void phy_pm_runtime_allow(struct phy *phy);
--void phy_pm_runtime_forbid(struct phy *phy);
- int phy_init(struct phy *phy);
- int phy_exit(struct phy *phy);
- int phy_power_on(struct phy *phy);
-@@ -188,44 +181,6 @@ void devm_of_phy_provider_unregister(struct device *dev,
- int phy_create_lookup(struct phy *phy, const char *con_id, const char *dev_id);
- void phy_remove_lookup(struct phy *phy, const char *con_id, const char *dev_id);
- #else
--static inline int phy_pm_runtime_get(struct phy *phy)
--{
--	if (!phy)
--		return 0;
--	return -ENOSYS;
--}
--
--static inline int phy_pm_runtime_get_sync(struct phy *phy)
--{
--	if (!phy)
--		return 0;
--	return -ENOSYS;
--}
--
--static inline int phy_pm_runtime_put(struct phy *phy)
--{
--	if (!phy)
--		return 0;
--	return -ENOSYS;
--}
--
--static inline int phy_pm_runtime_put_sync(struct phy *phy)
--{
--	if (!phy)
--		return 0;
--	return -ENOSYS;
--}
--
--static inline void phy_pm_runtime_allow(struct phy *phy)
--{
--	return;
--}
--
--static inline void phy_pm_runtime_forbid(struct phy *phy)
--{
--	return;
--}
--
- static inline int phy_init(struct phy *phy)
- {
- 	if (!phy)
+-	/* External CAN clock */
+-	can_clk: can {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+ };
 -- 
-2.7.4
+2.11.0
