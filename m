@@ -1,66 +1,59 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 21 Dec 2017 11:44:44 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:62498 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755534AbdLTUEz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 20 Dec 2017 15:04:55 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 8/9] ARM: dts: iwg22d-sodimm: Sound DMA support via SRC
- on DTS
-Message-ID: <20171221104443.rk6prrib4gdi7qyz@verge.net.au>
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 8/9] ARM: dts: iwg22d-sodimm: Sound DMA support via SRC on DTS
+Date: Wed, 20 Dec 2017 20:02:04 +0000
+Message-Id: <1513800125-53213-9-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
 References: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
- <1513800125-53213-9-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1513800125-53213-9-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Dec 20, 2017 at 08:02:04PM +0000, Biju Das wrote:
-> DMA transfer to/from SRC
-> 
->      DMA      DMApp
-> [MEM] -> [SRC] -> [SSIU] -> [SSI]
-> 
->      DMA      DMApp
-> [MEM] <- [SRC] <- [SSIU] <- [SSI]
-> 
-> Current sound driver is supporting SSI/SRC random connection.
-> So, this patch is trying
-> SSI3 -> SRC3
-> SSI4 <- SRC4
+DMA transfer to/from SRC
 
-I am curious to know why the selection here differs from that
-present in iwg20d-q7-common. Is it an arbitrary decision?
+     DMA      DMApp
+[MEM] -> [SRC] -> [SSIU] -> [SSI]
 
-Likewise for other uses of ssi*, src* and dvc* in this patchset.
+     DMA      DMApp
+[MEM] <- [SRC] <- [SSIU] <- [SSI]
 
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-> index 0f880c1..2cac57c 100644
-> --- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-> +++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-> @@ -183,8 +183,8 @@
->  
->  	rcar_sound,dai {
->  		dai0 {
-> -			playback = <&ssi3>;
-> -			capture = <&ssi4>;
-> +			playback = <&ssi3 &src3>;
-> +			capture = <&ssi4 &src4>;
->  		};
->  	};
->  };
-> -- 
-> 1.9.1
-> 
+Current sound driver is supporting SSI/SRC random connection.
+So, this patch is trying
+SSI3 -> SRC3
+SSI4 <- SRC4
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 0f880c1..2cac57c 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -183,8 +183,8 @@
+ 
+ 	rcar_sound,dai {
+ 		dai0 {
+-			playback = <&ssi3>;
+-			capture = <&ssi4>;
++			playback = <&ssi3 &src3>;
++			capture = <&ssi4 &src4>;
+ 		};
+ 	};
+ };
+-- 
+1.9.1
