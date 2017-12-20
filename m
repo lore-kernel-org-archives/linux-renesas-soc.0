@@ -1,57 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:55306 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752176AbdLENjg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52877 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753269AbdLTJ0I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Dec 2017 08:39:36 -0500
-Date: Tue, 5 Dec 2017 15:39:33 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v12 1/2] rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver
- documentation
-Message-ID: <20171205133933.rixqtzraauypwb4w@valkosipuli.retiisi.org.uk>
-References: <20171129193235.25423-1-niklas.soderlund+renesas@ragnatech.se>
- <20171129193235.25423-2-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 20 Dec 2017 04:26:08 -0500
+Received: from penelope.horms.nl (52D9BC73.cm-11-1c.dynamic.ziggo.nl [82.217.188.115])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 009F225BE02
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 20:26:07 +1100 (AEDT)
+Date: Wed, 20 Dec 2017 10:26:04 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: [ANNOUNCE] Renesas tree closing schedule for v4.16
+Message-ID: <20171220092604.wdw6ya64heqt7jao@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20171129193235.25423-2-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Nov 29, 2017 at 08:32:34PM +0100, Niklas S�derlund wrote:
-> Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
-> are located between the video sources (CSI-2 transmitters) and the video
-> grabbers (VIN) on Gen3 of Renesas R-Car SoC.
-> 
-> Each CSI-2 device is connected to more then one VIN device which
-> simultaneously can receive video from the same CSI-2 device. Each VIN
-> device can also be connected to more then one CSI-2 device. The routing
-> of which link are used are controlled by the VIN devices. There are only
-> a few possible routes which are set by hardware limitations, which are
-> different for each SoC in the Gen3 family.
-> 
-> To work with the limitations of routing possibilities it is necessary
-> for the DT bindings to describe which VIN device is connected to which
-> CSI-2 device. This is why port 1 needs to to assign reg numbers for each
-> VIN device that be connected to it. To setup and to know which links are
-> valid for each SoC is the responsibility of the VIN driver since the
-> register to configure it belongs to the VIN hardware.
-> 
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> Acked-by: Rob Herring <robh@kernel.org>
+Hi,
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+I would like to close the Renesas tree for non-bug submissions for v4.16 on
+Friday the 22nd December (this Friday, I work on GMT +0200).
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+This is a few days earlier than would otherwise be the case due to the
+holiday season.
+
+If this is has caught you by surprise and is going to be a large problem
+for you please let me know ASAP so we can discuss.
