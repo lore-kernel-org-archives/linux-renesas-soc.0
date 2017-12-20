@@ -1,81 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:44926 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752282AbdLHBJA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53039 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754404AbdLTJiW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 20:09:00 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v9 11/28] rcar-vin: do not allow changing scaling and composing while streaming
-Date: Fri,  8 Dec 2017 02:08:25 +0100
-Message-Id: <20171208010842.20047-12-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 20 Dec 2017 04:38:22 -0500
+Date: Wed, 20 Dec 2017 10:38:18 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-can@vger.kernel.org,
+        devicetree@vger.kernel.org, wsa@the-dreams.de,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        chris.paterson2@renesas.com,
+        ramesh.shanmugasundaram@bp.renesas.com, robh@kernel.org
+Subject: Re: [PATCH v2 2/2] can: rcar_canfd: document r8a77995 (R-Car D3)
+ compatibility strings
+Message-ID: <20171220093817.76pqd6ivqk3qjdyh@verge.net.au>
+References: <1513612297-10173-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1513612297-10173-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513612297-10173-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is possible on Gen2 to change the registers controlling composing and
-scaling while the stream is running. It is however not a good idea to do
-so and could result in trouble. There are also no good reasons to allow
-this, remove immediate reflection in hardware registers from
-vidioc_s_selection and only configure scaling and composing when the
-stream starts.
+On Mon, Dec 18, 2017 at 04:51:37PM +0100, Ulrich Hecht wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-dma.c  | 2 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ---
- drivers/media/platform/rcar-vin/rcar-vin.h  | 3 ---
- 3 files changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index fd14be20a6604d7a..7be5080f742825fb 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -514,7 +514,7 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
- 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
- }
- 
--void rvin_crop_scale_comp(struct rvin_dev *vin)
-+static void rvin_crop_scale_comp(struct rvin_dev *vin)
- {
- 	u32 xs, ys;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 254fa1c8770275a5..d6298c684ab2d731 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -436,9 +436,6 @@ static int rvin_s_selection(struct file *file, void *fh,
- 		return -EINVAL;
- 	}
- 
--	/* HW supports modifying configuration while running */
--	rvin_crop_scale_comp(vin);
--
- 	return 0;
- }
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 36d0f0cc4ce01a6e..67541b483ee43c52 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -175,7 +175,4 @@ void rvin_v4l2_unregister(struct rvin_dev *vin);
- 
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
--/* Cropping, composing and scaling */
--void rvin_crop_scale_comp(struct rvin_dev *vin);
--
- #endif
--- 
-2.15.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
