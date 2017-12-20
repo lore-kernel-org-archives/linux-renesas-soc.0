@@ -1,64 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52918 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754887AbdLFKXy (ORCPT
+        with ESMTP id S1754191AbdLTJ25 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:54 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 36/61] ARM: dts: iwg20d-q7-common: Add can0 support to carrier board
-Date: Wed,  6 Dec 2017 11:22:31 +0100
-Message-Id: <47f3c7b66b6d316f86b0ce957c99958da0268e36.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+        Wed, 20 Dec 2017 04:28:57 -0500
+Date: Wed, 20 Dec 2017 10:28:53 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7745: sort root sub-nodes alphabetically
+Message-ID: <20171220092853.ygkpdysctuths2nf@verge.net.au>
+References: <20171218215044.13088-1-horms+renesas@verge.net.au>
+ <20171218215044.13088-2-horms+renesas@verge.net.au>
+ <CAMuHMdWunJqU2b4e6XDc8MwnDc6WzxJPJumREM=X=MPSMN3e6A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWunJqU2b4e6XDc8MwnDc6WzxJPJumREM=X=MPSMN3e6A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Tue, Dec 19, 2017 at 09:44:38AM +0100, Geert Uytterhoeven wrote:
+> On Mon, Dec 18, 2017 at 10:50 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Sort root sub-nodes alphabetically for allow for easier maintenance
+> 
+> to allow for
+> 
+> > of this file.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch enables CAN0 interface exposed through connector J20 on the
-carrier board.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index c865499ad2a1..3e4bc4d6b9d3 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -59,6 +59,13 @@
- 	};
- };
- 
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &hsusb {
- 	status = "okay";
- 	pinctrl-0 = <&usb0_pins>;
-@@ -90,6 +97,11 @@
- };
- 
- &pfc {
-+	can0_pins: can0 {
-+		groups = "can0_data_d";
-+		function = "can0";
-+	};
-+
- 	avb_pins: avb {
- 		groups = "avb_mdio", "avb_gmii";
- 		function = "avb";
--- 
-2.11.0
+Thanks, applied with the changelog fix.
