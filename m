@@ -1,93 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:24870 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750748AbdLMGvd (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55952 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754722AbdLTLqR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Dec 2017 01:51:33 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4/4] usb: renesas_usbhs: add extcon notifier to set mode for non-otg channel
-Date: Wed, 13 Dec 2017 15:47:00 +0900
-Message-Id: <1513147620-20925-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1513147620-20925-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 20 Dec 2017 06:46:17 -0500
+Date: Wed, 20 Dec 2017 12:46:12 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] soc: renesas: rcar-sysc: Keep wakeup sources
+ active during system suspend
+Message-ID: <20171220114611.nd4y7ja6cyu7o4lo@verge.net.au>
+References: <1510234022-29442-1-git-send-email-geert+renesas@glider.be>
+ <1510234022-29442-4-git-send-email-geert+renesas@glider.be>
+ <CAPDyKFrxaghoAcWJN1R7d7k5b=QwMpusGFuohVZpTaWngf3aiw@mail.gmail.com>
+ <CAMuHMdU2CUE_68ZoQ5ssKaXYJ0L_P0gSTqVFS1GGa_cY7e-8cA@mail.gmail.com>
+ <20171220102305.pibdggkfycmj63l4@verge.net.au>
+ <CAMuHMdW7r74wGvpDjBr94N0y6_414hxgXmMjzKAPU+bOfeG7Jg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW7r74wGvpDjBr94N0y6_414hxgXmMjzKAPU+bOfeG7Jg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds extcon notifier callback to set the mode of
-host/peripheral by using extcon state (e.g phy-rcar-gen3-usb2) for
-non-otg channel (e.g. R-Car D3).
+On Wed, Dec 20, 2017 at 11:28:43AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Dec 20, 2017 at 11:23 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Dec 18, 2017 at 12:22:17PM +0100, Geert Uytterhoeven wrote:
+> >> On Thu, Dec 14, 2017 at 3:11 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >> > On 9 November 2017 at 14:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> >> >> If an R-Car SYSC slave device is part of the CPG/MSTP or CPG/MSSR Clock
+> >> >> Domain and to be used as a wakeup source, it must be kept active during
+> >> >> system suspend.
+> >> >>
+> >> >> Currently this is handled in device-specific drivers by explicitly
+> >> >> increasing the use count of the module clock when the device is
+> >> >> configured as a wakeup source.  However, the proper way to prevent the
+> >> >> device from being stopped is to inform this requirement to the genpd
+> >> >> core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
+> >> >>
+> >> >> Note that this will only affect devices configured as wakeup sources.
+> >> >>
+> >> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> >
+> >> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >>
+> >> Thank you!
+> >>
+> >> Simon: can you please queue this up for v4.16?
+> >> I have queued the other 2 clock patches in clk-renesas-for-v4.16, and sent
+> >> a PR for it.
+> >
+> > Thanks, I have applied this patch to the soc-for-v4.16 branch.
+> > It is currently not based v4.15-rc1. Let me know if it should
+> > be rebased on top of your pull request for clk-renesas-for-v4.16.
+> 
+> If the base is not v4.15-rc1, what is it? GENPD_FLAG_ACTIVE_WAKEUP was
+> introduced in v4.15-rc1, so it won't compile based on v4.14.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/common.c |  9 +++++++++
- drivers/usb/renesas_usbhs/common.h |  1 +
- drivers/usb/renesas_usbhs/rcar3.c  | 11 +++++++++++
- 3 files changed, 21 insertions(+)
+Sorry, I typed my message incorrectly. The base _is_ v4.15-rc1.
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index 56079bb..c5289b3 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -581,6 +581,15 @@ static int usbhs_probe(struct platform_device *pdev)
- 		break;
- 	case USBHS_TYPE_RCAR_GEN3_WITH_PLL:
- 		priv->pfunc = usbhs_rcar3_with_pll_ops;
-+		if (!IS_ERR_OR_NULL(priv->edev)) {
-+			priv->nb.notifier_call = priv->pfunc.notifier;
-+			ret = devm_extcon_register_notifier(&pdev->dev,
-+							    priv->edev,
-+							    EXTCON_USB_HOST,
-+							    &priv->nb);
-+			if (ret < 0)
-+				dev_err(&pdev->dev, "no notifier registered\n");
-+		}
- 		break;
- 	default:
- 		if (!info->platform_callback.get_id) {
-diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
-index 6479778..c9747f0 100644
---- a/drivers/usb/renesas_usbhs/common.h
-+++ b/drivers/usb/renesas_usbhs/common.h
-@@ -249,6 +249,7 @@ struct usbhs_priv {
- 	struct platform_device *pdev;
- 
- 	struct extcon_dev *edev;
-+	struct notifier_block nb;
- 
- 	spinlock_t		lock;
- 
-diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
-index b9a8453..d657309 100644
---- a/drivers/usb/renesas_usbhs/rcar3.c
-+++ b/drivers/usb/renesas_usbhs/rcar3.c
-@@ -112,6 +112,16 @@ static int usbhs_rcar3_get_id(struct platform_device *pdev)
- 	return USBHS_GADGET;
- }
- 
-+int usbhs_rcar3_notifier(struct notifier_block *nb, unsigned long event,
-+			 void *data)
-+{
-+	struct usbhs_priv *priv = container_of(nb, struct usbhs_priv, nb);
-+
-+	usbhs_rcar3_set_usbsel(priv, !!event);
-+
-+	return NOTIFY_DONE;
-+}
-+
- const struct renesas_usbhs_platform_callback usbhs_rcar3_ops = {
- 	.power_ctrl = usbhs_rcar3_power_ctrl,
- 	.get_id = usbhs_rcar3_get_id,
-@@ -120,4 +130,5 @@ static int usbhs_rcar3_get_id(struct platform_device *pdev)
- const struct renesas_usbhs_platform_callback usbhs_rcar3_with_pll_ops = {
- 	.power_ctrl = usbhs_rcar3_power_and_pll_ctrl,
- 	.get_id = usbhs_rcar3_get_id,
-+	.notifier = usbhs_rcar3_notifier,
- };
--- 
-1.9.1
+> There's no dependency on the clock drivers, so no need to base on
+> top of clk-renesas-for-v4.16.
+
+Thanks, got it.
