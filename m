@@ -1,228 +1,40 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/5] phy: renesas: rcar-gen3-usb2: use prefix "has_otg_pins_" for dedicated pins handling
-Date: Wed, 13 Dec 2017 15:27:38 +0900
-Message-Id: <1513146460-20326-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1513146460-20326-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1513146460-20326-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:52258 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753886AbdLTIps (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 20 Dec 2017 03:45:48 -0500
+Date: Wed, 20 Dec 2017 09:45:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH v3 3/5] ARM: dts: r8a7743: Add PWM SoC support
+Message-ID: <20171220084543.2e7tzkn7leplwcqe@verge.net.au>
+References: <1513690500-12165-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513690500-12165-4-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513690500-12165-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To support gpio handling in the future, this patch clean-ups the code
-to use prefix "has_otg_pins_" functions.
+On Tue, Dec 19, 2017 at 01:34:58PM +0000, Fabrizio Castro wrote:
+> Add the definitions for pwm[0123456] to the SoC .dtsi.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2->v3:
+> * pwm[0123456] compatible definitions don't wrap anymore
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 130 ++++++++++++++++++++-----------
- 1 file changed, 85 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index beeaa30..6d6f3eb 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -93,21 +93,21 @@ struct rcar_gen3_chan {
- 	bool has_otg_pins;
- };
- 
--static void rcar_gen3_phy_usb2_work(struct work_struct *work)
-+static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
- {
--	struct rcar_gen3_chan *ch = container_of(work, struct rcar_gen3_chan,
--						 work);
-+	void __iomem *usb2_base = ch->base;
-+	u32 val = readl(usb2_base + USB2_LINECTRL1);
- 
--	if (ch->extcon_host) {
--		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, true);
--		extcon_set_state_sync(ch->extcon, EXTCON_USB, false);
--	} else {
--		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, false);
--		extcon_set_state_sync(ch->extcon, EXTCON_USB, true);
--	}
-+	dev_vdbg(&ch->phy->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
-+	val &= ~(USB2_LINECTRL1_DP_RPD | USB2_LINECTRL1_DM_RPD);
-+	if (dp)
-+		val |= USB2_LINECTRL1_DP_RPD;
-+	if (dm)
-+		val |= USB2_LINECTRL1_DM_RPD;
-+	writel(val, usb2_base + USB2_LINECTRL1);
- }
- 
--static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
-+static void has_otg_pins_set_host(struct rcar_gen3_chan *ch, int host)
- {
- 	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_COMMCTRL);
-@@ -120,21 +120,27 @@ static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
- 	writel(val, usb2_base + USB2_COMMCTRL);
- }
- 
--static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
-+static bool has_otg_pins_is_host(struct rcar_gen3_chan *ch)
-+{
-+	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
-+}
-+
-+static irqreturn_t has_otg_pins_irq_handler(struct rcar_gen3_chan *ch)
- {
- 	void __iomem *usb2_base = ch->base;
--	u32 val = readl(usb2_base + USB2_LINECTRL1);
-+	u32 status = readl(usb2_base + USB2_OBINTSTA);
-+	irqreturn_t ret = IRQ_NONE;
- 
--	dev_vdbg(&ch->phy->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
--	val &= ~(USB2_LINECTRL1_DP_RPD | USB2_LINECTRL1_DM_RPD);
--	if (dp)
--		val |= USB2_LINECTRL1_DP_RPD;
--	if (dm)
--		val |= USB2_LINECTRL1_DM_RPD;
--	writel(val, usb2_base + USB2_LINECTRL1);
-+	if (status & USB2_OBINT_BITS) {
-+		dev_vdbg(&ch->phy->dev, "%s: %08x\n", __func__, status);
-+		writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-+		ret = IRQ_HANDLED;
-+	}
-+
-+	return ret;
- }
- 
--static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
-+static void has_otg_pins_enable_vbus(struct rcar_gen3_chan *ch, int vbus)
- {
- 	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_ADPCTRL);
-@@ -147,7 +153,7 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
- 	writel(val, usb2_base + USB2_ADPCTRL);
- }
- 
--static void rcar_gen3_enable_otg_irq(struct rcar_gen3_chan *ch, int enable)
-+static void has_otg_pins_enable_irq(struct rcar_gen3_chan *ch, int enable)
- {
- 	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_OBINTEN);
-@@ -159,6 +165,57 @@ static void rcar_gen3_enable_otg_irq(struct rcar_gen3_chan *ch, int enable)
- 	writel(val, usb2_base + USB2_OBINTEN);
- }
- 
-+static bool has_otg_pins_check_id(struct rcar_gen3_chan *ch)
-+{
-+	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
-+}
-+
-+static void has_otg_pins_init(struct rcar_gen3_chan *ch)
-+{
-+	void __iomem *usb2_base = ch->base;
-+	u32 val;
-+
-+	val = readl(usb2_base + USB2_VBCTRL);
-+	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
-+	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-+	has_otg_pins_enable_irq(ch, 1);
-+	val = readl(usb2_base + USB2_ADPCTRL);
-+	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
-+	val = readl(usb2_base + USB2_LINECTRL1);
-+	rcar_gen3_set_linectrl(ch, 0, 0);
-+	writel(val | USB2_LINECTRL1_DPRPD_EN | USB2_LINECTRL1_DMRPD_EN,
-+	       usb2_base + USB2_LINECTRL1);
-+}
-+
-+static void rcar_gen3_phy_usb2_work(struct work_struct *work)
-+{
-+	struct rcar_gen3_chan *ch = container_of(work, struct rcar_gen3_chan,
-+						 work);
-+
-+	if (ch->extcon_host) {
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, true);
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB, false);
-+	} else {
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB_HOST, false);
-+		extcon_set_state_sync(ch->extcon, EXTCON_USB, true);
-+	}
-+}
-+
-+static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
-+{
-+	has_otg_pins_set_host(ch, host);
-+}
-+
-+static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
-+{
-+	has_otg_pins_enable_vbus(ch, vbus);
-+}
-+
-+static void rcar_gen3_enable_otg_irq(struct rcar_gen3_chan *ch, int enable)
-+{
-+	has_otg_pins_enable_irq(ch, enable);
-+}
-+
- static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
- {
- 	rcar_gen3_set_linectrl(ch, 1, 1);
-@@ -214,7 +271,7 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
- 
- static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
- {
--	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
-+	return has_otg_pins_check_id(ch);
- }
- 
- static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
-@@ -227,7 +284,7 @@ static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
- 
- static bool rcar_gen3_is_host(struct rcar_gen3_chan *ch)
- {
--	return !(readl(ch->base + USB2_COMMCTRL) & USB2_COMMCTRL_OTG_PERI);
-+	return has_otg_pins_is_host(ch);
- }
- 
- static enum phy_mode rcar_gen3_get_phy_mode(struct rcar_gen3_chan *ch)
-@@ -293,19 +350,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
- 
- static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
- {
--	void __iomem *usb2_base = ch->base;
--	u32 val;
--
--	val = readl(usb2_base + USB2_VBCTRL);
--	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
--	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
--	rcar_gen3_enable_otg_irq(ch, 1);
--	val = readl(usb2_base + USB2_ADPCTRL);
--	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
--	val = readl(usb2_base + USB2_LINECTRL1);
--	rcar_gen3_set_linectrl(ch, 0, 0);
--	writel(val | USB2_LINECTRL1_DPRPD_EN | USB2_LINECTRL1_DMRPD_EN,
--	       usb2_base + USB2_LINECTRL1);
-+	has_otg_pins_init(ch);
- 
- 	rcar_gen3_device_recognition(ch);
- }
-@@ -380,16 +425,11 @@ static int rcar_gen3_phy_usb2_power_off(struct phy *p)
- static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- {
- 	struct rcar_gen3_chan *ch = _ch;
--	void __iomem *usb2_base = ch->base;
--	u32 status = readl(usb2_base + USB2_OBINTSTA);
--	irqreturn_t ret = IRQ_NONE;
-+	irqreturn_t ret;
- 
--	if (status & USB2_OBINT_BITS) {
--		dev_vdbg(&ch->phy->dev, "%s: %08x\n", __func__, status);
--		writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-+	ret = has_otg_pins_irq_handler(ch);
-+	if (ret == IRQ_HANDLED)
- 		rcar_gen3_device_recognition(ch);
--		ret = IRQ_HANDLED;
--	}
- 
- 	return ret;
- }
--- 
-1.9.1
-
+Thanks, applied.
