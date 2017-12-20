@@ -1,74 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:46049 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750995AbdLDWWY (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45060 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755060AbdLTPVA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 17:22:24 -0500
-Date: Mon, 4 Dec 2017 23:22:21 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 09/22] mmc: tmio: use mmc_can_gpio_cd() instead of
- checking TMIO_MMC_USE_GPIO_CD
-Message-ID: <20171204222221.j76mqfc4oqq2oyth@ninjato>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-10-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 20 Dec 2017 10:21:00 -0500
+Received: by mail-lf0-f68.google.com with SMTP id f13so24443462lff.12
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 07:20:59 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Wed, 20 Dec 2017 16:20:55 +0100
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v9 07/28] rcar-vin: change name of video device
+Message-ID: <20171220152055.GB32148@bigcity.dyn.berto.se>
+References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+ <2107363.OzArtd56sx@avalon>
+ <20171214142500.lhp3v6lrd7kovx7b@valkosipuli.retiisi.org.uk>
+ <3340556.KXTJ26DsAn@avalon>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wz3o4uhfixflk6we"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1511540697-27387-10-git-send-email-yamada.masahiro@socionext.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3340556.KXTJ26DsAn@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Laurent and Sakari,
 
---wz3o4uhfixflk6we
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your comments.
 
-On Sat, Nov 25, 2017 at 01:24:44AM +0900, Masahiro Yamada wrote:
-> To use a GPIO line for card detection, TMIO_MMC_USE_GPIO_CD is set
-> by a legacy board (arch/sh/boards/mach-ecovec24).
->=20
-> For DT platforms, the "cd-gpios" property is a legitimate way for that
-> in case the IP-builtin card detection can not be used for some reason.
-> mmc_of_parse() calls mmc_gpiod_request_cd() to set up ctx->cd_gpio if
-> the "cd-gpios" property is specified.
->=20
-> To cater to both cases, mmc_can_gpio_cd() is a correct way to check
-> which card detection logic is used.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On 2017-12-14 17:50:24 +0200, Laurent Pinchart wrote:
+> Hi Sakari,
+> 
+> On Thursday, 14 December 2017 16:25:00 EET Sakari Ailus wrote:
+> > On Fri, Dec 08, 2017 at 10:17:36AM +0200, Laurent Pinchart wrote:
+> > > On Friday, 8 December 2017 03:08:21 EET Niklas S�derlund wrote:
+> > > > The rcar-vin driver needs to be part of a media controller to support
+> > > > Gen3. Give each VIN instance a unique name so it can be referenced from
+> > > > userspace.
+> > > > 
+> > > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > > > Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+> > > > ---
+> > > > 
+> > > >  drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ++-
+> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > > b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> > > > 59ec6d3d119590aa..19de99133f048960 100644
+> > > > --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > > +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > > > @@ -876,7 +876,8 @@ int rvin_v4l2_register(struct rvin_dev *vin)
+> > > > 
+> > > >  	vdev->fops = &rvin_fops;
+> > > >  	vdev->v4l2_dev = &vin->v4l2_dev;
+> > > >  	vdev->queue = &vin->queue;
+> > > > 
+> > > > -	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
+> > > > +	snprintf(vdev->name, sizeof(vdev->name), "%s %s", KBUILD_MODNAME,
+> > > > +		 dev_name(vin->dev));
+> > > 
+> > > Do we need the module name here ? How about calling them "%s output",
+> > > dev_name(vin->dev) to emphasize the fact that this is a video node and not
+> > > a VIN subdev ? This is what the omap3isp and vsp1 drivers do.
+> > > 
+> > > We're suffering a bit from the fact that V4L2 has never standardized a
+> > > naming scheme for the devices. It wouldn't be fair to ask you to fix that
+> > > as a prerequisite to get the VIN driver merged, but we clearly have to
+> > > work on that at some point.
+> > 
+> > Agreed, this needs to be stable and I think aligning to what omap3isp or
+> > vsp1 do would be a good fix here.
+> 
+> Even omap3isp and vsp1 are not fully aligned, so I think we need to design a 
+> naming policy and document it.
 
-My gut feeling is that your patch is correct, but I need to have another
-look at this native_hotplug code with a fresh brain and take your other
-patches into account as well then, too.
+I agree that align this is a good idea. And for this reason I chosen to 
+update this patch as such:
 
+"%s output", dev_name(vin->dev)
 
---wz3o4uhfixflk6we
-Content-Type: application/pgp-signature; name="signature.asc"
+I hope this is a step in the correct direction. If not please let me 
+know as soon as possible so I can minimize the trouble for the other 
+developers doing stuff on-top of this series and there test scripts :-)
 
------BEGIN PGP SIGNATURE-----
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlolypoACgkQFA3kzBSg
-Kbb2AQ//RGMKaEnLUkmV7FjyiAXJfh3RCfFkk/Jfl54fTGhs7b1kYvZuk+JeKdyo
-WbfQRUbDV2RWa/nHBUT44Hib1UeeRw2t8G5S+RKlw5eaOnGsqQ0uwJOjawMKw5Ji
-Ps30g4Q4k9ex2Ds7KP0jxjyh7alo64djKIr/KOK2Peggrs4KEXzfJiLC3frUOKvW
-zWPI/UiMyakuzfA3UeGRuM/Huhhtdwpz/kIGQCKfIKLx2y+f4sSvXUwisvYMKTAH
-IB+vkptFl/FMBUyouLX/G5KPF7wB99AHq3UC8zPlwlm4fCaKECNeaZtZTlC4NVnu
-qZyvcSGru017beP2xRAZXTG5jv0/nbCSZyptT6IgqYULmnVxMo7XaLe5p7hrFDAm
-KjIxwZcfGxK1dfXZobWLoCDN58xaDocQlbkqF3BIbrNY2nrRqKNmGApJTNseSraZ
-oSOG+FhCuascsmZB0Xdsz4SpV3EykavcS/66XhtQI/sjRTltPYHpIA1LlubAYArS
-OlfOe6/pmV04Jfp9eVj3fz11rHnTm9HCVm683XVt/85R7/S7VH2QG5t9GkwJNVa1
-RIwVqjBVDv0QmkMx55OANNA2gUpzMifTZv7Xl6UbBhb1B2JH2v21L9yrF3nqNeoR
-Fb1lA3ZzVsNKFUwbrnqWgYTQelzldfXUEzorR6rHboiARpUy1d0=
-=ZA/I
------END PGP SIGNATURE-----
-
---wz3o4uhfixflk6we--
+-- 
+Regards,
+Niklas S�derlund
