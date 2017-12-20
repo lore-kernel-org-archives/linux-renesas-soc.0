@@ -1,76 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35658 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52041 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752481AbdLGJyY (ORCPT
+        with ESMTP id S932185AbdLTI10 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:54:24 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 20 Dec 2017 03:27:26 -0500
+Date: Wed, 20 Dec 2017 09:27:20 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/54] arm64: dts: renesas: r8a7795: Use R-Car SDHI Gen3 fallback compat string
-Date: Thu,  7 Dec 2017 10:53:05 +0100
-Message-Id: <e4428a726d57fb6068346a736c79953657bc8da6.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: thermal: rcar: Add device tree
+ support for r8a7743
+Message-ID: <20171220082720.7wmxidiyfzgr5pck@verge.net.au>
+References: <1513689449-2700-1-git-send-email-biju.das@bp.renesas.com>
+ <1513689449-2700-2-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513689449-2700-2-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car SDHI Gen3 fallback compat string
-in the DT of the r8a7795 SoC.
+On Tue, Dec 19, 2017 at 01:17:28PM +0000, Biju Das wrote:
+> Add thermal sensor support for r8a7743 SoC. The Renesas RZ/G1M
+> (r8a7743) thermal sensor module is identical to the R-Car Gen2 family.
+> 
+> No driver change is needed due to the fallback compatible value
+> "renesas,rcar-gen2-thermal".
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 15ef292a8d9f..42c51f2ec30b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1539,7 +1539,8 @@
- 		};
- 
- 		sdhi0: sd@ee100000 {
--			compatible = "renesas,sdhi-r8a7795";
-+			compatible = "renesas,sdhi-r8a7795",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee100000 0 0x2000>;
- 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 314>;
-@@ -1550,7 +1551,8 @@
- 		};
- 
- 		sdhi1: sd@ee120000 {
--			compatible = "renesas,sdhi-r8a7795";
-+			compatible = "renesas,sdhi-r8a7795",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee120000 0 0x2000>;
- 			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 313>;
-@@ -1561,7 +1563,8 @@
- 		};
- 
- 		sdhi2: sd@ee140000 {
--			compatible = "renesas,sdhi-r8a7795";
-+			compatible = "renesas,sdhi-r8a7795",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee140000 0 0x2000>;
- 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 312>;
-@@ -1572,7 +1575,8 @@
- 		};
- 
- 		sdhi3: sd@ee160000 {
--			compatible = "renesas,sdhi-r8a7795";
-+			compatible = "renesas,sdhi-r8a7795",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee160000 0 0x2000>;
- 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 311>;
--- 
-2.11.0
+> ---
+> v1->v2
+>   * No Change
+> 
+>  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+> index a8e52c8..349e635 100644
+> --- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+> +++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+> @@ -6,6 +6,7 @@ Required properties:
+>  			   "renesas,rcar-thermal" (without thermal-zone) as fallback.
+>  			  Examples with soctypes are:
+>  			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
+> +			    - "renesas,thermal-r8a7743" (RZ/G1M)
+>  			    - "renesas,thermal-r8a7779" (R-Car H1)
+>  			    - "renesas,thermal-r8a7790" (R-Car H2)
+>  			    - "renesas,thermal-r8a7791" (R-Car M2-W)
+> -- 
+> 1.9.1
+> 
