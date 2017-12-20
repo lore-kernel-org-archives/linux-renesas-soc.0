@@ -1,44 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35920 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751666AbdLUJxi (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:24897 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1756104AbdLTUEq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 04:53:38 -0500
-MIME-Version: 1.0
-In-Reply-To: <1513800125-53213-5-git-send-email-biju.das@bp.renesas.com>
-References: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com> <1513800125-53213-5-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 21 Dec 2017 10:53:37 +0100
-Message-ID: <CAMuHMdU+ezfARzO5rJND6SCXHof-zN1dXk9OCwf8VUCEaCWFxg@mail.gmail.com>
-Subject: Re: [PATCH 4/9] ARM: dts: iwg22d-sodimm: Enable SGTL5000 audio codec
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
+        Wed, 20 Dec 2017 15:04:46 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 4/9] ARM: dts: iwg22d-sodimm: Enable SGTL5000 audio codec
+Date: Wed, 20 Dec 2017 20:02:00 +0000
+Message-Id: <1513800125-53213-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
+References: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Dec 20, 2017 at 9:02 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> This patch enables SGTL5000 audio codec on the carrier board.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This patch enables SGTL5000 audio codec on the carrier board.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 39ce7e7..5d4b7d2 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -26,6 +26,12 @@
+ 		stdout-path = "serial3:115200n8";
+ 	};
+ 
++	audio_clock: audio_clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++	};
++
+ 	vccq_sdhi0: regulator-vccq-sdhi0 {
+ 		compatible = "regulator-gpio";
+ 
+@@ -80,6 +86,23 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&i2c5 {
++	pinctrl-0 = <&i2c5_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	sgtl5000: codec@a {
++		compatible = "fsl,sgtl5000";
++		#sound-dai-cells = <0>;
++		reg = <0x0a>;
++		clocks = <&audio_clock>;
++		VDDA-supply = <&reg_3p3v>;
++		VDDIO-supply = <&reg_3p3v>;
++	};
++};
++
+ &pci1 {
+ 	status = "okay";
+ 	pinctrl-0 = <&usb1_pins>;
+@@ -102,6 +125,11 @@
+ 		function = "hscif1";
+ 	};
+ 
++	i2c5_pins: i2c5 {
++		groups = "i2c5_b";
++		function = "i2c5";
++	};
++
+ 	scif4_pins: scif4 {
+ 		groups = "scif4_data_b";
+ 		function = "scif4";
+-- 
+1.9.1
