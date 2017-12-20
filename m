@@ -1,55 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:53825 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751884AbdLUL4n (ORCPT
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46945 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752886AbdLTMZQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 06:56:43 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+        Wed, 20 Dec 2017 07:25:16 -0500
+Received: by mail-pl0-f65.google.com with SMTP id i6so8900072plt.13
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 04:25:16 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC] arm64: dts: r8a7795: salvator-xs: enable SATA
-Date: Thu, 21 Dec 2017 12:56:39 +0100
-Message-Id: <20171221115639.13646-1-wsa+renesas@sang-engineering.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 20 Dec 2017 21:24:13 +0900
+Message-Id: <151377265378.17613.6585544315769524309.sendpatchset@little-apple>
+In-Reply-To: <151377262568.17613.8610167192375932687.sendpatchset@little-apple>
+References: <151377262568.17613.8610167192375932687.sendpatchset@little-apple>
+Subject: [PATCH/RFC 03/03] iommu/ipmmu-vmsa: Add SYS-DMAC devices as whitelist
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Needs this GPIO hog, so is probably an overlay?
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+For testing purpose add a list of allowed SYS-DMAC devices to
+the IPMMU driver. These may be used together with SCIF serial
+ports to validate some basic operation.
+
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
-So, this makes SATA work without any user interaction. But as said above, this
-should probably be an overlay? Or any other way to deal with it? Also, we don't
-have any way to check that SW12/7 is set correctly, or?
+ drivers/iommu/ipmmu-vmsa.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
- arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 7675de5d4f2cb1..b44ed5fbec7cb9 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -101,6 +101,19 @@
- 	};
- };
+--- 0024/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2017-11-22 13:26:36.270607110 +0900
+@@ -756,6 +756,13 @@ static int ipmmu_init_platform_device(st
  
-+&pca9654 {
-+	pcie_sata_switch {
-+		gpio-hog;
-+		gpios = <7>;
-+		output-low;
-+		line-name = "PCIE/SATA switch";
-+	};
-+};
-+
-+&sata {
-+	status = "okay";
-+};
-+
- &usb2_phy2 {
- 	pinctrl-0 = <&usb2_pins>;
- 	pinctrl-names = "default";
--- 
-2.11.0
+ static bool ipmmu_slave_whitelist(struct device *dev)
+ {
++	if (!strcmp(dev_name(dev), "e6700000.dma-controller"))
++		return true;
++	if (!strcmp(dev_name(dev), "e7300000.dma-controller"))
++		return true;
++	if (!strcmp(dev_name(dev), "e7310000.dma-controller"))
++		return true;
++  
+ 	/* By default, do not allow use of IPMMU */
+ 	return false;
+ }
