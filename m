@@ -1,97 +1,267 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:44902 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752346AbdLHBJC (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41779 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756003AbdLTVJN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 20:09:02 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v9 17/28] rcar-vin: add flag to switch to media controller mode
-Date: Fri,  8 Dec 2017 02:08:31 +0100
-Message-Id: <20171208010842.20047-18-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 20 Dec 2017 16:09:13 -0500
+Received: by mail-lf0-f65.google.com with SMTP id f18so25553871lfg.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 13:09:12 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Wed, 20 Dec 2017 22:09:09 +0100
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v9 15/28] rcar-vin: enable Gen3 hardware configuration
+Message-ID: <20171220210909.GF32148@bigcity.dyn.berto.se>
 References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171208010842.20047-16-niklas.soderlund+renesas@ragnatech.se>
+ <5504263.YnyVsq6zZe@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5504263.YnyVsq6zZe@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 a media controller API needs to be used to allow userspace to
-configure the subdevices in the pipeline instead of directly controlling
-a single source subdevice, which is and will continue to be the mode of
-operation on Gen2.
+Hi Laurent,
 
-Prepare for these two modes of operation by adding a flag to struct
-rvin_info which will control which mode to use.
+Thanks for your comments.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 6 +++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+On 2017-12-08 11:47:13 +0200, Laurent Pinchart wrote:
+> Hi Niklas,
+> 
+> Thank you for the patch.
+> 
+> On Friday, 8 December 2017 03:08:29 EET Niklas S�derlund wrote:
+> > Add the register needed to work with Gen3 hardware. This patch adds
+> > the logic for how to work with the Gen3 hardware. More work is required
+> > to enable the subdevice structure needed to configure capturing.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-dma.c | 94 ++++++++++++++++++---------
+> >  drivers/media/platform/rcar-vin/rcar-vin.h |  1 +
+> >  2 files changed, 64 insertions(+), 31 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> > b/drivers/media/platform/rcar-vin/rcar-dma.c index
+> > d7660f485a2df9e4..ace95d5b543a17e3 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> > @@ -33,21 +33,23 @@
+> >  #define VNELPRC_REG	0x10	/* Video n End Line Pre-Clip Register */
+> >  #define VNSPPRC_REG	0x14	/* Video n Start Pixel Pre-Clip Register */
+> >  #define VNEPPRC_REG	0x18	/* Video n End Pixel Pre-Clip Register */
+> > -#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
+> > -#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
+> > -#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
+> > -#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
+> >  #define VNIS_REG	0x2C	/* Video n Image Stride Register */
+> >  #define VNMB_REG(m)	(0x30 + ((m) << 2)) /* Video n Memory Base m Register
+> > */ #define VNIE_REG	0x40	/* Video n Interrupt Enable Register */
+> >  #define VNINTS_REG	0x44	/* Video n Interrupt Status Register */
+> >  #define VNSI_REG	0x48	/* Video n Scanline Interrupt Register */
+> >  #define VNMTC_REG	0x4C	/* Video n Memory Transfer Control Register */
+> > -#define VNYS_REG	0x50	/* Video n Y Scale Register */
+> > -#define VNXS_REG	0x54	/* Video n X Scale Register */
+> >  #define VNDMR_REG	0x58	/* Video n Data Mode Register */
+> >  #define VNDMR2_REG	0x5C	/* Video n Data Mode Register 2 */
+> >  #define VNUVAOF_REG	0x60	/* Video n UV Address Offset Register */
+> > +
+> > +/* Register offsets specific for Gen2 */
+> > +#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
+> > +#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
+> > +#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
+> > +#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
+> > +#define VNYS_REG	0x50	/* Video n Y Scale Register */
+> > +#define VNXS_REG	0x54	/* Video n X Scale Register */
+> >  #define VNC1A_REG	0x80	/* Video n Coefficient Set C1A Register */
+> >  #define VNC1B_REG	0x84	/* Video n Coefficient Set C1B Register */
+> >  #define VNC1C_REG	0x88	/* Video n Coefficient Set C1C Register */
+> > @@ -73,9 +75,13 @@
+> >  #define VNC8B_REG	0xF4	/* Video n Coefficient Set C8B Register */
+> >  #define VNC8C_REG	0xF8	/* Video n Coefficient Set C8C Register */
+> > 
+> > +/* Register offsets specific for Gen3 */
+> > +#define VNCSI_IFMD_REG		0x20 /* Video n CSI2 Interface Mode Register */
+> > 
+> >  /* Register bit fields for R-Car VIN */
+> >  /* Video n Main Control Register bits */
+> > +#define VNMC_DPINE		(1 << 27) /* Gen3 specific */
+> > +#define VNMC_SCLE		(1 << 26) /* Gen3 specific */
+> >  #define VNMC_FOC		(1 << 21)
+> >  #define VNMC_YCAL		(1 << 19)
+> >  #define VNMC_INF_YUV8_BT656	(0 << 16)
+> > @@ -119,6 +125,13 @@
+> >  #define VNDMR2_FTEV		(1 << 17)
+> >  #define VNDMR2_VLV(n)		((n & 0xf) << 12)
+> > 
+> > +/* Video n CSI2 Interface Mode Register (Gen3) */
+> > +#define VNCSI_IFMD_DES2		(1 << 27)
+> > +#define VNCSI_IFMD_DES1		(1 << 26)
+> > +#define VNCSI_IFMD_DES0		(1 << 25)
+> > +#define VNCSI_IFMD_CSI_CHSEL(n) ((n & 0xf) << 0)
+> 
+> *Always* enclose macro arguments in parentheses otherwise they are subject to 
+> side effects.
+> 
+> #define VNCSI_IFMD_CSI_CHSEL(n) (((n) & 0xf) << 0)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 7d49904cab9cb2d9..61f48ecc1ab815ec 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -232,18 +232,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static const struct rvin_info rcar_info_h1 = {
- 	.chip = RCAR_H1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_m1 = {
- 	.chip = RCAR_M1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
- 
- static const struct rvin_info rcar_info_gen2 = {
- 	.chip = RCAR_GEN2,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
-@@ -338,7 +341,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
--	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+	if (!vin->info->use_mc)
-+		v4l2_ctrl_handler_free(&vin->ctrl_handler);
- 
- 	rvin_dma_unregister(vin);
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 7819c760c2c13422..0747873c2b9cb74c 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -77,12 +77,14 @@ struct rvin_graph_entity {
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-+ * @use_mc:		use media controller instead of controlling subdevice
-  *
-  * max_width:		max input width the VIN supports
-  * max_height:		max input height the VIN supports
-  */
- struct rvin_info {
- 	enum chip_id chip;
-+	bool use_mc;
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
+Thanks for spotting this.
+
+> 
+> > +#define VNCSI_IFMD_CSI_CHSEL_MASK 0xf
+> > +
+> >  struct rvin_buffer {
+> >  	struct vb2_v4l2_buffer vb;
+> >  	struct list_head list;
+> > @@ -514,28 +527,10 @@ static void rvin_set_coeff(struct rvin_dev *vin,
+> > unsigned short xs) rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
+> >  }
+> > 
+> > -static void rvin_crop_scale_comp(struct rvin_dev *vin)
+> > +static void rvin_crop_scale_comp_gen2(struct rvin_dev *vin)
+> >  {
+> >  	u32 xs, ys;
+> > 
+> > -	/* Set Start/End Pixel/Line Pre-Clip */
+> > -	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
+> > -	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
+> > -	switch (vin->format.field) {
+> > -	case V4L2_FIELD_INTERLACED:
+> > -	case V4L2_FIELD_INTERLACED_TB:
+> > -	case V4L2_FIELD_INTERLACED_BT:
+> > -		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
+> > -		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
+> > -			   VNELPRC_REG);
+> > -		break;
+> > -	default:
+> > -		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
+> > -		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
+> > -			   VNELPRC_REG);
+> > -		break;
+> > -	}
+> > -
+> >  	/* Set scaling coefficient */
+> >  	ys = 0;
+> >  	if (vin->crop.height != vin->compose.height)
+> > @@ -573,11 +568,6 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
+> >  		break;
+> >  	}
+> > 
+> > -	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
+> > -		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
+> > -	else
+> > -		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
+> > -
+> >  	vin_dbg(vin,
+> >  		"Pre-Clip: %ux%u@%u:%u YS: %d XS: %d Post-Clip: %ux%u@%u:%u\n",
+> >  		vin->crop.width, vin->crop.height, vin->crop.left,
+> 
+> Would it make sense to keep the debug message in the common function, or ill 
+> cropping and composing be handled through subdevs for Gen3 ?
+
+Yes, my current idea is to model the scaler as a subdevice. As I'm sure 
+you are aware not all VIN instances have a scaler. And those who do 
+share it with one other VIN instance, so both of them can't use the 
+scaler at the same time (see register VnMC.SCLE).
+
+Modeling it as a separate subdevice and using media links ensure only 
+one VIN is using it at a time therefor I think is the best solution.
+
+> 
+> With these two issues addressed,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> > @@ -585,6 +575,37 @@ static void rvin_crop_scale_comp(struct rvin_dev *vin)
+> >  		0, 0);
+> >  }
+> > 
+> > +static void rvin_crop_scale_comp(struct rvin_dev *vin)
+> > +{
+> > +	/* Set Start/End Pixel/Line Pre-Clip */
+> > +	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
+> > +	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
+> > +
+> > +	switch (vin->format.field) {
+> > +	case V4L2_FIELD_INTERLACED:
+> > +	case V4L2_FIELD_INTERLACED_TB:
+> > +	case V4L2_FIELD_INTERLACED_BT:
+> > +		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
+> > +		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
+> > +			   VNELPRC_REG);
+> > +		break;
+> > +	default:
+> > +		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
+> > +		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
+> > +			   VNELPRC_REG);
+> > +		break;
+> > +	}
+> > +
+> > +	/* TODO: Add support for the UDS scaler. */
+> > +	if (vin->info->chip != RCAR_GEN3)
+> > +		rvin_crop_scale_comp_gen2(vin);
+> > +
+> > +	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
+> > +		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
+> > +	else
+> > +		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
+> > +}
+> > +
+> >  /* ------------------------------------------------------------------------
+> >   * Hardware setup
+> >   */
+> > @@ -659,7 +680,10 @@ static int rvin_setup(struct rvin_dev *vin)
+> >  	}
+> > 
+> >  	/* Enable VSYNC Field Toogle mode after one VSYNC input */
+> > -	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+> > +	if (vin->info->chip == RCAR_GEN3)
+> > +		dmr2 = VNDMR2_FTEV;
+> > +	else
+> > +		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+> > 
+> >  	/* Hsync Signal Polarity Select */
+> >  	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+> > @@ -711,6 +735,14 @@ static int rvin_setup(struct rvin_dev *vin)
+> >  	if (input_is_yuv == output_is_yuv)
+> >  		vnmc |= VNMC_BPS;
+> > 
+> > +	if (vin->info->chip == RCAR_GEN3) {
+> > +		/* Select between CSI-2 and Digital input */
+> > +		if (vin->mbus_cfg.type == V4L2_MBUS_CSI2)
+> > +			vnmc &= ~VNMC_DPINE;
+> > +		else
+> > +			vnmc |= VNMC_DPINE;
+> > +	}
+> > +
+> >  	/* Progressive or interlaced mode */
+> >  	interrupts = progressive ? VNIE_FIE : VNIE_EFE;
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
+> > b/drivers/media/platform/rcar-vin/rcar-vin.h index
+> > 118f45b656920d39..a440effe4b86af31 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> > +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> > @@ -33,6 +33,7 @@ enum chip_id {
+> >  	RCAR_H1,
+> >  	RCAR_M1,
+> >  	RCAR_GEN2,
+> > +	RCAR_GEN3,
+> >  };
+> > 
+> >  /**
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+
 -- 
-2.15.0
+Regards,
+Niklas S�derlund
