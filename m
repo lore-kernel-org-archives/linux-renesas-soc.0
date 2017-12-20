@@ -1,46 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52307 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756343AbdLVK3w (ORCPT
+        with ESMTP id S1753886AbdLTIrg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:29:52 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 20 Dec 2017 03:47:36 -0500
+Date: Wed, 20 Dec 2017 09:47:32 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/3] ARM: shmobile: defconfig: Enable PWM
-Date: Fri, 22 Dec 2017 11:29:41 +0100
-Message-Id: <1943cbd3b39ee3310494d5b531a906e836bb9f7f.1513935930.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513935930.git.horms+renesas@verge.net.au>
-References: <cover.1513935930.git.horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH v3 5/5] ARM: dts: r8a7743: Add TPU support
+Message-ID: <20171220084731.pd34v6lpxetisrpy@verge.net.au>
+References: <1513690500-12165-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513690500-12165-6-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513690500-12165-6-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Tue, Dec 19, 2017 at 01:35:00PM +0000, Fabrizio Castro wrote:
+> Add TPU support to SoC DT.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2->v3:
+> * No change
 
-RZ/G1 and R-Car platforms have PWM timers. This patch enables PWM support
-by default.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index d60dbe1f108f..578434cfd1a0 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -208,6 +208,7 @@ CONFIG_STAGING_BOARD=y
- CONFIG_IIO=y
- CONFIG_AK8975=y
- CONFIG_PWM=y
-+CONFIG_PWM_RCAR=y
- CONFIG_PWM_RENESAS_TPU=y
- CONFIG_GENERIC_PHY=y
- CONFIG_PHY_RCAR_GEN2=y
--- 
-2.11.0
+Thanks, applied.
