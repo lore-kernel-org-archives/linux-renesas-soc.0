@@ -1,109 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54468 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754064AbdLNWbH (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36200 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755427AbdLTOJe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 17:31:07 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/9] ARM: dts: koelsch: use demuxer for I2C4
-Date: Thu, 14 Dec 2017 23:30:56 +0100
-Message-Id: <20171214223101.16450-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
-References: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
+        Wed, 20 Dec 2017 09:09:34 -0500
+Received: by mail-lf0-f66.google.com with SMTP id c19so4311020lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 06:09:33 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [PATCH v2 3/3] phy: core: Update the runtime PM section in the docs to reflect changes
+Date: Wed, 20 Dec 2017 15:09:20 +0100
+Message-Id: <1513778960-10073-4-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
+References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
+Let's update and clarify he phy documentation, to reflect the latest
+changes around the runtime PM deployment in the phy core.
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOS]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ Documentation/phy.txt | 29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 4b20db197de629..8319eff0190ecd 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -52,8 +52,10 @@
- 		serial1 = &scif1;
- 		i2c9 = &gpioi2c1;
- 		i2c10 = &gpioi2c2;
-+		i2c11 = &gpioi2c4;
- 		i2c12 = &i2cexio1;
- 		i2c13 = &i2chdmi;
-+		i2c14 = &i2cexio4;
- 	};
+diff --git a/Documentation/phy.txt b/Documentation/phy.txt
+index 457c3e0..1c2c761 100644
+--- a/Documentation/phy.txt
++++ b/Documentation/phy.txt
+@@ -160,19 +160,22 @@ associated with this PHY.
+ PM Runtime
+ ==========
  
- 	chosen {
-@@ -329,6 +331,16 @@
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-+	gpioi2c4: i2c-11 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio7 13 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio7 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
+-This subsystem is pm runtime enabled. So while creating the PHY,
+-pm_runtime_enable of the phy device created by this subsystem is called and
+-while destroying the PHY, pm_runtime_disable is called. Note that the phy
+-device created by this subsystem will be a child of the device that calls
+-phy_create (PHY provider device).
+-
+-So pm_runtime_get_sync of the phy_device created by this subsystem will invoke
+-pm_runtime_get_sync of PHY provider device because of parent-child relationship.
+-It should also be noted that phy_power_on and phy_power_off performs
+-phy_pm_runtime_get_sync and phy_pm_runtime_put respectively.
+-There are exported APIs like phy_pm_runtime_get, phy_pm_runtime_get_sync,
+-phy_pm_runtime_put, phy_pm_runtime_put_sync, phy_pm_runtime_allow and
+-phy_pm_runtime_forbid for performing PM operations.
++This subsystem deploys runtime PM support. More precisely, calls to
++pm_runtime_get_sync() and to pm_runtime_put() surrounds calls to the phy
++provider callbacks, ->init|exit(), in phy_init|exit(). At phy_power_on(), the
++runtime PM usage count is raised again, via pm_runtime_get_sync(). The usage
++count remain raised, until the internal phy power on count reaches zero in
++phy_power_off(), at which point pm_runtime_put() is called to restore the
++runtime PM usage count. In this way, the device is guranteed to stay runtime
++resumed as long as the phy is powered on.
 +
- 	/*
- 	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
- 	 * A fallback to GPIO is provided.
-@@ -437,6 +449,18 @@
- 			pagesize = <16>;
- 		};
- 	};
-+
-+	/*
-+	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio4: i2c-14 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
++In regards to the runtime PM deployment in the phy core, it should also be
++noted that it's deployed for the phy provider device, which is the parent of
++the phy child device. In other words, the phy device created by the phy core
++remains runtime PM disabled. Of course, whether runtime PM is really used or
++not, depends on whether the phy provider driver has enabled runtime PM for its
++provider device. More exactly, pm_runtime_enable() needs to be called prior
++calling phy_create() or devm_phy_create().
  
- &du {
-@@ -480,6 +504,11 @@
- 		function = "i2c2";
- 	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
-+	};
-+
- 	du_pins: du {
- 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
- 		function = "du";
-@@ -735,6 +764,11 @@
- 	clock-frequency = <100000>;
- };
- 
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
-+};
-+
- &i2c6 {
- 	status = "okay";
- 	clock-frequency = <100000>;
+ PHY Mappings
+ ============
 -- 
-2.11.0
+2.7.4
