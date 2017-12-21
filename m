@@ -1,76 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:48345 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755414AbdLVKax (ORCPT
+        with ESMTP id S1750884AbdLULZX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:30:53 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 21 Dec 2017 06:25:23 -0500
+Date: Thu, 21 Dec 2017 12:25:18 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/37] ARM: dts: r8a7745: move timer node out of bus
-Date: Fri, 22 Dec 2017 11:29:54 +0100
-Message-Id: <7bee3795c8145678ec101f9dd033ef7f7f858f48.1513938145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
-References: <cover.1513938145.git.horms+renesas@verge.net.au>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/9] Add sound support
+Message-ID: <20171221112518.tsxtkcli3s6agj65@verge.net.au>
+References: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The timer node does not have any register properties and thus shouldn't be
-placed on the bus.
+On Wed, Dec 20, 2017 at 08:01:56PM +0000, Biju Das wrote:
+> This series aims to add sound support for iWave RZ/G1E board.
+> 
+> Biju Das (9):
+>   ARM: dts: r8a7745: Add audio clocks
+>   ARM: dts: r8a7745: Add audio DMAC support
+>   ARM: dts: r8a7745: Add sound support
+>   ARM: dts: iwg22d-sodimm: Enable SGTL5000 audio codec
+>   ARM: dts: iwg22d-sodimm: Sound PIO support
+>   ARM: dts: iwg22d-sodimm: Sound DMA support on DTS
+>   ARM: dts: iwg22d-sodimm: Sound DMA support via BUSIF on DTS
+>   ARM: dts: iwg22d-sodimm: Sound DMA support via SRC on DTS
+>   ARM: dts: iwg22d-sodimm: Sound DMA support via DVC on DTS
+> 
+>  arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts |  92 +++++++++++
+>  arch/arm/boot/dts/r8a7745.dtsi              | 232 ++++++++++++++++++++++++++++
 
-This problem is flagged by the compiler as follows:
-$ make dtbs W=1
-...
-arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-  DTC     arch/arm/boot/dts/r8a7745-sk-rzg1e.dtb
-arch/arm/boot/dts/r8a7745-sk-rzg1e.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7745.dtsi | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 8fa919a7476d..2be7485c4efe 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -247,18 +247,6 @@
- 			resets = <&cpg 407>;
- 		};
- 
--		timer {
--			compatible = "arm,armv7-timer";
--			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>;
--		};
--
- 		cmt0: timer@ffca0000 {
- 			compatible = "renesas,r8a7745-cmt0",
- 				     "renesas,rcar-gen2-cmt0";
-@@ -1255,6 +1243,14 @@
- 		};
- 	};
- 
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
- 	/* External USB clock - can be overridden by the board */
- 	usb_extal_clk: usb_extal {
- 		compatible = "fixed-clock";
--- 
-2.11.0
+Thanks, applied.
