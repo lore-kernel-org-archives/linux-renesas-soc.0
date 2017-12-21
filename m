@@ -1,12 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50344 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756322AbdLVTNJ (ORCPT
+Received: from mail-it0-f50.google.com ([209.85.214.50]:35354 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751105AbdLUKN7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 14:13:09 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thu, 21 Dec 2017 05:13:59 -0500
+Received: by mail-it0-f50.google.com with SMTP id f143so10272314itb.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Dec 2017 02:13:58 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0hctW_-WR2Gy4tszeXYJJfTRQbLCr_NRhAXao5_XR5NOw@mail.gmail.com>
+References: <1513353391-30806-1-git-send-email-ulf.hansson@linaro.org>
+ <1513353391-30806-2-git-send-email-ulf.hansson@linaro.org> <CAJZ5v0hctW_-WR2Gy4tszeXYJJfTRQbLCr_NRhAXao5_XR5NOw@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 21 Dec 2017 11:13:57 +0100
+Message-ID: <CAPDyKFqa5Lt6jrDQd+V_cE+Bz2ZRJRe95-8bbJgV=LbkGPM0mw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] PM / core: Assign the wakeup_path status flag in __device_prepare()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Linux PM <linux-pm@vger.kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
@@ -15,52 +24,29 @@ Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
         Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 1/3] PM / core: Assign the wakeup_path status flag in __device_prepare()
-Date: Fri, 22 Dec 2017 20:12:16 +0100
-Message-ID: <1742152.iLm4rp6jIy@aspire.rjw.lan>
-In-Reply-To: <CAPDyKFqa5Lt6jrDQd+V_cE+Bz2ZRJRe95-8bbJgV=LbkGPM0mw@mail.gmail.com>
-References: <1513353391-30806-1-git-send-email-ulf.hansson@linaro.org> <CAJZ5v0hctW_-WR2Gy4tszeXYJJfTRQbLCr_NRhAXao5_XR5NOw@mail.gmail.com> <CAPDyKFqa5Lt6jrDQd+V_cE+Bz2ZRJRe95-8bbJgV=LbkGPM0mw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thursday, December 21, 2017 11:13:57 AM CET Ulf Hansson wrote:
-> On 21 December 2017 at 02:43, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > On Fri, Dec 15, 2017 at 4:56 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >> The PM core in the device_prepare() phase, resets the wakeup_path status
-> >> flag to the value of device_may_wakeup(). This means if a ->prepare() or a
-> >> ->suspend() callback for the device would update the device's wakeup
-> >> setting, this doesn't become reflected in the wakeup_path status flag.
-> >>
-> >> In general this isn't a problem, because wakeup settings isn't supposed to
-> >> be changed during those system suspend phases. Nevertheless, there are a
-> >> cases not conforming to that behaviour, as device_set_wakeup_enable() is
-> >> indeed called from ->suspend() callbacks.
-> >
-> > And why is this regarded as correct?
-> 
-> I am not saying that this behavior is correct. However, I am trying to
-> improve the situation, which doesn't hurt or does it?
+On 21 December 2017 at 02:43, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Fri, Dec 15, 2017 at 4:56 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> The PM core in the device_prepare() phase, resets the wakeup_path status
+>> flag to the value of device_may_wakeup(). This means if a ->prepare() or a
+>> ->suspend() callback for the device would update the device's wakeup
+>> setting, this doesn't become reflected in the wakeup_path status flag.
+>>
+>> In general this isn't a problem, because wakeup settings isn't supposed to
+>> be changed during those system suspend phases. Nevertheless, there are a
+>> cases not conforming to that behaviour, as device_set_wakeup_enable() is
+>> indeed called from ->suspend() callbacks.
+>
+> And why is this regarded as correct?
 
-Adding a workaround for them kind of encourages new code to do the same
-thing, which actually may really hurt.  So I assume that these call sites are
-all legacy and that's why you don't want to touch them for now, but in that
-case the commit message should make it very clear that this is about legacy
-only and new code should not call device_set_wakeup_enable() during suspend.
+I am not saying that this behavior is correct. However, I am trying to
+improve the situation, which doesn't hurt or does it?
 
-[Something should be printed to the log if wakeup source objects
-are created while system suspend is in progress I guess or similar.]
+More importantly, the next patch, which is about the wakeup path,
+depends on this.
 
-> More importantly, the next patch, which is about the wakeup path,
-> depends on this.
-
-Honestly, this sounds like "We have this change we really really would like to
-make, but there's incorrect code getting in the way, so let's paper over it
-and be done."  Not very nice. :-/
-
-How many drivers actually do call device_set_wakeup_enable() during suspend?
-
-Thanks,
-Rafael
+Kind regards
+Uffe
