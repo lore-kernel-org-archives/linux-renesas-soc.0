@@ -1,188 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34595 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:54028 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750945AbdLaLXd (ORCPT
+        id S1750768AbdLUMhR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 31 Dec 2017 06:23:33 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 7/9] ARM: dts: silk: use demuxer for I2C1
-Date: Sun, 31 Dec 2017 12:23:18 +0100
-Message-Id: <20171231112320.3461-8-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
-References: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
+        Thu, 21 Dec 2017 07:37:17 -0500
+Date: Thu, 21 Dec 2017 13:37:16 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] arm64: dts: renesas: salvator-common: add GPIO
+ extender
+Message-ID: <20171221123715.7xjyfx2zd5uznf5r@ninjato>
+References: <20171221122136.17773-1-wsa+renesas@sang-engineering.com>
+ <20171221122425.3uz5mquj2a3373gb@ninjato>
+ <3d26f184-ed1a-0832-3c58-01a6173560e8@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ovdnjosjs2scpe45"
+Content-Disposition: inline
+In-Reply-To: <3d26f184-ed1a-0832-3c58-01a6173560e8@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+--ovdnjosjs2scpe45
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7794-silk.dts | 128 ++++++++++++++++++++++---------------
- 1 file changed, 75 insertions(+), 53 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index edfad0e5ac53a0..f1afe2dda13a36 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -31,6 +31,8 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		i2c9 = &gpioi2c1;
-+		i2c10 = &i2chdmi;
- 	};
- 
- 	chosen {
-@@ -153,6 +155,78 @@
- 			clocks = <&x9_clk>;
- 		};
- 	};
-+
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-10 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio5>;
-+			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &extal_clk {
-@@ -268,61 +342,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb0>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con>;
--				};
--			};
--		};
--	};
- };
- 
- &mmcif0 {
--- 
-2.11.0
+> > Forgot to say, this depends on 8a64e557f399090f5d1917b2f32a065da2b12be1
+> > ("gpio: pca953x: fix vendor prefix for PCA9654") which is in
+> > gpio/for-next already. I cherry-picked this commit and SATA still works.
+>=20
+>    It's in Linus' (Torvalds!) tree for quite some time already. :-)
+
+Well, it was not in renesas-drivers/sh-pfc-for-v4.16 which I used as a
+base for the SATA work which again is based on v4.15-rc1. But nice that
+it is upstream already, thanks for the heads up.
+
+
+--ovdnjosjs2scpe45
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlo7qvsACgkQFA3kzBSg
+KbZzRxAAry4O6f9ivMTopMEzar1TWPbCqIHpDqNGqz/6uk8NBYjZVuDKMpk3viJa
+OR6e4NNoHMIbHXF2reAXR3gANn9B7PU45JhZPEONKKUjSQI64J4ZGH9dTyEpTavo
+AKgDFmLUUKFoahegv6s48E8ApmEZNQhb+Ig1f4HNPEYKIl0DTjMCH+CIE57I5InS
+HeOqiFlfK8PyEXp6DovEjvLrCTjPlLRUQdkB0mOvfIsJVrlcF+IqCar1RMvfCY0O
+JJijUaRf1YfUeZkYNcdSaRQ5jG8m35AF5PA4WtyK/m0dSsTuNyi7diqxgWr93Vmk
+WoAkoRg/EyaZKb+Scdvr0gonmghOprQkhV8rJQZdy2fIzDb0Z0b+jp6/2FV7Jj1a
+91Fa457CurMtSRcBxuBEslj7s2gqtZ7bzYy6AcfZEnjS8EDT1uyrY1sOCh95TwYY
+eDNWwizfeXkfj+aR3r23oZJ9WmPOXCD/iOUYOV1BkqqoLbz+SuQd3JnahwC2aN/o
+P1OP46KlPfuBPVyQNO41Bn+1KNsZsdMN7DCdM6Ix3Vk0W5F53RPaQG+gAMMsItp6
+z0j8PJD6sBNe/8KXI/w2YbVAxTZKAaPv/fLcgyQprIfYkWuIXwZag/1ACVivQs7G
+m17VlSUsVOqDkFMCkvrTD3C0b+DiZ5XGP8DQaSxJvu72YffCnhE=
+=3HgI
+-----END PGP SIGNATURE-----
+
+--ovdnjosjs2scpe45--
