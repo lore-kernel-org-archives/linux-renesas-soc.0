@@ -1,97 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40905 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:53791 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965322AbdLRV6K (ORCPT
+        id S1752400AbdLULwj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 16:58:10 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 4/7] i2c: sh_mobile: let RuntimePM do the clock handling
-Date: Mon, 18 Dec 2017 22:57:59 +0100
-Message-Id: <20171218215802.28591-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
-References: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
+        Thu, 21 Dec 2017 06:52:39 -0500
+Date: Thu, 21 Dec 2017 12:52:37 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-gpio@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add SATA pins, groups, and
+ functions
+Message-ID: <20171221115237.vy42lxqo2igygbg2@ninjato>
+References: <20171220215922.22473-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWC9B9YtDzHJ21zLrzMx8JJxUC5q9LRz3c-Kv2y6M+Y9A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ulmomr2qqykx76rw"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWC9B9YtDzHJ21zLrzMx8JJxUC5q9LRz3c-Kv2y6M+Y9A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Start RuntimePM a bit earlier, so we can use it to enable the clock
-during probe for frequency calculations. Make sure it is enabled before
-calling setup().
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-sh_mobile.c | 35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+--ulmomr2qqykx76rw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 88af45225003a5..f1a9b971e2c14a 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -252,11 +252,7 @@ static int sh_mobile_i2c_init(struct sh_mobile_i2c_data *pd)
- 	u32 tHIGH, tLOW, tf;
- 	uint16_t max_val;
- 
--	/* Get clock rate after clock is enabled */
--	clk_prepare_enable(pd->clk);
--	i2c_clk_khz = clk_get_rate(pd->clk) / 1000;
--	clk_disable_unprepare(pd->clk);
--	i2c_clk_khz /= pd->clks_per_count;
-+	i2c_clk_khz = clk_get_rate(pd->clk) / 1000 / pd->clks_per_count;
- 
- 	if (pd->bus_speed == STANDARD_MODE) {
- 		tLOW	= 47;	/* tLOW = 4.7 us */
-@@ -881,6 +877,20 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
- 	if (resource_size(res) > 0x17)
- 		pd->flags |= IIC_FLAG_HAS_ICIC67;
- 
-+	/* Enable Runtime PM for this device.
-+	 *
-+	 * Also tell the Runtime PM core to ignore children
-+	 * for this device since it is valid for us to suspend
-+	 * this I2C master driver even though the slave devices
-+	 * on the I2C bus may not be suspended.
-+	 *
-+	 * The state of the I2C hardware bus is unaffected by
-+	 * the Runtime PM state.
-+	 */
-+	pm_suspend_ignore_children(&dev->dev, true);
-+	pm_runtime_enable(&dev->dev);
-+	pm_runtime_get_sync(&dev->dev);
-+
- 	config = of_device_get_match_data(&dev->dev);
- 	if (config) {
- 		pd->clks_per_count = config->clks_per_count;
-@@ -888,6 +898,8 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
- 	} else {
- 		ret = sh_mobile_i2c_init(pd);
- 	}
-+
-+	pm_runtime_put_sync(&dev->dev);
- 	if (ret)
- 		return ret;
- 
-@@ -896,19 +908,6 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
- 	pd->dma_direction = DMA_NONE;
- 	pd->dma_rx = pd->dma_tx = ERR_PTR(-EPROBE_DEFER);
- 
--	/* Enable Runtime PM for this device.
--	 *
--	 * Also tell the Runtime PM core to ignore children
--	 * for this device since it is valid for us to suspend
--	 * this I2C master driver even though the slave devices
--	 * on the I2C bus may not be suspended.
--	 *
--	 * The state of the I2C hardware bus is unaffected by
--	 * the Runtime PM state.
--	 */
--	pm_suspend_ignore_children(&dev->dev, true);
--	pm_runtime_enable(&dev->dev);
--
- 	/* setup the private data */
- 	adap = &pd->adap;
- 	i2c_set_adapdata(adap, pd);
--- 
-2.11.0
+Hi Geert,
+
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in sh-pfc-for-v4.16.
+
+Thanks for the fast review!
+
+>=20
+> > Note: To repeat the test you must:
+> > a) switch pin7 from SW12 to OFF
+>=20
+> Funny how the relation of MD12 to SATA is mentioned only in the Salvator-=
+XS
+> hardware manual, but not in the R-Car Gen3 User's Manual? Or did I miss i=
+t?
+
+I just followed the XS manual, to be honest.
+
+> > b) set an external GPIO to 0 by using these commands:
+> >         i2cset -y 4 0x20 3 0x7f (set pin to output)
+> >         i2cset -y 4 0x20 1 0x7f (set pin to 0)
+>=20
+> Time to add the PCA9654 to the DTS, so users can use a gpio-hog instead?
+
+Yes, I'll send some patches (with questions) in a minute. Just wanted to
+check if this one is OK.
+
+See you in a minute ;)
+
+   Wolfram
+
+
+--ulmomr2qqykx76rw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlo7oIEACgkQFA3kzBSg
+KbayyhAAmSQUUHQwhCPlN1jryXmvWsXP+9//hTfSHHplckoxqIQnrMSxgNT5EBPJ
+JzA+rH+Wka49rXhdnkVD7+l+gIqPoJ8j5IQdEQzGqlV5FBhDM0w+ZEjfGyWKXyRL
+Z1ImP7KlxvxM+nVY85iR2/AJNH6R+nznLhxNtGWtRhi5NlZU+s5e1GdO+/HMrygK
+H6I/9BQF0rBNC7AZJ/QvvK8scNgmcaBKNMAi2uty5WNIiPCCVpurweZ/6M1EQbBE
+rCK2x8NgCYtm+yq9Lur5baI4Mhkj/WwCP+OYGcTW5MS+0fe71G0fyKs5Kdf7B/Ab
+xZ53sgAJpSKM1QQq3A2dSnCHeTttRiatK0oEiduVAZxy5Ne//EG/eEnCZ/wnqWXh
+pR34CSrAfv3t0FGswTHeWnbHGHJdOqvs8rYxInYTPWhIE468Rq+MZ4fo+UYLfC9l
+eT62oRfT/HEcmhUd/t4jtg1McbpSo+jCaMhSI93W/BD5cyIfXaUWdM4dEWk0Uon7
+wcxM1odXi3QLK6hhU8l4AL8jJu5m05GIRc37OOa5VjG2bXdrXJ+nF9tPc9cH7p2Y
+jNhyZRuU5kNrAQ+/hjEqE2S5AOGReuCxrxdp+HWqkGmKS9DlIP9C85nIV6TyIQQ4
+AkXVrVFvI4UJ73Hy2MyvN7xKPXQ9sdcvQvcj/+1h3CNrS1D/8Ic=
+=rB3P
+-----END PGP SIGNATURE-----
+
+--ulmomr2qqykx76rw--
