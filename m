@@ -1,59 +1,180 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:29659 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752400AbdLUMYO (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46347 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753033AbdLUK5l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 07:24:14 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Kishon Vijay Abraham I <kishon@ti.com>,
+        Thu, 21 Dec 2017 05:57:41 -0500
+Received: by mail-io0-f193.google.com with SMTP id x129so20634033iod.13
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Dec 2017 02:57:41 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB0992E87FAA770B745DCBA690D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
+ <1513778960-10073-3-git-send-email-ulf.hansson@linaro.org> <TY1PR06MB0992E87FAA770B745DCBA690D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 21 Dec 2017 11:57:40 +0100
+Message-ID: <CAPDyKFrOONTsm5xiXrvqqy3koG5=11bKk1b2igx+FzSJbzj_Ng@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] phy: core: Drop unused runtime PM APIs
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 2/3] phy: core: Drop unused runtime PM APIs
-Date: Thu, 21 Dec 2017 12:24:09 +0000
-Message-ID: <TY1PR06MB0992357759B33F1F3C826439D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
- <1513778960-10073-3-git-send-email-ulf.hansson@linaro.org>
- <TY1PR06MB0992E87FAA770B745DCBA690D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAPDyKFrOONTsm5xiXrvqqy3koG5=11bKk1b2igx+FzSJbzj_Ng@mail.gmail.com>
-In-Reply-To: <CAPDyKFrOONTsm5xiXrvqqy3koG5=11bKk1b2igx+FzSJbzj_Ng@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DQo+IEZyb206IFVsZiBIYW5zc29uLCBTZW50OiBUaHVyc2RheSwgRGVjZW1iZXIgMjEsIDIwMTcg
-Nzo1OCBQTQ0KPiANCj4gT24gMjEgRGVjZW1iZXIgMjAxNyBhdCAxMTozMywgWW9zaGloaXJvIFNo
-aW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBI
-aSBVbGYtc2FuLA0KPiA+DQo+ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZy
-b206IFVsZiBIYW5zc29uLCBTZW50OiBXZWRuZXNkYXksIERlY2VtYmVyIDIwLCAyMDE3IDExOjA5
-IFBNDQo+ID4gPHNuaXA+DQo+ID4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3BoeS9waHku
-aCBiL2luY2x1ZGUvbGludXgvcGh5L3BoeS5oDQo+ID4+IGluZGV4IGI0Mjk4YTEuLjA1MGI2MjAg
-MTAwNjQ0DQo+ID4+IC0tLSBhL2luY2x1ZGUvbGludXgvcGh5L3BoeS5oDQo+ID4+ICsrKyBiL2lu
-Y2x1ZGUvbGludXgvcGh5L3BoeS5oDQo+ID4+IEBAIC0xNyw3ICsxNyw2IEBADQo+ID4+ICAjaW5j
-bHVkZSA8bGludXgvZXJyLmg+DQo+ID4+ICAjaW5jbHVkZSA8bGludXgvb2YuaD4NCj4gPj4gICNp
-bmNsdWRlIDxsaW51eC9kZXZpY2UuaD4NCj4gPj4gLSNpbmNsdWRlIDxsaW51eC9wbV9ydW50aW1l
-Lmg+DQo+ID4NCj4gPiBBZnRlciBJIGFwcGxpZWQgdGhpcyBwYXRjaCwgc29tZSBhdGEgYW5kIGdw
-dSBkcml2ZXJzIGNhdXNlcyBidWlsZCBlcnJvciBbMV0uDQo+ID4gU28sIHdlIHNob3VsZCBmaXgg
-dGhlIGRyaXZlcnMgYXQgZmlyc3QuLi4NCj4gDQo+IEh1aCwgcmlnaHQsIHRob3NlIGRyaXZlcnMg
-c2hvdWxkbid0IGJlIHJlbHlpbmcgb24gdGhlIHBoeS5oIHRvIGluY2x1ZGUNCj4gcG1fcnVudGlt
-ZS5oLg0KPiANCj4gVGhlIGVhc2llc3Qgd2F5IGF0IHRoaXMgcG9pbnQgaXMgdG8ganVzdCBwdXQg
-YmFjayAiI2luY2x1ZGUNCj4gPGxpbnV4L3BtX3J1bnRpbWUuaD4iIGluIHBoeS5oLCB0aGVuIHdl
-IGNhbiBkZWFsIHdpdGggdGhlc2UgcHJvYmxlbXMNCj4gc2VwYXJhdGVseS4gSSBkbyB0aGF0IGlu
-IGEgcmUtc3BpbiBzb29uLg0KDQpJIGdvdCBpdC4NCg0KPiBCVFcsIEkgd291bGQgYmUgZ3JlYXQg
-aWYgeW91IGNvdWxkIHRlc3QgdGhpcyBvbiB0aGUgUmVuZXNhcyBTb0MgdG8NCj4gbWFrZSBzdXJl
-IGl0IHN0aWxsIGZpeGVzIHRoZSBwcm9ibGVtcyAoYXQgbGVhc3QgaGFsZiBvZiB0aGVtIEkgbWVh
-bikuDQoNClN1cmUuIEkgcHV0IGJhY2sgdGhlICIjaW5jbHVkZSA8bGludXgvcG1fcnVudGltZS5o
-PiIgaW4gdGhlIHBoeS5oIGFuZCB0ZXN0ZWQNCnRoZSBwYXRjaGVzIG9uIG15IGVudmlyb25tZW50
-IChyOGE3Nzk1LXNhbHZhdG9yLXguZHRzIHdpdGggdjQuMTUtcmM0KS4gQW5kIHRoZW4sDQp0aGUg
-aXNzdWUgWzFdIGRpc2FwcGVhcmVkLg0KWzFdOg0KcHJpbnRlZCAiRW5hYmxpbmcgcnVudGltZSBQ
-TSBmb3IgaW5hY3RpdmUgZGV2aWNlIChlZTBhMDIwMC51c2ItcGh5KSB3aXRoIGFjdGl2ZSBjaGls
-ZHJlbiINCmluIHJlc3VtZSB0aW1pbmcuDQoNClNvLA0KDQpUZXN0ZWQtYnk6IFlvc2hpaGlybyBT
-aGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCg0KQmVzdCByZWdhcmRz
-LA0KWW9zaGloaXJvIFNoaW1vZGENCg0K
+On 21 December 2017 at 11:33, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Hi Ulf-san,
+>
+>> -----Original Message-----
+>> From: Ulf Hansson, Sent: Wednesday, December 20, 2017 11:09 PM
+> <snip>
+>> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+>> index b4298a1..050b620 100644
+>> --- a/include/linux/phy/phy.h
+>> +++ b/include/linux/phy/phy.h
+>> @@ -17,7 +17,6 @@
+>>  #include <linux/err.h>
+>>  #include <linux/of.h>
+>>  #include <linux/device.h>
+>> -#include <linux/pm_runtime.h>
+>
+> After I applied this patch, some ata and gpu drivers causes build error [1].
+> So, we should fix the drivers at first...
+
+Huh, right, those drivers shouldn't be relying on the phy.h to include
+pm_runtime.h.
+
+The easiest way at this point is to just put back "#include
+<linux/pm_runtime.h>" in phy.h, then we can deal with these problems
+separately. I do that in a re-spin soon.
+
+BTW, I would be great if you could test this on the Renesas SoC to
+make sure it still fixes the problems (at least half of them I mean).
+
+Thanks and kind regards
+Uffe
+
+>
+> Best regards,
+> Yoshihiro Shimoda
+> ---
+> [1]
+> drivers/ata/ahci_qoriq.c: In function 'ahci_qoriq_resume':
+> drivers/ata/ahci_qoriq.c:318:2: error: implicit declaration of function 'pm_runtime_disable' [-Werror=implicit-function-declaration]
+>   pm_runtime_disable(dev);
+>   ^
+> drivers/ata/ahci_qoriq.c:319:2: error: implicit declaration of function 'pm_runtime_set_active' [-Werror=implicit-function-declaration]
+>   pm_runtime_set_active(dev);
+>   ^
+> drivers/ata/ahci_qoriq.c:320:2: error: implicit declaration of function 'pm_runtime_enable' [-Werror=implicit-function-declaration]
+>   pm_runtime_enable(dev);
+>   ^
+> drivers/ata/ahci.c: In function 'ahci_init_one':
+> drivers/ata/ahci.c:1761:2: error: implicit declaration of function 'pm_runtime_put_noidle' [-Werror=implicit-function-declaration]
+>   pm_runtime_put_noidle(&pdev->dev);
+>   ^
+> drivers/ata/ahci.c: In function 'ahci_remove_one':
+> drivers/ata/ahci.c:1767:2: error: implicit declaration of function 'pm_runtime_get_noresume' [-Werror=implicit-function-declaration]
+>   pm_runtime_get_noresume(&pdev->dev);
+>   ^
+> drivers/ata/libahci.c: In function 'ahci_rpm_get_port':
+> drivers/ata/libahci.c:239:9: error: implicit declaration of function 'pm_runtime_get_sync' [-Werror=implicit-function-declaration]
+>   return pm_runtime_get_sync(ap->dev);
+>          ^
+> drivers/ata/libahci.c: In function 'ahci_rpm_put_port':
+> drivers/ata/libahci.c:251:2: error: implicit declaration of function 'pm_runtime_put' [-Werror=implicit-function-declaration]
+>   pm_runtime_put(ap->dev);
+>   ^
+> drivers/ata/ahci_ceva.c: In function 'ceva_ahci_resume':
+> drivers/ata/ahci_ceva.c:326:2: error: implicit declaration of function 'pm_runtime_disable' [-Werror=implicit-function-declaration]
+>   pm_runtime_disable(dev);
+>   ^
+> drivers/ata/ahci_ceva.c:327:2: error: implicit declaration of function 'pm_runtime_set_active' [-Werror=implicit-function-declaration]
+>   pm_runtime_set_active(dev);
+>   ^
+> drivers/ata/ahci_ceva.c:328:2: error: implicit declaration of function 'pm_runtime_enable' [-Werror=implicit-function-declaration]
+>   pm_runtime_enable(dev);
+>   ^
+> cc1: some warnings being treated as errors
+> make[2]: *** [drivers/ata/ahci_qoriq.o] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> cc1: some warnings being treated as errors
+> make[2]: *** [drivers/ata/ahci_ceva.o] Error 1
+> cc1: some warnings being treated as errors
+> make[2]: *** [drivers/ata/ahci.o] Error 1
+> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c: In function 'analogix_dp_get_modes':
+> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:949:3: error: implicit declaration of function 'pm_runtime_get_sync' [-Werror=implicit-function-declaration]
+>    pm_runtime_get_sync(dp->dev);
+>    ^
+> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:951:3: error: implicit declaration of function 'pm_runtime_put' [-Werror=implicit-function-declaration]
+>    pm_runtime_put(dp->dev);
+>    ^
+> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c: In function 'analogix_dp_bridge_disable':
+> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1120:2: error: implicit declaration of function 'pm_runtime_put_sync' [-Werror=implicit-function-declaration]
+>   pm_runtime_put_sync(dp->dev);
+>   ^
+> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c: In function 'analogix_dp_bind':
+> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1387:2: error: implicit declaration of function 'pm_runtime_enable' [-Werror=implicit-function-declaration]
+>   pm_runtime_enable(dev);
+>   ^
+> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1431:2: error: implicit declaration of function 'pm_runtime_disable' [-Werror=implicit-function-declaration]
+>   pm_runtime_disable(dev);
+>   ^
+> drivers/gpu/drm/exynos/exynos_drm_dsi.c: In function 'exynos_dsi_enable':
+> drivers/gpu/drm/exynos/exynos_drm_dsi.c:1385:2: error: implicit declaration of function 'pm_runtime_get_sync' [-Werror=implicit-function-declaration]
+>   pm_runtime_get_sync(dsi->dev);
+>   ^
+> drivers/gpu/drm/exynos/exynos_drm_dsi.c:1392:3: error: implicit declaration of function 'pm_runtime_put_sync' [-Werror=implicit-function-declaration]
+>    pm_runtime_put_sync(dsi->dev);
+>    ^
+> drivers/gpu/drm/exynos/exynos_drm_dsi.c: In function 'exynos_dsi_probe':
+> drivers/gpu/drm/exynos/exynos_drm_dsi.c:1797:2: error: implicit declaration of function 'pm_runtime_enable' [-Werror=implicit-function-declaration]
+>   pm_runtime_enable(dev);
+>   ^
+> drivers/gpu/drm/exynos/exynos_drm_dsi.c: In function 'exynos_dsi_remove':
+> drivers/gpu/drm/exynos/exynos_drm_dsi.c:1808:2: error: implicit declaration of function 'pm_runtime_disable' [-Werror=implicit-function-declaration]
+>   pm_runtime_disable(&pdev->dev);
+>   ^
+> drivers/gpu/drm/rockchip/cdn-dp-core.c: In function 'cdn_dp_clk_enable':
+> drivers/gpu/drm/rockchip/cdn-dp-core.c:111:8: error: implicit declaration of function 'pm_runtime_get_sync' [-Werror=implicit-function-declaration]
+>   ret = pm_runtime_get_sync(dp->dev);
+>         ^
+> drivers/gpu/drm/rockchip/cdn-dp-core.c:137:2: error: implicit declaration of function 'pm_runtime_put' [-Werror=implicit-function-declaration]
+>   pm_runtime_put(dp->dev);
+>   ^
+> drivers/gpu/drm/rockchip/cdn-dp-core.c: In function 'cdn_dp_clk_disable':
+> drivers/gpu/drm/rockchip/cdn-dp-core.c:148:2: error: implicit declaration of function 'pm_runtime_put_sync' [-Werror=implicit-function-declaration]
+>   pm_runtime_put_sync(dp->dev);
+>   ^
+> drivers/gpu/drm/rockchip/cdn-dp-core.c: In function 'cdn_dp_bind':
+> drivers/gpu/drm/rockchip/cdn-dp-core.c:1094:2: error: implicit declaration of function 'pm_runtime_enable' [-Werror=implicit-function-declaration]
+>   pm_runtime_enable(dev);
+>   ^
+> drivers/gpu/drm/rockchip/cdn-dp-core.c: In function 'cdn_dp_unbind':
+> drivers/gpu/drm/rockchip/cdn-dp-core.c:1118:2: error: implicit declaration of function 'pm_runtime_disable' [-Werror=implicit-function-declaration]
+>   pm_runtime_disable(dev);
+>   ^
+> cc1: some warnings being treated as errors
+> make[2]: *** [drivers/ata/libahci.o] Error 1
+> make[1]: *** [drivers/ata] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+> cc1: some warnings being treated as errors
+> make[5]: *** [drivers/gpu/drm/bridge/analogix/analogix_dp_core.o] Error 1
+> make[4]: *** [drivers/gpu/drm/bridge/analogix] Error 2
+> make[3]: *** [drivers/gpu/drm/bridge] Error 2
+> make[3]: *** Waiting for unfinished jobs....
+> cc1: some warnings being treated as errors
+> make[4]: *** [drivers/gpu/drm/exynos/exynos_drm_dsi.o] Error 1
+> make[3]: *** [drivers/gpu/drm/exynos] Error 2
+> cc1: some warnings being treated as errors
+> make[4]: *** [drivers/gpu/drm/rockchip/cdn-dp-core.o] Error 1
+> make[3]: *** [drivers/gpu/drm/rockchip] Error 2
+> make[2]: *** [drivers/gpu/drm] Error 2
+> make[1]: *** [drivers/gpu] Error 2
+> make: *** [drivers] Error 2
+>
