@@ -1,74 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40896 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965312AbdLRV6J (ORCPT
+Received: from mail-qt0-f170.google.com ([209.85.216.170]:33177 "EHLO
+        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751789AbdLUOGq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 16:58:09 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 2/7] i2c: sh_mobile: allow setup callback to return errno
-Date: Mon, 18 Dec 2017 22:57:57 +0100
-Message-Id: <20171218215802.28591-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
-References: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
+        Thu, 21 Dec 2017 09:06:46 -0500
+Received: by mail-qt0-f170.google.com with SMTP id e2so32561436qti.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Dec 2017 06:06:45 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <2645075.ThVs6ruk3K@avalon>
+References: <2645075.ThVs6ruk3K@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 21 Dec 2017 15:06:44 +0100
+Message-ID: <CAMuHMdV6-spZ9QjUt_EBCB9yRxhZcBquCTcp7PgD0NggEDQAuQ@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] Display CRC calculation support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The setup callback will be more generic and, thus, need to be able to
-return error codes. Change the return type to 'int' for that.
+Hi Laurent,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-sh_mobile.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+On Fri, Dec 15, 2017 at 11:12 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> The following changes since commit 0f2278cc90181f0e1d938ba9d20928eaf1fd31ce:
+>
+>   Merge branch 'drm/next/base' into vsp1/base (2017-12-14 01:11:25 +0200)
+>
+> are available in the git repository at:
+>
+>   git://linuxtv.org/pinchartl/media.git tags/vsp1-discom-v1-20171215
+>
+> for you to fetch changes up to cef620afa09ca165cbcdbdedbff0120e409ad946:
+>
+>   drm: rcar-du: Add support for CRC computation (2017-12-14 01:11:50 +0200)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 1ac896e46b390c..a3a377a10fa789 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -149,7 +149,7 @@ struct sh_mobile_i2c_data {
- 
- struct sh_mobile_dt_config {
- 	int clks_per_count;
--	void (*setup)(struct sh_mobile_i2c_data *pd);
-+	int (*setup)(struct sh_mobile_i2c_data *pd);
- };
- 
- #define IIC_FLAG_HAS_ICIC67	(1 << 0)
-@@ -749,7 +749,7 @@ static const struct i2c_algorithm sh_mobile_i2c_algorithm = {
-  * r8a7740 chip has lasting errata on I2C I/O pad reset.
-  * this is work-around for it.
-  */
--static void sh_mobile_i2c_r8a7740_workaround(struct sh_mobile_i2c_data *pd)
-+static int sh_mobile_i2c_r8a7740_workaround(struct sh_mobile_i2c_data *pd)
- {
- 	iic_set_clr(pd, ICCR, ICCR_ICE, 0);
- 	iic_rd(pd, ICCR); /* dummy read */
-@@ -770,6 +770,8 @@ static void sh_mobile_i2c_r8a7740_workaround(struct sh_mobile_i2c_data *pd)
- 	udelay(10);
- 	iic_wr(pd, ICCR, ICCR_TRS);
- 	udelay(10);
-+
-+	return 0;
- }
- 
- static const struct sh_mobile_dt_config default_dt_config = {
-@@ -881,8 +883,11 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
- 	if (config) {
- 		pd->clks_per_count = config->clks_per_count;
- 
--		if (config->setup)
--			config->setup(pd);
-+		if (config->setup) {
-+			ret = config->setup(pd);
-+			if (ret)
-+				return ret;
-+		}
- 	}
- 
- 	ret = sh_mobile_i2c_init(pd);
--- 
-2.11.0
+Thank you, merges cleanly into today's linux-next.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
