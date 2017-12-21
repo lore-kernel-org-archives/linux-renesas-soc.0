@@ -1,63 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:33994 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754271AbdLNTJQ (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33730 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751705AbdLUMHf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 14:09:16 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH/RFC v2 01/15] v4l2-subdev.h: add pad and stream aware s_stream
-Date: Thu, 14 Dec 2017 20:08:21 +0100
-Message-Id: <20171214190835.7672-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 21 Dec 2017 07:07:35 -0500
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Bin Liu <b-liu@ti.com>,
+        Felipe Balbi <balbi@ti.com>
+Subject: [PATCH] of: usb: Fix definition of of_usb_get_dr_mode_by_phy
+Date: Thu, 21 Dec 2017 12:06:42 +0000
+Message-Id: <20171221120642.2899-1-suzuki.poulose@arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To be able to start and stop individual streams of a multiplexed pad the
-s_stream operation needs to be both pad and stream aware. Add a new
-operation to pad ops to facilitate this.
+Declaration of of_usb_get_dr_mode_by_phy only depends on CONFIG_OF
+and not on CONFIG_USB_SUPPORT, which actually defines it. This can
+break the build like below, if USB_SUPPORT is not selected :
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+ drivers/phy/renesas/phy-rcar-gen3-usb2.o: In function `rcar_gen3_phy_usb2_probe':
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c:444: undefined reference to `of_usb_get_dr_mode_by_phy'
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c:444:(.text+0x2d4): relocation
+  truncated to fit: R_AARCH64_CALL26 against undefined symbol `of_usb_get_dr_mode_by_phy'
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c:444: undefined reference to `of_usb_get_dr_mode_by_phy'
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c:444:(.text+0x3bc): relocation truncated to
+  fit: R_AARCH64_CALL26 against undefined symbol `of_usb_get_dr_mode_by_phy'
+ make: *** [Makefile:993: vmlinux] Error 1
+
+Fixes: commit 98bfb39466954c69d2 ("usb: of: add an api to get dr_mode by the phy node")
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org
+Cc: Bin Liu <b-liu@ti.com>
+Cc: Felipe Balbi <balbi@ti.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- include/media/v4l2-subdev.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ include/linux/usb/of.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-index a30a94fad8dbacde..7288209338a48fda 100644
---- a/include/media/v4l2-subdev.h
-+++ b/include/media/v4l2-subdev.h
-@@ -669,6 +669,9 @@ struct v4l2_subdev_pad_config {
-  *
-  * @set_frame_desc: set the low level media bus frame parameters, @fd array
-  *                  may be adjusted by the subdev driver to device capabilities.
-+ *
-+ * @s_stream: used to notify the driver that a stream will start or has
-+ *	stopped.
-  */
- struct v4l2_subdev_pad_ops {
- 	int (*init_cfg)(struct v4l2_subdev *sd,
-@@ -713,6 +716,8 @@ struct v4l2_subdev_pad_ops {
- 			   struct v4l2_subdev_routing *route);
- 	int (*set_routing)(struct v4l2_subdev *sd,
- 			   struct v4l2_subdev_routing *route);
-+	int (*s_stream)(struct v4l2_subdev *sd, unsigned int pad,
-+			unsigned int stream, int enable);
- };
+diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
+index 6cbe7a5c2b57..181245e5fe36 100644
+--- a/include/linux/usb/of.h
++++ b/include/linux/usb/of.h
+@@ -13,7 +13,6 @@
+ #include <linux/usb/phy.h>
  
- /**
+ #if IS_ENABLED(CONFIG_OF)
+-enum usb_dr_mode of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0);
+ bool of_usb_host_tpl_support(struct device_node *np);
+ int of_usb_update_otg_caps(struct device_node *np,
+ 			struct usb_otg_caps *otg_caps);
+@@ -21,11 +20,6 @@ struct device_node *usb_of_get_child_node(struct device_node *parent,
+ 			int portnum);
+ struct device *usb_of_get_companion_dev(struct device *dev);
+ #else
+-static inline enum usb_dr_mode
+-of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0)
+-{
+-	return USB_DR_MODE_UNKNOWN;
+-}
+ static inline bool of_usb_host_tpl_support(struct device_node *np)
+ {
+ 	return false;
+@@ -48,7 +42,13 @@ static inline struct device *usb_of_get_companion_dev(struct device *dev)
+ 
+ #if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_USB_SUPPORT)
+ enum usb_phy_interface of_usb_get_phy_mode(struct device_node *np);
++enum usb_dr_mode of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0);
+ #else
++static inline enum usb_dr_mode
++of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0)
++{
++	return USB_DR_MODE_UNKNOWN;
++}
+ static inline enum usb_phy_interface of_usb_get_phy_mode(struct device_node *np)
+ {
+ 	return USBPHY_INTERFACE_MODE_UNKNOWN;
 -- 
-2.15.1
+2.13.6
