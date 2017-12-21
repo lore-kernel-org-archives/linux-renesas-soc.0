@@ -1,84 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:45145 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751620AbdLUOXx (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:29659 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752400AbdLUMYO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 09:23:53 -0500
-Received: by mail-io0-f171.google.com with SMTP id e204so21212678iof.12
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Dec 2017 06:23:53 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB0992357759B33F1F3C826439D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
- <1513778960-10073-3-git-send-email-ulf.hansson@linaro.org>
- <TY1PR06MB0992E87FAA770B745DCBA690D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
- <CAPDyKFrOONTsm5xiXrvqqy3koG5=11bKk1b2igx+FzSJbzj_Ng@mail.gmail.com> <TY1PR06MB0992357759B33F1F3C826439D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 21 Dec 2017 15:23:52 +0100
-Message-ID: <CAPDyKFrncD7nHRWuYbdrNWjHxD0CcTR+zXA4tPCgWsMCmzabSg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] phy: core: Drop unused runtime PM APIs
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        Thu, 21 Dec 2017 07:24:14 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Kishon Vijay Abraham I <kishon@ti.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH v2 2/3] phy: core: Drop unused runtime PM APIs
+Date: Thu, 21 Dec 2017 12:24:09 +0000
+Message-ID: <TY1PR06MB0992357759B33F1F3C826439D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
+ <1513778960-10073-3-git-send-email-ulf.hansson@linaro.org>
+ <TY1PR06MB0992E87FAA770B745DCBA690D80D0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <CAPDyKFrOONTsm5xiXrvqqy3koG5=11bKk1b2igx+FzSJbzj_Ng@mail.gmail.com>
+In-Reply-To: <CAPDyKFrOONTsm5xiXrvqqy3koG5=11bKk1b2igx+FzSJbzj_Ng@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 21 December 2017 at 13:24, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
->
->> From: Ulf Hansson, Sent: Thursday, December 21, 2017 7:58 PM
->>
->> On 21 December 2017 at 11:33, Yoshihiro Shimoda
->> <yoshihiro.shimoda.uh@renesas.com> wrote:
->> > Hi Ulf-san,
->> >
->> >> -----Original Message-----
->> >> From: Ulf Hansson, Sent: Wednesday, December 20, 2017 11:09 PM
->> > <snip>
->> >> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
->> >> index b4298a1..050b620 100644
->> >> --- a/include/linux/phy/phy.h
->> >> +++ b/include/linux/phy/phy.h
->> >> @@ -17,7 +17,6 @@
->> >>  #include <linux/err.h>
->> >>  #include <linux/of.h>
->> >>  #include <linux/device.h>
->> >> -#include <linux/pm_runtime.h>
->> >
->> > After I applied this patch, some ata and gpu drivers causes build error [1].
->> > So, we should fix the drivers at first...
->>
->> Huh, right, those drivers shouldn't be relying on the phy.h to include
->> pm_runtime.h.
->>
->> The easiest way at this point is to just put back "#include
->> <linux/pm_runtime.h>" in phy.h, then we can deal with these problems
->> separately. I do that in a re-spin soon.
->
-> I got it.
->
->> BTW, I would be great if you could test this on the Renesas SoC to
->> make sure it still fixes the problems (at least half of them I mean).
->
-> Sure. I put back the "#include <linux/pm_runtime.h>" in the phy.h and tested
-> the patches on my environment (r8a7795-salvator-x.dts with v4.15-rc4). And then,
-> the issue [1] disappeared.
-> [1]:
-> printed "Enabling runtime PM for inactive device (ee0a0200.usb-phy) with active children"
-> in resume timing.
->
-> So,
->
-> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Great, thanks!
-
-I add your tag in the next re-vision!
-
-Kind regards
-Uffe
+DQo+IEZyb206IFVsZiBIYW5zc29uLCBTZW50OiBUaHVyc2RheSwgRGVjZW1iZXIgMjEsIDIwMTcg
+Nzo1OCBQTQ0KPiANCj4gT24gMjEgRGVjZW1iZXIgMjAxNyBhdCAxMTozMywgWW9zaGloaXJvIFNo
+aW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBI
+aSBVbGYtc2FuLA0KPiA+DQo+ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZy
+b206IFVsZiBIYW5zc29uLCBTZW50OiBXZWRuZXNkYXksIERlY2VtYmVyIDIwLCAyMDE3IDExOjA5
+IFBNDQo+ID4gPHNuaXA+DQo+ID4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3BoeS9waHku
+aCBiL2luY2x1ZGUvbGludXgvcGh5L3BoeS5oDQo+ID4+IGluZGV4IGI0Mjk4YTEuLjA1MGI2MjAg
+MTAwNjQ0DQo+ID4+IC0tLSBhL2luY2x1ZGUvbGludXgvcGh5L3BoeS5oDQo+ID4+ICsrKyBiL2lu
+Y2x1ZGUvbGludXgvcGh5L3BoeS5oDQo+ID4+IEBAIC0xNyw3ICsxNyw2IEBADQo+ID4+ICAjaW5j
+bHVkZSA8bGludXgvZXJyLmg+DQo+ID4+ICAjaW5jbHVkZSA8bGludXgvb2YuaD4NCj4gPj4gICNp
+bmNsdWRlIDxsaW51eC9kZXZpY2UuaD4NCj4gPj4gLSNpbmNsdWRlIDxsaW51eC9wbV9ydW50aW1l
+Lmg+DQo+ID4NCj4gPiBBZnRlciBJIGFwcGxpZWQgdGhpcyBwYXRjaCwgc29tZSBhdGEgYW5kIGdw
+dSBkcml2ZXJzIGNhdXNlcyBidWlsZCBlcnJvciBbMV0uDQo+ID4gU28sIHdlIHNob3VsZCBmaXgg
+dGhlIGRyaXZlcnMgYXQgZmlyc3QuLi4NCj4gDQo+IEh1aCwgcmlnaHQsIHRob3NlIGRyaXZlcnMg
+c2hvdWxkbid0IGJlIHJlbHlpbmcgb24gdGhlIHBoeS5oIHRvIGluY2x1ZGUNCj4gcG1fcnVudGlt
+ZS5oLg0KPiANCj4gVGhlIGVhc2llc3Qgd2F5IGF0IHRoaXMgcG9pbnQgaXMgdG8ganVzdCBwdXQg
+YmFjayAiI2luY2x1ZGUNCj4gPGxpbnV4L3BtX3J1bnRpbWUuaD4iIGluIHBoeS5oLCB0aGVuIHdl
+IGNhbiBkZWFsIHdpdGggdGhlc2UgcHJvYmxlbXMNCj4gc2VwYXJhdGVseS4gSSBkbyB0aGF0IGlu
+IGEgcmUtc3BpbiBzb29uLg0KDQpJIGdvdCBpdC4NCg0KPiBCVFcsIEkgd291bGQgYmUgZ3JlYXQg
+aWYgeW91IGNvdWxkIHRlc3QgdGhpcyBvbiB0aGUgUmVuZXNhcyBTb0MgdG8NCj4gbWFrZSBzdXJl
+IGl0IHN0aWxsIGZpeGVzIHRoZSBwcm9ibGVtcyAoYXQgbGVhc3QgaGFsZiBvZiB0aGVtIEkgbWVh
+bikuDQoNClN1cmUuIEkgcHV0IGJhY2sgdGhlICIjaW5jbHVkZSA8bGludXgvcG1fcnVudGltZS5o
+PiIgaW4gdGhlIHBoeS5oIGFuZCB0ZXN0ZWQNCnRoZSBwYXRjaGVzIG9uIG15IGVudmlyb25tZW50
+IChyOGE3Nzk1LXNhbHZhdG9yLXguZHRzIHdpdGggdjQuMTUtcmM0KS4gQW5kIHRoZW4sDQp0aGUg
+aXNzdWUgWzFdIGRpc2FwcGVhcmVkLg0KWzFdOg0KcHJpbnRlZCAiRW5hYmxpbmcgcnVudGltZSBQ
+TSBmb3IgaW5hY3RpdmUgZGV2aWNlIChlZTBhMDIwMC51c2ItcGh5KSB3aXRoIGFjdGl2ZSBjaGls
+ZHJlbiINCmluIHJlc3VtZSB0aW1pbmcuDQoNClNvLA0KDQpUZXN0ZWQtYnk6IFlvc2hpaGlybyBT
+aGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCg0KQmVzdCByZWdhcmRz
+LA0KWW9zaGloaXJvIFNoaW1vZGENCg0K
