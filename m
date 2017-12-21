@@ -1,84 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756039AbdLVKbP (ORCPT
+Received: from sauhun.de ([88.99.104.3]:53825 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751884AbdLUL4n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:31:15 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Thu, 21 Dec 2017 06:56:43 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 36/37] ARM: dts: iwg22d-sodimm: Sound DMA support via DVC on DTS
-Date: Fri, 22 Dec 2017 11:30:14 +0100
-Message-Id: <6f41d5e0872e4b55a5352ff79ab2452bff306753.1513938145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
-References: <cover.1513938145.git.horms+renesas@verge.net.au>
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC] arm64: dts: r8a7795: salvator-xs: enable SATA
+Date: Thu, 21 Dec 2017 12:56:39 +0100
+Message-Id: <20171221115639.13646-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Needs this GPIO hog, so is probably an overlay?
 
-DMA transfer uses DVC
-
-     DMA               DMApp
-[MEM] -> [SRC] -> [DVC] -> [SSIU] -> [SSI]
-
-     DMA               DMApp
-[MEM] <- [DVC] <- [SRC] <- [SSIU] <- [SSI]
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 2cac57c7c44d..a4058f4cfbcd 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -8,6 +8,29 @@
-  * kind, whether express or implied.
-  */
- 
-+/*
-+ * SSI-SGTL5000
-+ *
-+ * This command is required when Playback/Capture
-+ *
-+ *      amixer set "DVC Out" 100%
-+ *      amixer set "DVC In" 100%
-+ *
-+ * You can use Mute
-+ *
-+ *      amixer set "DVC Out Mute" on
-+ *      amixer set "DVC In Mute" on
-+ *
-+ * You can use Volume Ramp
-+ *
-+ *      amixer set "DVC Out Ramp Up Rate"   "0.125 dB/64 steps"
-+ *      amixer set "DVC Out Ramp Down Rate" "0.125 dB/512 steps"
-+ *      amixer set "DVC Out Ramp" on
-+ *      aplay xxx.wav &
-+ *      amixer set "DVC Out"  80%  // Volume Down
-+ *      amixer set "DVC Out" 100%  // Volume Up
-+ */
-+
- /dts-v1/;
- #include "r8a7745-iwg22m.dtsi"
- 
-@@ -183,8 +206,8 @@
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi3 &src3>;
--			capture = <&ssi4 &src4>;
-+			playback = <&ssi3 &src3 &dvc0>;
-+			capture = <&ssi4 &src4 &dvc1>;
- 		};
+So, this makes SATA work without any user interaction. But as said above, this
+should probably be an overlay? Or any other way to deal with it? Also, we don't
+have any way to check that SW12/7 is set correctly, or?
+
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index 7675de5d4f2cb1..b44ed5fbec7cb9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -101,6 +101,19 @@
  	};
  };
+ 
++&pca9654 {
++	pcie_sata_switch {
++		gpio-hog;
++		gpios = <7>;
++		output-low;
++		line-name = "PCIE/SATA switch";
++	};
++};
++
++&sata {
++	status = "okay";
++};
++
+ &usb2_phy2 {
+ 	pinctrl-0 = <&usb2_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.11.0
