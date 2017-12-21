@@ -1,89 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33860 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757842AbdLVK30 (ORCPT
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33280 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752425AbdLUOKU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:29:26 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.16
-Date: Fri, 22 Dec 2017 11:29:20 +0100
-Message-Id: <cover.1513936760.git.horms+renesas@verge.net.au>
+        Thu, 21 Dec 2017 09:10:20 -0500
+Received: by mail-qk0-f194.google.com with SMTP id x7so13609492qkb.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Dec 2017 06:10:19 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20171215160159.xonlansqqvevyeze@ninjato>
+References: <20171215160159.xonlansqqvevyeze@ninjato>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 21 Dec 2017 15:10:18 +0100
+Message-ID: <CAMuHMdX9U5MNWAb0OJ+cSQ67L8WwsQ_+jZ4-F8m8iQSbtYvo3g@mail.gmail.com>
+Subject: Re: [PULL REQUEST] renesas/topic/rcar-i2c-recovery for renesas drivers
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Wolfram,
 
-Please consider these second round of Renesas ARM64 based SoC DT updates
-for v4.16.
+On Fri, Dec 15, 2017 at 5:02 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> here is a topic branch for renesas-drivers which enables I2C bus
+> recovery on i2c-rcar IP cores.
+>
+> It is based on i2c/for-next + renesas/dt-for-v4.16 +
+> renesas/topc/ip-switch-rework-2017.
+>
+> Please pull.
+>
+> Kind regards,
+>
+>    Wolfram
+>
+>
+> The following changes since commit 62127db8d012c586fdd45d1768261aaa3938c8b7:
+>
+>   Merge branch 'renesas/topc/ip-switch-rework-2017' into renesas/topic/rcar-i2c-recovery (2017-12-15 16:43:40 +0100)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/rcar-i2c-recovery
+>
+> for you to fetch changes up to e5bb5ef5f51d223dfcd188c803e746d445320b92:
+>
+>   i2c: rcar: implement bus recovery (2017-12-15 16:45:43 +0100)
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-arm64-dt-for-v4.16,
-which you have already pulled.
+Thank you, merges cleanly into today's linux-next.
 
+Gr{oetje,eeting}s,
 
-The following changes since commit 8aba250d7800702bbd2f6a91174e01b9a84ed2dd:
+                        Geert
 
-  arm64: dts: renesas: r8a77970: use SYSC power domain macros (2017-12-05 09:30:48 +0100)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.16
-
-for you to fetch changes up to 68b2c029e6200933fa3f6c06c8e6de33e8c78c51:
-
-  arm64: dts: renesas: salvator-common: enable usb3_peri0 (2017-12-21 10:22:12 +0100)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM64 Based SoC DT Updates for v4.16
-
-* Add usb3_phy node to r8a7795 (R-Car H3) and r8a7796 (R-Car M3-W) SoCs, and
-  enable usb3_peri0 on salvator boards
-
-* Allow DTBs of boards of r8a7795 (R-Car H3) and r8a7796 SoCs to build
-  without any warnings when compiled with W=1 using gcc-linaro-5.4.1-2017.05
-  - Move nodes which have no reg property out of bus, they don't belong there
-  - Add reg properties to dummy pciec[01] nodes
-  - Also sort sub-nodes of root node to allow for easier maintenance
-
-* Add Add EthernetAVB PHY reset to r8a7795 (R-Car H3) and r8a7796 SoCs boards.
-
-  Geert Uytterhoeven says "... add properties to describe the EthernetAVB
-  PHY reset topology to the common Salvator-X/XS and ULCB DTS files, which
-  solves two issues:
-    1. On Salvator-XS, the enable pin of the regulator providing PHY power
-       is connected to PRESETn, and PSCI powers down the SoC during system
-       suspend.  Hence a PHY reset is needed to restore network
-       functionality after system resume.
-    2. Linux should not rely on the boot loader having reset the PHY, but
-       should reset the PHY during driver probe."
-
-----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      arm64: dts: renesas: salvator-common: Add EthernetAVB PHY reset
-      arm64: dts: renesas: ulcb: Add EthernetAVB PHY reset
-
-Simon Horman (5):
-      arm64: dts: renesas: r8a7795: Move nodes which have no reg property out of bus
-      arm64: dts: renesas: r8a7795: sort subnodes of root node alphabetically
-      arm64: dts: renesas: r8a7796: sort subnodes of root node alphabetically
-      arm64: dts: renesas: r8a7796: move nodes which have no reg property out of bus
-      arm64: dts: renesas: r8a7796: add reg properties to pciec[01] nodes
-
-Yoshihiro Shimoda (4):
-      arm64: dts: renesas: r8a7795: add usb3_phy node
-      arm64: dts: renesas: r8a7796: add usb3_phy node
-      arm64: dts: renesas: salvator-common: enable usb3_phy0 node
-      arm64: dts: renesas: salvator-common: enable usb3_peri0
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi         | 174 ++++++++++-------
- arch/arm64/boot/dts/renesas/r8a7796.dtsi         | 230 ++++++++++++-----------
- arch/arm64/boot/dts/renesas/salvator-common.dtsi |  20 ++
- arch/arm64/boot/dts/renesas/ulcb.dtsi            |   1 +
- 4 files changed, 248 insertions(+), 177 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
