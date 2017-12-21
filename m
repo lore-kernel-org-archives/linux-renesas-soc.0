@@ -1,51 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:51940 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934240AbdLRRwW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46912 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751105AbdLUJ0g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 12:52:22 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 0/6] Add PWM and TPU support to r8a7743
-Date: Mon, 18 Dec 2017 17:52:02 +0000
-Message-Id: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 21 Dec 2017 04:26:36 -0500
+Date: Thu, 21 Dec 2017 10:26:31 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 0/2] iommu/ipmmu-vmsa: Add r8a779(6|70|95) DT bindings
+Message-ID: <20171221092631.tawh5x7gqw5626o2@verge.net.au>
+References: <20171124105804.26924-1-horms+renesas@verge.net.au>
+ <20171220120244.38a2be5a@t450s.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171220120244.38a2be5a@t450s.home>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+On Wed, Dec 20, 2017 at 12:02:44PM -0700, Alex Williamson wrote:
+> On Fri, 24 Nov 2017 10:58:02 +0000
+> Simon Horman <horms+renesas@verge.net.au> wrote:
+> 
+> > Update the IPMMU DT binding documentation to include r8a7796 (R-Car M3-W),
+> > r8a77970 (R-Car V3M) and r8a77995 (R-Car D3) compat strings.
+> > 
+> > This patch-set is comprised of patches previously included in
+> > * [PATCH v4 0/3] iommu/ipmmu-vmsa: r8a7796 support V4
+> > * [PATCH 0/2] iommu/ipmmu-vmsa: r8a779(70|95) support
+> > 
+> > Those series also include driver updates to implement the bindings,
+> > however, it while it is felt that the bindings themselves are ready
+> > to be merged we feel that the driver updates are not at that stage yet.
+> > 
+> > Changes since v1:
+> > * Correct typo in r8a779(70|95) patch: R8A7770 -> R8A77970
+> > 
+> > 
+> > Magnus Damm (1):
+> >   iommu/ipmmu-vmsa: Add r8a7796 DT binding
+> > 
+> > Simon Horman (1):
+> >   iommu/ipmmu-vmsa: Add r8a779(70|95) DT bindings
+> > 
+> >  Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> 
+> Applied to v4.16-iommu/ipmmu-vmsa.  Thanks,
 
-this series includes all that is required to add PWM and TPU SoC specific
-support for the r8a7743.
-
-Thanks,
-
-Fabrizio Castro (6):
-  ARM: shmobile: defconfig: Enable PWM
-  dt-bindings: pwm: rcar: Document r8a774[35] PWM bindings
-  ARM: dts: r8a7743: Add PWM SoC support
-  dt-bindings: pwm: renesas-tpu: Document r8a774[35] support
-  pinctrl: sh-pfc: r8a7791: Add tpu groups and function
-  ARM: dts: r8a7743: Add TPU support
-
- .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   | 10 ++-
- .../devicetree/bindings/pwm/renesas,tpu-pwm.txt    |  4 +-
- arch/arm/boot/dts/r8a7743.dtsi                     | 87 ++++++++++++++++++++++
- arch/arm/configs/shmobile_defconfig                |  1 +
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               | 42 ++++++++++-
- 5 files changed, 138 insertions(+), 6 deletions(-)
-
--- 
-2.7.4
+Thanks, much appreciated.
