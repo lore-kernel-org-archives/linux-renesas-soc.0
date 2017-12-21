@@ -1,91 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35777 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:48264 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752472AbdLGJyx (ORCPT
+        with ESMTP id S1751542AbdLULUX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:54:53 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 21 Dec 2017 06:20:23 -0500
+Date: Thu, 21 Dec 2017 12:20:17 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/54] arm64: dts: renesas: ulcb-kf: enable USB2 PHY of channel 0
-Date: Thu,  7 Dec 2017 10:53:18 +0100
-Message-Id: <80785024767c03ff28861db0faf274fffb8d713a.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 8/9] ARM: dts: iwg22d-sodimm: Sound DMA support via SRC
+ on DTS
+Message-ID: <20171221112013.fll76q5zdpqoonoc@verge.net.au>
+References: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
+ <1513800125-53213-9-git-send-email-biju.das@bp.renesas.com>
+ <20171221104443.rk6prrib4gdi7qyz@verge.net.au>
+ <KL1PR06MB17023E4E4DE156A8ADB88411B80D0@KL1PR06MB1702.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <KL1PR06MB17023E4E4DE156A8ADB88411B80D0@KL1PR06MB1702.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+On Thu, Dec 21, 2017 at 11:01:28AM +0000, Biju Das wrote:
+> Hi Simon,
+> 
+> > -----Original Message-----
+> > From: Simon Horman [mailto:horms@verge.net.au]
+> > Sent: 21 December 2017 10:45
+> > To: Biju Das <biju.das@bp.renesas.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland
+> > <mark.rutland@arm.com>; Magnus Damm <magnus.damm@gmail.com>;
+> > Chris Paterson <Chris.Paterson2@renesas.com>; Fabrizio Castro
+> > <fabrizio.castro@bp.renesas.com>; devicetree@vger.kernel.org; linux-renesas-
+> > soc@vger.kernel.org
+> > Subject: Re: [PATCH 8/9] ARM: dts: iwg22d-sodimm: Sound DMA support via
+> > SRC on DTS
+> >
+> > On Wed, Dec 20, 2017 at 08:02:04PM +0000, Biju Das wrote:
+> > > DMA transfer to/from SRC
+> > >
+> > >      DMA      DMApp
+> > > [MEM] -> [SRC] -> [SSIU] -> [SSI]
+> > >
+> > >      DMA      DMApp
+> > > [MEM] <- [SRC] <- [SSIU] <- [SSI]
+> > >
+> > > Current sound driver is supporting SSI/SRC random connection.
+> > > So, this patch is trying
+> > > SSI3 -> SRC3
+> > > SSI4 <- SRC4
+> >
+> > I am curious to know why the selection here differs from that present in
+> > iwg20d-q7-common. Is it an arbitrary decision?
+> >
+> > Likewise for other uses of ssi*, src* and dvc* in this patchset.
+> 
+> For ssi*,  on this board, SSI3/4 interface is connected to Audio In/Out.
+> 
+> For src*,  the original bsp from iwave is using src3/src4, also it is arbitrary as per the data sheet.
+> 
+> For dvc*,  Again it is arbitrary as per the data sheet.
 
-This supports USB2 PHY channel #0 on ULCB Kingfisher board
-
-The dedicated USB0_PWEN pin is used to control CN13 VBUS source from U43
-power supply.
-MAX3355 can also provide VBUS, hence it should be disabled via OTG_OFFVBUSn
-node coming from gpio expander TCA9539.
-Set MAX3355 enabled using OTG_EXTLPn node to be able to read OTG ID of
-CN13.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 657ad1041965..48a2e8f48e3f 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -67,6 +67,20 @@
- 			output-high;
- 			line-name = "HUB rst";
- 		};
-+
-+		otg_offvbusn {
-+			gpio-hog;
-+			gpios = <8 GPIO_ACTIVE_HIGH>;
-+			output-low;
-+			line-name = "OTG OFFVBUSn";
-+		};
-+
-+		otg_extlpn {
-+			gpio-hog;
-+			gpios = <9 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "OTG EXTLPn";
-+		};
- 	};
- 
- 	gpio_exp_75: gpio@75 {
-@@ -154,6 +168,11 @@
- 		groups = "scif1_data_b", "scif1_ctrl";
- 		function = "scif1";
- 	};
-+
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
- };
- 
- &scif1 {
-@@ -164,6 +183,13 @@
- 	status = "okay";
- };
- 
-+&usb2_phy0 {
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &xhci0 {
- 	status = "okay";
- };
--- 
-2.11.0
+Thanks, understood.
