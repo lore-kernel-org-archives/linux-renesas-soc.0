@@ -1,55 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754916AbdLFKYK (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33962 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbdLUPUq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:24:10 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 61/61] ARM: dts: alt: Convert to named i2c-gpio bindings
-Date: Wed,  6 Dec 2017 11:22:56 +0100
-Message-Id: <7f32eddb81ecc06131a643babe2d0f961fbd7f08.1512555546.git.horms+renesas@verge.net.au>
+        Thu, 21 Dec 2017 10:20:46 -0500
+Received: by mail-oi0-f66.google.com with SMTP id u193so17047694oie.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Dec 2017 07:20:46 -0800 (PST)
+MIME-Version: 1.0
 In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
 References: <cover.1512555546.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 21 Dec 2017 16:20:45 +0100
+Message-ID: <CAK8P3a2TAs8U1W0v8amgtpZg+z3VS6fC6rce20uN1tAjQYdZnw@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Updates for v4.16
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Dec 6, 2017 at 11:22 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+>
+> Please consider these Renesas ARM based SoC DT updates for v4.16.
+>
+>
+> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
+>
+>   Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-for-v4.16
+>
+> for you to fetch changes up to 7f32eddb81ecc06131a643babe2d0f961fbd7f08:
+>
+>   ARM: dts: alt: Convert to named i2c-gpio bindings (2017-12-04 09:34:53 +0100)
+>
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC DT Updates for v4.16
+>
+> * Convert to named i2c-gpio bindings
+>
+>   Geert Uytterhoeven says "Commits 7d29f509d2cfd807 ("dt-bindings: i2c:
+>   i2c-gpio: Add support for named gpios") and 05c74778858d7d99 ("i2c: gpio:
+>   Add support for named gpios in DT") introduced named i2c-gpio DT
+>   bindings, and deprecated the more error-prone unnamed variant.
+>
+>   This patch series switches all Renesas boards to the new bindings, and
+>   adds the missing GPIO_OPEN_DRAIN I/O flags, which were implicitly
+>   assumed before..."
+>
+>   ...  Note that after this series is applied, the i2c-gpio buses are no
+>   longer detected when booting new DTBs on old (v4.14 and older) kernels,
+>   which should not be an issue.  Booting old DTBs on new kernels is not
+>   affected."
+>
+> * Update DTS for CMT DT binding rework
+>
+>   Geert Uytterhoeven says "This patch series updates the CMT device nodes
+>   in the various Renesas DTS files sh_cmt clocksource driver for the recent
+>   DT binding rework that was merged in v4.14-rc1 and v4.15-rc1..."
+>
+> * Add SMP support to r8a7794 (R-Car E2) SoC
+>
+>   Sergei Shtylyov says "Add the device tree node for the Advanced Power
+>   Management Unit (APMU).  Use the "enable-method" prop to  point out that
+>   the APMU should be used for the SMP support."
+>
+> * Correct primary compatible value for eeprom
+>   on r7s72100 (RZ/A1H) genmai and r8a7791 (R-Car M2-W) koelsh boards
+>
+>   Geert Uytterhoeven says "The Renesas part numbers of the two-wire serial
+>   interface EEPROMs do not follow the 24Cxx pattern, but the R1EX24xxx
+>   pattern.
+>
+>   Hence change the primary compatible values to the appropriate variant of
+>   "renesas,r1ex24xxx", like is already done on Gose.""
+>
+> * Move cec_clock to root node on r8a7791 (R-Car M2-W) koelsh board
+>   r8a7791 (R-Car M2-W) koelsh board
+>
+> * Use R-Car SDHI and Ether Gen1 and 2 fallback compat strings
+>
+>   Use recently posted R-Car SDHI and Ether Gen 1 and 2 fallback
+>   compat strings in the DT of Renesas ARM based SoCs.
+>
+> * Add IIC cores to dtsi of r8a7745 (RZ/G1E) SoC
+>
+> * Rework DT architecture for r8a7745 (RZ/G1E) iW-RainboW-G22D development
+>   platform and add serial support.
+>
+>   Fabrizio Castro says "... define a new DT architecture for the
+>   iW-RainboW-G22D SODIMM Development Platform to include the configuration
+>   with the HDMI daughter board and to define the serial interfaces."
+>
+> * Add USB function support to
+>   r8a7745 (RZ/G1E) iW-RainboW-G22D development platform
+>
+> * Add PCIEC and ttySC3 support to r8a7743 (RZ/G1M) iW-RainboW-G20M-Qseven SoM
+>
+> * Add VIN support to r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs
+>
+> * Add CAN and HDMI support to r8a7743 (RZ/G1M) iW-RainboW-G20D-Qseven and
+>   r8a7745 (RZ/G1E) iW-RainboW-G22D development platforms
 
-Commits 7d29f509d2cfd807 ("dt-bindings: i2c: i2c-gpio: Add support for
-named gpios") and 05c74778858d7d99 ("i2c: gpio: Add support for named
-gpios in DT") introduced named i2c-gpio DT bindings, and deprecated the
-more error-prone unnamed variant.
+Pulled into next/dt, thanks for the detailed description!
 
-Switch to the new bindings, and add the missing GPIO_OPEN_DRAIN I/O
-flags, which were implicitly assumed before.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index bd98790d964e..60c6515c4996 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -143,9 +143,8 @@
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
- 		status = "disabled";
--		gpios = <&gpio4 9 GPIO_ACTIVE_HIGH /* sda */
--			 &gpio4 8 GPIO_ACTIVE_HIGH /* scl */
--			>;
-+		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpio4 8 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
--- 
-2.11.0
+        Arnd
