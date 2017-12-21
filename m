@@ -1,69 +1,112 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-To: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
-        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 2/2] arm64: dts: renesas: ulcb: Remove renesas,no-ether-link property
-Date: Wed, 20 Dec 2017 15:22:12 +0200
-Message-ID: <1513776132-22700-3-git-send-email-vladimir_zapolskiy@mentor.com>
-In-Reply-To: <1513776132-22700-1-git-send-email-vladimir_zapolskiy@mentor.com>
-References: <1513776132-22700-1-git-send-email-vladimir_zapolskiy@mentor.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:40869 "EHLO
+        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752110AbdLUPV7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 21 Dec 2017 10:21:59 -0500
+Received: by mail-oi0-f53.google.com with SMTP id w125so17060048oie.7
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Dec 2017 07:21:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
+References: <cover.1512640145.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 21 Dec 2017 16:21:57 +0100
+Message-ID: <CAK8P3a1v+GEegk3TVfFWV8D3Pm6UoArxwWSszOLbF6+qH6wRpA@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.16
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
+On Thu, Dec 7, 2017 at 10:53 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+>
+> ----------------------------------------------------------------
+> Renesas ARM64 Based SoC DT Updates for v4.16
+>
+> * Use r8a77970 (V3M) CPG core clock and SYSC power domain macros
+>
+>   These may be used in place of numeric constants now that they
+>   are present in Linus's tree.
+>
+> * Add r8a77970 (V3M) Starter Kit board support
+>
+>   This includes basic support to bring up the board with a serial
+>   console and EtherAVB support
+>
+> * Add IPMMU nodes and connections to on-chip devices
+>   on r8a7795 (H3), r8a7796 (M3-W), r8a77970 (V3M) and r8a77995 (D3) SoCs
+>
+>   Simon Horman says "With these patches applied a white list enabled IPMMU
+>   driver may be used to check silicon revision and then enable IPMMU in the
+>   known working cases."
+>
+> * Enable DMA for SCIF2 on r8a77995 (D2) SoC
+>
+> * Increase the number of GPIO bank 1 ports to 29 on r8a7795 (H3) SoC
+>
+>   This adds support for the GP-1-28 port pin of the r8a7795 (H3) ES2.0 SoC
+>
+> * Add support for CAN to r8a77995 (D3) SoC
+>
+>   Ulrich Hecht says "This is a by-the-datasheet implementation, with the
+>   datasheet missing some bits, namely the pin map.  I filled in the gaps...
+>   by deducing the information from pin numbers already in the PFC driver,
+>   so careful scrutiny is advised."
+>
+> * Add support for SDHI to r8a77995 (D3) SoC
+>
+> * Add SoC name to file header of r8a7795 (H3) and r8a7796 (M3-W)
+>   Salvator-X and Salvator-XS board files
+>
+>   Geert Uytterhoeven says "With the proliferation of Salvator-X and
+>   Salvator-XS boards carrying different R-Car Gen3 SoCs variants, several
+>   DTS files ended up having the same file headers.
+>
+>   Add the SoC names to the file headers to avoid confusion."
+>
+> * Add device note for ROHM BD9571MWV PMIC to
+>   r8a7795 (H3) and r8a7796 (M3-W) Salvator-X and Salvator-XS boards.
+>
+>   Geert Uytterhoeven says "This was based on the example in the DT binding
+>   documentation, but using IRQ0 instead of a GPIO interrupt, as that
+>   matches the schematics, and because INTC-EX is a simpler block."
+>
+> * Enable USB2.0 channel 0 on r8a77970 (V3M) ULCB Kingfisher board
+>
+>   Vladimir Barinov says "The dedicated USB0_PWEN pin is used to control
+>   CN13 VBUS source from U43 power supply.  MAX3355 can also provide VBUS,
+>   hence it should be disabled via OTG_OFFVBUSn node coming from gpio
+>   expander TCA9539.  Set MAX3355 enabled using OTG_EXTLPn node to be able
+>   to read OTG ID of CN13."
+>
+> * Add support for r8a7795 (M3-W) Salvator-XS board
+>
+>   Geert Uytterhoeven says "This patch series adds support for the version
+>   of the Salvator-XS development board equipped with an R-Car M3-W SiP.
+>
+>   The DT was based on work for the Salvator-X and -XS boards with M3-W
+>   resp. H3 SiPs."
+>
+> * Add watchdog timer support to r8a77970 (V3M) eagle board
+>
+>   Geert Uytterhoven says "This allows to use the watchdog timer to reset
+>   the board, until PSCI is enhanced to include such functionality."
+>
+> * Use Use R-Car SDHI Gen3 fallback on r8a7795 (H3) and r8a7796 (M3-W) SoCs
+>
+> * Set driver type for MMC on r8a7795 (H3) and r8a7796 (M3-W) Salvator-X and
+>   Salvator-XS boards.
+>
+>   Wolfram Sang says "These boards are known to have eMMC issues with the
+>   default driver type.  Specify a working one."
 
-The present change is a bug fix for AVB link iteratively up/down.
+Pulled into next/dt, thanks!
 
-Steps to reproduce:
-- start AVB TX stream (Using aplay via MSE),
-- disconnect+reconnect the eth cable,
-- after a reconnection the eth connection goes iteratively up/down
-  without user interaction,
-- this may heal after some seconds or even stay for minutes.
-
-As the documentation specifies, the "renesas,no-ether-link" option
-should be used when a board does not provide a proper AVB_LINK signal.
-There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
-and ULCB starter kits since the AVB_LINK is correctly handled by HW.
-
-Choosing to keep or remove the "renesas,no-ether-link" option will
-have impact on the code flow in the following ways:
-- keeping this option enabled may lead to unexpected behavior since
-  the RX & TX are enabled/disabled directly from adjust_link function
-  without any HW interrogation,
-- removing this option, the RX & TX will only be enabled/disabled after
-  HW interrogation. The HW check is made through the LMON pin in PSR
-  register which specifies AVB_LINK signal value (0 - at low level;
-  1 - at high level).
-
-In conclusion, the present change is also a safety improvement because
-it removes the "renesas,no-ether-link" option leading to a proper way
-of detecting the link state based on HW interrogation and not on
-software heuristic.
-
-Signed-off-by: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index be91016e0b48..3e7a6b94e9f8 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -145,7 +145,6 @@
- &avb {
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
--	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
- 	status = "okay";
- 
--- 
-2.8.1
-
+       Arnd
