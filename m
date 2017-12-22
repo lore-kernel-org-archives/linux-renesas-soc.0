@@ -1,75 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756302AbdLVKbq (ORCPT
+        with ESMTP id S1757407AbdLVKbB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:31:46 -0500
+        Fri, 22 Dec 2017 05:31:01 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] arm64: dts: renesas: salvator-x: Remove renesas, no-ether-link property
-Date: Fri, 22 Dec 2017 11:30:28 +0100
-Message-Id: <87c059e9c39dae20b8b9bd19d9ec55a6d6c10468.1513938447.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938447.git.horms+renesas@verge.net.au>
-References: <cover.1513938447.git.horms+renesas@verge.net.au>
+Subject: [PATCH 22/37] ARM: dts: iwg20d-q7-common: Sound DMA support via BUSIF on DTS
+Date: Fri, 22 Dec 2017 11:30:00 +0100
+Message-Id: <354cce5a1c8700afa8cff8f85c93c84feb342815.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-The present change is a bug fix for AVB link iteratively up/down.
+DMA transfer to/from SSIU
 
-Steps to reproduce:
-- start AVB TX stream (Using aplay via MSE),
-- disconnect+reconnect the eth cable,
-- after a reconnection the eth connection goes iteratively up/down
-  without user interaction,
-- this may heal after some seconds or even stay for minutes.
+     DMA
+[MEM] -> [SSIU] -> [SSI]
 
-As the documentation specifies, the "renesas,no-ether-link" option
-should be used when a board does not provide a proper AVB_LINK signal.
-There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
-and ULCB starter kits since the AVB_LINK is correctly handled by HW.
+     DMA
+[MEM] <- [SSIU] <- [SSI]
 
-Choosing to keep or remove the "renesas,no-ether-link" option will
-have impact on the code flow in the following ways:
-- keeping this option enabled may lead to unexpected behavior since
-  the RX & TX are enabled/disabled directly from adjust_link function
-  without any HW interrogation,
-- removing this option, the RX & TX will only be enabled/disabled after
-  HW interrogation. The HW check is made through the LMON pin in PSR
-  register which specifies AVB_LINK signal value (0 - at low level;
-  1 - at high level).
-
-In conclusion, the present change is also a safety improvement because
-it removes the "renesas,no-ether-link" option leading to a proper way
-of detecting the link state based on HW interrogation and not on
-software heuristic.
-
-Fixes: dc36965a8905 ("arm64: dts: r8a7796: salvator-x: Enable EthernetAVB")
-Fixes: 6fa501c549aa ("arm64: dts: r8a7795: enable EthernetAVB on Salvator-X")
-Signed-off-by: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index a298df74ca6c..dbe2648649db 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -255,7 +255,6 @@
- &avb {
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
--	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 0c0f08649fda..00b5b1351b26 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -242,12 +242,7 @@
  	status = "okay";
+ };
+ 
+-&ssi0 {
+-	no-busif;
+-};
+-
+ &ssi1 {
+-	no-busif;
+ 	shared-pin;
+ };
  
 -- 
 2.11.0
