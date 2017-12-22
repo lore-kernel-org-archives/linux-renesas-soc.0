@@ -1,74 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7934 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750931AbdLGJ75 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755987AbdLVKay (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:59:57 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/4] arm64: dts: renesas: r8a7795: add usb3_phy node
-Date: Thu,  7 Dec 2017 18:55:39 +0900
-Message-Id: <1512640542-10380-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1512640542-10380-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1512640542-10380-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 22 Dec 2017 05:30:54 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/37] ARM: dts: iwg20d-q7-common: Sound PIO support
+Date: Fri, 22 Dec 2017 11:29:58 +0100
+Message-Id: <cfa2e2f7cf22d0523a88c6284606baa9b2698866.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds USB3.0 PHY node for r8a7795.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Enable sound PIO support on carrier board.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 46 +++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 6db4f10..9710814 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -184,6 +184,19 @@
- 		clock-frequency = <0>;
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 03d41a736afd..f6b0eead6f92 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -34,6 +34,22 @@
+ 		regulator-always-on;
  	};
  
-+	/* External USB clocks - can be overridden by the board */
-+	usb3s0_clk: usb3s0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++	rsnd_sgtl5000: sound {
++		compatible = "simple-audio-card";
 +
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&sndcodec>;
++		simple-audio-card,frame-master = <&sndcodec>;
 +
- 	soc: soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -1643,6 +1656,19 @@
- 			iommus = <&ipmmu_hc 2>;
- 		};
- 
-+		usb3_phy0: usb-phy@e65ee000 {
-+			compatible = "renesas,r8a7795-usb3-phy",
-+				     "renesas,rcar-gen3-usb3-phy";
-+			reg = <0 0xe65ee000 0 0x90>;
-+			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
-+				 <&usb_extal_clk>;
-+			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			#phy-cells = <0>;
-+			status = "disabled";
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
 +		};
 +
- 		xhci0: usb@ee000000 {
- 			compatible = "renesas,xhci-r8a7795", "renesas,rcar-gen3-xhci";
- 			reg = <0 0xee000000 0 0xc00>;
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&sgtl5000>;
++		};
++	};
++
+ 	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -166,6 +182,11 @@
+ 		power-source = <1800>;
+ 	};
+ 
++	sound_pins: sound {
++		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
++		function = "ssi";
++	};
++
+ 	usb0_pins: usb0 {
+ 		groups = "usb0";
+ 		function = "usb0";
+@@ -177,6 +198,22 @@
+ 	};
+ };
+ 
++&rcar_sound {
++	pinctrl-0 = <&sound_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	/* Single DAI */
++	#sound-dai-cells = <0>;
++
++	rcar_sound,dai {
++		dai0 {
++			playback = <&ssi1>;
++			capture = <&ssi0>;
++		};
++	};
++};
++
+ &scif0 {
+ 	pinctrl-0 = <&scif0_pins>;
+ 	pinctrl-names = "default";
+@@ -205,6 +242,15 @@
+ 	status = "okay";
+ };
+ 
++&ssi0 {
++	pio-transfer;
++};
++
++&ssi1 {
++	pio-transfer;
++	shared-pin;
++};
++
+ &usbphy {
+ 	status = "okay";
+ };
 -- 
-1.9.1
+2.11.0
