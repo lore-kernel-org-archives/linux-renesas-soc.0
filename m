@@ -1,73 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:61862 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755204AbdLTNWc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755414AbdLVKax (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 08:22:32 -0500
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-To: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
-        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 1/2] arm64: dts: renesas: salvator-x: Remove renesas,no-ether-link property
-Date: Wed, 20 Dec 2017 15:22:11 +0200
-Message-ID: <1513776132-22700-2-git-send-email-vladimir_zapolskiy@mentor.com>
-In-Reply-To: <1513776132-22700-1-git-send-email-vladimir_zapolskiy@mentor.com>
-References: <1513776132-22700-1-git-send-email-vladimir_zapolskiy@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 22 Dec 2017 05:30:53 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/37] ARM: dts: r8a7745: move timer node out of bus
+Date: Fri, 22 Dec 2017 11:29:54 +0100
+Message-Id: <7bee3795c8145678ec101f9dd033ef7f7f858f48.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
+The timer node does not have any register properties and thus shouldn't be
+placed on the bus.
 
-The present change is a bug fix for AVB link iteratively up/down.
+This problem is flagged by the compiler as follows:
+$ make dtbs W=1
+...
+arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+  DTC     arch/arm/boot/dts/r8a7745-sk-rzg1e.dtb
+arch/arm/boot/dts/r8a7745-sk-rzg1e.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
 
-Steps to reproduce:
-- start AVB TX stream (Using aplay via MSE),
-- disconnect+reconnect the eth cable,
-- after a reconnection the eth connection goes iteratively up/down
-  without user interaction,
-- this may heal after some seconds or even stay for minutes.
-
-As the documentation specifies, the "renesas,no-ether-link" option
-should be used when a board does not provide a proper AVB_LINK signal.
-There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
-and ULCB starter kits since the AVB_LINK is correctly handled by HW.
-
-Choosing to keep or remove the "renesas,no-ether-link" option will
-have impact on the code flow in the following ways:
-- keeping this option enabled may lead to unexpected behavior since
-  the RX & TX are enabled/disabled directly from adjust_link function
-  without any HW interrogation,
-- removing this option, the RX & TX will only be enabled/disabled after
-  HW interrogation. The HW check is made through the LMON pin in PSR
-  register which specifies AVB_LINK signal value (0 - at low level;
-  1 - at high level).
-
-In conclusion, the present change is also a safety improvement because
-it removes the "renesas,no-ether-link" option leading to a proper way
-of detecting the link state based on HW interrogation and not on
-software heuristic.
-
-Signed-off-by: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 4e800e933944..c3095bd575d7 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -255,7 +255,6 @@
- &avb {
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
--	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
- 	status = "okay";
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 8fa919a7476d..2be7485c4efe 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -247,18 +247,6 @@
+ 			resets = <&cpg 407>;
+ 		};
  
+-		timer {
+-			compatible = "arm,armv7-timer";
+-			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>;
+-		};
+-
+ 		cmt0: timer@ffca0000 {
+ 			compatible = "renesas,r8a7745-cmt0",
+ 				     "renesas,rcar-gen2-cmt0";
+@@ -1255,6 +1243,14 @@
+ 		};
+ 	};
+ 
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
+ 	/* External USB clock - can be overridden by the board */
+ 	usb_extal_clk: usb_extal {
+ 		compatible = "fixed-clock";
 -- 
-2.8.1
+2.11.0
