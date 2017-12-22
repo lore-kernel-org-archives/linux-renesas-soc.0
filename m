@@ -1,62 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754910AbdLFKYJ (ORCPT
+        with ESMTP id S1752382AbdLVKbp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:24:09 -0500
+        Fri, 22 Dec 2017 05:31:45 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 45/61] ARM: dts: r8a7794: Add SMP support
-Date: Wed,  6 Dec 2017 11:22:40 +0100
-Message-Id: <655b9ff016149fd3a438f4205187c9de8a9c5b48.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] arm64: dts: renesas: ulcb: Remove renesas, no-ether-link property
+Date: Fri, 22 Dec 2017 11:30:29 +0100
+Message-Id: <7d2901f809c110bd9a261e879d59efe62e3bc758.1513938447.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938447.git.horms+renesas@verge.net.au>
+References: <cover.1513938447.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
 
-Add the device tree node for the Advanced Power Management Unit (APMU).
-Use the "enable-method" prop to  point out that the APMU should be used
-for the SMP support.
+The present change is a bug fix for AVB link iteratively up/down.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Steps to reproduce:
+- start AVB TX stream (Using aplay via MSE),
+- disconnect+reconnect the eth cable,
+- after a reconnection the eth connection goes iteratively up/down
+  without user interaction,
+- this may heal after some seconds or even stay for minutes.
+
+As the documentation specifies, the "renesas,no-ether-link" option
+should be used when a board does not provide a proper AVB_LINK signal.
+There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
+and ULCB starter kits since the AVB_LINK is correctly handled by HW.
+
+Choosing to keep or remove the "renesas,no-ether-link" option will
+have impact on the code flow in the following ways:
+- keeping this option enabled may lead to unexpected behavior since
+  the RX & TX are enabled/disabled directly from adjust_link function
+  without any HW interrogation,
+- removing this option, the RX & TX will only be enabled/disabled after
+  HW interrogation. The HW check is made through the LMON pin in PSR
+  register which specifies AVB_LINK signal value (0 - at low level;
+  1 - at high level).
+
+In conclusion, the present change is also a safety improvement because
+it removes the "renesas,no-ether-link" option leading to a proper way
+of detecting the link state based on HW interrogation and not on
+software heuristic.
+
+Fixes: dc36965a8905 ("arm64: dts: r8a7796: salvator-x: Enable EthernetAVB")
+Fixes: 6fa501c549aa ("arm64: dts: r8a7795: enable EthernetAVB on Salvator-X")
+Signed-off-by: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 95206c25e6a1..90050565114c 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -37,6 +37,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 0d85b315ce71..73439cf48659 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -145,7 +145,6 @@
+ &avb {
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
+-	renesas,no-ether-link;
+ 	phy-handle = <&phy0>;
+ 	status = "okay";
  
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -66,6 +67,12 @@
- 		};
- 	};
- 
-+	apmu@e6151000 {
-+		compatible = "renesas,r8a7794-apmu", "renesas,apmu";
-+		reg = <0 0xe6151000 0 0x188>;
-+		cpus = <&cpu0 &cpu1>;
-+	};
-+
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
 -- 
 2.11.0
