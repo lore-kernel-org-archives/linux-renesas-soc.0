@@ -1,107 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:49061 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933986AbdLRSGL (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 13:06:11 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7794: Add i2c5 pin groups and function
-Date: Mon, 18 Dec 2017 18:04:03 +0000
-Message-Id: <1513620243-4188-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 22 Dec 2017 09:40:59 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: renesas: ulcb: Remove
+ renesas,no-ether-link property
+Message-ID: <20171222084059.hpwxz5b7rivkbpwp@verge.net.au>
+References: <1513869539-18803-1-git-send-email-vladimir_zapolskiy@mentor.com>
+ <1513869539-18803-3-git-send-email-vladimir_zapolskiy@mentor.com>
+ <20171222083256.2jgts6mdmssr7y76@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171222083256.2jgts6mdmssr7y76@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add i2c5 pin groups and function to r8a7745 PFC driver.
+On Fri, Dec 22, 2017 at 09:32:56AM +0100, Simon Horman wrote:
+> On Thu, Dec 21, 2017 at 05:18:59PM +0200, Vladimir Zapolskiy wrote:
+> > From: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
+> > 
+> > The present change is a bug fix for AVB link iteratively up/down.
+> > 
+> > Steps to reproduce:
+> > - start AVB TX stream (Using aplay via MSE),
+> > - disconnect+reconnect the eth cable,
+> > - after a reconnection the eth connection goes iteratively up/down
+> >   without user interaction,
+> > - this may heal after some seconds or even stay for minutes.
+> > 
+> > As the documentation specifies, the "renesas,no-ether-link" option
+> > should be used when a board does not provide a proper AVB_LINK signal.
+> > There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
+> > and ULCB starter kits since the AVB_LINK is correctly handled by HW.
+> > 
+> > Choosing to keep or remove the "renesas,no-ether-link" option will
+> > have impact on the code flow in the following ways:
+> > - keeping this option enabled may lead to unexpected behavior since
+> >   the RX & TX are enabled/disabled directly from adjust_link function
+> >   without any HW interrogation,
+> > - removing this option, the RX & TX will only be enabled/disabled after
+> >   HW interrogation. The HW check is made through the LMON pin in PSR
+> >   register which specifies AVB_LINK signal value (0 - at low level;
+> >   1 - at high level).
+> > 
+> > In conclusion, the present change is also a safety improvement because
+> > it removes the "renesas,no-ether-link" option leading to a proper way
+> > of detecting the link state based on HW interrogation and not on
+> > software heuristic.
+> > 
+> > Fixes: 253ed045a34d ("arm64: dts: renesas: Extract common ULCB board support")
+> 
+> The above shuffles the code around but does not introduce the problem
+> as far as I can see. Instead I think we should use:
+> 
+> Fixes: 144bf6ccb13f ("arm64: dts: h3ulcb: enable EthernetAVB")
+> Fixes: 883fae315a6a ("arm64: dts: m3ulcb: enable EthernetAVB")
+> 
+> > Signed-off-by: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
+> > Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
-This patch is based on renesas devel tag renesas-devel-20171218-v4.15-rc4 
-
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 41 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index f133b4f..1640024 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -2228,6 +2228,35 @@ enum {
- static const unsigned int i2c4_e_mux[] = {
- 	I2C4_SCL_E_MARK, I2C4_SDA_E_MARK,
- };
-+/* - I2C5 ------------------------------------------------------------------- */
-+static const unsigned int i2c5_pins[] = {
-+	/* SCL, SDA */
-+	RCAR_GP_PIN(4, 14), RCAR_GP_PIN(4, 15),
-+};
-+static const unsigned int i2c5_mux[] = {
-+	I2C5_SCL_MARK, I2C5_SDA_MARK,
-+};
-+static const unsigned int i2c5_b_pins[] = {
-+	/* SCL, SDA */
-+	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-+};
-+static const unsigned int i2c5_b_mux[] = {
-+	I2C5_SCL_B_MARK, I2C5_SDA_B_MARK,
-+};
-+static const unsigned int i2c5_c_pins[] = {
-+	/* SCL, SDA */
-+	RCAR_GP_PIN(4, 31), RCAR_GP_PIN(4, 30),
-+};
-+static const unsigned int i2c5_c_mux[] = {
-+	I2C5_SCL_C_MARK, I2C5_SDA_C_MARK,
-+};
-+static const unsigned int i2c5_d_pins[] = {
-+	/* SCL, SDA */
-+	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 14),
-+};
-+static const unsigned int i2c5_d_mux[] = {
-+	I2C5_SCL_D_MARK, I2C5_SDA_D_MARK,
-+};
- /* - INTC ------------------------------------------------------------------- */
- static const unsigned int intc_irq0_pins[] = {
- 	/* IRQ0 */
-@@ -3821,6 +3850,10 @@ enum {
- 	SH_PFC_PIN_GROUP(i2c4_c),
- 	SH_PFC_PIN_GROUP(i2c4_d),
- 	SH_PFC_PIN_GROUP(i2c4_e),
-+	SH_PFC_PIN_GROUP(i2c5),
-+	SH_PFC_PIN_GROUP(i2c5_b),
-+	SH_PFC_PIN_GROUP(i2c5_c),
-+	SH_PFC_PIN_GROUP(i2c5_d),
- 	SH_PFC_PIN_GROUP(intc_irq0),
- 	SH_PFC_PIN_GROUP(intc_irq1),
- 	SH_PFC_PIN_GROUP(intc_irq2),
-@@ -4196,6 +4229,13 @@ enum {
- 	"i2c4_e",
- };
- 
-+static const char * const i2c5_groups[] = {
-+	"i2c5",
-+	"i2c5_b",
-+	"i2c5_c",
-+	"i2c5_d",
-+};
-+
- static const char * const intc_groups[] = {
- 	"intc_irq0",
- 	"intc_irq1",
-@@ -4537,6 +4577,7 @@ enum {
- 	SH_PFC_FUNCTION(i2c2),
- 	SH_PFC_FUNCTION(i2c3),
- 	SH_PFC_FUNCTION(i2c4),
-+	SH_PFC_FUNCTION(i2c5),
- 	SH_PFC_FUNCTION(intc),
- 	SH_PFC_FUNCTION(mmc),
- 	SH_PFC_FUNCTION(msiof0),
--- 
-1.9.1
+I have applied this a fix for v4.15 with the updated Fixes tags above. 
