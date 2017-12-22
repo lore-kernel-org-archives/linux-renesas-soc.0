@@ -1,55 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f175.google.com ([209.85.192.175]:46323 "EHLO
-        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753269AbdLTMY6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60615 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751428AbdLVI2S (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 07:24:58 -0500
-Received: by mail-pf0-f175.google.com with SMTP id c204so12482599pfc.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 04:24:58 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 20 Dec 2017 21:23:54 +0900
-Message-Id: <151377263489.17613.8433322549941624829.sendpatchset@little-apple>
-In-Reply-To: <151377262568.17613.8610167192375932687.sendpatchset@little-apple>
-References: <151377262568.17613.8610167192375932687.sendpatchset@little-apple>
-Subject: [PATCH/RFC 01/03] arm64: dts: r8a77965: Enable IPMMU MM, DS0 and DS1
+        Fri, 22 Dec 2017 03:28:18 -0500
+Date: Fri, 22 Dec 2017 09:28:14 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] arm64: dts: renesas: Remove renesas,no-ether-link
+ property
+Message-ID: <20171222082813.hsvmf6uhm45sunup@verge.net.au>
+References: <1513776132-22700-1-git-send-email-vladimir_zapolskiy@mentor.com>
+ <20171221112830.4ehdp237zsddfvrv@verge.net.au>
+ <39b80de4-84bd-916e-2ff9-580f7db720f2@mentor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39b80de4-84bd-916e-2ff9-580f7db720f2@mentor.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Thu, Dec 21, 2017 at 04:57:58PM +0200, Vladimir Zapolskiy wrote:
+> Hi Simon,
+> 
+> On 12/21/2017 01:28 PM, Simon Horman wrote:
+> > On Wed, Dec 20, 2017 at 03:22:10PM +0200, Vladimir Zapolskiy wrote:
+> >> The present change is a bug fix for AVB link iteratively up/down.
+> > 
+> > If this is a bug please consider including Fixes tags in the patches.
+> > 
+> 
+> would you prefer to get v2 with the Fixes tags added or short replies
+> to v1 with the requested information?
 
-Enable the IPMMU-MM, IPMMU-DS0 and IPMMU-DS1 devices on r8a77965.
-
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi |    3 ---
- 1 file changed, 3 deletions(-)
-
---- 0021/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77965.dtsi	2017-11-22 13:08:13.800607110 +0900
-@@ -107,7 +107,6 @@
- 			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
- 			renesas,ipmmu-main = <&ipmmu_mm 0>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
- 
- 		ipmmu_ds1: mmu@e7740000 {
-@@ -115,7 +114,6 @@
- 			reg = <0 0xe7740000 0 0x1000>; /* IPMMU-DS1 */
- 			renesas,ipmmu-main = <&ipmmu_mm 1>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
- 
- 		ipmmu_mm: mmu@e67b0000 {
-@@ -124,7 +122,6 @@
- 			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
- 
- 		cpg: clock-controller@e6150000 {
+Either way would be fine. I see you have gone ahead and posted v2,
+lets roll with that.
