@@ -1,57 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:26419 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932067AbdLOOxN (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757552AbdLVKbL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 09:53:13 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Fri, 22 Dec 2017 05:31:11 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/5] ARM: dts: iwg20d-q7-common: Sound DMA support on DTS
-Date: Fri, 15 Dec 2017 14:50:50 +0000
-Message-Id: <1513349453-54689-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513349453-54689-1-git-send-email-biju.das@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 34/37] ARM: dts: iwg22d-sodimm: Sound DMA support via BUSIF on DTS
+Date: Fri, 22 Dec 2017 11:30:12 +0100
+Message-Id: <996d68a1f4fd6f95ab340d84871cbdcb34bc74f4.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DMA transfer to/from SSI
+From: Biju Das <biju.das@bp.renesas.com>
+
+DMA transfer to/from SSIU
 
      DMA
-[MEM] -> [SSI]
+[MEM] -> [SSIU] -> [SSI]
 
      DMA
-[MEM] <- [SSI]
+[MEM] <- [SSIU] <- [SSI]
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 41bc4ed..fd50065 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -247,10 +247,10 @@
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index a9ba46d804bc..0f880c1e7afa 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -206,12 +206,7 @@
+ 	status = "okay";
  };
  
- &ssi0 {
--	pio-transfer;
-+	no-busif;
- };
- 
- &ssi1 {
--	pio-transfer;
-+	no-busif;
+-&ssi3 {
+-	no-busif;
+-};
+-
+ &ssi4 {
+-	no-busif;
  	shared-pin;
  };
+ 
 -- 
-1.9.1
+2.11.0
