@@ -1,75 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:24897 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756036AbdLTUEp (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752382AbdLVK3n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 15:04:45 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 22 Dec 2017 05:29:43 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 2/9] ARM: dts: r8a7745: Add audio DMAC support
-Date: Wed, 20 Dec 2017 20:01:58 +0000
-Message-Id: <1513800125-53213-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/11] arm64: dts: renesas: r8a7796: add reg properties to pciec[01] nodes
+Date: Fri, 22 Dec 2017 11:29:18 +0100
+Message-Id: <4316989537a6ed530807244fd2b69f274bf195ff.1513936761.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513936760.git.horms+renesas@verge.net.au>
+References: <cover.1513936760.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instantiate the audio DMA controller on the r8a7745 device tree.
+Add reg properties to pciec[01] placeholder nodes
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This is to stop the compiler complaining as follows:
+$ make
+...
+  DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb
+arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@fe000000 has a unit name, but no reg property
+arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@ee800000 has a unit name, but no reg property
+arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pcie@fe000000 missing or empty reg/ranges property
+arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pcie@ee800000 missing or empty reg/ranges property
+  DTC     arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb
+arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@fe000000 has a unit name, but no reg property
+arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@ee800000 has a unit name, but no reg property
+arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pcie@fe000000 missing or empty reg/ranges property
+arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pcie@ee800000 missing or empty reg/ranges property
+  DTC     arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb
+arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@fe000000 has a unit name, but no reg property
+arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@ee800000 has a unit name, but no reg property
+arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pcie@fe000000 missing or empty reg/ranges property
+arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pcie@ee800000 missing or empty reg/ranges property
+  DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb
+arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@fe000000 has a unit name, but no reg property
+arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@ee800000 has a unit name, but no reg property
+arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/pcie@fe000000 missing or empty reg/ranges property
+arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/pcie@ee800000 missing or empty reg/ranges property
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 6d085f0..d9488a1 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -397,6 +397,37 @@
- 			dma-channels = <15>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 49c5893f8a35..a339047acdc7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1758,10 +1758,12 @@
  		};
  
-+		audma0: dma-controller@ec700000 {
-+			compatible = "renesas,dmac-r8a7745",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xec700000 0 0x10000>;
-+			interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12";
-+			clocks = <&cpg CPG_MOD 502>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 502>;
-+			#dma-cells = <1>;
-+			dma-channels = <13>;
-+		};
-+
- 		usb_dmac0: dma-controller@e65a0000 {
- 			compatible = "renesas,r8a7745-usb-dmac",
- 				     "renesas,usb-dmac";
+ 		pciec0: pcie@fe000000 {
++			reg = <0 0xfe000000 0 0x80000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pciec1: pcie@ee800000 {
++			reg = <0 0xee800000 0 0x80000>;
+ 			/* placeholder */
+ 		};
+ 
 -- 
-1.9.1
+2.11.0
