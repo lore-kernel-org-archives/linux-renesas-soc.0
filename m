@@ -1,124 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34592 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750915AbdLaLXd (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756590AbdLVKab (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 31 Dec 2017 06:23:33 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+        Fri, 22 Dec 2017 05:30:31 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 6/9] ARM: dts: alt: use demuxer for I2C1
-Date: Sun, 31 Dec 2017 12:23:17 +0100
-Message-Id: <20171231112320.3461-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
-References: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 10/37] ARM: dts: r8a7743: Add thermal device to DT
+Date: Fri, 22 Dec 2017 11:29:48 +0100
+Message-Id: <6c76b4f7d89e89f0ae405dfc7a64c6d2b5d02813.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+This patch instantiates the thermal sensor module with thermal-zone
+support.
 
+This patch is based on the commit cac68a56e34b
+("ARM: dts: r8a7791: enable to use thermal-zone") by Kuninori Morimoto.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 53 +++++++++++++++++++++++++++------------
- 1 file changed, 37 insertions(+), 16 deletions(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 60c6515c499660..26a883484ea814 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -18,7 +18,9 @@
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index fcdf620d6637..acf9ce2e4057 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -250,6 +250,38 @@
+ 			resets = <&cpg 407>;
+ 		};
  
- 	aliases {
- 		serial0 = &scif2;
-+		i2c9 = &gpioi2c1;
- 		i2c10 = &gpioi2c4;
-+		i2c11 = &i2chdmi;
- 		i2c12 = &i2cexio4;
- 	};
- 
-@@ -138,17 +140,50 @@
- 		clock-frequency = <148500000>;
- 	};
- 
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	};
++		thermal: thermal@e61f0000 {
++			compatible = "renesas,thermal-r8a7743",
++				     "renesas,rcar-gen2-thermal",
++				     "renesas,rcar-thermal";
++			reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
++			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 522>;
++			#thermal-sensor-cells = <0>;
++		};
 +
- 	gpioi2c4: i2c-10 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
- 		status = "disabled";
--		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		scl-gpios = <&gpio4 8 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
- 	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-11 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++		thermal-zones {
++			cpu_thermal: cpu-thermal {
++				polling-delay-passive = <0>;
++				polling-delay = <0>;
 +
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
++				thermal-sensors = <&thermal>;
 +
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
++				trips {
++					cpu-crit {
++						temperature = <95000>;
++						hysteresis = <0>;
++						type = "critical";
++					};
++				};
++
++				cooling-maps {
 +				};
 +			};
 +		};
-+	};
 +
-+	/*
- 	 * I2C4 is routed to EXIO connector B, pins 73 (SCL) + 74 (SDA).
- 	 * A fallback to GPIO is provided.
- 	 */
-@@ -324,23 +359,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
- };
- 
- &i2c4 {
+ 		timer {
+ 			compatible = "arm,armv7-timer";
+ 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
 -- 
 2.11.0
