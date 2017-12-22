@@ -1,78 +1,49 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55085 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933574AbdLRVlK (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 16:41:10 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 22 Dec 2017 09:24:41 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <Chris.Paterson2@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 2/2] ARM: dts: r8a7743: move timer node out of bus
-Date: Mon, 18 Dec 2017 22:40:43 +0100
-Message-Id: <20171218214043.10796-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171218214043.10796-1-horms+renesas@verge.net.au>
-References: <20171218214043.10796-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: r8a7745: Add missing clock for secondary CA7
+ CPU core
+Message-ID: <20171222082440.npmnkzwg5izjmifj@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWKzH7NLxg=BukNSOVv-BQqWDgi3aSMBErzeZ6NR+20JA@mail.gmail.com>
+ <TY1PR06MB070295E987FDDC0093043924B70D0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The timer node does not have any register properties and thus shouldn't be
-placed on the bus.
+On Thu, Dec 21, 2017 at 02:58:24PM +0000, Chris Paterson wrote:
+> 
+> > From: Biju Das [mailto:biju.das@bp.renesas.com]
+> > Sent: 21 December 2017 14:52
+> > 
+> > Add the missing clock to CA7 CPU1 node.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> 
+> Kind regards, Chris
+> 
 
-This problem is flagged by the compiler as follows:
-$ make
-  DTC     arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb
-arch/arm/boot/dts/r8a7743-iwg20d-q7.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-  DTC     arch/arm/boot/dts/r8a7743-sk-rzg1m.dtb
-arch/arm/boot/dts/r8a7743-sk-rzg1m.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+On Thu, Dec 21, 2017 at 04:00:23PM +0100, Geert Uytterhoeven wrote:
+> On Thu, Dec 21, 2017 at 3:52 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> > Add the missing clock to CA7 CPU1 node.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Gr{oetje,eeting}s,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* Avoid line-wrapping properties
----
- arch/arm/boot/dts/r8a7743.dtsi | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index d333a545956d..5ba0af76b29c 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -304,18 +304,6 @@
- 			resets = <&cpg 407>;
- 		};
- 
--		timer {
--			compatible = "arm,armv7-timer";
--			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
--						  IRQ_TYPE_LEVEL_LOW)>;
--		};
--
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7743-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
-@@ -1539,6 +1527,14 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
- 	/* External USB clock - can be overridden by the board */
- 	usb_extal_clk: usb_extal {
- 		compatible = "fixed-clock";
--- 
-2.11.0
+Thanks, applied.
