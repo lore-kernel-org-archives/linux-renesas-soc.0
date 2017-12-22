@@ -1,111 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755987AbdLVKbJ (ORCPT
+        with ESMTP id S1755987AbdLVK3s (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:31:09 -0500
+        Fri, 22 Dec 2017 05:29:48 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 32/37] ARM: dts: iwg22d-sodimm: Sound PIO support
-Date: Fri, 22 Dec 2017 11:30:10 +0100
-Message-Id: <3838ef590119420031ad2a51ea19a9be2ea9acef.1513938145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
-References: <cover.1513938145.git.horms+renesas@verge.net.au>
+Subject: [PATCH 10/11] arm64: dts: renesas: salvator-common: enable usb3_phy0 node
+Date: Fri, 22 Dec 2017 11:29:21 +0100
+Message-Id: <d27f4ba7cc1556dd0e7806fd45b5430cbd6f9538.1513936761.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513936760.git.horms+renesas@verge.net.au>
+References: <cover.1513936760.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Enable sound PIO support on carrier board.
+This patch enables usb3_phy0 node for Salvator-X[S].
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 46 +++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 5d4b7d203f8d..b6521da8b766 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -32,6 +32,21 @@
- 		clock-frequency = <26000000>;
- 	};
- 
-+	rsnd_sgtl5000: sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&sndcodec>;
-+		simple-audio-card,frame-master = <&sndcodec>;
-+
-+		sndcpu: simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		sndcodec: simple-audio-card,codec {
-+			sound-dai = <&sgtl5000>;
-+		};
-+	};
-+
- 	vccq_sdhi0: regulator-vccq-sdhi0 {
- 		compatible = "regulator-gpio";
- 
-@@ -141,6 +156,11 @@
- 		power-source = <3300>;
- 	};
- 
-+	sound_pins: sound {
-+		groups = "ssi34_ctrl", "ssi3_data", "ssi4_data";
-+		function = "ssi";
-+	};
-+
- 	usb0_pins: usb0 {
- 		groups = "usb0";
- 		function = "usb0";
-@@ -152,6 +172,23 @@
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 4e800e933944..38831a734019 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -648,6 +648,10 @@
+ 	shared-pin;
  };
  
-+&rcar_sound {
-+	pinctrl-0 = <&sound_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	/* Single DAI */
-+
-+	#sound-dai-cells = <0>;
-+
-+	rcar_sound,dai {
-+		dai0 {
-+			playback = <&ssi3>;
-+			capture = <&ssi4>;
-+		};
-+	};
++&usb_extal_clk {
++	clock-frequency = <50000000>;
 +};
 +
- &scif4 {
- 	pinctrl-0 = <&scif4_pins>;
+ &usb2_phy0 {
+ 	pinctrl-0 = <&usb0_pins>;
  	pinctrl-names = "default";
-@@ -169,6 +206,15 @@
+@@ -663,6 +667,14 @@
  	status = "okay";
  };
  
-+&ssi3 {
-+	pio-transfer;
++&usb3_phy0 {
++	status = "okay";
 +};
 +
-+&ssi4 {
-+	pio-transfer;
-+	shared-pin;
++&usb3s0_clk {
++	clock-frequency = <100000000>;
 +};
 +
- &usbphy {
+ &wdt0 {
+ 	timeout-sec = <60>;
  	status = "okay";
- };
 -- 
 2.11.0
