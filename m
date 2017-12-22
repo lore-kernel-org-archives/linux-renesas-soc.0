@@ -1,40 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37862 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752886AbdLTMYs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757106AbdLVKa4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 07:24:48 -0500
-Received: by mail-pg0-f67.google.com with SMTP id o13so1116507pgp.4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Dec 2017 04:24:48 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Fri, 22 Dec 2017 05:30:56 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Wed, 20 Dec 2017 21:23:45 +0900
-Message-Id: <151377262568.17613.8610167192375932687.sendpatchset@little-apple>
-Subject: [PATCH/RFC 00/03] iommu/ipmmu-vmsa: IPMMU prototyping on r8a77965
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 19/37] ARM: dts: iwg20d-q7-common: Enable SGTL5000 audio codec
+Date: Fri, 22 Dec 2017 11:29:57 +0100
+Message-Id: <3091626868981e086f57d580cb1711b4553c5663.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: IPMMU prototyping on r8a77965
+From: Biju Das <biju.das@bp.renesas.com>
 
-[PATCH/RFC 01/03] arm64: dts: r8a77965: Enable IPMMU MM, DS0 and DS1
-[PATCH/RFC 02/03] iommu/ipmmu-vmsa: Detect r8a77965 compat strings
-[PATCH/RFC 03/03] iommu/ipmmu-vmsa: Add SYS-DMAC devices as whitelist
+This patch enables SGTL5000 audio codec on the carrier board.
 
-This series contain a few trivial modifications to the r8a77965 (R-Car M3-N)
-prototype environment and the IPMMU driver. The goal is to try out some basic
-features of the IPMMU hardware on the r8a77965 Salvator-X board.
-
-At this point this is just a bunch of prototype patches. More effort is
-needed to upstream support for the r8a77965 SoC and the IPMMU patches.
-
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
- Built on top of "renesas-drivers-next-2017-11-14-v4.14" and
- [PATCH/RFC] arm64: r8a77965 Salvator-X SoC/board support prototype
- [PATCH/RFC] arm64: r8a77965 Salvator-X IPMMU environment prototype
-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi |    3 ---
- drivers/iommu/ipmmu-vmsa.c                |   13 +++++++++++++
- 2 files changed, 13 insertions(+), 3 deletions(-)
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 54470c6de891..03d41a736afd 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -20,6 +20,20 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	audio_clock: audio_clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++	};
++
++	reg_1p5v: 1p5v {
++		compatible = "regulator-fixed";
++		regulator-name = "1P5V";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		regulator-always-on;
++	};
++
+ 	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -83,6 +97,16 @@
+ 		compatible = "ti,bq32000";
+ 		reg = <0x68>;
+ 	};
++
++	sgtl5000: codec@a {
++		compatible = "fsl,sgtl5000";
++		#sound-dai-cells = <0>;
++		reg = <0x0a>;
++		clocks = <&audio_clock>;
++		VDDA-supply = <&reg_3p3v>;
++		VDDIO-supply = <&reg_3p3v>;
++		VDDD-supply = <&reg_1p5v>;
++	};
+ };
+ 
+ &pci0 {
+-- 
+2.11.0
