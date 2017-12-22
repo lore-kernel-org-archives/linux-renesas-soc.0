@@ -1,48 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56322 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755023AbdLTMOw (ORCPT
+        with ESMTP id S1757850AbdLVKaj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 07:14:52 -0500
+        Fri, 22 Dec 2017 05:30:39 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] ARM: dts: r8a7791: Reduce size of thermal registers
-Date: Wed, 20 Dec 2017 13:14:44 +0100
-Message-Id: <20171220121445.31896-3-horms+renesas@verge.net.au>
-In-Reply-To: <20171220121445.31896-1-horms+renesas@verge.net.au>
-References: <20171220121445.31896-1-horms+renesas@verge.net.au>
+Subject: [PATCH 11/37] ARM: dts: r8a7745: Add PWM SoC support
+Date: Fri, 22 Dec 2017 11:29:49 +0100
+Message-Id: <3711d0ede24d2e3c90ae10e1a79746ac87169609.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reduce size of thermal registers in DT for r8a7791 (R-Car M3-W) SoC.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-According to the "User's Manual: Hardware" v2.00 the registers at base
-0xe61f0000 extend to an offset of 0x10, rather than 0x14 which is the case
-on the r8a73a4 (R-Mobile APE6).
+Add the definitions for pwm[0123456] to the SoC .dtsi.
 
-This should not have any runtime affect as mapping granularity is PAGE_SIZE.
-
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 70 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 008a260f86a5..8266a9b7cafd 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -240,7 +240,7 @@
- 		compatible =	"renesas,thermal-r8a7791",
- 				"renesas,rcar-gen2-thermal",
- 				"renesas,rcar-thermal";
--		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
-+		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 522>;
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 0fa78612746f..173d8a2cc6e2 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -936,6 +936,76 @@
+ 			status = "disabled";
+ 		};
+ 
++		pwm0: pwm@e6e30000 {
++			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
++			reg = <0 0xe6e30000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 523>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm1: pwm@e6e31000 {
++			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
++			reg = <0 0xe6e31000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 523>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm2: pwm@e6e32000 {
++			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
++			reg = <0 0xe6e32000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 523>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm3: pwm@e6e33000 {
++			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
++			reg = <0 0xe6e33000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 523>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm4: pwm@e6e34000 {
++			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
++			reg = <0 0xe6e34000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 523>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm5: pwm@e6e35000 {
++			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
++			reg = <0 0xe6e35000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 523>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm6: pwm@e6e36000 {
++			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
++			reg = <0 0xe6e36000 0 0x8>;
++			clocks = <&cpg CPG_MOD 523>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 523>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7745",
+ 				     "renesas,rcar-gen2-sdhi";
 -- 
 2.11.0
