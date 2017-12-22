@@ -1,50 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:16402 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934438AbdLRRwX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756478AbdLVKat (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 12:52:23 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 22 Dec 2017 05:30:49 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 1/6] ARM: shmobile: defconfig: Enable PWM
-Date: Mon, 18 Dec 2017 17:52:03 +0000
-Message-Id: <1513619528-12060-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513619528-12060-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/37] ARM: dts: r8a7745: Add TPU support
+Date: Fri, 22 Dec 2017 11:29:50 +0100
+Message-Id: <b9db514555274eb325c9b13a0b0587c0e600d75a.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G1 and R-Car platforms have PWM timers. This patch enables PWM support
-by default.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+
+Add TPU support to SoC DT.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v1->v2
-* No change
+ arch/arm/boot/dts/r8a7745.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index d60dbe1..578434c 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -208,6 +208,7 @@ CONFIG_STAGING_BOARD=y
- CONFIG_IIO=y
- CONFIG_AK8975=y
- CONFIG_PWM=y
-+CONFIG_PWM_RCAR=y
- CONFIG_PWM_RENESAS_TPU=y
- CONFIG_GENERIC_PHY=y
- CONFIG_PHY_RCAR_GEN2=y
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 173d8a2cc6e2..b46043567a1e 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -1006,6 +1006,16 @@
+ 			status = "disabled";
+ 		};
+ 
++		tpu: pwm@e60f0000 {
++			compatible = "renesas,tpu-r8a7745", "renesas,tpu";
++			reg = <0 0xe60f0000 0 0x148>;
++			clocks = <&cpg CPG_MOD 304>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 304>;
++			#pwm-cells = <3>;
++			status = "disabled";
++		};
++
+ 		sdhi0: sd@ee100000 {
+ 			compatible = "renesas,sdhi-r8a7745",
+ 				     "renesas,rcar-gen2-sdhi";
 -- 
-2.7.4
+2.11.0
