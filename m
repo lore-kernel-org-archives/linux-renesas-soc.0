@@ -1,54 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44193 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752121AbdLDMhQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757640AbdLVKaZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Dec 2017 07:37:16 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Claudio Foellmi <claudio.foellmi@ergon.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 2/6] i2c: add identifier in declarations for i2c_bus_recovery
-Date: Mon,  4 Dec 2017 13:36:36 +0100
-Message-Id: <20171204123640.3382-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
-References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
+        Fri, 22 Dec 2017 05:30:25 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/37] ARM: dts: r8a7745: Add APMU node and second CPU core
+Date: Fri, 22 Dec 2017 11:29:39 +0100
+Message-Id: <aaca1ff0dbfcb341c453abf160511d3419545431.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-No reason to have them undefined, so let's add them.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Cc: Phil Reid <preid@electromag.com.au>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Claudio Foellmi <claudio.foellmi@ergon.ch>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add DT node for the Advanced Power Management Unit (APMU), add the
+second CPU core, and use "renesas,apmu" as "enable-method".
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/linux/i2c.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index f8a9d81e911e52..8a020617b4e780 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -561,9 +561,9 @@ struct i2c_timings {
- struct i2c_bus_recovery_info {
- 	int (*recover_bus)(struct i2c_adapter *);
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index de13e156f071..0fa78612746f 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -38,6 +38,7 @@
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "renesas,apmu";
  
--	int (*get_scl)(struct i2c_adapter *);
--	void (*set_scl)(struct i2c_adapter *, int val);
--	int (*get_sda)(struct i2c_adapter *);
-+	int (*get_scl)(struct i2c_adapter *adap);
-+	void (*set_scl)(struct i2c_adapter *adap, int val);
-+	int (*get_sda)(struct i2c_adapter *adap);
+ 		cpu0: cpu@0 {
+ 			device_type = "cpu";
+@@ -49,6 +50,15 @@
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  
- 	void (*prepare_recovery)(struct i2c_adapter *);
- 	void (*unprepare_recovery)(struct i2c_adapter *);
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7745_PD_CA7_CPU1>;
++			next-level-cache = <&L2_CA7>;
++		};
++
+ 		L2_CA7: cache-controller-0 {
+ 			compatible = "cache";
+ 			cache-unified;
+@@ -65,6 +75,12 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		apmu@e6151000 {
++			compatible = "renesas,r8a7745-apmu", "renesas,apmu";
++			reg = <0 0xe6151000 0 0x188>;
++			cpus = <&cpu0 &cpu1>;
++		};
++
+ 		gic: interrupt-controller@f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.11.0
