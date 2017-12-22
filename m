@@ -1,47 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47467 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754707AbdLFKXI (ORCPT
+        with ESMTP id S1755826AbdLVKbZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 05:23:08 -0500
+        Fri, 22 Dec 2017 05:31:25 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/61] ARM: dts: r8a7791: Use R-Car Gen2 Ether fallback compat string
-Date: Wed,  6 Dec 2017 11:22:00 +0100
-Message-Id: <fc2d62f04dfd03eefc0061f3db9c00ded83db19e.1512555546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512555546.git.horms+renesas@verge.net.au>
-References: <cover.1512555546.git.horms+renesas@verge.net.au>
+Subject: [PATCH 24/37] ARM: dts: iwg20d-q7-common: Sound DMA support via DVC on DTS
+Date: Fri, 22 Dec 2017 11:30:02 +0100
+Message-Id: <0ed33948cb43193ba3dbdff8e521f84326669405.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use newly added R-Car Gen2 Ether fallback compat string
-in the DT of the r8a7791 SoC.
+From: Biju Das <biju.das@bp.renesas.com>
 
-This should have no run-time effect as the driver matches against
-the per-SoC compat string before considering the fallback compat string.
+DMA transfer uses DVC
 
+     DMA               DMApp
+[MEM] -> [SRC] -> [DVC] -> [SSIU] -> [SSI]
+
+     DMA               DMApp
+[MEM] <- [DVC] <- [SRC] <- [SSIU] <- [SSI]
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 67831d0405f3..9815a933e4cc 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -961,7 +961,8 @@
- 	};
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 952b79e1b391..66954aaf2c47 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -8,6 +8,29 @@
+  * kind, whether express or implied.
+  */
  
- 	ether: ethernet@ee700000 {
--		compatible = "renesas,ether-r8a7791";
-+		compatible = "renesas,ether-r8a7791",
-+			     "renesas,rcar-gen2-ether";
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 813>;
++/*
++ * SSI-SGTL5000
++ *
++ * This command is required when Playback/Capture
++ *
++ *      amixer set "DVC Out" 100%
++ *      amixer set "DVC In" 100%
++ *
++ * You can use Mute
++ *
++ *      amixer set "DVC Out Mute" on
++ *      amixer set "DVC In Mute" on
++ *
++ * You can use Volume Ramp
++ *
++ *      amixer set "DVC Out Ramp Up Rate"   "0.125 dB/64 steps"
++ *      amixer set "DVC Out Ramp Down Rate" "0.125 dB/512 steps"
++ *      amixer set "DVC Out Ramp" on
++ *      aplay xxx.wav &
++ *      amixer set "DVC Out"  80%  // Volume Down
++ *      amixer set "DVC Out" 100%  // Volume Up
++ */
++
+ / {
+ 	aliases {
+ 		serial0 = &scif0;
+@@ -208,8 +231,8 @@
+ 
+ 	rcar_sound,dai {
+ 		dai0 {
+-			playback = <&ssi1 &src3>;
+-			capture = <&ssi0 &src2>;
++			playback = <&ssi1 &src3 &dvc1>;
++			capture = <&ssi0 &src2 &dvc0>;
+ 		};
+ 	};
+ };
 -- 
 2.11.0
