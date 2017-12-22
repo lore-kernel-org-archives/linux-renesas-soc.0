@@ -1,63 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35796 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755564AbdL2LhW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752382AbdLVKbj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Dec 2017 06:37:22 -0500
-Received: by mail-lf0-f65.google.com with SMTP id h5so4225118lfj.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Dec 2017 03:37:22 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 3/4] PM / Domains: Take WAKEUP_PATH driver flag into account in genpd
-Date: Fri, 29 Dec 2017 12:37:02 +0100
-Message-Id: <1514547423-18965-4-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1514547423-18965-1-git-send-email-ulf.hansson@linaro.org>
-References: <1514547423-18965-1-git-send-email-ulf.hansson@linaro.org>
+        Fri, 22 Dec 2017 05:31:39 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 35/37] ARM: dts: iwg22d-sodimm: Sound DMA support via SRC on DTS
+Date: Fri, 22 Dec 2017 11:30:13 +0100
+Message-Id: <5ce5faa6fcf8b643ab91f48b972fd850f33d8f57.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In case the WAKEUP_PATH flag has been set in a later phase than from the
-->suspend() callback, the PM core don't set the ->power.wakeup_path status
-flag for the device. Therefore, let's be safe and check it explicitly.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+DMA transfer to/from SRC
+
+     DMA      DMApp
+[MEM] -> [SRC] -> [SSIU] -> [SSI]
+
+     DMA      DMApp
+[MEM] <- [SRC] <- [SSIU] <- [SSI]
+
+Current sound driver is supporting SSI/SRC random connection.
+So, this patch is trying
+SSI3 -> SRC3
+SSI4 <- SRC4
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/base/power/domain.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index f9dcc98..32b4ba7 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -1038,7 +1038,9 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 0f880c1e7afa..2cac57c7c44d 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -183,8 +183,8 @@
  
--	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
-+	if ((dev->power.wakeup_path ||
-+	    dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_PATH)) &&
-+	    genpd_is_active_wakeup(genpd))
- 		return 0;
- 
- 	if (poweroff)
-@@ -1093,7 +1095,9 @@ static int genpd_resume_noirq(struct device *dev)
- 	if (IS_ERR(genpd))
- 		return -EINVAL;
- 
--	if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
-+	if ((dev->power.wakeup_path ||
-+	    dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_PATH)) &&
-+	    genpd_is_active_wakeup(genpd))
- 		return 0;
- 
- 	genpd_lock(genpd);
+ 	rcar_sound,dai {
+ 		dai0 {
+-			playback = <&ssi3>;
+-			capture = <&ssi4>;
++			playback = <&ssi3 &src3>;
++			capture = <&ssi4 &src4>;
+ 		};
+ 	};
+ };
 -- 
-2.7.4
+2.11.0
