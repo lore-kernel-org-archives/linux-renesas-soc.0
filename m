@@ -1,86 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:24897 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756104AbdLTUEq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757886AbdLVK3h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Dec 2017 15:04:46 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 22 Dec 2017 05:29:37 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 4/9] ARM: dts: iwg22d-sodimm: Enable SGTL5000 audio codec
-Date: Wed, 20 Dec 2017 20:02:00 +0000
-Message-Id: <1513800125-53213-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
-References: <1513800125-53213-1-git-send-email-biju.das@bp.renesas.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/11] arm64: dts: renesas: r8a7795: sort subnodes of root node alphabetically
+Date: Fri, 22 Dec 2017 11:29:15 +0100
+Message-Id: <86af5aac311733d11c1c965522bd3d7fc6ee51c6.1513936761.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513936760.git.horms+renesas@verge.net.au>
+References: <cover.1513936760.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables SGTL5000 audio codec on the carrier board.
+Sort root sub-nodes alphabetically for allow for easier maintenance
+of this file.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 39ce7e7..5d4b7d2 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -26,6 +26,12 @@
- 		stdout-path = "serial3:115200n8";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index a851c88e1e04..62dfc7781cc1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -30,11 +30,6 @@
+ 		i2c7 = &i2c_dvfs;
  	};
  
-+	audio_clock: audio_clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+	};
-+
- 	vccq_sdhi0: regulator-vccq-sdhi0 {
- 		compatible = "regulator-gpio";
- 
-@@ -80,6 +86,23 @@
- 	pinctrl-names = "default";
- };
- 
-+&i2c5 {
-+	pinctrl-0 = <&i2c5_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	sgtl5000: codec@a {
-+		compatible = "fsl,sgtl5000";
-+		#sound-dai-cells = <0>;
-+		reg = <0x0a>;
-+		clocks = <&audio_clock>;
-+		VDDA-supply = <&reg_3p3v>;
-+		VDDIO-supply = <&reg_3p3v>;
-+	};
-+};
-+
- &pci1 {
- 	status = "okay";
- 	pinctrl-0 = <&usb1_pins>;
-@@ -102,6 +125,11 @@
- 		function = "hscif1";
+-	psci {
+-		compatible = "arm,psci-1.0", "arm,psci-0.2";
+-		method = "smc";
+-	};
+-
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -208,6 +203,11 @@
+ 				     <&a53_3>;
  	};
  
-+	i2c5_pins: i2c5 {
-+		groups = "i2c5_b";
-+		function = "i2c5";
++	psci {
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
++		method = "smc";
 +	};
 +
- 	scif4_pins: scif4 {
- 		groups = "scif4_data_b";
- 		function = "scif4";
+ 	soc: soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
 -- 
-1.9.1
+2.11.0
