@@ -1,61 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:42728 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933335AbdLRPvw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755987AbdLVKbJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 10:51:52 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+        Fri, 22 Dec 2017 05:31:09 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-        wsa@the-dreams.de, horms@verge.net.au, geert@linux-m68k.org,
-        magnus.damm@gmail.com, chris.paterson2@renesas.com,
-        ramesh.shanmugasundaram@bp.renesas.com, robh@kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 2/2] can: rcar_canfd: document r8a77995 (R-Car D3) compatibility strings
-Date: Mon, 18 Dec 2017 16:51:37 +0100
-Message-Id: <1513612297-10173-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1513612297-10173-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1513612297-10173-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 32/37] ARM: dts: iwg22d-sodimm: Sound PIO support
+Date: Fri, 22 Dec 2017 11:30:10 +0100
+Message-Id: <3838ef590119420031ad2a51ea19a9be2ea9acef.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+From: Biju Das <biju.das@bp.renesas.com>
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-index 93c3a6a..eeb9fec 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-@@ -6,6 +6,7 @@ Required properties:
-   - "renesas,rcar-gen3-canfd" for R-Car Gen3 compatible controller.
-   - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
-   - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3) compatible controller.
-+  - "renesas,r8a77995-canfd" for R8A77995 (R-Car D3) compatible controller.
+Enable sound PIO support on carrier board.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 46 +++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 5d4b7d203f8d..b6521da8b766 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -32,6 +32,21 @@
+ 		clock-frequency = <26000000>;
+ 	};
  
-   When compatible with the generic version, nodes must list the
-   SoC-specific version corresponding to the platform first, followed by the
-@@ -24,12 +25,12 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
- child node supports the "status" property only, which is used to
- enable/disable the respective channel.
++	rsnd_sgtl5000: sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&sndcodec>;
++		simple-audio-card,frame-master = <&sndcodec>;
++
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&sgtl5000>;
++		};
++	};
++
+ 	vccq_sdhi0: regulator-vccq-sdhi0 {
+ 		compatible = "regulator-gpio";
  
--Required properties for "renesas,r8a7795-canfd" and "renesas,r8a7796-canfd"
--compatible:
--In R8A7795 and R8A7796 SoCs, canfd clock is a div6 clock and can be used by both
--CAN and CAN FD controller at the same time. It needs to be scaled to maximum
--frequency if any of these controllers use it. This is done using the below
--properties:
-+Required properties for "renesas,r8a7795-canfd", "renesas,r8a7796-canfd" and
-+"renesas,r8a77995-canfd" compatible:
-+In R8A7795, R8A7796 and R8A77995 SoCs, canfd clock is a div6 clock and can
-+be used by both CAN and CAN FD controller at the same time. It needs to be
-+scaled to maximum frequency if any of these controllers use it. This is
-+done using the below properties:
+@@ -141,6 +156,11 @@
+ 		power-source = <3300>;
+ 	};
  
- - assigned-clocks: phandle of canfd clock.
- - assigned-clock-rates: maximum frequency of this clock.
++	sound_pins: sound {
++		groups = "ssi34_ctrl", "ssi3_data", "ssi4_data";
++		function = "ssi";
++	};
++
+ 	usb0_pins: usb0 {
+ 		groups = "usb0";
+ 		function = "usb0";
+@@ -152,6 +172,23 @@
+ 	};
+ };
+ 
++&rcar_sound {
++	pinctrl-0 = <&sound_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	/* Single DAI */
++
++	#sound-dai-cells = <0>;
++
++	rcar_sound,dai {
++		dai0 {
++			playback = <&ssi3>;
++			capture = <&ssi4>;
++		};
++	};
++};
++
+ &scif4 {
+ 	pinctrl-0 = <&scif4_pins>;
+ 	pinctrl-names = "default";
+@@ -169,6 +206,15 @@
+ 	status = "okay";
+ };
+ 
++&ssi3 {
++	pio-transfer;
++};
++
++&ssi4 {
++	pio-transfer;
++	shared-pin;
++};
++
+ &usbphy {
+ 	status = "okay";
+ };
 -- 
-2.7.4
+2.11.0
