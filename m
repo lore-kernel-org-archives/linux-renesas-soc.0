@@ -1,35 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:39056 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752484AbdLFIWt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757850AbdLVK3d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Dec 2017 03:22:49 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/3] usb: renesas_usbhs: modify fifo/pipe buffer clear handling
-Date: Wed,  6 Dec 2017 17:18:30 +0900
-Message-Id: <1512548313-20175-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 22 Dec 2017 05:29:33 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/11] arm64: dts: renesas: ulcb: Add EthernetAVB PHY reset
+Date: Fri, 22 Dec 2017 11:29:14 +0100
+Message-Id: <ef4a3bc8dab721a3dbea871f35e0217643aa860c.1513936761.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513936760.git.horms+renesas@verge.net.au>
+References: <cover.1513936760.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the latest Felipe's usb.git / testing next branch
-(commit id = 3ed9bbf28b6bc494606b4c1847073343f96d85db).
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yoshihiro Shimoda (3):
-  usb: renesas_usbhs: remove redundant polling in usbhsf_fifo_barrier()
-  usb: renesas_usbhs: add usbhs_pipe_clear_without_sequence() function
-  usb: renesas_usbhs: use PIPEnCLR.ACLRM instead of {C,Dn}FIFOCTR.BCLR
-    in usbhs_pkt_pop()
+Describe the GPIO used to reset the Ethernet PHY for EthernetAVB.
+This allows the driver to reset the PHY during probe and after system
+resume.
 
- drivers/usb/renesas_usbhs/fifo.c | 21 +++++++--------------
- drivers/usb/renesas_usbhs/pipe.c | 19 ++++++++++++++-----
- drivers/usb/renesas_usbhs/pipe.h |  2 ++
- 3 files changed, 23 insertions(+), 19 deletions(-)
+On ULCB, the enable pin of the regulator providing PHY power is always
+pulled high, but the driver may still need to reset the PHY if this
+wasn't done by the bootloader before.
 
+Inspired by patches in the BSP for the individual Salvator-X/XS boards
+by Kazuya Mizuguchi.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 0d85b315ce71..be91016e0b48 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -154,6 +154,7 @@
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+ 	};
+ };
+ 
 -- 
-1.9.1
+2.11.0
