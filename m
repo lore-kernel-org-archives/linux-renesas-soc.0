@@ -1,85 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60860 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbdLNLtm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755987AbdLVKbG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 06:49:42 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: Document hardware limitations related to chip selects" to the spi tree
-In-Reply-To: <1513191913-10612-5-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1ePS1C-0005U3-Tn@debutante>
-Date: Thu, 14 Dec 2017 11:49:38 +0000
+        Fri, 22 Dec 2017 05:31:06 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 26/37] ARM: dts: r8a7743: move timer and thermal-zones nodes out of bus
+Date: Fri, 22 Dec 2017 11:30:04 +0100
+Message-Id: <b9db3affbcdc1824d7481262858171938c936e77.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+The timer and thermal-zones nodes do not have any register properties and
+thus shouldn't be placed on the bus.
 
-   spi: sh-msiof: Document hardware limitations related to chip selects
+This problem is flagged by the compiler as follows:
+$ make
+  DTC     arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb
+arch/arm/boot/dts/r8a7743-iwg20d-q7.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
+arch/arm/boot/dts/r8a7743-iwg20d-q7.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
+arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+  DTC     arch/arm/boot/dts/r8a7743-sk-rzg1m.dtb
+arch/arm/boot/dts/r8a7743-sk-rzg1m.dtb: Warning (simple_bus_reg): Node /soc/thermal-zones missing or empty reg/ranges property
+arch/arm/boot/dts/r8a7743-sk-rzg1m.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
 
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From c99182f73cce7926c623b5c1c0ff0b7954ac8d81 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 13 Dec 2017 20:05:13 +0100
-Subject: [PATCH] spi: sh-msiof: Document hardware limitations related to chip
- selects
-
-Guide users to maintain the proper balance between native and GPIO chip
-selects.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 60 ++++++++++++++++++++----------------------
+ 1 file changed, 28 insertions(+), 32 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index bc8c16a6cfc8..80710f0f0448 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -41,6 +41,16 @@ Optional properties:
- 			   0: MSIOF_SYNC
- 			   1: MSIOF_SS1
- 			   2: MSIOF_SS2
-+			 Hardware limitations related to chip selects:
-+			   - Native chip selects are always deasserted in
-+			     between transfers that are part of the same
-+			     message.  Use cs-gpios to work around this.
-+			   - All slaves using native chip selects must use the
-+			     same spi-cs-high configuration.  Use cs-gpios to
-+			     work around this.
-+			   - When using GPIO chip selects, at least one native
-+			     chip select must be left unused, as it will be
-+			     driven anyway.
- - dmas                 : Must contain a list of two references to DMA
- 			 specifiers, one for transmission, and one for
- 			 reception.
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index ecbd39e5f630..0b74c6c7d21d 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -316,38 +316,6 @@
+ 			#thermal-sensor-cells = <0>;
+ 		};
+ 
+-		thermal-zones {
+-			cpu_thermal: cpu-thermal {
+-				polling-delay-passive = <0>;
+-				polling-delay = <0>;
+-
+-				thermal-sensors = <&thermal>;
+-
+-				trips {
+-					cpu-crit {
+-						temperature = <95000>;
+-						hysteresis = <0>;
+-						type = "critical";
+-					};
+-				};
+-
+-				cooling-maps {
+-				};
+-			};
+-		};
+-
+-		timer {
+-			compatible = "arm,armv7-timer";
+-			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
+-						  IRQ_TYPE_LEVEL_LOW)>;
+-		};
+-
+ 		cmt0: timer@ffca0000 {
+ 			compatible = "renesas,r8a7743-cmt0",
+ 				     "renesas,rcar-gen2-cmt0";
+@@ -1675,6 +1643,34 @@
+ 		};
+ 	};
+ 
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++
++			thermal-sensors = <&thermal>;
++
++			trips {
++				cpu-crit {
++					temperature = <95000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++
++			cooling-maps {
++			};
++		};
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
+ 	/* External USB clock - can be overridden by the board */
+ 	usb_extal_clk: usb_extal {
+ 		compatible = "fixed-clock";
 -- 
-2.15.1
+2.11.0
