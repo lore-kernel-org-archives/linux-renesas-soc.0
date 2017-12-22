@@ -1,57 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757407AbdLVKbB (ORCPT
+        with ESMTP id S1757767AbdLVKa0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:31:01 -0500
+        Fri, 22 Dec 2017 05:30:26 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 22/37] ARM: dts: iwg20d-q7-common: Sound DMA support via BUSIF on DTS
-Date: Fri, 22 Dec 2017 11:30:00 +0100
-Message-Id: <354cce5a1c8700afa8cff8f85c93c84feb342815.1513938145.git.horms+renesas@verge.net.au>
+Subject: [PATCH 05/37] ARM: dts: r8a7790: Correct critical CPU temperature
+Date: Fri, 22 Dec 2017 11:29:43 +0100
+Message-Id: <fcab5651fae4258a993170b7aaf443adbd3d4d84.1513938145.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
 References: <cover.1513938145.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Chris Paterson <chris.paterson2@renesas.com>
 
-DMA transfer to/from SSIU
+The R-Car H2 hardware manual states that Tc = –40°C to +105°C. The
+thermal sensor has an accuracy of ±5°C and there can be a temperature
+difference of 1 or 2 degrees between Tjmax and the thermal sensor due
+to the location of the latter.
 
-     DMA
-[MEM] -> [SSIU] -> [SSI]
+This means that 95°C is a safer value to use.
 
-     DMA
-[MEM] <- [SSIU] <- [SSI]
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Fixes: a8b805f3606f7af7 ("ARM: dts: r8a7790: enable to use thermal-zone")
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 0c0f08649fda..00b5b1351b26 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -242,12 +242,7 @@
- 	status = "okay";
- };
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index e2c530c330a8..606accf5ff2d 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -168,7 +168,7 @@
  
--&ssi0 {
--	no-busif;
--};
--
- &ssi1 {
--	no-busif;
- 	shared-pin;
- };
- 
+ 			trips {
+ 				cpu-crit {
+-					temperature	= <115000>;
++					temperature	= <95000>;
+ 					hysteresis	= <0>;
+ 					type		= "critical";
+ 				};
 -- 
 2.11.0
