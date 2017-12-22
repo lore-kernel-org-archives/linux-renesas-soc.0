@@ -1,77 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756177AbdLVKaw (ORCPT
+        with ESMTP id S1752224AbdLVK3p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:30:52 -0500
+        Fri, 22 Dec 2017 05:29:45 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/37] ARM: dts: r8a7745: Add CMT SoC specific support
-Date: Fri, 22 Dec 2017 11:29:52 +0100
-Message-Id: <9680c97b516cbb70efe73dde05d497b1203bde6d.1513938145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
-References: <cover.1513938145.git.horms+renesas@verge.net.au>
+Subject: [PATCH 09/11] arm64: dts: renesas: r8a7796: add usb3_phy node
+Date: Fri, 22 Dec 2017 11:29:20 +0100
+Message-Id: <488153d9fb3aa3d5b2e3acac34191917b83dbcd9.1513936761.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513936760.git.horms+renesas@verge.net.au>
+References: <cover.1513936760.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Add CMT[01] support to SoC DT.
+This patch adds USB3.0 PHY node for r8a7796.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index b46043567a1e..668e644815eb 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -235,6 +235,38 @@
- 						  IRQ_TYPE_LEVEL_LOW)>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index a339047acdc7..c5192d513d7d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1403,6 +1403,19 @@
+ 			status = "disabled";
  		};
  
-+		cmt0: timer@ffca0000 {
-+			compatible = "renesas,r8a7745-cmt0",
-+				     "renesas,rcar-gen2-cmt0";
-+			reg = <0 0xffca0000 0 0x1004>;
-+			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 124>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 124>;
++		usb3_phy0: usb-phy@e65ee000 {
++			compatible = "renesas,r8a7796-usb3-phy",
++				     "renesas,rcar-gen3-usb3-phy";
++			reg = <0 0xe65ee000 0 0x90>;
++			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
++				 <&usb_extal_clk>;
++			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 328>;
++			#phy-cells = <0>;
 +			status = "disabled";
 +		};
 +
-+		cmt1: timer@e6130000 {
-+			compatible = "renesas,r8a7745-cmt1",
-+				     "renesas,rcar-gen2-cmt1";
-+			reg = <0 0xe6130000 0 0x1004>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 329>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 329>;
-+			status = "disabled";
-+		};
+ 		xhci0: usb@ee000000 {
+ 			compatible = "renesas,xhci-r8a7796",
+ 				     "renesas,rcar-gen3-xhci";
+@@ -2021,4 +2034,17 @@
+ 			};
+ 		};
+ 	};
 +
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7745-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
++	/* External USB clocks - can be overridden by the board */
++	usb3s0_clk: usb3s0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
+ };
 -- 
 2.11.0
