@@ -1,44 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37005 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752338AbdLMDjT (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752382AbdLVKbu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Dec 2017 22:39:19 -0500
-To: sergei.shtylyov@cogentembedded.com, davem@davemloft.net,
-        niklas.soderlund+renesas@ragnatech.se, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, horms+renesas@verge.net.au
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] renesas/sh_eth: two possible sleep-in-atomic bugs in
- sh_eth_set_link_ksettings and sh_eth_nway_reset
-Message-ID: <45698118-3050-d1c5-4e48-c318d0cd164d@gmail.com>
-Date: Wed, 13 Dec 2017 11:39:07 +0800
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Fri, 22 Dec 2017 05:31:50 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/1] soc: renesas: rcar-sysc: Keep wakeup sources active during system suspend
+Date: Fri, 22 Dec 2017 11:30:38 +0100
+Message-Id: <91c719f5ec6671f7b63762d78897af5583dd7693.1513936182.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513936182.git.horms+renesas@verge.net.au>
+References: <cover.1513936182.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Accoring to drivers/net/ethernet/renesas/sh_eth.c, the driver may sleep 
-under a spinlock.
-The function call paths are:
-sh_eth_set_link_ksettings (acquire the spinlock)
-   phy_ethtool_ksettings_set
-     phy_start_aneg
-       phy_start_aneg_priv
-         mutex_lock --> may sleep
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-sh_eth_nway_reset (acquire the spinlock)
-   phy_start_aneg
-     phy_start_aneg_priv
-       mutex_lock --> may sleep
+If an R-Car SYSC slave device is part of the CPG/MSTP or CPG/MSSR Clock
+Domain and to be used as a wakeup source, it must be kept active during
+system suspend.
 
-I do not find a good way to fix them, so I only report.
-These possible bugs are found by my static analysis tool (DSAC) and 
-checked by my code review.
+Currently this is handled in device-specific drivers by explicitly
+increasing the use count of the module clock when the device is
+configured as a wakeup source.  However, the proper way to prevent the
+device from being stopped is to inform this requirement to the genpd
+core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
 
+Note that this will only affect devices configured as wakeup sources.
 
-Thanks,
-Jia-Ju Bai
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/rcar-sysc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 55a47e509e49..52c25a5e2646 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -224,7 +224,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 
+ 	if (!(pd->flags & (PD_CPU | PD_SCU))) {
+ 		/* Enable Clock Domain for I/O devices */
+-		genpd->flags |= GENPD_FLAG_PM_CLK;
++		genpd->flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+ 		if (has_cpg_mstp) {
+ 			genpd->attach_dev = cpg_mstp_attach_dev;
+ 			genpd->detach_dev = cpg_mstp_detach_dev;
+-- 
+2.11.0
