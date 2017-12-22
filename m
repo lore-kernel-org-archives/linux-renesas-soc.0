@@ -1,55 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:46194 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752901AbdLSQCL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752224AbdLVK36 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Dec 2017 11:02:11 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] dt-bindings: pwm: renesas-tpu: Correct SoC part numbers and family names
-Date: Tue, 19 Dec 2017 17:02:07 +0100
-Message-Id: <1513699327-27357-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1513699327-27357-1-git-send-email-geert+renesas@glider.be>
-References: <1513699327-27357-1-git-send-email-geert+renesas@glider.be>
+        Fri, 22 Dec 2017 05:29:58 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] ARM: multi_v7_defconfig: Select PWM_RCAR as module
+Date: Fri, 22 Dec 2017 11:29:40 +0100
+Message-Id: <7c57fbcf1455e6823ac6ce44ab45cc351bd79b42.1513935930.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513935930.git.horms+renesas@verge.net.au>
+References: <cover.1513935930.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R8A73A4 (not R8A77A4) is R-Mobile APE6,
-R8A7740 is R-Mobile (not R-Car) A1.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Enable PWM support for R-Car and friends by default.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-index 641b5b4c648340ee..fb633129d845a893 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-@@ -3,7 +3,7 @@
- Required Properties:
- 
-   - compatible: should be one of the following.
--    - "renesas,tpu-r8a73a4": for R8A77A4 (R-Mobile APE6) compatible PWM controller.
-+    - "renesas,tpu-r8a73a4": for R8A73A4 (R-Mobile APE6) compatible PWM controller.
-     - "renesas,tpu-r8a7740": for R8A7740 (R-Mobile A1) compatible PWM controller.
-     - "renesas,tpu-r8a7790": for R8A7790 (R-Car H2) compatible PWM controller.
-     - "renesas,tpu": for generic R-Car TPU PWM controller.
-@@ -18,7 +18,7 @@ Required Properties:
- Please refer to pwm.txt in this directory for details of the common PWM bindings
- used by client devices.
- 
--Example: R8A7740 (R-Car A1) TPU controller node
-+Example: R8A7740 (R-Mobile A1) TPU controller node
- 
- 	tpu: pwm@e6600000 {
- 		compatible = "renesas,tpu-r8a7740", "renesas,tpu";
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 61509c4b769f..b4c36f99f0fa 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -879,6 +879,7 @@ CONFIG_PWM_ATMEL=m
+ CONFIG_PWM_ATMEL_HLCDC_PWM=m
+ CONFIG_PWM_ATMEL_TCB=m
+ CONFIG_PWM_FSL_FTM=m
++CONFIG_PWM_RCAR=m
+ CONFIG_PWM_RENESAS_TPU=y
+ CONFIG_PWM_ROCKCHIP=m
+ CONFIG_PWM_SAMSUNG=m
 -- 
-2.7.4
+2.11.0
