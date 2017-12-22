@@ -1,109 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:54469 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754078AbdLNWbJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755773AbdLVKbH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 17:31:09 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+        Fri, 22 Dec 2017 05:31:07 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 9/9] ARM: dts: gose: use demuxer for I2C4
-Date: Thu, 14 Dec 2017 23:31:01 +0100
-Message-Id: <20171214223101.16450-10-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
-References: <20171214223101.16450-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 28/37] ARM: dts: r8a7745: Add audio clocks
+Date: Fri, 22 Dec 2017 11:30:06 +0100
+Message-Id: <44da63157d86b5ca5c4dec2b160bdeb71c6bd48e.1513938145.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
+References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
+From: Biju Das <biju.das@bp.renesas.com>
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
+Describe the external audio clocks required by the sound driver.
+Boards that provide audio clocks need to override the clock frequencies.
 
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, corrected board name in subject, fixed aliases, switched
-to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ arch/arm/boot/dts/r8a7745.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 2b330ef71f4c17..c2f6a0fd767527 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -49,7 +49,9 @@
- 		serial0 = &scif0;
- 		serial1 = &scif1;
- 		i2c9 = &gpioi2c2;
-+		i2c10 = &gpioi2c4;
- 		i2c11 = &i2chdmi;
-+		i2c12 = &i2cexio4;
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 2be7485c4efe..6d085f004721 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -35,6 +35,27 @@
+ 		vin1 = &vin1;
  	};
  
- 	chosen {
-@@ -309,6 +311,16 @@
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-+	gpioi2c4: i2c-10 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio7 13 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio7 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
- 	/*
- 	 * A fallback to GPIO is provided for I2C2.
- 	 */
-@@ -416,6 +428,18 @@
- 			pagesize = <16>;
- 		};
- 	};
-+
 +	/*
-+	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
-+	 * A fallback to GPIO is provided.
++	 * The external audio clocks are configured  as 0 Hz fixed
++	 * frequency clocks by default.  Boards that provide audio
++	 * clocks should override them.
 +	 */
-+	i2cexio4: i2c-12 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	audio_clka: audio_clka {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
 +	};
- };
- 
- &du {
-@@ -454,6 +478,11 @@
- 		function = "i2c2";
- 	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
++	audio_clkb: audio_clkb {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clkc: audio_clkc {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
 +	};
 +
- 	du_pins: du {
- 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
- 		function = "du";
-@@ -692,6 +721,11 @@
- 	};
- };
- 
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
- 	pinctrl-names = "default";
+ 	/* External CAN clock */
+ 	can_clk: can {
+ 		compatible = "fixed-clock";
 -- 
 2.11.0
