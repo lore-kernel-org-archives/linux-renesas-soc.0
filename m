@@ -1,78 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:34052 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757640AbdLVKaZ (ORCPT
+        with ESMTP id S1756039AbdLVKbP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:30:25 -0500
+        Fri, 22 Dec 2017 05:31:15 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/37] ARM: dts: r8a7745: Add APMU node and second CPU core
-Date: Fri, 22 Dec 2017 11:29:39 +0100
-Message-Id: <aaca1ff0dbfcb341c453abf160511d3419545431.1513938145.git.horms+renesas@verge.net.au>
+Subject: [PATCH 36/37] ARM: dts: iwg22d-sodimm: Sound DMA support via DVC on DTS
+Date: Fri, 22 Dec 2017 11:30:14 +0100
+Message-Id: <6f41d5e0872e4b55a5352ff79ab2452bff306753.1513938145.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1513938145.git.horms+renesas@verge.net.au>
 References: <cover.1513938145.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Add DT node for the Advanced Power Management Unit (APMU), add the
-second CPU core, and use "renesas,apmu" as "enable-method".
+DMA transfer uses DVC
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+     DMA               DMApp
+[MEM] -> [SRC] -> [DVC] -> [SSIU] -> [SSI]
+
+     DMA               DMApp
+[MEM] <- [DVC] <- [SRC] <- [SSIU] <- [SSI]
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index de13e156f071..0fa78612746f 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -38,6 +38,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index 2cac57c7c44d..a4058f4cfbcd 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -8,6 +8,29 @@
+  * kind, whether express or implied.
+  */
  
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -49,6 +50,15 @@
- 			next-level-cache = <&L2_CA7>;
++/*
++ * SSI-SGTL5000
++ *
++ * This command is required when Playback/Capture
++ *
++ *      amixer set "DVC Out" 100%
++ *      amixer set "DVC In" 100%
++ *
++ * You can use Mute
++ *
++ *      amixer set "DVC Out Mute" on
++ *      amixer set "DVC In Mute" on
++ *
++ * You can use Volume Ramp
++ *
++ *      amixer set "DVC Out Ramp Up Rate"   "0.125 dB/64 steps"
++ *      amixer set "DVC Out Ramp Down Rate" "0.125 dB/512 steps"
++ *      amixer set "DVC Out Ramp" on
++ *      aplay xxx.wav &
++ *      amixer set "DVC Out"  80%  // Volume Down
++ *      amixer set "DVC Out" 100%  // Volume Up
++ */
++
+ /dts-v1/;
+ #include "r8a7745-iwg22m.dtsi"
+ 
+@@ -183,8 +206,8 @@
+ 
+ 	rcar_sound,dai {
+ 		dai0 {
+-			playback = <&ssi3 &src3>;
+-			capture = <&ssi4 &src4>;
++			playback = <&ssi3 &src3 &dvc0>;
++			capture = <&ssi4 &src4 &dvc1>;
  		};
- 
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7745_PD_CA7_CPU1>;
-+			next-level-cache = <&L2_CA7>;
-+		};
-+
- 		L2_CA7: cache-controller-0 {
- 			compatible = "cache";
- 			cache-unified;
-@@ -65,6 +75,12 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		apmu@e6151000 {
-+			compatible = "renesas,r8a7745-apmu", "renesas,apmu";
-+			reg = <0 0xe6151000 0 0x188>;
-+			cpus = <&cpu0 &cpu1>;
-+		};
-+
- 		gic: interrupt-controller@f1001000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+ 	};
+ };
 -- 
 2.11.0
