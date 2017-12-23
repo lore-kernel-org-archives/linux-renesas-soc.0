@@ -1,23 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:44683 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751295AbdLWPR7 (ORCPT
+Received: from mail-ot0-f171.google.com ([74.125.82.171]:40348 "EHLO
+        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750810AbdLWMzo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 23 Dec 2017 10:17:59 -0500
-Received: by mail-io0-f170.google.com with SMTP id w127so27326889iow.11
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 23 Dec 2017 07:17:59 -0800 (PST)
+        Sat, 23 Dec 2017 07:55:44 -0500
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0iu-5Y9j+Qc-no_BUAamYZ7tq=24qSUu4H=vU98YBXCxw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jp-kmuQGnxc-v9QsFxoCRwULhVDeSjHmCGh93wdRPcDA@mail.gmail.com>
 References: <1513353391-30806-1-git-send-email-ulf.hansson@linaro.org>
  <CAJZ5v0hctW_-WR2Gy4tszeXYJJfTRQbLCr_NRhAXao5_XR5NOw@mail.gmail.com>
  <CAPDyKFqa5Lt6jrDQd+V_cE+Bz2ZRJRe95-8bbJgV=LbkGPM0mw@mail.gmail.com>
  <1742152.iLm4rp6jIy@aspire.rjw.lan> <CAPDyKFpO7_GxjcANYPUO3aEp2uTrnioQ3=hsWSzPg_nDM3Sh-w@mail.gmail.com>
- <CAJZ5v0jp-kmuQGnxc-v9QsFxoCRwULhVDeSjHmCGh93wdRPcDA@mail.gmail.com> <CAJZ5v0iu-5Y9j+Qc-no_BUAamYZ7tq=24qSUu4H=vU98YBXCxw@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Sat, 23 Dec 2017 16:17:58 +0100
-Message-ID: <CAPDyKFqKoOuLK2NG+kXthCUSRJnNUf57wCq_eYrkh+-2KTPWhQ@mail.gmail.com>
+ <CAJZ5v0jp-kmuQGnxc-v9QsFxoCRwULhVDeSjHmCGh93wdRPcDA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 23 Dec 2017 13:55:43 +0100
+Message-ID: <CAJZ5v0iu-5Y9j+Qc-no_BUAamYZ7tq=24qSUu4H=vU98YBXCxw@mail.gmail.com>
 Subject: Re: [PATCH 1/3] PM / core: Assign the wakeup_path status flag in __device_prepare()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Linux PM <linux-pm@vger.kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
@@ -30,35 +28,77 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[...]
-
->>>> How many drivers actually do call device_set_wakeup_enable() during suspend?
+On Sat, Dec 23, 2017 at 1:50 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Sat, Dec 23, 2017 at 1:03 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 22 December 2017 at 20:12, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>>> On Thursday, December 21, 2017 11:13:57 AM CET Ulf Hansson wrote:
+>>>> On 21 December 2017 at 02:43, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>>>> > On Fri, Dec 15, 2017 at 4:56 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>>> >> The PM core in the device_prepare() phase, resets the wakeup_path status
+>>>> >> flag to the value of device_may_wakeup(). This means if a ->prepare() or a
+>>>> >> ->suspend() callback for the device would update the device's wakeup
+>>>> >> setting, this doesn't become reflected in the wakeup_path status flag.
+>>>> >>
+>>>> >> In general this isn't a problem, because wakeup settings isn't supposed to
+>>>> >> be changed during those system suspend phases. Nevertheless, there are a
+>>>> >> cases not conforming to that behaviour, as device_set_wakeup_enable() is
+>>>> >> indeed called from ->suspend() callbacks.
+>>>> >
+>>>> > And why is this regarded as correct?
+>>>>
+>>>> I am not saying that this behavior is correct. However, I am trying to
+>>>> improve the situation, which doesn't hurt or does it?
 >>>
->>> There are some ethernet/wifi drivers, although it hard to say how many
->>> without a more thorough investigation.
->>>
->>> Besides those I found these more obvious ones:
->>> drivers/ssb/pcihost_wrapper.c
->>> drivers/staging/rtlwifi/core.c
->>> drivers/tty/serial/atmel_serial.c
->>> drivers/usb/core/hcd-pci.c
+>>> Adding a workaround for them kind of encourages new code to do the same
+>>> thing, which actually may really hurt.  So I assume that these call sites are
+>>> all legacy and that's why you don't want to touch them for now, but in that
+>>> case the commit message should make it very clear that this is about legacy
+>>> only and new code should not call device_set_wakeup_enable() during suspend.
 >>
->> Ugh.  I need to look at the last one at least ...
+>> Yeah, makes sense. Let me clarify that!
+>>
+>>>
+>>> [Something should be printed to the log if wakeup source objects
+>>> are created while system suspend is in progress I guess or similar.]
+>>
+>> Yes, good idea. Let me cook a patch for that as well.
+>>
+>>>
+>>>> More importantly, the next patch, which is about the wakeup path,
+>>>> depends on this.
+>>>
+>>> Honestly, this sounds like "We have this change we really really would like to
+>>> make, but there's incorrect code getting in the way, so let's paper over it
+>>> and be done."  Not very nice. :-/
+>>
+>> Yeah it sounds a bit weird, I agree.
+>>
+>> However, maybe if I update the changelog and fold in a patch printing
+>> an error in case the APIs is being abused, that would sort out the
+>> confusion?
 >
-> The drivers/usb/core/hcd-pci.c instance is actually valid, because it
-> calls device_set_wakeup_enable() to remove the wakeup source object in
-> case the device is dead.  Moreover, it does that in the "noirq" phase
-> which is not covered by your patch anyway.
+> That should be sufficient IMO.
+>
+>> Another option is simply to squash patch 1 and patch2, what do you prefer?
+>>
+>>>
+>>> How many drivers actually do call device_set_wakeup_enable() during suspend?
+>>
+>> There are some ethernet/wifi drivers, although it hard to say how many
+>> without a more thorough investigation.
+>>
+>> Besides those I found these more obvious ones:
+>> drivers/ssb/pcihost_wrapper.c
+>> drivers/staging/rtlwifi/core.c
+>> drivers/tty/serial/atmel_serial.c
+>> drivers/usb/core/hcd-pci.c
+>
+> Ugh.  I need to look at the last one at least ...
 
-Right, but this puzzles me a bit.
+The drivers/usb/core/hcd-pci.c instance is actually valid, because it
+calls device_set_wakeup_enable() to remove the wakeup source object in
+case the device is dead.  Moreover, it does that in the "noirq" phase
+which is not covered by your patch anyway.
 
-Could you explain what you mean by valid here? Is it okay to call
-device_set_wakeup_enable() in the suspend phase after all? No?
-
-My very vague idea at this point is, if we find cases where
-device_set_wakeup_enable() makes sense to call during system suspend,
-probably those could/should be replaces by using the "wakeup_path"
-flag instead, somehow.
-
-Kind regards
-Uffe
+Thanks,
+Rafael
