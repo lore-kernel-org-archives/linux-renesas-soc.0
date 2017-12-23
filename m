@@ -1,77 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:29143 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751761AbdLNK4a (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:40220 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751775AbdLWP2q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Dec 2017 05:56:30 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/6] dt-bindings: pwm: rcar: Document r8a774[35] PWM bindings
-Date: Thu, 14 Dec 2017 10:56:12 +0000
-Message-Id: <1513248976-26700-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Sat, 23 Dec 2017 10:28:46 -0500
+Received: by mail-lf0-f54.google.com with SMTP id u84so14369997lff.7
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 23 Dec 2017 07:28:46 -0800 (PST)
+Subject: Re: [PATCH] drm: rcar-du: lvds: fix LVDCR1 for R-Car gen3
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20171221202343.596842084@cogentembedded.com>
+ <89065057.2qEGqgNSnG@avalon>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <bad0559c-a664-2b93-5457-06d20bf43725@cogentembedded.com>
+Date: Sat, 23 Dec 2017 18:28:39 +0300
+MIME-Version: 1.0
+In-Reply-To: <89065057.2qEGqgNSnG@avalon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds compatible strings specific to r8a774[35], no driver
-change is needed as the fallback compatible string will activate the
-right code. Also, this patch replaces the example with a DT snippet used
-for adding PWM0 support to an r8a7743 based platform.
+Hello!
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-Dear All,
+On 12/23/2017 04:09 PM, Laurent Pinchart wrote:
 
-the reason for replacing the example with one of a different SoC is that
-the new example refers to recent code from a real use case. I hope that's ok.
+> On Thursday, 21 December 2017 22:23:30 EET Sergei Shtylyov wrote:
+>> The LVDCR1 register for the R-Car gen3 SoCs was documented as having the
+>> layout different from the gen2 SoCs in  the early R-Car gen3 manuals but
+>> since v0.52 the LVDCR1 layout is described as being the same as on the gen2
+>> SoCs; the old CHn control values are said to be prohibited now (and there
+>> seems to be no valid output signal when they are used).
+> 
+> Could it be that the "Gen3" values are specific to the H3 ES1.x ? I've got the
 
-Thanks,
-Fabrizio
+    I don't know. All I know is that the LVDCR1 description was changed in 
+v.52 of the gen3 manual (the 1st version that documented R-Car V3M).
 
- Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+> LVDS output working on a Salvator-X H3 board with the existing code, although
+> I'm not sure at the moment whether that was on ES1.x or ES2.0. I can check
+> that when I'll get access to the hardware back in a week.
+> 
+> On which platform have you tested this patch ?
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-index 74c1180..f3bba59 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-@@ -2,6 +2,8 @@
- 
- Required Properties:
- - compatible: should be "renesas,pwm-rcar" and one of the following.
-+ - "renesas,pwm-r8a7743": for RZ/G1M
-+ - "renesas,pwm-r8a7745": for RZ/G1E
-  - "renesas,pwm-r8a7778": for R-Car M1A
-  - "renesas,pwm-r8a7779": for R-Car H1
-  - "renesas,pwm-r8a7790": for R-Car H2
-@@ -17,13 +19,15 @@ Required Properties:
- - pinctrl-0: phandle, referring to a default pin configuration node.
- - pinctrl-names: Set to "default".
- 
--Example: R8A7790 (R-Car H2) PWM Timer node
-+Example: R8A7743 (RZ/G1M) PWM Timer node
- 
- 	pwm0: pwm@e6e30000 {
--		compatible = "renesas,pwm-r8a7790", "renesas,pwm-rcar";
-+		compatible = "renesas,pwm-r8a7743", "renesas,pwm-rcar";
- 		reg = <0 0xe6e30000 0 0x8>;
-+		clocks = <&cpg CPG_MOD 523>;
-+		power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+		resets = <&cpg 523>;
- 		#pwm-cells = <2>;
--		clocks = <&mstp5_clks R8A7790_CLK_PWM>;
- 		pinctrl-0 = <&pwm0_pins>;
- 		pinctrl-names = "default";
- 	};
--- 
-2.7.4
+    R-Car V3M (R8A77970), V3M Starter Kit board.
+
+>> Fixes: 6bc2e15cf21c ("drm: rcar-du: lvds: Add R-Car Gen3 support")
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[...]
+
+MBR, Sergei
