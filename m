@@ -1,74 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:48095 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752758AbdLUPTK (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38626 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750794AbdL0Hsn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 10:19:10 -0500
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-To: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
-        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 1/2] arm64: dts: renesas: salvator-x: Remove renesas,no-ether-link property
-Date: Thu, 21 Dec 2017 17:18:58 +0200
-Message-ID: <1513869539-18803-2-git-send-email-vladimir_zapolskiy@mentor.com>
-In-Reply-To: <1513869539-18803-1-git-send-email-vladimir_zapolskiy@mentor.com>
-References: <1513869539-18803-1-git-send-email-vladimir_zapolskiy@mentor.com>
+        Wed, 27 Dec 2017 02:48:43 -0500
+Received: by mail-lf0-f68.google.com with SMTP id w196so23578735lff.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Dec 2017 23:48:43 -0800 (PST)
+Date: Wed, 27 Dec 2017 08:48:39 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH V2] gpio: of: make example syntactically correct
+Message-ID: <20171227074839.GC15612@bigcity.dyn.berto.se>
+References: <20171223200641.3709-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171223200641.3709-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
+Hi Wolfram,
 
-The present change is a bug fix for AVB link iteratively up/down.
+Thanks for your patch.
 
-Steps to reproduce:
-- start AVB TX stream (Using aplay via MSE),
-- disconnect+reconnect the eth cable,
-- after a reconnection the eth connection goes iteratively up/down
-  without user interaction,
-- this may heal after some seconds or even stay for minutes.
+On 2017-12-23 21:06:41 +0100, Wolfram Sang wrote:
+> The ';' was missing. And cosmetic: there was a space too much.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-As the documentation specifies, the "renesas,no-ether-link" option
-should be used when a board does not provide a proper AVB_LINK signal.
-There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
-and ULCB starter kits since the AVB_LINK is correctly handled by HW.
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Choosing to keep or remove the "renesas,no-ether-link" option will
-have impact on the code flow in the following ways:
-- keeping this option enabled may lead to unexpected behavior since
-  the RX & TX are enabled/disabled directly from adjust_link function
-  without any HW interrogation,
-- removing this option, the RX & TX will only be enabled/disabled after
-  HW interrogation. The HW check is made through the LMON pin in PSR
-  register which specifies AVB_LINK signal value (0 - at low level;
-  1 - at high level).
+> ---
+> 
+> Changes since V1:
+> * removed extra spaces (Thanks Sergei!)
+> 
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+> index 802402f6cc5d89..bc5fe95d33fff0 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -33,12 +33,12 @@ The following example could be used to describe GPIO pins used as device enable
+>  and bit-banged data signals:
+>  
+>  	gpio1: gpio1 {
+> -		gpio-controller
+> -		 #gpio-cells = <2>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+>  	};
+>  	gpio2: gpio2 {
+> -		gpio-controller
+> -		 #gpio-cells = <1>;
+> +		gpio-controller;
+> +		#gpio-cells = <1>;
+>  	};
+>  	[...]
+>  
+> -- 
+> 2.11.0
+> 
 
-In conclusion, the present change is also a safety improvement because
-it removes the "renesas,no-ether-link" option leading to a proper way
-of detecting the link state based on HW interrogation and not on
-software heuristic.
-
-Fixes: d25e8ff0d5aa ("arm64: dts: renesas: Extract common Salvator-X board support")
-Signed-off-by: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 4e800e933944..c3095bd575d7 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -255,7 +255,6 @@
- &avb {
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
--	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
- 	status = "okay";
- 
 -- 
-2.8.1
+Regards,
+Niklas S�derlund
