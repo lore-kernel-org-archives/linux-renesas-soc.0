@@ -1,26 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34109 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbdLaSop (ORCPT
+Received: from mga04.intel.com ([192.55.52.120]:17077 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752493AbdL0P2q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 31 Dec 2017 13:44:45 -0500
-Received: by mail-lf0-f68.google.com with SMTP id h140so1533476lfg.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 31 Dec 2017 10:44:44 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171231184134.684953583@cogentembedded.com>
-Date: Sun, 31 Dec 2017 21:41:34 +0300
-To: netdev@vger.kernel.org
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/2] Kill redundant checks in the Renesas Ethernet drivers
+        Wed, 27 Dec 2017 10:28:46 -0500
+Date: Wed, 27 Dec 2017 17:28:39 +0200
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Benoit Parrot <bparrot@ti.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH/RFC v2 02/15] rcar-vin: use pad as the starting point for
+ a pipeline
+Message-ID: <20171227152839.ys5dfw65mz5iyzhk@kekkonen.localdomain>
+References: <20171214190835.7672-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171214190835.7672-3-niklas.soderlund+renesas@ragnatech.se>
+ <20171215115402.uvvjkn3ltnxweqy6@paasikivi.fi.intel.com>
+ <20171218230856.GF32148@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171218230856.GF32148@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Tue, Dec 19, 2017 at 12:08:56AM +0100, Niklas S�derlund wrote:
+> Hej Sakari,
+> 
+> Tack f�r dina kommentarer.
+> 
+> On 2017-12-15 13:54:02 +0200, Sakari Ailus wrote:
+> > On Thu, Dec 14, 2017 at 08:08:22PM +0100, Niklas S�derlund wrote:
+> > > The pipeline will be moved from the entity to the pads; reflect this in
+> > > the media pipeline function API.
+> > 
+> > I'll merge this to "media: entity: Use pad as the starting point for a
+> > pipeline" if you're fine with that.
+> 
+> I'm fine with that, the issue is that the rcar-vin Gen3 driver is not 
+> yet upstream :-( If it makes it upstream before the work in your vc 
+> branch feel free to squash this in. Until then I fear I need to keep 
+> carry this in this series.
 
-Here's a set of 2 patches against DaveM's 'net-next.git' repo removing
-redundant checks in the driver probe() methods.
+Oops, I thought it already was there. Anyway, no changes then.
 
-[1/2] ravb: kill redundant check in the probe() method
-[2/2] sh_eth: kill redundant check in the probe() method
-
-MBR, Sergei
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
