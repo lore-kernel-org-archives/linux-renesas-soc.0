@@ -1,113 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37313 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755587AbdL2LhY (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:42977 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbdL1WUK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Dec 2017 06:37:24 -0500
-Received: by mail-lf0-f68.google.com with SMTP id f3so11720752lfe.4
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Dec 2017 03:37:23 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thu, 28 Dec 2017 17:20:10 -0500
+MIME-Version: 1.0
+In-Reply-To: <8e88fcd7-655d-fad6-7838-4e84cdfca7c9@mentor.com>
+References: <1514122643-28838-1-git-send-email-ykaneko0929@gmail.com> <8e88fcd7-655d-fad6-7838-4e84cdfca7c9@mentor.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Date: Fri, 29 Dec 2017 07:20:09 +0900
+Message-ID: <CAH1o70JGD_144k59U7KcMUYY7ie+a0mL-8_wAXtF=aEFK7mNvw@mail.gmail.com>
+Subject: Re: [PATCH/RFT v2] gpio: gpio-rcar: Support S2RAM
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
         Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 4/4] PM / core: Print warn if device gets enabled as wakeup source during sleep
-Date: Fri, 29 Dec 2017 12:37:03 +0100
-Message-Id: <1514547423-18965-5-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1514547423-18965-1-git-send-email-ulf.hansson@linaro.org>
-References: <1514547423-18965-1-git-send-email-ulf.hansson@linaro.org>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In general, wakeup settings are not supposed to be changed during any of
-the system wide PM phases. The reason is simply that it would break
-guarantees provided by the PM core, to properly act on active wakeup
-sources.
+Hi Vladimir,
 
-However, there are exceptions to when, in particular, disabling a device as
-wakeup source makes sense. For example, in cases when a driver realizes
-that its device is dead during system suspend. For these scenarios, we
-don't need to care about acting on the wakeup source correctly, because a
-dead device shouldn't deliver wakeup signals.
+Thank you for your review.
+I will re-spin this patch.
 
-To this reasoning and to help users to properly manage wakeup settings,
-let's print a warning in cases someone calls device_wakeup_enable() during
-system sleep.
+Thanks,
+Kaneko
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/base/power/main.c   | 4 ++++
- drivers/base/power/wakeup.c | 4 ++++
- include/linux/pm.h          | 1 +
- 3 files changed, 9 insertions(+)
-
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index 1327726..6b0d312 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1030,6 +1030,8 @@ static void device_complete(struct device *dev, pm_message_t state)
- 		callback(dev);
- 	}
- 
-+	dev->power.may_set_wakeup = dev->power.can_wakeup;
-+
- 	device_unlock(dev);
- 
- 	pm_runtime_put(dev);
-@@ -1747,6 +1749,7 @@ static int device_prepare(struct device *dev, pm_message_t state)
- 
- 	device_lock(dev);
- 
-+	dev->power.may_set_wakeup = false;
- 	dev->power.wakeup_path = false;
- 
- 	if (dev->power.no_pm_callbacks) {
-@@ -1775,6 +1778,7 @@ static int device_prepare(struct device *dev, pm_message_t state)
- 	if (ret < 0) {
- 		suspend_report_result(callback, ret);
- 		pm_runtime_put(dev);
-+		dev->power.may_set_wakeup = dev->power.can_wakeup;
- 		return ret;
- 	}
- 	/*
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index cb72965..5445bea 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -268,6 +268,9 @@ int device_wakeup_enable(struct device *dev)
- 	if (!dev || !dev->power.can_wakeup)
- 		return -EINVAL;
- 
-+	if (!dev->power.may_set_wakeup)
-+		dev_warn(dev, "don't enable as wakup source during sleep!\n");
-+
- 	ws = wakeup_source_register(dev_name(dev));
- 	if (!ws)
- 		return -ENOMEM;
-@@ -413,6 +416,7 @@ void device_set_wakeup_capable(struct device *dev, bool capable)
- 		return;
- 
- 	dev->power.can_wakeup = capable;
-+	dev->power.may_set_wakeup = capable;
- 	if (device_is_registered(dev) && !list_empty(&dev->power.entry)) {
- 		if (capable) {
- 			int ret = wakeup_sysfs_add(dev);
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index ebc6ef8..106fb15 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -606,6 +606,7 @@ struct dev_pm_info {
- 	struct list_head	entry;
- 	struct completion	completion;
- 	struct wakeup_source	*wakeup;
-+	bool			may_set_wakeup:1;
- 	bool			wakeup_path:1;
- 	bool			syscore:1;
- 	bool			no_pm_callbacks:1;	/* Owned by the PM core */
--- 
-2.7.4
+2017-12-25 17:35 GMT+09:00 Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>:
+> On 12/24/2017 03:37 PM, Yoshihiro Kaneko wrote:
+>> From: Hien Dang <hien.dang.eb@renesas.com>
+>>
+>> This patch adds an implementation that saves and restores the state of
+>> GPIO configuration on suspend and resume.
+>>
+>> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> [Modify structure of the bank info to simplify a saving registers]
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> ---
+>
+> [snip]
+>
+>> +static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops,
+>> +             gpio_rcar_suspend, gpio_rcar_resume);
+>> +#define DEV_PM_OPS (&gpio_rcar_pm_ops)
+>> +#else
+>> +#define DEV_PM_OPS NULL
+>> +#endif /* CONFIG_PM_SLEEP*/
+>> +
+>>  static int gpio_rcar_probe(struct platform_device *pdev)
+>>  {
+>>       struct gpio_rcar_priv *p;
+>> @@ -536,6 +604,7 @@ static int gpio_rcar_remove(struct platform_device *pdev)
+>>       .remove         = gpio_rcar_remove,
+>>       .driver         = {
+>>               .name   = "gpio_rcar",
+>> +             .pm     = DEV_PM_OPS,
+>>               .of_match_table = of_match_ptr(gpio_rcar_of_table),
+>>       }
+>>  };
+>>
+>
+> You can safely follow the next simpler pattern (add pm functions after
+> gpio_rcar_remove() function and remove DEV_PM_OPS macro):
+>
+> #ifdef CONFIG_PM_SLEEP
+> static int gpio_rcar_suspend(struct device *dev)
+> {
+>         ...
+> }
+>
+> static int gpio_rcar_resume(struct device *dev)
+> {
+>         ...
+> }
+> #endif
+>
+> static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops, gpio_rcar_suspend, gpio_rcar_resume);
+>
+> static struct platform_driver gpio_rcar_device_driver = {
+>         .probe          = gpio_rcar_probe,
+>         .remove         = gpio_rcar_remove,
+>         .driver         = {
+>                 .name   = "gpio_rcar",
+>                 .pm     = &gpio_rcar_pm_ops,
+>                 .of_match_table = of_match_ptr(gpio_rcar_of_table),
+>         }
+> };
+>
+> --
+> With best wishes,
+> Vladimir
