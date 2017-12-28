@@ -1,76 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37261 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752812AbdLYVVc (ORCPT
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:60917 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932071AbdL1OBu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Dec 2017 16:21:32 -0500
-Received: by mail-lf0-f68.google.com with SMTP id f3so2025359lfe.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Dec 2017 13:21:31 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20171225212127.024131449@cogentembedded.com>
-Date: Tue, 26 Dec 2017 00:21:17 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] vsp1: fix video output on R8A77970
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=vsp1-fix-video-output-on-R8A77970.patch
+        Thu, 28 Dec 2017 09:01:50 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/9] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
+Date: Thu, 28 Dec 2017 15:01:16 +0100
+Message-Id: <1514469681-15602-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Laurent has added support for the VSP2-D found on R-Car V3M (R8A77970) but
-the video output that VSP2-D sends to DU has a greenish garbage-like line
-repeated every 8 or so screen rows.  It turns out that V3M has a teeny LIF
-register (at least it's documented!) that you need to set to some kind of
-a magic value for the LIF to work correctly...
+Add Capture Engine Unit (CEU) node to device tree.
 
-Based on the original (and large) patch by  Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
-
-Fixes: d455b45f8393 ("v4l: vsp1: Add support for new VSP2-BS, VSP2-DL and VSP2-D instances")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
-This patch is against the 'media_tree.git' repo's 'master' branch.
+ arch/arm/boot/dts/r7s72100.dtsi | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
- drivers/media/platform/vsp1/vsp1_lif.c  |    8 ++++++++
- drivers/media/platform/vsp1/vsp1_regs.h |    5 +++++
- 2 files changed, 13 insertions(+)
-
-Index: media_tree/drivers/media/platform/vsp1/vsp1_lif.c
-===================================================================
---- media_tree.orig/drivers/media/platform/vsp1/vsp1_lif.c
-+++ media_tree/drivers/media/platform/vsp1/vsp1_lif.c
-@@ -155,6 +155,14 @@ static void lif_configure(struct vsp1_en
- 			(obth << VI6_LIF_CTRL_OBTH_SHIFT) |
- 			(format->code == 0 ? VI6_LIF_CTRL_CFMT : 0) |
- 			VI6_LIF_CTRL_REQSEL | VI6_LIF_CTRL_LIF_EN);
-+
-+	if ((entity->vsp1->version &
-+	    (VI6_IP_VERSION_MODEL_MASK | VI6_IP_VERSION_SOC_MASK)) ==
-+	    (VI6_IP_VERSION_MODEL_VSPD_V3 | VI6_IP_VERSION_SOC_V3M)) {
-+		vsp1_lif_write(lif, dl, VI6_LIF_LBA,
-+			       VI6_LIF_LBA_LBA0 |
-+			       (1536 << VI6_LIF_LBA_LBA1_SHIFT));
-+	}
- }
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index ab9645a..b09b032 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -135,9 +135,9 @@
+ 			#clock-cells = <1>;
+ 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0xfcfe042c 4>;
+-			clocks = <&p0_clk>;
+-			clock-indices = <R7S72100_CLK_RTC>;
+-			clock-output-names = "rtc";
++			clocks = <&b_clk>, <&p0_clk>;
++			clock-indices = <R7S72100_CLK_CEU R7S72100_CLK_RTC>;
++			clock-output-names = "ceu", "rtc";
+ 		};
  
- static const struct vsp1_entity_operations lif_entity_ops = {
-Index: media_tree/drivers/media/platform/vsp1/vsp1_regs.h
-===================================================================
---- media_tree.orig/drivers/media/platform/vsp1/vsp1_regs.h
-+++ media_tree/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -693,6 +693,11 @@
- #define VI6_LIF_CSBTH_LBTH_MASK		(0x7ff << 0)
- #define VI6_LIF_CSBTH_LBTH_SHIFT	0
- 
-+#define VI6_LIF_LBA			0x3b0c
-+#define VI6_LIF_LBA_LBA0		(1 << 31)
-+#define VI6_LIF_LBA_LBA1_MASK		(0xfff << 16)
-+#define VI6_LIF_LBA_LBA1_SHIFT		16
+ 		mstp7_clks: mstp7_clks@fcfe0430 {
+@@ -667,4 +667,13 @@
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 +
- /* -----------------------------------------------------------------------------
-  * Security Control Registers
-  */
++	ceu: ceu@e8210000 {
++		reg = <0xe8210000 0x209c>;
++		compatible = "renesas,r7s72100-ceu";
++		interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp6_clks R7S72100_CLK_CEU>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
+ };
+-- 
+2.7.4
