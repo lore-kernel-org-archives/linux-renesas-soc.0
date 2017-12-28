@@ -1,160 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33247 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750860AbdL2Nb5 (ORCPT
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:50744 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbdL1OBg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Dec 2017 08:31:57 -0500
-Received: by mail-lf0-f68.google.com with SMTP id j143so2880993lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Dec 2017 05:31:56 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Thu, 28 Dec 2017 09:01:36 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] irqchip/renesas-intc-irqpin: Use WAKEUP_PATH driver PM flag
-Date: Fri, 29 Dec 2017 14:31:42 +0100
-Message-Id: <1514554304-18989-2-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
-References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH v2 0/9] Renesas Capture Engine Unit (CEU) V4L2 driver
+Date: Thu, 28 Dec 2017 15:01:12 +0100
+Message-Id: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello,
+  second round for Renesas CEU driver.
 
-Since commit 705bc96c2c15313c ("irqchip: renesas-intc-irqpin: Add minimal
-runtime PM support"), when an IRQ is used for wakeup, the INTC block's
-module clock (if exists) is manually kept running during system suspend, to
-make sure the device stays active.
+I have closed review comments received on v1 and tested again on RZ and SH4
+platforms to capture images in all available output formats (NV16/61, NV12/21
+and YUYV).
 
-However, this explicit clock handling is merely a workaround for a failure
-to properly communicate wakeup information to the PM core. Instead, set the
-WAKEUP_PATH driver PM flag to indicate that the device is part of the
-wakeup path, which further also enables middle-layers and PM domains (like
-genpd) to act on this.
+The patch is now based on v4.15-rc4, with a few patches on top to help testing
+on Migo-R and GR-Peach platforms. A base tag is available at:
+git://jmondi.org/linux tag:v4.15-rc4-ceu-v2-base for the interested ones.
 
-In case the device is attached to genpd and depending on if it has an
-active wakeup configuration, genpd will keep the device active (the clock
-running) during system suspend when needed. This enables us to remove all
-explicit clock handling code from the driver, so let's do that as well.
+As per v1, this patch series aims to add a modern CEU driver to replace the
+soc_camera-based sh_mobile_ceu_camera one, and port a first test platform
+(Migo-R) to use the new driver. Other SH4 based boards are currently using the
+old ceu driver in mainline, once this patch gets in we can port those
+platforms to use the new driver and start removing soc_camera completely.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[Ulf: Converted to use the WAKEUP_PATH driver PM flag]
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/irqchip/irq-renesas-intc-irqpin.c | 42 +++++++++++--------------------
- 1 file changed, 15 insertions(+), 27 deletions(-)
+As per v1, I have not removed any soc_camera-based code in this series and I
+won't until we haven't ported all platforms to use the new driver.
 
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
-index 06f29cf..bfc2c5c 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -17,7 +17,6 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
- 
--#include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -78,16 +77,14 @@ struct intc_irqpin_priv {
- 	struct platform_device *pdev;
- 	struct irq_chip irq_chip;
- 	struct irq_domain *irq_domain;
--	struct clk *clk;
- 	unsigned shared_irqs:1;
--	unsigned needs_clk:1;
-+	unsigned wakeup_path:1;
- 	u8 shared_irq_mask;
- };
- 
- struct intc_irqpin_config {
- 	unsigned int irlm_bit;
- 	unsigned needs_irlm:1;
--	unsigned needs_clk:1;
- };
- 
- static unsigned long intc_irqpin_read32(void __iomem *iomem)
-@@ -287,15 +284,7 @@ static int intc_irqpin_irq_set_wake(struct irq_data *d, unsigned int on)
- 	int hw_irq = irqd_to_hwirq(d);
- 
- 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
--
--	if (!p->clk)
--		return 0;
--
--	if (on)
--		clk_enable(p->clk);
--	else
--		clk_disable(p->clk);
--
-+	p->wakeup_path = on;
- 	return 0;
- }
- 
-@@ -365,12 +354,10 @@ static const struct irq_domain_ops intc_irqpin_irq_domain_ops = {
- static const struct intc_irqpin_config intc_irqpin_irlm_r8a777x = {
- 	.irlm_bit = 23, /* ICR0.IRLM0 */
- 	.needs_irlm = 1,
--	.needs_clk = 0,
- };
- 
- static const struct intc_irqpin_config intc_irqpin_rmobile = {
- 	.needs_irlm = 0,
--	.needs_clk = 1,
- };
- 
- static const struct of_device_id intc_irqpin_dt_ids[] = {
-@@ -422,18 +409,6 @@ static int intc_irqpin_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, p);
- 
- 	config = of_device_get_match_data(dev);
--	if (config)
--		p->needs_clk = config->needs_clk;
--
--	p->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(p->clk)) {
--		if (p->needs_clk) {
--			dev_err(dev, "unable to get clock\n");
--			ret = PTR_ERR(p->clk);
--			goto err0;
--		}
--		p->clk = NULL;
--	}
- 
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
-@@ -602,12 +577,25 @@ static int intc_irqpin_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int intc_irqpin_suspend(struct device *dev)
-+{
-+	struct intc_irqpin_priv *p = dev_get_drvdata(dev);
-+
-+	dev_pm_set_driver_flags(dev, p->wakeup_path ? DPM_FLAG_WAKEUP_PATH : 0);
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(intc_irqpin_pm_ops, intc_irqpin_suspend, NULL);
-+
- static struct platform_driver intc_irqpin_device_driver = {
- 	.probe		= intc_irqpin_probe,
- 	.remove		= intc_irqpin_remove,
- 	.driver		= {
- 		.name	= "renesas_intc_irqpin",
- 		.of_match_table = intc_irqpin_dt_ids,
-+		.pm	= &intc_irqpin_pm_ops,
- 	}
- };
- 
--- 
+Quite a long change log:
+
+v1->v2
+ - DT
+ -- Addressed Geert's comments and added clocks for CEU to mstp6 clock source
+ -- Specified supported generic video iterfaces properties in dt-bindings and
+    simplified example
+
+ - CEU driver
+ -- Re-worked interrupt handler, interrupt management, reset(*) and capture
+    start operation
+ -- Re-worked querycap/enum_input/enum_frameintervals to fix some
+    v4l2_compliance failures
+ -- Removed soc_camera legacy operations g/s_mbus_format
+ -- Update to new notifier implementation
+ -- Fixed several comments from Hans, Laurent and Sakari
+
+ - Migo-R
+ -- Register clocks and gpios for sensor drivers in Migo-R setup
+ -- Updated sensors (tw9910 and ov772x) drivers headers and drivers to close
+    remarks from Hans and Laurent:
+ --- Removed platform callbacks and handle clocks and gpios from sensor drivers
+ --- Remove g/s_mbus_config operations
+
+Thanks
+   j
+
+[*]: Laurent, I still haven't measured reset latencies during capture operations
+     so I'm still giving reset function a hundred cycles as upper limit, even if
+     I have made sure a single loop is enough during normal operations to
+     reset the interface properly.
+
+Jacopo Mondi (9):
+  dt-bindings: media: Add Renesas CEU bindings
+  include: media: Add Renesas CEU driver interface
+  v4l: platform: Add Renesas CEU driver
+  ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
+  arch: sh: migor: Use new renesas-ceu camera driver
+  v4l: i2c: Copy ov772x soc_camera sensor driver
+  media: i2c: ov772x: Remove soc_camera dependencies
+  v4l: i2c: Copy tw9910 soc_camera sensor driver
+  media: i2c: tw9910: Remove soc_camera dependencies
+
+ .../devicetree/bindings/media/renesas,ceu.txt      |   85 +
+ arch/arm/boot/dts/r7s72100.dtsi                    |   15 +-
+ arch/sh/boards/mach-migor/setup.c                  |  213 ++-
+ arch/sh/kernel/cpu/sh4a/clock-sh7722.c             |    2 +-
+ drivers/media/i2c/Kconfig                          |   20 +
+ drivers/media/i2c/Makefile                         |    2 +
+ drivers/media/i2c/ov772x.c                         | 1179 ++++++++++++++
+ drivers/media/i2c/tw9910.c                         | 1035 ++++++++++++
+ drivers/media/platform/Kconfig                     |    9 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/renesas-ceu.c               | 1661 ++++++++++++++++++++
+ include/media/drv-intf/renesas-ceu.h               |   20 +
+ include/media/i2c/ov772x.h                         |    8 +-
+ include/media/i2c/tw9910.h                         |    9 +
+ 14 files changed, 4128 insertions(+), 131 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
+ create mode 100644 drivers/media/i2c/ov772x.c
+ create mode 100644 drivers/media/i2c/tw9910.c
+ create mode 100644 drivers/media/platform/renesas-ceu.c
+ create mode 100644 include/media/drv-intf/renesas-ceu.h
+
+--
 2.7.4
