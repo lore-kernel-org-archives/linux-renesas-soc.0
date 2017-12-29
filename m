@@ -1,277 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34568 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750915AbdLaLXb (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34805 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755563AbdL2LhT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 31 Dec 2017 06:23:31 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 1/9] ARM: dts: lager: use demuxer for IIC2/I2C2
-Date: Sun, 31 Dec 2017 12:23:12 +0100
-Message-Id: <20171231112320.3461-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
-References: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
+        Fri, 29 Dec 2017 06:37:19 -0500
+Received: by mail-lf0-f52.google.com with SMTP id y78so42222257lfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Dec 2017 03:37:18 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 0/4] PM / core: Extend behaviour for wakeup paths
+Date: Fri, 29 Dec 2017 12:36:59 +0100
+Message-Id: <1514547423-18965-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C slaves.
+Changes in v2:
+	- Added a new patch at the end to warn about users calling
+	device_wakeup_enable() during any system wide PM phases, suggested by
+	Rafael.
+	- No other changes in the code, but only improved change logs, according
+	to comments from Rafael.
 
-Based on work by Wolfram Sang.
+Notes for v2:
+	- I am working on a new version of Geert series[2], as to give the
+	complete picture of how the new DPM_FLAG_WAKEUP_PATH can be used.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, removed typo in comment, fixed aliases, switched to
-named GPIOS, sort SCL pins first]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 197 +++++++++++++++++++++---------------
- 1 file changed, 116 insertions(+), 81 deletions(-)
+The generic problem this series intends to solve, is that for some PM domains,
+especially genpd, the current information in the dev->power.wakeup_path, is not
+sufficient for a PM domain to fully understand how to treat devices in the
+wakeup path during system suspend.
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index f2ea632381e7d1..e4050dae7e8e33 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -51,8 +51,10 @@
- 		serial0 = &scif0;
- 		serial1 = &scifa1;
- 		i2c8 = &gpioi2c1;
-+		i2c9 = &gpioi2c2;
- 		i2c10 = &i2cexio0;
- 		i2c11 = &i2cexio1;
-+		i2c12 = &i2chdmi;
- 	};
- 
- 	chosen {
-@@ -272,8 +274,18 @@
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
- 		status = "disabled";
--		sda-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		scl-gpios = <&gpio1 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	gpioi2c2: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio5 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio5 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-@@ -308,6 +320,96 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
-+
-+        /*
-+         * IIC2 and I2C2 may be switched using pinmux.
-+         * A fallback to GPIO is also provided.
-+         */
-+	i2chdmi: i2c-12 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&iic2>, <&i2c2>, <&gpioi2c2>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin1>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin1ep0>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio1>;
-+			interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		hdmi-in@4c {
-+			compatible = "adi,adv7612";
-+			reg = <0x4c>;
-+			interrupt-parent = <&gpio1>;
-+			interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+			default-input = <0>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7612_in: endpoint {
-+						remote-endpoint = <&hdmi_con_in>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					adv7612_out: endpoint {
-+						remote-endpoint = <&vin0ep2>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &du {
-@@ -437,6 +539,11 @@
- 		function = "iic1";
- 	};
- 
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2";
-+		function = "i2c2";
-+	};
-+
- 	iic2_pins: iic2 {
- 		groups = "iic2";
- 		function = "iic2";
-@@ -643,90 +750,18 @@
- 	pinctrl-names = "i2c-exio1";
- };
- 
--&iic2	{
--	status = "okay";
--	pinctrl-0 = <&iic2_pins>;
--	pinctrl-names = "default";
-+&i2c2	{
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "i2c-hdmi";
- 
- 	clock-frequency = <100000>;
-+};
- 
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin1>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin1ep0>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_lvds0>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con_out>;
--				};
--			};
--		};
--	};
--
--	hdmi-in@4c {
--		compatible = "adi,adv7612";
--		reg = <0x4c>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
--		default-input = <0>;
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7612_in: endpoint {
--					remote-endpoint = <&hdmi_con_in>;
--				};
--			};
-+&iic2	{
-+	pinctrl-0 = <&iic2_pins>;
-+	pinctrl-names = "i2c-hdmi";
- 
--			port@2 {
--				reg = <2>;
--				adv7612_out: endpoint {
--					remote-endpoint = <&vin0ep2>;
--				};
--			};
--		};
--	};
-+	clock-frequency = <100000>;
- };
- 
- &iic3 {
+Particularly this applies to resources being consumed by the driver that has
+configured system wakeup settings for its device. Currently the PM domain lacks
+information about these consumed resources, which means it may decide to power
+of their corresponding device and its attached PM domain, while they actually
+would need to stay powered to allow system wakeup signals to be delivered.
+
+Geert Uytterhoeven, has been working on these kind of problems for some Renesas
+SoCs and there have been lots of discussions around this. After some
+consideration I have dropped my first attempt [1] on how to address these
+problems, so here's hopefully a better one.
+
+So far I haven't included any patches for dealing with the "OUT_BAND_WAKEUP"
+thingy, but I suggest we do that in a second separate step, since it's not
+immediately need to fix the problems for the Renesas SoCs.
+
+Geert's Renesas series [2], needs to be re-based on top of this series to make
+it convert to use the new DPM_FLAG_WAKEUP_PATH flag, which is introduced in
+this series. That leads to a tree-wise-dependency, so perhaps Rafael can host
+an immutable branch the Renesas tree can pull in. Let's see.
+
+[1]
+https://www.spinics.net/lists/linux-renesas-soc/msg20122.html
+
+[2]
+https://www.spinics.net/lists/linux-renesas-soc/msg19947.html
+
+Ulf Hansson (4):
+  PM / core: Assign the wakeup_path status flag in __device_prepare()
+  PM / core: Add WAKEUP_PATH driver flag
+  PM / Domains: Take WAKEUP_PATH driver flag into account in genpd
+  PM / core: Print warn if device gets enabled as wakeup source during
+    sleep
+
+ drivers/base/power/domain.c | 8 ++++++--
+ drivers/base/power/main.c   | 9 ++++++++-
+ drivers/base/power/wakeup.c | 4 ++++
+ include/linux/pm.h          | 8 ++++++++
+ 4 files changed, 26 insertions(+), 3 deletions(-)
+
 -- 
-2.11.0
+2.7.4
