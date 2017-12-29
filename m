@@ -1,61 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39033 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933321AbdLRPvu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Dec 2017 10:51:50 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-        wsa@the-dreams.de, horms@verge.net.au, geert@linux-m68k.org,
-        magnus.damm@gmail.com, chris.paterson2@renesas.com,
-        ramesh.shanmugasundaram@bp.renesas.com, robh@kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 1/2] can: rcar_can: document r8a77995 (R-Car D3) compatibility strings
-Date: Mon, 18 Dec 2017 16:51:36 +0100
-Message-Id: <1513612297-10173-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1513612297-10173-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1513612297-10173-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1514469681-15602-7-git-send-email-jacopo+renesas@jmondi.org>
+References: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org> <1514469681-15602-7-git-send-email-jacopo+renesas@jmondi.org>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Fri, 29 Dec 2017 13:47:30 +0100
+Message-ID: <CAOFm3uEU1ZegJgjUYXVJCTLRROtJ_KJDgf1-KiHdoJSw-5zd3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 6/9] v4l: i2c: Copy ov772x soc_camera sensor driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, geert@glider.be,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-sh@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Jacopo,
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 06bb7cc..f7d0358 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -11,6 +11,7 @@ Required properties:
- 	      "renesas,can-r8a7794" if CAN controller is a part of R8A7794 SoC.
- 	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
- 	      "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
-+	      "renesas,can-r8a77995" if CAN controller is a part of R8A77995 SoC.
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
- 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 compatible device.
- 	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
-@@ -25,12 +26,12 @@ Required properties:
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
--Required properties for "renesas,can-r8a7795" and "renesas,can-r8a7796"
--compatible:
--In R8A7795 and R8A7796 SoCs, "clkp2" can be CANFD clock. This is a div6 clock
--and can be used by both CAN and CAN FD controller at the same time. It needs to
--be scaled to maximum frequency if any of these controllers use it. This is done
--using the below properties:
-+Required properties for "renesas,can-r8a7795", "renesas,can-r8a7796" and
-+"renesas,can-r8a77995" compatible:
-+In R8A7795, R8A7796 and R8A77995 SoCs, "clkp2" can be CANFD clock. This is a
-+div6 clock and can be used by both CAN and CAN FD controller at the same
-+time. It needs to be scaled to maximum frequency if any of these
-+controllers use it. This is done using the below properties:
- 
- - assigned-clocks: phandle of clkp2(CANFD) clock.
- - assigned-clock-rates: maximum frequency of this clock.
+On Thu, Dec 28, 2017 at 3:01 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Copy the soc_camera based driver in v4l2 sensor driver directory.
+> This commit just copies the original file without modifying it.
+> No modification to KConfig and Makefile as soc_camera framework
+> dependencies need to be removed first in next commit.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  drivers/media/i2c/ov772x.c | 1124 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 1124 insertions(+)
+>  create mode 100644 drivers/media/i2c/ov772x.c
+>
+> diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
+> new file mode 100644
+> index 0000000..8063835
+> --- /dev/null
+> +++ b/drivers/media/i2c/ov772x.c
+> @@ -0,0 +1,1124 @@
+> +/*
+> + * ov772x Camera Driver
+> + *
+> + * Copyright (C) 2008 Renesas Solutions Corp.
+> + * Kuninori Morimoto <morimoto.kuninori@renesas.com>
+> + *
+> + * Based on ov7670 and soc_camera_platform driver,
+> + *
+> + * Copyright 2006-7 Jonathan Corbet <corbet@lwn.net>
+> + * Copyright (C) 2008 Magnus Damm
+> + * Copyright (C) 2008, Guennadi Liakhovetski <kernel@pengutronix.de>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+
+Do you mind using a simpler SPDX identifier instead of this long
+legalese boilerplate?
+This is documented in Thomas doc patches. This applies to your entire
+patch set of course.
+Thanks!
 -- 
-2.7.4
+Cordially
+Philippe Ombredanne
