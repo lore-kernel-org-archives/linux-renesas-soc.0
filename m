@@ -1,81 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f171.google.com ([74.125.82.171]:46639 "EHLO
-        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbdLaA4V (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38583 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750814AbdL2Nbz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 30 Dec 2017 19:56:21 -0500
-MIME-Version: 1.0
-In-Reply-To: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
-References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 31 Dec 2017 01:56:20 +0100
-Message-ID: <CAJZ5v0heO9DxbxnrXJeXC0RDQV-oOb=KLJmXWm7uuy=y7U2KjA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] renesas: irqchip: Use WAKEUP_PATH driver PM flag
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Fri, 29 Dec 2017 08:31:55 -0500
+Received: by mail-lf0-f68.google.com with SMTP id w196so30184999lff.5
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Dec 2017 05:31:55 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Simon Horman <horms@verge.net.au>,
         Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] renesas: irqchip: Use WAKEUP_PATH driver PM flag
+Date: Fri, 29 Dec 2017 14:31:41 +0100
+Message-Id: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Changes in v2: [By Ulf Hansson]
->         - I have picked up the series from Geert [1] and converted it into use
->         the WAKEUP_PATH driver PM flag. This includes some minor changes to each
->         patch and updates to the changelogs.
->         - An important note, the WAKEUP_PATH driver PM flag is introduced in a
->         separate series [2], not yet applied, so @subject series depends on it.
->         - One more note, two of the patches has a checkpatch error, however I
->         did not fix them, becuase I think that should be done separate.
->
-> [1]
-> https://lkml.org/lkml/2017/11/9/382
-> [2]
-> https://marc.info/?l=linux-pm&m=151454744124661&w=2
->
-> More information below, picked from Geert's previous cover letter.
->
-> Kind regards
-> Uffe
->
->
-> Hi all,
->
-> If an interrupt controller in a Renesas ARM SoC is part of a Clock
-> Domain, and it is part of the wakeup path, it must be kept active during
-> system suspend.
->
-> Currently this is handled in all interrupt controller drivers by
-> explicitly increasing the use count of the module clock when the device
-> is part of the wakeup path.  However, this explicit clock handling is
-> merely a workaround for a failure to properly communicate wakeup
-> information to the device core.
->
-> Hence this series fixes the affected drivers by setting the devices'
-> power.wakeup_path fields instead, to indicate they are part of the
-> wakeup path.  Depending on the PM Domain's active_wakeup configuration,
-> the genpd core code will keep the device enabled (and the clock running)
-> during system suspend when needed.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-However, there is a convention, documented in the kerneldoc comment of
-device_init_wakeup(), by which devices participating in system wakeup
-"passively" (like USB controllers and hubs) are expected to have it
-enabled by default.
+Changes in v2: [By Ulf Hansson]
+	- I have picked up the series from Geert [1] and converted it into use
+	the WAKEUP_PATH driver PM flag. This includes some minor changes to each
+	patch and updates to the changelogs.
+	- An important note, the WAKEUP_PATH driver PM flag is introduced in a
+	separate series [2], not yet applied, so @subject series depends on it.
+	- One more note, two of the patches has a checkpatch error, however I
+	did not fix them, becuase I think that should be done separate.
 
-If that convention was followed by the devices in question here, the
-wakeup_path bit would be set for them and no other code changes would
-be necessary.  So is there any reason for not following it?
+[1]
+https://lkml.org/lkml/2017/11/9/382
+[2]
+https://marc.info/?l=linux-pm&m=151454744124661&w=2
 
-Thanks,
-Rafael
+More information below, picked from Geert's previous cover letter.
+
+Kind regards
+Uffe
+
+
+Hi all,
+
+If an interrupt controller in a Renesas ARM SoC is part of a Clock
+Domain, and it is part of the wakeup path, it must be kept active during
+system suspend.
+
+Currently this is handled in all interrupt controller drivers by
+explicitly increasing the use count of the module clock when the device
+is part of the wakeup path.  However, this explicit clock handling is
+merely a workaround for a failure to properly communicate wakeup
+information to the device core.
+
+Hence this series fixes the affected drivers by setting the devices'
+power.wakeup_path fields instead, to indicate they are part of the
+wakeup path.  Depending on the PM Domain's active_wakeup configuration,
+the genpd core code will keep the device enabled (and the clock running)
+during system suspend when needed.
+
+Note that most of these patches depend on the series "[PATCH v2 0/3] PM
+/ Domain: renesas: Fix active wakeup behavior", hence they should not be
+applied yet.
+
+This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
+r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7796/salvator-x, and
+sh73a0/kzm9g.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  irqchip/renesas-intc-irqpin: Use WAKEUP_PATH driver PM flag
+  irqchip/renesas-irqc: Use WAKEUP_PATH driver PM flag
+  gpio: rcar: Use WAKEUP_PATH driver PM flag
+
+ drivers/gpio/gpio-rcar.c                  | 40 +++++++++++------------------
+ drivers/irqchip/irq-renesas-intc-irqpin.c | 42 +++++++++++--------------------
+ drivers/irqchip/irq-renesas-irqc.c        | 32 +++++++++++------------
+ 3 files changed, 45 insertions(+), 69 deletions(-)
+
+-- 
+2.7.4
