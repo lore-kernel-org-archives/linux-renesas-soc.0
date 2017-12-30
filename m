@@ -1,43 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:53952 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752007AbdLUMVu (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36855 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750741AbdL3A6K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Dec 2017 07:21:50 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2] arm64: dts: renesas: salvator-common: add GPIO extender
-Date: Thu, 21 Dec 2017 13:21:36 +0100
-Message-Id: <20171221122136.17773-1-wsa+renesas@sang-engineering.com>
+        Fri, 29 Dec 2017 19:58:10 -0500
+MIME-Version: 1.0
+In-Reply-To: <1514547423-18965-5-git-send-email-ulf.hansson@linaro.org>
+References: <1514547423-18965-1-git-send-email-ulf.hansson@linaro.org> <1514547423-18965-5-git-send-email-ulf.hansson@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 30 Dec 2017 01:58:07 +0100
+Message-ID: <CAJZ5v0jWjvfQAttj6uhOhc_Hs1oT=sz3yEGnWGJaCMvJ7HJf8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] PM / core: Print warn if device gets enabled as
+ wakeup source during sleep
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We need to configure its GPIOs later.
+On Fri, Dec 29, 2017 at 12:37 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> In general, wakeup settings are not supposed to be changed during any of
+> the system wide PM phases. The reason is simply that it would break
+> guarantees provided by the PM core, to properly act on active wakeup
+> sources.
+>
+> However, there are exceptions to when, in particular, disabling a device as
+> wakeup source makes sense. For example, in cases when a driver realizes
+> that its device is dead during system suspend. For these scenarios, we
+> don't need to care about acting on the wakeup source correctly, because a
+> dead device shouldn't deliver wakeup signals.
+>
+> To this reasoning and to help users to properly manage wakeup settings,
+> let's print a warning in cases someone calls device_wakeup_enable() during
+> system sleep.
+>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/base/power/main.c   | 4 ++++
+>  drivers/base/power/wakeup.c | 4 ++++
+>  include/linux/pm.h          | 1 +
+>  3 files changed, 9 insertions(+)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 1327726..6b0d312 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -1030,6 +1030,8 @@ static void device_complete(struct device *dev, pm_message_t state)
+>                 callback(dev);
+>         }
+>
+> +       dev->power.may_set_wakeup = dev->power.can_wakeup;
+> +
+>         device_unlock(dev);
+>
+>         pm_runtime_put(dev);
+> @@ -1747,6 +1749,7 @@ static int device_prepare(struct device *dev, pm_message_t state)
+>
+>         device_lock(dev);
+>
+> +       dev->power.may_set_wakeup = false;
+>         dev->power.wakeup_path = false;
+>
+>         if (dev->power.no_pm_callbacks) {
+> @@ -1775,6 +1778,7 @@ static int device_prepare(struct device *dev, pm_message_t state)
+>         if (ret < 0) {
+>                 suspend_report_result(callback, ret);
+>                 pm_runtime_put(dev);
+> +               dev->power.may_set_wakeup = dev->power.can_wakeup;
+>                 return ret;
+>         }
+>         /*
+> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+> index cb72965..5445bea 100644
+> --- a/drivers/base/power/wakeup.c
+> +++ b/drivers/base/power/wakeup.c
+> @@ -268,6 +268,9 @@ int device_wakeup_enable(struct device *dev)
+>         if (!dev || !dev->power.can_wakeup)
+>                 return -EINVAL;
+>
+> +       if (!dev->power.may_set_wakeup)
+> +               dev_warn(dev, "don't enable as wakup source during sleep!\n");
+> +
+>         ws = wakeup_source_register(dev_name(dev));
+>         if (!ws)
+>                 return -ENOMEM;
+> @@ -413,6 +416,7 @@ void device_set_wakeup_capable(struct device *dev, bool capable)
+>                 return;
+>
+>         dev->power.can_wakeup = capable;
+> +       dev->power.may_set_wakeup = capable;
+>         if (device_is_registered(dev) && !list_empty(&dev->power.entry)) {
+>                 if (capable) {
+>                         int ret = wakeup_sysfs_add(dev);
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index ebc6ef8..106fb15 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -606,6 +606,7 @@ struct dev_pm_info {
+>         struct list_head        entry;
+>         struct completion       completion;
+>         struct wakeup_source    *wakeup;
+> +       bool                    may_set_wakeup:1;
+>         bool                    wakeup_path:1;
+>         bool                    syscore:1;
+>         bool                    no_pm_callbacks:1;      /* Owned by the PM core */
+> --
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+I didn't mean anything so complicated. :-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index a298df74ca6c03..ab4763f09dc7fd 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -338,6 +338,11 @@
- &i2c4 {
- 	status = "okay";
- 
-+	pca9654: gpio@20 {
-+		compatible = "onnn,pca9654";
-+		reg = <0x20>;
-+	};
-+
- 	csa_vdd: adc@7c {
- 		compatible = "maxim,max9611";
- 		reg = <0x7c>;
--- 
-2.11.0
+Just a warning message if (pm_suspend_target_state != PM_SUSPEND_ON)
+in device_wakeup_enable() (or equivalent) should be sufficient.
