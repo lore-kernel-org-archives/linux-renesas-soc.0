@@ -1,51 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:41184 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756692AbdLOPPA (ORCPT
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:33991 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750709AbdL3AoN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Dec 2017 10:15:00 -0500
-Received: by mail-wm0-f66.google.com with SMTP id g75so18223822wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Dec 2017 07:15:00 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@linux-m68k.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH 3/4] arm64: dts: r8a7796: Add GSX device node
-Date: Fri, 15 Dec 2017 16:14:49 +0100
-Message-Id: <1513350890-2446-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1513350890-2446-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1513350890-2446-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 29 Dec 2017 19:44:13 -0500
+MIME-Version: 1.0
+In-Reply-To: <1514547423-18965-2-git-send-email-ulf.hansson@linaro.org>
+References: <1514547423-18965-1-git-send-email-ulf.hansson@linaro.org> <1514547423-18965-2-git-send-email-ulf.hansson@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 30 Dec 2017 01:44:12 +0100
+Message-ID: <CAJZ5v0gCnQgRS7aBkQ6LUoNab0_=mMqdqje+YLmJpcusANkfMg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] PM / core: Assign the wakeup_path status flag in __device_prepare()
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Fri, Dec 29, 2017 at 12:37 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> The PM core in the device_prepare() phase, resets the wakeup_path status
+> flag to the value of device_may_wakeup(). This means if a ->prepare() or a
+> ->suspend() callback for the device would update the device's wakeup
+> setting, this doesn't become reflected in the wakeup_path status flag.
+>
+> In general this isn't a problem, because wakeup settings are not supposed
+> to be changed (via for example calling device_set_wakeup_enable()) during
+> any system wide suspend/resume phase.  Nevertheless there are some users,
+> which can be considered as legacy, that don't conform to this behaviour.
+>
+> These legacy cases should be corrected, however until that is done, let's
+> address the issue from the PM core, by moving the assignment of the
+> wakeup_path status flag to the __device_suspend() phase and after the
+> ->suspend() callback has been invoked.
+>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/base/power/main.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 6e8cc5d..810e5fb 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -1620,6 +1620,8 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
+>   End:
+>         if (!error) {
+>                 dev->power.is_suspended = true;
+> +               if (device_may_wakeup(dev))
+> +                       dev->power.wakeup_path = true;
+>                 dpm_propagate_to_parent(dev);
+>                 dpm_clear_suppliers_direct_complete(dev);
+>         }
+> @@ -1744,7 +1746,7 @@ static int device_prepare(struct device *dev, pm_message_t state)
+>
+>         device_lock(dev);
+>
+> -       dev->power.wakeup_path = device_may_wakeup(dev);
+> +       dev->power.wakeup_path = false;
 
-This patch adds GSX device node for R8A7796 SoC.
+If you did "dev->power.wakeup_path = device_may_wakeup(dev)" in
+__device_suspend(), it wouldn't need to be cleared here I guess?
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 0b8558d..d3264e7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2241,6 +2241,14 @@
- 			};
- 		};
- 
-+		gsx: gsx@fd000000 {
-+			compatible = "renesas,gsx";
-+			reg = <0 0xfd000000 0 0x3ffff>;
-+			interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 112>;
-+			power-domains = <&sysc R8A7796_PD_3DG_B>;
-+		};
-+
- 		pciec0: pcie@fe000000 {
- 			/* placeholder */
- 		};
--- 
-2.7.4
+>
+>         if (dev->power.no_pm_callbacks) {
+>                 ret = 1;        /* Let device go direct_complete */
+> --
+> 2.7.4
+>
