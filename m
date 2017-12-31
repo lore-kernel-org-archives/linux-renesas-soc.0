@@ -1,347 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:44896 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752418AbdLHBJE (ORCPT
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:33482 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751152AbdLaLr7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 20:09:04 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v9 21/28] rcar-vin: add group allocator functions
-Date: Fri,  8 Dec 2017 02:08:35 +0100
-Message-Id: <20171208010842.20047-22-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+        Sun, 31 Dec 2017 06:47:59 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdX0p7rnrtdVOeh71Nd4k8aU3Pi-L6y+LTFKoh21XNUs4w@mail.gmail.com>
+References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
+ <CAJZ5v0heO9DxbxnrXJeXC0RDQV-oOb=KLJmXWm7uuy=y7U2KjA@mail.gmail.com> <CAMuHMdX0p7rnrtdVOeh71Nd4k8aU3Pi-L6y+LTFKoh21XNUs4w@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sun, 31 Dec 2017 12:47:58 +0100
+Message-ID: <CAJZ5v0iphV9w6wQy2uQ=wW3HEC+eK4ZnS8fBE-GFuESjXM4PCQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] renesas: irqchip: Use WAKEUP_PATH driver PM flag
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In media controller mode all VIN instances needs to be part of the same
-media graph. There is also a need to each VIN instance to know and in
-some cases be able to communicate with other VIN instances.
+On Sun, Dec 31, 2017 at 10:22 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Rafael,
+>
+> On Sun, Dec 31, 2017 at 1:56 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>> On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>> From: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>
+>>> Changes in v2: [By Ulf Hansson]
+>>>         - I have picked up the series from Geert [1] and converted it into use
+>>>         the WAKEUP_PATH driver PM flag. This includes some minor changes to each
+>>>         patch and updates to the changelogs.
+>>>         - An important note, the WAKEUP_PATH driver PM flag is introduced in a
+>>>         separate series [2], not yet applied, so @subject series depends on it.
+>>>         - One more note, two of the patches has a checkpatch error, however I
+>>>         did not fix them, becuase I think that should be done separate.
+>>>
+>>> [1]
+>>> https://lkml.org/lkml/2017/11/9/382
+>>> [2]
+>>> https://marc.info/?l=linux-pm&m=151454744124661&w=2
+>>>
+>>> More information below, picked from Geert's previous cover letter.
+>>>
+>>> Kind regards
+>>> Uffe
+>>>
+>>>
+>>> Hi all,
+>>>
+>>> If an interrupt controller in a Renesas ARM SoC is part of a Clock
+>>> Domain, and it is part of the wakeup path, it must be kept active during
+>>> system suspend.
+>>>
+>>> Currently this is handled in all interrupt controller drivers by
+>>> explicitly increasing the use count of the module clock when the device
+>>> is part of the wakeup path.  However, this explicit clock handling is
+>>> merely a workaround for a failure to properly communicate wakeup
+>>> information to the device core.
+>>>
+>>> Hence this series fixes the affected drivers by setting the devices'
+>>> power.wakeup_path fields instead, to indicate they are part of the
+>>> wakeup path.  Depending on the PM Domain's active_wakeup configuration,
+>>> the genpd core code will keep the device enabled (and the clock running)
+>>> during system suspend when needed.
+>>
+>> However, there is a convention, documented in the kerneldoc comment of
+>> device_init_wakeup(), by which devices participating in system wakeup
+>> "passively" (like USB controllers and hubs) are expected to have it
+>> enabled by default.
+>>
+>> If that convention was followed by the devices in question here, the
+>> wakeup_path bit would be set for them and no other code changes would
+>> be necessary.  So is there any reason for not following it?
+>
+> Yes there is.  The need to stay enabled during system suspend depends
+> on the consumer of the interrupt. It is controlled by the consumer using
+> the irq_chip.irq_set_wake() callback at runtime, and may change at runtime.
+>
+> If the wakeup_path flag is always set, the interrupt controller will
+> never be suspended during system suspend, and thus waste power.
 
-Add an allocator framework where the first VIN instance to be probed
-creates a shared data structure and creates a media device.
+OK
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 179 +++++++++++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  38 ++++++
- 2 files changed, 215 insertions(+), 2 deletions(-)
+For IRQ chips in particular, I think, you don't need add new fields to
+struct dev_pm_info to make it work.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 45de4079fd835759..a6713fd61dd87a88 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -20,12 +20,170 @@
- #include <linux/of_graph.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/slab.h>
- 
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
- 
- #include "rcar-vin.h"
- 
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CSI2 Group Allocator
-+ */
-+
-+static int rvin_group_read_id(struct rvin_dev *vin, struct device_node *np)
-+{
-+	u32 val;
-+	int ret;
-+
-+	ret = of_property_read_u32(np, "renesas,id", &val);
-+	if (ret) {
-+		vin_err(vin, "%pOF: No renesas,id property found\n", np);
-+		return -EINVAL;
-+	}
-+
-+	if (val >= RCAR_VIN_NUM) {
-+		vin_err(vin, "%pOF: Invalid renesas,id '%u'\n", np, val);
-+		return -EINVAL;
-+	}
-+
-+	return val;
-+}
-+
-+static DEFINE_MUTEX(rvin_group_lock);
-+static struct rvin_group *rvin_group_data;
-+
-+static void rvin_group_release(struct kref *kref)
-+{
-+	struct rvin_group *group =
-+		container_of(kref, struct rvin_group, refcount);
-+
-+	mutex_lock(&rvin_group_lock);
-+
-+	media_device_unregister(&group->mdev);
-+	media_device_cleanup(&group->mdev);
-+
-+	rvin_group_data = NULL;
-+
-+	mutex_unlock(&rvin_group_lock);
-+
-+	kfree(group);
-+}
-+
-+static struct rvin_group *__rvin_group_allocate(struct rvin_dev *vin)
-+{
-+	struct rvin_group *group;
-+
-+	if (rvin_group_data) {
-+		group = rvin_group_data;
-+		kref_get(&group->refcount);
-+		vin_dbg(vin, "%s: get group=%p\n", __func__, group);
-+		return group;
-+	}
-+
-+	group = kzalloc(sizeof(*group), GFP_KERNEL);
-+	if (!group)
-+		return NULL;
-+
-+	kref_init(&group->refcount);
-+	rvin_group_data = group;
-+
-+	vin_dbg(vin, "%s: alloc group=%p\n", __func__, group);
-+	return group;
-+}
-+
-+static int rvin_group_add_vin(struct rvin_dev *vin)
-+{
-+	int ret;
-+
-+	ret = rvin_group_read_id(vin, vin->dev->of_node);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_lock(&vin->group->lock);
-+
-+	if (vin->group->vin[ret]) {
-+		mutex_unlock(&vin->group->lock);
-+		vin_err(vin, "VIN number %d already occupied\n", ret);
-+		return -EINVAL;
-+	}
-+
-+	vin->group->vin[ret] = vin;
-+
-+	mutex_unlock(&vin->group->lock);
-+
-+	vin_dbg(vin, "I'm VIN number %d", ret);
-+
-+	return 0;
-+}
-+
-+static int rvin_group_allocate(struct rvin_dev *vin)
-+{
-+	struct rvin_group *group;
-+	struct media_device *mdev;
-+	int ret;
-+
-+	mutex_lock(&rvin_group_lock);
-+
-+	group = __rvin_group_allocate(vin);
-+	if (!group) {
-+		mutex_unlock(&rvin_group_lock);
-+		return -ENOMEM;
-+	}
-+
-+	/* Init group data if it is not already initialized */
-+	mdev = &group->mdev;
-+	if (!mdev->dev) {
-+		mutex_init(&group->lock);
-+		mdev->dev = vin->dev;
-+
-+		strlcpy(mdev->driver_name, "Renesas VIN",
-+			sizeof(mdev->driver_name));
-+		strlcpy(mdev->model, vin->dev->of_node->name,
-+			sizeof(mdev->model));
-+
-+		snprintf(mdev->bus_info, sizeof(mdev->bus_info), "platform:%s",
-+			 dev_name(mdev->dev));
-+		media_device_init(mdev);
-+
-+		ret = media_device_register(mdev);
-+		if (ret) {
-+			vin_err(vin, "Failed to register media device\n");
-+			kref_put(&group->refcount, rvin_group_release);
-+			mutex_unlock(&rvin_group_lock);
-+			return ret;
-+		}
-+	}
-+
-+	vin->group = group;
-+	vin->v4l2_dev.mdev = mdev;
-+
-+	ret = rvin_group_add_vin(vin);
-+	if (ret) {
-+		kref_put(&group->refcount, rvin_group_release);
-+		mutex_unlock(&rvin_group_lock);
-+		return ret;
-+	}
-+
-+	mutex_unlock(&rvin_group_lock);
-+
-+	return 0;
-+}
-+
-+static void rvin_group_delete(struct rvin_dev *vin)
-+{
-+	unsigned int i;
-+
-+	mutex_lock(&vin->group->lock);
-+	for (i = 0; i < RCAR_VIN_NUM; i++)
-+		if (vin->group->vin[i] == vin)
-+			vin->group->vin[i] = NULL;
-+	mutex_unlock(&vin->group->lock);
-+
-+	vin_dbg(vin, "%s: group=%p\n", __func__, &vin->group);
-+	kref_put(&vin->group->refcount, rvin_group_release);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Async notifier
-  */
-@@ -236,12 +394,27 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static int rvin_group_init(struct rvin_dev *vin)
- {
-+	int ret;
-+
-+	ret = rvin_group_allocate(vin);
-+	if (ret)
-+		return ret;
-+
- 	/* All our sources are CSI-2 */
- 	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
- 	vin->mbus_cfg.flags = 0;
- 
- 	vin->pad.flags = MEDIA_PAD_FL_SINK;
--	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+	ret = media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+	if (ret)
-+		goto error_group;
-+
-+	return 0;
-+
-+error_group:
-+	rvin_group_delete(vin);
-+
-+	return ret;
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -361,7 +534,9 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
--	if (!vin->info->use_mc)
-+	if (vin->info->use_mc)
-+		rvin_group_delete(vin);
-+	else
- 		v4l2_ctrl_handler_free(&vin->ctrl_handler);
- 
- 	rvin_dma_unregister(vin);
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 07d270a976893cdb..5f736a3500b6e10f 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -17,6 +17,8 @@
- #ifndef __RCAR_VIN__
- #define __RCAR_VIN__
- 
-+#include <linux/kref.h>
-+
- #include <media/v4l2-async.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-dev.h>
-@@ -30,6 +32,9 @@
- /* Address alignment mask for HW buffers */
- #define HW_BUFFER_MASK 0x7f
- 
-+/* Max number on VIN instances that can be in a system */
-+#define RCAR_VIN_NUM 8
-+
- enum chip_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -37,6 +42,15 @@ enum chip_id {
- 	RCAR_GEN3,
- };
- 
-+enum rvin_csi_id {
-+	RVIN_CSI20,
-+	RVIN_CSI21,
-+	RVIN_CSI40,
-+	RVIN_CSI41,
-+	RVIN_CSI_MAX,
-+	RVIN_NC, /* Not Connected */
-+};
-+
- /**
-  * STOPPED  - No operation in progress
-  * RUNNING  - Operation in progress have buffers
-@@ -75,6 +89,8 @@ struct rvin_graph_entity {
- 	unsigned int sink_pad;
- };
- 
-+struct rvin_group;
-+
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @chip:		type of VIN chip
-@@ -103,6 +119,7 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @group:		Gen3 CSI group
-  * @pad:		pad for media controller
-  *
-  * @lock:		protects @queue
-@@ -134,6 +151,7 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct rvin_group *group;
- 	struct media_pad pad;
- 
- 	struct mutex lock;
-@@ -162,6 +180,26 @@ struct rvin_dev {
- #define vin_warn(d, fmt, arg...)	dev_warn(d->dev, fmt, ##arg)
- #define vin_err(d, fmt, arg...)		dev_err(d->dev, fmt, ##arg)
- 
-+/**
-+ * struct rvin_group - VIN CSI2 group information
-+ * @refcount:		number of VIN instances using the group
-+ *
-+ * @mdev:		media device which represents the group
-+ *
-+ * @lock:		protects the vin and csi members
-+ * @vin:		VIN instances which are part of the group
-+ * @csi:		CSI-2 entities that are part of the group
-+ */
-+struct rvin_group {
-+	struct kref refcount;
-+
-+	struct media_device mdev;
-+
-+	struct mutex lock;
-+	struct rvin_dev *vin[RCAR_VIN_NUM];
-+	struct rvin_graph_entity csi[RVIN_CSI_MAX];
-+};
-+
- int rvin_dma_register(struct rvin_dev *vin, int irq);
- void rvin_dma_unregister(struct rvin_dev *vin);
- 
--- 
-2.15.0
+In ->suspend (or ->suspend_late, which may be better) you can check
+the IRQD_WAKEUP_STATE flag of the irq_desc associated with the pin.
+If that is set, you can simply set power.wakeup_path for the device
+and that will make genpd skip it.  Wouldn't that work?
+
+Thanks,
+Rafael
