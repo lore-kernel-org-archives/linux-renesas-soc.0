@@ -1,141 +1,281 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41541 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751680AbdLXNiJ (ORCPT
+Received: from sauhun.de ([88.99.104.3]:34598 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750960AbdLaLXd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 24 Dec 2017 08:38:09 -0500
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
+        Sun, 31 Dec 2017 06:23:33 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFT v2] gpio: gpio-rcar: Support S2RAM
-Date: Sun, 24 Dec 2017 22:37:23 +0900
-Message-Id: <1514122643-28838-1-git-send-email-ykaneko0929@gmail.com>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 8/9] ARM: dts: gose: use demuxer for I2C2
+Date: Sun, 31 Dec 2017 12:23:19 +0100
+Message-Id: <20171231112320.3461-9-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
+References: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hien Dang <hien.dang.eb@renesas.com>
+Create a separate bus for HDMI related I2C2 and provide fallback to GPIO.
 
-This patch adds an implementation that saves and restores the state of
-GPIO configuration on suspend and resume.
+Based on work for the r8a7790/lager by Wolfram Sang.
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Modify structure of the bank info to simplify a saving registers]
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, corrected board name in subject, fixed aliases, switched
+to named GPIOs]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
+ arch/arm/boot/dts/r8a7793-gose.dts | 218 ++++++++++++++++++++-----------------
+ 1 file changed, 121 insertions(+), 97 deletions(-)
 
-This patch is based on the for-next branch of linux-gpio tree.
-
-v2 [Yoshihiro Kaneko]
-* Modify structure of the bank info as suggested by Geert Uytterhoeven
-
- drivers/gpio/gpio-rcar.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
-
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index e76de57..7c7360b 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -31,6 +31,16 @@
- #include <linux/spinlock.h>
- #include <linux/slab.h>
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 51b3ffac8efaad..2b330ef71f4c17 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -48,6 +48,8 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scif1;
++		i2c9 = &gpioi2c2;
++		i2c11 = &i2chdmi;
+ 	};
  
-+struct gpio_rcar_bank_info {
-+	u32 iointsel;
-+	u32 inoutsel;
-+	u32 outdt;
-+	u32 active_high_rising_edge;
-+	u32 level_trigger;
-+	u32 both;
-+	u32 intmsk;
-+};
+ 	chosen {
+@@ -296,6 +298,124 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <148500000>;
+ 	};
 +
- struct gpio_rcar_priv {
- 	void __iomem *base;
- 	spinlock_t lock;
-@@ -41,6 +51,7 @@ struct gpio_rcar_priv {
- 	unsigned int irq_parent;
- 	bool has_both_edge_trigger;
- 	bool needs_clk;
-+	struct gpio_rcar_bank_info bank_info;
++	gpioi2c2: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio2 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio2 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C2.
++	 */
++	i2chdmi: i2c-11 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c2>, <&gpioi2c2>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ak4643: codec@12 {
++			compatible = "asahi-kasei,ak4643";
++			#sound-dai-cells = <0>;
++			reg = <0x12>;
++		};
++
++		composite-in@20 {
++			compatible = "adi,adv7180cp";
++			reg = <0x20>;
++			remote = <&vin1>;
++
++			port {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7180_in: endpoint {
++						remote-endpoint = <&composite_con_in>;
++					};
++				};
++
++				port@3 {
++					reg = <3>;
++					adv7180_out: endpoint {
++						bus-width = <8>;
++						remote-endpoint = <&vin1ep>;
++					};
++				};
++			};
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio3>;
++			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_rgb>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con_out>;
++					};
++				};
++			};
++		};
++
++		hdmi-in@4c {
++			compatible = "adi,adv7612";
++			reg = <0x4c>;
++			interrupt-parent = <&gpio4>;
++			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++			default-input = <0>;
++
++			port {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7612_in: endpoint {
++						remote-endpoint = <&hdmi_con_in>;
++					};
++				};
++
++				port@2 {
++					reg = <2>;
++					adv7612_out: endpoint {
++						remote-endpoint = <&vin0ep2>;
++					};
++				};
++			};
++		};
++
++		eeprom@50 {
++			compatible = "renesas,r1ex24002", "atmel,24c02";
++			reg = <0x50>;
++			pagesize = <16>;
++		};
++	};
  };
  
- #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-@@ -415,6 +426,63 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
- 	return 0;
- }
+ &du {
+@@ -544,107 +664,11 @@
  
-+#ifdef CONFIG_PM_SLEEP
-+static int gpio_rcar_suspend(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+
-+	p->bank_info.iointsel = gpio_rcar_read(p, IOINTSEL);
-+	p->bank_info.inoutsel = gpio_rcar_read(p, INOUTSEL);
-+	p->bank_info.outdt = gpio_rcar_read(p, OUTDT);
-+	p->bank_info.intmsk = gpio_rcar_read(p, INTMSK);
-+	p->bank_info.active_high_rising_edge = gpio_rcar_read(p, POSNEG);
-+	p->bank_info.level_trigger = gpio_rcar_read(p, EDGLEVEL);
-+	p->bank_info.both = gpio_rcar_read(p, BOTHEDGE);
-+
-+	return 0;
-+}
-+
-+static int gpio_rcar_resume(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+	int offset;
-+	u32 mask;
-+
-+	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
-+		mask = BIT(offset);
-+		/* I/O pin */
-+		if (!(p->bank_info.iointsel & mask)) {
-+			if (p->bank_info.inoutsel & mask)
-+				gpio_rcar_direction_output(
-+					&p->gpio_chip, offset,
-+					!!(p->bank_info.outdt & mask));
-+			else
-+				gpio_rcar_direction_input(&p->gpio_chip,
-+							  offset);
-+		/* Interrupt pin */
-+		} else {
-+			gpio_rcar_config_interrupt_input_mode(
-+				p,
-+				offset,
-+				!(p->bank_info.active_high_rising_edge & mask),
-+				!!(p->bank_info.level_trigger & mask),
-+				!!(p->bank_info.both & mask));
-+
-+			if (p->bank_info.intmsk & mask)
-+				gpio_rcar_write(p, MSKCLR, mask);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops,
-+		gpio_rcar_suspend, gpio_rcar_resume);
-+#define DEV_PM_OPS (&gpio_rcar_pm_ops)
-+#else
-+#define DEV_PM_OPS NULL
-+#endif /* CONFIG_PM_SLEEP*/
-+
- static int gpio_rcar_probe(struct platform_device *pdev)
- {
- 	struct gpio_rcar_priv *p;
-@@ -536,6 +604,7 @@ static int gpio_rcar_remove(struct platform_device *pdev)
- 	.remove		= gpio_rcar_remove,
- 	.driver		= {
- 		.name	= "gpio_rcar",
-+		.pm     = DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(gpio_rcar_of_table),
- 	}
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+ 	status = "okay";
+ 	clock-frequency = <100000>;
+ 
+-	ak4643: codec@12 {
+-		compatible = "asahi-kasei,ak4643";
+-		#sound-dai-cells = <0>;
+-		reg = <0x12>;
+-	};
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180cp";
+-		reg = <0x20>;
+-		remote = <&vin1>;
+-
+-		port {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7180_in: endpoint {
+-					remote-endpoint = <&composite_con_in>;
+-				};
+-			};
+-
+-			port@3 {
+-				reg = <3>;
+-				adv7180_out: endpoint {
+-					bus-width = <8>;
+-					remote-endpoint = <&vin1ep>;
+-				};
+-			};
+-		};
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio3>;
+-		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_rgb>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con_out>;
+-				};
+-			};
+-		};
+-	};
+-
+-	hdmi-in@4c {
+-		compatible = "adi,adv7612";
+-		reg = <0x4c>;
+-		interrupt-parent = <&gpio4>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+-		default-input = <0>;
+-
+-		port {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7612_in: endpoint {
+-					remote-endpoint = <&hdmi_con_in>;
+-				};
+-			};
+-
+-			port@2 {
+-				reg = <2>;
+-				adv7612_out: endpoint {
+-					remote-endpoint = <&vin0ep2>;
+-				};
+-			};
+-		};
+-	};
+-
+-	eeprom@50 {
+-		compatible = "renesas,r1ex24002", "atmel,24c02";
+-		reg = <0x50>;
+-		pagesize = <16>;
+-	};
  };
+ 
+ &i2c6 {
 -- 
-1.9.1
+2.11.0
