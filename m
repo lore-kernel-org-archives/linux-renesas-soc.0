@@ -1,51 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:33917 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:34587 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750802AbdLWUGq (ORCPT
+        id S1750980AbdLaLXc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 23 Dec 2017 15:06:46 -0500
+        Sun, 31 Dec 2017 06:23:32 -0500
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH V2] gpio: of: make example syntactically correct
-Date: Sat, 23 Dec 2017 21:06:41 +0100
-Message-Id: <20171223200641.3709-1-wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 4/9] ARM: dts: koelsch: use demuxer for I2C4
+Date: Sun, 31 Dec 2017 12:23:15 +0100
+Message-Id: <20171231112320.3461-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
+References: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ';' was missing. And cosmetic: there was a space too much.
+Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
 
+This is based on reference work for the I2C0 core of the lager/r8a7790
+by Wolfram Sang.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, fixed aliases, switched to named GPIOS, fixed pinmux for I2C4]
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
 
-Changes since V1:
-* removed extra spaces (Thanks Sergei!)
+Change since V1:
+* fixed pinmux group for I2C4
 
- Documentation/devicetree/bindings/gpio/gpio.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index 802402f6cc5d89..bc5fe95d33fff0 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -33,12 +33,12 @@ The following example could be used to describe GPIO pins used as device enable
- and bit-banged data signals:
- 
- 	gpio1: gpio1 {
--		gpio-controller
--		 #gpio-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 4b20db197de629..f40321a1c917e7 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -52,8 +52,10 @@
+ 		serial1 = &scif1;
+ 		i2c9 = &gpioi2c1;
+ 		i2c10 = &gpioi2c2;
++		i2c11 = &gpioi2c4;
+ 		i2c12 = &i2cexio1;
+ 		i2c13 = &i2chdmi;
++		i2c14 = &i2cexio4;
  	};
- 	gpio2: gpio2 {
--		gpio-controller
--		 #gpio-cells = <1>;
-+		gpio-controller;
-+		#gpio-cells = <1>;
- 	};
- 	[...]
  
+ 	chosen {
+@@ -329,6 +331,16 @@
+ 		i2c-gpio,delay-us = <5>;
+ 	};
+ 
++	gpioi2c4: i2c-11 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio7 13 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio7 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
+ 	/*
+ 	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
+ 	 * A fallback to GPIO is provided.
+@@ -437,6 +449,18 @@
+ 			pagesize = <16>;
+ 		};
+ 	};
++
++	/*
++	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
++	 * A fallback to GPIO is provided.
++	 */
++	i2cexio4: i2c-14 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c4>, <&gpioi2c4>;
++		i2c-bus-name = "i2c-exio4";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
+ 
+ &du {
+@@ -480,6 +504,11 @@
+ 		function = "i2c2";
+ 	};
+ 
++	i2c4_pins: i2c4 {
++		groups = "i2c4_c";
++		function = "i2c4";
++	};
++
+ 	du_pins: du {
+ 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
+ 		function = "du";
+@@ -735,6 +764,11 @@
+ 	clock-frequency = <100000>;
+ };
+ 
++&i2c4 {
++	pinctrl-0 = <&i2c4_pins>;
++	pinctrl-names = "i2c-exio4";
++};
++
+ &i2c6 {
+ 	status = "okay";
+ 	clock-frequency = <100000>;
 -- 
 2.11.0
