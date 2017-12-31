@@ -1,70 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33901 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752382AbdLVK3n (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41568 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751013AbdLaSow (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Dec 2017 05:29:43 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/11] arm64: dts: renesas: r8a7796: add reg properties to pciec[01] nodes
-Date: Fri, 22 Dec 2017 11:29:18 +0100
-Message-Id: <4316989537a6ed530807244fd2b69f274bf195ff.1513936761.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1513936760.git.horms+renesas@verge.net.au>
-References: <cover.1513936760.git.horms+renesas@verge.net.au>
+        Sun, 31 Dec 2017 13:44:52 -0500
+Received: by mail-lf0-f66.google.com with SMTP id h137so8172655lfe.8
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 31 Dec 2017 10:44:51 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20171231184448.233694839@cogentembedded.com>
+Date: Sun, 31 Dec 2017 21:41:36 +0300
+To: netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org ("open list:RENESAS ETHERNET DRIVERS")
+Subject: [PATCH 2/2] sh_eth: kill redundant check in the probe() method
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=sh_eth-kill-redundant-check-in-the-probe-method.patch
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add reg properties to pciec[01] placeholder nodes
+Browsing thru the driver diassembly, I noticed that gcc was  able to
+figure  out  that the 'ndev' pointer is always non-NULL when calling
+free_netdev()  on the probe() method's  error path and  thus skip that
+redundant NULL check... gcc is smart, be like gcc! :-)
 
-This is to stop the compiler complaining as follows:
-$ make
-...
-  DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb
-arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@fe000000 has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@ee800000 has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pcie@fe000000 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (simple_bus_reg): Node /soc/pcie@ee800000 missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb
-arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@fe000000 has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@ee800000 has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pcie@fe000000 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dtb: Warning (simple_bus_reg): Node /soc/pcie@ee800000 missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb
-arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@fe000000 has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@ee800000 has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pcie@fe000000 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dtb: Warning (simple_bus_reg): Node /soc/pcie@ee800000 missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb
-arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@fe000000 has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): Node /soc/pcie@ee800000 has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/pcie@fe000000 missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (simple_bus_reg): Node /soc/pcie@ee800000 missing or empty reg/ranges property
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/renesas/sh_eth.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 49c5893f8a35..a339047acdc7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1758,10 +1758,12 @@
- 		};
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net-next/drivers/net/ethernet/renesas/sh_eth.c
+@@ -3282,8 +3282,7 @@ out_napi_del:
  
- 		pciec0: pcie@fe000000 {
-+			reg = <0 0xfe000000 0 0x80000>;
- 			/* placeholder */
- 		};
+ out_release:
+ 	/* net_dev free */
+-	if (ndev)
+-		free_netdev(ndev);
++	free_netdev(ndev);
  
- 		pciec1: pcie@ee800000 {
-+			reg = <0 0xee800000 0 0x80000>;
- 			/* placeholder */
- 		};
- 
--- 
-2.11.0
+ 	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
