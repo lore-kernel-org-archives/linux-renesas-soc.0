@@ -1,102 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35788 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752413AbdLGJzh (ORCPT
+Received: from sauhun.de ([88.99.104.3]:34574 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750945AbdLaLXb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Dec 2017 04:55:37 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Sun, 31 Dec 2017 06:23:31 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 51/54] arm64: dts: renesas: initial V3MSK board device tree
-Date: Thu,  7 Dec 2017 10:53:54 +0100
-Message-Id: <cc3e267e9bb0ce7fead857f9258268ffa5f51b91.1512640145.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1512640145.git.horms+renesas@verge.net.au>
-References: <cover.1512640145.git.horms+renesas@verge.net.au>
+Subject: [PATCH v2 2/9] ARM: dts: lager: use demuxer for IIC3/I2C3
+Date: Sun, 31 Dec 2017 12:23:13 +0100
+Message-Id: <20171231112320.3461-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
+References: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Create a separate bus for da9063 PMIC and da9210 regulator
+related I2C slaves.
 
-Add the initial device  tree for the V3M Starter Kit board.
-The board has 1 debug serial port (SCIF0); include support for it,
-so that the serial console can work.
+Based on similar work for HDMI by Wolfram Sang.
 
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, corrected chip name in commit msg, updated aliases]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/Makefile           |  2 +-
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts | 44 ++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+ arch/arm/boot/dts/r8a7790-lager.dts | 84 +++++++++++++++++++++++--------------
+ 1 file changed, 53 insertions(+), 31 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 7f13e014d0aa..2186d0193b73 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -7,5 +7,5 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
--dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb
-+dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-new file mode 100644
-index 000000000000..50f49212f54e
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-@@ -0,0 +1,44 @@
-+/*
-+ * Device Tree Source for the V3M Starter Kit board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ * Copyright (C) 2017 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index e4050dae7e8e33..6f6e41c9fc4f6c 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -55,6 +55,7 @@
+ 		i2c10 = &i2cexio0;
+ 		i2c11 = &i2cexio1;
+ 		i2c12 = &i2chdmi;
++		i2c13 = &i2cpwr;
+ 	};
+ 
+ 	chosen {
+@@ -410,6 +411,46 @@
+ 			};
+ 		};
+ 	};
 +
-+/dts-v1/;
-+#include "r8a77970.dtsi"
++	/*
++	 * IIC3 and I2C3 may be switched using pinmux.
++	 * IIC3/I2C3 does not appear to support fallback to GPIO.
++	 */
++	i2cpwr: i2c-13 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&iic3>, <&i2c3>;
++		i2c-bus-name = "i2c-pwr";
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+/ {
-+	model = "Renesas V3M Starter Kit board";
-+	compatible = "renesas,v3msk", "renesas,r8a77970";
++		pmic@58 {
++			compatible = "dlg,da9063";
++			reg = <0x58>;
++			interrupt-parent = <&irqc0>;
++			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++			interrupt-controller;
 +
-+	aliases {
-+		serial0 = &scif0;
++			rtc {
++				compatible = "dlg,da9063-rtc";
++			};
++
++			wdt {
++				compatible = "dlg,da9063-watchdog";
++			};
++		};
++
++		vdd_dvfs: regulator@68 {
++			compatible = "dlg,da9210";
++			reg = <0x68>;
++			interrupt-parent = <&irqc0>;
++			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++
++			regulator-min-microvolt = <1000000>;
++			regulator-max-microvolt = <1000000>;
++			regulator-boot-on;
++			regulator-always-on;
++		};
++	};
+ };
+ 
+ &du {
+@@ -549,6 +590,11 @@
+ 		function = "iic2";
+ 	};
+ 
++	i2c3_pins: i2c3 {
++		groups = "i2c3";
++		function = "i2c3";
 +	};
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
+ 	iic3_pins: iic3 {
+ 		groups = "iic3";
+ 		function = "iic3";
+@@ -764,38 +810,14 @@
+ 	clock-frequency = <100000>;
+ };
+ 
+-&iic3 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&iic3_pins>;
+-	status = "okay";
+-
+-	pmic@58 {
+-		compatible = "dlg,da9063";
+-		reg = <0x58>;
+-		interrupt-parent = <&irqc0>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-controller;
+-
+-		rtc {
+-			compatible = "dlg,da9063-rtc";
+-		};
+-
+-		wdt {
+-			compatible = "dlg,da9063-watchdog";
+-		};
+-	};
+-
+-	vdd_dvfs: regulator@68 {
+-		compatible = "dlg,da9210";
+-		reg = <0x68>;
+-		interrupt-parent = <&irqc0>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++&i2c3	{
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "i2c-pwr";
 +};
-+
-+&extal_clk {
-+	clock-frequency = <16666666>;
-+};
-+
-+&extalr_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
+ 
+-		regulator-min-microvolt = <1000000>;
+-		regulator-max-microvolt = <1000000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+-	};
++&iic3	{
++	pinctrl-0 = <&iic3_pins>;
++	pinctrl-names = "i2c-pwr";
+ };
+ 
+ &pci0 {
 -- 
 2.11.0
