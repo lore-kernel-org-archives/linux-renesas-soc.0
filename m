@@ -15,11 +15,11 @@ Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>,
         linux-mediatek@lists.infradead.org,
         freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-rtc@vger.kernel.org
-Subject: [PATCH v3 01/34] clk_ops: change round_rate() to return unsigned long
-Date: Mon,  1 Jan 2018 19:42:40 +0000
-Message-Id: <1514835793-1104-2-git-send-email-pure.logic@nexus-software.ie>
-In-Reply-To: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
-References: <1514835793-1104-1-git-send-email-pure.logic@nexus-software.ie>
+Subject: [PATCH v2 01/34] clk_ops: change round_rate() to return unsigned long
+Date: Mon,  1 Jan 2018 19:07:28 +0000
+Message-Id: <1514833681-30737-2-git-send-email-pure.logic@nexus-software.ie>
+In-Reply-To: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
+References: <1514833681-30737-1-git-send-email-pure.logic@nexus-software.ie>
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
