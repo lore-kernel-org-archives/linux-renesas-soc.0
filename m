@@ -1,67 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44282 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756049AbeAHLou (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45144 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751088AbeAAKif (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Jan 2018 06:44:50 -0500
-Received: by mail-lf0-f65.google.com with SMTP id w23so1600211lfd.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 Jan 2018 03:44:49 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        Mon, 1 Jan 2018 05:38:35 -0500
+Received: by mail-lf0-f66.google.com with SMTP id y71so2227664lfd.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 01 Jan 2018 02:38:35 -0800 (PST)
+Subject: Re: [PATCH] sata: rcar_sata: Reset SATA PHY when Salvator-X board
+ resumes
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-ide@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v4] PM / wakeup: Print warn if device gets enabled as wakeup source during sleep
-Date: Mon,  8 Jan 2018 12:44:43 +0100
-Message-Id: <1515411883-12626-1-git-send-email-ulf.hansson@linaro.org>
+        linux-renesas-soc@vger.kernel.org
+References: <1512585925-4251-1-git-send-email-ykaneko0929@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <219695fb-67eb-6770-675e-46fcc5c7f681@cogentembedded.com>
+Date: Mon, 1 Jan 2018 13:38:32 +0300
+MIME-Version: 1.0
+In-Reply-To: <1512585925-4251-1-git-send-email-ykaneko0929@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In general, wakeup settings are not supposed to be changed during any of
-the system wide PM phases. The reason is simply that it would break
-guarantees provided by the PM core, to properly act on active wakeup
-sources.
+Hello!
 
-However, there are exceptions to when, in particular, disabling a device as
-wakeup source makes sense. For example, in cases when a driver realizes
-that its device is dead during system suspend. For these scenarios, we
-don't need to care about acting on the wakeup source correctly, because a
-dead device shouldn't deliver wakeup signals.
+On 12/6/2017 9:45 PM, Yoshihiro Kaneko wrote:
 
-To this reasoning and to help users to properly manage wakeup settings,
-let's print a warning in cases someone calls device_wakeup_enable() during
-system sleep.
+> From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> 
+> Because power of Salvator-X board is cut off in suspend,
+> it needs to reset SATA PHY state in resume.
+> Otherwise, SATA partition could not be accessed anymore.
+> 
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> Signed-off-by: Hien Dang <hien.dang.eb@rvc.renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+> 
+> This patch is based on the for-next branch of libata tree.
+> 
+>   drivers/ata/sata_rcar.c | 32 ++++++++++++++++++++++++++++++++
+>   1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+> index 80ee2f2..aba6121 100644
+> --- a/drivers/ata/sata_rcar.c
+> +++ b/drivers/ata/sata_rcar.c
+> @@ -977,11 +977,43 @@ static int sata_rcar_resume(struct device *dev)
+>   	struct sata_rcar_priv *priv = host->private_data;
+>   	void __iomem *base = priv->base;
+>   	int ret;
+> +	u32 val;
+>   
+>   	ret = clk_prepare_enable(priv->clk);
+>   	if (ret)
+>   		return ret;
+>   
+> +	/* Re-use from sata_rcar_init_controller() */
 
-Suggested-by: Rafael J. Wysocki <rafael@kernel.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
+    Why not just call it? Or at least factor out a common part?
 
-Changes in v4:
-	- Send this as a separate change.
-	- Changed from dev_warn() to dev_dbg().
+[...]
 
----
- drivers/base/power/wakeup.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index e73a081..f30c233 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -268,6 +268,9 @@ int device_wakeup_enable(struct device *dev)
- 	if (!dev || !dev->power.can_wakeup)
- 		return -EINVAL;
- 
-+	if (pm_suspend_target_state != PM_SUSPEND_ON)
-+		dev_dbg(dev, "don't enable as wakup source during sleep!\n");
-+
- 	ws = wakeup_source_register(dev_name(dev));
- 	if (!ws)
- 		return -ENOMEM;
--- 
-2.7.4
+MBR, Sergei
