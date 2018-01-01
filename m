@@ -1,74 +1,68 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:60360 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750715AbeABTCC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 14:02:02 -0500
-Date: Tue, 2 Jan 2018 11:01:59 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Tue, 2 Jan 2018 02:01:18 +0800
+From: kbuild test robot <lkp@intel.com>
 To: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc: Mikko Perttunen <cyndis@kapsi.fi>, mturquette@baylibre.com,
+Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@codeaurora.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@linux-mips.org, linux-rpi-kernel@lists.infradead.org,
-        patches@opensource.cirrus.com,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-mips@linux-mips.org,
+        linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-rtc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
         linux-mediatek@lists.infradead.org,
-        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-rtc@vger.kernel.org
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org,
+        pure.logic@nexus-software.ie, linux-omap@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org
 Subject: Re: [PATCH 01/33] clk_ops: change round_rate() to return unsigned
  long
-Message-ID: <20180102190159.GH7997@codeaurora.org>
-References: <1514596392-22270-1-git-send-email-pure.logic@nexus-software.ie>
- <1514596392-22270-2-git-send-email-pure.logic@nexus-software.ie>
- <9f4bef5a-8a71-6f30-5cfb-5e8fe133e3d3@kapsi.fi>
- <6d83a5c3-6589-24bc-4ca5-4d1bbca47432@nexus-software.ie>
+Message-ID: <201801020112.PEMNifTo%fengguang.wu@intel.com>
+References: <1514596392-22270-2-git-send-email-pure.logic@nexus-software.ie>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6d83a5c3-6589-24bc-4ca5-4d1bbca47432@nexus-software.ie>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1514596392-22270-2-git-send-email-pure.logic@nexus-software.ie>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/31, Bryan O'Donoghue wrote:
-> On 30/12/17 16:36, Mikko Perttunen wrote:
-> >FWIW, we had this problem some years ago with the Tegra CPU clock
-> >- then it was determined that a simpler solution was to have the
-> >determine_rate callback support unsigned long rates - so clock
-> >drivers that need to return rates higher than 2^31 can instead
-> >implement the determine_rate callback. That is what's currently
-> >implemented.
-> >
-> >Mikko
-> 
-> Granted we could work around it but, having both zero and less than
-> zero indicate error means you can't support larger than LONG_MAX
-> which is I think worth fixing.
-> 
+Hi Bryan,
 
-Ok. But can you implement the determine_rate op instead of the
-round_rate op for your clk? It's not a work-around, it's the
-preferred solution. That would allow rates larger than 2^31 for
-the clk without pushing through a change to all the drivers to
-express zero as "error" and non-zero as the rounded rate.
+I love your patch! Perhaps something to improve:
 
-I'm not entirely opposed to this approach, because we probably
-don't care to pass the particular error value from a clk provider
-to a clk consumer about what the error is. It's actually what we
-proposed as the solution for clk_round_rate() to return values
-larger than LONG_MAX to consumers. But doing that consumer API
-change or this provider side change is going to require us to
-evaluate all the consumers of these clks to make sure they don't
-check for some error value that's less than zero. This series
-does half the work, by changing the provider side, while ignoring
-the consumer side and any potential fallout of the less than zero
-to zero return value change.
+[auto build test WARNING on tegra/for-next]
+[also build test WARNING on v4.15-rc6]
+[cannot apply to clk/clk-next next-20171222]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+url:    https://github.com/0day-ci/linux/commits/Bryan-O-Donoghue/change-clk_ops-round_rate-to-scale-past-LONG_MAX/20180101-212907
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+
+vim +321 drivers/clk/clk-versaclock5.c
+
+8c1ebe97 Marek Vasut 2017-07-09  318  
+8c1ebe97 Marek Vasut 2017-07-09  319  static const struct clk_ops vc5_dbl_ops = {
+8c1ebe97 Marek Vasut 2017-07-09  320  	.recalc_rate	= vc5_dbl_recalc_rate,
+8c1ebe97 Marek Vasut 2017-07-09 @321  	.round_rate	= vc5_dbl_round_rate,
+8c1ebe97 Marek Vasut 2017-07-09  322  	.set_rate	= vc5_dbl_set_rate,
+8c1ebe97 Marek Vasut 2017-07-09  323  };
+8c1ebe97 Marek Vasut 2017-07-09  324  
+
+:::::: The code at line 321 was first introduced by commit
+:::::: 8c1ebe9762670159ca982167131af63c94ff1571 clk: vc5: Add support for the input frequency doubler
+
+:::::: TO: Marek Vasut <marek.vasut@gmail.com>
+:::::: CC: Stephen Boyd <sboyd@codeaurora.org>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
