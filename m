@@ -1,21 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:33570 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753219AbeABJhg (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:41531 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752262AbeABJ1B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 04:37:36 -0500
+        Tue, 2 Jan 2018 04:27:01 -0500
+Received: by mail-io0-f196.google.com with SMTP id f6so12046681ioh.8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 Jan 2018 01:27:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdZCApUP2YnYK09wzn3MOwH2XL3Jmm=FXHtsc2pwLyVNRw@mail.gmail.com>
-References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
- <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org> <CACRpkdZCApUP2YnYK09wzn3MOwH2XL3Jmm=FXHtsc2pwLyVNRw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Jan 2018 10:37:34 +0100
-Message-ID: <CAMuHMdVwCmLYxVA0ivrE8MtCUpfVe4PrzTeC7jqqthShOw93JA@mail.gmail.com>
+In-Reply-To: <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org>
+References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org> <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 2 Jan 2018 10:27:00 +0100
+Message-ID: <CACRpkdZCApUP2YnYK09wzn3MOwH2XL3Jmm=FXHtsc2pwLyVNRw@mail.gmail.com>
 Subject: Re: [PATCH v2 3/3] gpio: rcar: Use WAKEUP_PATH driver PM flag
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Marc Zyngier <marc.zyngier@arm.com>,
@@ -29,46 +28,35 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus,
+On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-On Tue, Jan 2, 2018 at 10:27 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> From: Geert Uytterhoeven <geert+renesas@glider.be>
->> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
->> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO block's
->> module clock (if exists) is manually kept running during system suspend, to
->> make sure the device stays active.
->>
->> However, this explicit clock handling is merely a workaround for a failure
->> to properly communicate wakeup information to the PM core. Instead, set the
->> WAKEUP_PATH driver PM flag to indicate that the device is part of the
->> wakeup path, which further also enables middle-layers and PM domains (like
->> genpd) to act on this.
->>
->> In case the device is attached to genpd and depending on if it has an
->> active wakeup configuration, genpd will keep the device active (the clock
->> running) during system suspend when needed. This enables us to remove all
->> explicit clock handling code from the driver, so let's do that as well.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> [Ulf: Converted to use the WAKEUP_PATH driver PM flag]
->> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
+> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO block's
+> module clock (if exists) is manually kept running during system suspend, to
+> make sure the device stays active.
 >
-> I guess it is dependent on the other patches?
+> However, this explicit clock handling is merely a workaround for a failure
+> to properly communicate wakeup information to the PM core. Instead, set the
+> WAKEUP_PATH driver PM flag to indicate that the device is part of the
+> wakeup path, which further also enables middle-layers and PM domains (like
+> genpd) to act on this.
+>
+> In case the device is attached to genpd and depending on if it has an
+> active wakeup configuration, genpd will keep the device active (the clock
+> running) during system suspend when needed. This enables us to remove all
+> explicit clock handling code from the driver, so let's do that as well.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> [Ulf: Converted to use the WAKEUP_PATH driver PM flag]
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Yes, it depends on (a) a clock patch queued in clk-next for v4.16, and (b) a PM
-patch introducing WAKEUP_PATH.  Applying it prematurely will cause build
-or runtime issues.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Gr{oetje,eeting}s,
+I guess it is dependent on the other patches?
 
-                        Geert
+If you want me to just apply it to the GPIO tree, tell me.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
