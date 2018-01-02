@@ -1,54 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:40733 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752595AbeADKih (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50962 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751047AbeABPyY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 05:38:37 -0500
-MIME-Version: 1.0
-In-Reply-To: <2397934.0Hfvr3l64P@avalon>
-References: <1514906503-8535-1-git-send-email-geert+renesas@glider.be> <2397934.0Hfvr3l64P@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 4 Jan 2018 11:38:36 +0100
-Message-ID: <CAMuHMdXBFqiNLMAzDkyWZfdiJWt5WGEJJP0+5TE250az8u5Brg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add FDP clock
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Tue, 2 Jan 2018 10:54:24 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         ABE Hiroshige <hiroshige.abe.zc@renesas.com>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add FDP clock
+Date: Tue, 02 Jan 2018 17:54:44 +0200
+Message-ID: <2397934.0Hfvr3l64P@avalon>
+In-Reply-To: <1514906503-8535-1-git-send-email-geert+renesas@glider.be>
+References: <1514906503-8535-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 2, 2018 at 4:54 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Tuesday, 2 January 2018 17:21:43 EET Geert Uytterhoeven wrote:
->> From: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
->>
->> This patch adds FDP1-0 clock to the R8A7796 SoC.
->>
->> Signed-off-by: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> [geert: s/fdp0/fdp1-0/]
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> I can't verify the parent clock, but apart from that,
->
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Hi Geert,
 
-Applied with Laurent's ack, and queued in clk-renesas-for-v4.16.
+Thank you for the patch.
 
-Gr{oetje,eeting}s,
+On Tuesday, 2 January 2018 17:21:43 EET Geert Uytterhoeven wrote:
+> From: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
+> 
+> This patch adds FDP1-0 clock to the R8A7796 SoC.
+> 
+> Signed-off-by: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [geert: s/fdp0/fdp1-0/]
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-                        Geert
+I can't verify the parent clock, but apart from that,
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+> This gets rid of the following error messages during boot and system
+> resume:
+> 
+>     renesas-cpg-mssr e6150000.clock-controller: Cannot get module clock 119:
+> -2 rcar_fdp1 fe940000.fdp1: failed to add to PM domain a3vc: -2
+> 
+> To be queued in clk-renesas-for-v4.16.
+> ---
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> b/drivers/clk/renesas/r8a7796-cpg-mssr.c index
+> 83a68e51e4ec1d12..dfb267a92f2a20d3 100644
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -117,6 +117,7 @@ static const struct cpg_core_clk r8a7796_core_clks[]
+> __initconst = { };
+> 
+>  static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+> +	DEF_MOD("fdp1-0",		 119,	R8A7796_CLK_S0D1),
+>  	DEF_MOD("scif5",		 202,	R8A7796_CLK_S3D4),
+>  	DEF_MOD("scif4",		 203,	R8A7796_CLK_S3D4),
+>  	DEF_MOD("scif3",		 204,	R8A7796_CLK_S3D4),
+
+-- 
+Regards,
+
+Laurent Pinchart
