@@ -1,79 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41362 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751142AbeAILRk (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:34539 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeABQJA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 06:17:40 -0500
-Date: Tue, 9 Jan 2018 12:17:39 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Phil Reid <preid@electromag.com.au>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Claudio Foellmi <claudio.foellmi@ergon.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 2/6] i2c: add identifier in declarations for
- i2c_bus_recovery
-Message-ID: <20180109111738.4owgwmndd7bqmvbn@ninjato>
-References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
- <20171204123640.3382-3-wsa+renesas@sang-engineering.com>
- <1513178582.7000.38.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mzybk2sxdmi4y3g7"
-Content-Disposition: inline
-In-Reply-To: <1513178582.7000.38.camel@linux.intel.com>
+        Tue, 2 Jan 2018 11:09:00 -0500
+Received: by mail-lf0-f43.google.com with SMTP id h140so5320749lfg.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 Jan 2018 08:08:59 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 0/4] PM / core: Extend behaviour for wakeup paths
+Date: Tue,  2 Jan 2018 17:08:49 +0100
+Message-Id: <1514909333-4450-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Changes in v3:
+	- Dropped the DPM_FLAG_WAKEUP_PATH, thus re-placed patch 2 and patch 3
+	with new patches.
+	- Simplified patch4, according to suggestions by Rafael.
+	- No changes to patch1.
 
---mzybk2sxdmi4y3g7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The generic problem this series intends to solve, is that for some PM domains,
+especially genpd, the current information in the dev->power.wakeup_path, is not
+sufficient for a PM domain to fully understand how to treat devices in the
+wakeup path during system suspend.
 
-On Wed, Dec 13, 2017 at 05:23:02PM +0200, Andy Shevchenko wrote:
-> On Mon, 2017-12-04 at 13:36 +0100, Wolfram Sang wrote:
-> > No reason to have them undefined, so let's add them.
-> >=20
->=20
-> >  	int (*recover_bus)(struct i2c_adapter *);
-> > =20
-> > -	int (*get_scl)(struct i2c_adapter *);
-> > -	void (*set_scl)(struct i2c_adapter *, int val);
-> > -	int (*get_sda)(struct i2c_adapter *);
-> > +	int (*get_scl)(struct i2c_adapter *adap);
-> > +	void (*set_scl)(struct i2c_adapter *adap, int val);
-> > +	int (*get_sda)(struct i2c_adapter *adap);
-> > =20
-> >  	void (*prepare_recovery)(struct i2c_adapter *);
-> >  	void (*unprepare_recovery)(struct i2c_adapter *);
->=20
-> It seems inconsistent with the rest of the members even from this
-> visible piece.
+Particularly this applies to resources being consumed by the driver that has
+configured system wakeup settings for its device. Currently the PM domain lacks
+information about these consumed resources, which means it may decide to power
+of their corresponding device and its attached PM domain, while they actually
+would need to stay powered to allow system wakeup signals to be delivered.
 
-Agreed. Either overlooked, or lost during rebase. Any way, will fix!
+Geert Uytterhoeven, has been working on these kind of problems for some Renesas
+SoCs and there have been lots of discussions around this. So far I haven't
+included any patches for dealing with the "OUT_BAND_WAKEUP" thingy, but I
+suggest we do that in a second separate step, since it's not immediately needed
+to fix the problems for the Renesas SoCs.
 
+Ulf Hansson (4):
+  PM / core: Assign the wakeup_path status flag in __device_prepare()
+  PM / core: Propagate wakeup_path status flag in
+    __device_suspend_late()
+  PM / wakeup: Add device_set_wakeup_path() helper to control wakeup
+    path
+  PM / wakeup: Print warn if device gets enabled as wakeup source during
+    sleep
 
---mzybk2sxdmi4y3g7
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/base/power/main.c   | 37 ++++++++++++++++++++-----------------
+ drivers/base/power/wakeup.c |  3 +++
+ include/linux/pm_wakeup.h   |  7 +++++++
+ 3 files changed, 30 insertions(+), 17 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpUpNIACgkQFA3kzBSg
-KbYImw//fJ22BUIChPdXWvG7pUnvOQP2E17h6wzjOpq/sC/w5YFD+i5kYiXNUgzw
-TEHrnD4MzpMKY+/M6qYdwBam4b/B1jFPRQqTuEokrxSV998vaA8wE8Rvqj6xp1tu
-7CGtsISdDmqgUlza57x5K+G27shB3cm4uvt3PxiZab3aaoBWqBmmz9A9kdWdPyX5
-TVFa+2e4AcFRXat+CV/kU+Sb6ASNuRamHTNX/ESALlfXA9q/2oqCQt9a/u91ztmb
-W/aXxdobH7ircQhS39YH0YKNMaIb9Hu5d0+bTI+dZGbxHrY3UxTwl/2pUDZsZY2N
-3aDdu4nJtlmenhTd0OWljLz7VfKD6+tDhaaIclInVEjYA5rW2DNcraCdDVDJYETE
-q2ZJKPvw4Y3Qq5O6dfuRKT52CERDgacV3STje8a7vQT7k21SadN1q3j6EdB3sZjd
-0qb485oCDhva8/u85Yd7s3+ufBwsozllEDObuPLT/Ds5ZnQrd31r4+7pQInDfIOm
-4wffPq7NTN+4lraV+BQYXhGsy6BOFOy/BNCHRRzrMqCL9Fr4gvBX4aejIbkaNApa
-wWhIDs60xETntg5bVli7PzDHcbIReGFyLMVypszN5OAmeGUiyGTzRmGjevxGKzHC
-fyJqUJPsvxQZifROWmmltXsAJ1Mo4dabhyyIwCWuKE8Aapw4SRE=
-=FK+L
------END PGP SIGNATURE-----
-
---mzybk2sxdmi4y3g7--
+-- 
+2.7.4
