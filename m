@@ -1,54 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46351 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752517AbeAFV06 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:43833 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750865AbeABWeF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 6 Jan 2018 16:26:58 -0500
-Received: by mail-lf0-f68.google.com with SMTP id a12so8478485lfe.13
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 06 Jan 2018 13:26:57 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180106212652.818833413@cogentembedded.com>
-Date: Sun, 07 Jan 2018 00:26:47 +0300
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] sh_eth: fix TXALCR1 offsets
+        Tue, 2 Jan 2018 17:34:05 -0500
+Date: Tue, 2 Jan 2018 23:34:04 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: gpio: add fault injector
+Message-ID: <20180102223404.llvuybdtceoln4ks@ninjato>
+References: <20170825153918.7544-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=sh_eth-fix-TXALCR1-offsets.patch
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="f7wrtpgyryjzf6yk"
+Content-Disposition: inline
+In-Reply-To: <20170825153918.7544-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The  TXALCR1 offsets are incorrect in the register offset tables, most
-probably due to copy&paste error.  Luckily, the driver never uses this
-register. :-)
 
-Fixes: 4a55530f38e4 ("net: sh_eth: modify the definitions of register")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+--f7wrtpgyryjzf6yk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
- drivers/net/ethernet/renesas/sh_eth.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Aug 25, 2017 at 05:39:18PM +0200, Wolfram Sang wrote:
+> Add fault injection capabilities to the i2c-gpio driver. When connected to
+> another I2C bus, it can create unusual states which the other I2C bus mas=
+ter
+> driver needs to handle. Only for debugging!
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Index: net/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net/drivers/net/ethernet/renesas/sh_eth.c
-@@ -147,7 +147,7 @@ static const u16 sh_eth_offset_gigabit[S
- 	[FWNLCR0]	= 0x0090,
- 	[FWALCR0]	= 0x0094,
- 	[TXNLCR1]	= 0x00a0,
--	[TXALCR1]	= 0x00a0,
-+	[TXALCR1]	= 0x00a4,
- 	[RXNLCR1]	= 0x00a8,
- 	[RXALCR1]	= 0x00ac,
- 	[FWNLCR1]	= 0x00b0,
-@@ -399,7 +399,7 @@ static const u16 sh_eth_offset_fast_sh3_
- 	[FWNLCR0]	= 0x0090,
- 	[FWALCR0]	= 0x0094,
- 	[TXNLCR1]	= 0x00a0,
--	[TXALCR1]	= 0x00a0,
-+	[TXALCR1]	= 0x00a4,
- 	[RXNLCR1]	= 0x00a8,
- 	[RXALCR1]	= 0x00ac,
- 	[FWNLCR1]	= 0x00b0,
+To be more precise:
+
+Applied to for-next after fixing checkpatch warnings about parenthesis
+in macros, improper 'inline' usage, and octal values for file
+permissions.
+
+
+--f7wrtpgyryjzf6yk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpMCNsACgkQFA3kzBSg
+KbZwRw//fIlb1kJwwqCp85nvCjPQHrzY3AueLs3J99xTeAZkTa40AZqkDenqwhwj
+CfZIt0AsVwNfV4RnqefpZNgH+tJHPYFkCgIxTKBlZG3RzSTGaHHQ5nX6xmmNLzGH
+jhKqUBCesrdVTmrP/tqTk0cTAP1il/R6MVjGH+zNzKT/2gk8w+P9SlHJdUtSLBDI
+r8NSQBH9F0nSKGi3ZNgJCfdGivqqUEMYK27kSrURyBgiZCtkn4XkfjRNot7nKATK
+Ye0leBhhXDk2J5wn7bIctKXpAgVM/cErCsymHpQg6+MkuIV9LQIiqdSX39pX9iId
+JVMfyUvf0olpHfhpUJ5n54bijK7/u6QEYLS1jYUqwyQKbyqezp1UHPhhro4jFqy+
+WDItk0Ew2DdaFeKHn0OFjBIdkHq0maZo9rBLJY89LpmqjRqF4PuwuSHYiXrTjmpN
+Y9Xe1awaeaLddWs6moMTW0bWdJCCfY4OHq0ovM/CluaT9D6ZsBpKtfoj2Y/kxnnC
+pO/u214gp9zhRkvkBQO1RX0e2JpjY58Jo6p2K0neVr8grDECxvgLKGkHK1X5p55C
+Je0I1bOmKnBQdxaxfz4VUWZMhZN5gF1n6j/BwPwrqlhAsDwfATKLIi5tt8uVEcyR
+ugkWNmn4DZUZb59oiqxcfjn0aiXVfpJXmXFXlbxLYvaI95L07N0=
+=pUgP
+-----END PGP SIGNATURE-----
+
+--f7wrtpgyryjzf6yk--
