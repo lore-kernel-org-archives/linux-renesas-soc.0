@@ -1,171 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57702 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934091AbeAIQRg (ORCPT
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:36732 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751332AbeABLwc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 11:17:36 -0500
-From: Robin Murphy <robin.murphy@arm.com>
-To: alex.williamson@redhat.com, joro@8bytes.org
-Cc: sricharan@codeaurora.org,
-        laurent.pinchart+renesas@ideasonboard.com,
-        damm+renesas@opensource.se, iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/3] iommu: Clean up of_iommu_init_fn
-Date: Tue,  9 Jan 2018 16:17:27 +0000
-Message-Id: <4f15ffc754799866388d9e022333d73156257b89.1515512134.git.robin.murphy@arm.com>
-In-Reply-To: <da664cf8f60c77cbb657cc2e3849560604eaf6da.1515512134.git.robin.murphy@arm.com>
-References: <da664cf8f60c77cbb657cc2e3849560604eaf6da.1515512134.git.robin.murphy@arm.com>
+        Tue, 2 Jan 2018 06:52:32 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFqJfWy3jaC6jY9bj3e261ONufe7EkSYFWChWVeXvKQjyg@mail.gmail.com>
+References: <1514547423-18965-1-git-send-email-ulf.hansson@linaro.org>
+ <1514547423-18965-4-git-send-email-ulf.hansson@linaro.org>
+ <CAJZ5v0hoakc1_CwFXu5EE8SU8NstVv2aod+qpb4w4gjHE81X4A@mail.gmail.com> <CAPDyKFqJfWy3jaC6jY9bj3e261ONufe7EkSYFWChWVeXvKQjyg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 2 Jan 2018 12:52:31 +0100
+Message-ID: <CAJZ5v0jqOKKWzUAF36X5y+ncSYZcuy3ZO2Zj9ufU4votRpcS9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] PM / Domains: Take WAKEUP_PATH driver flag into
+ account in genpd
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now that no more drivers rely on arbitrary early initialisation via an
-of_iommu_init_fn hook, let's clean up the redundant remnants. The
-IOMMU_OF_DECLARE() macro needs to remain for now, as the probe-deferral
-mechanism has no other nice way to detect built-in drivers before they
-have registered themselves, such that it can make the right decision.
+On Tue, Jan 2, 2018 at 12:46 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 30 December 2017 at 01:47, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>> On Fri, Dec 29, 2017 at 12:37 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>> In case the WAKEUP_PATH flag has been set in a later phase than from the
+>>> ->suspend() callback, the PM core don't set the ->power.wakeup_path status
+>>> flag for the device. Therefore, let's be safe and check it explicitly.
+>>>
+>>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>> ---
+>>>  drivers/base/power/domain.c | 8 ++++++--
+>>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+>>> index f9dcc98..32b4ba7 100644
+>>> --- a/drivers/base/power/domain.c
+>>> +++ b/drivers/base/power/domain.c
+>>> @@ -1038,7 +1038,9 @@ static int genpd_finish_suspend(struct device *dev, bool poweroff)
+>>>         if (IS_ERR(genpd))
+>>>                 return -EINVAL;
+>>>
+>>> -       if (dev->power.wakeup_path && genpd_is_active_wakeup(genpd))
+>>> +       if ((dev->power.wakeup_path ||
+>>> +           dev_pm_test_driver_flags(dev, DPM_FLAG_WAKEUP_PATH)) &&
+>>
+>> Shouldn't dev->power.wakeup_path be always set if DPM_FLAG_WAKEUP_PATH
+>> is set as per the second patch in the series?
+>
+> Not if DPM_FLAG_WAKEUP_PATH is set from a driver's ->suspend_late() callback.
+>
+> To do that, the PM core would need to be adopted to set/propagate the
+> "wakeup_path" flag at __device_suspend_late(), similar to what is done
+> at __device_suspend().
 
-Reviewed-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
+Why not?
 
-v2: Rebase to 4.15-rc, add tags
+The wakeup_path flag is only used during the "noirq" phase, so it can
+be propagated to parent at the end of __device_suspend_late() instead
+of doing that in __device_suspend() even.
 
- drivers/iommu/arm-smmu-v3.c  |  2 +-
- drivers/iommu/arm-smmu.c     | 12 ++++++------
- drivers/iommu/exynos-iommu.c |  2 +-
- drivers/iommu/ipmmu-vmsa.c   |  4 ++--
- drivers/iommu/msm_iommu.c    |  2 +-
- drivers/iommu/of_iommu.c     | 16 ----------------
- drivers/iommu/qcom_iommu.c   |  2 +-
- include/linux/of_iommu.h     |  5 +----
- 8 files changed, 13 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index f122071688fd..7f186beaa1a6 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -2962,7 +2962,7 @@ static struct platform_driver arm_smmu_driver = {
- };
- module_platform_driver(arm_smmu_driver);
- 
--IOMMU_OF_DECLARE(arm_smmuv3, "arm,smmu-v3", NULL);
-+IOMMU_OF_DECLARE(arm_smmuv3, "arm,smmu-v3");
- 
- MODULE_DESCRIPTION("IOMMU API for ARM architected SMMUv3 implementations");
- MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 78d4c6b8f1ba..69e7c60792a8 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2211,12 +2211,12 @@ static struct platform_driver arm_smmu_driver = {
- };
- module_platform_driver(arm_smmu_driver);
- 
--IOMMU_OF_DECLARE(arm_smmuv1, "arm,smmu-v1", NULL);
--IOMMU_OF_DECLARE(arm_smmuv2, "arm,smmu-v2", NULL);
--IOMMU_OF_DECLARE(arm_mmu400, "arm,mmu-400", NULL);
--IOMMU_OF_DECLARE(arm_mmu401, "arm,mmu-401", NULL);
--IOMMU_OF_DECLARE(arm_mmu500, "arm,mmu-500", NULL);
--IOMMU_OF_DECLARE(cavium_smmuv2, "cavium,smmu-v2", NULL);
-+IOMMU_OF_DECLARE(arm_smmuv1, "arm,smmu-v1");
-+IOMMU_OF_DECLARE(arm_smmuv2, "arm,smmu-v2");
-+IOMMU_OF_DECLARE(arm_mmu400, "arm,mmu-400");
-+IOMMU_OF_DECLARE(arm_mmu401, "arm,mmu-401");
-+IOMMU_OF_DECLARE(arm_mmu500, "arm,mmu-500");
-+IOMMU_OF_DECLARE(cavium_smmuv2, "cavium,smmu-v2");
- 
- MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
- MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 736d4552d96f..2138102ef611 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1401,4 +1401,4 @@ static int __init exynos_iommu_init(void)
- }
- core_initcall(exynos_iommu_init);
- 
--IOMMU_OF_DECLARE(exynos_iommu_of, "samsung,exynos-sysmmu", NULL);
-+IOMMU_OF_DECLARE(exynos_iommu_of, "samsung,exynos-sysmmu");
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 331dad909301..40ae6e87cb88 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -1108,8 +1108,8 @@ static void __exit ipmmu_exit(void)
- subsys_initcall(ipmmu_init);
- module_exit(ipmmu_exit);
- 
--IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa", NULL);
--IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795", NULL);
-+IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa");
-+IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795");
- 
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
- MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
-diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-index dda1ce87a070..0d3350463a3f 100644
---- a/drivers/iommu/msm_iommu.c
-+++ b/drivers/iommu/msm_iommu.c
-@@ -877,7 +877,7 @@ static void __exit msm_iommu_driver_exit(void)
- subsys_initcall(msm_iommu_driver_init);
- module_exit(msm_iommu_driver_exit);
- 
--IOMMU_OF_DECLARE(msm_iommu_of, "qcom,apq8064-iommu", NULL);
-+IOMMU_OF_DECLARE(msm_iommu_of, "qcom,apq8064-iommu");
- 
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Stepan Moskovchenko <stepanm@codeaurora.org>");
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index 50947ebb6d17..5c36a8b7656a 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -231,19 +231,3 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
- 
- 	return ops;
- }
--
--static int __init of_iommu_init(void)
--{
--	struct device_node *np;
--	const struct of_device_id *match, *matches = &__iommu_of_table;
--
--	for_each_matching_node_and_match(np, matches, &match) {
--		const of_iommu_init_fn init_fn = match->data;
--
--		if (init_fn && init_fn(np))
--			pr_err("Failed to initialise IOMMU %pOF\n", np);
--	}
--
--	return 0;
--}
--postcore_initcall_sync(of_iommu_init);
-diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
-index e07f02d00c68..65b9c99707f8 100644
---- a/drivers/iommu/qcom_iommu.c
-+++ b/drivers/iommu/qcom_iommu.c
-@@ -947,7 +947,7 @@ static void __exit qcom_iommu_exit(void)
- module_init(qcom_iommu_init);
- module_exit(qcom_iommu_exit);
- 
--IOMMU_OF_DECLARE(qcom_iommu_dev, "qcom,msm-iommu-v1", NULL);
-+IOMMU_OF_DECLARE(qcom_iommu_dev, "qcom,msm-iommu-v1");
- 
- MODULE_DESCRIPTION("IOMMU API for QCOM IOMMU v1 implementations");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/of_iommu.h b/include/linux/of_iommu.h
-index cddfaff4d0b7..4fa654e4b5a9 100644
---- a/include/linux/of_iommu.h
-+++ b/include/linux/of_iommu.h
-@@ -34,9 +34,6 @@ static inline const struct iommu_ops *of_iommu_configure(struct device *dev,
- 
- extern struct of_device_id __iommu_of_table;
- 
--typedef int (*of_iommu_init_fn)(struct device_node *);
--
--#define IOMMU_OF_DECLARE(name, compat, fn) \
--	_OF_DECLARE(iommu, name, compat, fn, of_iommu_init_fn)
-+#define IOMMU_OF_DECLARE(name, compat)	OF_DECLARE_1(iommu, name, compat, NULL)
- 
- #endif /* __OF_IOMMU_H */
--- 
-2.13.4.dirty
+Thanks,
+Rafael
