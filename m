@@ -1,55 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:45464 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750928AbeACADz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40445 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752503AbeABJTs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 19:03:55 -0500
-Received: by mail-lf0-f54.google.com with SMTP id y71so57729lfd.12
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 Jan 2018 16:03:54 -0800 (PST)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Wed, 3 Jan 2018 01:03:52 +0100
-To: Simon Horman <horms@verge.net.au>
-Cc: Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org,
+        Tue, 2 Jan 2018 04:19:48 -0500
+Date: Tue, 2 Jan 2018 10:19:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [1/2] arm64: dts: r8a7795: add thermal cooling management
-Message-ID: <20180103000352.GB22490@bigcity.dyn.berto.se>
+Message-ID: <20180102091944.py647jheghud7sl2@verge.net.au>
 References: <20170913105909.13230-2-niklas.soderlund+renesas@ragnatech.se>
  <20180101181333.GA3631@localhost.localdomain>
- <20180102091944.py647jheghud7sl2@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180102091944.py647jheghud7sl2@verge.net.au>
+In-Reply-To: <20180101181333.GA3631@localhost.localdomain>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
-
-On 2018-01-02 10:19:44 +0100, Simon Horman wrote:
-> On Mon, Jan 01, 2018 at 10:13:35AM -0800, Eduardo Valentin wrote:
-> > On Wed, Sep 13, 2017 at 12:59:08PM +0200, Niklas S�derlund wrote:
-> > > Add nodes and properties for thermal cooling management support.
-> > > 
-> > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> > > ---
+On Mon, Jan 01, 2018 at 10:13:35AM -0800, Eduardo Valentin wrote:
+> On Wed, Sep 13, 2017 at 12:59:08PM +0200, Niklas Söderlund wrote:
+> > Add nodes and properties for thermal cooling management support.
 > > 
-> > Just a reminder, this series should go via your arch tree. You may add
-> > my acks.
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
 > 
-> Ack.
-> 
-> Niklas, could you comment on the readiness of these patches
-> for the renesas tree?
+> Just a reminder, this series should go via your arch tree. You may add
+> my acks.
 
-I think maybe the patches might have became a bit outdated since they 
-where posted due to all reg property fixup patches. The blocker for me 
-reposting this series is that the patches this depends 
-'topic/rcar-gen3-cpufreq' on are not yet in the renesas tree next or 
-devel branches. Do you think it would be valuable for me to refresh 
-these patches before the dependencies are picked up?
+Ack.
 
--- 
-Regards,
-Niklas S�derlund
+Niklas, could you comment on the readiness of these patches
+for the renesas tree?
