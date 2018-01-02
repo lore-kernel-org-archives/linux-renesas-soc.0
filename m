@@ -1,94 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:43720 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751495AbeAEP7j (ORCPT
+Received: from sauhun.de ([88.99.104.3]:42836 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750968AbeABRNX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Jan 2018 10:59:39 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180102171321.mxhcenirdx6ohbyo@ninjato>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-17-git-send-email-yamada.masahiro@socionext.com>
- <20180102131555.z6amjfqtadkh2w77@ninjato> <20180102171321.mxhcenirdx6ohbyo@ninjato>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sat, 6 Jan 2018 00:58:41 +0900
-Message-ID: <CAK7LNAThnAY43OMPDMaw4DSdtJCVTUTm4-NrTgWD-6SE-yCp=g@mail.gmail.com>
-Subject: Re: [PATCH v2 16/22] mmc: tmio: fix never-detected card insertion bug
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Tue, 2 Jan 2018 12:13:23 -0500
+Date: Tue, 2 Jan 2018 18:13:21 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <simon.horman@netronome.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 16/22] mmc: tmio: fix never-detected card insertion bug
+Message-ID: <20180102171321.mxhcenirdx6ohbyo@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-17-git-send-email-yamada.masahiro@socionext.com>
+ <20180102131555.z6amjfqtadkh2w77@ninjato>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sij7llbdkcmlsamu"
+Content-Disposition: inline
+In-Reply-To: <20180102131555.z6amjfqtadkh2w77@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+
+--sij7llbdkcmlsamu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
-2018-01-03 2:13 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
->
->> > The TMIO mmc cannot detect the card insertion in native_hotplug mode
->> > if the driver is probed without a card inserted.
->>
->> Hmm, it works for me without your patch just fine. Iam currently
->> researching it...
->
-> It really doesn't work for you?
+> > The TMIO mmc cannot detect the card insertion in native_hotplug mode
+> > if the driver is probed without a card inserted.
+>=20
+> Hmm, it works for me without your patch just fine. Iam currently
+> researching it...
+
+It really doesn't work for you?
+
+mmc_add_host -> mmc_start_host -> _mmc_detect_change ->
+mmc_schedule_delayed_work -> mmc_rescan -> mmc_start_request
 
 
-Does not work.
+--sij7llbdkcmlsamu
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> mmc_add_host -> mmc_start_host -> _mmc_detect_change ->
-> mmc_schedule_delayed_work -> mmc_rescan -> mmc_start_request
->
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpLva0ACgkQFA3kzBSg
+KbYJNQ/6A4+xI1/7e1x06zwF8RyECfxoM8TWd+7LIGMJ/UO+R2clIzo1rUJgrJBi
+X2Ljm8MmeITtw8vqjgPUZUaWyX9TaypWm6VIOtJPXOONQHEkg/uakCNmcgHGPhKN
+UnShaigmpaBZEuH1WGyjTFu6n5O5vsDvgPLvOYN8uQWeEwurcNstcllBjHH+Wl3+
+m0cq59BkePqSiPo10b/aa/lRORceNLqWe9MyDTzWBlRmqGMnLE1snJftDTNrnRQF
+4QS0LM0DSmDDIO9shg1Z+HJ9SAW46LF1cZq6l9lyA15kygxGy9Ax/Nc+O+OC9+XV
+oC1k3kXhWSDxTKYp876GKwIhfvUkvoEqIsv5S/XGIEsUZJS9/VwHbdb4lQWD1Kqq
+tK5n866lA5LtSTl8enoOsQKgWHso6iSLYaG4noRaqYyaVYWQlB711x87eqVBsmmj
+ocd6adnNwLi6H2d7RxqWzTLeNniztQ6VnYFpRLbU4iSaihNS4zRyGVGj0k1RcsAf
+SgZYNwl5qxGJjHayiYcoiQ+M3jTcmL2GfIpIBd/vYhs16vAzW5Szk4Emk/sbCOgB
+sCmWhxxvrLTU7XHSMMODQr2gK6mwPGz2jjgpvAOv4SVCVkhL486DXyC1cjoBhV2v
+nIjN3bHN9Am/W5+Oo+Cms6LmSYk2dLVHaSDZFObGIiPqAiMIrnw=
+=ecA+
+-----END PGP SIGNATURE-----
 
-Correct except "-> mmc_start_request".
-
-If a card is not inserted, the power will go down. [1]
-So, mmc_start_request will not happen.
-
-
-BTW, did you understand my git-log?
-
-I am talking about the card detection
-by the IP-builtin circuit.
-
-I am trying to support it by the following patch:
-https://patchwork.kernel.org/patch/10074255/
-
-TMIO MMC calls mmc_detect_change() [2],
-but please note this _never_ detects the card event.
-It just re-schedules mmc_rescan. [3]
-
-To detect the card insertion/removal, .get_cd hook must be implemented,
-but, it is fixed to mmc_gpio_get_cd. [4]
-
-Unless you had already migrated your boards to built-in CD
-based on my patch, GPIO is the only way to detect card events.
-
-If so, you are testing unrelated things.
-
-It is really hard to understand what is going on Renesas side,
-but I imagined some possibilities:
- - Poll the GPIO for card events          -> out of interest of this patch
- - Use interrupt from GPIO irqchip        -> ditto
- - The media is non-removable like eMMC   -> ditto
- - GPIO is not set up                     -> mmc_gpio_get_cd() returns -ENOSYS
-
-
-The last case is treated as "inserted", but the card removal will not
-be detected.
-
-
-[1] http://elixir.free-electrons.com/linux/v4.15-rc6/source/drivers/mmc/core/core.c#L2818
-[2] http://elixir.free-electrons.com/linux/v4.15-rc6/source/drivers/mmc/host/tmio_mmc_core.c#L656
-[3] http://elixir.free-electrons.com/linux/v4.15-rc6/source/drivers/mmc/core/core.c#L1995
-[4] http://elixir.free-electrons.com/linux/v4.15-rc6/source/drivers/mmc/host/tmio_mmc_core.c#L1105
-
--- 
-Best Regards
-Masahiro Yamada
+--sij7llbdkcmlsamu--
