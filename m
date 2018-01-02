@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:42836 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:42237 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750968AbeABRNX (ORCPT
+        id S1751866AbeABNP5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 12:13:23 -0500
-Date: Tue, 2 Jan 2018 18:13:21 +0100
+        Tue, 2 Jan 2018 08:15:57 -0500
+Date: Tue, 2 Jan 2018 14:15:55 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: linux-mmc@vger.kernel.org,
@@ -14,55 +14,55 @@ Cc: linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Ulf Hansson <ulf.hansson@linaro.org>
 Subject: Re: [PATCH v2 16/22] mmc: tmio: fix never-detected card insertion bug
-Message-ID: <20180102171321.mxhcenirdx6ohbyo@ninjato>
+Message-ID: <20180102131555.z6amjfqtadkh2w77@ninjato>
 References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
  <1511540697-27387-17-git-send-email-yamada.masahiro@socionext.com>
- <20180102131555.z6amjfqtadkh2w77@ninjato>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sij7llbdkcmlsamu"
+        protocol="application/pgp-signature"; boundary="jcy3zqaq2z6nqblr"
 Content-Disposition: inline
-In-Reply-To: <20180102131555.z6amjfqtadkh2w77@ninjato>
+In-Reply-To: <1511540697-27387-17-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---sij7llbdkcmlsamu
+--jcy3zqaq2z6nqblr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+
+Yamada-san,
+
+> The TMIO mmc cannot detect the card insertion in native_hotplug mode
+> if the driver is probed without a card inserted.
+
+Hmm, it works for me without your patch just fine. Iam currently
+researching it...
+
+Happy new year, by the way! :)
+
+Regards,
+
+   Wolfram
 
 
-> > The TMIO mmc cannot detect the card insertion in native_hotplug mode
-> > if the driver is probed without a card inserted.
->=20
-> Hmm, it works for me without your patch just fine. Iam currently
-> researching it...
-
-It really doesn't work for you?
-
-mmc_add_host -> mmc_start_host -> _mmc_detect_change ->
-mmc_schedule_delayed_work -> mmc_rescan -> mmc_start_request
-
-
---sij7llbdkcmlsamu
+--jcy3zqaq2z6nqblr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpLva0ACgkQFA3kzBSg
-KbYJNQ/6A4+xI1/7e1x06zwF8RyECfxoM8TWd+7LIGMJ/UO+R2clIzo1rUJgrJBi
-X2Ljm8MmeITtw8vqjgPUZUaWyX9TaypWm6VIOtJPXOONQHEkg/uakCNmcgHGPhKN
-UnShaigmpaBZEuH1WGyjTFu6n5O5vsDvgPLvOYN8uQWeEwurcNstcllBjHH+Wl3+
-m0cq59BkePqSiPo10b/aa/lRORceNLqWe9MyDTzWBlRmqGMnLE1snJftDTNrnRQF
-4QS0LM0DSmDDIO9shg1Z+HJ9SAW46LF1cZq6l9lyA15kygxGy9Ax/Nc+O+OC9+XV
-oC1k3kXhWSDxTKYp876GKwIhfvUkvoEqIsv5S/XGIEsUZJS9/VwHbdb4lQWD1Kqq
-tK5n866lA5LtSTl8enoOsQKgWHso6iSLYaG4noRaqYyaVYWQlB711x87eqVBsmmj
-ocd6adnNwLi6H2d7RxqWzTLeNniztQ6VnYFpRLbU4iSaihNS4zRyGVGj0k1RcsAf
-SgZYNwl5qxGJjHayiYcoiQ+M3jTcmL2GfIpIBd/vYhs16vAzW5Szk4Emk/sbCOgB
-sCmWhxxvrLTU7XHSMMODQr2gK6mwPGz2jjgpvAOv4SVCVkhL486DXyC1cjoBhV2v
-nIjN3bHN9Am/W5+Oo+Cms6LmSYk2dLVHaSDZFObGIiPqAiMIrnw=
-=ecA+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpLhgsACgkQFA3kzBSg
+KbaDcBAAouqc6tOdEeWmKxoVOKP/PS1xRl79B+0Btgx20v8taNxoLXhIaGj5kq6F
+Nzygzx3a5OzksOyZhHlVPm4JZZNsnUaGirnEMf+ly1gh3ZwOUTjmWRMZoMawPFfk
+sLPV3xI5Kj2O/EI0OWOUxM6sXM6cdDadCnNchaDrnwRgSGClz5igabb203uZxnhy
+uJJ5b97sqwEvaLZeAYHdz0YB9CBKU3vvjvbCfKB5TrYWKy/6DTiQaX4t11F5NfeC
+EuCwNIly0hSeeVPXbZrY4WE9ZJy1enEXtTvmp01z2H/xqYaDOkOuvil9ITwq/e6e
+h6nnOKdFCQzcsPm/WU76NpT9fiPb+nBKCr5o57VMHbEj5bz2fTnvHAZUWUoO8YBS
+KZvm+OhGSFPs7qY94hgvbV7KR3hpOPn72bdHDl/BtySSFDQvJpIQ0z82CiMEJIMD
+dHmj0+/kfmkdzv2QH6hozziAeuHn8zNf/0xrVyy5Tpj3DzDlU6HH3P5yqSyiRNlq
+xAWVtnKLa0IKYJOoWjJRfEg0MzWbkRGgslwK6atXmNyx8XOvLsIjfm0GaS4FMSCi
+Bp41xKckq4V+DWHqJTKdA1ehOL82PhVxqKNB+1ZNQmkF47/znvlUExHIOqexAZP+
++LI/XocxhED6K2f4dqqPSsLdcC8js1C+d4/fHPGkkyZ8z0f1GK0=
+=gP2v
 -----END PGP SIGNATURE-----
 
---sij7llbdkcmlsamu--
+--jcy3zqaq2z6nqblr--
