@@ -1,21 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:43097 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751604AbeABNxm (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36010 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751718AbeABNCN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 08:53:42 -0500
+        Tue, 2 Jan 2018 08:02:13 -0500
+Received: by mail-it0-f68.google.com with SMTP id d16so39315876itj.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 Jan 2018 05:02:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqcv8+B=xL_NSzydNYOH_ZzdJuqmrX72jsy=-FNnEf=tw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVmqM+WA_EaCRHNojpV6NYmS0-V18MoixyV5UdC3cq+2g@mail.gmail.com>
 References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
  <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org>
- <CAJZ5v0gWtr1bwi7WVeEbTJPu3KC8YfPvfUh5XDmomiK8TFmfyg@mail.gmail.com>
- <CAMuHMdVmqM+WA_EaCRHNojpV6NYmS0-V18MoixyV5UdC3cq+2g@mail.gmail.com>
- <CAJZ5v0j7r_-TJA=n6ohC_iFc_0Tei9nfVZUN5rjB0n0CxYkMgQ@mail.gmail.com> <CAPDyKFqcv8+B=xL_NSzydNYOH_ZzdJuqmrX72jsy=-FNnEf=tw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Jan 2018 14:53:40 +0100
-Message-ID: <CAMuHMdUuQP4_Zw+PfSwtdnwsbSeGGAh7fEf2bveAFNe1tRuLFw@mail.gmail.com>
+ <CAJZ5v0gWtr1bwi7WVeEbTJPu3KC8YfPvfUh5XDmomiK8TFmfyg@mail.gmail.com> <CAMuHMdVmqM+WA_EaCRHNojpV6NYmS0-V18MoixyV5UdC3cq+2g@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 2 Jan 2018 14:02:12 +0100
+Message-ID: <CAPDyKFrPTJ84-rBcdPH+Vs_L7Hbmh8G-C8fC1zYqP3H3dxn7vw@mail.gmail.com>
 Subject: Re: [PATCH v2 3/3] gpio: rcar: Use WAKEUP_PATH driver PM flag
-To: Ulf Hansson <ulf.hansson@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux PM <linux-pm@vger.kernel.org>,
@@ -32,50 +32,19 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 2, 2018 at 1:53 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 2 January 2018 at 11:48, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> On Tue, Jan 2, 2018 at 11:44 AM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->>> On Tue, Jan 2, 2018 at 11:32 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->>>> On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>>>> --- a/drivers/gpio/gpio-rcar.c
->>>>> +++ b/drivers/gpio/gpio-rcar.c
->>>
->>>>> @@ -415,6 +402,18 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
->>>>>         return 0;
->>>>>  }
->>>>>
->>>>> +#ifdef CONFIG_PM_SLEEP
->>>>> +static int gpio_rcar_suspend(struct device *dev)
->>>>> +{
->>>>> +       struct gpio_rcar_priv *p = dev_get_drvdata(dev);
->>>>> +
->>>>> +       dev_pm_set_driver_flags(dev, p->wakeup_path ? DPM_FLAG_WAKEUP_PATH : 0);
->>>>
->>>> Why don't you simply set dev->power.wakeup_path here?
->>>
->>> That's what my v1 did (https://patchwork.kernel.org/patch/10050995/).
->>
->> I very much prefer this one. :-)
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> [Ulf: Converted to use the WAKEUP_PATH driver PM flag]
 >
-> Okay!
+> Ulf: + killing the DEV_PM_OPS define, increasing kernel size if PM_SUSPEND=n?
 
->> What's wrong with it?
->
-> It works, although I would rather change the assignment of the flag to
-> respect if the current value is true, something like this:
->
-> dev->power.wakeup_path = dev->power.wakeup_path || p->wakeup_path;
+Oh, yes - correct!
 
-dev->power.wakeup_path |= p->wakeup_path?
+The code looks nicer, with the penalty of one static struct declared
+and not used, in case CONFIG_PM_SLEEP is unset.
 
-Gr{oetje,eeting}s,
+Should I revert back to your proposal, I am fine with whatever?
 
-                        Geert
+[...]
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind regards
+Uffe
