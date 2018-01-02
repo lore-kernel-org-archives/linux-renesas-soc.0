@@ -1,59 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:53172 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755323AbeAIQt3 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:42188 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751392AbeABM6k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 11:49:29 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] ARM: dts: lager: Add CEC clock for HDMI transmitter
-Date: Tue,  9 Jan 2018 17:49:04 +0100
-Message-Id: <20180109164904.24523-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 2 Jan 2018 07:58:40 -0500
+Date: Tue, 2 Jan 2018 13:58:38 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 10/22] mmc: tmio: support IP-builtin card detection
+ logic
+Message-ID: <20180102125838.ikrw7tw7njk4pcqk@ninjato>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ftqswrhthbutkg2e"
+Content-Disposition: inline
+In-Reply-To: <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The adv7511 on the Lager board has a 12 MHz fixed clock
-for the CEC block. Specify this in the dts to enable CEC support.
 
-Based on a similar patch for Koelsch by Hans Verkuil.
+--ftqswrhthbutkg2e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Sat, Nov 25, 2017 at 01:24:45AM +0900, Masahiro Yamada wrote:
+> A card detect GPIO is set up only for platforms with "cd-gpios"
+> DT property or TMIO_MMC_USE_GPIO_CD flag.  However, the driver
+> core always uses mmc_gpio_get_cd, which just fails with -ENOSYS
+> if ctx->cd_gpio is unset.
+>=20
+> The bit 5 of the status register provides the current signal level
+> of the CD line.  Allow to use it if the GPIO is unused.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index e3d27783b6b56b42..b8bbaa87a5ab7c99 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -670,11 +670,19 @@
- 		};
- 	};
- 
-+	cec_clock: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
-+
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
- 		interrupt-parent = <&gpio1>;
- 		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&cec_clock>;
-+		clock-names = "cec";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
--- 
-2.15.1
+As mentioned before (sorry, I lost this thread :( ), I like the
+refactoring to select in probe() which function to call depending on
+GPIO usage or not. If you like, we can do the same for read_only, too.
+
+Thanks!
+
+
+--ftqswrhthbutkg2e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpLgf4ACgkQFA3kzBSg
+KbbMEw/8DK8hfB3NUOun6cgZHwcC33xvWTxUqqTS3qysYwTwH4j0ibfyuxRxrZLU
+El87XIObB4kk1tvy6/YxksOmF/p3/aTX1/eRICnszu18h2wuyDwfi66BqU4X85ql
+d+1RaAUGYi6WyTlv72ANQ6FvDz7O4J6adiErAXtRqQP+4aGoVu/NnFiiubC8v13t
+0wvOSzbdQO3VgFLtoYDkReShNBQfTj76B4v+fN3CY6AxNh/xyzVxAhaJHxbFpGMx
+zHhIl6jVR7xfzeGICHdaLcLYL/zAqzqlsVD56GO5IKx8OdZh2vbXxJ0hpITuOPDW
+pflZu2fxxLXL9MuEpXDEYBVXpNRSh8eMeFtjoULwGmHF8Z+ZdWSfTUguYPTk3Tgk
+m/VeGQ7G6tUrClK+kC5sLxyBRISHOUAxLR8xheuTuowdjf+cdaIwyOoZTt4B+n2T
+d220InTQLWVlR39LP94ROyepFL5jueIbrEmrkJQq326FZw44nTzqers76TOZlrPO
+X/WKcAQIzzjgCh9s4ExDKfouKelxyo5DtUqy6Idce9X4I41CBT9z/npQRjQARp98
+I5hTToTFuTZmpOPEGmNd8Voai3/ceTjdpBimTflo45d8YZ4tWqaJP7wSv2u77Pti
+ex7z5mV29L6AQLJG+rolT20ifz9eiUp/9E0aqsBdHMYrbUPqYt0=
+=Rhf5
+-----END PGP SIGNATURE-----
+
+--ftqswrhthbutkg2e--
