@@ -1,81 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:23448 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753488AbeADQGY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53723 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751733AbeACMTA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 11:06:24 -0500
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] clocksource/drivers/ostm: Use unique device name
- instead of ostm
-Date: Thu, 4 Jan 2018 16:06:18 +0000
-Message-ID: <SG2PR06MB11656093841B4813142D8AFC8A1F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1507725113-18070-1-git-send-email-geert+renesas@glider.be>
- <1507727130-17641-1-git-send-email-jacopo+renesas@jmondi.org>
- <SG2PR06MB11657F97DA41FCA032C472A58A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-In-Reply-To: <SG2PR06MB11657F97DA41FCA032C472A58A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Wed, 3 Jan 2018 07:19:00 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v4 5/6] clk: renesas: r8a7796: Add Z clock
+Date: Wed,  3 Jan 2018 13:18:39 +0100
+Message-Id: <20180103121840.29316-6-horms+renesas@verge.net.au>
+In-Reply-To: <20180103121840.29316-1-horms+renesas@verge.net.au>
+References: <20180103121840.29316-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wednesday, October 11, 2017, Chris Brandt wrote:
-> On Wednesday, October 11, 2017, Jacopo Mondi wrote:
-> > From: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Currently all OSTM devices are called "ostm", also in kernel messages.
-> >
-> > As there can be multiple instances in an SoC, this can confuse the user=
-.
-> > Hence construct a unique name from the DT node name, like is done for
-> > platform devices.
-> >
-> > On GR-Peach, the boot log changes like:
-> >
-> >     -clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff,
-> > max_idle_ns: 57352151442 ns
-> >     +clocksource: ostm /timer@fcfec000: mask: 0xffffffff max_cycles:
-> > 0xffffffff, max_idle_ns: 57352151442 ns
-> >      sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every
-> > 64440619504ns
-> >     -ostm: used for clocksource
-> >     -ostm: used for clock events
-> >     +ostm /timer@fcfec000: used for clocksource
-> >     +ostm /timer@fcfec400: used for clock events
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
->=20
->=20
-> My results on the RZ/A1H RSK board:
->=20
-> $ dmesg | grep timer
-> [    0.000000] clocksource: ostm /timer@fcfec000: mask: 0xffffffff
-> max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-> [    0.008267] ostm /timer@fcfec000: used for clocksource
-> [    0.014085] ostm /timer@fcfec400: used for clock events
-> [    0.452022] sh_mtu2 fcff0000.timer: ch0: used for clock events
-> [    0.475358] sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be
-> powered off
-> [    0.486528] clocksource: Switched to clocksource ostm /timer@fcfec000
->=20
->=20
-> $ cat /proc/interrupts | grep timer
->  17:      18721     GIC-0 135 Edge      ostm /timer@fcfec400
->  40:          0     GIC-0 139 Level     fcff0000.timer
->=20
->=20
-> Chris
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
+This patch adds Z clock for R8A7796 SoC.
 
-Out of curiosity, what ever happened to this patch???
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-Chris
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index b3767472088a..82b444ac66c6 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -74,6 +74,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+ 
+ 	/* Core Clock Outputs */
++	DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+ 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A7796_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A7796_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+-- 
+2.11.0
