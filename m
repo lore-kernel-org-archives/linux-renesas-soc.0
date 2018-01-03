@@ -1,133 +1,76 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:37149 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751583AbeAASLJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Jan 2018 13:11:09 -0500
-Date: Mon, 1 Jan 2018 10:11:05 -0800
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [2/2] arm64: dts: r8a7796: add thermal cooling management
-Message-ID: <20180101181102.GA3487@localhost.localdomain>
-References: <20170913105909.13230-3-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 3 Jan 2018 17:24:05 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/9] media: i2c: ov772x: Remove soc_camera dependencies
+Message-ID: <20180103162405.GA6834@w540>
+References: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org>
+ <5703631.yJ335LfYLI@avalon>
+ <20180103154458.GD9493@w540>
+ <2597640.1dqQloDucb@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20170913105909.13230-3-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <2597640.1dqQloDucb@avalon>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 13, 2017 at 12:59:09PM +0200, Niklas S=F6derlund wrote:
-> Add nodes and properties for thermal cooling management support.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+Hi Laurent,
 
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
+On Wed, Jan 03, 2018 at 05:49:55PM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> >
+> > DT based platforms won't have any info->xlkc_rate, so they should be
+> > fine. I wonder how could I set rate in board code, as I'm just
+> > registering an alias for the clock there...
+>
+> Exactly as done by the current code, get the clock and set the rate :) You can
+> do that at initialization time, when you register the alias. Don't forget to
+> put the clock too.
 
-> ---
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 38 ++++++++++++++++++++++++++=
-++++++
->  1 file changed, 38 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/d=
-ts/renesas/r8a7796.dtsi
-> index 2905a3b953aab145..0b805dc30925e9be 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> @@ -53,6 +53,7 @@
->  				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
->  				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
->  				<&cluster0_opp_tb7>;
-> +			#cooling-cells =3D <2>;
->  		};
-> =20
->  		a57_1: cpu@1 {
-> @@ -67,6 +68,7 @@
->  				<&cluster0_opp_tb3>, <&cluster0_opp_tb4>,
->  				<&cluster0_opp_tb5>, <&cluster0_opp_tb6>,
->  				<&cluster0_opp_tb7>;
-> +			#cooling-cells =3D <2>;
->  		};
-> =20
->  		a53_0: cpu@100 {
-> @@ -2116,12 +2118,24 @@
->  				thermal-sensors =3D <&tsc 0>;
-> =20
->  				trips {
-> +					sensor1_passive: sensor1-passive {
-> +						temperature =3D <95000>;
-> +						hysteresis =3D <2000>;
-> +						type =3D "passive";
-> +					};
->  					sensor1_crit: sensor1-crit {
->  						temperature =3D <120000>;
->  						hysteresis =3D <2000>;
->  						type =3D "critical";
->  					};
->  				};
-> +
-> +				cooling-maps {
-> +					map0 {
-> +						trip =3D <&sensor1_passive>;
-> +						cooling-device =3D <&a57_0 5 5>;
-> +					};
-> +				};
->  			};
-> =20
->  			sensor_thermal2: sensor-thermal2 {
-> @@ -2130,12 +2144,24 @@
->  				thermal-sensors =3D <&tsc 1>;
-> =20
->  				trips {
-> +					sensor2_passive: sensor2-passive {
-> +						temperature =3D <95000>;
-> +						hysteresis =3D <2000>;
-> +						type =3D "passive";
-> +					};
->  					sensor2_crit: sensor2-crit {
->  						temperature =3D <120000>;
->  						hysteresis =3D <2000>;
->  						type =3D "critical";
->  					};
->  				};
-> +
-> +				cooling-maps {
-> +					map0 {
-> +						trip =3D <&sensor2_passive>;
-> +						cooling-device =3D <&a57_0 5 5>;
-> +					};
-> +				};
->  			};
-> =20
->  			sensor_thermal3: sensor-thermal3 {
-> @@ -2144,12 +2170,24 @@
->  				thermal-sensors =3D <&tsc 2>;
-> =20
->  				trips {
-> +					sensor3_passive: sensor3-passive {
-> +						temperature =3D <95000>;
-> +						hysteresis =3D <2000>;
-> +						type =3D "passive";
-> +					};
->  					sensor3_crit: sensor3-crit {
->  						temperature =3D <120000>;
->  						hysteresis =3D <2000>;
->  						type =3D "critical";
->  					};
->  				};
-> +
-> +				cooling-maps {
-> +					map0 {
-> +						trip =3D <&sensor3_passive>;
-> +						cooling-device =3D <&a57_0 5 5>;
-> +					};
-> +				};
->  			};
->  		};
-> =20
+Interesting. I had no idea a clock rate is retained between get/put
+cycles. I'll set the rate in board code (and now that I'm looking at
+other SH boards code, it seems pretty common to do as a thing).
+
+Thanks
+   j
+
+>
+> > >> +	if (priv->clk) {
+> > >> +		ret = clk_prepare_enable(priv->clk);
+> > >> +		if (ret)
+> > >> +			return ret;
+> > >> +	}
+> > >> +
+> > >> +	if (priv->pwdn_gpio) {
+> > >> +		gpiod_set_value(priv->pwdn_gpio, 1);
+> > >> +		usleep_range(500, 1000);
+> > >> +	}
+> > >> +
+> > >> +	/* Reset GPIOs are shared in some platforms. */
+> > >
+> > > I'd make this a FIXME comment as this is really a hack.
+> > >
+> > > 	/*
+> > > 	 * FIXME: The reset signal is connected to a shared GPIO on some
+> > > 	 * platforms (namely the SuperH Migo-R). Until a framework becomes
+> > > 	 * available to handle this cleanly, request the GPIO temporarily
+> > > 	 * only to avoid conflicts.
+> > > 	 */
+> > >
+> > > Same for the tw9910 driver.
+> >
+> > Ack.
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
