@@ -1,96 +1,77 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36690 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753834AbeAQQ3d (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:29:33 -0500
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 03/16] mmc: tmio: move {tmio_}mmc_of_parse() to tmio_mmc_host_alloc()
-Date: Thu, 18 Jan 2018 01:28:03 +0900
-Message-Id: <1516206496-16612-4-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] dt-bindings: media: Add Renesas CEU bindings
+Date: Wed, 03 Jan 2018 13:22:18 +0200
+Message-ID: <6187057.jxUe24LMpy@avalon>
+In-Reply-To: <20180103084952.GA9493@w540>
+References: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org> <6263435.xWGUCtEJC1@avalon> <20180103084952.GA9493@w540>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-mmc_of_parse() parses various DT properties and sets capability flags
-accordingly.  However, drivers have no chance to run platform init
-code depending on such flags because mmc_of_parse() is called from
-tmio_mmc_host_probe().
+Hi Jacopo,
 
-Move mmc_of_parse() to tmio_mmc_host_alloc() so that drivers can
-handle capabilities before mmc_add_host().  Move tmio_mmc_of_parse()
-likewise.
+On Wednesday, 3 January 2018 10:49:52 EET jacopo mondi wrote:
+> On Tue, Jan 02, 2018 at 01:45:30PM +0200, Laurent Pinchart wrote:
+> > On Thursday, 28 December 2017 16:01:13 EET Jacopo Mondi wrote:
+> >> Add bindings documentation for Renesas Capture Engine Unit (CEU).
+> >> 
+> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >> ---
+> >> 
+> >>  .../devicetree/bindings/media/renesas,ceu.txt      | 85 +++++++++++++++
+> >>  1 file changed, 85 insertions(+)
+> >>  create mode 100644
+> >>  Documentation/devicetree/bindings/media/renesas,ceu.txt
+> >> 
+> >> diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt
+> >> b/Documentation/devicetree/bindings/media/renesas,ceu.txt new file mode
+> >> 100644
+> >> index 0000000..f45628e
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+> >> @@ -0,0 +1,85 @@
+> >>+Renesas Capture Engine Unit (CEU)
+> >> +----------------------------------------------
+> >> +
+> >> +The Capture Engine Unit is the image capture interface found on Renesas
+> >> +RZ chip series and on SH Mobile ones.
+> > 
+> > "ones" sound a bit weird. How about "... found in the Renesas SH Mobil and
+> > RZ SoCs." ?
+> > 
+> >> +The interface supports a single parallel input with data bus width up
+> >> to
+> >> +8/16 bits.
+> > 
+> > What do you mean by "up to 8/16 bits" ?
+> 
+> The input bus width can be 8 or 16 bit.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Then how about writing it "The CEU supports a single parallel input with a 
+data bus width of 8 or 16 bits." ?
 
-Changes in v3: None
-Changes in v2:
-  - Newly added
+> On a general note: I always assumed DT bindings should describe the
+> hardware capabilities. In this case the hardware supports 8 or 16 bits
+> as input width, but the driver only cares about the 8 bits case. Which
+> one should I describe here?
 
- drivers/mmc/host/tmio_mmc_core.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+You should describe the hardware.
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 55442ed..fc9b28d 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1152,6 +1152,7 @@ struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev,
- 	struct mmc_host *mmc;
- 	struct resource *res;
- 	void __iomem *ctl;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	ctl = devm_ioremap_resource(&pdev->dev, res);
-@@ -1170,9 +1171,21 @@ struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev,
- 	host->ops = tmio_mmc_ops;
- 	mmc->ops = &host->ops;
- 
-+	ret = mmc_of_parse(host->mmc);
-+	if (ret) {
-+		host = ERR_PTR(ret);
-+		goto free;
-+	}
-+
-+	tmio_mmc_of_parse(pdev, pdata);
-+
- 	platform_set_drvdata(pdev, host);
- 
- 	return host;
-+free:
-+	mmc_free_host(mmc);
-+
-+	return host;
- }
- EXPORT_SYMBOL_GPL(tmio_mmc_host_alloc);
- 
-@@ -1198,15 +1211,9 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	if (mmc->f_min == 0)
- 		return -EINVAL;
- 
--	tmio_mmc_of_parse(pdev, pdata);
--
- 	if (!(pdata->flags & TMIO_MMC_HAS_IDLE_WAIT))
- 		_host->write16_hook = NULL;
- 
--	ret = mmc_of_parse(mmc);
--	if (ret < 0)
--		return ret;
--
- 	_host->set_pwr = pdata->set_pwr;
- 	_host->set_clk_div = pdata->set_clk_div;
- 
+> I will fix all of yours and Geert's remarks in V3.
+
+[snip]
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
