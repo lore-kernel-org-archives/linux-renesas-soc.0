@@ -1,42 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:38766 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751858AbeACOC6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54562 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751736AbeACMlP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 09:02:58 -0500
-Received: by mail-qk0-f193.google.com with SMTP id l19so1619671qke.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Jan 2018 06:02:58 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20180103124105.1999-2-horms+renesas@verge.net.au>
-References: <20180103124105.1999-1-horms+renesas@verge.net.au> <20180103124105.1999-2-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Jan 2018 15:02:56 +0100
-Message-ID: <CAMuHMdWUdF5OOjkCOzWO38Ems9NLXmmcpf-txhNF3ZU47itCfQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] arm64: dts: renesas: r8a7795: move scif node into
- alphabetical order
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Jan 2018 07:41:15 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 1/3] arm64: dts: renesas: r8a7795: move scif node into alphabetical order
+Date: Wed,  3 Jan 2018 13:41:03 +0100
+Message-Id: <20180103124105.1999-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180103124105.1999-1-horms+renesas@verge.net.au>
+References: <20180103124105.1999-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 3, 2018 at 1:41 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> Move scif node so that sub-nodes of the root node are in
-> alphabetical order.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Move scif node so that sub-nodes of the root node are in
+alphabetical order.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index d12df6f2ff09..24e9209ea54e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -165,13 +165,6 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	/* External SCIF clock - to be overridden by boards that provide it */
+-	scif_clk: scif {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+ 	/* External PCIe clock - can be overridden by the board */
+ 	pcie_bus_clk: pcie_bus {
+ 		compatible = "fixed-clock";
+@@ -208,6 +201,13 @@
+ 		method = "smc";
+ 	};
+ 
++	/* External SCIF clock - to be overridden by boards that provide it */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	soc: soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+-- 
+2.11.0
