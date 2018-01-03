@@ -1,66 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45691 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751150AbeACLQN (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:41270 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751185AbeACKlU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 06:16:13 -0500
-Date: Wed, 3 Jan 2018 12:16:11 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v3] arm64: dts: renesas: salvator-common: add GPIO
- extender
-Message-ID: <20180103111611.2ahrchxwc5ose3t7@ninjato>
-References: <20171222201146.8414-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdX7SO5rhfGOE0=HqV=5A6_vsJLgQc2Dxfnkw3uOjxYuOg@mail.gmail.com>
+        Wed, 3 Jan 2018 05:41:20 -0500
+Received: by mail-qt0-f195.google.com with SMTP id i40so1569317qti.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Jan 2018 02:41:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="borfd3wgta2rlacf"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX7SO5rhfGOE0=HqV=5A6_vsJLgQc2Dxfnkw3uOjxYuOg@mail.gmail.com>
+In-Reply-To: <20171222201146.8414-1-wsa+renesas@sang-engineering.com>
+References: <20171222201146.8414-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 3 Jan 2018 11:41:18 +0100
+Message-ID: <CAMuHMdX7SO5rhfGOE0=HqV=5A6_vsJLgQc2Dxfnkw3uOjxYuOg@mail.gmail.com>
+Subject: Re: [PATCH v3] arm64: dts: renesas: salvator-common: add GPIO extender
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---borfd3wgta2rlacf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 22, 2017 at 9:11 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> We need to configure its GPIOs later.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Changes since V2:
+> * added two more required properties (Thanks Geert!)
+>
+> And no dependency anymore (my statement for V2 was wrong).
+>
+>  arch/arm64/boot/dts/renesas/salvator-common.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> index a298df74ca6c03..7d43ec24cf9fd0 100644
+> --- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> @@ -338,6 +338,13 @@
+>  &i2c4 {
+>         status = "okay";
+>
+> +       pca9654: gpio@20 {
+> +               compatible = "onnn,pca9654";
+> +               reg = <0x20>;
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
 
+interrupts?
 
-> > +       pca9654: gpio@20 {
-> > +               compatible =3D "onnn,pca9654";
-> > +               reg =3D <0x20>;
-> > +               gpio-controller;
-> > +               #gpio-cells =3D <2>;
->=20
-> interrupts?
->=20
-> You can test them using CP16/17 and gpio-keys.
+You can test them using CP16/17 and gpio-keys.
 
-Too low priority. We can add it when needed.
+> +       };
+> +
+>         csa_vdd: adc@7c {
+>                 compatible = "maxim,max9611";
+>                 reg = <0x7c>;
 
+Gr{oetje,eeting}s,
 
---borfd3wgta2rlacf
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpMu3UACgkQFA3kzBSg
-KbYvNw/9G8N8tdux6m9u3LKCp/+5CNIOf7okwdQUk7CRbTLB30M8Ef7OubSPhlNi
-2WwB0wPA9Cp4lbCRUvRrzLtRKij9BKQeGrYmjrCXUt92JggaUr+HwRrnUH/ktbGZ
-Mr9WBWHA4R+JifH2E4Y3kFAqqDfDRaMu5skaTorDp5ruF+bX2pC5vlGWN+wdXOyi
-6D6EwqKoQowZSd74IjuRkirahPkTf5K7u0otaSVMIHKvGbrVdlvS1E1bX2RFXiqI
-MaTe51Mmeqs6uqcQ8dEHlELy20pCDIYO9RPoAzVllryPDbTRCgNwoekr7ZpUgN6V
-O+4GcT4sfgocdhzkJ87PZkRuo8VPkMHjUpRF7cxgeO+qiQ+ngrk6qZsE63K9fWiv
-rJ46iAO0gEjPlMhy2ok/FOnX4SGYdkQdJ0BZgTEeEulp5k2IQEPrjUWK4R0R263d
-qBQ89RendeREM1BPFCHrzWLAI4OSgcKv1Qrt4x+uewVPSHyh6Ag9zkWElNCdNqwu
-3pfASPZT0dzBhPtplJYAzH6CCWgKC0ZBWM4AWmgclWeZe6XLa2l4nn6An8QNj7GT
-nq8GdyxpRX+4USGht3pHx9tBdDSCc0sk+QdC/a6V6qKkkWl4zxd/VarWz/p2YOTn
-IG0kiNFEcApoAHY3JJx+JPXXsHho3Sju+EHnIus7JUNIm5jw84w=
-=OWEZ
------END PGP SIGNATURE-----
-
---borfd3wgta2rlacf--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
