@@ -1,68 +1,45 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: niklas.soderlund@ragnatech.se, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] v4l: doc: clarify v4l2_mbus_fmt height definition
-Date: Mon, 08 Jan 2018 14:45:49 +0000 (UTC)
-Message-Id: <1515422746-5971-1-git-send-email-kieran.bingham@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:53723 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751733AbeACMS6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 3 Jan 2018 07:18:58 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v4 3/6] clk: renesas: r8a7795: Add Z clock
+Date: Wed,  3 Jan 2018 13:18:37 +0100
+Message-Id: <20180103121840.29316-4-horms+renesas@verge.net.au>
+In-Reply-To: <20180103121840.29316-1-horms+renesas@verge.net.au>
+References: <20180103121840.29316-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The v4l2_mbus_fmt width and height corresponds directly with the
-v4l2_pix_format definitions, yet the differences in documentation make
-it ambiguous what to do in the event of field heights.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Clarify this by referencing the v4l2_pix_format which is explicit on the
-matter, and by matching the terminology of 'image height' rather than
-the misleading 'frame height'.
+This patch adds Z clock for R8A7795 SoC.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/media/uapi/v4l/subdev-formats.rst | 6 ++++--
- include/uapi/linux/v4l2-mediabus.h              | 4 ++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/media/uapi/v4l/subdev-formats.rst b/Documentation/media/uapi/v4l/subdev-formats.rst
-index b1eea44550e1..a2a00202b430 100644
---- a/Documentation/media/uapi/v4l/subdev-formats.rst
-+++ b/Documentation/media/uapi/v4l/subdev-formats.rst
-@@ -16,10 +16,12 @@ Media Bus Formats
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index b1d9f48eae9e..995a4c4fb01e 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -74,6 +74,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+ 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
  
-     * - __u32
-       - ``width``
--      - Image width, in pixels.
-+      - Image width in pixels. See struct
-+	:c:type:`v4l2_pix_format`.
-     * - __u32
-       - ``height``
--      - Image height, in pixels.
-+      - Image height in pixels. See struct
-+	:c:type:`v4l2_pix_format`.
-     * - __u32
-       - ``code``
-       - Format code, from enum
-diff --git a/include/uapi/linux/v4l2-mediabus.h b/include/uapi/linux/v4l2-mediabus.h
-index 6e20de63ec59..6b34108d0338 100644
---- a/include/uapi/linux/v4l2-mediabus.h
-+++ b/include/uapi/linux/v4l2-mediabus.h
-@@ -18,8 +18,8 @@
- 
- /**
-  * struct v4l2_mbus_framefmt - frame format on the media bus
-- * @width:	frame width
-- * @height:	frame height
-+ * @width:	image width
-+ * @height:	image height (see struct v4l2_pix_format)
-  * @code:	data format code (from enum v4l2_mbus_pixelcode)
-  * @field:	used interlacing type (from enum v4l2_field)
-  * @colorspace:	colorspace of the data (from enum v4l2_colorspace)
+ 	/* Core Clock Outputs */
++	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+ 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
 -- 
-2.7.4
+2.11.0
