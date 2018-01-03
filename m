@@ -1,76 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40863 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751019AbeAUMhR (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45207 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751154AbeACKgK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Jan 2018 07:37:17 -0500
-Date: Sun, 21 Jan 2018 13:37:15 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-gpio@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] gpio: pca953x: add required properties to example in
- bindings
-Message-ID: <20180121123715.q6f5agmrd2giv6o6@ninjato>
-References: <20171222200900.8367-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdURWa9z5_zewz-MQph_g=3MTk3f+QnUmULMbugb6qmNOQ@mail.gmail.com>
+        Wed, 3 Jan 2018 05:36:10 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7lius646uiz2iktd"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdURWa9z5_zewz-MQph_g=3MTk3f+QnUmULMbugb6qmNOQ@mail.gmail.com>
+In-Reply-To: <20171222200900.8367-1-wsa+renesas@sang-engineering.com>
+References: <20171222200900.8367-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 3 Jan 2018 11:36:08 +0100
+Message-ID: <CAMuHMdURWa9z5_zewz-MQph_g=3MTk3f+QnUmULMbugb6qmNOQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: pca953x: add required properties to example in bindings
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-gpio@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---7lius646uiz2iktd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 22, 2017 at 9:09 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> The binding documentation was missing two required properties in the
+> example. Fix it and add them also to the list of required properties.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> index 0d0158728f897b..a3d51e1cafe972 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> @@ -30,6 +30,11 @@ Required properties:
+>         onnn,pca9654
+>         exar,xra1202
+>
+> +- gpio-controller: Marks the device node as a GPIO controller
+> +- #gpio-cells: Must be '2':
+> +       - First cell is the GPIO line number
+> +       - Second cell is for optional parameters (currently unused)
 
+Is it really unused?
 
-> > +- gpio-controller: Marks the device node as a GPIO controller
-> > +- #gpio-cells: Must be '2':
-> > +       - First cell is the GPIO line number
-> > +       - Second cell is for optional parameters (currently unused)
->=20
-> Is it really unused?
->=20
-> I'd expect at least GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW to work,
-> cfr. Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
+I'd expect at least GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW to work,
+cfr. Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
 
-I rephrased it in a way which should be correct and no get stale over
-time. Will send it right away.
+> +
+>  Optional properties:
+>   - reset-gpios: GPIO specification for the RESET input. This is an
+>                 active low signal to the PCA953x.
+> @@ -44,4 +49,6 @@ Example:
+>                 pinctrl-0 = <&pinctrl_pca9505>;
+>                 interrupt-parent = <&gpio3>;
+>                 interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
 
-> > @@ -44,4 +49,6 @@ Example:
-> >                 pinctrl-0 =3D <&pinctrl_pca9505>;
-> >                 interrupt-parent =3D <&gpio3>;
-> >                 interrupts =3D <23 IRQ_TYPE_LEVEL_LOW>;
->=20
-> Note that interrupts is also not documented.
+Note that interrupts is also not documented.
 
-I vote for incremental changes. I haven't tested that yet.
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
+>         };
 
+Gr{oetje,eeting}s,
 
---7lius646uiz2iktd
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpkiXcACgkQFA3kzBSg
-KbYmzA//SMcwx3AMzBlmst+QGDSSLLp+E4t6XtzsZsh3jEE/QZbCbNUpavoBko7x
-24QnYb0HLpQjPKN8ewy/XBVZH8S9mm6/n0eeXGuvLO9rAp7Wgzw1eMpL/4utl1fj
-fvEzlJ84NyVeVUlRlcvyxyUkpab2XXJbFJ34buOf/PHjm3a/UVBA7uw71IbcMFNG
-yqtGDDsoeEjb3n0/AFZrL6i7g5IA0KtnGdt1u+bNqT0Xet2pG8KkeCNWa1HZOOQ2
-DvNc7zTYo8sD0PJKhWP0NWLIszAUilAOrvLo7o+Jv+ZEJiSenIUzQQie/yHwOuF0
-OAia9XqQ3I/744kiRtgk6pNZqtns/Adz/fUNHzmGYkiul0E+CUKfarIH7wfedl5Q
-+PKtkliYnBGISqTJjtblUs+emG45GGoXWewdN/zVReXxn6kQslDOkwX3boBbgYqE
-FgnwPUZoM+Kv8KTkB8Sf4O5kXqsQdVBbLOdpBJxiBzMbApW8O6Uam211h6I4rBSv
-SxcUEFM6Gtb1kPBIbkWl6OIhBN9TluTL/fOwfQfKmljd3gZcbNFtAz753zGUH234
-0G7bpbBwGUmL2Xr9QhwojYWie2+RUXBMcSJBmUDw0s/CSSUK/QTNuwMpuGKsGecy
-fzF47wLfX4AH+iCFLbFwTEkekM0ufffgtBx1TcWhO9s6zo9b+to=
-=tGzy
------END PGP SIGNATURE-----
-
---7lius646uiz2iktd--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
