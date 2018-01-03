@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45706 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:45691 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751653AbeACLRt (ORCPT
+        id S1751150AbeACLQN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 06:17:49 -0500
-Date: Wed, 3 Jan 2018 12:17:48 +0100
+        Wed, 3 Jan 2018 06:16:13 -0500
+Date: Wed, 3 Jan 2018 12:16:11 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -12,59 +12,55 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms@verge.net.au>
 Subject: Re: [PATCH v3] arm64: dts: renesas: salvator-common: add GPIO
  extender
-Message-ID: <20180103111747.zh7wn62k5anpj2zr@ninjato>
+Message-ID: <20180103111611.2ahrchxwc5ose3t7@ninjato>
 References: <20171222201146.8414-1-wsa+renesas@sang-engineering.com>
  <CAMuHMdX7SO5rhfGOE0=HqV=5A6_vsJLgQc2Dxfnkw3uOjxYuOg@mail.gmail.com>
- <20180103111611.2ahrchxwc5ose3t7@ninjato>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qt3h6knhwfsx5f3h"
+        protocol="application/pgp-signature"; boundary="borfd3wgta2rlacf"
 Content-Disposition: inline
-In-Reply-To: <20180103111611.2ahrchxwc5ose3t7@ninjato>
+In-Reply-To: <CAMuHMdX7SO5rhfGOE0=HqV=5A6_vsJLgQc2Dxfnkw3uOjxYuOg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---qt3h6knhwfsx5f3h
+--borfd3wgta2rlacf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 03, 2018 at 12:16:11PM +0100, Wolfram Sang wrote:
+
+> > +       pca9654: gpio@20 {
+> > +               compatible =3D "onnn,pca9654";
+> > +               reg =3D <0x20>;
+> > +               gpio-controller;
+> > +               #gpio-cells =3D <2>;
 >=20
-> > > +       pca9654: gpio@20 {
-> > > +               compatible =3D "onnn,pca9654";
-> > > +               reg =3D <0x20>;
-> > > +               gpio-controller;
-> > > +               #gpio-cells =3D <2>;
-> >=20
-> > interrupts?
-> >=20
-> > You can test them using CP16/17 and gpio-keys.
+> interrupts?
 >=20
-> Too low priority. We can add it when needed.
+> You can test them using CP16/17 and gpio-keys.
 
-Or when we are bored somewhen ;)
+Too low priority. We can add it when needed.
 
 
---qt3h6knhwfsx5f3h
+--borfd3wgta2rlacf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpMu9sACgkQFA3kzBSg
-KbYFQhAAtZFqeo1jRD1G12hBtrlW0fHuMrs17MSNIhlG1u44IFq7iqhrxXzuXX+j
-IGqigJjhW0ivdjh1u8m4R9BM5vjEdhltHdW3zMwF/O+aqRKUbpc+Zj2COD+tYRUf
-U0whrhSSfcfMd7FtOElTRKh/y4O/HdgzkWJNQoPBcYOA4sSKRQyxA9Fqu3XNEfCL
-bHvXPXkmoxoywcBddo8bW/obB38Rbhu17kDB9SgvMHaE/VP6DdFPRVwMKM054bdV
-/IiGPnL9T27dFFzS7h/tXV1x1eBfYEb5oFApIwKxsK1aqAI60s2KYpLiS+3Hwm8s
-4p+d0uqjuojDPXctuaxt6fIV4RjBw/8lZS1GWKbO5ynj95npvk0HzNZI+tf1Epob
-0RzSuG/Q317HGlzy7TpcJgxWwy27skAGMFUk+yqARVLS8rbTuWQaVVC2tRnJzdWp
-9XURb+dxfXk1Q043WSA1tlHtDXzbw84jXwuoHHQSON376Iq41tCFF0AxemRBLXai
-M0BME2pWqfzjZwVeZSjne6Iz7SI2a8GRwvePB6vY8/0XUdwUeb8M3LbmtcEgEpdt
-r8MyYjwi7vH1bAUw4TtCYfxOFckQwXThYjLgSyYN7HHxn3Pm29gq7oWjjuefQS9E
-/7QBmSJ9ghXh+LsyX02KmaJDTddUmLmdpagfzQBjsIEtCfVp3Sg=
-=+wm2
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpMu3UACgkQFA3kzBSg
+KbYvNw/9G8N8tdux6m9u3LKCp/+5CNIOf7okwdQUk7CRbTLB30M8Ef7OubSPhlNi
+2WwB0wPA9Cp4lbCRUvRrzLtRKij9BKQeGrYmjrCXUt92JggaUr+HwRrnUH/ktbGZ
+Mr9WBWHA4R+JifH2E4Y3kFAqqDfDRaMu5skaTorDp5ruF+bX2pC5vlGWN+wdXOyi
+6D6EwqKoQowZSd74IjuRkirahPkTf5K7u0otaSVMIHKvGbrVdlvS1E1bX2RFXiqI
+MaTe51Mmeqs6uqcQ8dEHlELy20pCDIYO9RPoAzVllryPDbTRCgNwoekr7ZpUgN6V
+O+4GcT4sfgocdhzkJ87PZkRuo8VPkMHjUpRF7cxgeO+qiQ+ngrk6qZsE63K9fWiv
+rJ46iAO0gEjPlMhy2ok/FOnX4SGYdkQdJ0BZgTEeEulp5k2IQEPrjUWK4R0R263d
+qBQ89RendeREM1BPFCHrzWLAI4OSgcKv1Qrt4x+uewVPSHyh6Ag9zkWElNCdNqwu
+3pfASPZT0dzBhPtplJYAzH6CCWgKC0ZBWM4AWmgclWeZe6XLa2l4nn6An8QNj7GT
+nq8GdyxpRX+4USGht3pHx9tBdDSCc0sk+QdC/a6V6qKkkWl4zxd/VarWz/p2YOTn
+IG0kiNFEcApoAHY3JJx+JPXXsHho3Sju+EHnIus7JUNIm5jw84w=
+=OWEZ
 -----END PGP SIGNATURE-----
 
---qt3h6knhwfsx5f3h--
+--borfd3wgta2rlacf--
