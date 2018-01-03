@@ -1,75 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44701 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750812AbeAPJoN (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:38766 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751858AbeACOC6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jan 2018 04:44:13 -0500
-Date: Tue, 16 Jan 2018 10:44:09 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 18/22] mmc: tmio: remove useless TMIO_MASK_CMD
- handling in tmio_mmc_host_probe()
-Message-ID: <20180116094409.3zb3igxqf36vqype@tetsubishi>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-19-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 3 Jan 2018 09:02:58 -0500
+Received: by mail-qk0-f193.google.com with SMTP id l19so1619671qke.5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Jan 2018 06:02:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w66ffc7p5kmmzqyx"
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-19-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20180103124105.1999-2-horms+renesas@verge.net.au>
+References: <20180103124105.1999-1-horms+renesas@verge.net.au> <20180103124105.1999-2-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 3 Jan 2018 15:02:56 +0100
+Message-ID: <CAMuHMdWUdF5OOjkCOzWO38Ems9NLXmmcpf-txhNF3ZU47itCfQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] arm64: dts: renesas: r8a7795: move scif node into
+ alphabetical order
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Wed, Jan 3, 2018 at 1:41 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> Move scif node so that sub-nodes of the root node are in
+> alphabetical order.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
---w66ffc7p5kmmzqyx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Sat, Nov 25, 2017 at 01:24:53AM +0900, Masahiro Yamada wrote:
-> TMIO_MASK_CMD is properly enabled in tmio_mmc_start_command().
->=20
-> We have no reason to set it up in tmio_mmc_host_probe().  (If we
-> really wanted to set it in the probe, we would have to do likewise
-> when resuming.)
->=20
-> Even worse, the following code is extremely confusing:
->=20
->   _host->sdcard_irq_mask &=3D ~irq_mask;
->=20
-> The logic is opposite between "->sdcard_irq_mask" and "irq_mask".
-> The intention is not clear at a glance.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Gr{oetje,eeting}s,
 
-In general, I like it a lot. It just depends on the previous patches
-which are still subject to discussion.
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---w66ffc7p5kmmzqyx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpdyWkACgkQFA3kzBSg
-KbbPZg//THuCQ5KQm8pgYtSAt7zDChzdUAN1f9ozK1oBQQy5/jnmdpbmMw3aVitM
-QUOwGX9vN/8V+IP5n37wFhec/sMw8FDHQb/lprCdgQtZPYA936/wPhsc8046Kqbj
-siWeVKJKOxqxx45nOWdrYyVicwC0g7b8tN29kMbS+Qv+Dd9XmTATrISUpKNk8OAj
-6pfa1afT/XVsrekw2wpG8e08whVCBYbnixgHD2p9NDNVtM03GtxLhbuUGDAklakI
-cJS1xmGmER34q4sYJ9rRn+s7hnbF+0f/CwWzEpI9HDoOjRtetpfu3EbTk63p9wju
-6gcfUtDfkrFrbAZtrRGmNuc9mM9DUxxKkob04mHqPbdTZA4yVtmxpjP49hm30IKP
-xGqtbH4h1CNdnhRFw/RrTqU2u+J4TS4tqhNnJM1wdta67isWR8K/UYkCpog50Tf3
-GhSD1OeSeDe2HmL0UZodmj1yM6dkLmAe9aLsviX+qJhS3QRYHEuX+cqOZ+IPTVxH
-3xrj9tEGoyJI/YvaoKhj1QPYola3smckMqWdnKXpUjlVwj6nBKi9A82Xd7UB1lzB
-SYtLcpSlJjrANY5um8/BgQRAmZMPQb6g0Wyv1xtFXcaNSrC4+tzagiL1U6OVA7sX
-WgCIggMWA5ZJ8xpH0+rQ7ePX2R3xqeOnlxULdPtsNLYGEsdqdZU=
-=3h90
------END PGP SIGNATURE-----
-
---w66ffc7p5kmmzqyx--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
