@@ -1,75 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20180103101438.il5grrfihewiduqe@verge.net.au>
-References: <20170913105909.13230-2-niklas.soderlund+renesas@ragnatech.se>
- <20180101181333.GA3631@localhost.localdomain> <20180102091944.py647jheghud7sl2@verge.net.au>
- <20180103000352.GB22490@bigcity.dyn.berto.se> <20180103101438.il5grrfihewiduqe@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Jan 2018 11:25:37 +0100
-Message-ID: <CAMuHMdWf76hNbQva_z9-2bCbBiGfA-veK9GdCqTyThaiBsNpMQ@mail.gmail.com>
-Subject: Re: [1/2] arm64: dts: r8a7795: add thermal cooling management
-To: Simon Horman <horms@verge.net.au>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:52669 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751954AbeACKOn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 3 Jan 2018 05:14:43 -0500
+Date: Wed, 3 Jan 2018 11:14:38 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Sender: devicetree-owner@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [1/2] arm64: dts: r8a7795: add thermal cooling management
+Message-ID: <20180103101438.il5grrfihewiduqe@verge.net.au>
+References: <20170913105909.13230-2-niklas.soderlund+renesas@ragnatech.se>
+ <20180101181333.GA3631@localhost.localdomain>
+ <20180102091944.py647jheghud7sl2@verge.net.au>
+ <20180103000352.GB22490@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180103000352.GB22490@bigcity.dyn.berto.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Wed, Jan 03, 2018 at 01:03:52AM +0100, Niklas Söderlund wrote:
+> Hi Simon,
+> 
+> On 2018-01-02 10:19:44 +0100, Simon Horman wrote:
+> > On Mon, Jan 01, 2018 at 10:13:35AM -0800, Eduardo Valentin wrote:
+> > > On Wed, Sep 13, 2017 at 12:59:08PM +0200, Niklas Söderlund wrote:
+> > > > Add nodes and properties for thermal cooling management support.
+> > > > 
+> > > > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > ---
+> > > 
+> > > Just a reminder, this series should go via your arch tree. You may add
+> > > my acks.
+> > 
+> > Ack.
+> > 
+> > Niklas, could you comment on the readiness of these patches
+> > for the renesas tree?
+> 
+> I think maybe the patches might have became a bit outdated since they 
+> where posted due to all reg property fixup patches. The blocker for me 
+> reposting this series is that the patches this depends 
+> 'topic/rcar-gen3-cpufreq' on are not yet in the renesas tree next or 
+> devel branches. Do you think it would be valuable for me to refresh 
+> these patches before the dependencies are picked up?
 
-On Wed, Jan 3, 2018 at 11:14 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Jan 03, 2018 at 01:03:52AM +0100, Niklas S=C3=B6derlund wrote:
->> On 2018-01-02 10:19:44 +0100, Simon Horman wrote:
->> > On Mon, Jan 01, 2018 at 10:13:35AM -0800, Eduardo Valentin wrote:
->> > > On Wed, Sep 13, 2017 at 12:59:08PM +0200, Niklas S=C3=B6derlund wrot=
-e:
->> > > > Add nodes and properties for thermal cooling management support.
->> > > >
->> > > > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@rag=
-natech.se>
->> > > > ---
->> > >
->> > > Just a reminder, this series should go via your arch tree. You may a=
-dd
->> > > my acks.
->> >
->> > Ack.
->> >
->> > Niklas, could you comment on the readiness of these patches
->> > for the renesas tree?
->>
->> I think maybe the patches might have became a bit outdated since they
->> where posted due to all reg property fixup patches. The blocker for me
->> reposting this series is that the patches this depends
->> 'topic/rcar-gen3-cpufreq' on are not yet in the renesas tree next or
->> devel branches. Do you think it would be valuable for me to refresh
->> these patches before the dependencies are picked up?
->
-> Probably not. I'll try to work on getting cpufreq upstream :)
-
-I think it's working fine in renesas-drivers, isn't it?
-
-As in the mean time the R-Car Gen3 CPG/MSSR drivers gained suspend/resume
-support, the only missing part is support for restoring the Z* clocks durin=
-g
-system resume.  Unless that is handled automatically by the cpufreq core.
-For secondary CPU cores, this may be handled by the CPU hotplug code.
-For the primary CPU core, I don't know.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Probably not. I'll try to work on getting cpufreq upstream :)
