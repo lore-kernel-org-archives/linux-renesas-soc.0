@@ -1,52 +1,166 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41075 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeACOHF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54562 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752074AbeACMlS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 09:07:05 -0500
-Received: by mail-qt0-f195.google.com with SMTP id i40so2182444qti.8
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Jan 2018 06:07:05 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20180103124105.1999-4-horms+renesas@verge.net.au>
-References: <20180103124105.1999-1-horms+renesas@verge.net.au> <20180103124105.1999-4-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Jan 2018 15:07:04 +0100
-Message-ID: <CAMuHMdWciOeHb22xaZcuCA_W-Bu1+s+51zDPRGhiyWzGZFTsMw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: renesas: r8a7796: Add OPPs table for
- cpu devices
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
+        Wed, 3 Jan 2018 07:41:18 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Dien Pham <dien.pham.ry@rvc.renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 3/3] arm64: dts: renesas: r8a7796: Add OPPs table for cpu devices
+Date: Wed,  3 Jan 2018 13:41:05 +0100
+Message-Id: <20180103124105.1999-4-horms+renesas@verge.net.au>
+In-Reply-To: <20180103124105.1999-1-horms+renesas@verge.net.au>
+References: <20180103124105.1999-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 3, 2018 at 1:41 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> From: Dien Pham <dien.pham.ry@rvc.renesas.com>
->
-> Define OOP tables for all CPUs.
-> This allows CPUFreq to function.
->
-> Based in part on work by Hien Dang.
->
-> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+From: Dien Pham <dien.pham.ry@rvc.renesas.com>
 
-Looks good and matches the bindings.
-I cannot verify the operating point tuples, though.
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Define OOP tables for all CPUs.
+This allows CPUFreq to function.
 
-Gr{oetje,eeting}s,
+Based in part on work by Hien Dang.
 
-                        Geert
+Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v3 [Simon Horman]
+* Do not give nodes a unit name, they have no base address
+* Preserve alphabetical order of sub-nodes of root node
+* Describe clock dependency for all CPU cores
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+v2 [Simon Horman]
+- Only provide one operating points node for each operating-points-v2 node
+  as per the binding; other nodes were unused and have been removed
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+v1 [Simon Horman]
+- consolidated several patches into one
+
+v0 [Dien Pham]
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 62 ++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index c5192d513d7d..e06bde6e2853 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -71,6 +71,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		a57_1: cpu@1 {
+@@ -80,6 +82,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		a53_0: cpu@100 {
+@@ -89,6 +93,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		a53_1: cpu@101 {
+@@ -98,6 +104,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU1>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		a53_2: cpu@102 {
+@@ -107,6 +115,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU2>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		a53_3: cpu@103 {
+@@ -116,6 +126,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU3>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		L2_CA57: cache-controller-0 {
+@@ -147,6 +159,56 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1800000000 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <960000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
+ 	/* External PCIe clock - can be overridden by the board */
+ 	pcie_bus_clk: pcie_bus {
+ 		compatible = "fixed-clock";
+-- 
+2.11.0
