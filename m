@@ -1,43 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41442 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750896AbeAILgE (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:50826 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753294AbeADQDn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 06:36:04 -0500
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/2] gpio: correct docs about return value of gpiod_get_direction
-Date: Tue,  9 Jan 2018 12:35:53 +0100
-Message-Id: <20180109113554.4337-1-wsa@the-dreams.de>
+        Thu, 4 Jan 2018 11:03:43 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/9] include: media: Add Renesas CEU driver interface
+Date: Thu,  4 Jan 2018 17:03:10 +0100
+Message-Id: <1515081797-17174-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1515081797-17174-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1515081797-17174-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add renesas-ceu header file.
 
-The use of the GPIOF_* flags is deprecated, so don't advertise them
-here. Document the plain numbers for now until we have a better
-solution.
+Do not remove the existing sh_mobile_ceu.h one as long as the original
+driver does not go away.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/media/drv-intf/renesas-ceu.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 include/media/drv-intf/renesas-ceu.h
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index aad84a6306c4e5..d3a91cf8fc73d4 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -195,7 +195,7 @@ static int gpiochip_find_base(int ngpio)
-  * gpiod_get_direction - return the current direction of a GPIO
-  * @desc:	GPIO to get the direction of
-  *
-- * Return GPIOF_DIR_IN or GPIOF_DIR_OUT, or an error code in case of error.
-+ * Returns 0 for output, 1 for input, or an error code in case of error.
-  *
-  * This function may sleep if gpiod_cansleep() is true.
-  */
+diff --git a/include/media/drv-intf/renesas-ceu.h b/include/media/drv-intf/renesas-ceu.h
+new file mode 100644
+index 0000000..52841d1
+--- /dev/null
++++ b/include/media/drv-intf/renesas-ceu.h
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * renesas-ceu.h - Renesas CEU driver interface
++ *
++ * Copyright 2017-2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ */
++
++#ifndef __MEDIA_DRV_INTF_RENESAS_CEU_H__
++#define __MEDIA_DRV_INTF_RENESAS_CEU_H__
++
++#define CEU_MAX_SUBDEVS		2
++
++struct ceu_async_subdev {
++	unsigned long flags;
++	unsigned char bus_width;
++	unsigned char bus_shift;
++	unsigned int i2c_adapter_id;
++	unsigned int i2c_address;
++};
++
++struct ceu_platform_data {
++	unsigned int num_subdevs;
++	struct ceu_async_subdev subdevs[CEU_MAX_SUBDEVS];
++};
++
++#endif /* ___MEDIA_DRV_INTF_RENESAS_CEU_H__ */
 -- 
-2.11.0
+2.7.4
