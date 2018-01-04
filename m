@@ -1,119 +1,72 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 1/9] dt-bindings: media: Add Renesas CEU bindings
-Date: Tue, 16 Jan 2018 22:44:53 +0100
-Message-Id: <1516139101-7835-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1516139101-7835-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1516139101-7835-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46660 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753633AbeADQxN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 4 Jan 2018 11:53:13 -0500
+Date: Thu, 4 Jan 2018 17:53:09 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [1/2] arm64: dts: r8a7795: add thermal cooling management
+Message-ID: <20180104165308.pr4klattmpg46iwm@verge.net.au>
+References: <20170913105909.13230-2-niklas.soderlund+renesas@ragnatech.se>
+ <20180101181333.GA3631@localhost.localdomain>
+ <20180102091944.py647jheghud7sl2@verge.net.au>
+ <20180103000352.GB22490@bigcity.dyn.berto.se>
+ <20180103101438.il5grrfihewiduqe@verge.net.au>
+ <CAMuHMdWf76hNbQva_z9-2bCbBiGfA-veK9GdCqTyThaiBsNpMQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWf76hNbQva_z9-2bCbBiGfA-veK9GdCqTyThaiBsNpMQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add bindings documentation for Renesas Capture Engine Unit (CEU).
+On Wed, Jan 03, 2018 at 11:25:37AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Jan 3, 2018 at 11:14 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Jan 03, 2018 at 01:03:52AM +0100, Niklas Söderlund wrote:
+> >> On 2018-01-02 10:19:44 +0100, Simon Horman wrote:
+> >> > On Mon, Jan 01, 2018 at 10:13:35AM -0800, Eduardo Valentin wrote:
+> >> > > On Wed, Sep 13, 2017 at 12:59:08PM +0200, Niklas Söderlund wrote:
+> >> > > > Add nodes and properties for thermal cooling management support.
+> >> > > >
+> >> > > > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> >> > > > ---
+> >> > >
+> >> > > Just a reminder, this series should go via your arch tree. You may add
+> >> > > my acks.
+> >> >
+> >> > Ack.
+> >> >
+> >> > Niklas, could you comment on the readiness of these patches
+> >> > for the renesas tree?
+> >>
+> >> I think maybe the patches might have became a bit outdated since they
+> >> where posted due to all reg property fixup patches. The blocker for me
+> >> reposting this series is that the patches this depends
+> >> 'topic/rcar-gen3-cpufreq' on are not yet in the renesas tree next or
+> >> devel branches. Do you think it would be valuable for me to refresh
+> >> these patches before the dependencies are picked up?
+> >
+> > Probably not. I'll try to work on getting cpufreq upstream :)
+> 
+> I think it's working fine in renesas-drivers, isn't it?
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- .../devicetree/bindings/media/renesas,ceu.txt      | 81 ++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
+There was some cleanup of the DTS patches pending.
+That has now happened, been posted, reviewed and merged :)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-new file mode 100644
-index 0000000..590ee27
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-@@ -0,0 +1,81 @@
-+Renesas Capture Engine Unit (CEU)
-+----------------------------------------------
-+
-+The Capture Engine Unit is the image capture interface found in the Renesas
-+SH Mobile and RZ SoCs.
-+
-+The interface supports a single parallel input with data bus width of 8 or 16
-+bits.
-+
-+Required properties:
-+- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1-H
-+  and RZ/A1-M SoCs.
-+- reg: Registers address base and size.
-+- interrupts: The interrupt specifier.
-+
-+The CEU supports a single parallel input and should contain a single 'port'
-+subnode with a single 'endpoint'. Connection to input devices are modeled
-+according to the video interfaces OF bindings specified in:
-+Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Optional endpoint properties applicable to parallel input bus described in
-+the above mentioned "video-interfaces.txt" file are supported.
-+
-+- hsync-active: Active state of the HSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+- vsync-active: Active state of the VSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+
-+Example:
-+
-+The example describes the connection between the Capture Engine Unit and an
-+OV7670 image sensor connected to i2c1 interface.
-+
-+ceu: ceu@e8210000 {
-+	reg = <0xe8210000 0x209c>;
-+	compatible = "renesas,r7s72100-ceu";
-+	interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vio_pins>;
-+
-+	status = "okay";
-+
-+	port {
-+		ceu_in: endpoint {
-+			remote-endpoint = <&ov7670_out>;
-+
-+			hsync-active = <1>;
-+			vsync-active = <0>;
-+		};
-+	};
-+};
-+
-+i2c1: i2c@fcfee400 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
-+
-+	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	ov7670: camera@21 {
-+		compatible = "ovti,ov7670";
-+		reg = <0x21>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vio_pins>;
-+
-+		reset-gpios = <&port3 11 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&port3 12 GPIO_ACTIVE_HIGH>;
-+
-+		port {
-+			ov7670_out: endpoint {
-+				remote-endpoint = <&ceu_in>;
-+
-+				hsync-active = <1>;
-+				vsync-active = <0>;
-+			};
-+		};
-+	};
-+};
--- 
-2.7.4
+> As in the mean time the R-Car Gen3 CPG/MSSR drivers gained suspend/resume
+> support, the only missing part is support for restoring the Z* clocks during
+> system resume.  Unless that is handled automatically by the cpufreq core.
+> For secondary CPU cores, this may be handled by the CPU hotplug code.
+> For the primary CPU core, I don't know.
 
+Thanks, I'll look into that.
