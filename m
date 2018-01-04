@@ -1,43 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39561 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965328AbeALXOj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46685 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751952AbeADQyt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 18:14:39 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 05/12] ARM: dts: porter: Fix HDMI output routing
-Date: Sat, 13 Jan 2018 01:14:23 +0200
-Message-Id: <20180112231430.26943-6-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 4 Jan 2018 11:54:49 -0500
+Date: Thu, 4 Jan 2018 17:54:46 +0100
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77970: move node which has no
+ reg property out of bus
+Message-ID: <20180104165445.odapc4somx6ksfp3@verge.net.au>
+References: <20171220122549.9452-1-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171220122549.9452-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The HDMI encoder is connected to the RGB output of the DU, which is
-port@0, not port@1. Fix the incorrect DT description.
+On Wed, Dec 20, 2017 at 01:25:49PM +0100, Simon Horman wrote:
+> Move timer node from soc node to root node.  The node that have been moved
+> do not have any register properties and thus shouldn't be placed on the
+> bus.
+> 
+> This problem is flagged by the compiler as follows:
+> $ make W=1
+> ...
+>   DTC     arch/arm64/boot/dts/renesas/r8a77970-eagle.dtb
+> arch/arm64/boot/dts/renesas/r8a77970-eagle.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+>   DTC     arch/arm64/boot/dts/renesas/r8a77970-v3msk.dtb
+> arch/arm64/boot/dts/renesas/r8a77970-v3msk.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm/boot/dts/r8a7791-porter.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index eb374956294f..9a02d03b23c2 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -425,7 +425,7 @@
- 		      "dclkin.0", "dclkin.1";
- 
- 	ports {
--		port@1 {
-+		port@0 {
- 			endpoint {
- 				remote-endpoint = <&adv7511_in>;
- 			};
--- 
-Regards,
-
-Laurent Pinchart
+Applied
