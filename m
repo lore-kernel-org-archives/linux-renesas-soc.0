@@ -1,48 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34570 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751257AbeAEIr1 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Jan 2018 03:47:27 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180104213108.24080-3-niklas.soderlund+renesas@ragnatech.se>
-References: <20180104213108.24080-1-niklas.soderlund+renesas@ragnatech.se> <20180104213108.24080-3-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jan 2018 09:47:26 +0100
-Message-ID: <CAMuHMdUEn=V7o=yfGTaCWEPeNzmQTNPLN8iGaGN5mU6nZ-sR_A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: r8a7796: update register size for thermal
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Sender: linux-renesas-soc-owner@vger.kernel.org
+To: devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] arm64: dts: r8a7796: update register size for thermal
+Date: Thu,  4 Jan 2018 22:31:08 +0100
+Message-Id: <20180104213108.24080-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180104213108.24080-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180104213108.24080-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 4, 2018 at 10:31 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> To be able to read fused calibration values from hardware the size of
-> the register resource of TSC1 needs to be incremented to cover one more
-> register which holds the information if the calibration values have been
-> fused or not.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+To be able to read fused calibration values from hardware the size of
+the register resource of TSC1 needs to be incremented to cover one more
+register which holds the information if the calibration values have been
+fused or not.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index ef10fb548681d36a..990ea798dbf6995d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1625,7 +1625,7 @@
+ 
+ 		tsc: thermal@e6198000 {
+ 			compatible = "renesas,r8a7796-thermal";
+-			reg = <0 0xe6198000 0 0x68>,
++			reg = <0 0xe6198000 0 0x6c>,
+ 			      <0 0xe61a0000 0 0x5c>,
+ 			      <0 0xe61a8000 0 0x5c>;
+ 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.15.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
