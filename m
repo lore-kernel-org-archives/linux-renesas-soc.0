@@ -1,120 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:38719 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753483AbeAIQ0F (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46702 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751952AbeADQzV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 11:26:05 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/9] dt-bindings: media: Add Renesas CEU bindings
-Date: Tue,  9 Jan 2018 17:25:23 +0100
-Message-Id: <1515515131-13760-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1515515131-13760-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1515515131-13760-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 4 Jan 2018 11:55:21 -0500
+Date: Thu, 4 Jan 2018 17:55:17 +0100
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: move nodes which have no
+ reg property out of bus
+Message-ID: <20180104165517.za3o44n7ikfs4vgg@verge.net.au>
+References: <20171220122442.9199-1-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171220122442.9199-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add bindings documentation for Renesas Capture Engine Unit (CEU).
+On Wed, Dec 20, 2017 at 01:24:42PM +0100, Simon Horman wrote:
+> Move pmu_a53 and timer nodes from soc node to root node.  The nodes that
+> have been moved do not have any register properties and thus shouldn't be
+> placed on the bus.
+> 
+> This problem is flagged by the compiler as follows:
+> $ make W=1
+> ...
+> arch/arm64/boot/dts/renesas/r8a77995-draak.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+> arch/arm64/boot/dts/renesas/r8a77995-draak.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- .../devicetree/bindings/media/renesas,ceu.txt      | 81 ++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
-
-diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-new file mode 100644
-index 0000000..590ee27
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-@@ -0,0 +1,81 @@
-+Renesas Capture Engine Unit (CEU)
-+----------------------------------------------
-+
-+The Capture Engine Unit is the image capture interface found in the Renesas
-+SH Mobile and RZ SoCs.
-+
-+The interface supports a single parallel input with data bus width of 8 or 16
-+bits.
-+
-+Required properties:
-+- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1-H
-+  and RZ/A1-M SoCs.
-+- reg: Registers address base and size.
-+- interrupts: The interrupt specifier.
-+
-+The CEU supports a single parallel input and should contain a single 'port'
-+subnode with a single 'endpoint'. Connection to input devices are modeled
-+according to the video interfaces OF bindings specified in:
-+Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Optional endpoint properties applicable to parallel input bus described in
-+the above mentioned "video-interfaces.txt" file are supported.
-+
-+- hsync-active: Active state of the HSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+- vsync-active: Active state of the VSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+
-+Example:
-+
-+The example describes the connection between the Capture Engine Unit and an
-+OV7670 image sensor connected to i2c1 interface.
-+
-+ceu: ceu@e8210000 {
-+	reg = <0xe8210000 0x209c>;
-+	compatible = "renesas,r7s72100-ceu";
-+	interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vio_pins>;
-+
-+	status = "okay";
-+
-+	port {
-+		ceu_in: endpoint {
-+			remote-endpoint = <&ov7670_out>;
-+
-+			hsync-active = <1>;
-+			vsync-active = <0>;
-+		};
-+	};
-+};
-+
-+i2c1: i2c@fcfee400 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
-+
-+	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	ov7670: camera@21 {
-+		compatible = "ovti,ov7670";
-+		reg = <0x21>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vio_pins>;
-+
-+		reset-gpios = <&port3 11 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&port3 12 GPIO_ACTIVE_HIGH>;
-+
-+		port {
-+			ov7670_out: endpoint {
-+				remote-endpoint = <&ceu_in>;
-+
-+				hsync-active = <1>;
-+				vsync-active = <0>;
-+			};
-+		};
-+	};
-+};
--- 
-2.7.4
+Applied
