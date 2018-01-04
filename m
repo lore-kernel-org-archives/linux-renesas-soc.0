@@ -1,59 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:29389 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751109AbeAYSDs (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:40733 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752595AbeADKih (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:03:48 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Thu, 4 Jan 2018 05:38:37 -0500
+MIME-Version: 1.0
+In-Reply-To: <2397934.0Hfvr3l64P@avalon>
+References: <1514906503-8535-1-git-send-email-geert+renesas@glider.be> <2397934.0Hfvr3l64P@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 4 Jan 2018 11:38:36 +0100
+Message-ID: <CAMuHMdXBFqiNLMAzDkyWZfdiJWt5WGEJJP0+5TE250az8u5Brg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add FDP clock
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 04/37] ARM: dts: r8a7790: Adjust SMP routine size
-Date: Thu, 25 Jan 2018 18:02:38 +0000
-Message-Id: <1516903391-30467-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        ABE Hiroshige <hiroshige.abe.zc@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+On Tue, Jan 2, 2018 at 4:54 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday, 2 January 2018 17:21:43 EET Geert Uytterhoeven wrote:
+>> From: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
+>>
+>> This patch adds FDP1-0 clock to the R8A7796 SoC.
+>>
+>> Signed-off-by: ABE Hiroshige <hiroshige.abe.zc@renesas.com>
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> [geert: s/fdp0/fdp1-0/]
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> I can't verify the parent clock, but apart from that,
+>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7790.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied with Laurent's ack, and queued in clk-renesas-for-v4.16.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 3bbcc0b..8b34636 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -443,7 +443,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x64>;
- 			};
- 		};
- 
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
