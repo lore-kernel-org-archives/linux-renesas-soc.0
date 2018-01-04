@@ -1,55 +1,30 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:60548 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752067AbeA3J76 (ORCPT
+Return-Path: <SRS0=mAXa=D7=vger.kernel.org=linux-renesas-soc-owner@vergenet.net>
+Received: from host116-16-237-212.serverdedicati.aruba.it ([212.237.16.116]:47196
+        "EHLO host.arubacloud.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753438AbeADQUb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:59:58 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 11/11] media: i2c: ov7670: Fully set mbus frame fmt
-Date: Tue, 30 Jan 2018 10:58:22 +0100
-Message-Id: <1517306302-27957-12-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 4 Jan 2018 11:20:31 -0500
+Received: from slsourcinggroup.com (nadneaa2.miniserver.com [78.31.108.146])
+        by host.arubacloud.com (Postfix) with ESMTPA id 6F98D756AB
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Jan 2018 17:13:32 +0100 (CET)
+MIME-Version: 1.0
+From: "Peter Deng" <peterddeng2000@securemailer.com>
+Reply-To: peterddeng2000@secsuremailer.com
+To: linux-renesas-soc@vger.kernel.org
+Subject: Business Possibility
+Content-Type: text/plain
+Content-Transfer-Encoding: 8BIT
+Date: Thu, 4 Jan 2018 16:14:00 +0000
+Message-ID: <2532406461752264956294@nadneaa2>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The sensor driver sets mbus format colorspace information and sizes,
-but not ycbcr encoding, quantization and xfer function. When supplied
-with an badly initialized mbus frame format structure, those fields
-need to be set explicitly not to leave them uninitialized. This is
-tested by v4l2-compliance, which supplies a mbus format description
-structure and checks for all fields to be properly set.
+Hello there, My name is Peter Deng a South African citizen and a friend to Mrs Mugabe sister . I got your contact through Korean business online directory. I represent the interest of Mrs Mugabe who wishes to move a total amount of $19 million  into a safe account owns by a trusted business man who is capable of accommodating such volume of funds with absolute trust & confidentiality.
 
-Without this commit, v4l2-compliance fails when testing formats with:
-fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
+We are willing to give 5-10 percent of the total money for this efforts . A non disclosure non circumvent agreement will be signed before the eventual transfer of funds. It is important for to know that the fund owner is going through a period of political turmoil and she is in a precarious position, so this transaction has to be highly secretive & very confidential.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/ov7670.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Kindly respond back to me if this is what you can handle .
 
-diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-index 25b26d4..61c472e 100644
---- a/drivers/media/i2c/ov7670.c
-+++ b/drivers/media/i2c/ov7670.c
-@@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct v4l2_subdev *sd,
- 	fmt->height = wsize->height;
- 	fmt->colorspace = ov7670_formats[index].colorspace;
- 
-+	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
-+	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
-+	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
-+
- 	info->format = *fmt;
- 
- 	return 0;
--- 
-2.7.4
+Regards,
+
+Peter.
