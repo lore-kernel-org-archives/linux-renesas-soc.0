@@ -1,69 +1,214 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f171.google.com ([74.125.82.171]:42323 "EHLO
-        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753403AbeADQFp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 11:05:45 -0500
-Received: by mail-ot0-f171.google.com with SMTP id d2so1622813oth.9
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Jan 2018 08:05:45 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <cover.1513938447.git.horms+renesas@verge.net.au>
-References: <cover.1513938447.git.horms+renesas@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 4 Jan 2018 17:05:44 +0100
-Message-ID: <CAK8P3a2pEBq5hbe-NW3+QX90YKMvMktn4DpzcH2_=LGfc3xaCQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Fixes for v4.15
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 1/3] usb: renesas_usbhs: Add support for RZ/A1
+Date: Thu,  4 Jan 2018 15:01:48 -0500
+Message-Id: <20180104200150.11352-2-chris.brandt@renesas.com>
+In-Reply-To: <20180104200150.11352-1-chris.brandt@renesas.com>
+References: <20180104200150.11352-1-chris.brandt@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 22, 2017 at 11:30 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
+This patch adds the capability to support RZ/A1 SoCs.
 
-> Renesas ARM Based SoC Fixes for v4.15
->
-> Vladimir Zapolskiy says:
->
-> The present change is a bug fix for AVB link iteratively up/down.
->
-> Steps to reproduce:
-> - start AVB TX stream (Using aplay via MSE),
-> - disconnect+reconnect the eth cable,
-> - after a reconnection the eth connection goes iteratively up/down
->   without user interaction,
-> - this may heal after some seconds or even stay for minutes.
->
-> As the documentation specifies, the "renesas,no-ether-link" option
-> should be used when a board does not provide a proper AVB_LINK signal.
-> There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
-> and ULCB starter kits since the AVB_LINK is correctly handled by HW.
->
-> Choosing to keep or remove the "renesas,no-ether-link" option will
-> have impact on the code flow in the following ways:
-> - keeping this option enabled may lead to unexpected behavior since
->   the RX & TX are enabled/disabled directly from adjust_link function
->   without any HW interrogation,
-> - removing this option, the RX & TX will only be enabled/disabled after
->   HW interrogation. The HW check is made through the LMON pin in PSR
->   register which specifies AVB_LINK signal value (0 - at low level;
->   1 - at high level).
->
-> In conclusion, the change is also a safety improvement because it
-> removes the "renesas,no-ether-link" option leading to a proper way
-> of detecting the link state based on HW interrogation and not on
-> software heuristic.
->
-> Note that DTS files for V3M Starter Kit, Draak and Eagle boards
-> contain the same property, the files are untouched due to unavailable
-> schematics to verify if the fix applies to these boards as well.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/usb/renesas_usbhs/Makefile |  2 +-
+ drivers/usb/renesas_usbhs/common.c | 17 +++++++++++++
+ drivers/usb/renesas_usbhs/common.h |  6 +++++
+ drivers/usb/renesas_usbhs/rza.c    | 52 ++++++++++++++++++++++++++++++++++++++
+ drivers/usb/renesas_usbhs/rza.h    |  4 +++
+ include/linux/usb/renesas_usbhs.h  |  1 +
+ 6 files changed, 81 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/usb/renesas_usbhs/rza.c
+ create mode 100644 drivers/usb/renesas_usbhs/rza.h
 
-Pulled into fixes, thanks!
+diff --git a/drivers/usb/renesas_usbhs/Makefile b/drivers/usb/renesas_usbhs/Makefile
+index fac147a3ad23..5c5b51bb48ef 100644
+--- a/drivers/usb/renesas_usbhs/Makefile
++++ b/drivers/usb/renesas_usbhs/Makefile
+@@ -5,7 +5,7 @@
+ 
+ obj-$(CONFIG_USB_RENESAS_USBHS)	+= renesas_usbhs.o
+ 
+-renesas_usbhs-y			:= common.o mod.o pipe.o fifo.o rcar2.o rcar3.o
++renesas_usbhs-y			:= common.o mod.o pipe.o fifo.o rcar2.o rcar3.o rza.o
+ 
+ ifneq ($(CONFIG_USB_RENESAS_USBHS_HCD),)
+ 	renesas_usbhs-y		+= mod_host.o
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index c5289b3ecf8d..2abefd3d6050 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -17,6 +17,7 @@
+ #include "common.h"
+ #include "rcar2.h"
+ #include "rcar3.h"
++#include "rza.h"
+ 
+ /*
+  *		image of renesas_usbhs
+@@ -480,6 +481,10 @@ static const struct of_device_id usbhs_of_match[] = {
+ 		.compatible = "renesas,usbhs-r8a77995",
+ 		.data = (void *)USBHS_TYPE_RCAR_GEN3_WITH_PLL,
+ 	},
++	{
++		.compatible = "renesas,usbhs-r7s72100",
++		.data = (void *)USBHS_TYPE_RZA1,
++	},
+ 	{
+ 		.compatible = "renesas,rcar-gen2-usbhs",
+ 		.data = (void *)USBHS_TYPE_RCAR_GEN2,
+@@ -488,6 +493,10 @@ static const struct of_device_id usbhs_of_match[] = {
+ 		.compatible = "renesas,rcar-gen3-usbhs",
+ 		.data = (void *)USBHS_TYPE_RCAR_GEN3,
+ 	},
++	{
++		.compatible = "renesas,rza1-usbhs",
++		.data = (void *)USBHS_TYPE_RZA1,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, usbhs_of_match);
+@@ -520,6 +529,11 @@ static struct renesas_usbhs_platform_info *usbhs_parse_dt(struct device *dev)
+ 		dparam->pipe_size = ARRAY_SIZE(usbhsc_new_pipe);
+ 	}
+ 
++	if (dparam->type == USBHS_TYPE_RZA1) {
++		dparam->pipe_configs = usbhsc_new_pipe;
++		dparam->pipe_size = ARRAY_SIZE(usbhsc_new_pipe);
++	}
++
+ 	return info;
+ }
+ 
+@@ -591,6 +605,9 @@ static int usbhs_probe(struct platform_device *pdev)
+ 				dev_err(&pdev->dev, "no notifier registered\n");
+ 		}
+ 		break;
++	case USBHS_TYPE_RZA1:
++		priv->pfunc = usbhs_rza1_ops;
++		break;
+ 	default:
+ 		if (!info->platform_callback.get_id) {
+ 			dev_err(&pdev->dev, "no platform callbacks");
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index c9747f064601..f619afeae2b8 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -98,6 +98,7 @@ struct usbhs_priv;
+ #define D2FIFOCTR	0x00F2	/* for R-Car Gen2 */
+ #define D3FIFOSEL	0x00F4	/* for R-Car Gen2 */
+ #define D3FIFOCTR	0x00F6	/* for R-Car Gen2 */
++#define SUSPMODE	0x0102	/* for RZ/A */
+ 
+ /* SYSCFG */
+ #define SCKE	(1 << 10)	/* USB Module Clock Enable */
+@@ -106,6 +107,8 @@ struct usbhs_priv;
+ #define DRPD	(1 << 5)	/* D+ Line/D- Line Resistance Control */
+ #define DPRPU	(1 << 4)	/* D+ Line Resistance Control */
+ #define USBE	(1 << 0)	/* USB Module Operation Enable */
++#define UCKSEL	(1 << 2)	/* Clock Select for RZ/A1 */
++#define UPLLE	(1 << 1)	/* USB PLL Enable for RZ/A1 */
+ 
+ /* DVSTCTR */
+ #define EXTLP	(1 << 10)	/* Controls the EXTLP pin output state */
+@@ -233,6 +236,9 @@ struct usbhs_priv;
+ #define USBSPD_SPEED_FULL	0x2
+ #define USBSPD_SPEED_HIGH	0x3
+ 
++/* SUSPMODE */
++#define SUSPM		(1 << 14)	/* SuspendM Control */
++
+ /*
+  *		struct
+  */
+diff --git a/drivers/usb/renesas_usbhs/rza.c b/drivers/usb/renesas_usbhs/rza.c
+new file mode 100644
+index 000000000000..b76e836d2c3d
+--- /dev/null
++++ b/drivers/usb/renesas_usbhs/rza.c
+@@ -0,0 +1,52 @@
++// SPDX-License-Identifier: GPL-1.0+
++/*
++ * Renesas USB driver RZ/A initialization and power control
++ *
++ * Copyright (C) 2018 Chris Brandt
++ * Copyright (C) 2018 Renesas Electronics Corporation
++ */
++
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/of_device.h>
++#include "common.h"
++#include "rza.h"
++
++static int usbhs_rza1_hardware_init(struct platform_device *pdev)
++{
++	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
++	struct device_node *usb_x1_clk, *extal_clk;
++	u32 freq_usb = 0, freq_extal = 0;
++
++	/* Input Clock Selection (NOTE: ch0 controls both ch0 and ch1) */
++	usb_x1_clk = of_find_node_by_name(NULL, "usb_x1");
++	extal_clk = of_find_node_by_name(NULL, "extal");
++	of_property_read_u32(usb_x1_clk, "clock-frequency", &freq_usb);
++	of_property_read_u32(extal_clk, "clock-frequency", &freq_extal);
++	if (freq_usb == 0) {
++		if (freq_extal == 12000000) {
++			/* Select 12MHz XTAL */
++			usbhs_bset(priv, SYSCFG, UCKSEL, UCKSEL);
++		} else {
++			dev_err(usbhs_priv_to_dev(priv), "A 48MHz USB clock or 12MHz main clock is required.\n");
++			return -EIO;
++		}
++	}
++
++	/* Enable USB PLL (NOTE: ch0 controls both ch0 and ch1) */
++	usbhs_bset(priv, SYSCFG, UPLLE, UPLLE);
++	udelay(1000);
++	usbhs_bset(priv, SUSPMODE, SUSPM, SUSPM);
++
++	return 0;
++}
++
++static int usbhs_rza_get_id(struct platform_device *pdev)
++{
++	return USBHS_GADGET;
++}
++
++const struct renesas_usbhs_platform_callback usbhs_rza1_ops = {
++	.hardware_init = usbhs_rza1_hardware_init,
++	.get_id = usbhs_rza_get_id,
++};
+diff --git a/drivers/usb/renesas_usbhs/rza.h b/drivers/usb/renesas_usbhs/rza.h
+new file mode 100644
+index 000000000000..ca917ca54f6d
+--- /dev/null
++++ b/drivers/usb/renesas_usbhs/rza.h
+@@ -0,0 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "common.h"
++
++extern const struct renesas_usbhs_platform_callback usbhs_rza1_ops;
+diff --git a/include/linux/usb/renesas_usbhs.h b/include/linux/usb/renesas_usbhs.h
+index 9482735d4ca5..53924f8e840c 100644
+--- a/include/linux/usb/renesas_usbhs.h
++++ b/include/linux/usb/renesas_usbhs.h
+@@ -195,6 +195,7 @@ struct renesas_usbhs_driver_param {
+ #define USBHS_TYPE_RCAR_GEN2		1
+ #define USBHS_TYPE_RCAR_GEN3		2
+ #define USBHS_TYPE_RCAR_GEN3_WITH_PLL	3
++#define USBHS_TYPE_RZA1			4
+ 
+ /*
+  * option:
+-- 
+2.15.1
 
-      Arnd
+
