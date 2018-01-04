@@ -1,55 +1,53 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41825 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755932AbeAIN7I (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 08:59:08 -0500
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Phil Reid <preid@electromag.com.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 1/6] i2c: make kerneldoc about bus recovery more precise
-Date: Tue,  9 Jan 2018 14:58:54 +0100
-Message-Id: <20180109135859.20771-2-wsa@the-dreams.de>
-In-Reply-To: <20180109135859.20771-1-wsa@the-dreams.de>
-References: <20180109135859.20771-1-wsa@the-dreams.de>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: magnus.damm@gmail.com, geert@glider.be, mchehab@kernel.org,
+        hverkuil@xs4all.nl, festevam@gmail.com, sakari.ailus@iki.fi,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 9/9] arch: sh: migor: Use new renesas-ceu camera driver
+Date: Thu, 04 Jan 2018 22:10:30 +0200
+Message-ID: <8062486.QngExgQv9j@avalon>
+In-Reply-To: <1515081797-17174-10-git-send-email-jacopo+renesas@jmondi.org>
+References: <1515081797-17174-1-git-send-email-jacopo+renesas@jmondi.org> <1515081797-17174-10-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Jacopo,
 
-"Used internally" is vague. What it actually means is that those fields
-are populated by the core if valid GPIOs are provided. Change the
-comments to reflect that.
+Thank you for the patch.
 
-Tested-by: Phil Reid <preid@electromag.com.au>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- include/linux/i2c.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On Thursday, 4 January 2018 18:03:17 EET Jacopo Mondi wrote:
+> Migo-R platform uses sh_mobile_ceu camera driver, which is now being
+> replaced by a proper V4L2 camera driver named 'renesas-ceu'.
+> 
+> Move Migo-R platform to use the v4l2 renesas-ceu camera driver
+> interface and get rid of soc_camera defined components used to register
+> sensor drivers and of platform specific enable/disable routines.
+> 
+> Register clock source and GPIOs for sensor drivers, so they can use
+> clock and gpio APIs.
+> 
+> Also, memory for CEU video buffers is now reserved with membocks APIs,
+> and need to be declared as dma_coherent during machine initialization to
+> remove that architecture specific part from CEU driver.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 5d7f3c1853ae4b..f8a9d81e911e52 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -545,12 +545,12 @@ struct i2c_timings {
-  * @recover_bus: Recover routine. Either pass driver's recover_bus() routine, or
-  *	i2c_generic_scl_recovery().
-  * @get_scl: This gets current value of SCL line. Mandatory for generic SCL
-- *      recovery. Used internally for generic GPIO recovery.
-- * @set_scl: This sets/clears SCL line. Mandatory for generic SCL recovery. Used
-- *      internally for generic GPIO recovery.
-+ *      recovery. Populated internally for generic GPIO recovery.
-+ * @set_scl: This sets/clears the SCL line. Mandatory for generic SCL recovery.
-+ *      Populated internally for generic GPIO recovery.
-  * @get_sda: This gets current value of SDA line. Optional for generic SCL
-- *      recovery. Used internally, if sda_gpio is a valid GPIO, for generic GPIO
-- *      recovery.
-+ *      recovery. Populated internally, if sda_gpio is a valid GPIO, for generic
-+ *      GPIO recovery.
-  * @prepare_recovery: This will be called before starting recovery. Platform may
-  *	configure padmux here for SDA/SCL line or something else they want.
-  * @unprepare_recovery: This will be called after completing recovery. Platform
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/sh/boards/mach-migor/setup.c      | 225 ++++++++++++++----------------
+>  arch/sh/kernel/cpu/sh4a/clock-sh7722.c |   2 +-
+>  2 files changed, 101 insertions(+), 126 deletions(-)
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
+
