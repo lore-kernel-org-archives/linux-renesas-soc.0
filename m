@@ -1,80 +1,146 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:59957 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751109AbeAYSEZ (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:38412 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753564AbeADQEb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:04:25 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+        Thu, 4 Jan 2018 11:04:31 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 11/37] soc: renesas: rcar-rst: Document generic compatible strings
-Date: Thu, 25 Jan 2018 18:02:45 +0000
-Message-Id: <1516903391-30467-12-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/2] arm64: dts: r8a7795: add thermal cooling management
+Date: Thu,  4 Jan 2018 17:03:19 +0100
+Message-Id: <20180104160320.11514-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180104160320.11514-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180104160320.11514-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
->From now on, devices compatible with the generic compatible strings
-documented by this commit don't need to modify the corresponding driver
-anymore.
+Add nodes and properties for thermal cooling management support.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Eduardo Valentin <edubezval@gmail.com>
 ---
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 40 ++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index a8014f3..2602a19 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -11,7 +11,10 @@ following functions:
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 1485e6a8e11220fe..19b7de57704c67e8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -43,6 +43,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 		};
  
+ 		a57_1: cpu@1 {
+@@ -54,6 +55,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 		};
  
- Required properties:
--  - compatible: Should be
-+  - compatible: Should be a SoC specific string, followed by a generic
-+		fallback compatible string when compatible with the generic
-+		version.
-+		The SoC specific compatible string should be:
- 		  - "renesas,<soctype>-reset-wdt" for R-Car Gen1,
- 		  - "renesas,<soctype>-rst" for R-Car Gen2 and Gen3, and RZ/G
- 		Examples with soctypes are:
-@@ -28,12 +31,16 @@ Required properties:
- 		  - "renesas,r8a7796-rst" (R-Car M3-W)
- 		  - "renesas,r8a77970-rst" (R-Car V3M)
- 		  - "renesas,r8a77995-rst" (R-Car D3)
-+		The generic compatible string should be:
-+		  - "renesas,rcar-gen1-rst" for R-Car Gen1
-+		  - "renesas,rcar-gen2-rst" for R-Car Gen2 and RZ/G
-+		  - "renesas,rcar-gen3-rst" for R-Car Gen3
-   - reg: Address start and address range for the device.
+ 		a57_2: cpu@2 {
+@@ -65,6 +67,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 		};
  
+ 		a57_3: cpu@3 {
+@@ -76,6 +79,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 		};
  
- Example:
+ 		a53_0: cpu@100 {
+@@ -2418,12 +2422,24 @@
+ 			thermal-sensors = <&tsc 0>;
  
- 	rst: reset-controller@e6160000 {
--		compatible = "renesas,r8a7795-rst";
-+		compatible = "renesas,r8a7795-rst", "renesas,rcar-gen3-rst";
- 		reg = <0 0xe6160000 0 0x0200>;
+ 			trips {
++				sensor1_passive: sensor1-passive {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
+ 				sensor1_crit: sensor1-crit {
+ 					temperature = <120000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&sensor1_passive>;
++					cooling-device = <&a57_0 4 4>;
++				};
++			};
+ 		};
+ 
+ 		sensor_thermal2: sensor-thermal2 {
+@@ -2432,12 +2448,24 @@
+ 			thermal-sensors = <&tsc 1>;
+ 
+ 			trips {
++				sensor2_passive: sensor2-passive {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
+ 				sensor2_crit: sensor2-crit {
+ 					temperature = <120000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&sensor2_passive>;
++					cooling-device = <&a57_0 4 4>;
++				};
++			};
+ 		};
+ 
+ 		sensor_thermal3: sensor-thermal3 {
+@@ -2446,12 +2474,24 @@
+ 			thermal-sensors = <&tsc 2>;
+ 
+ 			trips {
++				sensor3_passive: sensor3-passive {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
+ 				sensor3_crit: sensor3-crit {
+ 					temperature = <120000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&sensor3_passive>;
++					cooling-device = <&a57_0 4 4>;
++				};
++			};
+ 		};
  	};
+ 
 -- 
-2.7.4
+2.15.1
