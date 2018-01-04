@@ -1,63 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:54493 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751976AbeA3UXx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46608 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752344AbeADQu5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:23:53 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 4 Jan 2018 11:50:57 -0500
+Date: Thu, 4 Jan 2018 17:50:53 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 08/25] ARM: dts: r8a7794: Adjust SMP routine size
-Date: Tue, 30 Jan 2018 20:22:41 +0000
-Message-Id: <1517343778-27902-9-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] arm64: dts: r8a7795: r8a7796: add thermal cooling
+ management
+Message-ID: <20180104165053.jtycpk36fiaursho@verge.net.au>
+References: <20180104160320.11514-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180104160320.11514-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+On Thu, Jan 04, 2018 at 05:03:18PM +0100, Niklas Söderlund wrote:
+> Hi,
+> 
+> This series adds support for for using CPUFreq as a cooling device for
+> the A57 CUP:s on Renesas H3 and M3-W SoC:s. It depends on Simon Horman's
+> topic/rcar-gen3-cpufreq-v4 branch [1] and is tested on H3 and M3-W. For 
+> test results and test procedure please see:
+> 
+>    http://elinux.org/R-Car/Tests:rcar_gen3_thermal
+> 
+> Few notes on the specific values used in this series and why they might
+> need to be changed.
+> 
+> - The trip point temperature of 95000 used is the most conservative one
+>   from the BSP and maybe should be set at 110000 which is the most
+>   aggressive one in the BSP.
+> 
+> - The cooling states described in all cooling-maps nodes might be
+>   subject to change depending on the out-come of the ongoing review
+>   process of Simon's work. It should use the highest possible cooling
+>   state so if the number of states change due review of his work this
+>   should be reflected in this series.
+> 
+> 1.  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git
+> 
+> * Changes since v1
+> - Added acks from Eduardo Valentin.
+> - Rebased on top of the latest branch of Simons work.
+> 
+> Niklas Söderlund (2):
+>   arm64: dts: r8a7795: add thermal cooling management
+>   arm64: dts: r8a7796: add thermal cooling management
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v1->v3:
-* increased size to 0x100
-
- arch/arm/boot/dts/r8a7794.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index d588efa..e47c5f4 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -348,7 +348,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
--- 
-2.7.4
+Thanks, applied.
