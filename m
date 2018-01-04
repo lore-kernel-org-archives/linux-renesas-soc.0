@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:46766 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751008AbeAEKMR (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45800 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbeADKfR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Jan 2018 05:12:17 -0500
+        Thu, 4 Jan 2018 05:35:17 -0500
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUXRp_TEREXb1QGL88U907AJ4_DeTsWeO=ESZkBoB5qaA@mail.gmail.com>
-References: <1514906296-8099-1-git-send-email-geert+renesas@glider.be> <CAMuHMdUXRp_TEREXb1QGL88U907AJ4_DeTsWeO=ESZkBoB5qaA@mail.gmail.com>
+In-Reply-To: <1514906296-8099-1-git-send-email-geert+renesas@glider.be>
+References: <1514906296-8099-1-git-send-email-geert+renesas@glider.be>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jan 2018 11:12:16 +0100
-Message-ID: <CAMuHMdU-h39Ty6gUfuVGw3Lnor793R4v_r4_NbQrNnRecw2FsA@mail.gmail.com>
+Date: Thu, 4 Jan 2018 11:35:16 +0100
+Message-ID: <CAMuHMdUXRp_TEREXb1QGL88U907AJ4_DeTsWeO=ESZkBoB5qaA@mail.gmail.com>
 Subject: Re: [PATCH] clk: renesas: Stop enabling legacy DT clock support by default
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -22,21 +22,17 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 4, 2018 at 11:35 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, Jan 2, 2018 at 4:18 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->> Since v4.15-rc1, the DTS files for all R-Car Gen2 SoCs have been
->> converted to the new CPG/MSSR bindings.  Hence it is now safe to no
->> longer enable legacy DT clock support by default.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> To be queued in clk-renesas-for-v4.16.
+On Tue, Jan 2, 2018 at 4:18 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Since v4.15-rc1, the DTS files for all R-Car Gen2 SoCs have been
+> converted to the new CPG/MSSR bindings.  Hence it is now safe to no
+> longer enable legacy DT clock support by default.
 >
-> Applied and queued in clk-renesas-for-v4.16.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in clk-renesas-for-v4.16.
 
-Upon second thought, I'll postpone this to v4.17.
+Applied and queued in clk-renesas-for-v4.16.
 
 Gr{oetje,eeting}s,
 
