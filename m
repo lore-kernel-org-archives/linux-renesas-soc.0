@@ -1,49 +1,69 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20180105184609.24106-4-chris.brandt@renesas.com>
-References: <20180105184609.24106-1-chris.brandt@renesas.com> <20180105184609.24106-4-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jan 2018 21:17:31 +0100
-Message-ID: <CAMuHMdVBpMddxoLWHvJxEeu--Qe0O7UbfYw06znYpXob42ccow@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] ARM: dts: r7s72100: add USB device to device tree
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:24538 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752163AbeAESre (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 5 Jan 2018 13:47:34 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 3/3] ARM: dts: r7s72100: add USB device to device tree
+Date: Fri,  5 Jan 2018 13:46:09 -0500
+Message-Id: <20180105184609.24106-4-chris.brandt@renesas.com>
+In-Reply-To: <20180105184609.24106-1-chris.brandt@renesas.com>
+References: <20180105184609.24106-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 5, 2018 at 7:46 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Add USB device support.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add USB device support.
 
-> --- a/arch/arm/boot/dts/r7s72100.dtsi
-> +++ b/arch/arm/boot/dts/r7s72100.dtsi
-> @@ -667,4 +667,24 @@
->                 power-domains = <&cpg_clocks>;
->                 status = "disabled";
->         };
-> +
-> +       usbhs0: usb@e8010000 {
-> +               compatible = "renesas,usbhs-r7s72100";
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+ * Node name is now generic 'usb@'
+ * GIC_SPI (73-32) is now just GIC_SPI 41
+ * All hex number are lower case
+ * Added Reviewed-by
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-+ "renesas,rza1-usbhs"
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index ab9645a42eca..f863f74b1b30 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -667,4 +667,24 @@
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
++
++	usbhs0: usb@e8010000 {
++		compatible = "renesas,usbhs-r7s72100";
++		reg = <0xe8010000 0x1a0>;
++		interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp7_clks R7S72100_CLK_USB0>;
++		renesas,buswait = <4>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	usbhs1: usb@e8207000 {
++		compatible = "renesas,usbhs-r7s72100";
++		reg = <0xe8207000 0x1a0>;
++		interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp7_clks R7S72100_CLK_USB1>;
++		renesas,buswait = <4>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
+ };
+-- 
+2.15.1
