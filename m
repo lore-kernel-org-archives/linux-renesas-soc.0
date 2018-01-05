@@ -1,210 +1,55 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:38069 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751447AbeAEU0L (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 5 Jan 2018 15:26:11 -0500
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 1/3] usb: renesas_usbhs: Add support for RZ/A1
-Date: Fri,  5 Jan 2018 17:46:45 -0500
-Message-Id: <20180105224647.42262-2-chris.brandt@renesas.com>
-In-Reply-To: <20180105224647.42262-1-chris.brandt@renesas.com>
-References: <20180105224647.42262-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Simon Horman <horms@verge.net.au>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: RE: [PATCH v2 1/3] usb: renesas_usbhs: Add support for RZ/A1
+Date: Fri, 5 Jan 2018 20:26:06 +0000
+Message-ID: <SG2PR06MB116564859278F511BD5CD4208A1C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20180105184609.24106-1-chris.brandt@renesas.com>
+ <20180105184609.24106-2-chris.brandt@renesas.com>
+ <CAMuHMdV5KcRAJDw2eTMET2rpJoGD47YTfSXq-CEH_j+44Z+Byw@mail.gmail.com>
+In-Reply-To: <CAMuHMdV5KcRAJDw2eTMET2rpJoGD47YTfSXq-CEH_j+44Z+Byw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds the capability to support RZ/A1 SoCs.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
- * Removed "renesas,usbhs-r7s72100"
- * Changed license of rza.c
----
- drivers/usb/renesas_usbhs/Makefile |  2 +-
- drivers/usb/renesas_usbhs/common.c | 13 ++++++++++
- drivers/usb/renesas_usbhs/common.h |  6 +++++
- drivers/usb/renesas_usbhs/rza.c    | 52 ++++++++++++++++++++++++++++++++++++++
- drivers/usb/renesas_usbhs/rza.h    |  4 +++
- include/linux/usb/renesas_usbhs.h  |  1 +
- 6 files changed, 77 insertions(+), 1 deletion(-)
- create mode 100644 drivers/usb/renesas_usbhs/rza.c
- create mode 100644 drivers/usb/renesas_usbhs/rza.h
-
-diff --git a/drivers/usb/renesas_usbhs/Makefile b/drivers/usb/renesas_usbhs/Makefile
-index fac147a3ad23..5c5b51bb48ef 100644
---- a/drivers/usb/renesas_usbhs/Makefile
-+++ b/drivers/usb/renesas_usbhs/Makefile
-@@ -5,7 +5,7 @@
- 
- obj-$(CONFIG_USB_RENESAS_USBHS)	+= renesas_usbhs.o
- 
--renesas_usbhs-y			:= common.o mod.o pipe.o fifo.o rcar2.o rcar3.o
-+renesas_usbhs-y			:= common.o mod.o pipe.o fifo.o rcar2.o rcar3.o rza.o
- 
- ifneq ($(CONFIG_USB_RENESAS_USBHS_HCD),)
- 	renesas_usbhs-y		+= mod_host.o
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index c5289b3ecf8d..4310df46639d 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -17,6 +17,7 @@
- #include "common.h"
- #include "rcar2.h"
- #include "rcar3.h"
-+#include "rza.h"
- 
- /*
-  *		image of renesas_usbhs
-@@ -488,6 +489,10 @@ static const struct of_device_id usbhs_of_match[] = {
- 		.compatible = "renesas,rcar-gen3-usbhs",
- 		.data = (void *)USBHS_TYPE_RCAR_GEN3,
- 	},
-+	{
-+		.compatible = "renesas,rza1-usbhs",
-+		.data = (void *)USBHS_TYPE_RZA1,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, usbhs_of_match);
-@@ -520,6 +525,11 @@ static struct renesas_usbhs_platform_info *usbhs_parse_dt(struct device *dev)
- 		dparam->pipe_size = ARRAY_SIZE(usbhsc_new_pipe);
- 	}
- 
-+	if (dparam->type == USBHS_TYPE_RZA1) {
-+		dparam->pipe_configs = usbhsc_new_pipe;
-+		dparam->pipe_size = ARRAY_SIZE(usbhsc_new_pipe);
-+	}
-+
- 	return info;
- }
- 
-@@ -591,6 +601,9 @@ static int usbhs_probe(struct platform_device *pdev)
- 				dev_err(&pdev->dev, "no notifier registered\n");
- 		}
- 		break;
-+	case USBHS_TYPE_RZA1:
-+		priv->pfunc = usbhs_rza1_ops;
-+		break;
- 	default:
- 		if (!info->platform_callback.get_id) {
- 			dev_err(&pdev->dev, "no platform callbacks");
-diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
-index c9747f064601..f619afeae2b8 100644
---- a/drivers/usb/renesas_usbhs/common.h
-+++ b/drivers/usb/renesas_usbhs/common.h
-@@ -98,6 +98,7 @@ struct usbhs_priv;
- #define D2FIFOCTR	0x00F2	/* for R-Car Gen2 */
- #define D3FIFOSEL	0x00F4	/* for R-Car Gen2 */
- #define D3FIFOCTR	0x00F6	/* for R-Car Gen2 */
-+#define SUSPMODE	0x0102	/* for RZ/A */
- 
- /* SYSCFG */
- #define SCKE	(1 << 10)	/* USB Module Clock Enable */
-@@ -106,6 +107,8 @@ struct usbhs_priv;
- #define DRPD	(1 << 5)	/* D+ Line/D- Line Resistance Control */
- #define DPRPU	(1 << 4)	/* D+ Line Resistance Control */
- #define USBE	(1 << 0)	/* USB Module Operation Enable */
-+#define UCKSEL	(1 << 2)	/* Clock Select for RZ/A1 */
-+#define UPLLE	(1 << 1)	/* USB PLL Enable for RZ/A1 */
- 
- /* DVSTCTR */
- #define EXTLP	(1 << 10)	/* Controls the EXTLP pin output state */
-@@ -233,6 +236,9 @@ struct usbhs_priv;
- #define USBSPD_SPEED_FULL	0x2
- #define USBSPD_SPEED_HIGH	0x3
- 
-+/* SUSPMODE */
-+#define SUSPM		(1 << 14)	/* SuspendM Control */
-+
- /*
-  *		struct
-  */
-diff --git a/drivers/usb/renesas_usbhs/rza.c b/drivers/usb/renesas_usbhs/rza.c
-new file mode 100644
-index 000000000000..5b287257ec11
---- /dev/null
-+++ b/drivers/usb/renesas_usbhs/rza.c
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas USB driver RZ/A initialization and power control
-+ *
-+ * Copyright (C) 2018 Chris Brandt
-+ * Copyright (C) 2018 Renesas Electronics Corporation
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of_device.h>
-+#include "common.h"
-+#include "rza.h"
-+
-+static int usbhs_rza1_hardware_init(struct platform_device *pdev)
-+{
-+	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
-+	struct device_node *usb_x1_clk, *extal_clk;
-+	u32 freq_usb = 0, freq_extal = 0;
-+
-+	/* Input Clock Selection (NOTE: ch0 controls both ch0 and ch1) */
-+	usb_x1_clk = of_find_node_by_name(NULL, "usb_x1");
-+	extal_clk = of_find_node_by_name(NULL, "extal");
-+	of_property_read_u32(usb_x1_clk, "clock-frequency", &freq_usb);
-+	of_property_read_u32(extal_clk, "clock-frequency", &freq_extal);
-+	if (freq_usb == 0) {
-+		if (freq_extal == 12000000) {
-+			/* Select 12MHz XTAL */
-+			usbhs_bset(priv, SYSCFG, UCKSEL, UCKSEL);
-+		} else {
-+			dev_err(usbhs_priv_to_dev(priv), "A 48MHz USB clock or 12MHz main clock is required.\n");
-+			return -EIO;
-+		}
-+	}
-+
-+	/* Enable USB PLL (NOTE: ch0 controls both ch0 and ch1) */
-+	usbhs_bset(priv, SYSCFG, UPLLE, UPLLE);
-+	udelay(1000);
-+	usbhs_bset(priv, SUSPMODE, SUSPM, SUSPM);
-+
-+	return 0;
-+}
-+
-+static int usbhs_rza_get_id(struct platform_device *pdev)
-+{
-+	return USBHS_GADGET;
-+}
-+
-+const struct renesas_usbhs_platform_callback usbhs_rza1_ops = {
-+	.hardware_init = usbhs_rza1_hardware_init,
-+	.get_id = usbhs_rza_get_id,
-+};
-diff --git a/drivers/usb/renesas_usbhs/rza.h b/drivers/usb/renesas_usbhs/rza.h
-new file mode 100644
-index 000000000000..ca917ca54f6d
---- /dev/null
-+++ b/drivers/usb/renesas_usbhs/rza.h
-@@ -0,0 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include "common.h"
-+
-+extern const struct renesas_usbhs_platform_callback usbhs_rza1_ops;
-diff --git a/include/linux/usb/renesas_usbhs.h b/include/linux/usb/renesas_usbhs.h
-index 9482735d4ca5..53924f8e840c 100644
---- a/include/linux/usb/renesas_usbhs.h
-+++ b/include/linux/usb/renesas_usbhs.h
-@@ -195,6 +195,7 @@ struct renesas_usbhs_driver_param {
- #define USBHS_TYPE_RCAR_GEN2		1
- #define USBHS_TYPE_RCAR_GEN3		2
- #define USBHS_TYPE_RCAR_GEN3_WITH_PLL	3
-+#define USBHS_TYPE_RZA1			4
- 
- /*
-  * option:
--- 
-2.15.1
-
-
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgSmFudWFyeSAwNSwgMjAxOCwgR2VlcnQgVXl0dGVyaG9l
+dmVuIHdyb3RlOg0KPiA+ICsgICAgICAgew0KPiA+ICsgICAgICAgICAgICAgICAuY29tcGF0aWJs
+ZSA9ICJyZW5lc2FzLHVzYmhzLXI3czcyMTAwIiwNCj4gPiArICAgICAgICAgICAgICAgLmRhdGEg
+PSAodm9pZCAqKVVTQkhTX1RZUEVfUlpBMSwNCj4gPiArICAgICAgIH0sDQo+IA0KPiBJIHRoaW5r
+IGl0IHN1ZmZpY2VzIHRvIGRyb3AgdGhlIHBhcnQgYWJvdmUuLi4NCj4gDQo+ID4gICAgICAgICB7
+DQo+ID4gICAgICAgICAgICAgICAgIC5jb21wYXRpYmxlID0gInJlbmVzYXMscmNhci1nZW4yLXVz
+YmhzIiwNCj4gPiAgICAgICAgICAgICAgICAgLmRhdGEgPSAodm9pZCAqKVVTQkhTX1RZUEVfUkNB
+Ul9HRU4yLA0KPiA+IEBAIC00ODgsNiArNDkzLDEwIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2Zf
+ZGV2aWNlX2lkIHVzYmhzX29mX21hdGNoW10gPQ0KPiB7DQo+ID4gICAgICAgICAgICAgICAgIC5j
+b21wYXRpYmxlID0gInJlbmVzYXMscmNhci1nZW4zLXVzYmhzIiwNCj4gPiAgICAgICAgICAgICAg
+ICAgLmRhdGEgPSAodm9pZCAqKVVTQkhTX1RZUEVfUkNBUl9HRU4zLA0KPiA+ICAgICAgICAgfSwN
+Cj4gPiArICAgICAgIHsNCj4gPiArICAgICAgICAgICAgICAgLmNvbXBhdGlibGUgPSAicmVuZXNh
+cyxyemExLXVzYmhzIiwNCj4gPiArICAgICAgICAgICAgICAgLmRhdGEgPSAodm9pZCAqKVVTQkhT
+X1RZUEVfUlpBMSwNCj4gPiArICAgICAgIH0sDQo+IA0KPiAuLi4gYW5kIGp1c3QgbGV0IHRoZSBk
+cml2ZXIgbWF0Y2ggYWdhaW5zdCB0aGUgZ2VuZXJpYyBjb21wYXRpYmxlIHZhbHVlLg0KPiBCdXQg
+dGhlbiB5b3UgaGF2ZSB0byBhZGQgInJlbmVzYXMscnphMS11c2JocyIgdG8gdGhlIERUUywgdG9v
+Lg0KDQpPSy4gSSBjYW4gZG8gdGhhdC4NCg0KSSBrZWVwIGZvcmdldHRpbmcgYWxsIHRoZSBuZXcv
+b2xkIERUIHJ1bGVzLg0KSSB0aG91Z2h0IHRoZXJlIHdhcyBzb21ldGhpbmcgYWJvdXQgeW91IGFs
+d2F5cyBuZWVkIGEgZ2VuZXJpYyBuYW1lIGFuZA0KYWxzbyBhIGRldmljZSBzcGVjaWZpYyBuYW1l
+Lg0KDQpJJ20gaGFwcHkgd2l0aCBqdXN0ICJyZW5lc2FzLHJ6YTEtdXNiaHMiLg0KDQoNCj4gPiAt
+LS0gL2Rldi9udWxsDQo+ID4gKysrIGIvZHJpdmVycy91c2IvcmVuZXNhc191c2Jocy9yemEuYw0K
+PiA+IEBAIC0wLDAgKzEsNTIgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQ
+TC0xLjArDQo+IA0KPiBOb3QgR1BMLTIuMD8NCg0KT29wcy4gQ29weS9wYXN0ZSBlcnJvci4NCg0K
+DQpJJ2xsIHN1Ym1pdCBhIFYzIG9mIHRoZSBzZXJpZXMuDQoNCg0KVGhhbmtzIQ0KDQpDaHJpcw0K
+DQo=
