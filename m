@@ -1,205 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34830 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753764AbeAQQTj (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:45163 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750837AbeAEMds (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:19:39 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 5 Jan 2018 07:33:48 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180105122450.GG22490@bigcity.dyn.berto.se>
+References: <20180104213108.24080-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180104213108.24080-2-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdU97udtf4+vo_SaGyYaEk1eV4QEmeqWiGF4iVp045w=6A@mail.gmail.com> <20180105122450.GG22490@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 Jan 2018 13:33:46 +0100
+Message-ID: <CAMuHMdXnNQE7CY_k465robn8weh6+EeGn7xe7ZzdpdTOcice5A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: r8a7795: update register size for thermal
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 07/16] ARM: dts: r8a7791: sort subnodes of root node
-Date: Wed, 17 Jan 2018 17:17:08 +0100
-Message-Id: <20180117161717.14589-8-horms+renesas@verge.net.au>
-In-Reply-To: <20180117161717.14589-1-horms+renesas@verge.net.au>
-References: <20180117161717.14589-1-horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort subnodes of root node to aid maintenance.
+Hi Niklas,
 
-This patch should not introduce any functional change.
+On Fri, Jan 5, 2018 at 1:24 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> On 2018-01-05 09:47:11 +0100, Geert Uytterhoeven wrote:
+>> On Thu, Jan 4, 2018 at 10:31 PM, Niklas S=C3=B6derlund
+>> <niklas.soderlund+renesas@ragnatech.se> wrote:
+>> > To be able to read fused calibration values from hardware the size of
+>> > the register resource of TSC1 needs to be incremented to cover one mor=
+e
+>> > register which holds the information if the calibration values have be=
+en
+>> > fused or not.
+>> >
+>> > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnate=
+ch.se>
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> > @@ -2385,7 +2385,7 @@
+>> >
+>> >                 tsc: thermal@e6198000 {
+>> >                         compatible =3D "renesas,r8a7795-thermal";
+>> > -                       reg =3D <0 0xe6198000 0 0x68>,
+>> > +                       reg =3D <0 0xe6198000 0 0x6c>,
+>>
+>> Perhaps we should just make it 0x100?
+>> I'd be very surprised if that would be smaller than the granularity of t=
+he
+>> address decoder circuitry.
+>
+> I have no problem with making it 0x100, looking at r8a7795.dtsi it seems
+> we are mixing what we do today. For example the i2c nodes are defined
+> with a precise size less then 0x100 while the USB-DMAC nodes uses a size
+> of 0x100 while the size in the documentation is less then 0x100. Maybe
+> we should define how we should handle cases like this and update the
+> existing DT files?
+>
+> Do you think I should make all thermal registers 0x100 and not just TSC1
+> and resend?
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* New patch
----
- arch/arm/boot/dts/r8a7791.dtsi | 134 ++++++++++++++++++++---------------------
- 1 file changed, 67 insertions(+), 67 deletions(-)
+I think that makes sense.
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index de2af2199731..dc659351472f 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -39,6 +39,35 @@
- 		vin2 = &vin2;
- 	};
- 
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -82,23 +111,27 @@
- 		};
- 	};
- 
--	thermal-zones {
--		cpu_thermal: cpu-thermal {
--			polling-delay-passive	= <0>;
--			polling-delay		= <0>;
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
- 
--			thermal-sensors = <&thermal>;
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
- 
--			trips {
--				cpu-crit {
--					temperature	= <95000>;
--					hysteresis	= <0>;
--					type		= "critical";
--				};
--			};
--			cooling-maps {
--			};
--		};
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
- 	};
- 
- 	soc {
-@@ -1668,6 +1701,25 @@
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive	= <0>;
-+			polling-delay		= <0>;
-+
-+			thermal-sensors = <&thermal>;
-+
-+			trips {
-+				cpu-crit {
-+					temperature	= <95000>;
-+					hysteresis	= <0>;
-+					type		= "critical";
-+				};
-+			};
-+			cooling-maps {
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -1676,62 +1728,10 @@
- 				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
--	/* External root clock */
--	extal_clk: extal {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
--
--	/*
--	 * The external audio clocks are configured as 0 Hz fixed frequency
--	 * clocks by default.
--	 * Boards that provide audio clocks should override them.
--	 */
--	audio_clk_a: audio_clk_a {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--	audio_clk_b: audio_clk_b {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--	audio_clk_c: audio_clk_c {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
--	/* External PCIe clock - can be overridden by the board */
--	pcie_bus_clk: pcie_bus {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
--	/* External SCIF clock */
--	scif_clk: scif {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
--
- 	/* External USB clock - can be overridden by the board */
- 	usb_extal_clk: usb_extal {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <48000000>;
- 	};
--
--	/* External CAN clock */
--	can_clk: can {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
- };
--- 
-2.11.0
+Granularities below PAGE_SIZE can't be enforced well anyway
+(Hi, gpio5/6/7 virtualization!).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
