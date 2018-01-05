@@ -1,107 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:44872 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751058AbeAVLcZ (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:33400 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751734AbeAEPzJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Jan 2018 06:32:25 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH vY 2/2] ARM: dts: iwg22d-sodimm: use demuxer for I2C5
-Date: Mon, 22 Jan 2018 11:29:23 +0000
-Message-Id: <1516620563-7965-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1516620563-7965-1-git-send-email-biju.das@bp.renesas.com>
-References: <1516620563-7965-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 5 Jan 2018 10:55:09 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/2] arm64: dts: r8a7795: update register size for thermal
+Date: Fri,  5 Jan 2018 16:54:46 +0100
+Message-Id: <20180105155447.10071-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180105155447.10071-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180105155447.10071-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for audiocodec related I2C5 and provide fallback to GPIO.
+To be able to read fused calibration values from hardware the size of
+the register resource of TSC1 needs to be incremented to cover one more
+register which holds the information if the calibration values have been
+fused or not.
 
-Based on work for r8a7794/Alt by Wolfram Sang: "ARM: dts: alt: use demuxer
-for I2C1"
+Instead of increasing TSC1 size to the value from the datasheet update
+all TSC's size to the smallest granularity of the address decoder
+circuitry
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 44 +++++++++++++++++++++--------
- 1 file changed, 33 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index a4058f4..b2ea43f 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -42,6 +42,8 @@
- 		ethernet0 = &avb;
- 		serial3 = &scif4;
- 		serial5 = &hscif1;
-+		i2c9 = &gpioi2c5;
-+		i2c11 = &i2caudiocodec;
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 19b7de57704c67e8..ce85704976f0d3ef 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2385,9 +2385,9 @@
  
- 	chosen {
-@@ -55,6 +57,36 @@
- 		clock-frequency = <26000000>;
- 	};
- 
-+	gpioi2c5: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio0 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio0 15 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C5.
-+	 */
-+	i2caudiocodec: i2c-11 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c5>, <&gpioi2c5>;
-+		i2c-bus-name = "i2c-audiocodec";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		sgtl5000: codec@a {
-+			compatible = "fsl,sgtl5000";
-+			#sound-dai-cells = <0>;
-+			reg = <0x0a>;
-+			clocks = <&audio_clock>;
-+			VDDA-supply = <&reg_3p3v>;
-+			VDDIO-supply = <&reg_3p3v>;
-+		};
-+	};
-+
- 	rsnd_sgtl5000: sound {
- 		compatible = "simple-audio-card";
- 		simple-audio-card,format = "i2s";
-@@ -126,19 +158,9 @@
- 
- &i2c5 {
- 	pinctrl-0 = <&i2c5_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-audiocodec";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	sgtl5000: codec@a {
--		compatible = "fsl,sgtl5000";
--		#sound-dai-cells = <0>;
--		reg = <0x0a>;
--		clocks = <&audio_clock>;
--		VDDA-supply = <&reg_3p3v>;
--		VDDIO-supply = <&reg_3p3v>;
--	};
- };
- 
- &pci1 {
+ 		tsc: thermal@e6198000 {
+ 			compatible = "renesas,r8a7795-thermal";
+-			reg = <0 0xe6198000 0 0x68>,
+-			      <0 0xe61a0000 0 0x5c>,
+-			      <0 0xe61a8000 0 0x5c>;
++			reg = <0 0xe6198000 0 0x100>,
++			      <0 0xe61a0000 0 0x100>,
++			      <0 0xe61a8000 0 0x100>;
+ 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-2.7.4
+2.15.1
