@@ -1,62 +1,71 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:39299 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751221AbeAENDb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 5 Jan 2018 08:03:31 -0500
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB11653DA8D7101215AECE3B698A1C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20180104200150.11352-1-chris.brandt@renesas.com>
+ <20180104200150.11352-4-chris.brandt@renesas.com> <CAMuHMdWmoi3D9-XGXjefCsB2SgNjAH_G6uteSaTiWAN_krXhng@mail.gmail.com>
+ <SG2PR06MB11653DA8D7101215AECE3B698A1C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 Jan 2018 14:03:29 +0100
+Message-ID: <CAMuHMdVq6FcCE0G5c3fm-GvAfORyNy9zwO5j-Ph-4oTN9+wsvQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: r7s72100: add USB device to device tree
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         USB list <linux-usb@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 3/3] ARM: dts: r7s72100: add USB device to device tree
-Date: Fri, 5 Jan 2018 13:24:56 +0000
-Message-ID: <SG2PR06MB116569E2C504789CBA4090918A1C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20180104200150.11352-1-chris.brandt@renesas.com>
- <20180104200150.11352-4-chris.brandt@renesas.com>
- <CAMuHMdWmoi3D9-XGXjefCsB2SgNjAH_G6uteSaTiWAN_krXhng@mail.gmail.com>
- <SG2PR06MB11653DA8D7101215AECE3B698A1C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdVq6FcCE0G5c3fm-GvAfORyNy9zwO5j-Ph-4oTN9+wsvQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVq6FcCE0G5c3fm-GvAfORyNy9zwO5j-Ph-4oTN9+wsvQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgSmFudWFyeSAwNSwgMjAxOCwgR2VlcnQgVXl0dGVyaG9l
-dmVuIHdyb3RlOg0KPiA+IEJ1dCB0aGVuLi4udGhlIG51bWJlciBnb2VzIGJhY2sgdG8gJzczJyB3
-aGVuIHlvdSBsb29rIGF0IGl0IGluDQo+ID4gL3Byb2MvaW50ZXJydXB0cy4NCj4gDQo+IEhhdmlu
-ZyBhbiBpZGVudGljYWwgbnVtYmVyIGluIC9wcm9jL2ludGVycnVwdHMgaXMgYSBjb2luY2lkZW5j
-ZS4NCj4gVGhlc2UgbnVtYmVycyBhcmUgdmlydHVhbCwgYW5kIG1heSBjaGFuZ2UgZXZlbiBhY3Jv
-c3MgcmVib290cy4NCg0KSSdtIG5vdCB0YWxraW5nIGFib3V0IHRoZSBpZCBudW1iZXIgKHRoZSAx
-c3QgY29sdW1uKS4gSSdtIHRhbGtpbmcgDQphYm91dCB0aGUgNHRoIGNvbHVtbi4NCg0KJCB1bmFt
-ZSAtcnMNCkxpbnV4IDQuMTUuMC1yYzUtMDAwMDgtZzM2NmQyMmVhMDkxYg0KJCBjYXQgL3Byb2Mv
-aW50ZXJydXB0cw0KICAgICAgICAgICBDUFUwDQogMTc6ICAgICAgIDIzNjUgICAgIEdJQy0wIDEz
-NSBFZGdlICAgICAgb3N0bQ0KIDE4OiAgICAgICAgICAwICAgICBHSUMtMCAyMzAgTGV2ZWwgICAg
-IGU4MDA4MDAwLnNlcmlhbDpyeCBlcnINCiAxOTogICAgICAgICA0NSAgICAgR0lDLTAgMjMxIExl
-dmVsICAgICBlODAwODAwMC5zZXJpYWw6cnggZnVsbA0KIDIwOiAgICAgICAgMTk0ICAgICBHSUMt
-MCAyMzIgTGV2ZWwgICAgIGU4MDA4MDAwLnNlcmlhbDp0eCBlbXB0eQ0KIDIxOiAgICAgICAgICAw
-ICAgICBHSUMtMCAyMjkgTGV2ZWwgICAgIGU4MDA4MDAwLnNlcmlhbDpicmVhaw0KIDI0OiAgICAg
-ICAgICAwICAgICBHSUMtMCAxODkgTGV2ZWwgICAgIHJpaWMtdGVuZA0KIDI1OiAgICAgICAgICAw
-ICAgICBHSUMtMCAxOTAgRWRnZSAgICAgIHJpaWMtcmRyZg0KIDI2OiAgICAgICAgICAwICAgICBH
-SUMtMCAxOTEgRWRnZSAgICAgIHJpaWMtdGRyZQ0KIDI3OiAgICAgICAgICAwICAgICBHSUMtMCAx
-OTIgTGV2ZWwgICAgIHJpaWMtc3RvcA0KIDI5OiAgICAgICAgICAwICAgICBHSUMtMCAxOTQgTGV2
-ZWwgICAgIHJpaWMtbmFjaw0KIDMyOiAgICAgICAgMTYwICAgICBHSUMtMCAyMTMgTGV2ZWwgICAg
-IHJpaWMtdGVuZA0KIDMzOiAgICAgICAgMTYwICAgICBHSUMtMCAyMTQgRWRnZSAgICAgIHJpaWMt
-cmRyZg0KIDM0OiAgICAgICAgNDgwICAgICBHSUMtMCAyMTUgRWRnZSAgICAgIHJpaWMtdGRyZQ0K
-IDM1OiAgICAgICAgMjQwICAgICBHSUMtMCAyMTYgTGV2ZWwgICAgIHJpaWMtc3RvcA0KIDM3OiAg
-ICAgICAgICAwICAgICBHSUMtMCAyMTggTGV2ZWwgICAgIHJpaWMtbmFjaw0KIDQwOiAgICAgICAg
-ICAwICAgICBHSUMtMCAxMzkgTGV2ZWwgICAgIGZjZmYwMDAwLnRpbWVyDQogNDI6ICAgICAgICAg
-IDAgICAgIEdJQy0wIDMwNSBMZXZlbCAgICAgZTgwNGU4MDAuc2QNCiA0MzogICAgICAgICA1MiAg
-ICAgR0lDLTAgMzA2IExldmVsICAgICBlODA0ZTgwMC5zZA0KIDQ0OiAgICAgICAgICAwICAgICBH
-SUMtMCAzMDcgTGV2ZWwgICAgIGU4MDRlODAwLnNkDQogNDU6ICAgICAgICAgIDAgICAgIEdJQy0w
-IDMwOCBFZGdlICAgICAgc2gtcnRjIHBlcmlvZA0KIDQ2OiAgICAgICAgICAwICAgICBHSUMtMCAz
-MDkgRWRnZSAgICAgIHNoLXJ0YyBjYXJyeQ0KIDQ3OiAgICAgICAgICAwICAgICBHSUMtMCAzMTAg
-RWRnZSAgICAgIHNoLXJ0YyBhbGFybQ0KIDQ4OiAgICAgICAgICAwICAgICBHSUMtMCAgNzMgTGV2
-ZWwgICAgIGU4MDEwMDAwLnVzYmhzDQpFcnI6ICAgICAgICAgIDANCg0KDQo+ID4gQW55IG9waW5p
-b25zPz8/Pw0KPiANCj4gTm90IHJlYWxseSwgZXhjZXB0IHRoYXQgbm8gc2luZ2xlIC5kdHMoaSkg
-ZmlsZSBzZWVtcyB0byBoYXZlICItIDMyIi4NCg0KVGhlbiBJIGNhbiBiZSBhIHBpb25lZXIgb2Yg
-bmV3IHNvZnR3YXJlISEgIDspDQoNCg0KSSdsbCBqdXN0IGNoYW5nZSBpdCBiYWNrIHRvIGEgc2lu
-Z2xlIG51bWJlciB3aGVuIEkgdXBzdHJlYW0gY29kZSBqdXN0IHRvDQpiZSBjb25zaXN0ZW50Lg0K
-DQoNClRoYW5rcywNCkNocmlzDQoNCg==
+Hi Chris,
+
+On Fri, Jan 5, 2018 at 1:54 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Friday, January 05, 2018, Geert Uytterhoeven wrote:
+>> > +               interrupts = <GIC_SPI (73-32) IRQ_TYPE_LEVEL_HIGH>;
+>>
+>> "41", all other interrupt properties already have the SPI offset
+>> subtracted?
+>
+> The actual HW vector number in the hardware manual is '73'.
+> As you know, you need to subtract 32 for the number you use in the
+> device tree.
+> But then...the number goes back to '73' when you look at it in
+> /proc/interrupts.
+
+Having an identical number in /proc/interrupts is a coincidence.
+These numbers are virtual, and may change even across reboots.
+
+> So it was confusing to people on what number you needed to use.
+>
+> Therefore in the RZ/A1 BSP, I was doing (xx-32) so at least people could
+> see the relationship between what's in the hardware manual and what
+> gets put into the device tree.
+>
+> So, if doing (73-32) looks wrong, I can change it back to '41' for the
+> upstream version.
+>
+> Any opinions????
+
+Not really, except that no single .dts(i) file seems to have "- 32".
+
+Note that e.g. the R-Car Gen3 manuals do list both "interrupt ID"
+and "SGI, PPI, or SPI No" in the documentation for INTC-AP.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
