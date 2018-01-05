@@ -1,33 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55049 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751759AbeAEJxV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Jan 2018 04:53:21 -0500
-Date: Fri, 5 Jan 2018 10:53:16 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
 Subject: Re: [PATCH 3/3] ARM: dts: r7s72100: add USB device to device tree
-Message-ID: <20180105095316.5cqcsnaglhaoylhr@verge.net.au>
+To: Chris Brandt <chris.brandt@renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
 References: <20180104200150.11352-1-chris.brandt@renesas.com>
  <20180104200150.11352-4-chris.brandt@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <c6eac313-2d2d-70c8-16bb-ddb860fb7aa1@cogentembedded.com>
+Date: Fri, 5 Jan 2018 12:03:29 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180104200150.11352-4-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 04, 2018 at 03:01:50PM -0500, Chris Brandt wrote:
+Hello!
+
+On 1/4/2018 11:01 PM, Chris Brandt wrote:
+
 > Add USB device support.
 > 
 > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>   arch/arm/boot/dts/r7s72100.dtsi | 20 ++++++++++++++++++++
+>   1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+> index ab9645a42eca..eb414e735185 100644
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -667,4 +667,24 @@
+>   		power-domains = <&cpg_clocks>;
+>   		status = "disabled";
+>   	};
+> +
+> +	usbhs0: usbhs@e8010000 {
 
-Hi Chris,
+    The node names should be generic, i.e "usb@e8010000".
 
-it looks like there have been some requests for (minor) changes to this
-patch. Please consider addressing those and reposting.
+> +		compatible = "renesas,usbhs-r7s72100";
+> +		reg = <0xe8010000 0x1A0>;
+
+    Lowercase in the hex values, please be consistent...
+
+> +		interrupts = <GIC_SPI (73-32) IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp7_clks R7S72100_CLK_USB0>;
+> +		renesas,buswait = <4>;
+> +		power-domains = <&cpg_clocks>;
+> +		status = "disabled";
+> +	};
+> +
+> +	usbhs1: usbhs@e8207000 {
+> +		compatible = "renesas,usbhs-r7s72100";
+> +		reg = <0xe8207000 0x1A0>;
+> +		interrupts = <GIC_SPI (74-32) IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp7_clks R7S72100_CLK_USB1>;
+> +		renesas,buswait = <4>;
+> +		power-domains = <&cpg_clocks>;
+> +		status = "disabled";
+> +	};
+>   };
+
+    The same comments for the 2nd device.
+
+MBR, Sergei
