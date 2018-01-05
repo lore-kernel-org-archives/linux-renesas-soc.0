@@ -1,20 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46680 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752457AbeAERM1 (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:46856 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751158AbeAEM5H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Jan 2018 12:12:27 -0500
-Received: by mail-io0-f194.google.com with SMTP id z130so6413667ioe.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 05 Jan 2018 09:12:26 -0800 (PST)
+        Fri, 5 Jan 2018 07:57:07 -0500
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0iVbj7g6QkCJT2hG4=y=MRzXaB4yBbLQnjV3Pn5R0QLqg@mail.gmail.com>
-References: <1514909333-4450-1-git-send-email-ulf.hansson@linaro.org>
- <1514909333-4450-3-git-send-email-ulf.hansson@linaro.org> <CAJZ5v0iVbj7g6QkCJT2hG4=y=MRzXaB4yBbLQnjV3Pn5R0QLqg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 5 Jan 2018 18:12:25 +0100
-Message-ID: <CAPDyKFpp73v9LbR0A65m9rmVPx6jZdipzxJ6+ZRSgvF86J2m7w@mail.gmail.com>
+In-Reply-To: <1514909333-4450-3-git-send-email-ulf.hansson@linaro.org>
+References: <1514909333-4450-1-git-send-email-ulf.hansson@linaro.org> <1514909333-4450-3-git-send-email-ulf.hansson@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 5 Jan 2018 13:57:06 +0100
+Message-ID: <CAJZ5v0iVbj7g6QkCJT2hG4=y=MRzXaB4yBbLQnjV3Pn5R0QLqg@mail.gmail.com>
 Subject: Re: [PATCH v3 2/4] PM / core: Propagate wakeup_path status flag in __device_suspend_late()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Linux PM <linux-pm@vger.kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
@@ -28,83 +25,60 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 5 January 2018 at 13:57, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Tue, Jan 2, 2018 at 5:08 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> Currently the wakeup_path status flag becomes propagated from a child
->> device to its parent device at __device_suspend(). This allows a driver
->> dealing with a parent device to act on the flag from its ->suspend()
->> callback.
->>
->> However, in situations when the wakeup_path status flag needs to be set
->> from a ->suspend_late() callback, its value doesn't get propagated to the
->> parent by the PM core. Let's address this limitation, by also propagating
->> the flag at __device_suspend_late().
+On Tue, Jan 2, 2018 at 5:08 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> Currently the wakeup_path status flag becomes propagated from a child
+> device to its parent device at __device_suspend(). This allows a driver
+> dealing with a parent device to act on the flag from its ->suspend()
+> callback.
 >
-> This doesn't need to be done twice, so doing it once in
-> __device_suspend_late() should be sufficient.
+> However, in situations when the wakeup_path status flag needs to be set
+> from a ->suspend_late() callback, its value doesn't get propagated to the
+> parent by the PM core. Let's address this limitation, by also propagating
+> the flag at __device_suspend_late().
 
-Unfortunately no.
+This doesn't need to be done twice, so doing it once in
+__device_suspend_late() should be sufficient.
 
-For example that would break drivers/ssb/pcihost_wrapper.c, as it uses
-the flag from its ->suspend() callback.
-
-Also, I expect there may be more cases when the flag may be useful to
-check from a ->suspend() callback, rather than from a ->suspend_late()
-(or in later phase).
-
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/base/power/main.c | 33 +++++++++++++++++----------------
+>  1 file changed, 17 insertions(+), 16 deletions(-)
 >
->> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> ---
->>  drivers/base/power/main.c | 33 +++++++++++++++++----------------
->>  1 file changed, 17 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
->> index 7aeb91d..612bf1b 100644
->> --- a/drivers/base/power/main.c
->> +++ b/drivers/base/power/main.c
->> @@ -1476,6 +1476,22 @@ static pm_callback_t dpm_subsys_suspend_late_cb(struct device *dev,
->>         return callback;
->>  }
->>
->> +static void dpm_propagate_to_parent(struct device *dev)
->> +{
->> +       struct device *parent = dev->parent;
->> +
->> +       if (!parent)
->> +               return;
->> +
->> +       spin_lock_irq(&parent->power.lock);
->> +
->> +       parent->power.direct_complete = false;
->> +       if (dev->power.wakeup_path && !parent->power.ignore_children)
->> +               parent->power.wakeup_path = true;
->> +
->> +       spin_unlock_irq(&parent->power.lock);
->> +}
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 7aeb91d..612bf1b 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -1476,6 +1476,22 @@ static pm_callback_t dpm_subsys_suspend_late_cb(struct device *dev,
+>         return callback;
+>  }
 >
-> Clearing the parent's direct_complete in __device_suspend_late() is
-> incorrect, because it potentially overwrites the value previously used
-> by __device_suspend() for the parent.
+> +static void dpm_propagate_to_parent(struct device *dev)
+> +{
+> +       struct device *parent = dev->parent;
+> +
+> +       if (!parent)
+> +               return;
+> +
+> +       spin_lock_irq(&parent->power.lock);
+> +
+> +       parent->power.direct_complete = false;
+> +       if (dev->power.wakeup_path && !parent->power.ignore_children)
+> +               parent->power.wakeup_path = true;
+> +
+> +       spin_unlock_irq(&parent->power.lock);
+> +}
 
-That is already taken care of in __device_suspend_late(), with the below check:
+Clearing the parent's direct_complete in __device_suspend_late() is
+incorrect, because it potentially overwrites the value previously used
+by __device_suspend() for the parent.
 
-        if (dev->power.syscore || dev->power.direct_complete)
-                goto Complete;
+IMO it also need not be done under parent->power.lock, however,
+because the other parent's power. flags should not be updated in
+parallel with this update anyway, so maybe just move the parent's
+direct_complete update to __device_suspend(), rename
+dpm_propagate_to_parent() to something like
+dpm_propagate_wakeup_to_parent() and call it from
+__device_suspend_late() only?
 
- In other words, the dpm_propagate_to_parent() isn't called when
-dev->power.direct_complete is set.
-
->
-> IMO it also need not be done under parent->power.lock, however,
-> because the other parent's power. flags should not be updated in
-> parallel with this update anyway, so maybe just move the parent's
-> direct_complete update to __device_suspend(), rename
-> dpm_propagate_to_parent() to something like
-> dpm_propagate_wakeup_to_parent() and call it from
-> __device_suspend_late() only?
-
-I can do this, if you think this is more clear, but according to the
-above, it's shouldn't be needed.
-
-Kind regards
-Uffe
+Thanks,
+Rafael
