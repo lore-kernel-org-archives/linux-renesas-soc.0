@@ -1,76 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41659 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751514AbeAEOfP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57468 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751495AbeAEOEL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Jan 2018 09:35:15 -0500
-Received: by mail-qt0-f195.google.com with SMTP id i40so5886268qti.8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 05 Jan 2018 06:35:14 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20180105140401.7iitpzdrlyqtasvz@verge.net.au>
-References: <20180103121840.29316-1-horms+renesas@verge.net.au>
- <20180103121840.29316-3-horms+renesas@verge.net.au> <CAMuHMdXcLhFD825Xi2Uk=6_OAgLd7BEp14rWpgb7pv6rOM2H2Q@mail.gmail.com>
- <20180105140401.7iitpzdrlyqtasvz@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jan 2018 15:35:13 +0100
-Message-ID: <CAMuHMdWk3ke6GriUdxHp_62r-REYV3P4qNiNGOcGRiCQWCyKAg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider support
-To: Simon Horman <horms@verge.net.au>
+        Fri, 5 Jan 2018 09:04:11 -0500
+Date: Fri, 5 Jan 2018 15:04:05 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v4 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider
+ support
+Message-ID: <20180105140401.7iitpzdrlyqtasvz@verge.net.au>
+References: <20180103121840.29316-1-horms+renesas@verge.net.au>
+ <20180103121840.29316-3-horms+renesas@verge.net.au>
+ <CAMuHMdXcLhFD825Xi2Uk=6_OAgLd7BEp14rWpgb7pv6rOM2H2Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXcLhFD825Xi2Uk=6_OAgLd7BEp14rWpgb7pv6rOM2H2Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Wed, Jan 03, 2018 at 01:47:08PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Jan 3, 2018 at 1:18 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> >
+> > This patch adds Z2 clock divider support for R-Car Gen3 SoC.
+> >
+> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> > v4 [Simon Horman]
+> > * Rebase
+> > * Use __ffs as FIELD_{GET,PREP} don't not work with non-constant masks
+> > * Use correct mask in cpg_z_clk_recalc_rate()
+> 
+> Thanks for the update!
+> 
+> > --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> > +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> > @@ -63,7 +63,7 @@ static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
+> >  }
+> >
+> >  /*
+> > - * Z Clock
+> > + * Z Clock & Z2 Clock
+> >   *
+> >   * Traits of this clock:
+> >   * prepare - clk_prepare only ensures that parents are prepared
+> > @@ -75,11 +75,13 @@ static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
+> >  #define CPG_FRQCRB_KICK                        BIT(31)
+> >  #define CPG_FRQCRC                     0x000000e0
+> >  #define CPG_FRQCRC_ZFC_MASK            GENMASK(12, 8)
+> > +#define CPG_FRQCRC_Z2FC_MASK           GENMASK(4, 0)
+> >
+> >  struct cpg_z_clk {
+> >         struct clk_hw hw;
+> >         void __iomem *reg;
+> >         void __iomem *kick_reg;
+> > +       unsigned long mask;
+> >  };
+> >
+> >  #define to_z_clk(_hw)  container_of(_hw, struct cpg_z_clk, hw)
+> > @@ -89,8 +91,10 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+> >  {
+> >         struct cpg_z_clk *zclk = to_z_clk(hw);
+> >         unsigned int mult;
+> > +       u32 val;
+> >
+> > -       mult = 32 - FIELD_GET(CPG_FRQCRC_ZFC_MASK, clk_readl(zclk->reg));
+> > +       val = clk_readl(zclk->reg) & zclk->mask;
+> > +       mult = 32 - (val >> (__ffs(zclk->mask) - 1));
+> 
+> Shouldn't that be
+> 
+>         mult = 32 - (val >> __ffs(zclk->mask));
+> 
+> (same below)?
+> 
+> __ffs() returns 0..31, so you will shift right by 7 (Z) or -1 (Z2)?
 
-On Fri, Jan 5, 2018 at 3:04 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Jan 03, 2018 at 01:47:08PM +0100, Geert Uytterhoeven wrote:
->> On Wed, Jan 3, 2018 at 1:18 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
->> > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> >
->> > This patch adds Z2 clock divider support for R-Car Gen3 SoC.
->> >
->> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Thanks, I'll look at fixing that.
 
->> As the CPG/MSSR driver now has suspend/resume support, do we need
->> a notifier to restore the Z or Z2 registers? Or is that handled automatically
->> by cpufreq during system resume, for both the primary and the secondary
->> CPU cores?
->
-> I am a bit unsure.
->
-> When using the A57 cores, which is the default case, the Z clk is queried
-> by CPUFreq on resume. It appears that on my system its already set to the
-> correct value but I assume if it was not then it would be reset. However,
-> this does not cover Z2 clk. So perhaps to be safe we need to register
-> notifiers and make sure they they play nicely with CPUFreq?
+> As the CPG/MSSR driver now has suspend/resume support, do we need
+> a notifier to restore the Z or Z2 registers? Or is that handled automatically
+> by cpufreq during system resume, for both the primary and the secondary
+> CPU cores?
 
-Of course the CPU is special: unlike many other devices, it must be running
-when the kernel is reentered upon system resume.
-It may be running using a different frequency setting, though.
-However, following "opp-suspend", the system will always suspend with the
-Z clock running at 1.5GHz, which is the default?
-So Z is probably OK.
+I am a bit unsure.
 
-It's more interesting to check what happens when the little cores are
-enabled as well (unfortunately that requires different firmware).
-1. Does cpufreq handle them correctly when they are onlined again during
-   system resume?
-2. What happens if you offline all big cores, and enter system suspend
-   running with little cores only?
-   Perhaps that's prevented by the "opp-suspend" property as well?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+When using the A57 cores, which is the default case, the Z clk is queried
+by CPUFreq on resume. It appears that on my system its already set to the
+correct value but I assume if it was not then it would be reset. However,
+this does not cover Z2 clk. So perhaps to be safe we need to register
+notifiers and make sure they they play nicely with CPUFreq?
