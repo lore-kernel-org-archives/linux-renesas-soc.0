@@ -1,36 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46702 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751952AbeADQzV (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:39120 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751194AbeAEIss (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 11:55:21 -0500
-Date: Thu, 4 Jan 2018 17:55:17 +0100
-From: Simon Horman <horms@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: move nodes which have no
- reg property out of bus
-Message-ID: <20180104165517.za3o44n7ikfs4vgg@verge.net.au>
-References: <20171220122442.9199-1-horms+renesas@verge.net.au>
+        Fri, 5 Jan 2018 03:48:48 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171220122442.9199-1-horms+renesas@verge.net.au>
+In-Reply-To: <20180104200150.11352-3-chris.brandt@renesas.com>
+References: <20180104200150.11352-1-chris.brandt@renesas.com> <20180104200150.11352-3-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 Jan 2018 09:48:46 +0100
+Message-ID: <CAMuHMdWp-z--LD76MKx7-k62F4-2XLv20rYK4t7rhaXyt6U2Xw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: usb: renesas_usbhs: Add support for RZ/A1
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Dec 20, 2017 at 01:24:42PM +0100, Simon Horman wrote:
-> Move pmu_a53 and timer nodes from soc node to root node.  The nodes that
-> have been moved do not have any register properties and thus shouldn't be
-> placed on the bus.
-> 
-> This problem is flagged by the compiler as follows:
-> $ make W=1
-> ...
-> arch/arm64/boot/dts/renesas/r8a77995-draak.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-> arch/arm64/boot/dts/renesas/r8a77995-draak.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+On Thu, Jan 4, 2018 at 9:01 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Document support for RZ/A1 SoCs
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Applied
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
