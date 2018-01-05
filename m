@@ -9,9 +9,9 @@ Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 0/3] usb: renesas_usbhs: Add RZ/A1 support
-Date: Fri,  5 Jan 2018 17:46:44 -0500
-Message-Id: <20180105224647.42262-1-chris.brandt@renesas.com>
+Subject: [PATCH v2 0/3] usb: renesas_usbhs: Add RZ/A1 support
+Date: Fri,  5 Jan 2018 13:46:06 -0500
+Message-Id: <20180105184609.24106-1-chris.brandt@renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -22,31 +22,26 @@ The only real difference is the some extra registers for the PHY.
 This was tested on an RSK board by connecting to a PC as an
 Ethernet CDC gadget.
 
-v3:
- * Changed from "renesas,usbhs-r7s72100" to "renesas,rza1-usbhs"
- * Removed "renesas,usbhs-r7s72100"
- * Changed License of rza.c
 v2:
  * Node name is now generic 'usb@'
  * GIC_SPI (73-32) is now just GIC_SPI 41
  * All hex number are lower case
  * Added Reviewed-by
 
-
 Chris Brandt (3):
   usb: renesas_usbhs: Add support for RZ/A1
   dt-bindings: usb: renesas_usbhs: Add support for RZ/A1
   ARM: dts: r7s72100: add USB device to device tree
 
- .../devicetree/bindings/usb/renesas_usbhs.txt      |  1 +
+ .../devicetree/bindings/usb/renesas_usbhs.txt      |  2 +
  arch/arm/boot/dts/r7s72100.dtsi                    | 20 +++++++++
  drivers/usb/renesas_usbhs/Makefile                 |  2 +-
- drivers/usb/renesas_usbhs/common.c                 | 13 ++++++
+ drivers/usb/renesas_usbhs/common.c                 | 17 +++++++
  drivers/usb/renesas_usbhs/common.h                 |  6 +++
  drivers/usb/renesas_usbhs/rza.c                    | 52 ++++++++++++++++++++++
  drivers/usb/renesas_usbhs/rza.h                    |  4 ++
  include/linux/usb/renesas_usbhs.h                  |  1 +
- 8 files changed, 98 insertions(+), 1 deletion(-)
+ 8 files changed, 103 insertions(+), 1 deletion(-)
  create mode 100644 drivers/usb/renesas_usbhs/rza.c
  create mode 100644 drivers/usb/renesas_usbhs/rza.h
 
