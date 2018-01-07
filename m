@@ -1,38 +1,88 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 1 Jan 2018 12:11:58 -0800
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from cloudserver094114.home.pl ([79.96.170.134]:62735 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754649AbeAGXfj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 7 Jan 2018 18:35:39 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ARM: dts: r8a7743: Add thermal device to DT
-Message-ID: <20180101201157.GB13596@localhost.localdomain>
-References: <1513689449-2700-1-git-send-email-biju.das@bp.renesas.com>
- <1513689449-2700-3-git-send-email-biju.das@bp.renesas.com>
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] PM / wakeup: Add device_set_wakeup_path() helper to control wakeup path
+Date: Mon, 08 Jan 2018 00:34:29 +0100
+Message-ID: <2038838.WDDltxd3iX@aspire.rjw.lan>
+In-Reply-To: <1514909333-4450-4-git-send-email-ulf.hansson@linaro.org>
+References: <1514909333-4450-1-git-send-email-ulf.hansson@linaro.org> <1514909333-4450-4-git-send-email-ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1513689449-2700-3-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Dec 19, 2017 at 01:17:29PM +0000, Biju Das wrote:
-> This patch instantiates the thermal sensor module with thermal-zone
-> support.
+On Tuesday, January 2, 2018 5:08:52 PM CET Ulf Hansson wrote:
+> During system suspend, a driver may find that the wakeup setting is enabled
+> for its device and therefore configures it to deliver system wakeup
+> signals.
 > 
-> This patch is based on the commit cac68a56e34b
-> ("ARM: dts: r8a7791: enable to use thermal-zone") by Kuninori Morimoto.
+> Additionally, sometimes the driver and its device, relies on some further
+> consumed resource, like an irqchip or a phy for example, to stay powered
+> on, as to be able to deliver system wakeup signals.
 > 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> In general the driver deals with this, via raising an "enable count" of the
+> consumed resource or via a subsystem specific API, like irq_set_irq_wake()
+> or enable|disable_irq_wake() for an irqchip. However, this may not be
+> sufficient in cases when the resource's device may be attached to a PM
+> domain (genpd for example) or is attached to a non-trivial middle layer
+> (PCI for example).
+> 
+> To address cases like these, the existing ->dev.power.wakeup_path status
+> flag is there to help. As a matter of fact, genpd already monitors the flag
+> during system suspend and acts accordingly.
+> 
+> However, so far it has not been clear, if anybody else but the PM core is
+> allowed to set the ->dev.power.wakeup_path status flag, which is required
+> to make this work. For this reason, let's introduce a new helper function,
+> device_set_wakeup_path().
+> 
+> Typically a driver that manages a resource needed in the wakeup path,
+> should call device_set_wakeup_path() from its ->suspend() or
+> ->suspend_late() callback.
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  include/linux/pm_wakeup.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+> index 4c2cba7..4238dde 100644
+> --- a/include/linux/pm_wakeup.h
+> +++ b/include/linux/pm_wakeup.h
+> @@ -88,6 +88,11 @@ static inline bool device_may_wakeup(struct device *dev)
+>  	return dev->power.can_wakeup && !!dev->power.wakeup;
+>  }
+>  
+> +static inline void device_set_wakeup_path(struct device *dev)
+> +{
+> +	dev->power.wakeup_path = true;
+> +}
+> +
+>  /* drivers/base/power/wakeup.c */
+>  extern void wakeup_source_prepare(struct wakeup_source *ws, const char *name);
+>  extern struct wakeup_source *wakeup_source_create(const char *name);
+> @@ -174,6 +179,8 @@ static inline bool device_may_wakeup(struct device *dev)
+>  	return dev->power.can_wakeup && dev->power.should_wakeup;
+>  }
+>  
+> +static inline void device_set_wakeup_path(struct device *dev) {}
+> +
+>  static inline void __pm_stay_awake(struct wakeup_source *ws) {}
+>  
+>  static inline void pm_stay_awake(struct device *dev) {}
+> 
 
-As for the thermal composition of this patch:
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
-
-Also taking care of patch 1.
+Applied, thanks!
