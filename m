@@ -1,73 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:22899 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932250AbeAYAlY (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:55767 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1757239AbeAHMcL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jan 2018 19:41:24 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] v4l2-dev.h: fix symbol collision in media_entity_to_video_device()
-Date: Thu, 25 Jan 2018 01:34:30 +0100
-Message-Id: <20180125003430.18558-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 8 Jan 2018 07:32:11 -0500
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>
+Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v4 3/3] ARM: dts: r7s72100: add USB device to device tree
+Date: Mon,  8 Jan 2018 07:30:55 -0500
+Message-Id: <20180108123055.64890-4-chris.brandt@renesas.com>
+In-Reply-To: <20180108123055.64890-1-chris.brandt@renesas.com>
+References: <20180108123055.64890-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-A recent change to the media_entity_to_video_device() macro breaks some
-use-cases for the macro due to a symbol collision. Before the change
-this worked:
+Add USB device support.
 
-    vdev = media_entity_to_video_device(link->sink->entity);
-
-While after the change it results in a compiler error "error: 'struct
-video_device' has no member named 'link'; did you mean 'lock'?". While
-the following still works after the change.
-
-    struct media_entity *entity = link->sink->entity;
-    vdev = media_entity_to_video_device(entity);
-
-Fix the collision by renaming the macro argument to 'media_entity'.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/media/v4l2-dev.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+v4:
+ * Changed to "renesas,usbhs-r7s72100", "renesas,rza1-usbhs"
+v3:
+ * Changed from "renesas,usbhs-r7s72100" to "renesas,rza1-usbhs"
+v2:
+ * Node name is now generic 'usb@'
+ * GIC_SPI (73-32) is now just GIC_SPI 41
+ * All hex number are lower case
+ * Added Reviewed-by
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Hi Mauro,
-
-As the offending commit is not yet upstream and I'm not sure if the 
-commit ids in the media-tree are stable. If they are please attach the 
-following fixes tag.
-
-Fixes: 69b925c5fc36d8f1 ("media: v4l2-dev.h: add kernel-doc to two macros")
-
-Regards,
-// Niklas
-
-diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
-index 267fd2bed17bd3c1..f0fc1ebda47244b3 100644
---- a/include/media/v4l2-dev.h
-+++ b/include/media/v4l2-dev.h
-@@ -298,10 +298,10 @@ struct video_device
-  * media_entity_to_video_device - Returns a &struct video_device from
-  *	the &struct media_entity embedded on it.
-  *
-- * @entity: pointer to &struct media_entity
-+ * @media_entity: pointer to &struct media_entity
-  */
--#define media_entity_to_video_device(entity) \
--	container_of(entity, struct video_device, entity)
-+#define media_entity_to_video_device(media_entity) \
-+	container_of(media_entity, struct video_device, entity)
- 
- /**
-  * to_video_device - Returns a &struct video_device from the
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index ab9645a42eca..bd6366d1800b 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -667,4 +667,24 @@
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
++
++	usbhs0: usb@e8010000 {
++		compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
++		reg = <0xe8010000 0x1a0>;
++		interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp7_clks R7S72100_CLK_USB0>;
++		renesas,buswait = <4>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	usbhs1: usb@e8207000 {
++		compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
++		reg = <0xe8207000 0x1a0>;
++		interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp7_clks R7S72100_CLK_USB1>;
++		renesas,buswait = <4>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
+ };
 -- 
 2.15.1
