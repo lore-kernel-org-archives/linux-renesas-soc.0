@@ -1,45 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42485 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934021AbeAXQOw (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:46678 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932157AbeAHTKv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jan 2018 11:14:52 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/2] Add VSP support for r8a774[35]
-Date: Wed, 24 Jan 2018 16:11:50 +0000
-Message-Id: <1516810312-2100-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 8 Jan 2018 14:10:51 -0500
+Date: Mon, 08 Jan 2018 14:10:49 -0500 (EST)
+Message-Id: <20180108.141049.924805122299836294.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: ysato@users.sourceforge.jp, dalias@libc.org,
+        linux-sh@vger.kernel.org, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] sh_eth: remove sh_eth_plat_data::edmac_endian
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180104212654.038005757@cogentembedded.com>
+References: <20180104212654.038005757@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add VSP support for r8a774[35] SoC.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Fri, 05 Jan 2018 00:26:46 +0300
 
-It is tested with VSP unit tests available in the below git
+> Since the commit 888cc8c20cf ("sh_eth: remove EDMAC_BIG_ENDIAN") (geez,
+> I didn't realize that was 2 years ago!) the initializers in the SuperH
+> platform code for the 'sh_eth_plat_data::edmac_endian' stopped to matter,
+> so we can remove that field for good (not sure if  it  was ever useful --
+> SH7786 Ether has been reported  to have the same EDMAC descriptor/register
+> endiannes as configured for the SuperH CPU)...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> The patch is against DaveM's 'net-next.git' repo.
+> Not sure who should apply the patch -- will prolly be faster if DaveM does...
 
-git://git.ideasonboard.com/renesas/vsp-tests.git
-
-It is tested against renesas-devel-20180122-v4.15-rc9
-
-This patch depend on
-
-https://patchwork.kernel.org/patch/10182757/ 
-
-https://patchwork.kernel.org/patch/10182755/
-
-Biju Das (2):
-  ARM: dts: r8a7743: Add VSP support
-  ARM: dts: r8a7745: Add VSP support
-
- arch/arm/boot/dts/r8a7743.dtsi | 27 +++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7745.dtsi | 18 ++++++++++++++++++
- 2 files changed, 45 insertions(+)
-
--- 
-2.7.4
+Applied, thanks Sergei.
