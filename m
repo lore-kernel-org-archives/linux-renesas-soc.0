@@ -1,123 +1,166 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60444 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:45731 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933709AbeALA7O (ORCPT
+        with ESMTP id S1754169AbeAHR5Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Jan 2018 19:59:14 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 10/10] arm64: dts: renesas: r8a7796: Convert to new LVDS DT bindings
-Date: Fri, 12 Jan 2018 02:58:58 +0200
-Message-Id: <20180112005858.26472-11-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 8 Jan 2018 12:57:24 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v9 21/28] rcar-vin: add group allocator functions
+Date: Mon, 08 Jan 2018 19:57:53 +0200
+Message-ID: <1681465.QYWytPgN3R@avalon>
+In-Reply-To: <20180108172447.GD23075@bigcity.dyn.berto.se>
+References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se> <2338267.IAVXeh1rRr@avalon> <20180108172447.GD23075@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+Hi Niklas,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |  3 +-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  3 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 35 ++++++++++++++++++----
- 3 files changed, 31 insertions(+), 10 deletions(-)
+On Monday, 8 January 2018 19:24:47 EET Niklas S=F6derlund wrote:
+> On 2017-12-08 22:12:56 +0200, Laurent Pinchart wrote:
+> > On Friday, 8 December 2017 03:08:35 EET Niklas S=F6derlund wrote:
+> >> In media controller mode all VIN instances needs to be part of the same
+> >> media graph. There is also a need to each VIN instance to know and in
+> >> some cases be able to communicate with other VIN instances.
+> >>=20
+> >> Add an allocator framework where the first VIN instance to be probed
+> >> creates a shared data structure and creates a media device.
+> >>=20
+> >> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> >> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+> >> ---
+> >>=20
+> >>  drivers/media/platform/rcar-vin/rcar-core.c | 179 +++++++++++++++++++=
+++-
+> >>  drivers/media/platform/rcar-vin/rcar-vin.h  |  38 ++++++
+> >>  2 files changed, 215 insertions(+), 2 deletions(-)
+> >>=20
+> >> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> >> b/drivers/media/platform/rcar-vin/rcar-core.c index
+> >> 45de4079fd835759..a6713fd61dd87a88 100644
+> >> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> >> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index daee1f1a3f68..21bd679062f3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -33,10 +33,9 @@
- 	clocks = <&cpg CPG_MOD 724>,
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock5 1>,
- 		 <&versaclock5 3>,
- 		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2",
- 		      "dclkin.0", "dclkin.1", "dclkin.2";
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 4088bea8d62c..ecbfbcb65df3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -32,11 +32,10 @@
- 	clocks = <&cpg CPG_MOD 724>,
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock5 1>,
- 		 <&x21_clk>,
- 		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2",
- 		      "dclkin.0", "dclkin.1", "dclkin.2";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index f2b2e40c655e..ed30660c367b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1826,17 +1826,15 @@
- 
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7796";
--			reg = <0 0xfeb00000 0 0x70000>,
--			      <0 0xfeb90000 0 0x14>;
--			reg-names = "du", "lvds.0";
-+			reg = <0 0xfeb00000 0 0x70000>;
-+			reg-names = "du";
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>,
- 				 <&cpg CPG_MOD 723>,
--				 <&cpg CPG_MOD 722>,
--				 <&cpg CPG_MOD 727>;
--			clock-names = "du.0", "du.1", "du.2", "lvds.0";
-+				 <&cpg CPG_MOD 722>;
-+			clock-names = "du.0", "du.1", "du.2";
- 			status = "disabled";
- 
- 			vsps = <&vspd0 &vspd1 &vspd2>;
-@@ -1859,6 +1857,31 @@
- 				port@2 {
- 					reg = <2>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,lvds-r8a7796";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
--- 
+[snip]
+
+> >> +static struct rvin_group *__rvin_group_allocate(struct rvin_dev *vin)
+> >> +{
+> >> +	struct rvin_group *group;
+> >> +
+> >> +	if (rvin_group_data) {
+> >> +		group =3D rvin_group_data;
+> >> +		kref_get(&group->refcount);
+> >> +		vin_dbg(vin, "%s: get group=3D%p\n", __func__, group);
+> >> +		return group;
+> >> +	}
+> >> +
+> >> +	group =3D kzalloc(sizeof(*group), GFP_KERNEL);
+> >> +	if (!group)
+> >> +		return NULL;
+> >> +
+> >> +	kref_init(&group->refcount);
+> >> +	rvin_group_data =3D group;
+> >=20
+> > Ouch. While I agree with the global mutex, a single global group variab=
+le
+> > reminds me of the days when per-device data was happily stored in global
+> > variables because, you know, we will never have more than one instance =
+of
+> > that device, right ? (Or, sometimes, because the driver author didn't
+> > know what an instance was.)
+> >=20
+> > Ideally we'd want a linked list of groups, and this function would eith=
+er
+> > retrieve the group that the VIN instance is part of, or allocate a new
+> > one.
+>=20
+> I agree that removing the global group variable would be for the better,
+> and I was hoping to be able to use the device allocator API for this
+> once it's ready. However for now on all supported hardware (I know of)
+> there would only be one group for the whole system.
+>=20
+> - On H3 and M3-W CSI20 is connected to all VINs.
+> - On V3M there is only one CSI40 and it is connected to all VINs.
+>=20
+> Is this satisfactory for you or do you believe it would be better to
+> complete the device allocator first. Or implement parts of the ideas
+> from that API locally to this driver? If I understand things correctly
+> there are still obstacles blocking that API which are not trivial. And
+> even if they are cleared it have no DT support AFIK so functionality to
+> iterate over all nodes in a graph would be needed which in itself is no
+> trivial task.
+
+I don't think we need to wait for the API to be finalized. My dislike for=20
+global variables pushes me to ask for a local implementation based on a=20
+linked-list, but that would be a bit overkill given that all platforms will=
+=20
+have a single group. I'm OK with your current implementation, but please ad=
+d a=20
+=46IXME comment that explains that the single global pointer should really =
+be a=20
+linked list, and that it should eventually be replaced by usage of a global=
+=20
+device allocator API.
+
+> >> +	vin_dbg(vin, "%s: alloc group=3D%p\n", __func__, group);
+> >=20
+> > Do you still need those two debug statements (and all of the other ones
+> > below) ?
+>=20
+> Wops, no they can be dropped.
+>=20
+> >> +	return group;
+> >> +}
+> >> +
+> >> +static int rvin_group_add_vin(struct rvin_dev *vin)
+> >> +{
+> >> +	int ret;
+> >> +
+> >> +	ret =3D rvin_group_read_id(vin, vin->dev->of_node);
+> >> +	if (ret < 0)
+> >> +		return ret;
+> >> +
+> >> +	mutex_lock(&vin->group->lock);
+> >> +
+> >> +	if (vin->group->vin[ret]) {
+> >> +		mutex_unlock(&vin->group->lock);
+> >> +		vin_err(vin, "VIN number %d already occupied\n", ret);
+> >> +		return -EINVAL;
+> >=20
+> > Can this happen ?
+>=20
+> Sure, the values are read from DT so if the renesas,id property have the
+> same value for more then one node. This is a incorrect DT of course but
+> better to handle and warn for such a case I think?
+
+Good point. How about phrasing the error as "Duplicate renesas,id %u" or ev=
+en=20
+"Duplicate renesas,id property value %u" ? That would more clearly point to=
+ a=20
+DT error.
+
+> >> +	}
+> >> +
+> >> +	vin->group->vin[ret] =3D vin;
+> >> +
+> >> +	mutex_unlock(&vin->group->lock);
+> >> +
+> >> +	vin_dbg(vin, "I'm VIN number %d", ret);
+> >> +
+> >> +	return 0;
+> >> +}
+
+[snip]
+
+=2D-=20
 Regards,
 
 Laurent Pinchart
