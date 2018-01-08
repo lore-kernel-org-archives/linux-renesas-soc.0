@@ -1,22 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:38315 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756315AbeAHL0W (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:46067 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756099AbeAHLNG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Jan 2018 06:26:22 -0500
+        Mon, 8 Jan 2018 06:13:06 -0500
+Received: by mail-io0-f196.google.com with SMTP id e20so12766675iof.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 Jan 2018 03:13:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFor=wOr8RZ0g1rw=gJb4D4mRyrOL-3yYYZaCsR9vE=ZMw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0ix1HH_az91ga5ETpi-qCS4MFtfyC6oB+Umdqw+9MzOrQ@mail.gmail.com>
 References: <1514909333-4450-1-git-send-email-ulf.hansson@linaro.org>
  <1514909333-4450-5-git-send-email-ulf.hansson@linaro.org> <CAJZ5v0ix1HH_az91ga5ETpi-qCS4MFtfyC6oB+Umdqw+9MzOrQ@mail.gmail.com>
- <CAPDyKFor=wOr8RZ0g1rw=gJb4D4mRyrOL-3yYYZaCsR9vE=ZMw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 8 Jan 2018 12:26:21 +0100
-Message-ID: <CAJZ5v0h8JiyDieOgMeqidVvisPrK3EFQaf9vAUrPjJ_K2zi1Yg@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 8 Jan 2018 12:13:05 +0100
+Message-ID: <CAPDyKFor=wOr8RZ0g1rw=gJb4D4mRyrOL-3yYYZaCsR9vE=ZMw@mail.gmail.com>
 Subject: Re: [PATCH v3 4/4] PM / wakeup: Print warn if device gets enabled as
  wakeup source during sleep
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Linux PM <linux-pm@vger.kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
@@ -29,55 +29,52 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 8, 2018 at 12:13 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 6 January 2018 at 00:57, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> On Tue, Jan 2, 2018 at 5:08 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> In general, wakeup settings are not supposed to be changed during any of
->>> the system wide PM phases. The reason is simply that it would break
->>> guarantees provided by the PM core, to properly act on active wakeup
->>> sources.
->>>
->>> However, there are exceptions to when, in particular, disabling a device as
->>> wakeup source makes sense. For example, in cases when a driver realizes
->>> that its device is dead during system suspend. For these scenarios, we
->>> don't need to care about acting on the wakeup source correctly, because a
->>> dead device shouldn't deliver wakeup signals.
->>>
->>> To this reasoning and to help users to properly manage wakeup settings,
->>> let's print a warning in cases someone calls device_wakeup_enable() during
->>> system sleep.
->>>
->>> Suggested-by: Rafael J. Wysocki <rafael@kernel.org>
->>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->>> ---
->>>  drivers/base/power/wakeup.c | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
->>> index b7b8b2f..272c44b 100644
->>> --- a/drivers/base/power/wakeup.c
->>> +++ b/drivers/base/power/wakeup.c
->>> @@ -268,6 +268,9 @@ int device_wakeup_enable(struct device *dev)
->>>         if (!dev || !dev->power.can_wakeup)
->>>                 return -EINVAL;
->>>
->>> +       if (pm_suspend_target_state != PM_SUSPEND_ON)
->>> +               dev_warn(dev, "don't enable as wakup source during sleep!\n");
->>> +
->>>         ws = wakeup_source_register(dev_name(dev));
->>>         if (!ws)
->>>                 return -ENOMEM;
->>> --
+On 6 January 2018 at 00:57, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Tue, Jan 2, 2018 at 5:08 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> In general, wakeup settings are not supposed to be changed during any of
+>> the system wide PM phases. The reason is simply that it would break
+>> guarantees provided by the PM core, to properly act on active wakeup
+>> sources.
 >>
->> It looks like we need to defer this until we fix a couple of issues ...
+>> However, there are exceptions to when, in particular, disabling a device as
+>> wakeup source makes sense. For example, in cases when a driver realizes
+>> that its device is dead during system suspend. For these scenarios, we
+>> don't need to care about acting on the wakeup source correctly, because a
+>> dead device shouldn't deliver wakeup signals.
+>>
+>> To this reasoning and to help users to properly manage wakeup settings,
+>> let's print a warning in cases someone calls device_wakeup_enable() during
+>> system sleep.
+>>
+>> Suggested-by: Rafael J. Wysocki <rafael@kernel.org>
+>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> ---
+>>  drivers/base/power/wakeup.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+>> index b7b8b2f..272c44b 100644
+>> --- a/drivers/base/power/wakeup.c
+>> +++ b/drivers/base/power/wakeup.c
+>> @@ -268,6 +268,9 @@ int device_wakeup_enable(struct device *dev)
+>>         if (!dev || !dev->power.can_wakeup)
+>>                 return -EINVAL;
+>>
+>> +       if (pm_suspend_target_state != PM_SUSPEND_ON)
+>> +               dev_warn(dev, "don't enable as wakup source during sleep!\n");
+>> +
+>>         ws = wakeup_source_register(dev_name(dev));
+>>         if (!ws)
+>>                 return -ENOMEM;
+>> --
 >
-> Yes.
->
-> Or, perhaps changing from dev_warn() to dev_dbg(), as it could provide
-> us with some more detailed information, compared to a "git grep"
-> research?
+> It looks like we need to defer this until we fix a couple of issues ...
 
-That would work too.
+Yes.
 
-Thanks,
-Rafael
+Or, perhaps changing from dev_warn() to dev_dbg(), as it could provide
+us with some more detailed information, compared to a "git grep"
+research?
+
+Kind regards
+Uffe
