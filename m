@@ -1,33 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:52631 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756583AbeAIH3m (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34477 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758088AbeAHWiF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 02:29:42 -0500
-Subject: Re: [PATCH v2] v4l: doc: Clarify v4l2_mbus_fmt height definition
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, niklas.soderlund@ragnatech.se,
-        sakari.ailus@iki.fi,
+        Mon, 8 Jan 2018 17:38:05 -0500
+Received: by mail-lf0-f66.google.com with SMTP id h140so13813575lfg.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 Jan 2018 14:38:04 -0800 (PST)
+Date: Mon, 8 Jan 2018 23:38:02 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        sakari.ailus@iki.fi, Hans Verkuil <hverkuil@xs4all.nl>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Archit Taneja <architt@codeaurora.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
         open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] v4l: doc: Clarify v4l2_mbus_fmt height definition
+Message-ID: <20180108223802.GF23075@bigcity.dyn.berto.se>
 References: <1515434106-18747-1-git-send-email-kieran.bingham@ideasonboard.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <33ac89f1-c7c3-041c-c772-a90d8a40a0db@xs4all.nl>
-Date: Tue, 9 Jan 2018 08:29:37 +0100
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <1515434106-18747-1-git-send-email-kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/08/2018 06:55 PM, Kieran Bingham wrote:
+Hi Kieran,
+
+Thanks for your patch.
+
+On 2018-01-08 17:55:24 +0000, Kieran Bingham wrote:
 > The v4l2_mbus_fmt width and height corresponds directly with the
 > v4l2_pix_format definitions, yet the differences in documentation make
 > it ambiguous what to do in the event of field heights.
@@ -38,11 +44,7 @@ On 01/08/2018 06:55 PM, Kieran Bingham wrote:
 > 
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-Regards,
-
-	Hans
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
 > ---
 > v2:
@@ -89,4 +91,10 @@ Regards,
 >   * @code:	data format code (from enum v4l2_mbus_pixelcode)
 >   * @field:	used interlacing type (from enum v4l2_field)
 >   * @colorspace:	colorspace of the data (from enum v4l2_colorspace)
+> -- 
+> 2.7.4
 > 
+
+-- 
+Regards,
+Niklas S�derlund
