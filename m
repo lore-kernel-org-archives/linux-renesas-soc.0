@@ -1,175 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59271 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751256AbeA2OYG (ORCPT
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:47060 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755086AbeAHIGN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 09:24:06 -0500
-Date: Mon, 29 Jan 2018 15:24:02 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Mon, 8 Jan 2018 03:06:13 -0500
+Received: by mail-qt0-f177.google.com with SMTP id r39so12604429qtr.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 Jan 2018 00:06:13 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20180108080210.2c4rrijezfsad55k@verge.net.au>
+References: <20180103121840.29316-1-horms+renesas@verge.net.au>
+ <20180103121840.29316-3-horms+renesas@verge.net.au> <CAMuHMdXcLhFD825Xi2Uk=6_OAgLd7BEp14rWpgb7pv6rOM2H2Q@mail.gmail.com>
+ <20180105140401.7iitpzdrlyqtasvz@verge.net.au> <CAMuHMdWk3ke6GriUdxHp_62r-REYV3P4qNiNGOcGRiCQWCyKAg@mail.gmail.com>
+ <20180108080210.2c4rrijezfsad55k@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Jan 2018 09:06:12 +0100
+Message-ID: <CAMuHMdV3q-5wzWK=h_SfSwNLpyvDOgNEATGcHUDpDnar=C9pPQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider support
+To: Simon Horman <horms@verge.net.au>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH v4 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider
- support
-Message-ID: <20180129142357.sw3d4f5d4hwmveua@verge.net.au>
-References: <20180103121840.29316-1-horms+renesas@verge.net.au>
- <20180103121840.29316-3-horms+renesas@verge.net.au>
- <CAMuHMdXcLhFD825Xi2Uk=6_OAgLd7BEp14rWpgb7pv6rOM2H2Q@mail.gmail.com>
- <20180105140401.7iitpzdrlyqtasvz@verge.net.au>
- <CAMuHMdWk3ke6GriUdxHp_62r-REYV3P4qNiNGOcGRiCQWCyKAg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWk3ke6GriUdxHp_62r-REYV3P4qNiNGOcGRiCQWCyKAg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 05, 2018 at 03:35:13PM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Fri, Jan 5, 2018 at 3:04 PM, Simon Horman <horms@verge.net.au> wrote:
-> > On Wed, Jan 03, 2018 at 01:47:08PM +0100, Geert Uytterhoeven wrote:
-> >> On Wed, Jan 3, 2018 at 1:18 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> >> > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> >> >
-> >> > This patch adds Z2 clock divider support for R-Car Gen3 SoC.
-> >> >
-> >> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> >> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> >> As the CPG/MSSR driver now has suspend/resume support, do we need
-> >> a notifier to restore the Z or Z2 registers? Or is that handled automatically
-> >> by cpufreq during system resume, for both the primary and the secondary
-> >> CPU cores?
-> >
-> > I am a bit unsure.
-> >
-> > When using the A57 cores, which is the default case, the Z clk is queried
-> > by CPUFreq on resume. It appears that on my system its already set to the
-> > correct value but I assume if it was not then it would be reset. However,
-> > this does not cover Z2 clk. So perhaps to be safe we need to register
-> > notifiers and make sure they they play nicely with CPUFreq?
-> 
-> Of course the CPU is special: unlike many other devices, it must be running
-> when the kernel is reentered upon system resume.
-> It may be running using a different frequency setting, though.
-> However, following "opp-suspend", the system will always suspend with the
-> Z clock running at 1.5GHz, which is the default?
-> So Z is probably OK.
-> 
-> It's more interesting to check what happens when the little cores are
-> enabled as well (unfortunately that requires different firmware).
-> 1. Does cpufreq handle them correctly when they are onlined again during
->    system resume?
+Hi Simon,
 
-I tested this by updating the firmware on an H3 ES2.0 / Salvator-XS
-using the instructions at
-https://elinux.org/R-Car/Virtualization#Enabling_HYP_Support
+On Mon, Jan 8, 2018 at 9:02 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Jan 05, 2018 at 03:35:13PM +0100, Geert Uytterhoeven wrote:
+>> On Fri, Jan 5, 2018 at 3:04 PM, Simon Horman <horms@verge.net.au> wrote:
+>> > On Wed, Jan 03, 2018 at 01:47:08PM +0100, Geert Uytterhoeven wrote:
+>> >> On Wed, Jan 3, 2018 at 1:18 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+>> >> > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> >> >
+>> >> > This patch adds Z2 clock divider support for R-Car Gen3 SoC.
+>> >> >
+>> >> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> >> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>>
+>> >> As the CPG/MSSR driver now has suspend/resume support, do we need
+>> >> a notifier to restore the Z or Z2 registers? Or is that handled automatically
+>> >> by cpufreq during system resume, for both the primary and the secondary
+>> >> CPU cores?
+>> >
+>> > I am a bit unsure.
+>> >
+>> > When using the A57 cores, which is the default case, the Z clk is queried
+>> > by CPUFreq on resume. It appears that on my system its already set to the
+>> > correct value but I assume if it was not then it would be reset. However,
+>> > this does not cover Z2 clk. So perhaps to be safe we need to register
+>> > notifiers and make sure they they play nicely with CPUFreq?
+>>
+>> Of course the CPU is special: unlike many other devices, it must be running
+>> when the kernel is reentered upon system resume.
+>> It may be running using a different frequency setting, though.
+>> However, following "opp-suspend", the system will always suspend with the
+>> Z clock running at 1.5GHz, which is the default?
+>> So Z is probably OK.
+>>
+>> It's more interesting to check what happens when the little cores are
+>> enabled as well (unfortunately that requires different firmware).
+>> 1. Does cpufreq handle them correctly when they are onlined again during
+>>    system resume?
+>> 2. What happens if you offline all big cores, and enter system suspend
+>>    running with little cores only?
+>>    Perhaps that's prevented by the "opp-suspend" property as well?
+>
+> Thanks for clarifying the problem.
+>
+> I should be able to install updated firmware on:
+> i* r8a7796 (M3-W) ES1.0 / Salvator-X; and
+> * r8a7795 (H3) ES2.0 / Salvator-XS.
+> * But not easily r8a7795 (H3) / Salvator-X
+>
+> Do you know what the minimal / desired firmware version is to exercise the
+> scenarios you describe.
 
-I also fleshed out the opts table for the little CPUs using the following
-from the 3.6.0 BSP:
+There are binaries available for "v2.7.0 8core". Unfortunately I
+believe it supports
+your "not easily r8a7795 (H3) / Salvator-X" only...
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 1485e6a8e112..671c2d7ed6d0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -219,7 +219,17 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp-1200000000 {
-+		opp@800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp@1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp@1200000000 {
- 			opp-hz = /bits/ 64 <1200000000>;
- 			opp-microvolt = <820000>;
- 			clock-latency-ns = <300000>;
+Gr{oetje,eeting}s,
 
-And fixed the out-by-one bug you pointed out elsewhere in this thread:
+                        Geert
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index a7d68cefda9c..0c8fe10d57fe 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -94,7 +94,7 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
- 	u32 val;
- 
- 	val = clk_readl(zclk->reg) & zclk->mask;
--	mult = 32 - (val >> (__ffs(zclk->mask) - 1));
-+	mult = 32 - (val >> __ffs(zclk->mask));
- 
- 	/* Factor of 2 is for fixed divider */
- 	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, 32 * 2);
-@@ -129,7 +129,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 		return -EBUSY;
- 
- 	val = clk_readl(zclk->reg) & ~zclk->mask;
--	val |= ((32 - mult) << (__ffs(zclk->mask) - 1)) & zclk->mask;
-+	val |= ((32 - mult) << __ffs(zclk->mask)) & zclk->mask;
- 	clk_writel(val, zclk->reg);
- 
- 	/*
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-With these changes in place CPUFreq seems to work for both BIG and little
-CPUS. And the frequencies seem to be correct after S2RAM.
-
-# cd /sys/devices/system/cpu/
-# grep . cpu*/cpufreq/scaling_available_frequencies
-cpu0/cpufreq/scaling_available_frequencies:500000 1000000 1500000 
-...
-cpu4/cpufreq/scaling_available_frequencies:800000 1000000 1200000 
-...
-# grep grep -E -w "pll[01]|z|z2" /sys/kernel/debug/clk/clk_summary
-grep: pll[01]|z|z2: No such file or directory
-# grep -E -w "pll[01]|z|z2" /sys/kernel/debug/clk/clk_summary
-          z2                              0            0  1198080000          0 0  
-       .pll1                              1            1  3194880000          0 0  
-       .pll0                              0            0  2995200000          0 0  
-          z                               0            0  1497600000          0 0  
-# echo 500000 > cpu0/cpufreq/scaling_max_freq
-# echo 800000 > cpu4/cpufreq/scaling_max_freq
-# grep . cpu*/cpufreq/*cur*
-cpu0/cpufreq/cpuinfo_cur_freq:468000
-cpu0/cpufreq/scaling_cur_freq:500000
-...
-cpu4/cpufreq/cpuinfo_cur_freq:786240
-cpu4/cpufreq/scaling_cur_freq:786240
-...
-# grep -E -w "pll[01]|z|z2" /sys/kernel/debug/clk/clk_summary
-          z2                              0            0   786240000          0 0  
-       .pll1                              1            1  3194880000          0 0  
-       .pll0                              0            0  2995200000          0 0  
-          z                               0            0   468000000          0 0  
-# i2cset -f -y 7 0x30 0x20 0x0F
-# echo mem > /sys/power/state
-...
-[  203.289585] Restarting tasks ... done.
-[  203.299250] PM: suspend exit
-# grep . cpu*/cpufreq/*cur*
-cpu0/cpufreq/cpuinfo_cur_freq:468000
-cpu0/cpufreq/scaling_cur_freq:500000
-...
-cpu4/cpufreq/cpuinfo_cur_freq:786240
-cpu4/cpufreq/scaling_cur_freq:800000
-...
-# grep -E -w "pll[01]|z|z2" /sys/kernel/debug/clk/clk_summary
-          z2                              0            0   786240000          0 0  
-       .pll1                              1            1  3194880000          0 0  
-       .pll0                              0            0  2995200000          0 0  
-          z                               0            0   468000000          0 0  
-
-> 2. What happens if you offline all big cores, and enter system suspend
->    running with little cores only?
->    Perhaps that's prevented by the "opp-suspend" property as well?
-
-I am unable to take CPU0 offline.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
