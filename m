@@ -1,74 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34830 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932088AbeAQQT5 (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44282 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756049AbeAHLou (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:19:57 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 09/16] ARM: dts: r8a7793: consistently use single space after =
-Date: Wed, 17 Jan 2018 17:17:10 +0100
-Message-Id: <20180117161717.14589-10-horms+renesas@verge.net.au>
-In-Reply-To: <20180117161717.14589-1-horms+renesas@verge.net.au>
-References: <20180117161717.14589-1-horms+renesas@verge.net.au>
+        Mon, 8 Jan 2018 06:44:50 -0500
+Received: by mail-lf0-f65.google.com with SMTP id w23so1600211lfd.11
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 Jan 2018 03:44:49 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v4] PM / wakeup: Print warn if device gets enabled as wakeup source during sleep
+Date: Mon,  8 Jan 2018 12:44:43 +0100
+Message-Id: <1515411883-12626-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Consistently use a single space after a =.
+In general, wakeup settings are not supposed to be changed during any of
+the system wide PM phases. The reason is simply that it would break
+guarantees provided by the PM core, to properly act on active wakeup
+sources.
 
-This patch removes instances where a tab is used instead.  It also avoids
-running over 80 columns in width in one of the lines where whitespace is
-updated.
+However, there are exceptions to when, in particular, disabling a device as
+wakeup source makes sense. For example, in cases when a driver realizes
+that its device is dead during system suspend. For these scenarios, we
+don't need to care about acting on the wakeup source correctly, because a
+dead device shouldn't deliver wakeup signals.
 
-This patch should not introduce any functional change.
+To this reasoning and to help users to properly manage wakeup settings,
+let's print a warning in cases someone calls device_wakeup_enable() during
+system sleep.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Suggested-by: Rafael J. Wysocki <rafael@kernel.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
-v2
-* New patch
----
- arch/arm/boot/dts/r8a7793.dtsi | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index e95f4fb44dc4..ea4bc06c8e8a 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -228,9 +228,9 @@
- 	};
+Changes in v4:
+	- Send this as a separate change.
+	- Changed from dev_warn() to dev_dbg().
+
+---
+ drivers/base/power/wakeup.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index e73a081..f30c233 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -268,6 +268,9 @@ int device_wakeup_enable(struct device *dev)
+ 	if (!dev || !dev->power.can_wakeup)
+ 		return -EINVAL;
  
- 	thermal: thermal@e61f0000 {
--		compatible =	"renesas,thermal-r8a7793",
--				"renesas,rcar-gen2-thermal",
--				"renesas,rcar-thermal";
-+		compatible = "renesas,thermal-r8a7793",
-+			     "renesas,rcar-gen2-thermal",
-+			     "renesas,rcar-thermal";
- 		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 522>;
-@@ -1174,12 +1174,13 @@
- 		 * Single DAI : #sound-dai-cells = <0>;         <&rcar_sound>;
- 		 * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
- 		 */
--		compatible =  "renesas,rcar_sound-r8a7793", "renesas,rcar_sound-gen2";
--		reg =	<0 0xec500000 0 0x1000>, /* SCU */
--			<0 0xec5a0000 0 0x100>,  /* ADG */
--			<0 0xec540000 0 0x1000>, /* SSIU */
--			<0 0xec541000 0 0x280>,  /* SSI */
--			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
-+		compatible = "renesas,rcar_sound-r8a7793",
-+			     "renesas,rcar_sound-gen2";
-+		reg = <0 0xec500000 0 0x1000>, /* SCU */
-+		      <0 0xec5a0000 0 0x100>,  /* ADG */
-+		      <0 0xec540000 0 0x1000>, /* SSIU */
-+		      <0 0xec541000 0 0x280>,  /* SSI */
-+		      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
- 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
- 
- 		clocks = <&cpg CPG_MOD 1005>,
++	if (pm_suspend_target_state != PM_SUSPEND_ON)
++		dev_dbg(dev, "don't enable as wakup source during sleep!\n");
++
+ 	ws = wakeup_source_register(dev_name(dev));
+ 	if (!ws)
+ 		return -ENOMEM;
 -- 
-2.11.0
+2.7.4
