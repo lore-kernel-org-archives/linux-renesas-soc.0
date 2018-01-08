@@ -1,63 +1,97 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from o1678950229.outbound-mail.sendgrid.net ([167.89.50.229]:8514
-        "EHLO o1678950229.outbound-mail.sendgrid.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755000AbeAHSOF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Jan 2018 13:14:05 -0500
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, niklas.soderlund@ragnatech.se,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH] media: i2c: adv748x: fix HDMI field heights
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Hans Verkuil <hverkuil@xs4all.nl>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] media: i2c: adv748x: fix HDMI field heights
-Date: Mon, 08 Jan 2018 18:14:04 +0000 (UTC)
-Message-Id: <1515435242-22956-1-git-send-email-kieran.bingham@ideasonboard.com>
+        open list <linux-kernel@vger.kernel.org>
+References: <1515433167-15912-1-git-send-email-kieran.bingham@ideasonboard.com>
+ <20180108175629.GE23075@bigcity.dyn.berto.se>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <66cfaf77-de48-2380-85a2-442a95f8752d@ideasonboard.com>
+Date: Mon, 8 Jan 2018 18:05:56 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-content-transfer-encoding: quoted-printable
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20180108175629.GE23075@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ADV748x handles interlaced media using V4L2_FIELD_ALTERNATE field=0D
-types.  The correct specification for the height on the mbus is the=0D
-image height, in this instance, the field height.=0D
-=0D
-The AFE component already correctly adjusts the height on the mbus, but=0D
-the HDMI component got left behind.=0D
-=0D
-Adjust the mbus height to correctly describe the image height of the=0D
-fields when processing interlaced video for HDMI pipelines.=0D
-=0D
-Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")=0D
-Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>=
-=0D
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>=0D
----=0D
-v2:=0D
- - switch conditional to check the fmt->field, removing the need for=0D
-   the comment.=0D
-=0D
- drivers/media/i2c/adv748x/adv748x-hdmi.c | 3 +++=0D
- 1 file changed, 3 insertions(+)=0D
-=0D
-diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/a=
-dv748x/adv748x-hdmi.c=0D
-index 4da4253553fc..10d229a4f088 100644=0D
---- a/drivers/media/i2c/adv748x/adv748x-hdmi.c=0D
-+++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c=0D
-@@ -105,6 +105,9 @@ static void adv748x_hdmi_fill_format(struct adv748x_hdm=
-i *hdmi,=0D
- =0D
- 	fmt->width =3D hdmi->timings.bt.width;=0D
- 	fmt->height =3D hdmi->timings.bt.height;=0D
-+=0D
-+	if (fmt->field =3D=3D V4L2_FIELD_ALTERNATE)=0D
-+		fmt->height /=3D 2;=0D
- }=0D
- =0D
- static void adv748x_fill_optional_dv_timings(struct v4l2_dv_timings *timin=
-gs)=0D
--- =0D
-2.7.4=0D
+Hi Niklas,
+
+On 08/01/18 17:56, Niklas Söderlund wrote:
+> Hi Kieran,
+> 
+> Thanks for your patch.
+> 
+> On 2018-01-08 17:39:30 +0000, Kieran Bingham wrote:
+>> The ADV748x handles interlaced media using V4L2_FIELD_ALTERNATE field
+>> types.  The correct specification for the height on the mbus is the
+>> image height, in this instance, the field height.
+>>
+>> The AFE component already correctly adjusts the height on the mbus, but
+>> the HDMI component got left behind.
+>>
+>> Adjust the mbus height to correctly describe the image height of the
+>> fields when processing interlaced video for HDMI pipelines.
+>>
+>> Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> ---
+>>  drivers/media/i2c/adv748x/adv748x-hdmi.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+>> index 4da4253553fc..0e2f76f3f029 100644
+>> --- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
+>> +++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+>> @@ -105,6 +105,10 @@ static void adv748x_hdmi_fill_format(struct adv748x_hdmi *hdmi,
+>>  
+>>  	fmt->width = hdmi->timings.bt.width;
+>>  	fmt->height = hdmi->timings.bt.height;
+>> +
+>> +	/* Propagate field height on the mbus for FIELD_ALTERNATE fmts */
+>> +	if (hdmi->timings.bt.interlaced)
+> 
+>         if (V4L2_FIELD_HAS_T_OR_B(fmt->field))
+> 
+> Nit-picking but I would use the field here (which is set just above this 
+> in the same function) as it makes it more clear why the format is cut in 
+> half. I looked at the documentation for bt.interlaced and I'm not sure 
+> if it would be set to true for INTERLACED field formats when the height 
+> should not be halved? In this case it do not matter as 
+> 
+>         fmt->field = hdmi->timings.bt.interlaced ?
+>             V4L2_FIELD_ALTERNATE : V4L2_FIELD_NONE;
+> 
+> So I leave this up to you and feel free to add in either case.
+
+In this instance, I chose to mirror the value(/code path) which explicitly sets
+the V4L2_FIELD_ALTERNATE, rather than:
+ if (fmt->field == V4L2_FIELD_ALTERNATE ||
+     fmt->field == V4L2_FIELD_TOP ||
+     fmt->field == V4L2_FIELD_BOTTOM)
+
+But perhaps we would never expect _TOP || _BOTTOM therefore
+
+ if (fmt->field == V4L2_FIELD_ALTERNATE)
+
+might be perfectly suitable?
+
+Actually - yes - I now agree. I'll respin.
+
+--
+Kieran
+
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+>> +		fmt->height /= 2;
+>>  }
+>>  
+>>  static void adv748x_fill_optional_dv_timings(struct v4l2_dv_timings *timings)
+>> -- 
+>> 2.7.4
+>>
+> 
