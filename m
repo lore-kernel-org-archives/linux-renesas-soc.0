@@ -1,59 +1,44 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 2 Jan 2018 10:00:20 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, geert@glider.be,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-sh@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 6/9] v4l: i2c: Copy ov772x soc_camera sensor driver
-Message-ID: <20180102090020.GC4314@w540>
-References: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org>
- <1514469681-15602-7-git-send-email-jacopo+renesas@jmondi.org>
- <CAOFm3uEU1ZegJgjUYXVJCTLRROtJ_KJDgf1-KiHdoJSw-5zd3Q@mail.gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:46922 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755079AbeAHHTp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 8 Jan 2018 02:19:45 -0500
+Received: by mail-io0-f173.google.com with SMTP id z130so11906997ioe.13
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 07 Jan 2018 23:19:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOFm3uEU1ZegJgjUYXVJCTLRROtJ_KJDgf1-KiHdoJSw-5zd3Q@mail.gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1515148438-5569-1-git-send-email-geert+renesas@glider.be>
+References: <1515148438-5569-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 8 Jan 2018 08:19:43 +0100
+Message-ID: <CACRpkdb19pUPB8YE8B4hft90s2Kh7YLDfzG5GcM686tDH-E25A@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.16 (take two)
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-gpio@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Philippe,
-   thanks for the comment,
+On Fri, Jan 5, 2018 at 11:33 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-On Fri, Dec 29, 2017 at 01:47:30PM +0100, Philippe Ombredanne wrote:
-> Jacopo,
+>         Hi Linus,
 >
-> On Thu, Dec 28, 2017 at 3:01 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > Copy the soc_camera based driver in v4l2 sensor driver directory.
-> > This commit just copies the original file without modifying it.
-> > No modification to KConfig and Makefile as soc_camera framework
-> > dependencies need to be removed first in next commit.
+> The following changes since commit 527890f72892b127b67567af6bdbdc5288c211c1:
 >
-> Do you mind using a simpler SPDX identifier instead of this long
-> legalese boilerplate?
-> This is documented in Thomas doc patches. This applies to your entire
-> patch set of course.
+>   pinctrl: sh-pfc: r8a77995: Add CAN FD support (2017-12-05 14:14:56 +0100)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.16-tag2
+>
+> for you to fetch changes up to 297e5b2b7a8398b4b850d6bdb63f3a3544670b9e:
+>
+>   pinctrl: sh-pfc: r8a7795: Add SATA pins, groups, and functions (2017-12-21 10:08:23 +0100)
 
-Please read the changelogs. In this commit I am just copying the
-already in mainline driver with no code changes. I have gathered all
-of changes in [7/9] (and in [9/9] for tw9910 driver).
+Pulled to my devel branch for v4.16, thanks!
 
-If you look at those patches, you'll notice I have replaced the
-license text with the SPDX identifier.
-
-Thanks
-    j
-
-> Thanks!
-> --
-> Cordially
-> Philippe Ombredanne
+Yours,
+Linus Walleij
