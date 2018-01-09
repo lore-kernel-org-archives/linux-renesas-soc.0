@@ -1,95 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53714 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751284AbeACMSy (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:40065 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751352AbeAIJDs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 07:18:54 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 0/6] clk: renesas: r8a779[56]: Add Z and Z2 clock support
-Date: Wed,  3 Jan 2018 13:18:34 +0100
-Message-Id: <20180103121840.29316-1-horms+renesas@verge.net.au>
+        Tue, 9 Jan 2018 04:03:48 -0500
+Received: by mail-lf0-f68.google.com with SMTP id u2so634416lff.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Jan 2018 01:03:47 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v4 1/2] PM / core: Re-structure code for clearing the direct_complete flag
+Date: Tue,  9 Jan 2018 10:03:39 +0100
+Message-Id: <1515488620-10575-2-git-send-email-ulf.hansson@linaro.org>
+In-Reply-To: <1515488620-10575-1-git-send-email-ulf.hansson@linaro.org>
+References: <1515488620-10575-1-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+To make the code more consistent, let's clear the parent's direct_complete
+flag along with clearing it for suppliers, instead of as currently, when
+propagating the wakeup_path flag to parents.
 
-Hi,
+While changing this, let's take the opportunity to rename the affected
+internal functions, to make them self-explanatory. Like this:
 
-this patch-set adds Z and Z2 clock support.
+dpm_clear_suppliers_direct_complete -> dpm_clear_superiors_direct_complete
+dpm_propagate_to_parent -> dpm_propagate_wakeup_to_parent
 
-These are dependencies for supporting CPUFreq. The remainder of that
-work is being posted separately and can be found at:
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/base/power/main.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq-v4
-
-Based on v4.15-rc1
-
-Changes since v3:
-* Rebase
-* Divide parent clock by 2 to give correct rate (again)                         * Take care not to overflow multiplication on 32 but platforms
-* Use __ffs as FIELD_{GET,PREP} don't not work with non-constant masks
-* Use correct mask in cpg_z_clk_recalc_rate()
-
-Changes since v2:
-* Rebase
-* Address review of v2 as noted in patch changelogs
-
-Takeshi Kihara (6):
-  clk: renesas: rcar-gen3: Add Z clock divider support
-  clk: renesas: rcar-gen3: Add Z2 clock divider support
-  clk: renesas: r8a7795: Add Z clock
-  clk: renesas: r8a7795: Add Z2 clock
-  clk: renesas: r8a7796: Add Z clock
-  clk: renesas: r8a7796: Add Z2 clock
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c |   2 +
- drivers/clk/renesas/r8a7796-cpg-mssr.c |   2 +
- drivers/clk/renesas/rcar-gen3-cpg.c    | 143 +++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h    |   2 +
- 4 files changed, 149 insertions(+)
-
-Results of testing this on the Salvator-X r8a7796 are as follows:
-
-On Boot
--------
-
-Z clock is half of pll0 and corresponds to CPU frequency.
-Z2 clock is half pll2. This is as expected.
-
-root@Debian:~# cd /sys/devices/system/cpu/cpu0/cpufreq
-root@Debian:/sys/devices/system/cpu/cpu0/cpufreq# grep -E -w "pll0|z" /sys/kernel/debug/clk/clk_summary; grep -E -w "pll2|z2" /sys/kernel/debug/clk/clk_summary; grep . *cur*
-       .pll0                              0            0  2999999880          0 0
-          z                               0            0  1499999940          0 0
-       .pll2                              0            0  2399999904          0 0
-          z2                              0            0  1199999952          0 0
-cpuinfo_cur_freq:1499999
-scaling_cur_freq:1500000
-
-CPU Freq scaled to 1000000 and then 500000
-------------------------------------------
-
-Z clock corresponds to new CPU frequency.
-Z2 clock, PLL0 and PLL2 are unchanged.
-This is also as expected.
-
-root@Debian:/sys/devices/system/cpu/cpu0/cpufreq# echo 1000000 > scaling_max_freq
-root@Debian:/sys/devices/system/cpu/cpu0/cpufreq# grep -E -w "pll0|z" /sys/kernel/debug/clk/clk_summary; grep -E -w "pll2|z2" /sys/kernel/debug/clk/clk_summary; grep . *cur*
- grep . *cur*lk_summary; grep -E -w "pll2|z2" /sys/kernel/debug/clk/clk_summary; 
-       .pll0                              0            0  2999999880          0 0  
-          z                               0            0  1031249959          0 0  
-       .pll2                              0            0  2399999904          0 0  
-          z2                              0            0  1199999952          0 0  
-cpuinfo_cur_freq:1031249
-scaling_cur_freq:1000000
-
-root@Debian:/sys/devices/system/cpu/cpu0/cpufreq# echo 500000 > scaling_max_freq
-root@Debian:/sys/devices/system/cpu/cpu0/cpufreq# grep -E -w "pll0|z" /sys/kernel/debug/clk/clk_summary; grep -E -w "pll2|z2" /sys/kernel/debug/clk/clk_summary; grep . *cur*
-       .pll0                              0            0  2999999880          0 0  
-          z                               0            0   468749981          0 0  
-       .pll2                              0            0  2399999904          0 0  
-          z2                              0            0  1199999952          0 0  
-cpuinfo_cur_freq:468749
-scaling_cur_freq:500000
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index ebcec7e..720e36e 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1660,7 +1660,7 @@ static int legacy_suspend(struct device *dev, pm_message_t state,
+ 	return error;
+ }
+ 
+-static void dpm_propagate_to_parent(struct device *dev)
++static void dpm_propagate_wakeup_to_parent(struct device *dev)
+ {
+ 	struct device *parent = dev->parent;
+ 
+@@ -1669,18 +1669,23 @@ static void dpm_propagate_to_parent(struct device *dev)
+ 
+ 	spin_lock_irq(&parent->power.lock);
+ 
+-	parent->power.direct_complete = false;
+ 	if (dev->power.wakeup_path && !parent->power.ignore_children)
+ 		parent->power.wakeup_path = true;
+ 
+ 	spin_unlock_irq(&parent->power.lock);
+ }
+ 
+-static void dpm_clear_suppliers_direct_complete(struct device *dev)
++static void dpm_clear_superiors_direct_complete(struct device *dev)
+ {
+ 	struct device_link *link;
+ 	int idx;
+ 
++	if (dev->parent) {
++		spin_lock_irq(&dev->parent->power.lock);
++		dev->parent->power.direct_complete = false;
++		spin_unlock_irq(&dev->parent->power.lock);
++	}
++
+ 	idx = device_links_read_lock();
+ 
+ 	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node) {
+@@ -1791,8 +1796,8 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
+ 		if (device_may_wakeup(dev))
+ 			dev->power.wakeup_path = true;
+ 
+-		dpm_propagate_to_parent(dev);
+-		dpm_clear_suppliers_direct_complete(dev);
++		dpm_propagate_wakeup_to_parent(dev);
++		dpm_clear_superiors_direct_complete(dev);
+ 	}
+ 
+ 	device_unlock(dev);
+-- 
+2.7.4
