@@ -1,90 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41835 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:41388 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758433AbeAIN7J (ORCPT
+        id S1752819AbeAILYA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 08:59:09 -0500
+        Tue, 9 Jan 2018 06:24:00 -0500
+Date: Tue, 9 Jan 2018 12:23:58 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Phil Reid <preid@electromag.com.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 3/6] i2c: add 'set_sda' to bus_recovery_info
-Date: Tue,  9 Jan 2018 14:58:56 +0100
-Message-Id: <20180109135859.20771-4-wsa@the-dreams.de>
-In-Reply-To: <20180109135859.20771-1-wsa@the-dreams.de>
-References: <20180109135859.20771-1-wsa@the-dreams.de>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Claudio Foellmi <claudio.foellmi@ergon.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 3/6] i2c: add 'set_sda' to bus_recovery_info
+Message-ID: <20180109112358.3enbi2fxt6fniasm@ninjato>
+References: <20171204123640.3382-1-wsa+renesas@sang-engineering.com>
+ <20171204123640.3382-4-wsa+renesas@sang-engineering.com>
+ <CACRpkdZzwo9UhT08VDHXg6=eXdK80Pt1omZ4Xda_HFwguyNpaw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5qntr2zkxlsjb4up"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZzwo9UhT08VDHXg6=eXdK80Pt1omZ4Xda_HFwguyNpaw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This will be needed when we want to create STOP conditions, too, later.
-Create the needed fields and populate them for the GPIO case if the GPIO
-is set to output.
+--5qntr2zkxlsjb4up
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Phil Reid <preid@electromag.com.au>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-Changes since V1:
+On Tue, Dec 05, 2017 at 09:39:48AM +0100, Linus Walleij wrote:
+> On Mon, Dec 4, 2017 at 1:36 PM, Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+>=20
+> > This will be needed when we want to create STOP conditions, too, later.
+> > Create the needed fields and populate them for the GPIO case if the GPIO
+> > is set to output.
+> >
+> > Cc: Phil Reid <preid@electromag.com.au>
+> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> > Cc: Claudio Foellmi <claudio.foellmi@ergon.ch>
+> > Cc: Andrzej Hajda <a.hajda@samsung.com>
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> (...)
+> >  #include <linux/errno.h>
+> > +#include <linux/gpio.h>
+>=20
+> Please no.
+>=20
+> > +                       if (gpiod_get_direction(bri->sda_gpiod) =3D=3D =
+GPIOF_DIR_OUT)
+> > +                               bri->set_sda =3D set_sda_gpio_value;
+>=20
+> Just compare it to zero. if (!gpiod_get_direction())
 
-* don't use GPIOF_* flags but hardocded '0'
+Okay, for now, I'll do:
 
- drivers/i2c/i2c-core-base.c | 11 ++++++++++-
- include/linux/i2c.h         |  4 ++++
- 2 files changed, 14 insertions(+), 1 deletion(-)
+	/* FIXME: add proper flag once provided by GPIO core */
+	if (gpiod_get_direction(bri->sda_gpiod) =3D=3D 0)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index bb34a5d4113331..a8b3fbe16fa08c 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -147,6 +147,11 @@ static int get_sda_gpio_value(struct i2c_adapter *adap)
- 	return gpiod_get_value_cansleep(adap->bus_recovery_info->sda_gpiod);
- }
- 
-+static void set_sda_gpio_value(struct i2c_adapter *adap, int val)
-+{
-+	gpiod_set_value_cansleep(adap->bus_recovery_info->sda_gpiod, val);
-+}
-+
- /*
-  * We are generating clock pulses. ndelay() determines durating of clk pulses.
-  * We will generate clock with rate 100 KHz and so duration of both clock levels
-@@ -225,8 +230,12 @@ static void i2c_init_recovery(struct i2c_adapter *adap)
- 	if (bri->scl_gpiod && bri->recover_bus == i2c_generic_scl_recovery) {
- 		bri->get_scl = get_scl_gpio_value;
- 		bri->set_scl = set_scl_gpio_value;
--		if (bri->sda_gpiod)
-+		if (bri->sda_gpiod) {
- 			bri->get_sda = get_sda_gpio_value;
-+			/* FIXME: add proper flag instead of '0' once available */
-+			if (gpiod_get_direction(bri->sda_gpiod) == 0)
-+				bri->set_sda = set_sda_gpio_value;
-+		}
- 		return;
- 	}
- 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index fd87b806b5f165..419a38e7c315f1 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -551,6 +551,9 @@ struct i2c_timings {
-  * @get_sda: This gets current value of SDA line. Optional for generic SCL
-  *      recovery. Populated internally, if sda_gpio is a valid GPIO, for generic
-  *      GPIO recovery.
-+ * @set_sda: This sets/clears the SDA line. Optional for generic SCL recovery.
-+ *	Populated internally, if sda_gpio is a valid GPIO, for generic GPIO
-+ *	recovery.
-  * @prepare_recovery: This will be called before starting recovery. Platform may
-  *	configure padmux here for SDA/SCL line or something else they want.
-  * @unprepare_recovery: This will be called after completing recovery. Platform
-@@ -564,6 +567,7 @@ struct i2c_bus_recovery_info {
- 	int (*get_scl)(struct i2c_adapter *adap);
- 	void (*set_scl)(struct i2c_adapter *adap, int val);
- 	int (*get_sda)(struct i2c_adapter *adap);
-+	void (*set_sda)(struct i2c_adapter *adap, int val);
- 
- 	void (*prepare_recovery)(struct i2c_adapter *adap);
- 	void (*unprepare_recovery)(struct i2c_adapter *adap);
--- 
-2.11.0
+Thanks!
+
+   Wolfram
+
+
+--5qntr2zkxlsjb4up
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpUpk4ACgkQFA3kzBSg
+KbawlQ//SYS+r3JX007+ioa5xlwm47bOnD/+GJDN1T928JPbxKy2OkJEJVoyidiJ
+MEvZ4OEyvjXjzvVTrJQwPLjFC15lgcGrFUWqHbhLMK/iMnOZTXb7Si2faEaUi4WM
+3HDnnN60HqjtPOY6zn0wlHOkSNHT02Sf5V89CZmdiyNAMdoH/oMSfQU7FGb63cyw
+WpiK+vbkbo3xNR9A482xb9W93O4XNgtRVm5YOyGXMusNXHzwkMIsLfVLewbbdGa+
+D9Gn1YpEM6VcIepy0pJZDhh/jCPyAirKV2VvxmbczvKzAoDhyiYsVaQYwIYL1vjq
+yc4YSQN4AEOYGAdn3TGwTh/0D5hdWzKfUX/8nrLl4d4CBAX9y5AL/CMVPe7zNjqE
+aCxhPQ2/33dD4ZKm6PBAr5ihRkSCiWlIwoiWnRTRVKFv8mdYFN/AC0Qktn2TA1bE
+oPDZAHVCnGoyWcSTrnIbQqEtXi/RkZUM2LcpzH/iOkAL9p3u/I4p/uWa1HURiB4A
+hWG5MMHP5FKSa0GkqXfA/2DnHnH1F3vj/yTR6fn7Nej1JMdS49AW0aoxkvLu9vSa
+qTq209ZM7B/5BQGhLHBCl1F7yo5h4f8KRF3+4+lufZmn7d8b8gwmKA8nRJOX97jp
+le+Xcc/2FJNLto0gEoUk19NAh0fW3iSDu842FL4dtbpjbIe5PDY=
+=nSqe
+-----END PGP SIGNATURE-----
+
+--5qntr2zkxlsjb4up--
