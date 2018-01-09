@@ -1,64 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47867 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753570AbeASNjl (ORCPT
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:44706 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753812AbeAIH3A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 08:39:41 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH v2] arm64: dts: salvator-common: Enable HS400 of SDHI2
-Date: Fri, 19 Jan 2018 14:39:30 +0100
-Message-Id: <20180119133930.11410-1-horms+renesas@verge.net.au>
+        Tue, 9 Jan 2018 02:29:00 -0500
+Subject: Re: [PATCH v2] media: i2c: adv748x: fix HDMI field heights
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: niklas.soderlund@ragnatech.se,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1515435242-22956-1-git-send-email-kieran.bingham@ideasonboard.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9c95a0d3-52de-9078-46f3-b0ba470b687f@xs4all.nl>
+Date: Tue, 9 Jan 2018 08:28:54 +0100
+MIME-Version: 1.0
+In-Reply-To: <1515435242-22956-1-git-send-email-kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On 01/08/2018 07:14 PM, Kieran Bingham wrote:
+> The ADV748x handles interlaced media using V4L2_FIELD_ALTERNATE field
+> types.  The correct specification for the height on the mbus is the
+> image height, in this instance, the field height.
+> 
+> The AFE component already correctly adjusts the height on the mbus, but
+> the HDMI component got left behind.
+> 
+> Adjust the mbus height to correctly describe the image height of the
+> fields when processing interlaced video for HDMI pipelines.
+> 
+> Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-This patch adds the mmc-hs400-1_8v property to SDHI2 and enable eMMC
-HS400.
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-Based on renesas-devel-20180119-v4.15-rc8
+Regards,
 
-Dependencies for testing and applying this patch upstream:
-* [PATCH v2 0/3] mmc: renesas_sdhi: add eMMC HS400 mode support
-* [PATCH] clk: renesas: rcar-gen3: Fix SD divider setting
+	Hans
 
-To assist testing and review this patch and the above mentioned
-dependencies, which are necessary and sufficient to enable HS400 on H3 /
-Salvator-X, M3-W 1.0 / Salvator-X and H3 ES2.0 Salvator-XS are available
-at:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/hs400-v2
-
-v2 [Simon Horman]
-* Broke out of larger patchset
-
-v1 [Simon Horman]
-* Rebase
-
-v0 [Takeshi Kihara]
-
-
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 89cbb3b95acd..34847c3653b8 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -631,6 +631,7 @@
- 	vqmmc-supply = <&reg_1p8v>;
- 	bus-width = <8>;
- 	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
- 	non-removable;
- 	fixed-emmc-driver-type = <1>;
- 	status = "okay";
--- 
-2.11.0
+> ---
+> v2:
+>  - switch conditional to check the fmt->field, removing the need for
+>    the comment.
+> 
+>  drivers/media/i2c/adv748x/adv748x-hdmi.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+> index 4da4253553fc..10d229a4f088 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+> @@ -105,6 +105,9 @@ static void adv748x_hdmi_fill_format(struct adv748x_hdmi *hdmi,
+>  
+>  	fmt->width = hdmi->timings.bt.width;
+>  	fmt->height = hdmi->timings.bt.height;
+> +
+> +	if (fmt->field == V4L2_FIELD_ALTERNATE)
+> +		fmt->height /= 2;
+>  }
+>  
+>  static void adv748x_fill_optional_dv_timings(struct v4l2_dv_timings *timings)
+> 
