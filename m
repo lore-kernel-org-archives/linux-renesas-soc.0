@@ -1,67 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33003 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752417AbeADSHB (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:46910 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933376AbeAIPqN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 13:07:01 -0500
-Received: by mail-lf0-f67.google.com with SMTP id j143so2660829lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Jan 2018 10:07:00 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180104180655.936982989@cogentembedded.com>
-Date: Thu, 04 Jan 2018 21:06:49 +0300
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] sh_eth: fix SH7757 GEther initialization
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=sh_eth-fix-SH7757-GEther-initialization.patch
+        Tue, 9 Jan 2018 10:46:13 -0500
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1eYw6N-0001Ht-Ly
+        for linux-renesas-soc@vger.kernel.org; Tue, 09 Jan 2018 16:46:11 +0100
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1eYw6N-0000Yj-Fo
+        for linux-renesas-soc@vger.kernel.org; Tue, 09 Jan 2018 16:46:11 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-01-09-v4.15-rc7
+Date: Tue,  9 Jan 2018 16:46:11 +0100
+Message-Id: <1515512771-2105-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas  SH7757 has 2 Fast and 2 Gigabit Ether controllers, while the
-'sh_eth' driver can only reset and initialize TSU of the first controller
-pair. Shimoda-san tried to solve that adding the 'needs_init' member to the
-'struct sh_eth_plat_data', however the platform code still never sets this
-flag. I think  that we can infer this information from the 'devno' variable
-(set  to 'platform_device::id') and reset/init the Ether controller pair
-only for an even 'devno'; therefore 'sh_eth_plat_data::needs_init' can be
-removed...
+I have pushed renesas-drivers-2018-01-09-v4.15-rc7 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Fixes: 150647fb2c31 ("net: sh_eth: change the condition of initialization")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
----
-The patch is against DaveM's 'net.git' repo.
+Today's version is based on renesas-devel-20180108-v4.15-rc7.
 
- drivers/net/ethernet/renesas/sh_eth.c |    4 ++--
- include/linux/sh_eth.h                |    1 -
- 2 files changed, 2 insertions(+), 3 deletions(-)
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/rcar-genpd-wakeup-v3-rebased1
+  - topic/25lc040-dt-v2
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-z-clk-v4
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v5
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-bindings
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://linuxtv.org/pinchartl/media.git#tags/vsp1-discom-v1-20171215
+  - git://linuxtv.org/pinchartl/media.git#tags/drm-next-colorkey-v1-20171215
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/ip-switch-rework-2017
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/rcar-i2c-recovery
+  - git://git.ragnatech.se/linux#for-renesas-drivers
 
-Index: net/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3254,8 +3254,8 @@ static int sh_eth_drv_probe(struct platf
- 		ndev->features = NETIF_F_HW_VLAN_CTAG_FILTER;
- 	}
- 
--	/* initialize first or needed device */
--	if (!devno || pd->needs_init) {
-+	/* Need to init only the first port of the two sharing a TSU */
-+	if (devno % 2 == 0) {
- 		if (mdp->cd->chip_reset)
- 			mdp->cd->chip_reset(ndev);
- 
-Index: net/include/linux/sh_eth.h
-===================================================================
---- net.orig/include/linux/sh_eth.h
-+++ net/include/linux/sh_eth.h
-@@ -17,7 +17,6 @@ struct sh_eth_plat_data {
- 	unsigned char mac_addr[ETH_ALEN];
- 	unsigned no_ether_link:1;
- 	unsigned ether_link_active_low:1;
--	unsigned needs_init:1;
- };
- 
- #endif
+Included fixes:
+  - net: phy: Fix phy_modify() semantic difference fallout
+  - Revert "PM / runtime: Rework pm_runtime_force_suspend/resume()"
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
