@@ -1,28 +1,59 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 11 Jan 2018 16:51:00 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:53172 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755323AbeAIQt3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 9 Jan 2018 11:49:29 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH] ARM: dts: lager: Add CEC clock for HDMI transmitter
-Message-ID: <20180111155100.7auiku2v2npfdbwp@verge.net.au>
-References: <20180109164904.24523-1-niklas.soderlund+renesas@ragnatech.se>
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] ARM: dts: lager: Add CEC clock for HDMI transmitter
+Date: Tue,  9 Jan 2018 17:49:04 +0100
+Message-Id: <20180109164904.24523-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180109164904.24523-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 09, 2018 at 05:49:04PM +0100, Niklas Söderlund wrote:
-> The adv7511 on the Lager board has a 12 MHz fixed clock
-> for the CEC block. Specify this in the dts to enable CEC support.
-> 
-> Based on a similar patch for Koelsch by Hans Verkuil.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+The adv7511 on the Lager board has a 12 MHz fixed clock
+for the CEC block. Specify this in the dts to enable CEC support.
 
-Thanks, applied.
+Based on a similar patch for Koelsch by Hans Verkuil.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index e3d27783b6b56b42..b8bbaa87a5ab7c99 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -670,11 +670,19 @@
+ 		};
+ 	};
+ 
++	cec_clock: cec-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <12000000>;
++	};
++
+ 	hdmi@39 {
+ 		compatible = "adi,adv7511w";
+ 		reg = <0x39>;
+ 		interrupt-parent = <&gpio1>;
+ 		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&cec_clock>;
++		clock-names = "cec";
+ 
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
+-- 
+2.15.1
