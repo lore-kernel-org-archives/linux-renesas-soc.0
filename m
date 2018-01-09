@@ -1,142 +1,120 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34557 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbeA2SCF (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 13:02:05 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v5 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider support
-Date: Mon, 29 Jan 2018 19:01:50 +0100
-Message-Id: <20180129180154.29626-3-horms+renesas@verge.net.au>
-In-Reply-To: <20180129180154.29626-1-horms+renesas@verge.net.au>
-References: <20180129180154.29626-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Phil Reid <preid@electromag.com.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 6/6] i2c: rcar: implement bus recovery
+Date: Tue,  9 Jan 2018 14:58:59 +0100
+Message-Id: <20180109135859.20771-7-wsa@the-dreams.de>
+In-Reply-To: <20180109135859.20771-1-wsa@the-dreams.de>
+References: <20180109135859.20771-1-wsa@the-dreams.de>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This patch adds Z2 clock divider support for R-Car Gen3 SoC.
+We can force levels of SCL and SDA, so we can use that for bus recovery.
+Note that we cannot read SDA back, because we will only get the internal
+state of the bus free detection.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v5 [Simon Horman]
-* Correct off-by-one error in use of __ffs()
+ drivers/i2c/busses/i2c-rcar.c | 54 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 52 insertions(+), 2 deletions(-)
 
-v4 [Simon Horman]
-* Rebase
-* Use __ffs as FIELD_{GET,PREP} don't not work with non-constant masks
-* Use correct mask in cpg_z_clk_recalc_rate()
-
-v3 [Simon Horman]
-* Consolidate Z and Z2 clock ops
-* Allow setting of Z2 clock
-
-v1 [Simon Horman]
-* Provide __cpg_z_clk_recalc_rate() helper
-* Use GENMASK
-
-v0 [Takeshi Kihara]
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 22 ++++++++++++++++------
- drivers/clk/renesas/rcar-gen3-cpg.h |  1 +
- 2 files changed, 17 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index b85918fa62c6..0c8fe10d57fe 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -63,7 +63,7 @@ static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 8a2ae3e6c561c4..d4b7b5380c2983 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -132,6 +132,7 @@ struct rcar_i2c_priv {
+ 	int pos;
+ 	u32 icccr;
+ 	u32 flags;
++	u8 recovery_icmcr;	/* protected by adapter lock */
+ 	enum rcar_i2c_type devtype;
+ 	struct i2c_client *slave;
+ 
+@@ -158,6 +159,46 @@ static u32 rcar_i2c_read(struct rcar_i2c_priv *priv, int reg)
+ 	return readl(priv->io + reg);
  }
  
- /*
-- * Z Clock
-+ * Z Clock & Z2 Clock
-  *
-  * Traits of this clock:
-  * prepare - clk_prepare only ensures that parents are prepared
-@@ -75,11 +75,13 @@ static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
- #define CPG_FRQCRB_KICK			BIT(31)
- #define CPG_FRQCRC			0x000000e0
- #define CPG_FRQCRC_ZFC_MASK		GENMASK(12, 8)
-+#define CPG_FRQCRC_Z2FC_MASK		GENMASK(4, 0)
- 
- struct cpg_z_clk {
- 	struct clk_hw hw;
- 	void __iomem *reg;
- 	void __iomem *kick_reg;
-+	unsigned long mask;
- };
- 
- #define to_z_clk(_hw)	container_of(_hw, struct cpg_z_clk, hw)
-@@ -89,8 +91,10 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
- {
- 	struct cpg_z_clk *zclk = to_z_clk(hw);
- 	unsigned int mult;
-+	u32 val;
- 
--	mult = 32 - FIELD_GET(CPG_FRQCRC_ZFC_MASK, clk_readl(zclk->reg));
-+	val = clk_readl(zclk->reg) & zclk->mask;
-+	mult = 32 - (val >> __ffs(zclk->mask));
- 
- 	/* Factor of 2 is for fixed divider */
- 	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, 32 * 2);
-@@ -124,8 +128,8 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
- 		return -EBUSY;
- 
--	val = clk_readl(zclk->reg) & ~CPG_FRQCRC_ZFC_MASK;
--	val |= FIELD_PREP(CPG_FRQCRC_ZFC_MASK, 32 - mult);
-+	val = clk_readl(zclk->reg) & ~zclk->mask;
-+	val |= ((32 - mult) << __ffs(zclk->mask)) & zclk->mask;
- 	clk_writel(val, zclk->reg);
- 
- 	/*
-@@ -163,7 +167,8 @@ static const struct clk_ops cpg_z_clk_ops = {
- 
- static struct clk * __init cpg_z_clk_register(const char *name,
- 					      const char *parent_name,
--					      void __iomem *reg)
-+					      void __iomem *reg,
-+					      unsigned long mask)
- {
- 	struct clk_init_data init;
- 	struct cpg_z_clk *zclk;
-@@ -182,6 +187,7 @@ static struct clk * __init cpg_z_clk_register(const char *name,
- 	zclk->reg = reg + CPG_FRQCRC;
- 	zclk->kick_reg = reg + CPG_FRQCRB;
- 	zclk->hw.init = &init;
-+	zclk->mask = mask;
- 
- 	clk = clk_register(NULL, &zclk->hw);
- 	if (IS_ERR(clk))
-@@ -551,7 +557,11 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 
- 	case CLK_TYPE_GEN3_Z:
- 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
--					  base);
-+					  base, CPG_FRQCRC_ZFC_MASK);
++static int rcar_i2c_get_scl(struct i2c_adapter *adap)
++{
++	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
 +
-+	case CLK_TYPE_GEN3_Z2:
-+		return cpg_z_clk_register(core->name, __clk_get_name(parent),
-+					  base, CPG_FRQCRC_Z2FC_MASK);
++	return !!(rcar_i2c_read(priv, ICMCR) & FSCL);
++
++};
++
++static void rcar_i2c_set_scl(struct i2c_adapter *adap, int val)
++{
++	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
++
++	if (val)
++		priv->recovery_icmcr |= FSCL;
++	else
++		priv->recovery_icmcr &= ~FSCL;
++
++	rcar_i2c_write(priv, ICMCR, priv->recovery_icmcr);
++};
++
++/* No get_sda, because the HW only reports its bus free logic, not SDA itself */
++
++static void rcar_i2c_set_sda(struct i2c_adapter *adap, int val)
++{
++	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
++
++	if (val)
++		priv->recovery_icmcr |= FSDA;
++	else
++		priv->recovery_icmcr &= ~FSDA;
++
++	rcar_i2c_write(priv, ICMCR, priv->recovery_icmcr);
++};
++
++static struct i2c_bus_recovery_info rcar_i2c_bri = {
++	.get_scl = rcar_i2c_get_scl,
++	.set_scl = rcar_i2c_set_scl,
++	.set_sda = rcar_i2c_set_sda,
++	.recover_bus = i2c_generic_scl_recovery,
++};
+ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
+ {
+ 	/* reset master mode */
+@@ -170,7 +211,7 @@ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
  
- 	default:
- 		return ERR_PTR(-EINVAL);
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index c73d4d6fdc85..ea4f8fc3c4c9 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -22,6 +22,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_R,
- 	CLK_TYPE_GEN3_PE,
- 	CLK_TYPE_GEN3_Z,
-+	CLK_TYPE_GEN3_Z2,
- };
+ static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
+ {
+-	int i;
++	int i, ret;
  
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+ 	for (i = 0; i < LOOP_TIMEOUT; i++) {
+ 		/* make sure that bus is not busy */
+@@ -179,7 +220,15 @@ static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
+ 		udelay(1);
+ 	}
+ 
+-	return -EBUSY;
++	/* Waiting did not help, try to recover */
++	priv->recovery_icmcr = MDBS | OBPC | FSDA | FSCL;
++	ret = i2c_recover_bus(&priv->adap);
++
++	/* No failure when recovering, so check bus busy bit again */
++	if (ret == 0)
++		ret = (rcar_i2c_read(priv, ICMCR) & FSDA) ? -EBUSY : 0;
++
++	return ret;
+ }
+ 
+ static int rcar_i2c_clock_calculate(struct rcar_i2c_priv *priv, struct i2c_timings *t)
+@@ -851,6 +900,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 	adap->retries = 3;
+ 	adap->dev.parent = dev;
+ 	adap->dev.of_node = dev->of_node;
++	adap->bus_recovery_info = &rcar_i2c_bri;
+ 	i2c_set_adapdata(adap, priv);
+ 	strlcpy(adap->name, pdev->name, sizeof(adap->name));
+ 
 -- 
 2.11.0
