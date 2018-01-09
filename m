@@ -1,37 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f172.google.com ([209.85.223.172]:37486 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756670AbeAIOf5 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:41442 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750896AbeAILgE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 09:35:57 -0500
-Received: by mail-io0-f172.google.com with SMTP id n14so18739216iob.4
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Jan 2018 06:35:57 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20180109113554.4337-1-wsa@the-dreams.de>
-References: <20180109113554.4337-1-wsa@the-dreams.de>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 9 Jan 2018 15:35:56 +0100
-Message-ID: <CACRpkdZoVogFA+xHruC_cD5==NBgndeTAE5-v2vyaEQGMeajGQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpio: correct docs about return value of gpiod_get_direction
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-gpio@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 9 Jan 2018 06:36:04 -0500
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH 1/2] gpio: correct docs about return value of gpiod_get_direction
+Date: Tue,  9 Jan 2018 12:35:53 +0100
+Message-Id: <20180109113554.4337-1-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 9, 2018 at 12:35 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> The use of the GPIOF_* flags is deprecated, so don't advertise them
-> here. Document the plain numbers for now until we have a better
-> solution.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The use of the GPIOF_* flags is deprecated, so don't advertise them
+here. Document the plain numbers for now until we have a better
+solution.
 
-Patch applied.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index aad84a6306c4e5..d3a91cf8fc73d4 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -195,7 +195,7 @@ static int gpiochip_find_base(int ngpio)
+  * gpiod_get_direction - return the current direction of a GPIO
+  * @desc:	GPIO to get the direction of
+  *
+- * Return GPIOF_DIR_IN or GPIOF_DIR_OUT, or an error code in case of error.
++ * Returns 0 for output, 1 for input, or an error code in case of error.
+  *
+  * This function may sleep if gpiod_cansleep() is true.
+  */
+-- 
+2.11.0
