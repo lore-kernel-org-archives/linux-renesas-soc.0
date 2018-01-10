@@ -1,73 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:42188 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751392AbeABM6k (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:39003 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932547AbeAJNnL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 07:58:40 -0500
-Date: Tue, 2 Jan 2018 13:58:38 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 10/22] mmc: tmio: support IP-builtin card detection
- logic
-Message-ID: <20180102125838.ikrw7tw7njk4pcqk@ninjato>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 10 Jan 2018 08:43:11 -0500
+Received: by mail-io0-f193.google.com with SMTP id g70so22463728ioj.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jan 2018 05:43:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ftqswrhthbutkg2e"
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-11-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20180109135859.20771-4-wsa@the-dreams.de>
+References: <20180109135859.20771-1-wsa@the-dreams.de> <20180109135859.20771-4-wsa@the-dreams.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 10 Jan 2018 14:43:10 +0100
+Message-ID: <CACRpkdYZZ+KtpxxDzFdYqXT+2Gj4B4T-FwVzNw-J+Hj6f3UQEA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] i2c: add 'set_sda' to bus_recovery_info
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Reid <preid@electromag.com.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Tue, Jan 9, 2018 at 2:58 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
---ftqswrhthbutkg2e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> This will be needed when we want to create STOP conditions, too, later.
+> Create the needed fields and populate them for the GPIO case if the GPIO
+> is set to output.
+>
+> Tested-by: Phil Reid <preid@electromag.com.au>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Sat, Nov 25, 2017 at 01:24:45AM +0900, Masahiro Yamada wrote:
-> A card detect GPIO is set up only for platforms with "cd-gpios"
-> DT property or TMIO_MMC_USE_GPIO_CD flag.  However, the driver
-> core always uses mmc_gpio_get_cd, which just fails with -ENOSYS
-> if ctx->cd_gpio is unset.
->=20
-> The bit 5 of the status register provides the current signal level
-> of the CD line.  Allow to use it if the GPIO is unused.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-As mentioned before (sorry, I lost this thread :( ), I like the
-refactoring to select in probe() which function to call depending on
-GPIO usage or not. If you like, we can do the same for read_only, too.
+Geert pointed out a bug in *_cansleep() so I have merged his fix
+for v4.15.
 
-Thanks!
+Everything "should be smooth".
 
+> +                       /* FIXME: add proper flag instead of '0' once available */
+> +                       if (gpiod_get_direction(bri->sda_gpiod) == 0)
 
---ftqswrhthbutkg2e
-Content-Type: application/pgp-signature; name="signature.asc"
+Yeah I should fix ... I suspect I need to do something kernel-wide
+to shape this up.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpLgf4ACgkQFA3kzBSg
-KbbMEw/8DK8hfB3NUOun6cgZHwcC33xvWTxUqqTS3qysYwTwH4j0ibfyuxRxrZLU
-El87XIObB4kk1tvy6/YxksOmF/p3/aTX1/eRICnszu18h2wuyDwfi66BqU4X85ql
-d+1RaAUGYi6WyTlv72ANQ6FvDz7O4J6adiErAXtRqQP+4aGoVu/NnFiiubC8v13t
-0wvOSzbdQO3VgFLtoYDkReShNBQfTj76B4v+fN3CY6AxNh/xyzVxAhaJHxbFpGMx
-zHhIl6jVR7xfzeGICHdaLcLYL/zAqzqlsVD56GO5IKx8OdZh2vbXxJ0hpITuOPDW
-pflZu2fxxLXL9MuEpXDEYBVXpNRSh8eMeFtjoULwGmHF8Z+ZdWSfTUguYPTk3Tgk
-m/VeGQ7G6tUrClK+kC5sLxyBRISHOUAxLR8xheuTuowdjf+cdaIwyOoZTt4B+n2T
-d220InTQLWVlR39LP94ROyepFL5jueIbrEmrkJQq326FZw44nTzqers76TOZlrPO
-X/WKcAQIzzjgCh9s4ExDKfouKelxyo5DtUqy6Idce9X4I41CBT9z/npQRjQARp98
-I5hTToTFuTZmpOPEGmNd8Voai3/ceTjdpBimTflo45d8YZ4tWqaJP7wSv2u77Pti
-ex7z5mV29L6AQLJG+rolT20ifz9eiUp/9E0aqsBdHMYrbUPqYt0=
-=Rhf5
------END PGP SIGNATURE-----
-
---ftqswrhthbutkg2e--
+Yours,
+Linus Walleij
