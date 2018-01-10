@@ -1,44 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:44815 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932913AbeAKV6R (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:10541 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754586AbeAJIcC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Jan 2018 16:58:17 -0500
-Date: Thu, 11 Jan 2018 15:58:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wed, 10 Jan 2018 03:32:02 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Felipe Balbi <balbi@kernel.org>
+CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: usb: renesas_usbhs: Add support for
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH v4 2/3] dt-bindings: usb: renesas_usbhs: Add support for
  RZ/A1
-Message-ID: <20180111215815.xqvtdjnbgvzoyx3g@rob-hp-laptop>
+Date: Wed, 10 Jan 2018 08:31:55 +0000
+Message-ID: <TY1PR06MB0992F61847A2928F149ECB4AD8110@TY1PR06MB0992.apcprd06.prod.outlook.com>
 References: <20180108123055.64890-1-chris.brandt@renesas.com>
  <20180108123055.64890-3-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180108123055.64890-3-chris.brandt@renesas.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 08, 2018 at 07:30:54AM -0500, Chris Brandt wrote:
+Hi Chris-san,
+(And I added Felipe's email as To)
+
+> From: Chris Brandt, Sent: Monday, January 8, 2018 9:31 PM
+>=20
 > Document support for RZ/A1 SoCs
-> 
+>=20
 > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> v4:
->  * Re-added "renesas,usbhs-r7s72100"
-> v3:
->  * Removed "renesas,usbhs-r7s72100"
-> v2:
->  * Added Reviewed-by
-> ---
->  Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 2 ++
->  1 file changed, 2 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thank you for the patch!
+
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Best regards,
+Yoshihiro Shimoda
