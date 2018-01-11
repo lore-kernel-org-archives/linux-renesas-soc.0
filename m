@@ -1,30 +1,35 @@
-Return-Path: <SRS0=mAXa=D7=vger.kernel.org=linux-renesas-soc-owner@vergenet.net>
-Received: from host116-16-237-212.serverdedicati.aruba.it ([212.237.16.116]:47196
-        "EHLO host.arubacloud.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753438AbeADQUb (ORCPT
+Return-Path: <SRS0=1qNj=EG=vger.kernel.org=linux-renesas-soc-owner@vergenet.net>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46579 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933816AbeAKRA5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 11:20:31 -0500
-Received: from slsourcinggroup.com (nadneaa2.miniserver.com [78.31.108.146])
-        by host.arubacloud.com (Postfix) with ESMTPA id 6F98D756AB
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Jan 2018 17:13:32 +0100 (CET)
-MIME-Version: 1.0
-From: "Peter Deng" <peterddeng2000@securemailer.com>
-Reply-To: peterddeng2000@secsuremailer.com
+        Thu, 11 Jan 2018 12:00:57 -0500
+Received: by mail-lf0-f68.google.com with SMTP id a12so3520200lfe.13
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Jan 2018 09:00:56 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20180111165432.745995666@cogentembedded.com>
+Date: Thu, 11 Jan 2018 19:54:32 +0300
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: David Airlie <airlied@linux.ie>
+To: Rob Herring <robh+dt@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+To: dri-devel@lists.freedesktop.org
 To: linux-renesas-soc@vger.kernel.org
-Subject: Business Possibility
-Content-Type: text/plain
-Content-Transfer-Encoding: 8BIT
-Date: Thu, 4 Jan 2018 16:14:00 +0000
-Message-ID: <2532406461752264956294@nadneaa2>
+To: devicetree@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/3] Add R-Car V3M (R8A77970) support to the DU driver
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello there, My name is Peter Deng a South African citizen and a friend to Mrs Mugabe sister . I got your contact through Korean business online directory. I represent the interest of Mrs Mugabe who wishes to move a total amount of $19 million  into a safe account owns by a trusted business man who is capable of accommodating such volume of funds with absolute trust & confidentiality.
+Hello!
 
-We are willing to give 5-10 percent of the total money for this efforts . A non disclosure non circumvent agreement will be signed before the eventual transfer of funds. It is important for to know that the fund owner is going through a period of political turmoil and she is in a precarious position, so this transaction has to be highly secretive & very confidential.
+Here's the set of 3 patches against the 'drm-next' branch of David Airlie's
+'linux.git' repo plus the patch fixing LVDCR1 for R-Car gen3 posted recently.
+The main purpose of these patches is to add the R-Car V3M (R8A77970) support
+to the DU driver, we have to do some refactoring first to achieve this goal...
 
-Kindly respond back to me if this is what you can handle .
+[1/3] drm: rcar-du: lvds: refactor LVDS startup
+[2/3] drm: rcar-du: add 'model' field to 'struct rcar_du_device_info'
+[3/3] drm: rcar-du: add R8A77970 support
 
-Regards,
-
-Peter.
+MBR, Sergei
