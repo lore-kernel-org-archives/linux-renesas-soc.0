@@ -1,45 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35936 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755940AbeASSf6 (ORCPT
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:44815 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932913AbeAKV6R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 13:35:58 -0500
-Received: by mail-lf0-f68.google.com with SMTP id t79so3209871lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 10:35:57 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180119183553.649510876@cogentembedded.com>
-Date: Fri, 19 Jan 2018 21:29:20 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
+        Thu, 11 Jan 2018 16:58:17 -0500
+Date: Thu, 11 Jan 2018 15:58:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/3] DT: display: renesas,lvds: document R8A77970 bindings
+Subject: Re: [PATCH v4 2/3] dt-bindings: usb: renesas_usbhs: Add support for
+ RZ/A1
+Message-ID: <20180111215815.xqvtdjnbgvzoyx3g@rob-hp-laptop>
+References: <20180108123055.64890-1-chris.brandt@renesas.com>
+ <20180108123055.64890-3-chris.brandt@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=DT-display-renesas,lvds-document-R8A77970-bindings.patch
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180108123055.64890-3-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the R-Car V3M (R8A77970) SoC in the R-Car LVDS bindings.
+On Mon, Jan 08, 2018 at 07:30:54AM -0500, Chris Brandt wrote:
+> Document support for RZ/A1 SoCs
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v4:
+>  * Re-added "renesas,usbhs-r7s72100"
+> v3:
+>  * Removed "renesas,usbhs-r7s72100"
+> v2:
+>  * Added Reviewed-by
+> ---
+>  Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
- Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt |    1 +
- 1 file changed, 1 insertion(+)
-
-Index: linux/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-===================================================================
---- linux.orig/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-+++ linux/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-@@ -13,6 +13,7 @@ Required properties:
-   - "renesas,r8a7793-lvds" for R8A7791 (R-Car M2-N) compatible LVDS encoders
-   - "renesas,r8a7795-lvds" for R8A7795 (R-Car H3) compatible LVDS encoders
-   - "renesas,r8a7796-lvds" for R8A7796 (R-Car M3-W) compatible LVDS encoders
-+  - "renesas,r8a77970-lvds" for R8A77970 (R-Car V3M) compatible LVDS encoders
- 
- - reg: Base address and length for the memory-mapped registers
- - clocks: A phandle + clock-specifier pair for the functional clock
+Reviewed-by: Rob Herring <robh@kernel.org>
