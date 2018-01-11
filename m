@@ -1,152 +1,134 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:40112 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932740AbeALLUa (ORCPT
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:44979 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934939AbeAKSoE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 06:20:30 -0500
+        Thu, 11 Jan 2018 13:44:04 -0500
 MIME-Version: 1.0
-In-Reply-To: <23692721.edtBXv1IdE@aspire.rjw.lan>
-References: <4069324.Q7yJt6I4hJ@aspire.rjw.lan> <CAMuHMdX=rc4M9oO0dFQ9b2TtRgUXRG_37sw+MVJ3REeAa-0ogw@mail.gmail.com>
- <CAJZ5v0gvN4DDgLUfHftpJ+Mj5nPkhaKBqadzPtvLXpWs9M6nqA@mail.gmail.com> <23692721.edtBXv1IdE@aspire.rjw.lan>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jan 2018 12:20:29 +0100
-Message-ID: <CAMuHMdV8swqU+ubh9ybBR5kC1zMnn2M1qkmMGqY_Y+hJf56XWg@mail.gmail.com>
+In-Reply-To: <CAPDyKFqzON3PFgYbkBiAy0Bexzjj0YwwPZbgs6O3k3dXO_v4eA@mail.gmail.com>
+References: <4069324.Q7yJt6I4hJ@aspire.rjw.lan> <CAMuHMdUQQ_iH=HczLNoCsrbmEAG=7BKFEQbspg=SUYczt_4-WA@mail.gmail.com>
+ <CAJZ5v0gzAPkHjWEt0Vog+HcbObXSy6nqmsL1_-LT6+F3u7TPSQ@mail.gmail.com>
+ <2074722.H5Hd6orL2D@aspire.rjw.lan> <CAPDyKFoEHFpvvDgkuMSyyTMyCsmXv_Psg9uO+BjXcP0QSeE4EA@mail.gmail.com>
+ <CAJZ5v0hZZ88yjX2TThKJShhX7f1T2C9O-dOho1SsMUtQykzrZg@mail.gmail.com> <CAPDyKFqzON3PFgYbkBiAy0Bexzjj0YwwPZbgs6O3k3dXO_v4eA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 11 Jan 2018 19:44:02 +0100
+Message-ID: <CAJZ5v0hrB-myMYSXoiLw23i_O2XuSmOkKMW+Z_Zz3GgUoUjLFg@mail.gmail.com>
 Subject: Re: [PATCH v2] PM / runtime: Rework pm_runtime_force_suspend/resume()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
         Lukas Wunner <lukas@wunner.de>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rafael,
+On Thu, Jan 11, 2018 at 1:32 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-On Tue, Jan 9, 2018 at 5:25 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Tuesday, January 9, 2018 4:00:35 PM CET Rafael J. Wysocki wrote:
->> On Tue, Jan 9, 2018 at 2:37 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> > On Wed, Jan 3, 2018 at 12:06 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> >>
->> >> One of the limitations of pm_runtime_force_suspend/resume() is that
->> >> if a parent driver wants to use these functions, all of its child
->> >> drivers have to do that too because of the parent usage counter
->> >> manipulations necessary to get the correct state of the parent during
->> >> system-wide transitions to the working state (system resume).
->> >> However, that limitation turns out to be artificial, so remove it.
->> >>
->> >> Namely, pm_runtime_force_suspend() only needs to update the children
->> >> counter of its parent (if there's is a parent) when the device can
->> >> stay in suspend after the subsequent system resume transition, as
->> >> that counter is correct already otherwise.  Now, if the parent's
->> >> children counter is not updated, it is not necessary to increment
->> >> the parent's usage counter in that case any more, as long as the
->> >> children counters of devices are checked along with their usage
->> >> counters in order to decide whether or not the devices may be left
->> >> in suspend after the subsequent system resume transition.
->> >>
->> >> Accordingly, modify pm_runtime_force_suspend() to only call
->> >> pm_runtime_set_suspended() for devices whose usage and children
->> >> counters are at the "no references" level (the runtime PM status
->> >> of the device needs to be updated to "suspended" anyway in case
->> >> this function is called once again for the same device during the
->> >> transition under way), drop the parent usage counter incrementation
->> >> from it and update pm_runtime_force_resume() to compensate for these
->> >> changes.
->> >>
->> >> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> >
->> > This patch causes a regression during system resume on Renesas Salvator-XS
->> > with R-Car H3 ES2.0:
+[cut]
+
+>>>
+>>> The point is, we can go for this solution, but is it good enough?
 >>
->> I have dropped it for now, but we need to address the underlying issue.
+>> I would like to treat it as a step away from what is there today,
+>> retaining some of the existing functionality.
 >>
->> >     SError Interrupt on CPU3, code 0xbf000002 -- SError
->> >     SError Interrupt on CPU2, code 0xbf000002 -- SError
->> >     CPU: 3 PID: 1769 Comm: kworker/u16:13 Not tainted
->> > 4.15.0-rc7-arm64-renesas-05338-gf14cf570a813c9ca-dirty #97
->> >     CPU: 2 PID: 1774 Comm: kworker/u16:18 Not tainted
->> > 4.15.0-rc7-arm64-renesas-05338-gf14cf570a813c9ca-dirty #97
->> >     Hardware name: Renesas Salvator-X 2nd version board based on
->> > r8a7795 ES2.0+ (DT)
->> >     Hardware name: Renesas Salvator-X 2nd version board based on
->> > r8a7795 ES2.0+ (DT)
->> >     Workqueue: events_unbound async_run_entry_fn
->> >     Workqueue: events_unbound async_run_entry_fn
->> >     pstate: 60000005 (nZCv daif -PAN -UAO)
->> >     pstate: 60000005 (nZCv daif -PAN -UAO)
->> >     pc : rcar_gen3_phy_usb2_init+0x34/0xf8
->> >     pc : rcar_gen3_phy_usb2_init+0x34/0xf8
->> >     lr : phy_init+0x64/0xcc
->> >     lr : phy_init+0x64/0xcc
->> >     ...
->> >     Kernel panic - not syncing: Asynchronous SError Interrupt
->> >
->> > Note that before, it printed a warning instead:
->> >
->> >     Enabling runtime PM for inactive device (ee0a0200.usb-phy) with
->> > active children
->> >     WARNING: CPU: 0 PID: 1741 at drivers/base/power/runtime.c:1300
->> > pm_runtime_enable+0x94/0xd8
->> >
->> > Reverting commit 0408584d580d4a2c ("PM / runtime: Rework
->> > pm_runtime_force_suspend/resume()") fixes the crash.
->> >
->> > Note that applying Ulf's "[PATCH v2 0/3] phy: core: Re-work runtime PM
->> > deployment and fix an issue"
->> > (https://www.spinics.net/lists/linux-renesas-soc/msg21719.html) instead
->> > does not fix the crash.
->>
->> OK
->>
->> > With more debug code added, it seems the EHCI module clocks (701-703) are
->> > enabled earlier than before. I guess this triggers the workqueue to perform
->> > an operation while another related device (HSUSB 704?) is still disabled?
->>
->> Probably.
->>
->> Likely a device that wasn't resumed before resumes now and that causes
->> the issue to appear.
->>
->> I'm wondering if adding the ignore_children check to the patch helps.
->> If not, there clearly is a resume ordering issue that is papered over
->> by the current code.
+>> From a quick look at the existing users of genpd that use the device
+>> start/stop functionality, running genpd_stop_dev()/genpd_start_dev()
+>> in the "noirq" phases should not be problematic for them at least.
 >
-> Below is an alternative version of the patch that caused the problem
-> to happen which checks the ignore_children flag of the device.  It may
-> avoid the issue by accident, but then I'd rather make it not happen. :-)
+> I guess so.
+>
+> Still, the error report by Geert worries me, but I don't think it
+> worth to speculate, but rather test and see.
 
-So the delta with the previous version is:
+Agreed.
 
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1616,7 +1616,8 @@ void pm_runtime_drop_link(struct device *dev)
- static bool pm_runtime_need_not_resume(struct device *dev)
- {
-        return atomic_read(&dev->power.usage_count) <= 1 &&
--               atomic_read(&dev->power.child_count) == 0;
-+               (atomic_read(&dev->power.child_count) == 0 ||
-+                dev->power.ignore_children);
- }
+>>> Another option, is to simply to remove (and not replace with something
+>>> else) the calls to pm_runtime_force_ suspend|resume() from genpd.
+>>
+>> Right.
+>>
+>>> This moves the entire responsibility to the driver, to put its device into
+>>> low power state during system suspend, but with the benefit of that it
+>>> can decide to use the correct level of suspend/resume callbacks.
+>>
+>> Drivers of the devices in the "stop/start" domains will have to use
+>> pm_runtime_force_ suspend|resume() internally then to benefit from the
+>> domain's management of clocks, but that just may be the only way to
+>> avoid more problems.
+>
+> Agree.
 
- /**
+But this doesn't look particularly attractive to me, because it would
+add a requirement for drivers to implement their system-wide PM
+callbacks in a specific way and, in my view, no such requirements
+should be imposed by code that advertises itself as "generic" (by the
+name at least).  In particular, drivers written to this requirement
+might not be able to work correctly with other middle-layer code.
 
-> Please try this patch anyway, though, and let me know if the crash is still
-> there.
+If genpd was a bus type, that wouldn't be particularly objectionable,
+even though it is not particularly straightforward either, because
+drivers register for a particular bus type and so they need to take
+its specifics into account.  Drivers usually don't register for a
+specific PM domain, however, and at least some of them may need to
+work with different PM domain code on different platforms.
 
-Unfortunately it still fails the same way.
+>>> No matter how we do it, changing this may introduce some potential
+>>> regressions from a power consumption point of view, however although
+>>> only for those SoCs that uses the ->start|stop() callbacks. To
+>>> mitigate these power regressions, some drivers needs to be fixed, but
+>>> that seems inevitable anyway, doesn't it?
+>>
+>> Yes, it does.
+>>
+>> I would say let's try to go with this patch of mine as submitted and
+>> see how far we can get with that.
+>>
+>> That essentially doesn't prevent us from dropping the
+>> genpd_stop_dev()/genpd_start_dev() from the "noirq" stages if need be
+>> after all, but dropping them right away may cause the fallout to be
+>> more dramatic, at least in theory.
+>>
+>
+> Well, my guesses is that would be a step to make the behavior a bit
+> more deterministic and perhaps less fragile than today.
+>
+> On the other hand, I am also concerned about the future users of the
+> ->stop|start() callbacks, including related drivers dealing with the
+> affected devices. That in a sense, that converting the code in genpd
+> to what you suggest, would still not encourage related drivers to
+> behave correctly during system suspend/resume.
 
-Gr{oetje,eeting}s,
+I'm not sure what you mean here.
 
-                        Geert
+Drivers in principle should not need to worry about the ->stop|start()
+part, because that belongs to a different code layer.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+They only need to be able to expect certain things (like clocks) to be
+there (or in a specific state) when their code is running in certain
+cases.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Now, I realize that this is pure theory and that in practice, if
+->stop|start() are there, drivers working with genpd are probably
+platform-specific anyway, more or less, so it is not likely that they
+will ever have to work with any other middle-layer code.
+
+>Then down the road, when additional new users of the ->stop|start() callbacks
+> may have been added, it may be even harder to drop calling them in from the
+> noirq phases.
+>
+> So to conclude, I would prefer to drop calling
+> pm_runtime_force_suspend|resume() from genpd, without a replacement,
+> but I am willing to accept also your suggested alternative.
+
+OK
+
+Thanks,
+Rafael
