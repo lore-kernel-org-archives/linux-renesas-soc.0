@@ -1,144 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34817 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753764AbeAQQTg (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39561 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965291AbeALXOn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:19:36 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 01/16] ARM: dts: r8a7790: consistently use single space after =
-Date: Wed, 17 Jan 2018 17:17:02 +0100
-Message-Id: <20180117161717.14589-2-horms+renesas@verge.net.au>
-In-Reply-To: <20180117161717.14589-1-horms+renesas@verge.net.au>
-References: <20180117161717.14589-1-horms+renesas@verge.net.au>
+        Fri, 12 Jan 2018 18:14:43 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 09/12] ARM: dts: r8a7793: Convert to new LVDS DT bindings
+Date: Sat, 13 Jan 2018 01:14:27 +0200
+Message-Id: <20180112231430.26943-10-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Consistently use a single space after a =.
+The internal LVDS encoder now has DT bindings separate from the DU. Port
+the device tree over to the new model.
 
-This patch removes instances where a tab or multiple spaces are used
-instead.  It also avoids running over 80 columns in width in one of the
-lines where whitespace is updated.
-
-This patch should not introduce any functional change.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-v2
-* Consistently use tabs for indentation as much as possible
----
- arch/arm/boot/dts/r8a7790.dtsi | 75 +++++++++++++++++++++---------------------
- 1 file changed, 38 insertions(+), 37 deletions(-)
+Changes since v1:
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 13926fc7abfa..b4306f7c1bbb 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -291,9 +291,9 @@
- 	};
+- Remove the DU reg-names property
+---
+ arch/arm/boot/dts/r8a7793-gose.dts | 10 +++++++---
+ arch/arm/boot/dts/r8a7793.dtsi     | 34 ++++++++++++++++++++++++++++------
+ 2 files changed, 35 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 51b3ffac8efa..c6121f9b72a8 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -303,10 +303,9 @@
+ 	pinctrl-names = "default";
+ 	status = "okay";
  
- 	thermal: thermal@e61f0000 {
--		compatible =	"renesas,thermal-r8a7790",
--				"renesas,rcar-gen2-thermal",
--				"renesas,rcar-thermal";
-+		compatible = "renesas,thermal-r8a7790",
-+			     "renesas,rcar-gen2-thermal",
-+			     "renesas,rcar-thermal";
- 		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 522>;
-@@ -423,20 +423,20 @@
- 	audma0: dma-controller@ec700000 {
- 		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
- 		reg = <0 0xec700000 0 0x10000>;
--		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error",
- 				"ch0", "ch1", "ch2", "ch3",
- 				"ch4", "ch5", "ch6", "ch7",
-@@ -453,20 +453,20 @@
- 	audma1: dma-controller@ec720000 {
- 		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
- 		reg = <0 0xec720000 0 0x10000>;
--		interrupts =	<GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error",
- 				"ch0", "ch1", "ch2", "ch3",
- 				"ch4", "ch5", "ch6", "ch7",
-@@ -1437,12 +1437,13 @@
- 		 * Single DAI : #sound-dai-cells = <0>;         <&rcar_sound>;
- 		 * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
- 		 */
--		compatible =  "renesas,rcar_sound-r8a7790", "renesas,rcar_sound-gen2";
--		reg =	<0 0xec500000 0 0x1000>, /* SCU */
--			<0 0xec5a0000 0 0x100>,  /* ADG */
--			<0 0xec540000 0 0x1000>, /* SSIU */
--			<0 0xec541000 0 0x280>,  /* SSI */
--			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
-+		compatible = "renesas,rcar_sound-r8a7790",
-+			     "renesas,rcar_sound-gen2";
-+		reg = <0 0xec500000 0 0x1000>, /* SCU */
-+		      <0 0xec5a0000 0 0x100>,  /* ADG */
-+		      <0 0xec540000 0 0x1000>, /* SSIU */
-+		      <0 0xec541000 0 0x280>,  /* SSI */
-+		      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
- 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
+-	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
++	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
+ 		 <&x13_clk>, <&x2_clk>;
+-	clock-names = "du.0", "du.1", "lvds.0",
+-		      "dclkin.0", "dclkin.1";
++	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
  
- 		clocks = <&cpg CPG_MOD 1005>,
+ 	ports {
+ 		port@0 {
+@@ -314,6 +313,11 @@
+ 				remote-endpoint = <&adv7511_in>;
+ 			};
+ 		};
++	};
++};
++
++&lvds0 {
++	ports {
+ 		port@1 {
+ 			lvds_connector: endpoint {
+ 			};
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 0cd1035de1a4..c382a57df168 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -976,15 +976,12 @@
+ 
+ 	du: display@feb00000 {
+ 		compatible = "renesas,du-r8a7793";
+-		reg = <0 0xfeb00000 0 0x40000>,
+-		      <0 0xfeb90000 0 0x1c>;
+-		reg-names = "du", "lvds.0";
++		reg = <0 0xfeb00000 0 0x40000>;
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 724>,
+-			 <&cpg CPG_MOD 723>,
+-			 <&cpg CPG_MOD 726>;
+-		clock-names = "du.0", "du.1", "lvds.0";
++			 <&cpg CPG_MOD 723>;
++		clock-names = "du.0", "du.1";
+ 		status = "disabled";
+ 
+ 		ports {
+@@ -999,6 +996,31 @@
+ 			port@1 {
+ 				reg = <1>;
+ 				du_out_lvds0: endpoint {
++					remote-endpoint = <&lvds0_in>;
++				};
++			};
++		};
++	};
++
++	lvds0: lvds@feb90000 {
++		compatible = "renesas,lvds-r8a7793";
++		reg = <0 0xfeb90000 0 0x1c>;
++		clocks = <&cpg CPG_MOD 726>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				lvds0_in: endpoint {
++					remote-endpoint = <&du_out_lvds0>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				lvds0_out: endpoint {
+ 				};
+ 			};
+ 		};
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
