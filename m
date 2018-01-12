@@ -1,44 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39819 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756314AbeASWrW (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39555 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965296AbeALXOf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 17:47:22 -0500
-Date: Fri, 19 Jan 2018 16:47:20 -0600
-From: Rob Herring <robh@kernel.org>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Fri, 12 Jan 2018 18:14:35 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 01/12] dt-bindings: display: renesas: Add R-Car LVDS
- encoder DT bindings
-Message-ID: <20180119224720.x5xrf5piagwwg7jj@rob-hp-laptop>
+Subject: [PATCH v2 01/12] dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
+Date: Sat, 13 Jan 2018 01:14:19 +0200
+Message-Id: <20180112231430.26943-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180112231430.26943-2-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180112231430.26943-2-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Jan 13, 2018 at 01:14:19AM +0200, Laurent Pinchart wrote:
-> The Renesas R-Car Gen2 and Gen3 SoCs have internal LVDS encoders. Add
-> corresponding device tree bindings.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
-> Changes since v1:
-> 
-> - Move the SoC name before the IP name in compatible strings
-> - Rename parallel input to parallel RGB input
-> - Fixed "renesas,r8a7743-lvds" description
-> - Document the resets property
-> - Fixed typo
-> ---
->  .../bindings/display/bridge/renesas,lvds.txt       | 56 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+The Renesas R-Car Gen2 and Gen3 SoCs have internal LVDS encoders. Add
+corresponding device tree bindings.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v1:
+
+- Move the SoC name before the IP name in compatible strings
+- Rename parallel input to parallel RGB input
+- Fixed "renesas,r8a7743-lvds" description
+- Document the resets property
+- Fixed typo
+---
+ .../bindings/display/bridge/renesas,lvds.txt       | 56 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+new file mode 100644
+index 000000000000..2b19ce51ec07
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+@@ -0,0 +1,56 @@
++Renesas R-Car LVDS Encoder
++==========================
++
++These DT bindings describe the LVDS encoder embedded in the Renesas R-Car
++Gen2, R-Car Gen3 and RZ/G SoCs.
++
++Required properties:
++
++- compatible : Shall contain one of
++  - "renesas,r8a7743-lvds" for R8A7743 (RZ/G1M) compatible LVDS encoders
++  - "renesas,r8a7790-lvds" for R8A7790 (R-Car H2) compatible LVDS encoders
++  - "renesas,r8a7791-lvds" for R8A7791 (R-Car M2-W) compatible LVDS encoders
++  - "renesas,r8a7793-lvds" for R8A7791 (R-Car M2-N) compatible LVDS encoders
++  - "renesas,r8a7795-lvds" for R8A7795 (R-Car H3) compatible LVDS encoders
++  - "renesas,r8a7796-lvds" for R8A7796 (R-Car M3-W) compatible LVDS encoders
++
++- reg: Base address and length for the memory-mapped registers
++- clocks: A phandle + clock-specifier pair for the functional clock
++- resets: A phandle + reset specifier for the module reset
++
++Required nodes:
++
++The LVDS encoder has two video ports. Their connections are modelled using the
++OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
++
++- Video port 0 corresponds to the parallel RGB input
++- Video port 1 corresponds to the LVDS output
++
++Each port shall have a single endpoint.
++
++
++Example:
++
++	lvds0: lvds@feb90000 {
++		compatible = "renesas,r8a7790-lvds";
++		reg = <0 0xfeb90000 0 0x1c>;
++		clocks = <&cpg CPG_MOD 726>;
++		resets = <&cpg 726>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				lvds0_in: endpoint {
++					remote-endpoint = <&du_out_lvds0>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				lvds0_out: endpoint {
++				};
++			};
++		};
++	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 40aea858c7ea..5609a7f5ac4d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4725,6 +4725,7 @@ F:	drivers/gpu/drm/rcar-du/
+ F:	drivers/gpu/drm/shmobile/
+ F:	include/linux/platform_data/shmob_drm.h
+ F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
++F:	Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+ F:	Documentation/devicetree/bindings/display/renesas,du.txt
+ 
+ DRM DRIVERS FOR ROCKCHIP
+-- 
+Regards,
+
+Laurent Pinchart
