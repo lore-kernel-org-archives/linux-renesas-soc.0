@@ -1,51 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from o1.7nn.fshared.sendgrid.net ([167.89.55.65]:43041 "EHLO
-        o1.7nn.fshared.sendgrid.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S966866AbeAOQio (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39559 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965270AbeALXOn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Jan 2018 11:38:44 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 9/9] v4l: vsp1: Reduce display list body size
-Date: Mon, 15 Jan 2018 16:38:43 +0000 (UTC)
-Message-Id: <fa58cc7e478813b2e3e8a7e5f646e4c9db844312.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 12 Jan 2018 18:14:43 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 10/12] ARM: dts: r8a7794: Convert to new DU DT bindings
+Date: Sat, 13 Jan 2018 01:14:28 +0200
+Message-Id: <20180112231430.26943-11-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The display list originally allocated a body of 256 entries to store all
-of the register lists required for each frame.
+The DU DT bindings have been updated to drop the reg-names property.
+Update the r8a7792 device tree accordingly.
 
-This has now been separated into fragments for constant stream setup, and
-runtime updates.
-
-Empirical testing shows that the body0 now uses a maximum of 41
-registers for each frame, for both DRM and Video API pipelines thus a
-rounded 64 entries provides a suitable allocation.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_dl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 1fc52496fc13..ce315821b60c 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -21,7 +21,7 @@
- #include "vsp1.h"
- #include "vsp1_dl.h"
- 
--#define VSP1_DL_NUM_ENTRIES		256
-+#define VSP1_DL_NUM_ENTRIES		64
- 
- #define VSP1_DLH_INT_ENABLE		(1 << 1)
- #define VSP1_DLH_AUTO_START		(1 << 0)
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 5643976c1356..cccdada9e4a4 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -992,7 +992,6 @@
+ 	du: display@feb00000 {
+ 		compatible = "renesas,du-r8a7794";
+ 		reg = <0 0xfeb00000 0 0x40000>;
+-		reg-names = "du";
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
 -- 
-git-series 0.9.1
+Regards,
+
+Laurent Pinchart
