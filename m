@@ -1,144 +1,168 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 5/9] v4l: vsp1: Use reference counting for bodies
-Date: Mon, 15 Jan 2018 16:38:42 +0000 (UTC)
-Message-Id: <edfe6825f7ce2400c215a2a2247d68f25ed8f678.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39561 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965328AbeALXOo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 12 Jan 2018 18:14:44 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 11/12] arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
+Date: Sat, 13 Jan 2018 01:14:29 +0200
+Message-Id: <20180112231430.26943-12-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Extend the display list body with a reference count, allowing bodies to
-be kept as long as a reference is maintained. This provides the ability
-to keep a cached copy of bodies which will not change, so that they can
-be re-applied to multiple display lists.
+The internal LVDS encoder now has DT bindings separate from the DU. Port
+the device tree over to the new model.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-This could be squashed into the body update code, but it's not a
-straightforward squash as the refcounts will affect both:
-  v4l: vsp1: Provide a body pool
-and
-  v4l: vsp1: Convert display lists to use new body pool
-therefore, I have kept this separate to prevent breaking bisectability
-of the vsp-tests.
+Changes since v1:
 
-v3:
- - 's/fragment/body/'
-
-v4:
- - Fix up reference handling comments.
+- Remove the DU reg-names property
 ---
- drivers/media/platform/vsp1/vsp1_clu.c |  7 ++++++-
- drivers/media/platform/vsp1/vsp1_dl.c  | 15 ++++++++++++++-
- drivers/media/platform/vsp1/vsp1_lut.c |  7 ++++++-
- 3 files changed, 26 insertions(+), 3 deletions(-)
+ .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |  3 +-
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |  3 +-
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  3 +-
+ .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |  3 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 34 ++++++++++++++++++----
+ 5 files changed, 32 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
-index a765d56c4118..1142d004e238 100644
---- a/drivers/media/platform/vsp1/vsp1_clu.c
-+++ b/drivers/media/platform/vsp1/vsp1_clu.c
-@@ -216,8 +216,13 @@ static void clu_configure(struct vsp1_entity *entity,
- 		clu->clu = NULL;
- 		spin_unlock_irqrestore(&clu->lock, flags);
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+index 9ef9a4e5f376..0dda1c0ed1ce 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+@@ -43,12 +43,11 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock5 1>,
+ 		 <&x21_clk>,
+ 		 <&x22_clk>,
+ 		 <&versaclock5 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
  
--		if (dlb)
-+		if (dlb) {
- 			vsp1_dl_list_add_body(dl, dlb);
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 0afe777973de..f0d6528c05eb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -44,11 +44,10 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock5 1>,
+ 		 <&versaclock5 3>,
+ 		 <&versaclock5 4>,
+ 		 <&versaclock5 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 00ad1ab53a7d..e34b986185d4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -43,12 +43,11 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock5 1>,
+ 		 <&x21_clk>,
+ 		 <&x22_clk>,
+ 		 <&versaclock5 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index 79e8b65622db..31f2abaa90aa 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -43,12 +43,11 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock6 1>,
+ 		 <&x21_clk>,
+ 		 <&x22_clk>,
+ 		 <&versaclock6 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 15ef292a8d9f..8e14873455b9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2077,9 +2077,7 @@
+ 
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7795";
+-			reg = <0 0xfeb00000 0 0x80000>,
+-			      <0 0xfeb90000 0 0x14>;
+-			reg-names = "du", "lvds.0";
++			reg = <0 0xfeb00000 0 0x80000>;
+ 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
+@@ -2087,9 +2085,8 @@
+ 			clocks = <&cpg CPG_MOD 724>,
+ 				 <&cpg CPG_MOD 723>,
+ 				 <&cpg CPG_MOD 722>,
+-				 <&cpg CPG_MOD 721>,
+-				 <&cpg CPG_MOD 727>;
+-			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
++				 <&cpg CPG_MOD 721>;
++			clock-names = "du.0", "du.1", "du.2", "du.3";
+ 			vsps = <&vspd0 0 &vspd1 0 &vspd2 0 &vspd0 1>;
+ 			status = "disabled";
+ 
+@@ -2117,6 +2114,31 @@
+ 				port@3 {
+ 					reg = <3>;
+ 					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
++					};
++				};
++			};
++		};
 +
-+			/* release our local reference */
-+			vsp1_dl_body_put(dlb);
-+		}
++		lvds0: lvds@feb90000 {
++			compatible = "renesas,lvds-r8a7795";
++			reg = <0 0xfeb90000 0 0x14>;
++			clocks = <&cpg CPG_MOD 727>;
++			status = "disabled";
 +
- 		break;
- 	}
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 961c3fd2ff1c..2784d3b48b02 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -14,6 +14,7 @@
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
- #include <linux/gfp.h>
-+#include <linux/refcount.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
- 
-@@ -58,6 +59,8 @@ struct vsp1_dl_body {
- 	struct list_head list;
- 	struct list_head free;
- 
-+	refcount_t refcnt;
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
- 	struct vsp1_dl_body_pool *pool;
- 	struct vsp1_device *vsp1;
- 
-@@ -259,6 +262,7 @@ struct vsp1_dl_body *vsp1_dl_body_get(struct vsp1_dl_body_pool *pool)
- 	if (!list_empty(&pool->free)) {
- 		dlb = list_first_entry(&pool->free, struct vsp1_dl_body, free);
- 		list_del(&dlb->free);
-+		refcount_set(&dlb->refcnt, 1);
- 	}
- 
- 	spin_unlock_irqrestore(&pool->lock, flags);
-@@ -279,6 +283,9 @@ void vsp1_dl_body_put(struct vsp1_dl_body *dlb)
- 	if (!dlb)
- 		return;
- 
-+	if (!refcount_dec_and_test(&dlb->refcnt))
-+		return;
-+
- 	dlb->num_entries = 0;
- 
- 	spin_lock_irqsave(&dlb->pool->lock, flags);
-@@ -465,7 +472,11 @@ void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data)
-  * in the order in which bodies are added.
-  *
-  * Adding a body to a display list passes ownership of the body to the list. The
-- * caller must not touch the body after this call.
-+ * caller retains its reference to the fragment when adding it to the display
-+ * list, but is not allowed to add new entries to the body.
-+ *
-+ * The reference must be explicitly released by a call to vsp1_dl_body_put()
-+ * when the body isn't needed anymore.
-  *
-  * Additional bodies are only usable for display lists in header mode.
-  * Attempting to add a body to a header-less display list will return an error.
-@@ -477,6 +488,8 @@ int vsp1_dl_list_add_body(struct vsp1_dl_list *dl,
- 	if (dl->dlm->mode != VSP1_DL_MODE_HEADER)
- 		return -EINVAL;
- 
-+	refcount_inc(&dlb->refcnt);
-+
- 	list_add_tail(&dlb->list, &dl->bodies);
- 	return 0;
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
-index a9cf874312c1..7643f18b1ea6 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/vsp1/vsp1_lut.c
-@@ -172,8 +172,13 @@ static void lut_configure(struct vsp1_entity *entity,
- 		lut->lut = NULL;
- 		spin_unlock_irqrestore(&lut->lock, flags);
- 
--		if (dlb)
-+		if (dlb) {
- 			vsp1_dl_list_add_body(dl, dlb);
-+
-+			/* release our local reference */
-+			vsp1_dl_body_put(dlb);
-+		}
-+
- 		break;
- 	}
- }
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
+ 					};
+ 				};
+ 			};
 -- 
-git-series 0.9.1
+Regards,
+
+Laurent Pinchart
