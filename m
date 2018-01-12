@@ -1,45 +1,49 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:44269 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754350AbeALJrE (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 12 Jan 2018 04:47:04 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 Jan 2018 10:47:03 +0100
+Message-ID: <CAMuHMdWJ=5O4+FyutUdtWY+8yBwBy_fKqJ-vZGUKKUuvpeB8FQ@mail.gmail.com>
+Subject: Re: [PATCH 00/10] R-Car DU: Convert LVDS code to bridge driver
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: DRI Development <dri-devel@lists.freedesktop.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH 00/10] R-Car DU: Convert LVDS code to bridge driver
-Date: Fri, 12 Jan 2018 15:48:25 +0200
-Message-ID: <2317358.st5FeEE5QH@avalon>
-In-Reply-To: <CAMuHMdWJ=5O4+FyutUdtWY+8yBwBy_fKqJ-vZGUKKUuvpeB8FQ@mail.gmail.com>
-References: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdWJ=5O4+FyutUdtWY+8yBwBy_fKqJ-vZGUKKUuvpeB8FQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Laurent,
 
-On Friday, 12 January 2018 11:47:03 EET Geert Uytterhoeven wrote:
-> On Fri, Jan 12, 2018 at 1:58 AM, Laurent Pinchart wrote:
-> > This patch series addresses a design mistake that dates back from the
-> > initial DU support. Support for the LVDS encoders, which are IP cores
-> > separate from the DU, was bundled in the DU driver. Worse, both the DU
-> > and LVDS were described through a single DT node.
-> > 
-> > To fix the, patches 01/10 and 02/10 define new DT bindings for the LVDS
-> > encoders, and deprecate their description inside the DU bindings. To
-> > retain backward compatibility with existing DT, patch 03/10 then patches
-> > the device tree at runtime to convert the legacy bindings to the new ones.
-> 
-> Looks like we will have to postpone the R-Car Gen2 Modern DT flag day
-> again by a few kernel releases?
+On Fri, Jan 12, 2018 at 1:58 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> This patch series addresses a design mistake that dates back from the initial
+> DU support. Support for the LVDS encoders, which are IP cores separate from
+> the DU, was bundled in the DU driver. Worse, both the DU and LVDS were
+> described through a single DT node.
+>
+> To fix the, patches 01/10 and 02/10 define new DT bindings for the LVDS
+> encoders, and deprecate their description inside the DU bindings. To retain
+> backward compatibility with existing DT, patch 03/10 then patches the device
+> tree at runtime to convert the legacy bindings to the new ones.
 
-Why so ? We don't have to drop support for all legacy DT bindings at the same 
-time, do we ? We can switch to the new-style clock bindings on Gen2 already, 
-and drop the legacy LVDS bindings later.
+Looks like we will have to postpone the R-Car Gen2 Modern DT flag day
+again by a few kernel releases?
 
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
