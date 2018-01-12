@@ -1,51 +1,42 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180118211024.314876177@cogentembedded.com>
-Date: Fri, 19 Jan 2018 00:05:58 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 1/2] DT: display: renesas,du: document R8A77970 bindings
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=DT-display-renesas,du-document-R8A77970-bindings-v2.patch
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60795 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932298AbeALDUm (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 11 Jan 2018 22:20:42 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] drm: rcar-du: Enable VSP compositor by default on Gen3
+Date: Fri, 12 Jan 2018 05:20:35 +0200
+Message-Id: <20180112032035.11977-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the R-Car V3M (R8A77970) SoC in the R-Car DU bindings.
+On Gen3 hardware the VSP compositor is required for display. Enable it
+by default in the kernel configuration. The option is kept
+user-configurable for testing purpose on Gen2 platforms.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-Changes in version 2:
-- documented  R8A77970 DU ports;
-- patch split from the main R8A77970 DU support patch.
+ drivers/gpu/drm/rcar-du/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/display/renesas,du.txt |    2 ++
- 1 file changed, 2 insertions(+)
+diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+index 1d6f1b849287..2b104daf56eb 100644
+--- a/drivers/gpu/drm/rcar-du/Kconfig
++++ b/drivers/gpu/drm/rcar-du/Kconfig
+@@ -27,7 +27,8 @@ config DRM_RCAR_LVDS
+ 	  Enable support for the R-Car Display Unit embedded LVDS encoders.
+ 
+ config DRM_RCAR_VSP
+-	bool "R-Car DU VSP Compositor Support"
++	bool "R-Car DU VSP Compositor Support" if ARM
++	default y if ARM64
+ 	depends on DRM_RCAR_DU
+ 	depends on VIDEO_RENESAS_VSP1=y || (VIDEO_RENESAS_VSP1 && DRM_RCAR_DU=m)
+ 	help
+-- 
+Regards,
 
-Index: linux/Documentation/devicetree/bindings/display/renesas,du.txt
-===================================================================
---- linux.orig/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ linux/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -13,6 +13,7 @@ Required Properties:
-     - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
-     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
-     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
-+    - "renesas,du-r8a77970" for R8A77970 (R-Car V3M) compatible DU
- 
-   - reg: A list of base address and length of each memory resource, one for
-     each entry in the reg-names property.
-@@ -63,6 +64,7 @@ corresponding to each DU output.
-  R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
-  R8A7795 (R-Car H3)   DPAD 0         HDMI 0         HDMI 1         LVDS 0
-  R8A7796 (R-Car M3-W) DPAD 0         HDMI 0         LVDS 0         -
-+ R8A77970 (R-Car V3M) DPAD 0         LVDS 0         -              -
- 
- 
- Example: R8A7795 (R-Car H3) ES2.0 DU
-
+Laurent Pinchart
