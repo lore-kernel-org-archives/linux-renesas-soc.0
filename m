@@ -1,95 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:44184 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751836AbeABN2P (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39559 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965328AbeALXOh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 08:28:15 -0500
-Received: by mail-io0-f179.google.com with SMTP id k18so8537061ioc.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 Jan 2018 05:28:15 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1828343.cNA3rGR90B@aspire.rjw.lan>
-References: <1513778960-10073-1-git-send-email-ulf.hansson@linaro.org>
- <CAJZ5v0hmSaWiy9zQPP+0FySySW4yNCm92mTtJ7ebd+rBjjqJng@mail.gmail.com>
- <CAPDyKFpHNYbf3Wz+Hq94Rm_wQGWnQkc6B2cS_RTjkmcbeeZoyw@mail.gmail.com> <1828343.cNA3rGR90B@aspire.rjw.lan>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 2 Jan 2018 14:28:14 +0100
-Message-ID: <CAPDyKFrrHkhNH6Qr4NJQjPSVh+Ok-wC5-vrY5bi85Jk63Ash0A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] phy: core: Move runtime PM reference counting to
- the parent device
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 12 Jan 2018 18:14:37 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 02/12] dt-bindings: display: renesas: Deprecate LVDS support in the DU bindings
+Date: Sat, 13 Jan 2018 01:14:20 +0200
+Message-Id: <20180112231430.26943-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 24 December 2017 at 13:00, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Saturday, December 23, 2017 4:09:33 PM CET Ulf Hansson wrote:
->> [...]
->>
->> >
->> > So IMO the changes you are proposing make sense regardless of the
->> > genpd issue, because they generally simplify the phy code, but the
->> > additional use_runtime_pm field in struct phy represents redundant
->> > information (manipulating reference counters shouldn't matter if
->> > runtime PM is disabled), so it doesn't appear to be necessary.
->> >
->>
->> Actually, the first version I posted treated the return codes from
->> pm_runtime_get_sync() according to your suggestion above.
->>
->> However, Kishon pointed out that it didn't work. That's because, there
->> are phy provider drivers that enables runtime PM *after* calling
->> phy_create(). And in those cases, that is because they want to treat
->> runtime PM themselves.
->>
->> I think that's probably something we should look into to change, but I
->> find it being a separate issue, that I didn't want to investigate as
->> part of this series.
->>
->> See more about the thread here:
->> https://www.spinics.net/lists/linux-renesas-soc/msg21711.html
->
-> Even so, it shouldn't matter when the provider enables runtime PM.
->
-> Calling pm_runtime_get_*()/pm_runtime_put_*() should always work as
-> long as they are balanced properly regardless of whether or not
-> runtime PM is enabled for the device or it is enabled in the meantime.
-> Of course, the initial runtime PM status of the device must reflect
-> the values of the usage counters, but that should not be too hard to
-> ensure.
+The internal LVDS encoders now have their own DT bindings, representing
+them as part of the DU is deprecated.
 
-Yes, this is probably the main reason.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v1:
 
-However, as stated, I think we should look into addressing this
-problem more carefully, in a separate next step.
+- Remove the LVDS reg range from the example
+- Remove the reg-names property
+---
+ .../devicetree/bindings/display/renesas,du.txt     | 31 ++++++++--------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
->
-> The reason why it matters here is because the phy core tries to be smart
-> about manipulating reference counters by itself and that's a mistake.
->
-> So it looks to me like the whole thing needs to be reworked and yes,
-> that should be done in the first place IMO, because it will make the
-> issue with genpd go away automatically.
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index cd48aba3bc8c..e79cf9b0ad38 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -14,12 +14,7 @@ Required Properties:
+     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
+     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
+ 
+-  - reg: A list of base address and length of each memory resource, one for
+-    each entry in the reg-names property.
+-  - reg-names: Name of the memory resources. The DU requires one memory
+-    resource for the DU core (named "du") and one memory resource for each
+-    LVDS encoder (named "lvds.x" with "x" being the LVDS controller numerical
+-    index).
++  - reg: the memory-mapped I/O registers base address and length
+ 
+   - interrupt-parent: phandle of the parent interrupt controller.
+   - interrupts: Interrupt specifiers for the DU interrupts.
+@@ -29,14 +24,13 @@ Required Properties:
+   - clock-names: Name of the clocks. This property is model-dependent.
+     - R8A7779 uses a single functional clock. The clock doesn't need to be
+       named.
+-    - All other DU instances use one functional clock per channel and one
+-      clock per LVDS encoder (if available). The functional clocks must be
+-      named "du.x" with "x" being the channel numerical index. The LVDS clocks
+-      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
+-    - In addition to the functional and encoder clocks, all DU versions also
+-      support externally supplied pixel clocks. Those clocks are optional.
+-      When supplied they must be named "dclkin.x" with "x" being the input
+-      clock numerical index.
++    - All other DU instances use one functional clock per channel The
++      functional clocks must be named "du.x" with "x" being the channel
++      numerical index.
++    - In addition to the functional clocks, all DU versions also support
++      externally supplied pixel clocks. Those clocks are optional. When
++      supplied they must be named "dclkin.x" with "x" being the input clock
++      numerical index.
+ 
+   - vsps: A list of phandle and channel index tuples to the VSPs that handle
+     the memory interfaces for the DU channels. The phandle identifies the VSP
+@@ -69,9 +63,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 
+ 	du: display@feb00000 {
+ 		compatible = "renesas,du-r8a7795";
+-		reg = <0 0xfeb00000 0 0x80000>,
+-		      <0 0xfeb90000 0 0x14>;
+-		reg-names = "du", "lvds.0";
++		reg = <0 0xfeb00000 0 0x80000>;
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
+@@ -79,9 +71,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 		clocks = <&cpg CPG_MOD 724>,
+ 			 <&cpg CPG_MOD 723>,
+ 			 <&cpg CPG_MOD 722>,
+-			 <&cpg CPG_MOD 721>,
+-			 <&cpg CPG_MOD 727>;
+-		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
++			 <&cpg CPG_MOD 721>;
++		clock-names = "du.0", "du.1", "du.2", "du.3";
+ 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 
+ 		ports {
+-- 
+Regards,
 
-Sorry, but I am not fully understanding what you suggest here. Perhaps
-you didn't check patch2?
-
->
-> [Why is phy_pm_runtime_get() there at all, for instance?  It seems
-> to have no users and I kind of don't see use cases for it.  Also
-> phy_pm_runtime_get_sync() is only used by the phy core in three
-> places - shouldn't be too hard to fix that.]
-
-Removing these APIs and functions is done in patch2, so I guess I am
-already doing what you suggests above? No?
-
-[...]
-
-Kind regards
-Uffe
+Laurent Pinchart
