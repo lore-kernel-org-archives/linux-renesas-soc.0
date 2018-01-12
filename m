@@ -1,70 +1,128 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48314 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751430AbeAPWm5 (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36205 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932740AbeALJCJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jan 2018 17:42:57 -0500
-Date: Tue, 16 Jan 2018 23:42:55 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 21/22] mmc: tmio: move {tmio_}mmc_of_parse() to
- tmio_mmc_host_alloc()
-Message-ID: <20180116224255.sf6bm53qk54cr4gq@tetsubishi>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-22-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 12 Jan 2018 04:02:09 -0500
+Received: by mail-lf0-f66.google.com with SMTP id e203so5157123lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jan 2018 01:02:09 -0800 (PST)
+Subject: Re: [PATCH 1/3] drm: rcar-du: lvds: refactor LVDS startup
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20180111170055.878913975@cogentembedded.com>
+ <2087195.Y7A8apsEt0@avalon>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <f61e3cd0-7b3a-5dc1-354a-227b3407c18e@cogentembedded.com>
+Date: Fri, 12 Jan 2018 12:02:07 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6ke3noqytirshwmf"
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-22-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <2087195.Y7A8apsEt0@avalon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello!
 
---6ke3noqytirshwmf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 1/12/2018 4:26 AM, Laurent Pinchart wrote:
 
-On Sat, Nov 25, 2017 at 01:24:56AM +0900, Masahiro Yamada wrote:
-> mmc_of_parse() parses various DT properties and sets capability flags
-> accordingly.  However, drivers have no chance to run platform init
-> code depending on such flags because mmc_of_parse() is called from
-> tmio_mmc_host_probe().
->=20
-> Move mmc_of_parse() to tmio_mmc_host_alloc() so that drivers can
-> handle capabilities before mmc_add_host().  Move tmio_mmc_of_parse()
-> likewise.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> After the recent correction of the R-Car gen3 LVDCR1 value, already similar
+>> enough at their  ends rcar_du_lvdsenc_start_gen{2|3}() started asking for a
+>> merge and it's becoming actually necessary with the addition the R-Car V3M
+>> (R8A77970) support -- this  gen3 SoC  has gen2-like LVDPLLCR layout.
+>>
+>> BTW, such a merge saves 72 bytes of the object code with AArch64 gcc 4.8.5.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>>   drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |  132 +++++++++++---------------
+>>   1 file changed, 54 insertions(+), 78 deletions(-)
+>>
+>> Index: linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+>> ===================================================================
+>> --- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+>> +++ linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+>> @@ -39,98 +39,41 @@ static void rcar_lvds_write(struct rcar_
+[...]
+>>   static int rcar_du_lvdsenc_start(struct rcar_du_lvdsenc *lvds,
+>>   				 struct rcar_du_crtc *rcrtc)
+>>   {
+>> -	u32 lvdhcr;
+>> +	u32 lvdhcr, lvdpllcr, lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
+> 
+> Please declare variables on separate lines. Especially having lvdcr0 on a line
+> of its own will make it clearer.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+    OK.
 
+>> +	const struct drm_display_mode *mode = &rcrtc->crtc.mode;
+>> +	unsigned int gen = lvds->dev->info->gen;
+>> +	unsigned int freq = mode->clock;
+>>   	int ret;
+>>
+>>   	if (lvds->enabled)
+>> @@ -158,14 +101,47 @@ static int rcar_du_lvdsenc_start(struct
+>>   	else
+>>   		lvdhcr = LVDCHCR_CHSEL_CH(0, 0) | LVDCHCR_CHSEL_CH(1, 1)
+>>
+>>   		       | LVDCHCR_CHSEL_CH(2, 2) | LVDCHCR_CHSEL_CH(3, 3);
+>>
+>> -
+>>   	rcar_lvds_write(lvds, LVDCHCR, lvdhcr);
+>>
+>> -	/* Perform generation-specific initialization. */
+>> -	if (lvds->dev->info->gen < 3)
+>> -		rcar_du_lvdsenc_start_gen2(lvds, rcrtc);
+>> +	/* PLL clock configuration */
+>> +	if (gen < 3)
+>> +		lvdpllcr = rcar_lvds_gen2_lvdpllcr(freq);
+>>   	else
+>> -		rcar_du_lvdsenc_start_gen3(lvds, rcrtc);
+>> +		lvdpllcr = rcar_lvds_gen3_lvdpllcr(freq);
+>> +	rcar_lvds_write(lvds, LVDPLLCR,	lvdpllcr);
+>> +
+>> +	if (gen < 3) {
+>> +		/*
+>> +		 * Select the input, enable LVDS operation, and turn
+>> +		 * the bias circuitry on.
+>> +		 */
+>> +		lvdcr0 |= LVDCR0_BEN | LVDCR0_LVEN;
+>> +		if (rcrtc->index == 2)
+>> +			lvdcr0 |= LVDCR0_DUSEL;
+>> +		rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+>> +	}
+>> +
+>> +	/* Turn all the channels on. */
+>> +	rcar_lvds_write(lvds, LVDCR1,
+>> +			LVDCR1_CHSTBY(3) | LVDCR1_CHSTBY(2) |
+>> +			LVDCR1_CHSTBY(1) | LVDCR1_CHSTBY(0) | LVDCR1_CLKSTBY);
+>> +
+>> +	/* Turn the PLL on. */
+>> +	lvdcr0 |= LVDCR0_PLLON;
+>> +	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+>> +
+>> +	if (gen > 2) {
+>> +		/* Turn on the LVDS normal mode. */
+>> +		lvdcr0 |= LVDCR0_PWD;
+>> +		rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+>> +	}
+>> +
+>> +	/* Wait for the startup delay. */
+>> +	usleep_range(100, 150);
+>> +
+>> +	/* Turn the output on. */
+>> +	lvdcr0 |= LVDCR0_LVRES;
+>> +	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+>>
+>>   	lvds->enabled = true;
+> 
+> How will this work with the D3 and E3 SoCs ? They seem to have a few
+> differences, will code still be reusable ?
 
---6ke3noqytirshwmf
-Content-Type: application/pgp-signature; name="signature.asc"
+    Looking at "37.3.7 Setting Procedure" it will require some adjustments -- 
+in the same vein as in the V3M case. The most prominent D3/E3 specific feature 
+is the totally different LVDPLLCR layout, and it's not currently supported...
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpef+4ACgkQFA3kzBSg
-KbbzrQ/8D2TegEVVDZUhqrLZ/FKoBy2RhzgaWqhLwa1rGe4Bm2YS2gcRJdbBCMmA
-MJ9SrJeWkBYzbBGeNyFju/XTKswCFpz7ngpyAteHiz6iwLdjH8IPIPj6bjWd68n6
-YzFdWte9r4u7vxVE7aOYshjCH631i0h98Xz+Ihl5uFy9GubdHpb3yZfcF7rjMDeu
-G03BTNBsuo8CKttawttaPMd/RmeYSdo3COtzE/sJekFoc+DfcTacSRONKV9Ch1Ws
-dEvGsI33wRy6TZqCWiU+c5YvLMIXUuBU1TRpl66UARqmnVr6n46GNC0vFtQr+VQL
-Hv3qGfnFt26HpP5Tz0pp9X0jDI8b0AZwwweSHv2fzPlBM3S4bKkXxZBre6PXvaUM
-jOKV3aeXsPxmS6+AyoFLfkgGeGrhnl05sZmCirYjRXkjCi/xlGWuFEiGVgih0b8W
-pSZAcwzk7brkfD2Bv5BBDhjOX5EYaSrvtvHPPIEI7tV8Lm0E6EXi/117mdrWzitR
-vpjS57qpEPiFk23oiUHuVGUAAS71FDOPxw7Lw2QdJrYV7AyFddD5YJJFEzlxsfhg
-h2jJoyek3a5elng/gi6Yyft73vcOfSR0D03NEv/pHMlz5hnJv1nLgQSYO4pM//Dc
-meaKCq479+PBom2aVJOb3zJwLVAHjBSKZlg/MlOY+nEC2rDhTF0=
-=BzsU
------END PGP SIGNATURE-----
-
---6ke3noqytirshwmf--
+MBR, Sergei
