@@ -1,69 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48304 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750750AbeAPWmu (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35984 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933544AbeALNx2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jan 2018 17:42:50 -0500
-Date: Tue, 16 Jan 2018 23:42:48 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 20/22] mmc: tmio: move clk_enable/disable out of
- tmio_mmc_host_probe()
-Message-ID: <20180116224248.6ywmgcxpe5luykws@tetsubishi>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-21-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 12 Jan 2018 08:53:28 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 03/10] drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
+Date: Fri, 12 Jan 2018 15:53:27 +0200
+Message-ID: <1675787.pl840eVHyY@avalon>
+In-Reply-To: <CAMuHMdW5wDj5gyTnh+Xa3J10b_6For0MdhcTFgdU_+sgx=BYmA@mail.gmail.com>
+References: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com> <20180112005858.26472-4-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdW5wDj5gyTnh+Xa3J10b_6For0MdhcTFgdU_+sgx=BYmA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d5o6ckdt6porjxbf"
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-21-git-send-email-yamada.masahiro@socionext.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Geert,
 
---d5o6ckdt6porjxbf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Friday, 12 January 2018 12:09:45 EET Geert Uytterhoeven wrote:
+> On Fri, Jan 12, 2018 at 1:58 AM, Laurent Pinchart wrote:
+> > The internal LVDS encoders now have their own DT bindings. Before
+> > switching the driver infrastructure to those new bindings, implement
+> > backward-compatibility through live DT patching.
+> > 
+> > Patching is disabled and will be enabled along with support for the new
+> > DT bindings in the DU driver.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Thanks for your patch!
+> 
+> > --- a/drivers/gpu/drm/rcar-du/Kconfig
+> > +++ b/drivers/gpu/drm/rcar-du/Kconfig
+> > @@ -22,6 +22,7 @@ config DRM_RCAR_LVDS
+> >         bool "R-Car DU LVDS Encoder Support"
+> >         depends on DRM_RCAR_DU
+> >         select DRM_PANEL
+> > +       select OF_OVERLAY
+> 
+> select OF_FLATTREE for of_fdt_unflatten_tree()
 
-On Sat, Nov 25, 2017 at 01:24:55AM +0900, Masahiro Yamada wrote:
-> The clock is enabled in the tmio_mmc_host_probe().  It also prevents
-> drivers from performing platform-specific settings before mmc_add_host()
-> because the register access generally requires a clock.
->=20
-> Enable/disable the clock in drivers' probe/remove.  Also, I passed
-> tmio_mmc_data to tmio_mmc_host_alloc() because renesas_sdhi_clk_enable()
-> needs it to get the private data from tmio_mmc_host.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+I'll fix that.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> (you can probably check with sparc all*config)
 
+I'd have to install a sparc cross-compiler :-)
 
---d5o6ckdt6porjxbf
-Content-Type: application/pgp-signature; name="signature.asc"
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+> > @@ -0,0 +1,440 @@
 
------BEGIN PGP SIGNATURE-----
+[snip]
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpef98ACgkQFA3kzBSg
-KbZlQA//UOGijpKwM3o7ffnF2WlXgvOvMXvJpASzzsZS/T1D2heveBDhff45/0Od
-NILrTozdr69E15F94nFoF8N4UPVnAX2jGqvMpCcay2S/Jb0SZhwT/GUT3f0I1Z7f
-PgxO8wJwQwwRzMk9AYMRzWGb0GCS2aU4o/ucxLatYxIN+4byAn4MwDyTdfdoCdgJ
-TX+Mr6X4k+CpIMxQeXp8PzXJC2/MLXEBLRsN5DYYQ+fLIEQ8HXCuxy+mz7xGjiOt
-E9+4x/Bzapkb3K2WHFdgwS6pzuQBpYDl+hZO3imkpTIzMsDZa9b4IUaNHBJZ4qSa
-LnfaIujvSY+3YWaPSq942io3+qO0+ddiUzv8GKlgvMRVcDm1cyl3neF03ekR+H8J
-6LY54lwDmCqT/2TVIvh8MdZUUV+ZobiVSSDisA4z2yGj+ME+Q0mY73Sah0sQrSbf
-tShC8Kg/E50YOE0+Daqm1TDlpfskroct0nrEI/EhwouCDpNnUDc5OlkuaJV22LfX
-zFaWWLu2lSweU7MqWlHFBoUOsPgom1U/5Owpd4yIz0pBeOO5ih4zObx3oABJk1MN
-wWxsp8pNnLZmktA2wyw0YwUUg33o1c+QVckUYvsKzTNl+PwOGE9qWBhYDSRzy/H9
-19yPsaUJUny9Xo/D0yhg/rP6afdJHqEzKf4zr70OVMXuUhRX8uM=
-=oJJq
------END PGP SIGNATURE-----
+> > +static void __init rcar_du_of_lvds_patch_one(struct device_node *du,
+> > +                                            unsigned int port_id,
+> > +                                            const struct resource *res,
+> > +                                            const __be32 *reg,
+> > +                                            const struct of_phandle_args
+> > *clkspec,
+> > +                                            struct device_node *local,
+> > +                                            struct device_node *remote)
+> > +{
+> > 
+> > +
+> > +       /* Skip if the LVDS node already exists. */
+> > +       sprintf(name, "lvds@%llx", (u64)res->start);
+> 
+> I guess you cannot use %pa because you don't want a 0x prefix?
 
---d5o6ckdt6porjxbf--
+Correct.
+
+> > +       /*
+> > +        * Patch the LVDS and DU port nodes names and the associated fixup
+> > +        * entries.
+> > +        */
+> > +       lvds = rcar_du_of_find_node_by_path(overlay.np,
+> > +               "/fragment@0/__overlay__/lvds");
+> > +       lvds_endpoints[0] = rcar_du_of_find_node_by_path(overlay.np,
+> > +               "/fragment@0/__overlay__/lvds/ports/port@0/endpoint");
+> > +       lvds_endpoints[1] = rcar_du_of_find_node_by_path(overlay.np,
+> > +               "/fragment@0/__overlay__/lvds/ports/port@1/endpoint");
+> > +       du_port = rcar_du_of_find_node_by_path(overlay.np,
+> > +               "/fragment@1/__overlay__/ports/port@0");
+> > +       du_port_fixup = rcar_du_of_find_node_by_path(overlay.np,
+> > +               "/__local_fixups__/fragment@1/__overlay__/ports/port@0");
+> 
+> Many strings with similar prefixes or substrings?
+> Would it make sense to e.g. locate "/fragment@0/__overlay__/lvds/ports"
+> first, and continue from there?
+
+I can do that for the first three, yes.
+
+-- 
+Regards,
+
+Laurent Pinchart
