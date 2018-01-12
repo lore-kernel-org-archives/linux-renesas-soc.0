@@ -1,97 +1,165 @@
-Subject: Re: [PATCH 4/6] arm64: renesas: draak: enable I2C controller 0 and
- EEPROM
-Cc: Simon Horman <horms@verge.net.au>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- Wolfram Sang <wsa@the-dreams.de>, Magnus Damm <magnus.damm@gmail.com>,
- Linux I2C <linux-i2c@vger.kernel.org>
-References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1510759526-30346-5-git-send-email-ulrich.hecht+renesas@gmail.com>
- <CAMuHMdWmZEoNGRjsumOc+yPe3JTCBobVZd8arzUfcymjF0imDA@mail.gmail.com>
- <20171117143120.ayattgah6q54425c@verge.net.au>
- <20171117163939.q7jlx6d56zc5fli3@verge.net.au>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <1b72df38-1185-a046-65ae-7f8515d50e8f@ideasonboard.com>
-Date: Fri, 19 Jan 2018 10:34:03 +0000
-MIME-Version: 1.0
-In-Reply-To: <20171117163939.q7jlx6d56zc5fli3@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60446 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933671AbeALA7N (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 11 Jan 2018 19:59:13 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 09/10] arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
+Date: Fri, 12 Jan 2018 02:58:57 +0200
+Message-Id: <20180112005858.26472-10-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
+The internal LVDS encoder now has DT bindings separate from the DU. Port
+the device tree over to the new model.
 
-On 17/11/17 16:39, Simon Horman wrote:
-> On Fri, Nov 17, 2017 at 06:31:21AM -0800, Simon Horman wrote:
->> On Thu, Nov 16, 2017 at 10:27:56AM +0100, Geert Uytterhoeven wrote:
->>> Hi Ulrich,
->>>
->>> On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
->>> <ulrich.hecht+renesas@gmail.com> wrote:
->>>> Enables EEPROM on I2C0 on the Draak board.
->>>>
->>>> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
->>>
->>> Thanks for your patch!
->>>
->>>> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
->>>> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
->>>
->>>> @@ -67,6 +72,18 @@
->>>>         };
->>>>  };
->>>>
->>>> +&i2c0 {
->>>> +       pinctrl-0 = <&i2c0_pins>;
->>>> +       pinctrl-names = "default";
->>>> +       status = "okay";
->>>> +
->>>> +       eeprom@50 {
->>>> +               compatible = "atmel,24c01";
->>>
->>> This is actually a ROHM Semiconductor BR24T01FVM-W, so it should be
->>>
->>>         compatible = "rohm,br24t01", "atmel,24c01";
->>
->> Applied with the above change.
-> 
-> Sorry, I was a bit hasty there as this patch
-> depends on a patch earlier in the series which I have not applied.
-> 
-> I've dropped this patch for now and will wait a bit longer for the review
-> to unfold.
-> 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |  3 +-
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |  3 +-
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  3 +-
+ .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |  3 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 35 ++++++++++++++++++----
+ 5 files changed, 33 insertions(+), 14 deletions(-)
 
-I am dependant upon this patch for my Draak-D3 work.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+index 9ef9a4e5f376..0dda1c0ed1ce 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+@@ -43,12 +43,11 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock5 1>,
+ 		 <&x21_clk>,
+ 		 <&x22_clk>,
+ 		 <&versaclock5 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 0afe777973de..f0d6528c05eb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -44,11 +44,10 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock5 1>,
+ 		 <&versaclock5 3>,
+ 		 <&versaclock5 4>,
+ 		 <&versaclock5 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 00ad1ab53a7d..e34b986185d4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -43,12 +43,11 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock5 1>,
+ 		 <&x21_clk>,
+ 		 <&x22_clk>,
+ 		 <&versaclock5 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index 79e8b65622db..31f2abaa90aa 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -43,12 +43,11 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock6 1>,
+ 		 <&x21_clk>,
+ 		 <&x22_clk>,
+ 		 <&versaclock6 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 15ef292a8d9f..d6c423988ab6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2077,9 +2077,8 @@
+ 
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7795";
+-			reg = <0 0xfeb00000 0 0x80000>,
+-			      <0 0xfeb90000 0 0x14>;
+-			reg-names = "du", "lvds.0";
++			reg = <0 0xfeb00000 0 0x80000>;
++			reg-names = "du";
+ 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
+@@ -2087,9 +2086,8 @@
+ 			clocks = <&cpg CPG_MOD 724>,
+ 				 <&cpg CPG_MOD 723>,
+ 				 <&cpg CPG_MOD 722>,
+-				 <&cpg CPG_MOD 721>,
+-				 <&cpg CPG_MOD 727>;
+-			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
++				 <&cpg CPG_MOD 721>;
++			clock-names = "du.0", "du.1", "du.2", "du.3";
+ 			vsps = <&vspd0 0 &vspd1 0 &vspd2 0 &vspd0 1>;
+ 			status = "disabled";
+ 
+@@ -2117,6 +2115,31 @@
+ 				port@3 {
+ 					reg = <3>;
+ 					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
++					};
++				};
++			};
++		};
++
++		lvds0: lvds@feb90000 {
++			compatible = "renesas,lvds-r8a7795";
++			reg = <0 0xfeb90000 0 0x14>;
++			clocks = <&cpg CPG_MOD 727>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
+ 					};
+ 				};
+ 			};
+-- 
+Regards,
 
-Would you be able to consider the comments mentioned to progress this patch please?
-
---
-Regards
-
-Kieran
-
-
->>
->>> Please also submit a patch to add that compatible value to
->>> Documentation/devicetree/bindings/eeprom/eeprom.txt.
->>
->> Ulrich, please follow-up on this, thanks!
->>
->>> With the above fixed:
->>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>>
->>> Gr{oetje,eeting}s,
->>>
->>>                         Geert
->>>
->>> --
->>> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->>>
->>> In personal conversations with technical people, I call myself a hacker. But
->>> when I'm talking to journalists I just say "programmer" or something like that.
->>>                                 -- Linus Torvalds
->>>
->>
+Laurent Pinchart
