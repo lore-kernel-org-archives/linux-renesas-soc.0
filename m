@@ -1,76 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44706 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750830AbeAPJoZ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39392 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965172AbeALWXT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jan 2018 04:44:25 -0500
-Date: Tue, 16 Jan 2018 10:44:22 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 19/22] mmc: tmio: ioremap memory resource in
- tmio_mmc_host_alloc()
-Message-ID: <20180116094422.2m2iotvgwzx6jfiz@tetsubishi>
-References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
- <1511540697-27387-20-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 12 Jan 2018 17:23:19 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm: rcar-du: lvds: fix LVDS startup on R-Car gen2
+Date: Sat, 13 Jan 2018 00:23:20 +0200
+Message-ID: <11845752.a3eY2rs97p@avalon>
+In-Reply-To: <20180112201553.683979009@cogentembedded.com>
+References: <20180112201553.683979009@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dc6rnypxybjuatak"
-Content-Disposition: inline
-In-Reply-To: <1511540697-27387-20-git-send-email-yamada.masahiro@socionext.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Sergei,
 
---dc6rnypxybjuatak
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch.
 
-On Sat, Nov 25, 2017 at 01:24:54AM +0900, Masahiro Yamada wrote:
-> The register region is ioremap'ed in the tmio_mmc_host_probe(), i.e.
-> drivers cannot get access to the hardware before mmc_add_host().
->=20
-> Actually, renesas_sdhi_core.c reads out the CTL_VERSION register to
-> complete the platform-specific settings.  However, at this point,
-> the MMC host is already running.
->=20
-> Move the register ioremap to tmio_mmc_host_alloc() so that drivers
-> can perform platform-specific settings between tmio_mmc_host_alloc()
-> and tmio_mmc_host_probe().
->=20
-> I changed tmio_mmc_host_alloc() to return an error pointer to
-> propagate the return code from devm_ioremap_resource().
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On Friday, 12 January 2018 22:12:05 EET Sergei Shtylyov wrote:
+> According to the latest revision 2.00 of the R-Car gen2 manual, the LVDS
+> must be enabled and the bias crcuit  enabled after the LVDS I/O pins are
+> enabled, not before --  fix the gen2 LVDS startup sequence accordingly.
+> 
+> Fixes: 90374b5c25c9 ("drm/rcar-du: Add internal LVDS encoder support")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
 > ---
+>  drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |   11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> Index: linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+> ===================================================================
+> --- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+> +++ linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+> @@ -59,11 +59,8 @@ static void rcar_du_lvdsenc_start_gen2(s
+> 
+>  	rcar_lvds_write(lvds, LVDPLLCR, pllcr);
+> 
+> -	/*
+> -	 * Set the  LVDS mode, select the input, enable LVDS operation,
+> -	 * and turn bias circuitry on.
+> -	 */
+> -	lvdcr0 = (lvds->mode << LVDCR0_LVMD_SHIFT) | LVDCR0_BEN | LVDCR0_LVEN;
+> +	/* Select the input and set the LVDS mode. */
+> +	lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
+>  	if (rcrtc->index == 2)
+>  		lvdcr0 |= LVDCR0_DUSEL;
+>  	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+> @@ -73,6 +70,10 @@ static void rcar_du_lvdsenc_start_gen2(s
+>  			LVDCR1_CHSTBY(3) | LVDCR1_CHSTBY(2) |
+>  			LVDCR1_CHSTBY(1) | LVDCR1_CHSTBY(0) | LVDCR1_CLKSTBY);
+> 
+> +	/* Enable LVDS operation and turn bias circuitry on. */
+> +	lvdcr0 |= LVDCR0_BEN | LVDCR0_LVEN;
+> +	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This change looks good, but for the reasons explained in my replies to patch 
+1/2, I would set the mode here along with the BEN and LVEN bits.
 
+>  	/*
+>  	 * Turn the PLL on, wait for the startup delay, and turn the output
+>  	 * on.
 
---dc6rnypxybjuatak
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Regards,
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpdyXYACgkQFA3kzBSg
-KbYUpg//aPP/JzY4FCSZ1+y0wQanBo1l84/ptPXWPY/2W3JF1Na9F3JFMob4U8QV
-86+kh4+zm7xX8IHIPf/R7V3Dt2vj9e0mWshQwxRk/GC4Y2dXMN3eYm5WV79Ho2xq
-oVsHr2VknGMZ1XMJSwFBkKjudPfZCcaALaYI9Gdk2Vp3DFTACoSFUFyi0knvCcqv
-5fd/PvOvWXcaLwyZX9EkNtVlehP6yugfkScq3GkPbsJdv5VhX5gZmEShwEyPhWHs
-aaNw0x+ZDmi6+Mz3rDg4c3/L+9V6IYrsHPr+VScW7u9n942rHHISCJttgMgIZ0B/
-ZcJGRRB89g/iKyVlfTihHo0+pRaz/xOCAWzYn7LTSyP6ghM7JNIFbDVVBR55RBmO
-h1Q5KpTyUrUSXbq+qoQ2SZewCpXWs/mhD3HEXXy9F8LSG31a44BSwnEjHB096v3U
-XgqSCjF2d8pV5SyO3A8CZJhkgEcagYRYgGzF1ralMShEPrJcBJReRdCfrwMoW96V
-+SJBYvJc16Y3UUNdBahDGpCyn2xSh17QyusRYGIyQDaYbEia6uRkVTDFL1Rexo1O
-oK2X7ni4rl/r6/x0D6P4cVMJ/MZaovobInPoOpnSKAuCDRTNv5QRkGwq5mACX/tD
-AvJ1R3yfJkpwxw0YmGCvTmwNzWsj0TqUnoHkRrk4s8O3UeZHyKo=
-=HU2N
------END PGP SIGNATURE-----
-
---dc6rnypxybjuatak--
+Laurent Pinchart
