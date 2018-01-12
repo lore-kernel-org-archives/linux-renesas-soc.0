@@ -1,14 +1,12 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20180112133857.GE24794@w540>
-References: <1515515131-13760-1-git-send-email-jacopo+renesas@jmondi.org>
- <1515515131-13760-4-git-send-email-jacopo+renesas@jmondi.org>
- <CAOFm3uGxm3bAHPryMV8+MAFy+45-3Ld7RbKqo1saigzPUZ8mqg@mail.gmail.com> <20180112133857.GE24794@w540>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Tue, 23 Jan 2018 11:28:00 +0100
-Message-ID: <CAOFm3uGdVkgJ10n=pVKh9h2r7t_UkUS1768tVQLKSaOh8v-buA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/9] v4l: platform: Add Renesas CEU driver
-To: jacopo mondi <jacopo@jmondi.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:54107 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933478AbeALNjE (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 12 Jan 2018 08:39:04 -0500
+Date: Fri, 12 Jan 2018 14:38:57 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>, geert@glider.be,
@@ -23,48 +21,62 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-sh@vger.kernel.org,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Subject: Re: [PATCH v4 3/9] v4l: platform: Add Renesas CEU driver
+Message-ID: <20180112133857.GE24794@w540>
+References: <1515515131-13760-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1515515131-13760-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAOFm3uGxm3bAHPryMV8+MAFy+45-3Ld7RbKqo1saigzPUZ8mqg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAOFm3uGxm3bAHPryMV8+MAFy+45-3Ld7RbKqo1saigzPUZ8mqg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 12, 2018 at 2:38 PM, jacopo mondi <jacopo@jmondi.org> wrote:
-> Hi Philippe, Laurent, Geert,
->
-> On Fri, Jan 12, 2018 at 11:36:31AM +0100, Philippe Ombredanne wrote:
->> On Tue, Jan 9, 2018 at 5:25 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->> > Add driver for Renesas Capture Engine Unit (CEU).
->>
->> <snip>
->>
->> > --- /dev/null
->> > +++ b/drivers/media/platform/renesas-ceu.c
->> > @@ -0,0 +1,1648 @@
->> > +// SPDX-License-Identifier: GPL-2.0
->>
->> <snip>
->>
->> > +MODULE_DESCRIPTION("Renesas CEU camera driver");
->> > +MODULE_AUTHOR("Jacopo Mondi <jacopo+renesas@jmondi.org>");
->> > +MODULE_LICENSE("GPL");
->>
->> Jacopo,
->> the MODULE_LICENSE does not match the SPDX tag. Per module.h "GPL"
->> means GPL-2.0 or later ;)
->>
->> It should be instead:
->>
->> > +MODULE_LICENSE("GPL v2");
->>
->> ... to match your
->>
->> > +// SPDX-License-Identifier: GPL-2.0
->
-> I will update this in next v5.
-> Laurent, Geert: I'll keep SPDX identifier to "GPL-2.0" until kernel
-> doc does not get updated.
+Hi Philippe, Laurent, Geert,
 
-Thanks. Sorry for the late reply!
+On Fri, Jan 12, 2018 at 11:36:31AM +0100, Philippe Ombredanne wrote:
+> On Tue, Jan 9, 2018 at 5:25 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > Add driver for Renesas Capture Engine Unit (CEU).
+>
+> <snip>
+>
+> > --- /dev/null
+> > +++ b/drivers/media/platform/renesas-ceu.c
+> > @@ -0,0 +1,1648 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+>
+> <snip>
+>
+> > +MODULE_DESCRIPTION("Renesas CEU camera driver");
+> > +MODULE_AUTHOR("Jacopo Mondi <jacopo+renesas@jmondi.org>");
+> > +MODULE_LICENSE("GPL");
+>
+> Jacopo,
+> the MODULE_LICENSE does not match the SPDX tag. Per module.h "GPL"
+> means GPL-2.0 or later ;)
+>
+> It should be instead:
+>
+> > +MODULE_LICENSE("GPL v2");
+>
+> ... to match your
+>
+> > +// SPDX-License-Identifier: GPL-2.0
 
--- 
-Cordially
-Philippe Ombredanne
+I will update this in next v5.
+Laurent, Geert: I'll keep SPDX identifier to "GPL-2.0" until kernel
+doc does not get updated.
+
+Thanks
+   j
+
+>
+> I know this can be confusing, but updating the MODULE_LICENSE tags
+> definitions in module.h to match SPDX tags is unlikely to happen as it
+> would create mayhem for everyone and every module loader relying on
+> this established convention.
+>
+> --
+> Cordially
+> Philippe Ombredanne
