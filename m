@@ -1,33 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:52440 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750768AbeAOTvM (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:35818 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751806AbeAMSS2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Jan 2018 14:51:12 -0500
-Date: Mon, 15 Jan 2018 14:51:11 -0500 (EST)
-Message-Id: <20180115.145111.1674948548030681862.davem@davemloft.net>
-To: sergei.shtylyov@cogentembedded.com
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org
+        Sat, 13 Jan 2018 13:18:28 -0500
+Received: by mail-lf0-f41.google.com with SMTP id a204so871708lfa.2
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 13 Jan 2018 10:18:27 -0800 (PST)
 Subject: Re: [PATCH] sh_eth: dix dumping ARSTR
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180113172207.201026516@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: linux-sh@vger.kernel.org
 References: <20180113172207.201026516@cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+ <6f95c17b-dd74-8baa-641f-0618757a8055@cogentembedded.com>
+Message-ID: <27dad15d-e0e4-1812-f2c8-83d50c09a47e@cogentembedded.com>
+Date: Sat, 13 Jan 2018 21:18:24 +0300
+MIME-Version: 1.0
+In-Reply-To: <6f95c17b-dd74-8baa-641f-0618757a8055@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Sat, 13 Jan 2018 20:22:01 +0300
-
-> ARSTR  is always located at the start of the TSU register region, thus
-> using add_reg()  instead of add_tsu_reg() in __sh_eth_get_regs() to dump it
-> causes EDMR or EDSR (depending on the register layout) to be dumped instead
-> of ARSTR.  Use the correct condition/macro there...
-> 
-> Fixes: 6b4b4fead342 ("sh_eth: Implement ethtool register dump operations")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Applied to 'net' with subj. typo fixed :)
+Umm, s/dix/fix/ in the subject. Do I need to repost?
