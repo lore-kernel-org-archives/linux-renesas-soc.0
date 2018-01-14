@@ -1,71 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:36585 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752368AbeARTH6 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:36564 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752461AbeANVHk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Jan 2018 14:07:58 -0500
-Received: by mail-pf0-f176.google.com with SMTP id 23so15377389pfp.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 11:07:58 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 19 Jan 2018 04:07:21 +0900
-Message-Id: <151630244106.14098.1751390484334216468.sendpatchset@little-apple>
-In-Reply-To: <151630243226.14098.14517816422611139335.sendpatchset@little-apple>
-References: <151630243226.14098.14517816422611139335.sendpatchset@little-apple>
-Subject: [PATCH/RFC 01/03] arm64: dts: renesas: r8a77970: Add PFC node for Eagle V3M
+        Sun, 14 Jan 2018 16:07:40 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] serial: mxs-auart: don't use GPIOF_* with gpiod_get_direction
+Date: Sun, 14 Jan 2018 22:07:09 +0100
+Message-Id: <20180114210711.13863-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180114210711.13863-1-wsa+renesas@sang-engineering.com>
+References: <20180114210711.13863-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+The documentation was wrong, gpiod_get_direction() returns 0/1 instead
+of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
+("gpio: correct docs about return value of gpiod_get_direction"). Now,
+fix this user (until a better, system-wide solution is in place). This
+also means we can drop the deprecated use of 'linux/gpio.h'. Yay!
 
-Add DT nodes for the PFC on the r8a77970 SoC and hook up the SCIF
-console to make use of the PFC to configure the pins.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
+Only build tested!
 
- Depends on r8a77970 PFC support - included in latest renesas-drivers
+ drivers/tty/serial/mxs-auart.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |   10 ++++++++++
- arch/arm64/boot/dts/renesas/r8a77970.dtsi      |    5 +++++
- 2 files changed, 15 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ work/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts	2018-01-19 03:43:18.050607110 +0900
-@@ -52,11 +52,21 @@
- 	clock-frequency = <32768>;
- };
+diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
+index 5b470406bf9d67..079dc47aa142d8 100644
+--- a/drivers/tty/serial/mxs-auart.c
++++ b/drivers/tty/serial/mxs-auart.c
+@@ -40,7 +40,6 @@
  
-+&pfc {
-+	scif0_pins: scif0 {
-+		groups = "scif0_data";
-+		function = "scif0";
-+	};
-+};
-+
- &rwdt {
- 	timeout-sec = <60>;
- 	status = "okay";
- };
+ #include <asm/cacheflush.h>
  
- &scif0 {
-+	pinctrl-0 = <&scif0_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
---- 0001/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77970.dtsi	2018-01-19 03:43:36.990607110 +0900
-@@ -117,6 +117,11 @@
- 			reg = <0 0xe6160000 0 0x200>;
- 		};
+-#include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/err.h>
+ #include <linux/irq.h>
+@@ -1597,7 +1596,7 @@ static int mxs_auart_init_gpios(struct mxs_auart_port *s, struct device *dev)
  
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a77970";
-+			reg = <0 0xe6060000 0 0x504>;
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a77970-sysc";
- 			reg = <0 0xe6180000 0 0x440>;
+ 	for (i = 0; i < UART_GPIO_MAX; i++) {
+ 		gpiod = mctrl_gpio_to_gpiod(s->gpios, i);
+-		if (gpiod && (gpiod_get_direction(gpiod) == GPIOF_DIR_IN))
++		if (gpiod && (gpiod_get_direction(gpiod) == 1))
+ 			s->gpio_irq[i] = gpiod_to_irq(gpiod);
+ 		else
+ 			s->gpio_irq[i] = -EINVAL;
+-- 
+2.11.0
