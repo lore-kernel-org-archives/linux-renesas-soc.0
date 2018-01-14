@@ -1,45 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41448 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:36559 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750911AbeAILgE (ORCPT
+        id S1753146AbeANVHk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 06:36:04 -0500
-From: Wolfram Sang <wsa@the-dreams.de>
+        Sun, 14 Jan 2018 16:07:40 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-gpio@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/2] Documentation: gpio: correct return value of gpiod_get_direction
-Date: Tue,  9 Jan 2018 12:35:54 +0100
-Message-Id: <20180109113554.4337-2-wsa@the-dreams.de>
-In-Reply-To: <20180109113554.4337-1-wsa@the-dreams.de>
-References: <20180109113554.4337-1-wsa@the-dreams.de>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] extcon: int3496: don't use GPIOF_* with gpiod_get_direction
+Date: Sun, 14 Jan 2018 22:07:08 +0100
+Message-Id: <20180114210711.13863-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180114210711.13863-1-wsa+renesas@sang-engineering.com>
+References: <20180114210711.13863-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-The use of the GPIOF_* flags is deprecated, so don't advertise them
-here. Document the plain numbers for now until we have a better
-solution.
+The documentation was wrong, gpiod_get_direction() returns 0/1 instead
+of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
+("gpio: correct docs about return value of gpiod_get_direction"). Now,
+fix this user (until a better, system-wide solution is in place). This
+also means we can drop the deprecated use of 'linux/gpio.h'. Yay!
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- Documentation/gpio/consumer.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Only build tested!
 
-diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-index 63e1bd1d88e324..7aac3308151016 100644
---- a/Documentation/gpio/consumer.txt
-+++ b/Documentation/gpio/consumer.txt
-@@ -184,7 +184,7 @@ A driver can also query the current direction of a GPIO:
+ drivers/extcon/extcon-intel-int3496.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/extcon/extcon-intel-int3496.c b/drivers/extcon/extcon-intel-int3496.c
+index c8691b5a9cb00c..256a25e511671d 100644
+--- a/drivers/extcon/extcon-intel-int3496.c
++++ b/drivers/extcon/extcon-intel-int3496.c
+@@ -20,7 +20,7 @@
  
- 	int gpiod_get_direction(const struct gpio_desc *desc)
- 
--This function will return either GPIOF_DIR_IN or GPIOF_DIR_OUT.
-+This function returns 0 for output, 1 for input, or an error code in case of error.
- 
- Be aware that there is no default direction for GPIOs. Therefore, **using a GPIO
- without setting its direction first is illegal and will result in undefined
+ #include <linux/acpi.h>
+ #include <linux/extcon-provider.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -112,7 +112,7 @@ static int int3496_probe(struct platform_device *pdev)
+ 		ret = PTR_ERR(data->gpio_usb_id);
+ 		dev_err(dev, "can't request USB ID GPIO: %d\n", ret);
+ 		return ret;
+-	} else if (gpiod_get_direction(data->gpio_usb_id) != GPIOF_DIR_IN) {
++	} else if (gpiod_get_direction(data->gpio_usb_id) != 1) {
+ 		dev_warn(dev, FW_BUG "USB ID GPIO not in input mode, fixing\n");
+ 		gpiod_direction_input(data->gpio_usb_id);
+ 	}
 -- 
 2.11.0
