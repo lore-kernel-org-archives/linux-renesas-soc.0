@@ -1,59 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:39057 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752550AbeADUDa (ORCPT
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:10645 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750936AbeANIrK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 15:03:30 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 3/3] ARM: dts: r7s72100: add USB device to device tree
-Date: Thu,  4 Jan 2018 15:01:50 -0500
-Message-Id: <20180104200150.11352-4-chris.brandt@renesas.com>
-In-Reply-To: <20180104200150.11352-1-chris.brandt@renesas.com>
-References: <20180104200150.11352-1-chris.brandt@renesas.com>
+        Sun, 14 Jan 2018 03:47:10 -0500
+From: "Liu, Wenlong" <liuwl.fnst@cn.fujitsu.com>
+To: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+CC: "fuego@lists.linuxfoundation.org" <fuego@lists.linuxfoundation.org>
+Subject: RE: Kernel 4.14 test results on porter
+Date: Sun, 14 Jan 2018 08:47:03 +0000
+Message-ID: <F40213214988A94A9DDBFC5F7146FC5E016122D571@G08CNEXMBPEKD01.g08.fujitsu.local>
+References: <F40213214988A94A9DDBFC5F7146FC5E016122D386@G08CNEXMBPEKD01.g08.fujitsu.local>
+In-Reply-To: <F40213214988A94A9DDBFC5F7146FC5E016122D386@G08CNEXMBPEKD01.g08.fujitsu.local>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add USB device support.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index ab9645a42eca..eb414e735185 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -667,4 +667,24 @@
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-+
-+	usbhs0: usbhs@e8010000 {
-+		compatible = "renesas,usbhs-r7s72100";
-+		reg = <0xe8010000 0x1A0>;
-+		interrupts = <GIC_SPI (73-32) IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp7_clks R7S72100_CLK_USB0>;
-+		renesas,buswait = <4>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
-+
-+	usbhs1: usbhs@e8207000 {
-+		compatible = "renesas,usbhs-r7s72100";
-+		reg = <0xe8207000 0x1A0>;
-+		interrupts = <GIC_SPI (74-32) IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp7_clks R7S72100_CLK_USB1>;
-+		renesas,buswait = <4>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
- };
--- 
-2.15.1
+SGksDQoNClNvcnJ5LCBJIGdvdCBhIG1pc3Rha2UgaW4gbXkgcHJldmlvdXMg
+bWFpbC4NCk1NQyBjYW4gYmUgdXNlZCBub3JtYWxseSBpbiBrZXJuZWwgNC4x
+NCBvbiBwb3J0ZXIsIHNvIGp1c3QgaWdub3JlIHRoZSBpc3N1ZToxIGluIG15
+IHByZS1tYWlsLg0KVGhhbmtzLg0KDQpUaGUgdGVzdCByZXN1bHRzIHJlcG9y
+dCBpbiB0aGUgcHJlLW1haWwgaXMgY29ycmVjdC4NCk5vdywgSSBoYXZlIHR3
+byBxdWVzdGlvbnMsDQoxLiBCZW5jaG1hcmsubmV0cGlwZSBmYWlsZWQsIGVy
+cm9yIG1zZyBhcyBiZWxvdzoNCiAgIC4uLg0KICAgU2VuZCBhbmQgcmVjZWl2
+ZSBidWZmZXJzIGFyZSAxNjM4NCBhbmQgODczODAgYnl0ZXMNCiAgIChBIGJ1
+ZyBpbiBMaW51eCBkb3VibGVzIHRoZSByZXF1ZXN0ZWQgYnVmZmVyIHNpemVz
+KQ0KICAgVXNpbmcgYSBwZXJ0dXJiYXRpb24gdmFsdWUgb2YgMg0KICAgLi4u
+DQogICBJIGRpZG4ndCBrbm93IG11Y2ggYWJvdXQgaXQsIHNvIGNvdWxkIHNv
+bWVvbmUgdGVsbCBtZSBpZiBpdCdzIGEgcmVhbCBidWc/DQoyLiBBYm91dCB0
+aGUgQlNQIGRyaXZlcnMgdGVzdHNbMV0sIHRob3NlIHRlc3RzIGNhbiBiZSB1
+c2VkIG9uIHBvcnRlcj8NCg0KVGhhbmtzLg0KDQpbMV0gaHR0cHM6Ly9naXRo
+dWIuY29tL0ppbnphaS1zb2x1dGlvbi9TQUxWQVRPUl9TSEVMTA0KDQpCZXN0
+IHJlZ2FyZHMNCkxpdQ0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0t
+DQo+IEZyb206IGZ1ZWdvLWJvdW5jZXNAbGlzdHMubGludXhmb3VuZGF0aW9u
+Lm9yZw0KPiBbbWFpbHRvOmZ1ZWdvLWJvdW5jZXNAbGlzdHMubGludXhmb3Vu
+ZGF0aW9uLm9yZ10gT24gQmVoYWxmIE9mIExpdSwNCj4gV2VubG9uZw0KPiBT
+ZW50OiBGcmlkYXksIEphbnVhcnkgMTIsIDIwMTggMzo1MCBQTQ0KPiBUbzog
+bGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3JnDQo+IENjOiBmdWVn
+b0BsaXN0cy5saW51eGZvdW5kYXRpb24ub3JnDQo+IFN1YmplY3Q6IFtGdWVn
+b10gS2VybmVsIDQuMTQgdGVzdCByZXN1bHRzIG9uIHBvcnRlcg0KPiANCj4g
+SGksIGZyaWVuZHMNCj4gDQo+IFBvcnRlciBib2FyZCBoYXMgYmVlbiB1c2Vk
+IGZvciBldmFsdWF0aW9ucyBhbmQgcHJvZHVjdCBkZXZlbG9wbWVudCwgYW5k
+DQo+IHNvIGRpZCB3ZS4NCj4gSSBoYXZlIGRvbmUgc29tZSB0ZXN0cyBhbmQg
+dmFsaWRhdGlvbiBvbiB0aGUgcG9ydGVyIHdpdGggdGhlIDQuMTQga2VybmVs
+DQo+IHJlY2VudGx5Lg0KPiBHbGFkIHRvIGV4cGFuZCB0aGlzIHRlc3QgcmVz
+dWx0cyB0byBSZW5lc2FzIEtlcm5lbCBUZWFtLg0KPiBJIGFsc28gQ0NlZCB0
+aGUgRnVlZ28gVGVhbSwgYmVjYXVzZSB0aGUgbGF0ZXN0IEZ1ZWdvIHdhcyB1
+c2VkIHRvIGRvIHN1Y2gNCj4gYSBvdmVyYWxsIHRlc3QgYW5kIEkgYWxzbyB3
+YW50IHRvIHNoYXJlIHRoZSB0ZXN0IHJlc3VsdHMgdG8gdGhlbS4NCj4gDQo+
+IFRoZSBmb2xsb3dpbmcgdGVzdHMgaGF2ZSBiZWVuIGRvbmU6DQo+IDEuIEZ1
+bmN0aW9uYWwuTFRQOiBzeXNjYWxscyBmcyBmc3ggZGlvIGlvIG1tIGlwYyBt
+YXRoIG5wdGwgcHR5IGFkbWluX3Rvb2xzDQo+IHRpbWVycyBjb21tYW5kcyBz
+Y2hlZCBjcmFzaG1lIDIuIE1vc3QgRnVuY3Rpb25hbCZCZW5jaG1hcmsgdGVz
+dHMgaW4gRnVlZ28NCj4gMy4gQlNQIGRyaXZlcnMgdGVzdHMNCj4gDQo+IEFj
+Y29yZGluZyB0byB0ZXN0IGxvZywgaXQgc2VlbXMgdGhhdCB0aGVyZSBubyBi
+aWcgaXNzdWUsIGJ1dDoNCj4gMS4gSW4gb3JkZXIgdG8gYm9vdCBzdWNjZXNz
+ZnVsbHksIEkgaGF2ZSB0byB1c2UgdGhlIG5mcyBvciBzZHggYXMgdGhlIHJv
+b3RmcyhpdA0KPiBzZWVtcyB0aGF0IHRoZSBtbWMgY2FuJ3QgYmUgdXNlZCku
+DQo+IDIuIEJlbmNobWFyay5uZXRwaXBlIGZhaWxlZCwgZXJyb3IgbXNnIGFz
+IGJlbG93Og0KPiAgICAuLi4NCj4gICAgU2VuZCBhbmQgcmVjZWl2ZSBidWZm
+ZXJzIGFyZSAxNjM4NCBhbmQgODczODAgYnl0ZXMNCj4gICAgKEEgYnVnIGlu
+IExpbnV4IGRvdWJsZXMgdGhlIHJlcXVlc3RlZCBidWZmZXIgc2l6ZXMpDQo+
+ICAgIFVzaW5nIGEgcGVydHVyYmF0aW9uIHZhbHVlIG9mIDINCj4gICAgLi4u
+DQo+IA0KPiBGb3IgdGhlIGRyaXZlcnMgdGVzdCwgSSBoYXZlIGNoZWNrZWQg
+dGhpcyByZXBvc2l0b3J5WzFdLg0KPiBUaGUgQlNQIGRyaXZlciB0ZXN0cyBo
+YXZlIGJlZW4gZG9uZSBvbiBwb3J0ZXIsIGJ1dCB0aGVyZSBhcmUgbWFueSBm
+YWlsZWQNCj4gY2FzZXMgdGhhbiBJIHRob3VnaHQuDQo+IEl0IHNlZW1zIHRo
+YXQgdGhvc2UgY29uZmlndXJhdGlvbnMgYW5kIHRlc3RzIGFyZSBub3QgdmVy
+eSBjbGVhciB0byBtZSB5ZXQuDQo+IFNvLCB3aG8gY2FuIHRlbGwgbWUgaG93
+IHRvIGRvIHRob3NlIHRlc3RzIHByb3Blcmx5IG9uIHBvcnRlcj8NCj4gKEBG
+dWVnbywgbWF5YmUgdGhvc2UgQlNQIGRyaXZlciB0ZXN0cyBjb3VsZCBhbHNv
+IGJlIGFkZGVkIGludG8gRnVlZ28gaW4NCj4gdGhlIGZ1dHVyZSkNCj4gDQo+
+IC0tDQo+IFRoZSB0ZXN0IHJlc3VsdCBmb3JtYXQgb2YgdGhlIGF0dGFjaG1l
+bnQgaXMgc2FtZSB3aXRoIHRoZSBzaGFyZWQgcmVwb3J0DQo+IG9mIEtoaWVt
+LXNhbiBiZWZvcmUuIFRoYW5rcy4NCj4gDQo+IFRoYW5rcy4NCj4gDQo+IFsx
+XSBodHRwczovL2dpdGh1Yi5jb20vSmluemFpLXNvbHV0aW9uL1NBTFZBVE9S
+X1NIRUxMDQo+IA0KPiBCZXN0IHJlZ2FyZHMNCj4gTGl1DQo+IA0KPiANCg0K
+Cgo=
