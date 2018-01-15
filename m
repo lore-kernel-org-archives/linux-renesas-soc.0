@@ -1,198 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:22839 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751765AbeA2Qf6 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40556 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934173AbeAORCu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:35:58 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 27/30] rcar-vin: extend {start,stop}_streaming to work with media controller
-Date: Mon, 29 Jan 2018 17:34:32 +0100
-Message-Id: <20180129163435.24936-28-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 15 Jan 2018 12:02:50 -0500
+Date: Mon, 15 Jan 2018 18:02:48 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [RFC PATCH 0/7] i2c: sh_mobile: support per-SoC frequency
+ calculation
+Message-ID: <20180115170248.lwxc6wy7ktrlc3xf@ninjato>
+References: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qnregg4s6khibxxt"
+Content-Disposition: inline
+In-Reply-To: <20171218215802.28591-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The procedure to start or stop streaming using the non-MC single
-subdevice and the MC graph and multiple subdevices are quite different.
-Create a new function to abstract which method is used based on which
-mode the driver is running in and add logic to start the MC graph.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 123 +++++++++++++++++++++++++++--
- 1 file changed, 116 insertions(+), 7 deletions(-)
+--qnregg4s6khibxxt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 811d8f8638d21200..6784e7eb3d96e1c0 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -1087,15 +1087,126 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- }
- 
-+static int rvin_set_stream(struct rvin_dev *vin, int on)
-+{
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	struct media_pipeline *pipe;
-+	struct media_device *mdev;
-+	struct  v4l2_subdev *sd;
-+	struct media_pad *pad;
-+	int ret;
-+
-+	/* No media controller used, simply pass operation to subdevice */
-+	if (!vin->info->use_mc) {
-+		ret = v4l2_subdev_call(vin->digital->subdev, video, s_stream,
-+				       on);
-+
-+		return ret == -ENOIOCTLCMD ? 0 : ret;
-+	}
-+
-+	pad = media_entity_remote_pad(&vin->pad);
-+	if (!pad)
-+		return -EPIPE;
-+
-+	sd = media_entity_to_v4l2_subdev(pad->entity);
-+
-+	if (!on) {
-+		media_pipeline_stop(&vin->vdev.entity);
-+		return v4l2_subdev_call(sd, video, s_stream, 0);
-+	}
-+
-+	fmt.pad = pad->index;
-+	if (v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt))
-+		return -EPIPE;
-+
-+	switch (fmt.format.code) {
-+	case MEDIA_BUS_FMT_YUYV8_1X16:
-+	case MEDIA_BUS_FMT_UYVY8_2X8:
-+	case MEDIA_BUS_FMT_UYVY10_2X10:
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+		vin->code = fmt.format.code;
-+		break;
-+	default:
-+		return -EPIPE;
-+	}
-+
-+	switch (fmt.format.field) {
-+	case V4L2_FIELD_TOP:
-+	case V4L2_FIELD_BOTTOM:
-+	case V4L2_FIELD_NONE:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+	case V4L2_FIELD_INTERLACED:
-+	case V4L2_FIELD_SEQ_TB:
-+	case V4L2_FIELD_SEQ_BT:
-+		/* Supported natively */
-+		break;
-+	case V4L2_FIELD_ALTERNATE:
-+		switch (vin->format.field) {
-+		case V4L2_FIELD_TOP:
-+		case V4L2_FIELD_BOTTOM:
-+		case V4L2_FIELD_NONE:
-+			break;
-+		case V4L2_FIELD_INTERLACED_TB:
-+		case V4L2_FIELD_INTERLACED_BT:
-+		case V4L2_FIELD_INTERLACED:
-+		case V4L2_FIELD_SEQ_TB:
-+		case V4L2_FIELD_SEQ_BT:
-+			/* Use VIN hardware to combine the two fields */
-+			fmt.format.height *= 2;
-+			break;
-+		default:
-+			return -EPIPE;
-+		}
-+		break;
-+	default:
-+		return -EPIPE;
-+	}
-+
-+	if (fmt.format.width != vin->format.width ||
-+	    fmt.format.height != vin->format.height ||
-+	    fmt.format.code != vin->code)
-+		return -EPIPE;
-+
-+	mdev = vin->vdev.entity.graph_obj.mdev;
-+
-+	/*
-+	 * The graph lock needs to be taken to protect concurrent
-+	 * starts of multiple VIN instances as they might share
-+	 * a common subdevice down the line and then should use
-+	 * the same pipe.
-+	 */
-+	mutex_lock(&mdev->graph_mutex);
-+	pipe = sd->entity.pipe ? sd->entity.pipe : &vin->vdev.pipe;
-+	ret = __media_pipeline_start(&vin->vdev.entity, pipe);
-+	mutex_unlock(&mdev->graph_mutex);
-+	if (ret)
-+		return ret;
-+
-+	ret = v4l2_subdev_call(sd, video, s_stream, 1);
-+	if (ret == -ENOIOCTLCMD)
-+		ret = 0;
-+	if (ret)
-+		media_pipeline_stop(&vin->vdev.entity);
-+
-+	return ret;
-+}
-+
- static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int ret;
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 1);
-+	ret = rvin_set_stream(vin, 1);
-+	if (ret) {
-+		spin_lock_irqsave(&vin->qlock, flags);
-+		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
-+		spin_unlock_irqrestore(&vin->qlock, flags);
-+		return ret;
-+	}
- 
- 	spin_lock_irqsave(&vin->qlock, flags);
- 
-@@ -1104,7 +1215,7 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	ret = rvin_capture_start(vin);
- 	if (ret) {
- 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
--		v4l2_subdev_call(sd, video, s_stream, 0);
-+		rvin_set_stream(vin, 0);
- 	}
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
-@@ -1115,7 +1226,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- static void rvin_stop_streaming(struct vb2_queue *vq)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int retries = 0;
- 
-@@ -1154,8 +1264,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 0);
-+	rvin_set_stream(vin, 0);
- 
- 	/* disable interrupts */
- 	rvin_disable_interrupts(vin);
--- 
-2.16.1
+On Mon, Dec 18, 2017 at 10:57:55PM +0100, Wolfram Sang wrote:
+> The current calculation for I2C bus speeds does not match the datasheet a=
+nd is,
+> in deed, a little too fast for 100kHz settings (~107kHz have been measure=
+d).
+>=20
+> This series implements a second calculation according to the datasheet. In
+> order to not cause regressions on the various old SoCs, using this new fo=
+rmula
+> is opt-in per SoC. Once the new formula has been verified to work, we can
+> switch over. By default, the old behaviour is retained.
+>=20
+> So, the first patches are refactoring the driver to support per-SoC frequ=
+ency
+> calculations. This is done by making the already existing per-SoC
+> setup()-callback mandatory and let the frequency calculation be done in t=
+here.
+>=20
+> This series has been tested on a R-Car H2 Lager board (r8a7790). The comp=
+uted
+> values match the suggested values in the datasheet. Also, measurements sh=
+owed
+> that the bus frequency is now 100kHz. For 400 kHz, the overall bus speed =
+did
+> not change much, but the low-to-high relationship is now matching the
+> datasheet, too.
+>=20
+> This series is RFC because I think we need to discuss when to enable a So=
+C to
+> the new formula. For Lager, I did some basic checking but did not run a f=
+ull
+> V4L testsuite or other complex configurations making use of I2C clients. =
+Gen3,
+> in theory, should be easier to test because only the PMIC and an EEPROM a=
+re
+> connected to IIC_DVFS. However, there are no testpoints available for mea=
+suring
+> on Salvator-X(S). And the suggested values in the datasheet do not match =
+the
+> module clock we have. Do ULCB boards maybe have testpoints for IIC_DVFS? =
+For
+> Lager, it could be argued that the resulting speed is slower than before =
+which
+> should not introduce regressions. But I am open to discussion here.
+>=20
+> A branch can be found here:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/iic-r=
+efactor
+>=20
+> Thanks, and looking forward to comments
+>=20
+>    Wolfram
+>=20
+>=20
+> Wolfram Sang (7):
+>   i2c: sh_mobile: move type detection upwards
+>   i2c: sh_mobile: allow setup callback to return errno
+>   i2c: sh_mobile: require setup callback
+>   i2c: sh_mobile: let RuntimePM do the clock handling
+>   i2c: sh_mobile: add helper to check frequency calculations
+>   i2c: sh_mobile: add new frequency calculation for later SoC
+>   i2c: sh_mobile: let r8a7790 (R-Car H2) use the new formula
+>=20
+
+Fixed a spelling mistake in the patch description of patch 5 and applied
+to for-next.
+
+
+--qnregg4s6khibxxt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpc3rQACgkQFA3kzBSg
+KbaZJQ/+KjxMJYkXM16hqiKWyISDgvh+phRnEdwQ+2rqeFufffz6Fo9bMbUq+dap
+WDbwHgolgh2GJ+eoYz4YSxav1Gjw9hYLKRrOrHpXXY/97aHcjoAgzVhejreDR4Qn
+kH3r4QPVnLplv1orJ/9UDAhjjErR8P+1pzJFNMXgbl+ZF350K6hJFQQFCJYphQe8
+69sL0qfgSp2+DoqiC5roWSPqj8wu/Kc9I2Xea1VZFoC6zTbqul1btf2TzaJHi0aO
+WHRNdw/31sUVFtjblTFE8yL5TBK2HQxqJHeQ3fRFiyJa4xOvklpsc3P+ALFwPdaA
+OoYWZB1LxGcKVXTgTlLE2qd+mYxDowZZJcY3N2+zpSHDZQgeDCZ20EnmgC+rF7iJ
+jgp2Kh9uOf9D1WXgkgJBfNPY24dPD5nobPUp4zhBhC05qDVYoheZfP3sHNaZ+CL5
+VNuXXjlY0xx0a4gIchpdO/s2LLsfCsNRatlh1U1n/jpzi/TadR+HSlEpgPsdIS+G
+3cADbUS3FbbLO4F/WW+2iEJI68D/Mx8p1aysdSX0OxSsgC2T9naTAJPwdY7gNCAU
+ZEoif7z6IVykVOGvl60jqKlRXvE6Nhn/HpNzc5PAHpdznYBLFsKzF+P6wz8c4Q3r
+6AtHrUCTmvks8gxl2uQR/nNHXTv/atJXkZFajhV9q/RsvQiLCS4=
+=3+n5
+-----END PGP SIGNATURE-----
+
+--qnregg4s6khibxxt--
