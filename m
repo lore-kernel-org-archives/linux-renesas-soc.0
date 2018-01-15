@@ -1,98 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:61093 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751451AbeA2Qfd (ORCPT
+Received: from sauhun.de ([88.99.104.3]:42283 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750776AbeAOXI1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:35:33 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 13/30] rcar-vin: add function to manipulate Gen3 chsel value
-Date: Mon, 29 Jan 2018 17:34:18 +0100
-Message-Id: <20180129163435.24936-14-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 15 Jan 2018 18:08:27 -0500
+Date: Tue, 16 Jan 2018 00:08:25 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Phil Reid <preid@electromag.com.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 0/6] i2c: send STOP after recovery; use it for i2c-rcar
+Message-ID: <20180115230825.wlfisucepjilqifw@ninjato>
+References: <20180109135859.20771-1-wsa@the-dreams.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6ikwx66mlux3s2a3"
+Content-Disposition: inline
+In-Reply-To: <20180109135859.20771-1-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
-feature of this register is that it's only present in the VIN0 and VIN4
-instances. The register in VIN0 controls the routing for VIN0-3 and the
-register in VIN4 controls routing for VIN4-7.
 
-To be able to control routing from a media device this function is need
-to control runtime PM for the subgroup master (VIN0 and VIN4). The
-subgroup master must be switched on before the register is manipulated,
-once the operation is complete it's safe to switch the master off and
-the new routing will still be in effect.
+--6ikwx66mlux3s2a3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 28 ++++++++++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
- 2 files changed, 30 insertions(+)
+On Tue, Jan 09, 2018 at 02:58:53PM +0100, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> When implementing bus recovery for the i2c-rcar driver, two problems were
+> encountered: 1) When reading the SDA bit, not the SDA status was returned=
+ but
+> the internal state of the "bus_is_busy" logic. 2) This logic needs a STOP=
+ to
+> consider the bus free again. SCL/SDA high is not enough, and there is no =
+other
+> way known to reset the internal logic otherwise.
+>=20
+> The obvious solution to just send STOP after recovery makes sense for the
+> generic case, too, IMO. If we made a device release SDA again, and are ab=
+out
+> start a new transfer using START, then we should terminate the previous s=
+tate
+> properly with STOP. This may help with some devices and shouldn't create =
+any
+> drawback AFAICS.
+>=20
+> For this, we need to introduce a 'set_sda' callback to the recovery
+> infrastructure. The first five patches may be interesting for anyone, so =
+input
+> is greatly appreciated. Also, testing the new features with GPIO based re=
+covery
+> would be awesome to have. Thanks to Phil for testing already!
+>=20
+> This was tested on a Renesas Lager board (r8a7790/R-Car H2). My test proc=
+edure
+> is documented here:
+>=20
+> https://elinux.org/Tests:I2C-bus-recovery
+>=20
+> A branch is available here:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic=
+/rcar-i2c-recovery
+>=20
+> Please let me know what you think.
+>=20
+> Changes since V1:
+>=20
+> * add more identifiers in patch 2
+> * don't use GPIOF_* flags but hardocded '0'
+> * added Phil's Tested-by
+>=20
+>=20
+>=20
+> Wolfram Sang (6):
+>   i2c: make kerneldoc about bus recovery more precise
+>   i2c: add identifier in declarations for i2c_bus_recovery
+>   i2c: add 'set_sda' to bus_recovery_info
+>   i2c: ensure SDA is released in recovery if SDA is controllable
+>   i2c: send STOP after successful bus recovery
+>   i2c: rcar: implement bus recovery
+>=20
+>  drivers/i2c/busses/i2c-rcar.c | 54 +++++++++++++++++++++++++++++++++++++=
+++++--
+>  drivers/i2c/i2c-core-base.c   | 25 +++++++++++++++++++-
+>  include/linux/i2c.h           | 26 ++++++++++++---------
+>  3 files changed, 91 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 2f9ad1bec1c8a92f..ae286742f15a3ab5 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-+#include <linux/pm_runtime.h>
- 
- #include <media/videobuf2-dma-contig.h>
- 
-@@ -1228,3 +1229,30 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
- 
- 	return ret;
- }
-+
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CHSEL manipulation
-+ */
-+
-+void rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
-+{
-+	u32 ifmd, vnmc;
-+
-+	pm_runtime_get_sync(vin->dev);
-+
-+	/* Make register writes take effect immediately */
-+	vnmc = rvin_read(vin, VNMC_REG);
-+	rvin_write(vin, vnmc & ~VNMC_VUP, VNMC_REG);
-+
-+	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
-+		VNCSI_IFMD_CSI_CHSEL(chsel);
-+
-+	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
-+
-+	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
-+
-+	/* Restore VNMC */
-+	rvin_write(vin, vnmc, VNMC_REG);
-+
-+	pm_runtime_put(vin->dev);
-+}
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 146683142e6533fa..a5dae5b5e9cb704b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -165,4 +165,6 @@ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- /* Cropping, composing and scaling */
- void rvin_crop_scale_comp(struct rvin_dev *vin);
- 
-+void rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
-+
- #endif
--- 
-2.16.1
+Applied to for-next, thanks!
+
+
+--6ikwx66mlux3s2a3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpdNGkACgkQFA3kzBSg
+KbZ5whAAkFA6eyFi1gc1hafSb3n9MWn40i7NdhGa/4vj2JTmUz8eFTdyYn+H6UJz
+b+tg5OGoMVAhImy2PEtv1M03bj/3ZPzGoHB9a1i4tWgLNj026r5snmKQWsOcovjE
+1xql5cDc1w8dXDF1KBV718pJ0vkVFJaT5V4Rm27u01pOBkTRiDdosxpz4B12vwoV
+ov5pdfZEZkwDiHWn/Jf73rQ4LsQ2Bnx7mdzNZAfZTNEkq21ltNOKKjlg3hGh010H
+iZnL0aAAvERE7XFoNuZn2MWOoP8G7Wnhr0NT2PKt/S5cU9dyuFVU4d36lBliXUYy
+pRuDoD6lbtT//4JP/Lt3SH94uEiVukFzIl/psBJP7dr12rI2mLRtNd/GRo0yA5bu
+g3E1k5w1RKDqtN6uAxIgKK8wlnCeuQM+1sUGbLdXSBxS4DPfv2QLY9FlmFfruYuz
+L5n0XtlTdoYZazCNzlESeQQmo3TCEmbAm0ueV1PzdcfDKFk7nQoIC2TbejQsxt++
+poGHGcaFK92V147IK142S/iqgO+LmwwxvqD/5q1PDSgrnsYLtX3lWk6/1EHy3RZn
+u8Z/wqdjz7E4jMcgZfRpTcuxPsYGekjfxsqCTrhcdZ69IwuJGx4+1kfiqJLdsec/
+oAq0yXAT/t6CtNuaRJ5Plz0Go87GgNfdZRoKsCXWm7Xsgd2gNz4=
+=H46L
+-----END PGP SIGNATURE-----
+
+--6ikwx66mlux3s2a3--
