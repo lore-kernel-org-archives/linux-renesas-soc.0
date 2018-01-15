@@ -1,56 +1,42 @@
-Subject: Re: [PATCH 0/3] Add R8A77970/Eagle PFC support
-To: Simon Horman <horms@verge.net.au>,
- Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
-References: <20171110200218.747996672@cogentembedded.com>
- <20171113075303.zmkmq6bt3lfuttwu@verge.net.au>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <049b0a0a-b1c2-73e6-c471-ca8342bba6ab@ideasonboard.com>
-Date: Fri, 19 Jan 2018 10:48:06 +0000
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:43234 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753838AbeAOIMt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 15 Jan 2018 03:12:49 -0500
 MIME-Version: 1.0
-In-Reply-To: <20171113075303.zmkmq6bt3lfuttwu@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180114175203.191929089@cogentembedded.com>
+References: <20180114175203.191929089@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 15 Jan 2018 09:12:48 +0100
+Message-ID: <CAMuHMdV-PHbf1zko2URteFVEUZGsrnu5GXQ2eYDVDR2Z=qVT_A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] sh_eth: get Ether port # only when needed
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+On Sun, Jan 14, 2018 at 6:47 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The dual-port Ether configurations always have a shared TSU to e.g. pass
+> the packets between those  ports.  With the  TSU init. code gathered under
+> the single *if*, we now can only get the port # from 'platform_device::id'
+> only when we actually  need it  (and not recalculate it each time)...
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On 13/11/17 07:53, Simon Horman wrote:
-> On Fri, Nov 10, 2017 at 11:02:18PM +0300, Sergei Shtylyov wrote:
->> Hello!
->>
->> Here's the set of 3 patches against Simon Horman's 'renesas.git' repo's
->> 'renesas-devel-20171110-v4.14-rc8' tag.  We're adding the R8A77970 PFC node
->> and then describing the pins for SCIF0 and EtherAVB devices declared earlier.
->> These patches depend on the R8A77970 PFC suport in order to work properly.
->>
->> [1/3] arm64: dts: renesas: r8a77970: add PFC support
->> [2/3] arm64: dts: renesas: eagle: add SCIF0 pins
->> [3/3] arm64: dts: renesas: eagle: add EtherAVB pins
-> 
-> Hi Sergei,
-> 
-> I have marked these patches as deferred pending acceptance of the PFC
-> driver. Please repost or otherwise ping me once that dependency has been
-> accepted.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Has the dependency blocking this series been resolved yet ?
+Gr{oetje,eeting}s,
 
-(I have patches for the Eagle-V3M which are blocked waiting for the PFC support)
+                        Geert
 
 --
-Regards
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Kieran
-
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
