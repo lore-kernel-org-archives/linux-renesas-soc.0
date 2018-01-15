@@ -1,116 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60444 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932169AbeALA7N (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36631 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752499AbeAOIMF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Jan 2018 19:59:13 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 08/10] ARM: dts: r8a7793: Convert to new LVDS DT bindings
-Date: Fri, 12 Jan 2018 02:58:56 +0200
-Message-Id: <20180112005858.26472-9-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 15 Jan 2018 03:12:05 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180114175159.604307495@cogentembedded.com>
+References: <20180114175159.604307495@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 15 Jan 2018 09:12:04 +0100
+Message-ID: <CAMuHMdUFhW7LVtVyQ8hFT+8+Us8WV7W2n9B9Zac=yCRNKv3+5Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] sh_eth: gather all TSU init code in one place
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+On Sun, Jan 14, 2018 at 6:47 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The  sh_eth_cpu_data::chip_reset() method  always resets using ARSTR and
+> this register is always located at the start of the  TSU register region.
+> Therefore, we can  only call  this method if we know TSU is there and thus
+> simplify  the probing code a  bit...
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm/boot/dts/r8a7793-gose.dts | 10 +++++++---
- arch/arm/boot/dts/r8a7793.dtsi     | 35 +++++++++++++++++++++++++++++------
- 2 files changed, 36 insertions(+), 9 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 51b3ffac8efa..c6121f9b72a8 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -303,10 +303,9 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- 
--	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
-+	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 		 <&x13_clk>, <&x2_clk>;
--	clock-names = "du.0", "du.1", "lvds.0",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
- 
- 	ports {
- 		port@0 {
-@@ -314,6 +313,11 @@
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
-+	};
-+};
-+
-+&lvds0 {
-+	ports {
- 		port@1 {
- 			lvds_connector: endpoint {
- 			};
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 0cd1035de1a4..c044291bb2a2 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -976,15 +976,13 @@
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7793";
--		reg = <0 0xfeb00000 0 0x40000>,
--		      <0 0xfeb90000 0 0x1c>;
--		reg-names = "du", "lvds.0";
-+		reg = <0 0xfeb00000 0 0x40000>;
-+		reg-names = "du";
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 724>,
--			 <&cpg CPG_MOD 723>,
--			 <&cpg CPG_MOD 726>;
--		clock-names = "du.0", "du.1", "lvds.0";
-+			 <&cpg CPG_MOD 723>;
-+		clock-names = "du.0", "du.1";
- 		status = "disabled";
- 
- 		ports {
-@@ -999,6 +997,31 @@
- 			port@1 {
- 				reg = <1>;
- 				du_out_lvds0: endpoint {
-+					remote-endpoint = <&lvds0_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	lvds0: lvds@feb90000 {
-+		compatible = "renesas,lvds-r8a7793";
-+		reg = <0 0xfeb90000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 726>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds0_in: endpoint {
-+					remote-endpoint = <&du_out_lvds0>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds0_out: endpoint {
- 				};
- 			};
- 		};
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
