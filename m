@@ -1,168 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39561 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965328AbeALXOo (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33153 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeAOVBj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 18:14:44 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 11/12] arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
-Date: Sat, 13 Jan 2018 01:14:29 +0200
-Message-Id: <20180112231430.26943-12-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 15 Jan 2018 16:01:39 -0500
+Received: by mail-lf0-f66.google.com with SMTP id t139so82268lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Jan 2018 13:01:38 -0800 (PST)
+Subject: Re: [PATCH v2 04/12] drm: rcar-du: Convert LVDS encoder code to
+ bridge driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
 References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180112231430.26943-5-laurent.pinchart+renesas@ideasonboard.com>
+ <9a2806f3-d232-b587-bc77-733e9d45c138@cogentembedded.com>
+ <84235223.mW0iJ7b1HL@avalon>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <c788a280-46ac-8d50-746a-e8e684592bfc@cogentembedded.com>
+Date: Tue, 16 Jan 2018 00:01:35 +0300
+MIME-Version: 1.0
+In-Reply-To: <84235223.mW0iJ7b1HL@avalon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+On 01/15/2018 11:32 PM, Laurent Pinchart wrote:
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v1:
+>>> The LVDS encoders used to be described in DT as part of the DU. They now
+>>> have their own DT node, linked to the DU using the OF graph bindings.
+>>> This allows moving internal LVDS encoder support to a separate driver
+>>> modelled as a DRM bridge. Backward compatibility is retained as legacy
+>>> DT is patched live to move to the new bindings.
+>>>
+>>> Signed-off-by: Laurent Pinchart
+>>> <laurent.pinchart+renesas@ideasonboard.com>
+>>
+>> [...]
+>>
+>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+>>> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 6e02c762a557..06a3fbdd728a
+>>> 100644
+>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+>>
+>> [...]
+>>
+>>>    /* --------------------------------------------------------------------
+>>> @@ -74,7 +75,6 @@ static const struct rcar_du_device_info
+>>> rzg1_du_r8a7745_info = {
+>>>    			.port = 1,
+>   >   		},
+>>>    	},
+>>> -	.num_lvds = 0,
+>>>    };
+>>>    
+>>>    static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+>>> @@ -95,14 +95,13 @@ static const struct rcar_du_device_info
+>>> rcar_du_r8a7779_info = {
+>>>    			.port = 1,
+>>>    		},
+>>>    	},
+>>> -	.num_lvds = 0,
+>>>    };
+>>>    
+>>>    static const struct rcar_du_device_info rcar_du_r8a7790_info = {
+>>>    	.gen = 2,
+>>>    	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+>>>    		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+>>> -	.quirks = RCAR_DU_QUIRK_ALIGN_128B | RCAR_DU_QUIRK_LVDS_LANES,
+>>> +	.quirks = RCAR_DU_QUIRK_ALIGN_128B,
+>>>    	.num_crtcs = 3,
+>>>    	.routes = {
+>>>    		/*
+>>> @@ -164,7 +163,6 @@ static const struct rcar_du_device_info
+>>> rcar_du_r8a7792_info = {
+>>>    			.port = 1,
+>>>    		},
+>>>    	},
+>>> -	.num_lvds = 0,
+>>>    };
+>>>    
+>>>    static const struct rcar_du_device_info rcar_du_r8a7794_info = {
+>>> @@ -186,7 +184,6 @@ static const struct rcar_du_device_info
+>>> rcar_du_r8a7794_info = {
+>>>    			.port = 1,
+>>>    		},
+>>>    	},
+>>> -	.num_lvds = 0,
+>>
+>> I think you can remove *all* such initializers and the field itself with
+>> them -- otherwise it looks like you're doing a not-quite-related drive-by
+>> clean up...
+> 
+> The OF compatibility code uses the .num_lvds field, that's why I haven't
+> removed it.
 
-- Remove the DU reg-names property
----
- .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |  3 +-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |  3 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  3 +-
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |  3 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 34 ++++++++++++++++++----
- 5 files changed, 32 insertions(+), 14 deletions(-)
+    Ah, I haven't yet reviewed that patch! But then I would leave the 
+initializers alone...
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-index 9ef9a4e5f376..0dda1c0ed1ce 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-@@ -43,12 +43,11 @@
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
- 		 <&cpg CPG_MOD 721>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock5 1>,
- 		 <&x21_clk>,
- 		 <&x22_clk>,
- 		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2", "du.3",
- 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 0afe777973de..f0d6528c05eb 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -44,11 +44,10 @@
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
- 		 <&cpg CPG_MOD 721>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock5 1>,
- 		 <&versaclock5 3>,
- 		 <&versaclock5 4>,
- 		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2", "du.3",
- 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 00ad1ab53a7d..e34b986185d4 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -43,12 +43,11 @@
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
- 		 <&cpg CPG_MOD 721>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock5 1>,
- 		 <&x21_clk>,
- 		 <&x22_clk>,
- 		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2", "du.3",
- 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 79e8b65622db..31f2abaa90aa 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -43,12 +43,11 @@
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
- 		 <&cpg CPG_MOD 721>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock6 1>,
- 		 <&x21_clk>,
- 		 <&x22_clk>,
- 		 <&versaclock6 2>;
--	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2", "du.3",
- 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 15ef292a8d9f..8e14873455b9 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2077,9 +2077,7 @@
- 
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7795";
--			reg = <0 0xfeb00000 0 0x80000>,
--			      <0 0xfeb90000 0 0x14>;
--			reg-names = "du", "lvds.0";
-+			reg = <0 0xfeb00000 0 0x80000>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-@@ -2087,9 +2085,8 @@
- 			clocks = <&cpg CPG_MOD 724>,
- 				 <&cpg CPG_MOD 723>,
- 				 <&cpg CPG_MOD 722>,
--				 <&cpg CPG_MOD 721>,
--				 <&cpg CPG_MOD 727>;
--			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+				 <&cpg CPG_MOD 721>;
-+			clock-names = "du.0", "du.1", "du.2", "du.3";
- 			vsps = <&vspd0 0 &vspd1 0 &vspd2 0 &vspd0 1>;
- 			status = "disabled";
- 
-@@ -2117,6 +2114,31 @@
- 				port@3 {
- 					reg = <3>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,lvds-r8a7795";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
--- 
-Regards,
-
-Laurent Pinchart
+MBR, Sergei
