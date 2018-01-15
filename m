@@ -1,72 +1,48 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36920 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752322AbeAOG7O (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Jan 2018 01:59:14 -0500
-Date: Mon, 15 Jan 2018 07:59:10 +0100
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 15 Jan 2018 07:57:48 +0100
 From: Simon Horman <horms@verge.net.au>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         devicetree@vger.kernel.org
 Subject: Re: [PATCH 00/10] R-Car DU: Convert LVDS code to bridge driver
-Message-ID: <20180115065909.ajhigdnv4nl5tuiw@verge.net.au>
+Message-ID: <20180115065747.hx5kvhurk3x5f3jz@verge.net.au>
 References: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdWJ=5O4+FyutUdtWY+8yBwBy_fKqJ-vZGUKKUuvpeB8FQ@mail.gmail.com>
+ <2317358.st5FeEE5QH@avalon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <2317358.st5FeEE5QH@avalon>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 12, 2018 at 02:58:48AM +0200, Laurent Pinchart wrote:
-> Hello,
+On Fri, Jan 12, 2018 at 03:48:25PM +0200, Laurent Pinchart wrote:
+> Hi Geert,
 > 
-> This patch series addresses a design mistake that dates back from the initial
-> DU support. Support for the LVDS encoders, which are IP cores separate from
-> the DU, was bundled in the DU driver. Worse, both the DU and LVDS were
-> described through a single DT node.
+> On Friday, 12 January 2018 11:47:03 EET Geert Uytterhoeven wrote:
+> > On Fri, Jan 12, 2018 at 1:58 AM, Laurent Pinchart wrote:
+> > > This patch series addresses a design mistake that dates back from the
+> > > initial DU support. Support for the LVDS encoders, which are IP cores
+> > > separate from the DU, was bundled in the DU driver. Worse, both the DU
+> > > and LVDS were described through a single DT node.
+> > > 
+> > > To fix the, patches 01/10 and 02/10 define new DT bindings for the LVDS
+> > > encoders, and deprecate their description inside the DU bindings. To
+> > > retain backward compatibility with existing DT, patch 03/10 then patches
+> > > the device tree at runtime to convert the legacy bindings to the new ones.
+> > 
+> > Looks like we will have to postpone the R-Car Gen2 Modern DT flag day
+> > again by a few kernel releases?
 > 
-> To fix the, patches 01/10 and 02/10 define new DT bindings for the LVDS
-> encoders, and deprecate their description inside the DU bindings. To retain
-> backward compatibility with existing DT, patch 03/10 then patches the device
-> tree at runtime to convert the legacy bindings to the new ones.
-> 
-> With the DT side addressed, patch 04/10 then converts the LVDS support code to
-> a separate bridge driver. After a small fix to the Porter board device tree in
-> patch 05/10, patches 06/10 to 10/10 then update all the device tree sources to
-> the new LVDS encoders bindings.
-> 
-> I decided to go for live DT patching in patch 03/10 because implementing
-> support for both the legacy and new bindings in the driver would have been
-> very intrusive, and prevented further cleanups. I'm in a way both proud and 
-> ashamed of that patch that I would call a neat and dirty hack. It was fun to
-> write perhaps in a similar way that one would enjoy researching and developing
-> proof-of-concepts for security holes: they're good and bad at the same time.
-> 
-> Anyway, with this philosophical considerations aside, there were a few
-> shortcomings in the OF API that I worked around with local code in the driver.
-> If anyone is interested in performing similar live DT patching I think we
-> could move some of the code to the OF core. For instance I was surprised
-> to not find a device node lookup by path function that would start at a
-> given node instead of the root of the live device tree, and had to write
-> rcar_du_of_find_node_by_path(). Utility functions to add or modify properties
-> or to rename nodes could similarly be added.
-> 
-> Laurent Pinchart (10):
->   dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
->   dt-bindings: display: renesas: Deprecate LVDS support in the DU
->     bindings
->   drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
->   drm: rcar-du: Convert LVDS encoder code to bridge driver
->   ARM: dts: porter: Fix HDMI output routing
->   ARM: dts: r8a7790: Convert to new LVDS DT bindings
->   ARM: dts: r8a7791: Convert to new LVDS DT bindings
->   ARM: dts: r8a7793: Convert to new LVDS DT bindings
->   arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
->   arm64: dts: renesas: r8a7796: Convert to new LVDS DT bindings
+> Why so ? We don't have to drop support for all legacy DT bindings at the same 
+> time, do we ? We can switch to the new-style clock bindings on Gen2 already, 
+> and drop the legacy LVDS bindings later.
 
-I understand that there will be a v2 to address review of the non DTS
-patches. I am marking the DTS patches as "Changes Requested" as they
-are dependent on the bindings patches from my PoV.
+To clarify, after this patchset.
+* Old DTs work with old and new kernels.
+* New DTs require new kernels.
+
