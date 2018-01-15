@@ -1,69 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:15892 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751827AbeAaS0e (ORCPT
+Received: from o1.7nn.fshared.sendgrid.net ([167.89.55.65]:43041 "EHLO
+        o1.7nn.fshared.sendgrid.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S966866AbeAOQio (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jan 2018 13:26:34 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 18/26] clk: renesas: r8a7791/r8a7793: Add rwdt clock
-Date: Wed, 31 Jan 2018 18:24:22 +0000
-Message-Id: <1517423070-24236-19-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 15 Jan 2018 11:38:44 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v5 9/9] v4l: vsp1: Reduce display list body size
+Date: Mon, 15 Jan 2018 16:38:43 +0000 (UTC)
+Message-Id: <fa58cc7e478813b2e3e8a7e5f646e4c9db844312.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.7c5bc67e9d7032daf8ea4d7bd18cf237c61676b4.1516028582.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add "rwdt" clock to r8a7791_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+The display list originally allocated a body of 256 entries to store all
+of the register lists required for each frame.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+This has now been separated into fragments for constant stream setup, and
+runtime updates.
+
+Empirical testing shows that the body0 now uses a maximum of 41
+registers for each frame, for both DRM and Video API pipelines thus a
+rounded 64 entries provides a suitable allocation.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-v3->4:
-* no change
+ drivers/media/platform/vsp1/vsp1_dl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-index c0b51f9..820b220 100644
---- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-@@ -128,6 +128,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7791_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7791_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7791_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7791_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7791_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7791_CLK_ZS),
- 	DEF_MOD("audio-dmac1",		 501,	R8A7791_CLK_HP),
-@@ -209,6 +210,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
- };
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 1fc52496fc13..ce315821b60c 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -21,7 +21,7 @@
+ #include "vsp1.h"
+ #include "vsp1_dl.h"
  
- static const unsigned int r8a7791_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
+-#define VSP1_DL_NUM_ENTRIES		256
++#define VSP1_DL_NUM_ENTRIES		64
  
+ #define VSP1_DLH_INT_ENABLE		(1 << 1)
+ #define VSP1_DLH_AUTO_START		(1 << 0)
 -- 
-2.7.4
+git-series 0.9.1
