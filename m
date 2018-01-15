@@ -1,82 +1,75 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 10/25] dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
-Date: Tue, 30 Jan 2018 20:22:43 +0000
-Message-Id: <1517343778-27902-11-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57547 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752816AbeAOQtd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 15 Jan 2018 11:49:33 -0500
+Subject: Re: [PATCH] [VSP-Tests] tests: add pseudo platform test
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+References: <1516034870-27229-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <32fee8cf-e1c3-a05c-6b0d-eabc9b1b1ab1@ideasonboard.com>
+Date: Mon, 15 Jan 2018 16:49:30 +0000
+MIME-Version: 1.0
+In-Reply-To: <1516034870-27229-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This commit documents the compatibility with R-Car Gen2 and RZ/G
-devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
-Also, this patch expands the list of SoC-specific compatible strings to
-include RZ/G and R-Car Gen2 devices.
+Ahem, ...
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v1->v3:
-* made description less generic and added compatible strings for r8a779[0-4]
+Not that it really matters but perhaps that should read 'add platform pseudo
+test' instead.?
 
- .../devicetree/bindings/watchdog/renesas-wdt.txt       | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+--
+Kieran
 
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index bf6d1ca..a983a74 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -1,17 +1,25 @@
- Renesas Watchdog Timer (WDT) Controller
- 
- Required properties:
--- compatible : Should be "renesas,<soctype>-wdt", and
--	       "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
-+ - compatible : Must be "renesas,<soctype>-wdt", followed by a generic
-+		fallback compatible string when compatible with the generic
-+		version.
- 	       Examples with soctypes are:
-+		 - "renesas,r8a7743-wdt" (RZ/G1M)
-+		 - "renesas,r8a7745-wdt" (RZ/G1E)
-+	         - "renesas,r8a7790-wdt" (R-Car H2)
-+	         - "renesas,r8a7791-wdt" (R-Car M2-W)
-+	         - "renesas,r8a7792-wdt" (R-Car V2H)
-+	         - "renesas,r8a7793-wdt" (R-Car M2-N)
-+	         - "renesas,r8a7794-wdt" (R-Car E2)
- 	         - "renesas,r8a7795-wdt" (R-Car H3)
- 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
- 	         - "renesas,r8a77995-wdt" (R-Car D3)
- 	         - "renesas,r7s72100-wdt" (RZ/A1)
-+		The generic compatible string must be:
-+		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
-+		 - "renesas,rcar-gen3-wdt" for R-Car Gen3
- 
--  When compatible with the generic version, nodes must list the SoC-specific
--  version corresponding to the platform first, followed by the generic
--  version.
- 
- - reg : Should contain WDT registers location and length
- - clocks : the clock feeding the watchdog timer.
--- 
-2.7.4
 
+On 15/01/18 16:47, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> Provide an initial test which can run as part of the test suite.
+> This test will report the platform and kernel version, along with
+> the identified paths of required utilities.
+> 
+> This will aid in ensuring that required tools are available on a
+> running platform - and report the kernel and platform details in
+> any test suite output for clarification of results.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> ---
+>  tests/vsp-unit-test-0000.sh | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>  create mode 100755 tests/vsp-unit-test-0000.sh
+> 
+> diff --git a/tests/vsp-unit-test-0000.sh b/tests/vsp-unit-test-0000.sh
+> new file mode 100755
+> index 000000000000..144cfc677b32
+> --- /dev/null
+> +++ b/tests/vsp-unit-test-0000.sh
+> @@ -0,0 +1,20 @@
+> +#!/bin/sh
+> +
+> +# Report testing conditions
+> +
+> +model=`cat /sys/firmware/devicetree/base/model`
+> +
+> +echo "Test Conditions:"
+> +
+> +function check_all() {
+> +	echo "  Platform: " "$model"
+> +	echo "  Kernel release: " `uname -r`
+> +	echo "  convert: " `which convert`
+> +	echo "  compare: " `which compare`
+> +	echo "  killall: " `which killall`
+> +	echo "  raw2rgbpnm: " `which raw2rgbpnm`
+> +	echo "  stress: " `which stress`
+> +	echo "  yavta: " `which yavta`
+> +}
+> +
+> +check_all | column -ts ":"
+> 
