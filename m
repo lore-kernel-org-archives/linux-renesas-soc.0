@@ -1,62 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:40014 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753875AbeALUP6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 15:15:58 -0500
-Received: by mail-lf0-f67.google.com with SMTP id v74so5228281lfa.7
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jan 2018 12:15:57 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180112201553.683979009@cogentembedded.com>
-Date: Fri, 12 Jan 2018 23:12:05 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/2] drm: rcar-du: lvds: fix LVDS startup on R-Car gen2
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 15 Jan 2018 08:58:13 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 00/10] R-Car DU: Convert LVDS code to bridge driver
+Message-ID: <20180115075812.nhffb3phxqongmds@verge.net.au>
+References: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
+ <2317358.st5FeEE5QH@avalon>
+ <20180115065747.hx5kvhurk3x5f3jz@verge.net.au>
+ <1910701.B4GqNP9ovV@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=drm-rcar-du-lvds-fix-LVDS-startup-on-R-Car-gen2.patch
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1910701.B4GqNP9ovV@avalon>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the latest revision 2.00 of the R-Car gen2 manual, the LVDS
-must be enabled and the bias crcuit  enabled after the LVDS I/O pins are
-enabled, not before --  fix the gen2 LVDS startup sequence accordingly.
+On Mon, Jan 15, 2018 at 09:00:59AM +0200, Laurent Pinchart wrote:
+> Hi Simon,
+> 
+> On Monday, 15 January 2018 08:57:48 EET Simon Horman wrote:
+> > On Fri, Jan 12, 2018 at 03:48:25PM +0200, Laurent Pinchart wrote:
+> > > On Friday, 12 January 2018 11:47:03 EET Geert Uytterhoeven wrote:
+> > >> On Fri, Jan 12, 2018 at 1:58 AM, Laurent Pinchart wrote:
+> > >>> This patch series addresses a design mistake that dates back from the
+> > >>> initial DU support. Support for the LVDS encoders, which are IP cores
+> > >>> separate from the DU, was bundled in the DU driver. Worse, both the DU
+> > >>> and LVDS were described through a single DT node.
+> > >>> 
+> > >>> To fix the, patches 01/10 and 02/10 define new DT bindings for the
+> > >>> LVDS encoders, and deprecate their description inside the DU bindings.
+> > >>> To retain backward compatibility with existing DT, patch 03/10 then
+> > >>> patches the device tree at runtime to convert the legacy bindings to the
+> > >>> new ones.
+> > >> 
+> > >> Looks like we will have to postpone the R-Car Gen2 Modern DT flag day
+> > >> again by a few kernel releases?
+> > > 
+> > > Why so ? We don't have to drop support for all legacy DT bindings at the
+> > > same time, do we ? We can switch to the new-style clock bindings on Gen2
+> > > already, and drop the legacy LVDS bindings later.
+> > 
+> > To clarify, after this patchset.
+> > * Old DTs work with old and new kernels.
+> > * New DTs require new kernels.
+> 
+> That's correct. I've tested old DTs with new kernels successfully on Lager, 
+> Salvator-X (both H3 ES1.x and M3-W) and Salvator-XS.
 
-Fixes: 90374b5c25c9 ("drm/rcar-du: Add internal LVDS encoder support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-Index: linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-===================================================================
---- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-+++ linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-@@ -59,11 +59,8 @@ static void rcar_du_lvdsenc_start_gen2(s
- 
- 	rcar_lvds_write(lvds, LVDPLLCR, pllcr);
- 
--	/*
--	 * Set the  LVDS mode, select the input, enable LVDS operation,
--	 * and turn bias circuitry on.
--	 */
--	lvdcr0 = (lvds->mode << LVDCR0_LVMD_SHIFT) | LVDCR0_BEN | LVDCR0_LVEN;
-+	/* Select the input and set the LVDS mode. */
-+	lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
- 	if (rcrtc->index == 2)
- 		lvdcr0 |= LVDCR0_DUSEL;
- 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-@@ -73,6 +70,10 @@ static void rcar_du_lvdsenc_start_gen2(s
- 			LVDCR1_CHSTBY(3) | LVDCR1_CHSTBY(2) |
- 			LVDCR1_CHSTBY(1) | LVDCR1_CHSTBY(0) | LVDCR1_CLKSTBY);
- 
-+	/* Enable LVDS operation and turn bias circuitry on. */
-+	lvdcr0 |= LVDCR0_BEN | LVDCR0_LVEN;
-+	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-+
- 	/*
- 	 * Turn the PLL on, wait for the startup delay, and turn the output
- 	 * on.
+Thanks, no objections to this approach from my side.
