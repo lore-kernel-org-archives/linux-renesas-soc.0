@@ -1,75 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57547 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752816AbeAOQtd (ORCPT
+Received: from o1.7nn.fshared.sendgrid.net ([167.89.55.65]:51301 "EHLO
+        o1.7nn.fshared.sendgrid.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965492AbeAOQr7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Jan 2018 11:49:33 -0500
-Subject: Re: [PATCH] [VSP-Tests] tests: add pseudo platform test
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-References: <1516034870-27229-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <32fee8cf-e1c3-a05c-6b0d-eabc9b1b1ab1@ideasonboard.com>
-Date: Mon, 15 Jan 2018 16:49:30 +0000
-MIME-Version: 1.0
-In-Reply-To: <1516034870-27229-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Mon, 15 Jan 2018 11:47:59 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH] [VSP-Tests] tests: add pseudo platform test
+Date: Mon, 15 Jan 2018 16:47:58 +0000 (UTC)
+Message-Id: <1516034870-27229-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Ahem, ...
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Not that it really matters but perhaps that should read 'add platform pseudo
-test' instead.?
+Provide an initial test which can run as part of the test suite.
+This test will report the platform and kernel version, along with
+the identified paths of required utilities.
 
---
-Kieran
+This will aid in ensuring that required tools are available on a
+running platform - and report the kernel and platform details in
+any test suite output for clarification of results.
 
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+---
+ tests/vsp-unit-test-0000.sh | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100755 tests/vsp-unit-test-0000.sh
 
-On 15/01/18 16:47, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
-> Provide an initial test which can run as part of the test suite.
-> This test will report the platform and kernel version, along with
-> the identified paths of required utilities.
-> 
-> This will aid in ensuring that required tools are available on a
-> running platform - and report the kernel and platform details in
-> any test suite output for clarification of results.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> ---
->  tests/vsp-unit-test-0000.sh | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100755 tests/vsp-unit-test-0000.sh
-> 
-> diff --git a/tests/vsp-unit-test-0000.sh b/tests/vsp-unit-test-0000.sh
-> new file mode 100755
-> index 000000000000..144cfc677b32
-> --- /dev/null
-> +++ b/tests/vsp-unit-test-0000.sh
-> @@ -0,0 +1,20 @@
-> +#!/bin/sh
-> +
-> +# Report testing conditions
-> +
-> +model=`cat /sys/firmware/devicetree/base/model`
-> +
-> +echo "Test Conditions:"
-> +
-> +function check_all() {
-> +	echo "  Platform: " "$model"
-> +	echo "  Kernel release: " `uname -r`
-> +	echo "  convert: " `which convert`
-> +	echo "  compare: " `which compare`
-> +	echo "  killall: " `which killall`
-> +	echo "  raw2rgbpnm: " `which raw2rgbpnm`
-> +	echo "  stress: " `which stress`
-> +	echo "  yavta: " `which yavta`
-> +}
-> +
-> +check_all | column -ts ":"
-> 
+diff --git a/tests/vsp-unit-test-0000.sh b/tests/vsp-unit-test-0000.sh
+new file mode 100755
+index 000000000000..144cfc677b32
+--- /dev/null
++++ b/tests/vsp-unit-test-0000.sh
+@@ -0,0 +1,20 @@
++#!/bin/sh
++
++# Report testing conditions
++
++model=`cat /sys/firmware/devicetree/base/model`
++
++echo "Test Conditions:"
++
++function check_all() {
++	echo "  Platform: " "$model"
++	echo "  Kernel release: " `uname -r`
++	echo "  convert: " `which convert`
++	echo "  compare: " `which compare`
++	echo "  killall: " `which killall`
++	echo "  raw2rgbpnm: " `which raw2rgbpnm`
++	echo "  stress: " `which stress`
++	echo "  yavta: " `which yavta`
++}
++
++check_all | column -ts ":"
+-- 
+2.7.4
