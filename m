@@ -1,94 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:36280 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755050AbeAOJRt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38246 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751895AbeAOIlw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Jan 2018 04:17:49 -0500
-Received: by mail-lf0-f53.google.com with SMTP id e203so12469154lfg.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Jan 2018 01:17:48 -0800 (PST)
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: eagle: Remove renesas,
- no-ether-link property
-To: Simon Horman <horms+renesas@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
+        Mon, 15 Jan 2018 03:41:52 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
         Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] arm64: dts: renesas: eagle: Remove renesas, no-ether-link property
+Date: Mon, 15 Jan 2018 09:41:24 +0100
+Message-Id: <20180115084125.8112-3-horms+renesas@verge.net.au>
+In-Reply-To: <20180115084125.8112-1-horms+renesas@verge.net.au>
 References: <20180115084125.8112-1-horms+renesas@verge.net.au>
- <20180115084125.8112-3-horms+renesas@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <7cda829c-cb72-ef12-90fe-80f9dbb9200e@cogentembedded.com>
-Date: Mon, 15 Jan 2018 12:17:46 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180115084125.8112-3-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Regarding Salvator-X and ULCB boards, Bogdan Mirea says:
 
-On 1/15/2018 11:41 AM, Simon Horman wrote:
+    The present change is a bug fix for AVB link iteratively up/down.
 
-> Regarding Salvator-X and ULCB boards, Bogdan Mirea says:
+    Steps to reproduce:
+    - start AVB TX stream (Using aplay via MSE),
+    - disconnect+reconnect the eth cable,
+    - after a reconnection the eth connection goes iteratively up/down
+      without user interaction,
+    - this may heal after some seconds or even stay for minutes.
 
-    Intended to reply to the original patches but due to high load haven't 
-ever finished that email...
+    As the documentation specifies, the "renesas,no-ether-link" option
+    should be used when a board does not provide a proper AVB_LINK signal.
+    There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
+    and ULCB starter kits since the AVB_LINK is correctly handled by HW.
 
->      The present change is a bug fix for AVB link iteratively up/down.
-> 
->      Steps to reproduce:
->      - start AVB TX stream (Using aplay via MSE),
->      - disconnect+reconnect the eth cable,
->      - after a reconnection the eth connection goes iteratively up/down
->        without user interaction,
->      - this may heal after some seconds or even stay for minutes.
-> 
->      As the documentation specifies, the "renesas,no-ether-link" option
->      should be used when a board does not provide a proper AVB_LINK signal.
->      There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
->      and ULCB starter kits since the AVB_LINK is correctly handled by HW.
-> 
->      Choosing to keep or remove the "renesas,no-ether-link" option will
->      have impact on the code flow in the following ways:
->      - keeping this option enabled may lead to unexpected behavior since
->        the RX & TX are enabled/disabled directly from adjust_link function
->        without any HW interrogation,
+    Choosing to keep or remove the "renesas,no-ether-link" option will
+    have impact on the code flow in the following ways:
+    - keeping this option enabled may lead to unexpected behavior since
+      the RX & TX are enabled/disabled directly from adjust_link function
+      without any HW interrogation,
+    - removing this option, the RX & TX will only be enabled/disabled after
+      HW interrogation. The HW check is made through the LMON pin in PSR
+      register which specifies AVB_LINK signal value (0 - at low level;
+      1 - at high level).
 
-    What does he mean by that? The adjust_link() is surely called as a result 
-of interrogating the PHY...
+    In conclusion, the present change is also a safety improvement because
+    it removes the "renesas,no-ether-link" option leading to a proper way
+    of detecting the link state based on HW interrogation and not on
+    software heuristic.
 
->      - removing this option, the RX & TX will only be enabled/disabled after
->        HW interrogation. The HW check is made through the LMON pin in PSR
+On examination of the documentation for the Eagle board this change seems
+necessary as AVB_LINK is documented as being connected.
 
-    s/pin/bit/.
+Fixes: 38525608952a ("arm64: dts: renesas: eagle: add EtherAVB support")
+Cc: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
->        register which specifies AVB_LINK signal value (0 - at low level;
->        1 - at high level).
-
-    Things are not that simple with this signal. The main cause of the issues 
-is that it's connected to a LED control output of the Micrel PHY and that one 
-may have different meaning -- e.g., it can well be blinking when some traffic 
-happens (and IIRC that's might be a problem with KSZ9031, usually used with 
-AVB). I remember I have tried without this option but finally decided to leave 
-it specified as my schematics reading skills failed me in this case... I need 
-to test this patch.
-
->      In conclusion, the present change is also a safety improvement because
->      it removes the "renesas,no-ether-link" option leading to a proper way
->      of detecting the link state based on HW interrogation and not on
->      software heuristic.
-> 
-> On examination of the documentation for the Eagle board this change seems
-> necessary as AVB_LINK is documented as being connected.
-> 
-> Fixes: 38525608952a ("arm64: dts: renesas: eagle: add EtherAVB support")
-> Cc: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
-> Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[...]
-
-MBR, Sergei
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+index 8fe5c193e049..83210542db34 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -34,7 +34,6 @@
+ };
+ 
+ &avb {
+-	renesas,no-ether-link;
+ 	phy-handle = <&phy0>;
+ 	status = "okay";
+ 
+-- 
+2.11.0
