@@ -1,70 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:6241 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751753AbeA3UZL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36736 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932420AbeAOGsn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:25:11 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 15 Jan 2018 01:48:43 -0500
+Date: Mon, 15 Jan 2018 07:48:38 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
         Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 22/25] ARM: dts: r8a7791: Add watchdog support to SoC dtsi
-Date: Tue, 30 Jan 2018 20:22:55 +0000
-Message-Id: <1517343778-27902-23-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH] ARM: dts: iwg20m: Enable cmt0
+Message-ID: <20180115064838.3tc2nkczbcuxi777@verge.net.au>
+References: <1515704379-29154-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1515704379-29154-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This commit adds watchdog support to the r8a7791 dtsi.
+On Thu, Jan 11, 2018 at 08:59:38PM +0000, Fabrizio Castro wrote:
+> This patch enables cmt0 support from within the iwg20m SoM dtsi.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v3:
-* rwdt moved before gpio@e6050000
-
- arch/arm/boot/dts/r8a7791.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index d2a4546..80e20ecd 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -142,6 +142,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7791-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7791",
- 				     "renesas,rcar-gen2-gpio";
--- 
-2.7.4
+Thanks, applied.
