@@ -1,61 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:6160 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752134AbeA3UYV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37628 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750798AbeAPJMH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:24:21 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 13/25] ARM: shmobile: defconfig: Enable CONFIG_RENESAS_WDT
-Date: Tue, 30 Jan 2018 20:22:46 +0000
-Message-Id: <1517343778-27902-14-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 16 Jan 2018 04:12:07 -0500
+Date: Tue, 16 Jan 2018 10:12:03 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, geert@glider.be
+Subject: Re: [PATCH] [LOCAL] arm64: renesas_defconfig: Use a default 128MB of
+ CMA
+Message-ID: <20180116091203.mn54twa4ovfzyuya@verge.net.au>
+References: <1516021154-17400-1-git-send-email-kieran.bingham@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516021154-17400-1-git-send-email-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-its driver by default.
+On Mon, Jan 15, 2018 at 12:59:16PM +0000, Kieran Bingham wrote:
+> Our media tests frequently need large areas of CMA.
+> Define the default allocation to be 128 MBytes to support
+> larger use-cases.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> 
+> v1.1
+>  - Collected Laurent's Acked-by
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v1->v3:
-* CONFIG_RENESAS_WDT_GEN2 -> CONFIG_RENESAS_WDT
-
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 578434c..d5cdad8 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -132,6 +132,7 @@ CONFIG_CPU_THERMAL=y
- CONFIG_RCAR_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_DA9063_WATCHDOG=y
-+CONFIG_RENESAS_WDT=y
- CONFIG_MFD_AS3711=y
- CONFIG_MFD_DA9063=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
--- 
-2.7.4
+Thanks, I have applied this to the topic/renesas-defconfig branch which is
+included in the devel branch and tags of the Renesas tree as a convenience
+to developers.  The branch is not, however, included in the next branch or
+tags nor is it targeted at upstream.
