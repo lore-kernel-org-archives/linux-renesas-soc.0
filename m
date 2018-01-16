@@ -1,49 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:12215 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932290AbeAKU7q (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44706 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750830AbeAPJoZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Jan 2018 15:59:46 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] ARM: dts: iwg20m: Enable cmt0
-Date: Thu, 11 Jan 2018 20:59:38 +0000
-Message-Id: <1515704379-29154-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 16 Jan 2018 04:44:25 -0500
+Date: Tue, 16 Jan 2018 10:44:22 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 19/22] mmc: tmio: ioremap memory resource in
+ tmio_mmc_host_alloc()
+Message-ID: <20180116094422.2m2iotvgwzx6jfiz@tetsubishi>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-20-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dc6rnypxybjuatak"
+Content-Disposition: inline
+In-Reply-To: <1511540697-27387-20-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables cmt0 support from within the iwg20m SoM dtsi.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+--dc6rnypxybjuatak
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index 75a8ca5..1d3e950 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -34,6 +34,10 @@
- 	};
- };
- 
-+&cmt0 {
-+	status = "okay";
-+};
-+
- &extal_clk {
- 	clock-frequency = <20000000>;
- };
--- 
-2.7.4
+On Sat, Nov 25, 2017 at 01:24:54AM +0900, Masahiro Yamada wrote:
+> The register region is ioremap'ed in the tmio_mmc_host_probe(), i.e.
+> drivers cannot get access to the hardware before mmc_add_host().
+>=20
+> Actually, renesas_sdhi_core.c reads out the CTL_VERSION register to
+> complete the platform-specific settings.  However, at this point,
+> the MMC host is already running.
+>=20
+> Move the register ioremap to tmio_mmc_host_alloc() so that drivers
+> can perform platform-specific settings between tmio_mmc_host_alloc()
+> and tmio_mmc_host_probe().
+>=20
+> I changed tmio_mmc_host_alloc() to return an error pointer to
+> propagate the return code from devm_ioremap_resource().
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--dc6rnypxybjuatak
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpdyXYACgkQFA3kzBSg
+KbYUpg//aPP/JzY4FCSZ1+y0wQanBo1l84/ptPXWPY/2W3JF1Na9F3JFMob4U8QV
+86+kh4+zm7xX8IHIPf/R7V3Dt2vj9e0mWshQwxRk/GC4Y2dXMN3eYm5WV79Ho2xq
+oVsHr2VknGMZ1XMJSwFBkKjudPfZCcaALaYI9Gdk2Vp3DFTACoSFUFyi0knvCcqv
+5fd/PvOvWXcaLwyZX9EkNtVlehP6yugfkScq3GkPbsJdv5VhX5gZmEShwEyPhWHs
+aaNw0x+ZDmi6+Mz3rDg4c3/L+9V6IYrsHPr+VScW7u9n942rHHISCJttgMgIZ0B/
+ZcJGRRB89g/iKyVlfTihHo0+pRaz/xOCAWzYn7LTSyP6ghM7JNIFbDVVBR55RBmO
+h1Q5KpTyUrUSXbq+qoQ2SZewCpXWs/mhD3HEXXy9F8LSG31a44BSwnEjHB096v3U
+XgqSCjF2d8pV5SyO3A8CZJhkgEcagYRYgGzF1ralMShEPrJcBJReRdCfrwMoW96V
++SJBYvJc16Y3UUNdBahDGpCyn2xSh17QyusRYGIyQDaYbEia6uRkVTDFL1Rexo1O
+oK2X7ni4rl/r6/x0D6P4cVMJ/MZaovobInPoOpnSKAuCDRTNv5QRkGwq5mACX/tD
+AvJ1R3yfJkpwxw0YmGCvTmwNzWsj0TqUnoHkRrk4s8O3UeZHyKo=
+=HU2N
+-----END PGP SIGNATURE-----
+
+--dc6rnypxybjuatak--
