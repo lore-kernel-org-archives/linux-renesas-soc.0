@@ -1,113 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36663 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753787AbeAQQ3b (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38617 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751704AbeAPKNh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:29:31 -0500
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 04/16] mmc: tmio: remove dma_ops from tmio_mmc_host_probe() argument
-Date: Thu, 18 Jan 2018 01:28:04 +0900
-Message-Id: <1516206496-16612-5-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 16 Jan 2018 05:13:37 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/4] ARM: dts: r8a7790: consistently use single space after =
+Date: Tue, 16 Jan 2018 11:13:27 +0100
+Message-Id: <20180116101330.21688-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180116101330.21688-1-horms+renesas@verge.net.au>
+References: <20180116101330.21688-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Drivers need to set up various struct members for tmio_mmc_host before
-calling tmio_mmc_host_probe().  Do likewise for host->dma_ops instead
-of passing it as a function argument.
+Consistently use a single space after a =.
+This patch removes instances where a tab is used instead.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch should not introduce any functional change.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7790.dtsi | 72 +++++++++++++++++++++---------------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
 
-Changes in v3: None
-Changes in v2: None
-
- drivers/mmc/host/renesas_sdhi_core.c | 3 ++-
- drivers/mmc/host/tmio_mmc.c          | 2 +-
- drivers/mmc/host/tmio_mmc.h          | 3 +--
- drivers/mmc/host/tmio_mmc_core.c     | 4 +---
- 4 files changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index e18a1c5..80943fa 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -532,6 +532,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	host->clk_update	= renesas_sdhi_clk_update;
- 	host->clk_disable	= renesas_sdhi_clk_disable;
- 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
-+	host->dma_ops		= dma_ops;
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 13926fc7abfa..26da3b282913 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -291,9 +291,9 @@
+ 	};
  
- 	/* SDR speeds are only available on Gen2+ */
- 	if (mmc_data->flags & TMIO_MMC_MIN_RCAR2) {
-@@ -575,7 +576,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	if (ret)
- 		goto efree;
+ 	thermal: thermal@e61f0000 {
+-		compatible =	"renesas,thermal-r8a7790",
+-				"renesas,rcar-gen2-thermal",
+-				"renesas,rcar-thermal";
++		compatible = "renesas,thermal-r8a7790",
++			     "renesas,rcar-gen2-thermal",
++			     "renesas,rcar-thermal";
+ 		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 522>;
+@@ -423,20 +423,20 @@
+ 	audma0: dma-controller@ec700000 {
+ 		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
+ 		reg = <0 0xec700000 0 0x10000>;
+-		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
++		              GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error",
+ 				"ch0", "ch1", "ch2", "ch3",
+ 				"ch4", "ch5", "ch6", "ch7",
+@@ -453,20 +453,20 @@
+ 	audma1: dma-controller@ec720000 {
+ 		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
+ 		reg = <0 0xec720000 0 0x10000>;
+-		interrupts =	<GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error",
+ 				"ch0", "ch1", "ch2", "ch3",
+ 				"ch4", "ch5", "ch6", "ch7",
+@@ -1438,11 +1438,11 @@
+ 		 * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
+ 		 */
+ 		compatible =  "renesas,rcar_sound-r8a7790", "renesas,rcar_sound-gen2";
+-		reg =	<0 0xec500000 0 0x1000>, /* SCU */
+-			<0 0xec5a0000 0 0x100>,  /* ADG */
+-			<0 0xec540000 0 0x1000>, /* SSIU */
+-			<0 0xec541000 0 0x280>,  /* SSI */
+-			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
++		reg = <0 0xec500000 0 0x1000>, /* SCU */
++		      <0 0xec5a0000 0 0x100>,  /* ADG */
++		      <0 0xec540000 0 0x1000>, /* SSIU */
++		      <0 0xec541000 0 0x280>,  /* SSI */
++		      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
+ 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
  
--	ret = tmio_mmc_host_probe(host, dma_ops);
-+	ret = tmio_mmc_host_probe(host);
- 	if (ret < 0)
- 		goto edisclk;
- 
-diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
-index 11b87ce..43a2ea5 100644
---- a/drivers/mmc/host/tmio_mmc.c
-+++ b/drivers/mmc/host/tmio_mmc.c
-@@ -104,7 +104,7 @@ static int tmio_mmc_probe(struct platform_device *pdev)
- 	host->mmc->f_max = pdata->hclk;
- 	host->mmc->f_min = pdata->hclk / 512;
- 
--	ret = tmio_mmc_host_probe(host, NULL);
-+	ret = tmio_mmc_host_probe(host);
- 	if (ret)
- 		goto host_free;
- 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index f46d282..7609434 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -198,8 +198,7 @@ struct tmio_mmc_host {
- struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev,
- 					  struct tmio_mmc_data *pdata);
- void tmio_mmc_host_free(struct tmio_mmc_host *host);
--int tmio_mmc_host_probe(struct tmio_mmc_host *host,
--			const struct tmio_mmc_dma_ops *dma_ops);
-+int tmio_mmc_host_probe(struct tmio_mmc_host *host);
- void tmio_mmc_host_remove(struct tmio_mmc_host *host);
- void tmio_mmc_do_data_irq(struct tmio_mmc_host *host);
- 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index fc9b28d..d092b0f 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1195,8 +1195,7 @@ void tmio_mmc_host_free(struct tmio_mmc_host *host)
- }
- EXPORT_SYMBOL_GPL(tmio_mmc_host_free);
- 
--int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
--			const struct tmio_mmc_dma_ops *dma_ops)
-+int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- {
- 	struct platform_device *pdev = _host->pdev;
- 	struct tmio_mmc_data *pdata = _host->pdata;
-@@ -1296,7 +1295,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	INIT_WORK(&_host->done, tmio_mmc_done_work);
- 
- 	/* See if we also get DMA */
--	_host->dma_ops = dma_ops;
- 	tmio_mmc_request_dma(_host, pdata);
- 
- 	pm_runtime_set_active(&pdev->dev);
+ 		clocks = <&cpg CPG_MOD 1005>,
 -- 
-2.7.4
+2.11.0
