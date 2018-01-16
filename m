@@ -1,98 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:36749 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750861AbeAPURg (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39854 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750933AbeAPPqQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jan 2018 15:17:36 -0500
-Received: by mail-lf0-f45.google.com with SMTP id t79so3630548lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 16 Jan 2018 12:17:35 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] drm: rcar-du: lvds: Fix LVDS startup on R-Car gen2
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Tue, 16 Jan 2018 10:46:16 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <11845752.a3eY2rs97p@avalon>
- <20180112231002.26213-1-laurent.pinchart+renesas@ideasonboard.com>
- <38ec7142-1bef-656a-1399-f3642028d460@cogentembedded.com>
- <1635865.FStOqVGXHX@avalon>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <1078e267-c900-6caf-5787-de078f5b6557@cogentembedded.com>
-Date: Tue, 16 Jan 2018 23:17:31 +0300
+Subject: Re: [PATCH v2 2/2] drm: rcar-du: lvds: Fix LVDS startup on R-Car gen2
+Date: Tue, 16 Jan 2018 17:46:20 +0200
+Message-ID: <1635865.FStOqVGXHX@avalon>
+In-Reply-To: <38ec7142-1bef-656a-1399-f3642028d460@cogentembedded.com>
+References: <11845752.a3eY2rs97p@avalon> <20180112231002.26213-1-laurent.pinchart+renesas@ideasonboard.com> <38ec7142-1bef-656a-1399-f3642028d460@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1635865.FStOqVGXHX@avalon>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/16/2018 06:46 PM, Laurent Pinchart wrote:
+Hi Sergei,
 
->>> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>>
->>> According to the latest revision 2.00 of the R-Car gen2 manual, the LVDS
->>> must be enabled and the bias crcuit enabled after the LVDS I/O pins are
-
-    Oops, this needs fixing (note the typo!). Could you please change this 
-passage to:
-
-and the bias circuit must be enabled after the LVDS I/O pins are
-
-?
-
->>> enabled, not before. Fix the gen2 LVDS startup sequence accordingly.
->>>
->>> While at it, also fix the comment preceding the first LVDCR0 write that
->>> still talks about hardcoding the LVDS mode 0.
->>
->> Please do this in a separate commit then...
+On Saturday, 13 January 2018 11:33:55 EET Sergei Shtylyov wrote:
+> On 1/13/2018 2:10 AM, Laurent Pinchart wrote:
+> > From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > According to the latest revision 2.00 of the R-Car gen2 manual, the LVDS
+> > must be enabled and the bias crcuit enabled after the LVDS I/O pins are
+> > enabled, not before. Fix the gen2 LVDS startup sequence accordingly.
+> > 
+> > While at it, also fix the comment preceding the first LVDCR0 write that
+> > still talks about hardcoding the LVDS mode 0.
 > 
-> The reason I added it here is that I think we don't need patch 1/2 from this
-> series, and I found a bit overkill to split a comment fix to a separate patch
-> when we have a patch that touches the code around the comment.
+> Please do this in a separate commit then...
 
-    OK, you're the maintainer of this driver, you know better. :-)
+The reason I added it here is that I think we don't need patch 1/2 from this 
+series, and I found a bit overkill to split a comment fix to a separate patch 
+when we have a patch that touches the code around the comment.
 
->>> Fixes: 90374b5c25c9 ("drm/rcar-du: Add internal LVDS encoder support")
->>
->> You forgot to specify the other commit this one fixes -- I mean the comment
->> fix.
+> > Fixes: 90374b5c25c9 ("drm/rcar-du: Add internal LVDS encoder support")
 > 
-> Do we need to for a comment update ? It doesn't affect fix the behaviour of
-> the driver or device, and I'd thus prefer to avoid giving the wrong impression
-> that this patch fixes an bug introduced in a previous commit, otherwise it
-> might end up being backported unnecessarily.
+> You forgot to specify the other commit this one fixes -- I mean the comment
+> fix.
 
-    OK, no dire need to backport indeed...
+Do we need to for a comment update ? It doesn't affect fix the behaviour of 
+the driver or device, and I'd thus prefer to avoid giving the wrong impression 
+that this patch fixes an bug introduced in a previous commit, otherwise it 
+might end up being backported unnecessarily.
 
->>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>> [Set the mode and input at the same time as the BEN and LVEN bits]
->>> Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>> Signed-off-by: Laurent Pinchart
->>> <laurent.pinchart+renesas@ideasonboard.com>
->>> ---
->>>
->>>    drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 14 +++++++-------
->>>    1 file changed, 7 insertions(+), 7 deletions(-)
->>>
->>> Hi Sergei,
->>>
->>> For your convenience (and if you agree with bundling mode setup with the
->>> first write as explained in my review of patch 1/2), here's the updated
->>> version of patch 2/2 that I have taken in my development branch. If
->>> you're fine with it I'll keep it, otherwise we can continue the review
->>> discussion.
->>
->> As I said, I don't know how to interpret the note 3 in either manual.
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > [Set the mode and input at the same time as the BEN and LVEN bits]
+> > Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >   drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 14 +++++++-------
+> >   1 file changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > Hi Sergei,
+> > 
+> > For your convenience (and if you agree with bundling mode setup with the
+> > first write as explained in my review of patch 1/2), here's the updated
+> > version of patch 2/2 that I have taken in my development branch. If
+> > you're fine with it I'll keep it, otherwise we can continue the review
+> > discussion.
+> 
+> As I said, I don't know how to interpret the note 3 in either manual.
 
-    Moreover, it seems to me that the notes don't match the start-up procedure 
-anymore...
+As explained in my latest reply to patch 1/2, my understanding is that the 
+parameters can be programmed at any time before step 6. The fact that the 
+current code works seems to confirm that interpretation. We could ask Renesas 
+for a confirmation if you want.
 
-> As explained in my latest reply to patch 1/2, my understanding is that the
-> parameters can be programmed at any time before step 6. The fact that the
-> current code works seems to confirm that interpretation. We could ask Renesas
-> for a confirmation if you want.
+-- 
+Regards,
 
-    Would be good to ask, indeed.
-
-MBR, Sergei
+Laurent Pinchart
