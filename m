@@ -1,82 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60083 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751245AbeACNdS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41989 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeAPONG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 08:33:18 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: iwg20d display driver
-Date: Wed, 03 Jan 2018 15:33:39 +0200
-Message-ID: <1562100.VQODLR5xyG@avalon>
-In-Reply-To: <TY1PR06MB0702E8B2778BD1E5FB76AA10B71E0@TY1PR06MB0702.apcprd06.prod.outlook.com>
-References: <TY1PR06MB0702E8B2778BD1E5FB76AA10B71E0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+        Tue, 16 Jan 2018 09:13:06 -0500
+Date: Tue, 16 Jan 2018 15:12:46 +0100
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 3/4] ARM: r8a7790: sort subnodes of soc node
+Message-ID: <20180116141244.4dgsgofvil6iu2an@verge.net.au>
+References: <20180116101330.21688-1-horms+renesas@verge.net.au>
+ <20180116101330.21688-4-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180116101330.21688-4-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Wednesday, 3 January 2018 12:09:48 EET Chris Paterson wrote:
-> Hello Laurent,
+On Tue, Jan 16, 2018 at 11:13:29AM +0100, Simon Horman wrote:
+> Sort the subnodes of the soc node to improve maintainability.
+> The sort key is the addresss on the bus with instances of the same
+> IP block grouped together.
 > 
-> Happy new year!
-
-Onnellista uutta vuotta to you too :)
-
-> We are looking at upstreaming support for the display provided in the iwg20d
-> development kit [1]. The setup is slightly unusual in the sense that the
-> display is an RGB panel (EDT etm070001adh6), connected to the RZ/G1M via an
-> LVDS/RGB transmitter (DS90CF384AMTDX/NOPB).
+> This patch should not introduce any functional change.
 > 
-> We think that the correct driver to use is
-> drivers/gpu/drm/panel/panel-lvds.c as as far as the SoC/Kernel is aware
-> there is an LVDS display connected. However the bindings documentation
-> states: "compatible: Shall contain "panel-lvds" in addition to a mandatory
-> panel-specific compatible string defined in individual panel bindings. The
-> "panel-lvds" value shall never be used on its own."
-> 
-> As the development kit uses an RGB panel there are no suitable LVDS
-> panel-specific bindings. Would it be okay in this case to used panel-lvds
-> on its own?
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-The rationale is that there's no such thing as a fully generic LVDS panel. The 
-panel-lvds compatible string allows supporting panels that are compatible with 
-the interface defined by the panel-lvds driver, but using the compatible 
-string on its own would mean that the operating system would have no way to 
-tweak operation for a particular panel. It might be that using the panel-lvds 
-driver works today, but that you will realize tomorrow that you need some 
-panel-specific quirks. Being able to identify the exact panel model is thus 
-crucial to be future-proof.
-
-The exact compatible string for your panel should be "edt,etm070001adh6". 
-Using
-
-	compatible = "edt,etm070001adh6", "panel-lvds";
-
-will work today and be somehow future-proof, but is a bit of a hack as the 
-panel isn't an LVDS panel.
-
-The right solution would be to model the full display pipeline in DT, 
-including the DS90CF384AMTDX. However, the DU driver doesn't support that yet. 
-Some Gen2 boards suffer from a similar issue in the sense that the device tree 
-pretends that a RGB to HDMI encoder is connected directly to the LVDS output 
-of the SoC, while an LVDS to RGB decoder is present in-between.
-
-Fixing this is somewhere in my todo list but with a low priority I'm afraid. 
-Would you like to give it a go ?
-
-> [1]
-> http://www.iwavesystems.com/product/development-platform/qseven-evaluation-> board/rz-g1m-qseven-development-kit-49/rz-g1m-qseven-development-kit.html
-
--- 
-Regards,
-
-Laurent Pinchart
+Looking over this it seems I messed up the ordering of
+qspi, msiof*, can*, and vin* nodes.
