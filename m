@@ -1,49 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:44554 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751731AbeA2Qfs (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39835 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750878AbeAPPmi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:35:48 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 23/30] rcar-vin: change name of video device
-Date: Mon, 29 Jan 2018 17:34:28 +0100
-Message-Id: <20180129163435.24936-24-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 16 Jan 2018 10:42:38 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm: rcar-du: lvds: fix LVDS startup on R-Car gen3
+Date: Tue, 16 Jan 2018 17:42:41 +0200
+Message-ID: <35260661.mJIny8zrSv@avalon>
+In-Reply-To: <27ae5c72-b774-1af5-ae99-65009c2b6416@cogentembedded.com>
+References: <20180112201550.368547609@cogentembedded.com> <3090757.msatNG3mHi@avalon> <27ae5c72-b774-1af5-ae99-65009c2b6416@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar-vin driver needs to be part of a media controller to support
-Gen3. Give each VIN instance a unique name so it can be referenced from
-userspace.
+Hi Sergei,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Saturday, 13 January 2018 11:25:31 EET Sergei Shtylyov wrote:
+> On 1/13/2018 1:15 AM, Laurent Pinchart wrote:
+> >>> According to the latest revisions of the R-Car gen3 manual, the LVDS
+> >>> mode must be set before the LVDS I/O pins are enabled, not after --  fix 
+> >>> the gen3 LVDS startup sequence accordingly...
+> >>> 
+> >>> While  at it,  also fix the comment  preceding the first LVDCR0 write in
+> >>> the R-Car gen2 startup code that still talks about hardcoding the LVDS
+> >>> mode 0...
+> >> 
+> >> How about fixing that in patch 2/2 that touches the Gen2 initialization
+> >> sequence ? I think I'd even go as far as squashing both patches, I don't
+> >> think there's a need to split them.
+> >> 
+> >>> Fixes: e947eccbeba4 ("drm: rcar-du: Add support for LVDS mode
+> >>> selection")
+> >>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >> 
+> >> Is this really needed ? Does it fix a problem you've experienced, or is
+> >> it theoretical only ? The mode shouldn't matter before the LVDS internal
+> >> logic is turned on. Unless there's a real issue I'm not sure we should
+> >> make the code more complex.
+> > 
+> > Furthermore the datasheet states
+> > 
+> > "3. This refers to settings other than those that are concerned with
+> > LVDS-IF startup. These items may be set while waiting for the conditions
+> > of step 6 to be met."
+> 
+> Ah, I hadn't paid much attention to this note. Howeve, it seems quite
+> vague to me... and there's no condition in step 6. ;-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 292e1f22a4be36c7..3ac6cdcb18ce4a21 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -1012,7 +1012,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	/* video node */
- 	vdev->v4l2_dev = &vin->v4l2_dev;
- 	vdev->queue = &vin->queue;
--	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
-+	snprintf(vdev->name, sizeof(vdev->name), "VIN%u output", vin->id);
- 	vdev->release = video_device_release_empty;
- 	vdev->lock = &vin->lock;
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+Lots of bits and pieces are lost in translation yes :-)
+
+> > Doesn't this mean that the mode and input selector don't have to be set as
+> > the very first step, but can be programmed at any point before starting
+> > the LVDS encoder through the PWD bit (on Gen3) or the PLLON bit (on Gen2)
+> > ?
+> 
+> Frankly speaking, I don't know how to interpret that note...
+
+My understanding is that the parameters can be programmed at any time before 
+step 6. The fact that the current code works seems to confirm that 
+interpretation. We could ask Renesas for a confirmation if you want.
+
 -- 
-2.16.1
+Regards,
+
+Laurent Pinchart
