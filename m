@@ -1,154 +1,37 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34830 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753577AbeAQQT6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:19:58 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 12/16] ARM: dts: r8a7793: sort subnodes of root node
-Date: Wed, 17 Jan 2018 17:17:13 +0100
-Message-Id: <20180117161717.14589-13-horms+renesas@verge.net.au>
-In-Reply-To: <20180117161717.14589-1-horms+renesas@verge.net.au>
-References: <20180117161717.14589-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v5 5/9] v4l: i2c: Copy ov772x soc_camera sensor driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
+        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
+        pombredanne@nexb.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1515765849-10345-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1515765849-10345-6-git-send-email-jacopo+renesas@jmondi.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <5daa42ce-b5ff-2fa7-79ff-e13891c18c33@xs4all.nl>
+Date: Tue, 16 Jan 2018 10:47:56 +0100
+MIME-Version: 1.0
+In-Reply-To: <1515765849-10345-6-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort the subnodes of the soc node to improve maintainability.
-The sort key is the address on the bus with instances of the same
-IP block grouped together.
+On 01/12/2018 03:04 PM, Jacopo Mondi wrote:
+> Copy the soc_camera based driver in v4l2 sensor driver directory.
+> This commit just copies the original file without modifying it.
+> No modification to KConfig and Makefile as soc_camera framework
+> dependencies need to be removed first in next commit.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-This patch should not introduce any functional change.
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* New patch
----
- arch/arm/boot/dts/r8a7793.dtsi | 90 +++++++++++++++++++++---------------------
- 1 file changed, 45 insertions(+), 45 deletions(-)
+Regards,
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index f2b58a28cee9..aa7d7792fb13 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -31,6 +31,35 @@
- 		spi0 = &qspi;
- 	};
- 
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -73,6 +102,22 @@
- 		};
- 	};
- 
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -1342,55 +1387,10 @@
- 				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
--	/* External root clock */
--	extal_clk: extal {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
--
--	/*
--	 * The external audio clocks are configured as 0 Hz fixed frequency
--	 * clocks by default.
--	 * Boards that provide audio clocks should override them.
--	 */
--	audio_clk_a: audio_clk_a {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--	audio_clk_b: audio_clk_b {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--	audio_clk_c: audio_clk_c {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
- 	/* External USB clock - can be overridden by the board */
- 	usb_extal_clk: usb_extal {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <48000000>;
- 	};
--
--	/* External CAN clock */
--	can_clk: can {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
--
--	/* External SCIF clock */
--	scif_clk: scif {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		/* This value must be overridden by the board. */
--		clock-frequency = <0>;
--	};
- };
--- 
-2.11.0
+	Hans
