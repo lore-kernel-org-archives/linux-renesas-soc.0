@@ -1,71 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:12051 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752211AbeAaQSc (ORCPT
+Received: from sauhun.de ([88.99.104.3]:48323 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751689AbeAPWnF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jan 2018 11:18:32 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 3/5] arm64: dts: renesas: r8a77970: add DU instance
-Date: Wed, 31 Jan 2018 17:18:09 +0100
-Message-Id: <20180131161811.12699-4-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20180131161811.12699-1-niklas.soderlund@ragnatech.se>
-References: <20180131161811.12699-1-niklas.soderlund@ragnatech.se>
+        Tue, 16 Jan 2018 17:43:05 -0500
+Date: Tue, 16 Jan 2018 23:43:03 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 22/22] mmc: tmio: remove dma_ops from
+ tmio_mmc_host_probe() argument
+Message-ID: <20180116224303.sspgktqoqlieig53@tetsubishi>
+References: <1511540697-27387-1-git-send-email-yamada.masahiro@socionext.com>
+ <1511540697-27387-23-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="o2p2voy2lr5yoqnr"
+Content-Disposition: inline
+In-Reply-To: <1511540697-27387-23-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Add the DU device to r8a77970.dtsi in a disabled state.
+--o2p2voy2lr5yoqnr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+On Sat, Nov 25, 2017 at 01:24:57AM +0900, Masahiro Yamada wrote:
+> Drivers need to set up various struct members for tmio_mmc_host before
+> calling tmio_mmc_host_probe().  Do likewise for host->dma_ops instead
+> of passing it as a function argument.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 8419576dab50f460..e1d8aa0fbc1e4f90 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -632,6 +632,33 @@
- 			resets = <&cpg 603>;
- 			iommus = <&ipmmu_vi0 8>;
- 		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77970";
-+			reg = <0 0xfeb00000 0 0x70000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>;
-+			clock-names = "du.0";
-+			status = "disabled";
-+
-+			vsps = <&vspd0>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	timer {
--- 
-2.16.1
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+I think I have done all the review by now. I'll do some more regression
+testing tomorrow and then give Tested-by as well if everything works
+fine (but it looks like it so far).
+
+
+--o2p2voy2lr5yoqnr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpef/YACgkQFA3kzBSg
+KbawBw//UPg5tgUAInFyysISHeVpVQEc0Rb2ax2zKMRjhGxBOa/S63iswWDouKCK
+4+vv14I10RE7C07XOO/WySZuuguRtTsLsd5dxVtcUtvvQu7DX6M787mE1sEkojpw
+kS+2Fe9wn/YO3B5K5eutzSsZVrfTMEMD9BFhzwg4vtyxVj9DJZbIEsk++GGyr5uJ
+xtG17K3KEIemt4Ju7wv4+CmXgfcTB64Wye6WcndpyIGALLPf6uW1peOE9jBmy6RO
+DeQV1CsSi2oSQmnLODgcHNi10+k9rxRbZHX5PPwNxb379hB9gT4X9Le/vU41oHPb
+AEWfcrPjQmAI8EItqfEvcp2z+nNhq63nQZPmaEQGz4yWnKDLYskLvVKon55u01wp
+P00ML6QYRsOOiOsgjcjxcrV/x17T58l/kapdqTl80H6zUoLTdtJ/GXjxrYnFNjP+
+51ZNDzVHH8o3zrLFMEaYG5QgBAWbVQnwqtOiwxAiuQ47B/DlAPIA2Sy4p5VJbmOr
+zEoFxsHxIMm87L63d/cano+k0mBq2shwv8tXqzc/yOtEinmX7fxj9vYZbIgnVgM1
+pbmU2O44qObOmzYrvif88tUZSW0iLnm2vqOgD7tjUPd1Ob0SZWyoR1X1FTdEeV5h
+Zqk6Shc3KIg1Fna3z05ghUuTBPgj/WUALWvhMmxPVibXVG/D9+g=
+=gce6
+-----END PGP SIGNATURE-----
+
+--o2p2voy2lr5yoqnr--
