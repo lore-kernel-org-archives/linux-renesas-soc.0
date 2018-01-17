@@ -1,166 +1,144 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35545 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753126AbeARAQi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34817 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753764AbeAQQTg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 19:16:38 -0500
-Received: by mail-lf0-f68.google.com with SMTP id a204so15974048lfa.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Jan 2018 16:16:37 -0800 (PST)
-Date: Thu, 18 Jan 2018 01:16:34 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v2 01/16] ARM: dts: r8a7790: consistently use single
- space after =
-Message-ID: <20180118001633.GA11924@bigcity.dyn.berto.se>
+        Wed, 17 Jan 2018 11:19:36 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 01/16] ARM: dts: r8a7790: consistently use single space after =
+Date: Wed, 17 Jan 2018 17:17:02 +0100
+Message-Id: <20180117161717.14589-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180117161717.14589-1-horms+renesas@verge.net.au>
 References: <20180117161717.14589-1-horms+renesas@verge.net.au>
- <20180117161717.14589-2-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180117161717.14589-2-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Consistently use a single space after a =.
 
-Thanks for your patch.
+This patch removes instances where a tab or multiple spaces are used
+instead.  It also avoids running over 80 columns in width in one of the
+lines where whitespace is updated.
 
-On 2018-01-17 17:17:02 +0100, Simon Horman wrote:
-> Consistently use a single space after a =.
-> 
-> This patch removes instances where a tab or multiple spaces are used
-> instead.  It also avoids running over 80 columns in width in one of the
-> lines where whitespace is updated.
-> 
-> This patch should not introduce any functional change.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+This patch should not introduce any functional change.
 
-Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2
+* Consistently use tabs for indentation as much as possible
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 75 +++++++++++++++++++++---------------------
+ 1 file changed, 38 insertions(+), 37 deletions(-)
 
-> ---
-> v2
-> * Consistently use tabs for indentation as much as possible
-> ---
->  arch/arm/boot/dts/r8a7790.dtsi | 75 +++++++++++++++++++++---------------------
->  1 file changed, 38 insertions(+), 37 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-> index 13926fc7abfa..b4306f7c1bbb 100644
-> --- a/arch/arm/boot/dts/r8a7790.dtsi
-> +++ b/arch/arm/boot/dts/r8a7790.dtsi
-> @@ -291,9 +291,9 @@
->  	};
->  
->  	thermal: thermal@e61f0000 {
-> -		compatible =	"renesas,thermal-r8a7790",
-> -				"renesas,rcar-gen2-thermal",
-> -				"renesas,rcar-thermal";
-> +		compatible = "renesas,thermal-r8a7790",
-> +			     "renesas,rcar-gen2-thermal",
-> +			     "renesas,rcar-thermal";
->  		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
->  		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&cpg CPG_MOD 522>;
-> @@ -423,20 +423,20 @@
->  	audma0: dma-controller@ec700000 {
->  		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
->  		reg = <0 0xec700000 0 0x10000>;
-> -		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
->  		interrupt-names = "error",
->  				"ch0", "ch1", "ch2", "ch3",
->  				"ch4", "ch5", "ch6", "ch7",
-> @@ -453,20 +453,20 @@
->  	audma1: dma-controller@ec720000 {
->  		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
->  		reg = <0 0xec720000 0 0x10000>;
-> -		interrupts =	<GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
-> -				 GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
-> +			      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
->  		interrupt-names = "error",
->  				"ch0", "ch1", "ch2", "ch3",
->  				"ch4", "ch5", "ch6", "ch7",
-> @@ -1437,12 +1437,13 @@
->  		 * Single DAI : #sound-dai-cells = <0>;         <&rcar_sound>;
->  		 * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
->  		 */
-> -		compatible =  "renesas,rcar_sound-r8a7790", "renesas,rcar_sound-gen2";
-> -		reg =	<0 0xec500000 0 0x1000>, /* SCU */
-> -			<0 0xec5a0000 0 0x100>,  /* ADG */
-> -			<0 0xec540000 0 0x1000>, /* SSIU */
-> -			<0 0xec541000 0 0x280>,  /* SSI */
-> -			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
-> +		compatible = "renesas,rcar_sound-r8a7790",
-> +			     "renesas,rcar_sound-gen2";
-> +		reg = <0 0xec500000 0 0x1000>, /* SCU */
-> +		      <0 0xec5a0000 0 0x100>,  /* ADG */
-> +		      <0 0xec540000 0 0x1000>, /* SSIU */
-> +		      <0 0xec541000 0 0x280>,  /* SSI */
-> +		      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
->  		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
->  
->  		clocks = <&cpg CPG_MOD 1005>,
-> -- 
-> 2.11.0
-> 
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 13926fc7abfa..b4306f7c1bbb 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -291,9 +291,9 @@
+ 	};
+ 
+ 	thermal: thermal@e61f0000 {
+-		compatible =	"renesas,thermal-r8a7790",
+-				"renesas,rcar-gen2-thermal",
+-				"renesas,rcar-thermal";
++		compatible = "renesas,thermal-r8a7790",
++			     "renesas,rcar-gen2-thermal",
++			     "renesas,rcar-thermal";
+ 		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 522>;
+@@ -423,20 +423,20 @@
+ 	audma0: dma-controller@ec700000 {
+ 		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
+ 		reg = <0 0xec700000 0 0x10000>;
+-		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error",
+ 				"ch0", "ch1", "ch2", "ch3",
+ 				"ch4", "ch5", "ch6", "ch7",
+@@ -453,20 +453,20 @@
+ 	audma1: dma-controller@ec720000 {
+ 		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
+ 		reg = <0 0xec720000 0 0x10000>;
+-		interrupts =	<GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
+-				 GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error",
+ 				"ch0", "ch1", "ch2", "ch3",
+ 				"ch4", "ch5", "ch6", "ch7",
+@@ -1437,12 +1437,13 @@
+ 		 * Single DAI : #sound-dai-cells = <0>;         <&rcar_sound>;
+ 		 * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
+ 		 */
+-		compatible =  "renesas,rcar_sound-r8a7790", "renesas,rcar_sound-gen2";
+-		reg =	<0 0xec500000 0 0x1000>, /* SCU */
+-			<0 0xec5a0000 0 0x100>,  /* ADG */
+-			<0 0xec540000 0 0x1000>, /* SSIU */
+-			<0 0xec541000 0 0x280>,  /* SSI */
+-			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
++		compatible = "renesas,rcar_sound-r8a7790",
++			     "renesas,rcar_sound-gen2";
++		reg = <0 0xec500000 0 0x1000>, /* SCU */
++		      <0 0xec5a0000 0 0x100>,  /* ADG */
++		      <0 0xec540000 0 0x1000>, /* SSIU */
++		      <0 0xec541000 0 0x280>,  /* SSI */
++		      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
+ 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
+ 
+ 		clocks = <&cpg CPG_MOD 1005>,
 -- 
-Regards,
-Niklas S�derlund
+2.11.0
