@@ -1,85 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:16180 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751109AbeAYSEP (ORCPT
+Received: from cloudserver094114.home.pl ([79.96.170.134]:64999 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752610AbeAQLRP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:04:15 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Wed, 17 Jan 2018 06:17:15 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Vinod Koul <vinod.koul@intel.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 09/37] soc: renesas: rcar-rst: Add generic compatible strings
-Date: Thu, 25 Jan 2018 18:02:43 +0000
-Message-Id: <1516903391-30467-10-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        dmaengine@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: rcar-dmac: Make DMAC reinit during system resume explicit
+Date: Wed, 17 Jan 2018 12:15:55 +0100
+Message-ID: <2226167.p7nrZLn7KR@aspire.rjw.lan>
+In-Reply-To: <20180117101917.GN18649@localhost>
+References: <1516181908-16930-1-git-send-email-geert+renesas@glider.be> <20180117101917.GN18649@localhost>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This commit introduces generic compatible strings to use as fallback,
-so that devices compatible with the generic implementation may avoid
-changing the driver.
+On Wednesday, January 17, 2018 11:19:17 AM CET Vinod Koul wrote:
+> On Wed, Jan 17, 2018 at 10:38:28AM +0100, Geert Uytterhoeven wrote:
+> > The current (empty) system sleep callbacks rely on the PM core to force
+> > a runtime resume to reinitialize the DMAC registers during system
+> > resume.  Without a reinitialization, e.g. SCIF DMA will hang silently
+> > after a system resume on R-Car Gen3.
+> > 
+> > Make this explicit by using pm_runtime_force_{suspend,resume}() as the
+> > system sleep callbacks instead.  Use SET_LATE_SYSTEM_SLEEP_PM_OPS() as
+> > DMA engines must be initialized before all DMA slave devices.
+> > 
+> > Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > This is a dependency for "[PATCH 1/2] PM / genpd: Stop/start devices
+> > without pm_runtime_force_suspend/resume()"
+> > (https://www.spinics.net/lists/kernel/msg2696802.html), so perhaps it
+> > makes most sense if Rafael takes it through the PM tree?
+> 
+> Sounds okay to me.
+> 
+> Acked-By: Vinod Koul <vinod.koul@intel.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/soc/renesas/rcar-rst.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+OK, so I'll take it.
 
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index 3316b02..f7a0d54 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -25,8 +25,16 @@ static const struct rst_config rcar_rst_gen2 __initconst = {
- 	.modemr = 0x60,
- };
- 
-+static const struct rst_config rcar_rst_gen3 __initconst = {
-+	.modemr = 0x60,
-+};
-+
- static const struct of_device_id rcar_rst_matches[] __initconst = {
--	/* RZ/G is handled like R-Car Gen2 */
-+	/* generic compatible strings */
-+	{ .compatible = "renesas,rcar-gen1-rst", .data = &rcar_rst_gen1 },
-+	{ .compatible = "renesas,rcar-gen2-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,rcar-gen3-rst", .data = &rcar_rst_gen3 },
-+	/* RZ/G */
- 	{ .compatible = "renesas,r8a7743-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7745-rst", .data = &rcar_rst_gen2 },
- 	/* R-Car Gen1 */
-@@ -38,11 +46,11 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	{ .compatible = "renesas,r8a7792-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7793-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7794-rst", .data = &rcar_rst_gen2 },
--	/* R-Car Gen3 is handled like R-Car Gen2 */
--	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
--	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
--	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen2 },
--	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
-+	/* R-Car Gen3 */
-+	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen3 },
- 	{ /* sentinel */ }
- };
- 
--- 
-2.7.4
+Thanks!
