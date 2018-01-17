@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from conuserg-08.nifty.com ([210.131.2.75]:36685 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753813AbeAQQ3d (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 17 Jan 2018 11:29:33 -0500
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
@@ -8,77 +13,76 @@ Cc: Ulf Magnusson <ulfalizer@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-renesas-soc@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, linux-sh@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rich Felker <dalias@libc.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
-Date: Thu, 18 Jan 2018 01:28:00 +0900
-Message-Id: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: devicetree-owner@vger.kernel.org
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 15/16] mmc: tmio: clear force_pio flag before starting data transfer
+Date: Thu, 18 Jan 2018 01:28:15 +0900
+Message-Id: <1516206496-16612-16-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Currently, force_pio is cleared when the driver exits.  Then, it
+resulted in clearing it in multiple places since MMC drivers in
+general have multiple exit points.
 
-In the previous batch (https://lkml.org/lkml/2017/11/24/428)
-I sent 22 patches for TMIO MMC.
+ tmio_mmc_reset_work - bails out on timeout
+ tmio_process_mrq - error out when it cannot send a command
+ tmio_mmc_finish_request - successful exit
 
-14 patches were applied, the rest is under discussion.
+This is error-prone since we may miss to cover all bail-out points.
 
-This series consists of 16 patches.
+To simplify the code, the data structure should be initialized just
+before used since we have a single entrance.  force_pio is only used
+for data transfer, so tmio_mmc_start_data() will be a suitable place
+to clear this flag.
 
-Patch 1-4:  repost from v2.
-            (Wolfram gave Reviewed by, so I moved them to the head)
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Patch 5-11: new patches  (cleanups of WP flag)
+Changes in v3:
+  - newly added
 
-Patch 12: updated per Wolfram
+Changes in v2: None
 
-Patch 13: repost  (almost reviewed)
+ drivers/mmc/host/tmio_mmc_core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Patch 14: updated
-
-Patch 15: new
-
-Patch 16: repost (almost reviewed)
-
-
-Masahiro Yamada (16):
-  mmc: tmio: ioremap memory resource in tmio_mmc_host_alloc()
-  mmc: tmio: move clk_enable/disable out of tmio_mmc_host_probe()
-  mmc: tmio: move {tmio_}mmc_of_parse() to tmio_mmc_host_alloc()
-  mmc: tmio: remove dma_ops from tmio_mmc_host_probe() argument
-  mmc: slot-gpio: add a helper to check capability of GPIO WP detection
-  mmc: tmio: refactor .get_ro hook
-  mmc: renesas_sdhi: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own
-    flag
-  sh: kfr2r09: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own flag
-  mmc: tmio: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own flag
-  mmc: tmio: remove TMIO_MMC_WRPROTECT_DISABLE
-  mmc: tmio: deprecate "toshiba,mmc-wrprotect-disable" DT property
-  mmc: tmio: support IP-builtin card detection logic
-  mmc: tmio: fix never-detected card insertion bug
-  mmc: tmio: move TMIO_MASK_{READOP,WRITEOP} handling to correct place
-  mmc: tmio: clear force_pio flag before starting data transfer
-  mmc: tmio: remove useless TMIO_MASK_CMD handling in
-    tmio_mmc_host_probe()
-
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |   1 -
- arch/sh/boards/mach-kfr2r09/setup.c                |   2 +-
- drivers/mmc/core/slot-gpio.c                       |   8 ++
- drivers/mmc/host/renesas_sdhi_core.c               |  18 ++-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  12 +-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c           |  20 ++-
- drivers/mmc/host/tmio_mmc.c                        |  11 +-
- drivers/mmc/host/tmio_mmc.h                        |   7 +-
- drivers/mmc/host/tmio_mmc_core.c                   | 139 +++++++++++----------
- include/linux/mfd/tmio.h                           |   1 -
- include/linux/mmc/slot-gpio.h                      |   1 +
- 11 files changed, 120 insertions(+), 100 deletions(-)
-
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 731552a..494f0b3 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -278,7 +278,6 @@ static void tmio_mmc_reset_work(struct work_struct *work)
+ 
+ 	host->cmd = NULL;
+ 	host->data = NULL;
+-	host->force_pio = false;
+ 
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ 
+@@ -759,6 +758,7 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
+ 
+ 	tmio_mmc_init_sg(host, data);
+ 	host->data = data;
++	host->force_pio = false;
+ 
+ 	/* Set transfer length / blocksize */
+ 	sd_ctrl_write16(host, CTL_SD_XFER_LEN, data->blksz);
+@@ -850,7 +850,6 @@ static void tmio_process_mrq(struct tmio_mmc_host *host,
+ 	return;
+ 
+ fail:
+-	host->force_pio = false;
+ 	host->mrq = NULL;
+ 	mrq->cmd->error = ret;
+ 	mmc_request_done(host->mmc, mrq);
+@@ -900,7 +899,6 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+ 	if (host->cmd != mrq->sbc) {
+ 		host->cmd = NULL;
+ 		host->data = NULL;
+-		host->force_pio = false;
+ 		host->mrq = NULL;
+ 	}
+ 
 -- 
 2.7.4
-
