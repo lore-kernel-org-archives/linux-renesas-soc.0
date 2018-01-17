@@ -1,223 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34562 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbeA2SCH (ORCPT
+Received: from conuserg-08.nifty.com ([210.131.2.75]:36694 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753853AbeAQQ3d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 13:02:07 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v5 1/6] clk: renesas: rcar-gen3: Add Z clock divider support
-Date: Mon, 29 Jan 2018 19:01:49 +0100
-Message-Id: <20180129180154.29626-2-horms+renesas@verge.net.au>
-In-Reply-To: <20180129180154.29626-1-horms+renesas@verge.net.au>
-References: <20180129180154.29626-1-horms+renesas@verge.net.au>
+        Wed, 17 Jan 2018 11:29:33 -0500
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 07/16] mmc: renesas_sdhi: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own flag
+Date: Thu, 18 Jan 2018 01:28:07 +0900
+Message-Id: <1516206496-16612-8-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+TMIO_MMC_WRPROTECT_DISABLE is equivalent to MMC_CAP2_NO_WRITE_PROTECT.
 
-This patch adds Z clock divider support for R-Car Gen3 SoC.
+The flag is propagated as follows:
+       renesas_sdhi_of_data::capabilities2
+    -> tmio_mmc_data::capabilities2
+    -> mmc_host::caps2
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Only the difference is the TMIO_... makes tmio_mmc_get_ro() return 0
+(i.e. it does not affect mmc_gpio_get_ro() at all), while MMC_CAP2_...
+returns 0 before calling ->get_ro() hook (i.e. it affects both IP own
+logic and GPIO detection).
+
+The TMIO MMC drivers do not set-up gpio_ro by themselves.  Only the
+possibility, if any, would be DT specifies "wp-gpios" property, and
+gpio_ro is set by mmc_gpiod_request_ro() called from mmc_of_parse().
+However, it does not make sense to specify "wp-gpios" property and
+TMIO_MMC_WRPROTECT_DISABLE at the same time.
+
+I checked under arch/arm/boot/dts/ and arch/arm64/boot/dts/renesas/,
+and I did not see any Renesas boards with "wp-gpios".  So, this
+conversion should be safe.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-v4 [Simon Horman]
-* Rebase
-* Divide parent clock by 2 to give correct rate (again)
-* Take care not to overflow multiplication on 32 but platforms
+Changes in v3:
+  - newly added
 
-v3 [Simon Horman]
-* Use DIV_ROUND_CLOSEST_ULL instead of open-coding the same behaviour
-  using div_u64()
-* Do not round rate to 100MHz in cpg_z_clk_recalc_rate
-* Remove calculation for PLL post-divider, this is bogus.
-  Instead do not round to closest in cpg_z_clk_round_rate()
-* Drop check for !prate in cpg_z_clk_round_rate
+Changes in v2: None
 
-v1 [Simon Horman]
-* Divide parent clock by 2 to give correct rate
-* Use GENMASK, FIELD_{GET,PREP}
-* Correct whitespace
-* Arrange local variables in reverse Christmas tree order
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  6 +++---
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 16 ++++++++--------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-v0 [Takeshi Kihara]
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 133 ++++++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h |   1 +
- 2 files changed, 134 insertions(+)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 0904886f5501..b85918fa62c6 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -13,6 +13,7 @@
-  */
- 
- #include <linux/bug.h>
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/device.h>
-@@ -62,6 +63,134 @@ static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
- }
- 
- /*
-+ * Z Clock
-+ *
-+ * Traits of this clock:
-+ * prepare - clk_prepare only ensures that parents are prepared
-+ * enable - clk_enable only ensures that parents are enabled
-+ * rate - rate is adjustable.  clk->rate = (parent->rate * mult / 32 ) / 2
-+ * parent - fixed parent.  No clk_set_parent support
-+ */
-+#define CPG_FRQCRB			0x00000004
-+#define CPG_FRQCRB_KICK			BIT(31)
-+#define CPG_FRQCRC			0x000000e0
-+#define CPG_FRQCRC_ZFC_MASK		GENMASK(12, 8)
-+
-+struct cpg_z_clk {
-+	struct clk_hw hw;
-+	void __iomem *reg;
-+	void __iomem *kick_reg;
-+};
-+
-+#define to_z_clk(_hw)	container_of(_hw, struct cpg_z_clk, hw)
-+
-+static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int mult;
-+
-+	mult = 32 - FIELD_GET(CPG_FRQCRC_ZFC_MASK, clk_readl(zclk->reg));
-+
-+	/* Factor of 2 is for fixed divider */
-+	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, 32 * 2);
-+}
-+
-+static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	/* Factor of 2 is for fixed divider */
-+	unsigned long prate = *parent_rate / 2;
-+	unsigned int mult;
-+
-+	mult = div_u64(rate * 32ULL, prate);
-+	mult = clamp(mult, 1U, 32U);
-+
-+	return (u64)prate * mult / 32;
-+}
-+
-+static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct cpg_z_clk *zclk = to_z_clk(hw);
-+	unsigned int mult;
-+	unsigned int i;
-+	u32 val, kick;
-+
-+	/* Factor of 2 is for fixed divider */
-+	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * 2, parent_rate);
-+	mult = clamp(mult, 1U, 32U);
-+
-+	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
-+		return -EBUSY;
-+
-+	val = clk_readl(zclk->reg) & ~CPG_FRQCRC_ZFC_MASK;
-+	val |= FIELD_PREP(CPG_FRQCRC_ZFC_MASK, 32 - mult);
-+	clk_writel(val, zclk->reg);
-+
-+	/*
-+	 * Set KICK bit in FRQCRB to update hardware setting and wait for
-+	 * clock change completion.
-+	 */
-+	kick = clk_readl(zclk->kick_reg);
-+	kick |= CPG_FRQCRB_KICK;
-+	clk_writel(kick, zclk->kick_reg);
-+
-+	/*
-+	 * Note: There is no HW information about the worst case latency.
-+	 *
-+	 * Using experimental measurements, it seems that no more than
-+	 * ~10 iterations are needed, independently of the CPU rate.
-+	 * Since this value might be dependent of external xtal rate, pll1
-+	 * rate or even the other emulation clocks rate, use 1000 as a
-+	 * "super" safe value.
-+	 */
-+	for (i = 1000; i; i--) {
-+		if (!(clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
-+			return 0;
-+
-+		cpu_relax();
-+	}
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static const struct clk_ops cpg_z_clk_ops = {
-+	.recalc_rate = cpg_z_clk_recalc_rate,
-+	.round_rate = cpg_z_clk_round_rate,
-+	.set_rate = cpg_z_clk_set_rate,
-+};
-+
-+static struct clk * __init cpg_z_clk_register(const char *name,
-+					      const char *parent_name,
-+					      void __iomem *reg)
-+{
-+	struct clk_init_data init;
-+	struct cpg_z_clk *zclk;
-+	struct clk *clk;
-+
-+	zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
-+	if (!zclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &cpg_z_clk_ops;
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	zclk->reg = reg + CPG_FRQCRC;
-+	zclk->kick_reg = reg + CPG_FRQCRB;
-+	zclk->hw.init = &init;
-+
-+	clk = clk_register(NULL, &zclk->hw);
-+	if (IS_ERR(clk))
-+		kfree(zclk);
-+
-+	return clk;
-+}
-+
-+/*
-  * SDn Clock
-  */
- #define CPG_SD_STP_HCK		BIT(9)
-@@ -420,6 +549,10 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		mult = 1;
- 		break;
- 
-+	case CLK_TYPE_GEN3_Z:
-+		return cpg_z_clk_register(core->name, __clk_get_name(parent),
-+					  base);
-+
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index 2e4284399f53..c73d4d6fdc85 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -21,6 +21,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_SD,
- 	CLK_TYPE_GEN3_R,
- 	CLK_TYPE_GEN3_PE,
-+	CLK_TYPE_GEN3_Z,
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 02c2724..0d1f95e 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -71,11 +71,11 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
  };
  
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+-			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_HAVE_CBSY |
+-			  TMIO_MMC_MIN_RCAR2,
++	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
++			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+ 			  MMC_CAP_CMD23,
++	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
+ 	.bus_shift	= 2,
+ 	.scc_offset	= 0x1000,
+ 	.taps		= rcar_gen3_scc_taps,
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index c8a74b2..afdb66b 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -40,9 +40,9 @@ static const struct renesas_sdhi_of_data of_rz_compatible = {
+ };
+ 
+ static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+-			  TMIO_MMC_CLK_ACTUAL,
++	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
++	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
+ };
+ 
+ /* Definitions for sampling clocks */
+@@ -58,11 +58,11 @@ static struct renesas_sdhi_scc rcar_gen2_scc_taps[] = {
+ };
+ 
+ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+-			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_HAVE_CBSY |
+-			  TMIO_MMC_MIN_RCAR2,
++	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
++			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+ 			  MMC_CAP_CMD23,
++	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
+ 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
+ 	.dma_rx_offset	= 0x2000,
+ 	.scc_offset	= 0x0300,
+@@ -79,11 +79,11 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+ };
+ 
+ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+-			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_HAVE_CBSY |
+-			  TMIO_MMC_MIN_RCAR2,
++	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
++			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+ 			  MMC_CAP_CMD23,
++	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
+ 	.bus_shift	= 2,
+ 	.scc_offset	= 0x1000,
+ 	.taps		= rcar_gen3_scc_taps,
 -- 
-2.11.0
+2.7.4
