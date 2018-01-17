@@ -1,108 +1,129 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:34478 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750770AbeADQDe (ORCPT
+Received: from conuserg-08.nifty.com ([210.131.2.75]:36683 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753810AbeAQQ3d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 11:03:34 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/9] Renesas Capture Engine Unit (CEU) V4L2 driver
-Date: Thu,  4 Jan 2018 17:03:08 +0100
-Message-Id: <1515081797-17174-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 17 Jan 2018 11:29:33 -0500
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 01/16] mmc: tmio: ioremap memory resource in tmio_mmc_host_alloc()
+Date: Thu, 18 Jan 2018 01:28:01 +0900
+Message-Id: <1516206496-16612-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello everyone,
-    this is the third round for Renesas CEU unit.
+The register region is ioremap'ed in the tmio_mmc_host_probe(), i.e.
+drivers cannot get access to the hardware before mmc_add_host().
 
-Patch now based on v4.15-rc6, a base tag for testing is available at:
-git://jmondi.org/linux tag:v4.15-rc6-ceu-v3-base for the interested ones.
+Actually, renesas_sdhi_core.c reads out the CTL_VERSION register to
+complete the platform-specific settings.  However, at this point,
+the MMC host is already running.
 
-Just closed review comments received from Laurent, Geert and Fabio on v2,
-not a huge changelog in this iteration, compared to v1->v2 one.
+Move the register ioremap to tmio_mmc_host_alloc() so that drivers
+can perform platform-specific settings between tmio_mmc_host_alloc()
+and tmio_mmc_host_probe().
 
-Hopefully we're close to final version, I just would like to hear about
-runtime_pm management, as I have noticed in Sakari's review of other patches
-I may have been using runtime_pm a bit naively in this driver. Just want a
-confirmation this is ok.
+I changed tmio_mmc_host_alloc() to return an error pointer to
+propagate the return code from devm_ioremap_resource().
 
-Tested on RZ with GR-Peach and ov7670 and SH4 with Migo-R platform with ov7725.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Thanks
-   j
+Changes in v3: None
+Changes in v2: None
 
-v2->v3:
-- Improved DT bindings removing standard properties (pinctrl- ones and
-  remote-endpoint) not specific to this driver and improved description of
-  compatible strings
-- Remove ov772x's xlkc_rate property and set clock rate in Migo-R board file
-- Made 'xclk' clock private to ov772x driver in Migo-R board file
-- Change 'rstb' GPIO active output level and changed ov772x and tw9910 drivers
-  accordingly as suggested by Fabio
-- Minor changes in CEU driver to address Laurent's comments
-- Moved Migo-R setup patch to the end of the series to silence 0-day bot
-- Renamed tw9910 clock to 'xti' as per video decoder manual
-- Changed all SPDX identifiers to GPL-2.0 from previous GPL-2.0+
+ drivers/mmc/host/renesas_sdhi_core.c |  4 ++--
+ drivers/mmc/host/tmio_mmc.c          |  4 +++-
+ drivers/mmc/host/tmio_mmc_core.c     | 16 +++++++++-------
+ 3 files changed, 14 insertions(+), 10 deletions(-)
 
-v1->v2:
- - DT
- -- Addressed Geert's comments and added clocks for CEU to mstp6 clock source
- -- Specified supported generic video iterfaces properties in dt-bindings and
-    simplified example
-
- - CEU driver
- -- Re-worked interrupt handler, interrupt management, reset(*) and capture
-    start operation
- -- Re-worked querycap/enum_input/enum_frameintervals to fix some
-    v4l2_compliance failures
- -- Removed soc_camera legacy operations g/s_mbus_format
- -- Update to new notifier implementation
- -- Fixed several comments from Hans, Laurent and Sakari
-
- - Migo-R
- -- Register clocks and gpios for sensor drivers in Migo-R setup
- -- Updated sensors (tw9910 and ov772x) drivers headers and drivers to close
-    remarks from Hans and Laurent:
- --- Removed platform callbacks and handle clocks and gpios from sensor drivers
- --- Remove g/s_mbus_config operations
-Jacopo Mondi (9):
-  dt-bindings: media: Add Renesas CEU bindings
-  include: media: Add Renesas CEU driver interface
-  v4l: platform: Add Renesas CEU driver
-  ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
-  v4l: i2c: Copy ov772x soc_camera sensor driver
-  media: i2c: ov772x: Remove soc_camera dependencies
-  v4l: i2c: Copy tw9910 soc_camera sensor driver
-  media: i2c: tw9910: Remove soc_camera dependencies
-  arch: sh: migor: Use new renesas-ceu camera driver
-
- .../devicetree/bindings/media/renesas,ceu.txt      |   85 +
- arch/arm/boot/dts/r7s72100.dtsi                    |   15 +-
- arch/sh/boards/mach-migor/setup.c                  |  225 ++-
- arch/sh/kernel/cpu/sh4a/clock-sh7722.c             |    2 +-
- drivers/media/i2c/Kconfig                          |   20 +
- drivers/media/i2c/Makefile                         |    2 +
- drivers/media/i2c/ov772x.c                         | 1181 ++++++++++++++
- drivers/media/i2c/tw9910.c                         | 1039 ++++++++++++
- drivers/media/platform/Kconfig                     |    9 +
- drivers/media/platform/Makefile                    |    1 +
- drivers/media/platform/renesas-ceu.c               | 1649 ++++++++++++++++++++
- include/media/drv-intf/renesas-ceu.h               |   26 +
- include/media/i2c/ov772x.h                         |    6 +-
- include/media/i2c/tw9910.h                         |    9 +
- 14 files changed, 4138 insertions(+), 131 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
- create mode 100644 drivers/media/i2c/ov772x.c
- create mode 100644 drivers/media/i2c/tw9910.c
- create mode 100644 drivers/media/platform/renesas-ceu.c
- create mode 100644 include/media/drv-intf/renesas-ceu.h
-
---
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 6a2988b..ccdde27 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -512,8 +512,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	host = tmio_mmc_host_alloc(pdev);
+-	if (!host)
+-		return -ENOMEM;
++	if (IS_ERR(host))
++		return PTR_ERR(host);
+ 
+ 	if (of_data) {
+ 		mmc_data->flags |= of_data->tmio_flags;
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index ccfbc15..d660816 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -93,8 +93,10 @@ static int tmio_mmc_probe(struct platform_device *pdev)
+ 	pdata->flags |= TMIO_MMC_HAVE_HIGH_REG;
+ 
+ 	host = tmio_mmc_host_alloc(pdev);
+-	if (!host)
++	if (IS_ERR(host)) {
++		ret = PTR_ERR(host);
+ 		goto cell_disable;
++	}
+ 
+ 	/* SD control register space size is 0x200, 0x400 for bus_shift=1 */
+ 	host->bus_shift = resource_size(res) >> 10;
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 610f26f..5f0f12a 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1150,12 +1150,20 @@ tmio_mmc_host_alloc(struct platform_device *pdev)
+ {
+ 	struct tmio_mmc_host *host;
+ 	struct mmc_host *mmc;
++	struct resource *res;
++	void __iomem *ctl;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	ctl = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(ctl))
++		return ERR_CAST(ctl);
+ 
+ 	mmc = mmc_alloc_host(sizeof(struct tmio_mmc_host), &pdev->dev);
+ 	if (!mmc)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	host = mmc_priv(mmc);
++	host->ctl = ctl;
+ 	host->mmc = mmc;
+ 	host->pdev = pdev;
+ 	host->ops = tmio_mmc_ops;
+@@ -1177,7 +1185,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ {
+ 	struct platform_device *pdev = _host->pdev;
+ 	struct mmc_host *mmc = _host->mmc;
+-	struct resource *res_ctl;
+ 	int ret;
+ 	u32 irq_mask = TMIO_MASK_CMD;
+ 
+@@ -1186,11 +1193,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 	if (!(pdata->flags & TMIO_MMC_HAS_IDLE_WAIT))
+ 		_host->write16_hook = NULL;
+ 
+-	res_ctl = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	_host->ctl = devm_ioremap_resource(&pdev->dev, res_ctl);
+-	if (IS_ERR(_host->ctl))
+-		return PTR_ERR(_host->ctl);
+-
+ 	ret = mmc_of_parse(mmc);
+ 	if (ret < 0)
+ 		return ret;
+-- 
 2.7.4
