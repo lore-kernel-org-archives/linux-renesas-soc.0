@@ -1,77 +1,119 @@
 Subject: Re: [PATCH 3/6] arm64: renesas: r8a77995: add I2C support
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- Wolfram Sang <wsa@the-dreams.de>, Magnus Damm <magnus.damm@gmail.com>,
- Linux I2C <linux-i2c@vger.kernel.org>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+ linux-renesas-soc@vger.kernel.org, horms@verge.net.au, wsa@the-dreams.de,
+ geert@linux-m68k.org
+Cc: magnus.damm@gmail.com, linux-i2c@vger.kernel.org
 References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
  <1510759526-30346-4-git-send-email-ulrich.hecht+renesas@gmail.com>
- <CAMuHMdV4pBYPTrnCCU8BU1Lr8t2ejcKwWpXWzp-PuBgT2DfVSg@mail.gmail.com>
- <20171117142850.iht5qonmfscl47sp@verge.net.au>
 From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <787354f2-4b76-37fd-4570-e73657b2854c@ideasonboard.com>
-Date: Fri, 19 Jan 2018 10:32:19 +0000
+Message-ID: <ba3b094e-91f3-fa4d-7dbb-ab7741c5470c@ideasonboard.com>
+Date: Wed, 17 Jan 2018 17:21:33 +0000
 MIME-Version: 1.0
-In-Reply-To: <20171117142850.iht5qonmfscl47sp@verge.net.au>
+In-Reply-To: <1510759526-30346-4-git-send-email-ulrich.hecht+renesas@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
+Hi Ulrich, Wolfram,
 
-On 17/11/17 14:28, Simon Horman wrote:
-> On Thu, Nov 16, 2017 at 10:10:27AM +0100, Geert Uytterhoeven wrote:
->> Hi Ulrich,
->>
->> On Wed, Nov 15, 2017 at 4:25 PM, Ulrich Hecht
->> <ulrich.hecht+renesas@gmail.com> wrote:
->>> Defines R-Car D3 I2C controllers 0-3.
->>>
->>> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
->>
->> Thanks for your patch!
->>
->>> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->>> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->>> @@ -400,6 +400,70 @@
->>>                         status = "disabled";
->>>                 };
->>>
->>> +               i2c0: i2c@e6500000 {
->>> +                       #address-cells = <1>;
->>> +                       #size-cells = <0>;
->>> +                       compatible = "renesas,i2c-r8a77995",
->>> +                                    "renesas,rcar-gen3-i2c";
->>> +                       reg = <0 0xe6500000 0 0x40>;
->>> +                       interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
->>> +                       clocks = <&cpg CPG_MOD 931>;
->>> +                       power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
->>> +                       resets = <&cpg 931>;
->>> +                       dmas = <&dmac1 0x91>, <&dmac1 0x90>;
->>> +                       dma-names = "tx", "rx";
->>
->> Missing set for dmac2? (for all four interfaces)
->>
->>> +                       i2c-scl-internal-delay-ns = <110>;
->>
->> According to Table 57.1, all i2c interfaces on R-Car D3 have LVTTL
->> output buffers,
->> so this should be <6> for all four interfaces.
->>
->> With the above fixed:
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Hi Ulrich,
-> 
-> I would like Geert's review addressed before I consider applying this patch.
+Is there any update to this patch series?
+This seems to be the latest I could find for D3.
 
-I am dependant upon this patch for my Draak-D3 work.
+I need I2C on D3 for my current additional task, so I'll try to use these
+patches as the base for now.
 
-Would you be able to consider the comments mentioned to progress this patch please?
+(Patch 3, 4, 5 apply on top of renesas-drivers-2018-01-09-v4.15-rc7, so if it
+works - that's enough for me for the moment)
+
+Please let me know if there is a newer series or branch that I should be
+considering as a base.
 
 --
-Regards
-
 Kieran
+
+
+On 15/11/17 15:25, Ulrich Hecht wrote:
+> Defines R-Car D3 I2C controllers 0-3.
+> 
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 64 +++++++++++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> index 5fa7572..b3113003 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -400,6 +400,70 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		i2c0: i2c@e6500000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a77995",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe6500000 0 0x40>;
+> +			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 931>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 931>;
+> +			dmas = <&dmac1 0x91>, <&dmac1 0x90>;
+> +			dma-names = "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <110>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c1: i2c@e6508000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a77995",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe6508000 0 0x40>;
+> +			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 930>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 930>;
+> +			dmas = <&dmac1 0x93>, <&dmac1 0x92>;
+> +			dma-names = "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <6>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c2: i2c@e6510000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a77995",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe6510000 0 0x40>;
+> +			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 929>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 929>;
+> +			dmas = <&dmac1 0x95>, <&dmac1 0x94>;
+> +			dma-names = "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <6>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c3: i2c@e66d0000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a77995",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe66d0000 0 0x40>;
+> +			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 928>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 928>;
+> +			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
+> +			dma-names = "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <110>;
+> +			status = "disabled";
+> +		};
+> +
+>  		pwm0: pwm@e6e30000 {
+>  			compatible = "renesas,pwm-r8a77995", "renesas,pwm-rcar";
+>  			reg = <0 0xe6e30000 0 0x8>;
+> 
