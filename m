@@ -1,178 +1,154 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33437 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750931AbeARCUC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34830 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754152AbeAQQTv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 21:20:02 -0500
-Received: by mail-lf0-f67.google.com with SMTP id t139so9761701lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Jan 2018 18:20:02 -0800 (PST)
-Date: Thu, 18 Jan 2018 03:20:00 +0100
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v2 16/16] ARM: dts: r8a7794: sort subnodes of root node
-Message-ID: <20180118022000.GQ11924@bigcity.dyn.berto.se>
+        Wed, 17 Jan 2018 11:19:51 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 16/16] ARM: dts: r8a7794: sort subnodes of root node
+Date: Wed, 17 Jan 2018 17:17:17 +0100
+Message-Id: <20180117161717.14589-17-horms+renesas@verge.net.au>
+In-Reply-To: <20180117161717.14589-1-horms+renesas@verge.net.au>
 References: <20180117161717.14589-1-horms+renesas@verge.net.au>
- <20180117161717.14589-17-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180117161717.14589-17-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Sort the subnodes of the soc node to improve maintainability.
+The sort key is the address on the bus with instances of the same
+IP block grouped together.
 
-Thanks for your patch.
+This patch should not introduce any functional change.
 
-On 2018-01-17 17:17:17 +0100, Simon Horman wrote:
-> Sort the subnodes of the soc node to improve maintainability.
-> The sort key is the address on the bus with instances of the same
-> IP block grouped together.
-> 
-> This patch should not introduce any functional change.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2
+* New patch
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 90 +++++++++++++++++++++---------------------
+ 1 file changed, 45 insertions(+), 45 deletions(-)
 
-This patch also aligns the comment for audio_clka. This is good but not 
-mentioned in the commit message which confused the review bot, i.e me :-)
-
-Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> v2
-> * New patch
-> ---
->  arch/arm/boot/dts/r8a7794.dtsi | 90 +++++++++++++++++++++---------------------
->  1 file changed, 45 insertions(+), 45 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-> index 9e5f886f53c5..d588efa6aeaa 100644
-> --- a/arch/arm/boot/dts/r8a7794.dtsi
-> +++ b/arch/arm/boot/dts/r8a7794.dtsi
-> @@ -33,6 +33,35 @@
->  		vin1 = &vin1;
->  	};
->  
-> +	/*
-> +	 * The external audio clocks are configured as 0 Hz fixed frequency
-> +	 * clocks by default.
-> +	 * Boards that provide audio clocks should override them.
-> +	 */
-> +	audio_clka: audio_clka {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <0>;
-> +	};
-> +	audio_clkb: audio_clkb {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <0>;
-> +	};
-> +	audio_clkc: audio_clkc {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <0>;
-> +	};
-> +
-> +	/* External CAN clock */
-> +	can_clk: can {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		/* This value must be overridden by the board. */
-> +		clock-frequency = <0>;
-> +	};
-> +
->  	cpus {
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> @@ -66,6 +95,22 @@
->  		};
->  	};
->  
-> +	/* External root clock */
-> +	extal_clk: extal {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		/* This value must be overridden by the board. */
-> +		clock-frequency = <0>;
-> +	};
-> +
-> +	/* External SCIF clock */
-> +	scif_clk: scif {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		/* This value must be overridden by the board. */
-> +		clock-frequency = <0>;
-> +	};
-> +
->  	soc {
->  		compatible = "simple-bus";
->  		interrupt-parent = <&gic>;
-> @@ -1353,55 +1398,10 @@
->  				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
->  	};
->  
-> -	/* External root clock */
-> -	extal_clk: extal {
-> -		compatible = "fixed-clock";
-> -		#clock-cells = <0>;
-> -		/* This value must be overridden by the board. */
-> -		clock-frequency = <0>;
-> -	};
-> -
->  	/* External USB clock - can be overridden by the board */
->  	usb_extal_clk: usb_extal {
->  		compatible = "fixed-clock";
->  		#clock-cells = <0>;
->  		clock-frequency = <48000000>;
->  	};
-> -
-> -	/* External CAN clock */
-> -	can_clk: can {
-> -		compatible = "fixed-clock";
-> -		#clock-cells = <0>;
-> -		/* This value must be overridden by the board. */
-> -		clock-frequency = <0>;
-> -	};
-> -
-> -	/* External SCIF clock */
-> -	scif_clk: scif {
-> -		compatible = "fixed-clock";
-> -		#clock-cells = <0>;
-> -		/* This value must be overridden by the board. */
-> -		clock-frequency = <0>;
-> -	};
-> -
-> -	/*
-> -	 * The external audio clocks are configured  as 0 Hz fixed
-> -	 * frequency clocks by default.  Boards that provide audio
-> -	 * clocks should override them.
-> -	 */
-> -	audio_clka: audio_clka {
-> -		compatible = "fixed-clock";
-> -		#clock-cells = <0>;
-> -		clock-frequency = <0>;
-> -	};
-> -	audio_clkb: audio_clkb {
-> -		compatible = "fixed-clock";
-> -		#clock-cells = <0>;
-> -		clock-frequency = <0>;
-> -	};
-> -	audio_clkc: audio_clkc {
-> -		compatible = "fixed-clock";
-> -		#clock-cells = <0>;
-> -		clock-frequency = <0>;
-> -	};
->  };
-> -- 
-> 2.11.0
-> 
-
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 9e5f886f53c5..d588efa6aeaa 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -33,6 +33,35 @@
+ 		vin1 = &vin1;
+ 	};
+ 
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clka: audio_clka {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clkb: audio_clkb {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clkc: audio_clkc {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -66,6 +95,22 @@
+ 		};
+ 	};
+ 
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+@@ -1353,55 +1398,10 @@
+ 				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
+-	/* External root clock */
+-	extal_clk: extal {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+-
+ 	/* External USB clock - can be overridden by the board */
+ 	usb_extal_clk: usb_extal {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <48000000>;
+ 	};
+-
+-	/* External CAN clock */
+-	can_clk: can {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+-
+-	/* External SCIF clock */
+-	scif_clk: scif {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+-
+-	/*
+-	 * The external audio clocks are configured  as 0 Hz fixed
+-	 * frequency clocks by default.  Boards that provide audio
+-	 * clocks should override them.
+-	 */
+-	audio_clka: audio_clka {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-	audio_clkb: audio_clkb {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-	audio_clkc: audio_clkc {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+ };
 -- 
-Regards,
-Niklas S�derlund
+2.11.0
