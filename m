@@ -1,73 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:45214 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933810AbeALObK (ORCPT
+Received: from conuserg-08.nifty.com ([210.131.2.75]:36663 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753787AbeAQQ3b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 09:31:10 -0500
-MIME-Version: 1.0
-In-Reply-To: <4928977.5hd79RbQlp@aspire.rjw.lan>
-References: <4928977.5hd79RbQlp@aspire.rjw.lan>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jan 2018 15:31:09 +0100
-Message-ID: <CAMuHMdX6dJzOcxkWyDR6anpcwZU5fy03sTeChEp35KY0d40iFg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] PM / core: genpd fix and pm_runtime_force_suspend|resume()
- rework
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 17 Jan 2018 11:29:31 -0500
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 04/16] mmc: tmio: remove dma_ops from tmio_mmc_host_probe() argument
+Date: Thu, 18 Jan 2018 01:28:04 +0900
+Message-Id: <1516206496-16612-5-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rafael,
+Drivers need to set up various struct members for tmio_mmc_host before
+calling tmio_mmc_host_probe().  Do likewise for host->dma_ops instead
+of passing it as a function argument.
 
-On Fri, Jan 12, 2018 at 2:00 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> This comes from the recent discussion/testing effort that ensued after my
-> pm_runtime_force_suspend|resume() changes proposal:
->
-> https://marc.info/?t=151497772000004&r=1&w=2
->
-> Patch [1/2] basically is https://patchwork.kernel.org/patch/10152873/ rebased
-> on top of the current linux-next branch of the linux-pm.git tree (the relevant
-> part should be there in the linux-next tree proper ATM).  It applies on top
-> of https://patchwork.kernel.org/patch/10156077/ which should apply to the Linus'
-> tree cleanly.
->
-> Patch [2/2] is a resend of https://patchwork.kernel.org/patch/10142047/ with
-> a very minor changelog modification and the R-b tag from Ulf.
->
-> Geert, if possible, please test this on the Renesas systems that had the
-> problem with https://patchwork.kernel.org/patch/10142047/ previously and let
-> me know if you still see issues.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-I've tested this on two very similar systems: Salvator-XS with R-Car H3 ES2.0,
-and Salvator-X with R-Car M3-W ES1.0.
+Changes in v3: None
+Changes in v2: None
 
-On the M3-based system, everything seems to work fine.
-On the H3-based system, the serial console (the /dev/ttySC0 device, not kernel
-serial output) is dead after resume from s2ram, with and without
-no_console_suspend.
+ drivers/mmc/host/renesas_sdhi_core.c | 3 ++-
+ drivers/mmc/host/tmio_mmc.c          | 2 +-
+ drivers/mmc/host/tmio_mmc.h          | 3 +--
+ drivers/mmc/host/tmio_mmc_core.c     | 4 +---
+ 4 files changed, 5 insertions(+), 7 deletions(-)
 
-With no_console_suspend, I see:
-
-    ttySC ttySC0: 1 input overrun(s)
-
-after typing on the serial console, so it looks like an interrupt problem.
-
-This issue seems to be caused by patch [1/2]. But I have no idea what's
-really happening, and why the two systems behave differently.
-
-Oh well, have a nice weekend!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index e18a1c5..80943fa 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -532,6 +532,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	host->clk_update	= renesas_sdhi_clk_update;
+ 	host->clk_disable	= renesas_sdhi_clk_disable;
+ 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
++	host->dma_ops		= dma_ops;
+ 
+ 	/* SDR speeds are only available on Gen2+ */
+ 	if (mmc_data->flags & TMIO_MMC_MIN_RCAR2) {
+@@ -575,7 +576,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (ret)
+ 		goto efree;
+ 
+-	ret = tmio_mmc_host_probe(host, dma_ops);
++	ret = tmio_mmc_host_probe(host);
+ 	if (ret < 0)
+ 		goto edisclk;
+ 
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index 11b87ce..43a2ea5 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -104,7 +104,7 @@ static int tmio_mmc_probe(struct platform_device *pdev)
+ 	host->mmc->f_max = pdata->hclk;
+ 	host->mmc->f_min = pdata->hclk / 512;
+ 
+-	ret = tmio_mmc_host_probe(host, NULL);
++	ret = tmio_mmc_host_probe(host);
+ 	if (ret)
+ 		goto host_free;
+ 
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index f46d282..7609434 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -198,8 +198,7 @@ struct tmio_mmc_host {
+ struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev,
+ 					  struct tmio_mmc_data *pdata);
+ void tmio_mmc_host_free(struct tmio_mmc_host *host);
+-int tmio_mmc_host_probe(struct tmio_mmc_host *host,
+-			const struct tmio_mmc_dma_ops *dma_ops);
++int tmio_mmc_host_probe(struct tmio_mmc_host *host);
+ void tmio_mmc_host_remove(struct tmio_mmc_host *host);
+ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host);
+ 
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index fc9b28d..d092b0f 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1195,8 +1195,7 @@ void tmio_mmc_host_free(struct tmio_mmc_host *host)
+ }
+ EXPORT_SYMBOL_GPL(tmio_mmc_host_free);
+ 
+-int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+-			const struct tmio_mmc_dma_ops *dma_ops)
++int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ {
+ 	struct platform_device *pdev = _host->pdev;
+ 	struct tmio_mmc_data *pdata = _host->pdata;
+@@ -1296,7 +1295,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 	INIT_WORK(&_host->done, tmio_mmc_done_work);
+ 
+ 	/* See if we also get DMA */
+-	_host->dma_ops = dma_ops;
+ 	tmio_mmc_request_dma(_host, pdata);
+ 
+ 	pm_runtime_set_active(&pdev->dev);
+-- 
+2.7.4
