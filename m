@@ -1,64 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:27082 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751668AbeAaSZb (ORCPT
+Received: from conuserg-08.nifty.com ([210.131.2.75]:36725 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753875AbeAQQ3e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jan 2018 13:25:31 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 17 Jan 2018 11:29:34 -0500
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 08/26] ARM: dts: r8a7794: Adjust SMP routine size
-Date: Wed, 31 Jan 2018 18:24:12 +0000
-Message-Id: <1517423070-24236-9-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Subject: [PATCH v3 08/16] sh: kfr2r09: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own flag
+Date: Thu, 18 Jan 2018 01:28:08 +0900
+Message-Id: <1516206496-16612-9-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+TMIO_MMC_WRPROTECT_DISABLE is equivalent to MMC_CAP2_NO_WRITE_PROTECT.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The flag is propagated as follows:
+    tmio_mmc_data::capabilities2 -> mmc_host::caps2
+
+Only the difference is the TMIO_... makes tmio_mmc_get_ro() return 0
+(i.e. it does not affect mmc_gpio_get_ro() at all), while MMC_CAP2_...
+returns 0 before calling ->get_ro() hook (i.e. it affects both IP own
+logic and GPIO detection).
+
+The TMIO MMC drivers do not set-up gpio_ro by themselves, so gpio_ro
+is obviously unused by legacy boards like this.  So, this conversion
+should be safe.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-v3->4:
-* no change
 
- arch/arm/boot/dts/r8a7794.dtsi | 2 +-
+Changes in v3:
+  - newly added
+
+Changes in v2: None
+
+ arch/sh/boards/mach-kfr2r09/setup.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index d588efa..e47c5f4 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -348,7 +348,7 @@
+diff --git a/arch/sh/boards/mach-kfr2r09/setup.c b/arch/sh/boards/mach-kfr2r09/setup.c
+index 5deb2d8..6af7777 100644
+--- a/arch/sh/boards/mach-kfr2r09/setup.c
++++ b/arch/sh/boards/mach-kfr2r09/setup.c
+@@ -375,8 +375,8 @@ static struct resource kfr2r09_sh_sdhi0_resources[] = {
+ static struct tmio_mmc_data sh7724_sdhi0_data = {
+ 	.chan_priv_tx	= (void *)SHDMA_SLAVE_SDHI0_TX,
+ 	.chan_priv_rx	= (void *)SHDMA_SLAVE_SDHI0_RX,
+-	.flags		= TMIO_MMC_WRPROTECT_DISABLE,
+ 	.capabilities	= MMC_CAP_SDIO_IRQ,
++	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
+ };
  
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
+ static struct platform_device kfr2r09_sh_sdhi0_device = {
 -- 
 2.7.4
