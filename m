@@ -1,61 +1,84 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:36096 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753501AbeARINW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Jan 2018 03:13:22 -0500
-Received: by mail-io0-f177.google.com with SMTP id l17so14025525ioc.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 00:13:22 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 18 Jan 2018 09:13:21 +0100
-Message-ID: <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Ulf Magnusson <ulfalizer@gmail.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org, linux-sh@vger.kernel.org,
         Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
         Rich Felker <dalias@libc.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
+Date: Thu, 18 Jan 2018 01:28:00 +0900
+Message-Id: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 17 January 2018 at 17:28, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> In the previous batch (https://lkml.org/lkml/2017/11/24/428)
-> I sent 22 patches for TMIO MMC.
->
-> 14 patches were applied, the rest is under discussion.
->
-> This series consists of 16 patches.
->
-> Patch 1-4:  repost from v2.
->             (Wolfram gave Reviewed by, so I moved them to the head)
 
-Applied for next.
+In the previous batch (https://lkml.org/lkml/2017/11/24/428)
+I sent 22 patches for TMIO MMC.
 
->
-> Patch 5-11: new patches  (cleanups of WP flag)
+14 patches were applied, the rest is under discussion.
 
-I picked patch5 and patch6, as those seemed trivial. Unless there is a
-rc9, let's aim for 4.17 for the rest.
+This series consists of 16 patches.
 
-[...]
+Patch 1-4:  repost from v2.
+            (Wolfram gave Reviewed by, so I moved them to the head)
 
-Kind regards
-Uffe
+Patch 5-11: new patches  (cleanups of WP flag)
+
+Patch 12: updated per Wolfram
+
+Patch 13: repost  (almost reviewed)
+
+Patch 14: updated
+
+Patch 15: new
+
+Patch 16: repost (almost reviewed)
+
+
+Masahiro Yamada (16):
+  mmc: tmio: ioremap memory resource in tmio_mmc_host_alloc()
+  mmc: tmio: move clk_enable/disable out of tmio_mmc_host_probe()
+  mmc: tmio: move {tmio_}mmc_of_parse() to tmio_mmc_host_alloc()
+  mmc: tmio: remove dma_ops from tmio_mmc_host_probe() argument
+  mmc: slot-gpio: add a helper to check capability of GPIO WP detection
+  mmc: tmio: refactor .get_ro hook
+  mmc: renesas_sdhi: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own
+    flag
+  sh: kfr2r09: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own flag
+  mmc: tmio: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own flag
+  mmc: tmio: remove TMIO_MMC_WRPROTECT_DISABLE
+  mmc: tmio: deprecate "toshiba,mmc-wrprotect-disable" DT property
+  mmc: tmio: support IP-builtin card detection logic
+  mmc: tmio: fix never-detected card insertion bug
+  mmc: tmio: move TMIO_MASK_{READOP,WRITEOP} handling to correct place
+  mmc: tmio: clear force_pio flag before starting data transfer
+  mmc: tmio: remove useless TMIO_MASK_CMD handling in
+    tmio_mmc_host_probe()
+
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |   1 -
+ arch/sh/boards/mach-kfr2r09/setup.c                |   2 +-
+ drivers/mmc/core/slot-gpio.c                       |   8 ++
+ drivers/mmc/host/renesas_sdhi_core.c               |  18 ++-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  12 +-
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c           |  20 ++-
+ drivers/mmc/host/tmio_mmc.c                        |  11 +-
+ drivers/mmc/host/tmio_mmc.h                        |   7 +-
+ drivers/mmc/host/tmio_mmc_core.c                   | 139 +++++++++++----------
+ include/linux/mfd/tmio.h                           |   1 -
+ include/linux/mmc/slot-gpio.h                      |   1 +
+ 11 files changed, 120 insertions(+), 100 deletions(-)
+
+-- 
+2.7.4
+
