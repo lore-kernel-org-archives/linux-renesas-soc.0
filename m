@@ -1,70 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48853 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751850AbeA3J6x (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42800 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752368AbeARTHu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 04:58:53 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 02/11] include: media: Add Renesas CEU driver interface
-Date: Tue, 30 Jan 2018 10:58:13 +0100
-Message-Id: <1517306302-27957-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 18 Jan 2018 14:07:50 -0500
+Received: by mail-pf0-f193.google.com with SMTP id b25so9095149pfd.9
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 11:07:50 -0800 (PST)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 19 Jan 2018 04:07:12 +0900
+Message-Id: <151630243226.14098.14517816422611139335.sendpatchset@little-apple>
+Subject: [PATCH/RFC 00/03] arm64: dts: renesas: Eagle V3M PFC/GPIO update and SPI NOR flash bitbang hack
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add renesas-ceu header file.
+arm64: dts: renesas: Eagle V3M PFC/GPIO update and SPI NOR flash bitbang hack
 
-Do not remove the existing sh_mobile_ceu.h one as long as the original
-driver does not go away.
+[PATCH/RFC 01/03] arm64: dts: renesas: r8a77970: Add PFC node for Eagle V3M
+[PATCH/RFC 02/03] arm64: dts: renesas: r8a77970: Add GPIO nodes
+[PATCH/RFC 03/03] arm64: dts: renesas: eagle: NOR flash SPI bitbang prototype
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+This series gives the R-Car V3M SoC and the Eagle board an update when
+it comes to PFC and GPIO support. Also to test the two QSPI channels are
+configured as GPIOs and via SPI bitbang the SPI NOR flash chips are probed.
+
+Patch 1 and 2 are rather ready for upstream merge:
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+
+Patch 3 is just for testing purpose and shall not be picked up:
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- include/media/drv-intf/renesas-ceu.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 include/media/drv-intf/renesas-ceu.h
 
-diff --git a/include/media/drv-intf/renesas-ceu.h b/include/media/drv-intf/renesas-ceu.h
-new file mode 100644
-index 0000000..52841d1
---- /dev/null
-+++ b/include/media/drv-intf/renesas-ceu.h
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * renesas-ceu.h - Renesas CEU driver interface
-+ *
-+ * Copyright 2017-2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ */
-+
-+#ifndef __MEDIA_DRV_INTF_RENESAS_CEU_H__
-+#define __MEDIA_DRV_INTF_RENESAS_CEU_H__
-+
-+#define CEU_MAX_SUBDEVS		2
-+
-+struct ceu_async_subdev {
-+	unsigned long flags;
-+	unsigned char bus_width;
-+	unsigned char bus_shift;
-+	unsigned int i2c_adapter_id;
-+	unsigned int i2c_address;
-+};
-+
-+struct ceu_platform_data {
-+	unsigned int num_subdevs;
-+	struct ceu_async_subdev subdevs[CEU_MAX_SUBDEVS];
-+};
-+
-+#endif /* ___MEDIA_DRV_INTF_RENESAS_CEU_H__ */
--- 
-2.7.4
+ Developed on top of renesas-drivers-2018-01-09-v4.15-rc7
+
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |   46 ++++++++++
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi      |  101 ++++++++++++++++++++++++
+ 2 files changed, 147 insertions(+)
