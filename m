@@ -1,107 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42890 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752661AbeAJX2A (ORCPT
+Received: from mail-io0-f177.google.com ([209.85.223.177]:36096 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753501AbeARINW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Jan 2018 18:28:00 -0500
-Date: Wed, 10 Jan 2018 17:27:57 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
- r8a7743
-Message-ID: <20180110232757.GG241460@bhelgaas-glaptop.roam.corp.google.com>
-References: <1510653543-53770-1-git-send-email-biju.das@bp.renesas.com>
- <KL1PR06MB1702B0E1D37DC38E9E3835F1B8370@KL1PR06MB1702.apcprd06.prod.outlook.com>
+        Thu, 18 Jan 2018 03:13:22 -0500
+Received: by mail-io0-f177.google.com with SMTP id l17so14025525ioc.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 00:13:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <KL1PR06MB1702B0E1D37DC38E9E3835F1B8370@KL1PR06MB1702.apcprd06.prod.outlook.com>
+In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 18 Jan 2018 09:13:21 +0100
+Message-ID: <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rich Felker <dalias@libc.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Dec 11, 2017 at 01:30:37PM +0000, Biju Das wrote:
-> Hi Bjorn Helgaas,
-> 
-> Does this patch look okay to you?
+On 17 January 2018 at 17:28, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> In the previous batch (https://lkml.org/lkml/2017/11/24/428)
+> I sent 22 patches for TMIO MMC.
+>
+> 14 patches were applied, the rest is under discussion.
+>
+> This series consists of 16 patches.
+>
+> Patch 1-4:  repost from v2.
+>             (Wolfram gave Reviewed by, so I moved them to the head)
 
-It's OK by me, but Lorenzo (cc'd) would handle this now.
+Applied for next.
 
-> > -----Original Message-----
-> > From: Biju Das [mailto:biju.das@bp.renesas.com]
-> > Sent: 14 November 2017 09:59
-> > To: Bjorn Helgaas <bhelgaas@google.com>; Rob Herring
-> > <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>
-> > Cc: Simon Horman <horms@verge.net.au>; Magnus Damm
-> > <magnus.damm@gmail.com>; Chris Paterson <Chris.Paterson2@renesas.com>;
-> > Fabrizio Castro <fabrizio.castro@bp.renesas.com>; linux-pci@vger.kernel.org;
-> > linux-renesas-soc@vger.kernel.org; Biju Das <biju.das@bp.renesas.com>
-> > Subject: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for r8a7743
-> >
-> > Add support for r8a7743. The Renesas RZ/G1M(R8A7743)PCIe controller is
-> > identical to the R-Car Gen2 family.
-> >
-> > No driver change is needed due to the fallback compatible value "renesas,pcie-
-> > rcar-gen2".
-> > Adding the SoC-specific compatible values here has three purposes:
-> > 1. Document which SoCs have this hardware module, 2. Allow checkpatch to
-> > validate compatible values.
-> > 3. Allow the driver to support SoC specific implementations in future
-> >    as necessary.
-> >
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > v1-->v2
-> >    Corrected RZ-G1 to RZ/G1.
-> >
-> >  Documentation/devicetree/bindings/pci/rcar-pci.txt | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> > b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> > index 76ba3a6..1fb614e 100644
-> > --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> > +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> > @@ -1,13 +1,15 @@
-> >  * Renesas R-Car PCIe interface
-> >
-> >  Required properties:
-> > -compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
-> > +compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
-> > +    "renesas,pcie-r8a7779" for the R8A7779 SoC;
-> >      "renesas,pcie-r8a7790" for the R8A7790 SoC;
-> >      "renesas,pcie-r8a7791" for the R8A7791 SoC;
-> >      "renesas,pcie-r8a7793" for the R8A7793 SoC;
-> >      "renesas,pcie-r8a7795" for the R8A7795 SoC;
-> >      "renesas,pcie-r8a7796" for the R8A7796 SoC;
-> > -    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
-> > +    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
-> > +     RZ/G1 compatible device.
-> >      "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
-> >
-> >      When compatible with the generic version, nodes must list the
-> > --
-> > 1.9.1
-> 
-> 
-> 
-> [https://www2.renesas.eu/media/email/unicef_2017.jpg]
-> 
-> This Christmas, instead of sending out cards, Renesas Electronics Europe have decided to support Unicef with a donation. For further details click here<https://www.unicef.org/> to find out about the valuable work they do, helping children all over the world.
-> We would like to take this opportunity to wish you a Merry Christmas and a prosperous New Year.
-> 
-> 
-> 
-> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+>
+> Patch 5-11: new patches  (cleanups of WP flag)
+
+I picked patch5 and patch6, as those seemed trivial. Unless there is a
+rc9, let's aim for 4.17 for the rest.
+
+[...]
+
+Kind regards
+Uffe
