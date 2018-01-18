@@ -1,166 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36669 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753778AbeAQQ3b (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:37897 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753406AbeARVKb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:29:31 -0500
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 14/16] mmc: tmio: move TMIO_MASK_{READOP,WRITEOP} handling to correct place
-Date: Thu, 18 Jan 2018 01:28:14 +0900
-Message-Id: <1516206496-16612-15-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 18 Jan 2018 16:10:31 -0500
+Received: by mail-lf0-f65.google.com with SMTP id g72so22967960lfg.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 13:10:31 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20180118211027.375081728@cogentembedded.com>
+Date: Fri, 19 Jan 2018 00:05:59 +0300
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+To: devicetree@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 2/2] drm: rcar-du: add R8A77970 support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=drm-rcar-du-add-R8A77970-support-v2.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As far as I tested the IP on UniPhier SoCs, TMIO_STAT_{RXRDY,TXRQ}
-are asserted for DMA mode as well as for PIO.  I need to disable the
-those IRQs in dma_ops->start hook, otherwise the DMA transfer fails
-with the following error message:
-  PIO IRQ in DMA mode!
+Add support for the R-Car V3M (R8A77970) SoC to the R-Car DU driver.
 
-Renesas chips are the same cases since I see their dma_ops->start
-hooks explicitly clear TMIO_STAT_{RXRDY,TXRQ} (with nice comment!).
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-If we do this sanity check in TMIO MMC core, RXRDY/TXRQ handling
-should be entirely moved to the core.  tmio_mmc_cmd_irq() will
-be a suitable place to disable them.
-
-The probe function sets TMIO_MASK_{READOP,WRITEOP} but this is odd.
-
-    /* Unmask the IRQs we want to know about */
-    if (!_host->chan_rx)
-            irq_mask |= TMIO_MASK_READOP;
-    if (!_host->chan_tx)
-            irq_mask |= TMIO_MASK_WRITEOP;
-
-At this point, _host->{chan_rx,chan_tx} are _always_ NULL because
-tmio_mmc_request_dma() is called after this code.  Consequently,
-TMIO_MASK_{READOP,WRITEOP} are set here whether DMA is used or not.
-Remove this pointless code.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
+Changes in version 2:
+- removed  the 'model' and 'dpll_ch' field initializers;
+- fixed up the DU port numbers;
+- split the DU bindings and the LVDS driver updates into a separate patches;
+- removed  the check before the DPTSR write (to be done in a separate patch).
 
-Changes in v3:
-  - Remove the first paragraph of git-log
-  - Clean up renesas drivers too
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Changes in v2:
-  - Newly added
-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  6 ------
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  4 ----
- drivers/mmc/host/tmio_mmc_core.c              | 20 ++++++++++----------
- 3 files changed, 10 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 0d1f95e..693ad49 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -145,7 +145,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
- 	enum dma_data_direction dir;
- 	int ret;
--	u32 irq_mask;
+Index: linux/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+===================================================================
+--- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ linux/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -249,6 +249,26 @@ static const struct rcar_du_device_info
+ 	.dpll_ch =  BIT(1),
+ };
  
- 	/* This DMAC cannot handle if sg_len is not 1 */
- 	WARN_ON(host->sg_len > 1);
-@@ -157,11 +156,9 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
- 		dir = DMA_FROM_DEVICE;
--		irq_mask = TMIO_STAT_RXRDY;
- 	} else {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
- 		dir = DMA_TO_DEVICE;
--		irq_mask = TMIO_STAT_TXRQ;
- 	}
++static const struct rcar_du_device_info rcar_du_r8a77970_info = {
++	.gen = 3,
++	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
++		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
++		  | RCAR_DU_FEATURE_VSP1_SOURCE,
++	.num_crtcs = 1,
++	.routes = {
++		/* R8A77970 has one RGB output and one LVDS output. */
++		[RCAR_DU_OUTPUT_DPAD0] = {
++			.possible_crtcs = BIT(0),
++			.port = 0,
++		},
++		[RCAR_DU_OUTPUT_LVDS0] = {
++			.possible_crtcs = BIT(0),
++			.port = 1,
++		},
++	},
++	.num_lvds = 1,
++};
++
+ static const struct of_device_id rcar_du_of_table[] = {
+ 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+ 	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
+@@ -260,6 +280,7 @@ static const struct of_device_id rcar_du
+ 	{ .compatible = "renesas,du-r8a7794", .data = &rcar_du_r8a7794_info },
+ 	{ .compatible = "renesas,du-r8a7795", .data = &rcar_du_r8a7795_info },
+ 	{ .compatible = "renesas,du-r8a7796", .data = &rcar_du_r8a7796_info },
++	{ .compatible = "renesas,du-r8a77970", .data = &rcar_du_r8a77970_info },
+ 	{ }
+ };
  
- 	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len, dir);
-@@ -170,9 +167,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 
- 	renesas_sdhi_internal_dmac_enable_dma(host, true);
- 
--	/* disable PIO irqs to avoid "PIO IRQ in DMA mode!" */
--	tmio_mmc_disable_mmc_irqs(host, irq_mask);
--
- 	/* set dma parameters */
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_DTRAN_MODE,
- 					    dtran_mode);
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index afdb66b..393df17 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -205,8 +205,6 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
- 		return;
- 	}
- 
--	tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_RXRDY);
--
- 	/* The only sg element can be unaligned, use our bounce buffer then */
- 	if (!aligned) {
- 		sg_init_one(&host->bounce_sg, host->bounce_buf, sg->length);
-@@ -280,8 +278,6 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 		return;
- 	}
- 
--	tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_TXRQ);
--
- 	/* The only sg element can be unaligned, use our bounce buffer then */
- 	if (!aligned) {
- 		unsigned long flags;
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 0e3dc8c..731552a 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -621,15 +621,21 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
- 	 */
- 	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
--			if (host->force_pio || !host->chan_rx)
-+			if (host->force_pio || !host->chan_rx) {
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
--			else
-+			} else {
-+				tmio_mmc_disable_mmc_irqs(host,
-+							  TMIO_MASK_READOP);
- 				tasklet_schedule(&host->dma_issue);
-+			}
- 		} else {
--			if (host->force_pio || !host->chan_tx)
-+			if (host->force_pio || !host->chan_tx) {
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_WRITEOP);
--			else
-+			} else {
-+				tmio_mmc_disable_mmc_irqs(host,
-+							  TMIO_MASK_WRITEOP);
- 				tasklet_schedule(&host->dma_issue);
-+			}
- 		}
- 	} else {
- 		schedule_work(&host->done);
-@@ -1287,12 +1293,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
- 	tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
- 
--	/* Unmask the IRQs we want to know about */
--	if (!_host->chan_rx)
--		irq_mask |= TMIO_MASK_READOP;
--	if (!_host->chan_tx)
--		irq_mask |= TMIO_MASK_WRITEOP;
--
- 	_host->sdcard_irq_mask &= ~irq_mask;
- 
- 	if (_host->native_hotplug)
--- 
-2.7.4
