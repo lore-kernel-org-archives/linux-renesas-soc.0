@@ -1,114 +1,84 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 09/26] soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
-Date: Wed, 31 Jan 2018 18:24:13 +0000
-Message-Id: <1517423070-24236-10-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36344 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750910AbeARI1Q (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 18 Jan 2018 03:27:16 -0500
+Received: by mail-wm0-f68.google.com with SMTP id f3so21016177wmc.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 00:27:16 -0800 (PST)
+Date: Thu, 18 Jan 2018 08:27:13 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 10/16] mmc: tmio: remove TMIO_MMC_WRPROTECT_DISABLE
+Message-ID: <20180118082713.jdc4u4shabx2qyge@dell>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-11-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1516206496-16612-11-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch allows for platform specific quirks as some of the SoC need
-further customization for the watchdog to work properly, like for R-Car
-Gen2 and for RZ/G.
+On Thu, 18 Jan 2018, Masahiro Yamada wrote:
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v3->4:
-* no change
+> The use of this flag has been replaced with MMC_CAP2_NO_WRITE_PROTECT.
+> No platform defines this flag any more.  Remove.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+> Changes in v3:
+>   - newly added
+> 
+> Changes in v2: None
+> 
+>  drivers/mmc/host/tmio_mmc_core.c | 5 ++---
+>  include/linux/mfd/tmio.h         | 1 -
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+> index bdbff2d..7ad3433c 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -1075,10 +1075,9 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  static int tmio_mmc_get_ro(struct mmc_host *mmc)
+>  {
+>  	struct tmio_mmc_host *host = mmc_priv(mmc);
+> -	struct tmio_mmc_data *pdata = host->pdata;
+>  
+> -	return !((pdata->flags & TMIO_MMC_WRPROTECT_DISABLE) ||
+> -		 (sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) & TMIO_STAT_WRPROTECT));
+> +	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
+> +		 TMIO_STAT_WRPROTECT);
+>  }
+>  
+>  static int tmio_multi_io_quirk(struct mmc_card *card,
+> diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+> index 396a103c..91f9221 100644
+> --- a/include/linux/mfd/tmio.h
+> +++ b/include/linux/mfd/tmio.h
+> @@ -36,7 +36,6 @@
+>  	} while (0)
+>  
+>  /* tmio MMC platform flags */
+> -#define TMIO_MMC_WRPROTECT_DISABLE	BIT(0)
 
- drivers/soc/renesas/rcar-rst.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
+If it is truly not in use after this set:
 
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index 3316b02..93febe6 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -13,8 +13,18 @@
- #include <linux/of_address.h>
- #include <linux/soc/renesas/rcar-rst.h>
- 
-+#define WDTRSTCR_RESET		0xA55A0002
-+#define WDTRSTCR		0x0054
-+
-+static int rcar_rst_enable_wdt_reset(void __iomem *base)
-+{
-+	iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
-+	return 0;
-+}
-+
- struct rst_config {
--	unsigned int modemr;	/* Mode Monitoring Register Offset */
-+	unsigned int modemr;		/* Mode Monitoring Register Offset */
-+	int (*configure)(void *base);	/* Platform specific configuration */
- };
- 
- static const struct rst_config rcar_rst_gen1 __initconst = {
-@@ -23,6 +33,11 @@ static const struct rst_config rcar_rst_gen1 __initconst = {
- 
- static const struct rst_config rcar_rst_gen2 __initconst = {
- 	.modemr = 0x60,
-+	.configure = rcar_rst_enable_wdt_reset,
-+};
-+
-+static const struct rst_config rcar_rst_gen3 __initconst = {
-+	.modemr = 0x60,
- };
- 
- static const struct of_device_id rcar_rst_matches[] __initconst = {
-@@ -38,11 +53,11 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	{ .compatible = "renesas,r8a7792-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7793-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7794-rst", .data = &rcar_rst_gen2 },
--	/* R-Car Gen3 is handled like R-Car Gen2 */
--	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
--	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
--	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen2 },
--	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
-+	/* R-Car Gen3 */
-+	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen3 },
- 	{ /* sentinel */ }
- };
- 
-@@ -71,6 +86,14 @@ static int __init rcar_rst_init(void)
- 	rcar_rst_base = base;
- 	cfg = match->data;
- 	saved_mode = ioread32(base + cfg->modemr);
-+	if (cfg->configure) {
-+		error = cfg->configure(base);
-+		if (error) {
-+			pr_warn("%pOF: Cannot run SoC specific configuration\n",
-+				np);
-+			goto out_put;
-+		}
-+	}
- 
- 	pr_debug("%pOF: MODE = 0x%08x\n", np, saved_mode);
- 
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
 -- 
-2.7.4
-
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
