@@ -1,30 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39413 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751237AbeAWKaX (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:39658 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754805AbeASMdX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Jan 2018 05:30:23 -0500
-Date: Tue, 23 Jan 2018 11:30:17 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] arm64: renesas_defconfig: add driver for PCA9654
-Message-ID: <20180123103015.rtuj7kcadiq7h2rh@verge.net.au>
-References: <20180119113852.1894-1-wsa+renesas@sang-engineering.com>
+        Fri, 19 Jan 2018 07:33:23 -0500
+Received: by mail-qt0-f194.google.com with SMTP id f4so3363257qtj.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 04:33:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180119113852.1894-1-wsa+renesas@sang-engineering.com>
+References: <20180119113852.1894-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 Jan 2018 13:33:22 +0100
+Message-ID: <CAMuHMdU+X0A63YEe68A3qqUuRmgQq-4=3WiwsZB8Vw4y4D5CWA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: renesas_defconfig: add driver for PCA9654
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 19, 2018 at 12:38:52PM +0100, Wolfram Sang wrote:
+On Fri, Jan 19, 2018 at 12:38 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 > We enabled it in the DTS, so we should have it here, too.
-> 
+>
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks, I have applied this to the topic/renesas-defconfig branch which is
-included in the devel branch and tags of the Renesas tree as a convenience
-to developers.  The branch is not, however, included in the next branch or
-tags nor is it targeted at upstream.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
