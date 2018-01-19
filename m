@@ -1,39 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42800 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752368AbeARTHu (ORCPT
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:33790 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754070AbeASI7E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Jan 2018 14:07:50 -0500
-Received: by mail-pf0-f193.google.com with SMTP id b25so9095149pfd.9
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 11:07:50 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 19 Jan 2018 04:07:12 +0900
-Message-Id: <151630243226.14098.14517816422611139335.sendpatchset@little-apple>
-Subject: [PATCH/RFC 00/03] arm64: dts: renesas: Eagle V3M PFC/GPIO update and SPI NOR flash bitbang hack
+        Fri, 19 Jan 2018 03:59:04 -0500
+Received: by mail-qt0-f178.google.com with SMTP id e2so2191334qti.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 00:59:03 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20180117161717.14589-16-horms+renesas@verge.net.au>
+References: <20180117161717.14589-1-horms+renesas@verge.net.au> <20180117161717.14589-16-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 Jan 2018 09:59:02 +0100
+Message-ID: <CAMuHMdUTvP4Qwfe12EZtxOZh0QOD07tMgytK9NaJpfZqd4L9TQ@mail.gmail.com>
+Subject: Re: [PATCH v2 15/16] ARM: dts: r8a7794: sort subnodes of soc node
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-arm64: dts: renesas: Eagle V3M PFC/GPIO update and SPI NOR flash bitbang hack
+On Wed, Jan 17, 2018 at 5:17 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Sort the subnodes of the soc node to improve maintainability.
+> The sort key is the address on the bus with instances of the same
+> IP block grouped together.
+>
+> This patch should not introduce any functional change.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-[PATCH/RFC 01/03] arm64: dts: renesas: r8a77970: Add PFC node for Eagle V3M
-[PATCH/RFC 02/03] arm64: dts: renesas: r8a77970: Add GPIO nodes
-[PATCH/RFC 03/03] arm64: dts: renesas: eagle: NOR flash SPI bitbang prototype
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This series gives the R-Car V3M SoC and the Eagle board an update when
-it comes to PFC and GPIO support. Also to test the two QSPI channels are
-configured as GPIOs and via SPI bitbang the SPI NOR flash chips are probed.
+SCIF sort order?
 
-Patch 1 and 2 are rather ready for upstream merge:
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Gr{oetje,eeting}s,
 
-Patch 3 is just for testing purpose and shall not be picked up:
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+                        Geert
 
- Developed on top of renesas-drivers-2018-01-09-v4.15-rc7
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |   46 ++++++++++
- arch/arm64/boot/dts/renesas/r8a77970.dtsi      |  101 ++++++++++++++++++++++++
- 2 files changed, 147 insertions(+)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
