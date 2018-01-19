@@ -1,175 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39559 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965291AbeALXOl (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36776 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754070AbeASIqa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 18:14:41 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 06/12] ARM: dts: r8a7790: Convert to new LVDS DT bindings
-Date: Sat, 13 Jan 2018 01:14:24 +0200
-Message-Id: <20180112231430.26943-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 19 Jan 2018 03:46:30 -0500
+Received: by mail-qt0-f194.google.com with SMTP id z11so2109280qtm.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 00:46:30 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20180117161717.14589-7-horms+renesas@verge.net.au>
+References: <20180117161717.14589-1-horms+renesas@verge.net.au> <20180117161717.14589-7-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 Jan 2018 09:46:29 +0100
+Message-ID: <CAMuHMdV_wYCbGreShikfi4LQaNxDUAW+aX=3L8Gd_b=9wHSgZw@mail.gmail.com>
+Subject: Re: [PATCH v2 06/16] ARM: dts: r8a7791: add soc node
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+On Wed, Jan 17, 2018 at 5:17 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Add soc node to represent the bus and move all nodes with a base address
+> into this node. This is consistent with handling of R-Car Gen3, RZ/G1, and
+> R-Car V2H (R8A77920) SoCs upstream. It is intended to migrate other R-Car
+> Gen2 SoCs to this scheme.
+>
+> The ordering is derived from simply moving each node with an address up to
+> before any nodes without a base address that occur before the soc node.  To
+> improve maintainability follow-up patches will sort subnodes of both the
+> new soc node and the root node.
+>
+> This patch should not introduce any functional change.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v1:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-- Remove the DU reg-names property
----
- arch/arm/boot/dts/r8a7790-lager.dts | 22 ++++++++++----
- arch/arm/boot/dts/r8a7790.dtsi      | 60 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 70 insertions(+), 12 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 7d5cd01069a3..f84963cb6785 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -317,10 +317,8 @@
- 	status = "okay";
- 
- 	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 726>, <&cpg CPG_MOD 725>,
- 		 <&x13_clk>, <&x2_clk>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "du.2", "dclkin.0", "dclkin.1";
- 
- 	ports {
- 		port@0 {
-@@ -328,12 +326,26 @@
- 				remote-endpoint = <&adv7123_in>;
- 			};
- 		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
- 		port@1 {
- 			endpoint {
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
--		port@2 {
-+	};
-+};
-+
-+&lvds1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
- 			lvds_connector: endpoint {
- 			};
- 		};
-@@ -689,7 +701,7 @@
- 			port@0 {
- 				reg = <0>;
- 				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_lvds0>;
-+					remote-endpoint = <&lvds0_out>;
- 				};
- 			};
- 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 62baabd757b6..0fcd5e34ef82 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1067,17 +1067,13 @@
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7790";
--		reg = <0 0xfeb00000 0 0x70000>,
--		      <0 0xfeb90000 0 0x1c>,
--		      <0 0xfeb94000 0 0x1c>;
--		reg-names = "du", "lvds.0", "lvds.1";
-+		reg = <0 0xfeb00000 0 0x70000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
--			 <&cpg CPG_MOD 722>, <&cpg CPG_MOD 726>,
--			 <&cpg CPG_MOD 725>;
--		clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1";
-+			 <&cpg CPG_MOD 722>;
-+		clock-names = "du.0", "du.1", "du.2";
- 		status = "disabled";
- 
- 		ports {
-@@ -1092,11 +1088,61 @@
- 			port@1 {
- 				reg = <1>;
- 				du_out_lvds0: endpoint {
-+					remote-endpoint = <&lvds0_in>;
- 				};
- 			};
- 			port@2 {
- 				reg = <2>;
- 				du_out_lvds1: endpoint {
-+					remote-endpoint = <&lvds1_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	lvds0: lvds@feb90000 {
-+		compatible = "renesas,lvds-r8a7790";
-+		reg = <0 0xfeb90000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 726>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds0_in: endpoint {
-+					remote-endpoint = <&du_out_lvds0>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds0_out: endpoint {
-+				};
-+			};
-+		};
-+	};
-+
-+	lvds1: lvds@feb94000 {
-+		compatible = "renesas,lvds-r8a7790";
-+		reg = <0 0xfeb94000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 725>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds1_in: endpoint {
-+					remote-endpoint = <&du_out_lvds1>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds1_out: endpoint {
- 				};
- 			};
- 		};
--- 
-Regards,
+                        Geert
 
-Laurent Pinchart
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
