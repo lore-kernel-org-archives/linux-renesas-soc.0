@@ -1,130 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:26272 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751567AbeA3UXI (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34127 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754070AbeASIzI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:23:08 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 00/25] Fix watchdog on Renesas R-Car Gen2 and RZ/G1
-Date: Tue, 30 Jan 2018 20:22:33 +0000
-Message-Id: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 19 Jan 2018 03:55:08 -0500
+Received: by mail-qt0-f194.google.com with SMTP id 33so2163061qtv.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 00:55:08 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20180117161717.14589-11-horms+renesas@verge.net.au>
+References: <20180117161717.14589-1-horms+renesas@verge.net.au> <20180117161717.14589-11-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 Jan 2018 09:55:07 +0100
+Message-ID: <CAMuHMdWTORWxPXT5GyLtGjSefFik-d-XTqRE7WFhKD5QmbbqQA@mail.gmail.com>
+Subject: Re: [PATCH v2 10/16] ARM: dts: r8a7793: add soc node
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+On Wed, Jan 17, 2018 at 5:17 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Add soc node to represent the bus and move all nodes with a base address
+> into this node. This is consistent with handling of R-Car Gen3, RZ/G1, and
+> R-Car V2H (R8A77920) SoCs upstream. It is intended to migrate other R-Car
+> Gen2 SoCs to this scheme.
+>
+> The ordering is derived from simply moving each node with an address up to
+> before any nodes without a base address that occur before the soc node.  To
+> improve maintainability follow-up patches will sort subnodes of both the
+> new soc node and the root node.
+>
+> This patch should not introduce any functional change.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-while trying to add watchdog support to RZ/G1M and RZ/G1E I discovered
-that it couldn't work out of the box. R-Car Gen2 and RZ/G1 are very
-similar from a design perspective, and therefore the same problem is
-observable on R-Car Gen2 too.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-To deal with SMP on R-Car Gen2 and RZ/G1, we install a reset vector
-to ICRAM1 and we program the [S]BAR registers so that when we turn ON
-the non-boot CPUs they are redirected to the reset vector installed by
-Linux in ICRAM1, and eventually they continue the execution to RAM,
-where the SMP bring-up code will take care of the rest.
-The content of the [S]BAR registers survives a watchdog triggered reset,
-and as such after the watchdog fires the boot core will try and execute
-the SMP bring-up code instead of jumping to the bootrom code.
+Gr{oetje,eeting}s,
 
-This series is a proposal for a fix to the aforementioned problem.
-The main strategy for the solution is to let the reset vector decide
-if it needs to jump to shmobile_boot_fn or to the bootrom code.
-In a watchdog triggered reset scenario, since the [S]BAR registers keep
-their values, the boot CPU will jump into the newly designed reset
-vector, the assembly routine will eventually test WOVF (a bit in register
-RWTCSRA that indicates if the watchdog counter has overflown, the value
-of this bit gets retained in this scenario), and jump to the bootrom code
-which will in turn load up the bootloader, etc.
-When bringing up SMP or using CPU hotplug, the reset vector will jump
-to shmobile_boot_fn instead.
+                        Geert
 
-v3 takes into account all the feedbacks recieved, and implements a
-different logic in the reset vector in order to get rid of
-shmobile_wdt_clock_status.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-This work was rebased on top of tag renesas-devel-20180122-v4.15-rc9
-from the below repository:
-git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git
-
-What do you guys think about this?
-
-Any volunteer for testing this work?
-
-Comments welcome!
-
-Best Regards,
-
-Fabrizio Castro (25):
-  ARM: shmobile: Add watchdog support
-  ARM: dts: r8a7743: Adjust SMP routine size
-  ARM: dts: r8a7745: Adjust SMP routine size
-  ARM: dts: r8a7790: Adjust SMP routine size
-  ARM: dts: r8a7791: Adjust SMP routine size
-  ARM: dts: r8a7792: Adjust SMP routine size
-  ARM: dts: r8a7793: Adjust SMP routine size
-  ARM: dts: r8a7794: Adjust SMP routine size
-  soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
-  dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
-  watchdog: renesas_wdt: Add R-Car Gen2 support
-  ARM: shmobile: rcar-gen2: Add watchdog support
-  ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
-  clk: renesas: r8a7743: Add rwdt clock
-  clk: renesas: r8a7745: Add rwdt clock
-  clk: renesas: r8a7790: Add rwdt clock
-  clk: renesas: r8a7791/r8a7793: Add rwdt clock
-  clk: renesas: r8a7794: Add rwdt clock
-  ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7790: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7791: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7794: Add watchdog support to SoC dtsi
-  ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-  ARM: dts: iwg22m: Add watchdog support to SoM dtsi
-
- .../devicetree/bindings/watchdog/renesas-wdt.txt   | 18 +++++--
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  5 ++
- arch/arm/boot/dts/r8a7743.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |  5 ++
- arch/arm/boot/dts/r8a7745.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7790.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7791.dtsi                     | 12 ++++-
- arch/arm/boot/dts/r8a7792.dtsi                     |  2 +-
- arch/arm/boot/dts/r8a7793.dtsi                     |  2 +-
- arch/arm/boot/dts/r8a7794.dtsi                     | 12 ++++-
- arch/arm/configs/shmobile_defconfig                |  1 +
- arch/arm/mach-shmobile/common.h                    |  6 +++
- arch/arm/mach-shmobile/headsmp.S                   | 55 +++++++++++++++++++
- arch/arm/mach-shmobile/platsmp-apmu.c              |  1 +
- arch/arm/mach-shmobile/pm-rcar-gen2.c              | 13 +++--
- drivers/clk/renesas/r8a7743-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7745-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7790-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7791-cpg-mssr.c             |  2 +
- drivers/clk/renesas/r8a7794-cpg-mssr.c             |  2 +
- drivers/soc/renesas/rcar-rst.c                     | 35 ++++++++++---
- drivers/watchdog/renesas_wdt.c                     | 61 ++++++++++++++++++++--
- 22 files changed, 248 insertions(+), 26 deletions(-)
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
