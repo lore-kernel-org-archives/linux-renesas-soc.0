@@ -1,55 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47838 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:44855 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754542AbeASNjT (ORCPT
+        with ESMTP id S1755662AbeASJ1I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 08:39:19 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/3] mmc: tmio: correct treatment of errors during tuning
-Date: Fri, 19 Jan 2018 14:39:04 +0100
-Message-Id: <20180119133906.11280-2-horms+renesas@verge.net.au>
-In-Reply-To: <20180119133906.11280-1-horms+renesas@verge.net.au>
-References: <20180119133906.11280-1-horms+renesas@verge.net.au>
+        Fri, 19 Jan 2018 04:27:08 -0500
+Date: Fri, 19 Jan 2018 10:26:48 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 03/16] ARM: dts: r8a7790: sort subnodes of soc node
+Message-ID: <20180119092647.iumaljyi5mtwa4gr@verge.net.au>
+References: <20180117161717.14589-1-horms+renesas@verge.net.au>
+ <20180117161717.14589-4-horms+renesas@verge.net.au>
+ <CAMuHMdV65W0jAH9u3vGyrZrD3VjV_4XotFKdsNx6gVCU8nyJQw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV65W0jAH9u3vGyrZrD3VjV_4XotFKdsNx6gVCU8nyJQw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+On Fri, Jan 19, 2018 at 09:39:24AM +0100, Geert Uytterhoeven wrote:
+> On Wed, Jan 17, 2018 at 5:17 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Sort the subnodes of the soc node to improve maintainability.
+> > The sort key is the addresss on the bus with instances of the same
+> > IP block grouped together.
+> >
+> > This patch should not introduce any functional change.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> The sort order for the various SCIF variants is still a bit odd:
+> 
+>         scifa0: serial@e6c40000 {
+>         scifa1: serial@e6c50000 {
+>         scifa2: serial@e6c60000 {
+>         scifb0: serial@e6c20000 {
+>         scifb1: serial@e6c30000 {
+>         scifb2: serial@e6ce0000 {
+>         scif0: serial@e6e60000 {
+>         scif1: serial@e6e68000 {
+>         scif2: serial@e6e56000 {
+>         hscif0: serial@e62c0000 {
+>         hscif1: serial@e62c8000 {
+> 
+> (hscif0 has the lowest address)
+> 
+> But hey, SCIF is special ;-)
 
-If the return value of mmc_send_tuning() is error other than -EILSEQ, the
-tuning fails and process goes out of for_loop.  But the correct processing
-is to judge their TAP as bad.
-
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2 [Simon Horman]
-* Added to patchset targeted at upstream
-* Minor revision of changelog
-
-v0 [Masaharu Hayakawa]
----
- drivers/mmc/host/tmio_mmc_core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 6d8719be75a8..41767d33ef97 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -800,10 +800,7 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 		if (host->prepare_tuning)
- 			host->prepare_tuning(host, i % host->tap_num);
- 
--		ret = mmc_send_tuning(mmc, opcode, NULL);
--		if (ret && ret != -EILSEQ)
--			goto out;
--		if (ret == 0)
-+		if (!mmc_send_tuning(mmc, opcode, NULL))
- 			set_bit(i, host->taps);
- 
- 		usleep_range(1000, 1200);
--- 
-2.11.0
+Right, I decided to keep the SCIF ordering as is.
+My preference is to address this later if we come up with a better scheme.
