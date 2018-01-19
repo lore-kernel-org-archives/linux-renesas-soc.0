@@ -1,129 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36683 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753810AbeAQQ3d (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:29:33 -0500
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 01/16] mmc: tmio: ioremap memory resource in tmio_mmc_host_alloc()
-Date: Thu, 18 Jan 2018 01:28:01 +0900
-Message-Id: <1516206496-16612-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH 0/3] Add R8A77970/Eagle PFC support
+To: Simon Horman <horms@verge.net.au>,
+ Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+ Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+References: <20171110200218.747996672@cogentembedded.com>
+ <20171113075303.zmkmq6bt3lfuttwu@verge.net.au>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <049b0a0a-b1c2-73e6-c471-ca8342bba6ab@ideasonboard.com>
+Date: Fri, 19 Jan 2018 10:48:06 +0000
+MIME-Version: 1.0
+In-Reply-To: <20171113075303.zmkmq6bt3lfuttwu@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The register region is ioremap'ed in the tmio_mmc_host_probe(), i.e.
-drivers cannot get access to the hardware before mmc_add_host().
+Hi Sergei,
 
-Actually, renesas_sdhi_core.c reads out the CTL_VERSION register to
-complete the platform-specific settings.  However, at this point,
-the MMC host is already running.
+On 13/11/17 07:53, Simon Horman wrote:
+> On Fri, Nov 10, 2017 at 11:02:18PM +0300, Sergei Shtylyov wrote:
+>> Hello!
+>>
+>> Here's the set of 3 patches against Simon Horman's 'renesas.git' repo's
+>> 'renesas-devel-20171110-v4.14-rc8' tag.  We're adding the R8A77970 PFC node
+>> and then describing the pins for SCIF0 and EtherAVB devices declared earlier.
+>> These patches depend on the R8A77970 PFC suport in order to work properly.
+>>
+>> [1/3] arm64: dts: renesas: r8a77970: add PFC support
+>> [2/3] arm64: dts: renesas: eagle: add SCIF0 pins
+>> [3/3] arm64: dts: renesas: eagle: add EtherAVB pins
+> 
+> Hi Sergei,
+> 
+> I have marked these patches as deferred pending acceptance of the PFC
+> driver. Please repost or otherwise ping me once that dependency has been
+> accepted.
 
-Move the register ioremap to tmio_mmc_host_alloc() so that drivers
-can perform platform-specific settings between tmio_mmc_host_alloc()
-and tmio_mmc_host_probe().
+Has the dependency blocking this series been resolved yet ?
 
-I changed tmio_mmc_host_alloc() to return an error pointer to
-propagate the return code from devm_ioremap_resource().
+(I have patches for the Eagle-V3M which are blocked waiting for the PFC support)
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--
+Regards
 
-Changes in v3: None
-Changes in v2: None
+Kieran
 
- drivers/mmc/host/renesas_sdhi_core.c |  4 ++--
- drivers/mmc/host/tmio_mmc.c          |  4 +++-
- drivers/mmc/host/tmio_mmc_core.c     | 16 +++++++++-------
- 3 files changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 6a2988b..ccdde27 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -512,8 +512,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	}
- 
- 	host = tmio_mmc_host_alloc(pdev);
--	if (!host)
--		return -ENOMEM;
-+	if (IS_ERR(host))
-+		return PTR_ERR(host);
- 
- 	if (of_data) {
- 		mmc_data->flags |= of_data->tmio_flags;
-diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
-index ccfbc15..d660816 100644
---- a/drivers/mmc/host/tmio_mmc.c
-+++ b/drivers/mmc/host/tmio_mmc.c
-@@ -93,8 +93,10 @@ static int tmio_mmc_probe(struct platform_device *pdev)
- 	pdata->flags |= TMIO_MMC_HAVE_HIGH_REG;
- 
- 	host = tmio_mmc_host_alloc(pdev);
--	if (!host)
-+	if (IS_ERR(host)) {
-+		ret = PTR_ERR(host);
- 		goto cell_disable;
-+	}
- 
- 	/* SD control register space size is 0x200, 0x400 for bus_shift=1 */
- 	host->bus_shift = resource_size(res) >> 10;
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 610f26f..5f0f12a 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1150,12 +1150,20 @@ tmio_mmc_host_alloc(struct platform_device *pdev)
- {
- 	struct tmio_mmc_host *host;
- 	struct mmc_host *mmc;
-+	struct resource *res;
-+	void __iomem *ctl;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	ctl = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(ctl))
-+		return ERR_CAST(ctl);
- 
- 	mmc = mmc_alloc_host(sizeof(struct tmio_mmc_host), &pdev->dev);
- 	if (!mmc)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	host = mmc_priv(mmc);
-+	host->ctl = ctl;
- 	host->mmc = mmc;
- 	host->pdev = pdev;
- 	host->ops = tmio_mmc_ops;
-@@ -1177,7 +1185,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- {
- 	struct platform_device *pdev = _host->pdev;
- 	struct mmc_host *mmc = _host->mmc;
--	struct resource *res_ctl;
- 	int ret;
- 	u32 irq_mask = TMIO_MASK_CMD;
- 
-@@ -1186,11 +1193,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	if (!(pdata->flags & TMIO_MMC_HAS_IDLE_WAIT))
- 		_host->write16_hook = NULL;
- 
--	res_ctl = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	_host->ctl = devm_ioremap_resource(&pdev->dev, res_ctl);
--	if (IS_ERR(_host->ctl))
--		return PTR_ERR(_host->ctl);
--
- 	ret = mmc_of_parse(mmc);
- 	if (ret < 0)
- 		return ret;
--- 
-2.7.4
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
