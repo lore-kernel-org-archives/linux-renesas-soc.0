@@ -1,63 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:34690 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751212AbeASJRw (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44191 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751747AbeASIEF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 04:17:52 -0500
-Date: Fri, 19 Jan 2018 10:17:49 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Subject: Re: [RFC] arm64: renesas_defconfig: add driver for PCA9654
-Message-ID: <20180119091749.g43xzbw3dg6thgy4@katana>
-References: <20171221120859.14729-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdVUcXDf82zupm0BRqjPwBV_kxbtVGhg951ypNoz9c+J_Q@mail.gmail.com>
+        Fri, 19 Jan 2018 03:04:05 -0500
+Received: by mail-qt0-f194.google.com with SMTP id l20so567840qtj.11
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 00:04:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pbmwmsmsnkfwbvhb"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVUcXDf82zupm0BRqjPwBV_kxbtVGhg951ypNoz9c+J_Q@mail.gmail.com>
+In-Reply-To: <20171221120859.14729-1-wsa+renesas@sang-engineering.com>
+References: <20171221120859.14729-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 Jan 2018 09:04:04 +0100
+Message-ID: <CAMuHMdVUcXDf82zupm0BRqjPwBV_kxbtVGhg951ypNoz9c+J_Q@mail.gmail.com>
+Subject: Re: [RFC] arm64: renesas_defconfig: add driver for PCA9654
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---pbmwmsmsnkfwbvhb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Dec 21, 2017 at 1:08 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Do you actually want patches for renesas_defconfig?
 
+Yes we do!
 
-> > +CONFIG_GPIO_PCA953X=3Dy
-> > +CONFIG_GPIO_PCA953X_IRQ=3Dy
->=20
-> Why enable CONFIG_GPIO_PCA953X_IRQ if you don't want to add an
-> interrupts property to the device node in DT yet? ;-)
+>  arch/arm64/configs/renesas_defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+> index 88cbd4f769d15b..69a0e107c75bb7 100644
+> --- a/arch/arm64/configs/renesas_defconfig
+> +++ b/arch/arm64/configs/renesas_defconfig
+> @@ -131,6 +131,8 @@ CONFIG_PINCTRL_SINGLE=y
+>  CONFIG_GPIOLIB=y
+>  CONFIG_GPIO_GENERIC_PLATFORM=y
+>  CONFIG_GPIO_RCAR=y
+> +CONFIG_GPIO_PCA953X=y
+> +CONFIG_GPIO_PCA953X_IRQ=y
 
-:D
+Why enable CONFIG_GPIO_PCA953X_IRQ if you don't want to add an
+interrupts property to the device node in DT yet? ;-)
 
-Will resend a fixed version!
+>  CONFIG_GPIO_BD9571MWV=y
+>  CONFIG_THERMAL=y
+>  CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
 
+Gr{oetje,eeting}s,
 
---pbmwmsmsnkfwbvhb
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpht7EACgkQFA3kzBSg
-KbaO1A//VMvOjBTpoF8nWu24wChsu0llc32Bg5nbgRFIkoa0pdmAT8mo5BIbMeJQ
-F7bB42ZJRhhkak/YMnEECK4ukWHCxY+PbCmoeXEKx379t9iOBl2zwR9zEEbiqo+a
-Bv9tirOIt3pFpdibID2aX6dw+SSEKCFIKLYcnaXwfo/PFDOkYOcwZQ09q6mX4FHV
-JGX0lcUmelq537ztwImwwSVulxCSxSL7inquP6/NnQip96Yno4IBh1dYejlRVvb/
-oATiEhQ/aaGxWxsxkIcd1k5u1kITuORqiX+0Xc1OI/bAvvJa/yJLYVeT0H/0T0m5
-yr0Xiv4XAoSjaCoMjvwnH8Z43hVcMzWuN3fHiIHjgQtZhAB7+iTN5lHruUjIId5p
-f26yGLex1ulw94C8sdHUSNBuZ/MorErH+loAgWNtRPairGlPU31+ZgRKRXR+O06D
-QCysvIkIA2tHbKlnRHkCk3Gwob4+uPUZin7AQUE6TWAHOCGrjClol03BDg8Qog16
-imgUg9ASxJLk1OWD7nKzSVbtF2qeVE+3ZwaA9Xu8QGRm16VYIL4lGS3du+CMcd26
-vASC/YgSIYOrLU5vD5WaJMvMHDTnKeww8vlRssV16isweq6XG5JhOHCijwuWdzzf
-PmRkhNpM7Y9uwARkNam2cRkfw2lnwo0W8U+RDiVs8mUQuMP0Vgk=
-=Pw+4
------END PGP SIGNATURE-----
-
---pbmwmsmsnkfwbvhb--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
