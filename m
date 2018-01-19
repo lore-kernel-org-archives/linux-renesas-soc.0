@@ -1,105 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:47666 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934267AbeAXPpJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47867 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753570AbeASNjl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jan 2018 10:45:09 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Joerg Roedel <joro@8bytes.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  3/3] ARM: dts: r8a7745: Add IPMMU DT nodes
-Date: Wed, 24 Jan 2018 15:42:02 +0000
-Message-Id: <1516808522-17348-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
-References: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 19 Jan 2018 08:39:41 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH v2] arm64: dts: salvator-common: Enable HS400 of SDHI2
+Date: Fri, 19 Jan 2018 14:39:30 +0100
+Message-Id: <20180119133930.11410-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the six IPMMU instances found in the r8a7745 to DT with a disabled
-status.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+This patch adds the mmc-hs400-1_8v property to SDHI2 and enable eMMC
+HS400.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 58 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+Based on renesas-devel-20180119-v4.15-rc8
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index ae918e9..a9da80c 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -1295,6 +1295,64 @@
- 			status = "disabled";
- 		};
- 
-+		ipmmu_sy0: mmu@e6280000 {
-+			compatible = "renesas,ipmmu-r8a7745",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xe6280000 0 0x1000>;
-+			interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_sy1: mmu@e6290000 {
-+			compatible = "renesas,ipmmu-r8a7745",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xe6290000 0 0x1000>;
-+			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a7745",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xe6740000 0 0x1000>;
-+			interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mp: mmu@ec680000 {
-+			compatible = "renesas,ipmmu-r8a7745",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xec680000 0 0x1000>;
-+			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mx: mmu@fe951000 {
-+			compatible = "renesas,ipmmu-r8a7745",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xfe951000 0 0x1000>;
-+			interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_gp: mmu@e62a0000 {
-+			compatible = "renesas,ipmmu-r8a7745",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xe62a0000 0 0x1000>;
-+			interrupts = <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		rcar_sound: sound@ec500000 {
- 			/*
- 			 * #sound-dai-cells is required
+Dependencies for testing and applying this patch upstream:
+* [PATCH v2 0/3] mmc: renesas_sdhi: add eMMC HS400 mode support
+* [PATCH] clk: renesas: rcar-gen3: Fix SD divider setting
+
+To assist testing and review this patch and the above mentioned
+dependencies, which are necessary and sufficient to enable HS400 on H3 /
+Salvator-X, M3-W 1.0 / Salvator-X and H3 ES2.0 Salvator-XS are available
+at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/hs400-v2
+
+v2 [Simon Horman]
+* Broke out of larger patchset
+
+v1 [Simon Horman]
+* Rebase
+
+v0 [Takeshi Kihara]
+
+
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 89cbb3b95acd..34847c3653b8 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -631,6 +631,7 @@
+ 	vqmmc-supply = <&reg_1p8v>;
+ 	bus-width = <8>;
+ 	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
+ 	non-removable;
+ 	fixed-emmc-driver-type = <1>;
+ 	status = "okay";
 -- 
-2.7.4
+2.11.0
