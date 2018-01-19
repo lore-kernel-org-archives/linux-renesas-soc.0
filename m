@@ -1,61 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:57684 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934284AbeAIQRe (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45335 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751424AbeASKJa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 11:17:34 -0500
-From: Robin Murphy <robin.murphy@arm.com>
-To: alex.williamson@redhat.com, joro@8bytes.org
-Cc: sricharan@codeaurora.org,
-        laurent.pinchart+renesas@ideasonboard.com,
-        damm+renesas@opensource.se, iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
+        Fri, 19 Jan 2018 05:09:30 -0500
+Date: Fri, 19 Jan 2018 11:09:10 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/3] iommu/ipmmu-vmsa: Remove redundant of_iommu_init_fn hook
-Date: Tue,  9 Jan 2018 16:17:26 +0000
-Message-Id: <12163854e04da92b5de586912bf7257fc0fed79a.1515512134.git.robin.murphy@arm.com>
-In-Reply-To: <da664cf8f60c77cbb657cc2e3849560604eaf6da.1515512134.git.robin.murphy@arm.com>
-References: <da664cf8f60c77cbb657cc2e3849560604eaf6da.1515512134.git.robin.murphy@arm.com>
+Subject: Re: [PATCH v2 0/16] ARM: r8a7790: add soc node
+Message-ID: <20180119100909.ieblxu4cjgn7hmao@verge.net.au>
+References: <20180117161717.14589-1-horms+renesas@verge.net.au>
+ <CAMuHMdWGZ-kN1Kb-w9KAWD+0c8ccF7B5WE0gLhv4PNi41B6XWg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWGZ-kN1Kb-w9KAWD+0c8ccF7B5WE0gLhv4PNi41B6XWg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Having of_iommu_init() call ipmmu_init() via ipmmu_vmsa_iommu_of_setup()
-does nothing that the subsys_initcall wouldn't do slightly later anyway,
-since probe-deferral of masters means it is no longer critical to
-register the driver super-early. Clean it up.
+On Fri, Jan 19, 2018 at 10:41:17AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Jan 17, 2018 at 5:17 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > this patchset adds an soc node, moves all nodes for IP blocks with an
+> > address on the bus to be sub nodes of the soc node, and sorts subnodes of
+> > the root and soc nodes.
+> >
+> > The use of an soc node is consistent with handling of R-Car Gen3, RZ/G1,
+> > and R-Car V2H (R8A77920) SoCs upstream. This patch-set adds it for all
+> > other R-Car Gen2 SoCs: r8a7790 (H2), r8a7791 (M2-W), r8a7793 (M2-N),
+> > r8a7794 (E2).
+> >
+> > Sorting of nodes is also done for the R-Car V2H (R8A77920), making it
+> > consistent across all R-Car Gen2 SoCs and thus allowing easier comparison
+> > of DTs of different R-Car Gen2 SoCs.
+> >
+> > The patchset also fixes some minor whitespace problems.
+> 
+> Thank you, this is a great cleanup!
+> 
+> Now the structure of the DTSes is the same for all SoCs, they can be
+> compared more easily using my soc-dts-diff script (which BTW also works
+> for e.g. driver source files using the <soc>-<module>.c pattern).
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
+Thanks, this seems very nice.
 
-v2: New (somehow v1 was based on 4.14-rc3 so missed this...)
-
- drivers/iommu/ipmmu-vmsa.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 8dce3a9de9d8..331dad909301 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -1108,18 +1108,8 @@ static void __exit ipmmu_exit(void)
- subsys_initcall(ipmmu_init);
- module_exit(ipmmu_exit);
- 
--#ifdef CONFIG_IOMMU_DMA
--static int __init ipmmu_vmsa_iommu_of_setup(struct device_node *np)
--{
--	ipmmu_init();
--	return 0;
--}
--
--IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa",
--		 ipmmu_vmsa_iommu_of_setup);
--IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
--		 ipmmu_vmsa_iommu_of_setup);
--#endif
-+IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa", NULL);
-+IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795", NULL);
- 
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
- MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
--- 
-2.13.4.dirty
+I have applied this series.
