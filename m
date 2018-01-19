@@ -1,49 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52588 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755005AbeARJl0 (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33710 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932219AbeASUNG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Jan 2018 04:41:26 -0500
-Received: from penelope.horms.nl (unknown [217.111.208.18])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 610FA25B776
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 20:41:24 +1100 (AEDT)
-Date: Thu, 18 Jan 2018 10:41:22 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [ANNOUNCE] Renesas tree closing schedule for v4.16
-Message-ID: <20180118094122.ldnusepks3io26ez@verge.net.au>
-References: <20171220092604.wdw6ya64heqt7jao@verge.net.au>
+        Fri, 19 Jan 2018 15:13:06 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171220092604.wdw6ya64heqt7jao@verge.net.au>
+In-Reply-To: <20180119195439.145129729@cogentembedded.com>
+References: <20180119195439.145129729@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 Jan 2018 21:13:04 +0100
+Message-ID: <CAMuHMdXOLLizyzm6wFbV-0_oYXvF5xmRQBQn20f6oCe4HOe8CA@mail.gmail.com>
+Subject: Re: [PATCH 4/5] arm64: dts: renesas: r8a77970: add LVDS support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Dec 20, 2017 at 10:26:04AM +0100, Simon Horman wrote:
-> Hi,
-> 
-> I would like to close the Renesas tree for non-bug submissions for v4.16 on
-> Friday the 22nd December (this Friday, I work on GMT +0200).
-> 
-> This is a few days earlier than would otherwise be the case due to the
-> holiday season.
-> 
-> If this is has caught you by surprise and is going to be a large problem
-> for you please let me know ASAP so we can discuss.
+Hi Sergei,
 
-Hi Again,
+On Fri, Jan 19, 2018 at 8:42 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Define the generic R8A77970 part of the LVDS device node.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-I did close my tree for v4.16 as described above and send pull-requests
-accordingly.
+I love your patch! Yet something to improve...
 
-Unfortunately I also continued to accept new patches into for-v4.16
-branches which propagated into the next branch and in turn linux-next tree.
-I have rectified this by moving all the relevant patches into for-v4.17
-branches and excluding them from the next branch. They are still all
-present in the devel branch and are on track for v4.17.
+> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> @@ -654,6 +654,31 @@
+>                                 port@1 {
+>                                         reg = <1>;
+>                                         du_out_lvds: endpoint {
+> +                                               remote-endpoint = <&lvds_in>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               lvds: lvds@feb90000 {
+> +                       compatible = "renesas,r8a77970-lvds";
+> +                       reg = <0 0xfeb90000 0 0x14>;
+> +                       clocks = <&cpg CPG_MOD 727>;
 
-These changes are visible in the renesas-next-20180118-v4.15-rc1 and
-renesas-devel-20180118-v4.15-rc8 tags.
+Missing resets and power-domains properties.
 
-Sorry for any confusion this may have caused.
+> +                       status = "disabled";
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               port@0 {
+> +                                       reg = <0>;
+> +                                       lvds_in: endpoint {
+> +                                               remote-endpoint = <&du_out_lvds>;
+> +                                       };
+> +                               };
+> +                               port@1 {
+> +                                       reg = <1>;
+> +                                       lvds_out: endpoint {
+>                                         };
+>                                 };
+>                         };
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
