@@ -1,93 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43054 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932434AbeAROGF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47815 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753841AbeASNix (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Jan 2018 09:06:05 -0500
-Received: by mail-lf0-f65.google.com with SMTP id o89so22686079lfg.10
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 06:06:04 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180118140600.363149670@cogentembedded.com>
-Date: Thu, 18 Jan 2018 17:05:51 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3] vsp1: fix video output on R8A77970
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=vsp1-fix-video-output-on-R8A77970-v3.patch
+        Fri, 19 Jan 2018 08:38:53 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: renesas: rcar-gen3: Fix SD divider setting
+Date: Fri, 19 Jan 2018 14:38:42 +0100
+Message-Id: <20180119133842.11135-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit d455b45f8393 ("v4l: vsp1: Add support for new VSP2-BS, VSP2-DL,
-and VSP2-D instances") added support for the VSP2-D found in the R-Car
-V3M (R8A77970) but the video output that VSP2-D sends to DU has a greenish
-garbage-like line repeated every 8 screen rows. It turns out that R-Car
-V3M has the LIF0 buffer attribute register that you need to set to a non-
-default value in order to get rid of the output artifacts...
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+This patch fixed the SD divider settiing for corresponding to the change
+in the HS200/HS400 mode.
 
-Fixes: d455b45f8393 ("v4l: vsp1: Add support for new VSP2-BS, VSP2-DL and VSP2-D instances")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+NOTE:
+- In H3/M3, the clock in HS400 mode refers to SDnH clock
+  (others are SDn clock). Therefore, only the division value of SD is set
+  as struct sd_div_table.div of cpg_sd_div_table[].
+- In M3N, HS400 mode and HS200 mode use the same clock setting.
 
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This patch is against the 'media_tree.git' repo's 'fixes' branch.
+Based on renesas-drivers/clk-renesas-for-v4.17
 
-Changes in version 3:
-- reworded the comment in lif_configure();
-- reworded the patch description.
+I believe that this is a pre-requisite for enabling HS400 as with HS400
+enabled but without this patch I see:
 
-Changes in version 2:
-- added a  comment before the V3M SoC check;
-- fixed indetation in that check;
-- reformatted  the patch description.
+* M3-W ES1.0 / Salvator-X
 
- drivers/media/platform/vsp1/vsp1_lif.c  |   15 +++++++++++++++
- drivers/media/platform/vsp1/vsp1_regs.h |    5 +++++
- 2 files changed, 20 insertions(+)
+[    1.874323] renesas_sdhi_internal_dmac ee140000.sd: mmc0 base at 0xee140000 max clock rate 200 MHz
+[    2.064014] mmc0: new HS400 MMC card at address 0001
+[    2.065225] mmcblk0: mmc0:0001 eMMC   28.8 GiB
+[    2.065722] mmcblk0boot0: mmc0:0001 eMMC   partition 1 4.00 MiB
+[    2.066116] mmcblk0boot1: mmc0:0001 eMMC   partition 2 4.00 MiB
+[    2.066751] mmcblk0rpmb: mmc0:0001 eMMC   partition 3 4.00 MiB, chardev (243:0)
+[    2.469721] print_req_error: I/O error, dev mmcblk0, sector 0
+[    2.478455] Buffer I/O error on dev mmcblk0, logical block 0, async page read
+[    2.611630] print_req_error: I/O error, dev mmcblk0, sector 0
+[    2.613261] Buffer I/O error on dev mmcblk0, logical block 0, async page read
+[    2.623928]  mmcblk0: unable to read partition table
+[   11.379974] print_req_error: I/O error, dev mmcblk0, sector 0
+[   11.477670] print_req_error: I/O error, dev mmcblk0, sector 0
+[   11.487071] Buffer I/O error on dev mmcblk0, logical block 0, async page read
+[   12.125520] print_req_error: I/O error, dev mmcblk0boot1, sector 7936
+[   12.355220] print_req_error: I/O error, dev mmcblk0boot1, sector 7936
+[   12.365142] Buffer I/O error on dev mmcblk0boot1, logical block 992, async page read
 
-Index: media_tree/drivers/media/platform/vsp1/vsp1_lif.c
-===================================================================
---- media_tree.orig/drivers/media/platform/vsp1/vsp1_lif.c
-+++ media_tree/drivers/media/platform/vsp1/vsp1_lif.c
-@@ -155,6 +155,21 @@ static void lif_configure(struct vsp1_en
- 			(obth << VI6_LIF_CTRL_OBTH_SHIFT) |
- 			(format->code == 0 ? VI6_LIF_CTRL_CFMT : 0) |
- 			VI6_LIF_CTRL_REQSEL | VI6_LIF_CTRL_LIF_EN);
-+
-+	/*
-+	 * On R-Car V3M the LIF0 buffer attribute register has to be set
-+	 * to a non-default value to guarantee proper operation (otherwise
-+	 * artifacts may appear on the output). The value required by
-+	 * the manual is not explained but is likely a buffer size or
-+	 * threshold...
-+	 */
-+	if ((entity->vsp1->version &
-+	     (VI6_IP_VERSION_MODEL_MASK | VI6_IP_VERSION_SOC_MASK)) ==
-+	    (VI6_IP_VERSION_MODEL_VSPD_V3 | VI6_IP_VERSION_SOC_V3M)) {
-+		vsp1_lif_write(lif, dl, VI6_LIF_LBA,
-+			       VI6_LIF_LBA_LBA0 |
-+			       (1536 << VI6_LIF_LBA_LBA1_SHIFT));
-+	}
- }
+* On H3 ES2.0 / Salvator-XS:
+
+[    2.456253] renesas_sdhi_internal_dmac ee100000.sd: Got CD GPIO
+[    2.462243] renesas_sdhi_internal_dmac ee100000.sd: Got WP GPIO
+[    2.517855] renesas_sdhi_internal_dmac ee140000.sd: mmc0 base at 0xee140000 max clock rate 200 MHz
+[    2.527651] renesas_sdhi_internal_dmac ee160000.sd: Got CD GPIO
+[    2.533834] renesas_sdhi_internal_dmac ee160000.sd: Got WP GPIO
+[    2.645783] mmc0: error -84 whilst initialising MMC card
+[    2.745795] mmc0: error -84 whilst initialising MMC card
+[    2.894756] mmc0: error -84 whilst initialising MMC card
+[    2.957199] renesas_sdhi_internal_dmac ee100000.sd: Got CD GPIO
+[    2.964230] renesas_sdhi_internal_dmac ee100000.sd: Got WP GPIO
+[    3.020456] renesas_sdhi_internal_dmac ee100000.sd: mmc1 base at 0xee100000 max clock rate 200 MHz
+[    3.031186] renesas_sdhi_internal_dmac ee160000.sd: Got CD GPIO
+[    3.038196] renesas_sdhi_internal_dmac ee160000.sd: Got WP GPIO
+[    3.090806] renesas_sdhi_internal_dmac ee160000.sd: mmc2 base at 0xee160000 max clock rate 200 MHz
+[    3.124870] mmc0: error -84 whilst initialising MMC card
+
+On H3 ES1.0 / Salvator-X I do not see any problems either with or without
+this patch.
+
+To assist testing and review I will make patches, including this one, to
+enable HS400 on H3 / Salvator-X, M3-W 1.0 / Salvator-X and
+H3 ES2.0 Salvator-XS available at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/hs400-v2
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 0904886f5501..caa39d33726a 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -95,32 +95,32 @@ struct sd_clock {
+ };
  
- static const struct vsp1_entity_operations lif_entity_ops = {
-Index: media_tree/drivers/media/platform/vsp1/vsp1_regs.h
-===================================================================
---- media_tree.orig/drivers/media/platform/vsp1/vsp1_regs.h
-+++ media_tree/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -693,6 +693,11 @@
- #define VI6_LIF_CSBTH_LBTH_MASK		(0x7ff << 0)
- #define VI6_LIF_CSBTH_LBTH_SHIFT	0
- 
-+#define VI6_LIF_LBA			0x3b0c
-+#define VI6_LIF_LBA_LBA0		(1 << 31)
-+#define VI6_LIF_LBA_LBA1_MASK		(0xfff << 16)
-+#define VI6_LIF_LBA_LBA1_SHIFT		16
-+
- /* -----------------------------------------------------------------------------
-  * Security Control Registers
+ /* SDn divider
+- *                     sd_srcfc   sd_fc   div
+- * stp_hck   stp_ck    (div)      (div)     = sd_srcfc x sd_fc
++ *                     sd_srcfc   sd_fc       div
++ * stp_hck   stp_ck    (div)      (div)        = sd_srcfc div x sd_fc div
+  *-------------------------------------------------------------------
+- *  0         0         0 (1)      1 (4)      4
+- *  0         0         1 (2)      1 (4)      8
+- *  1         0         2 (4)      1 (4)     16
+- *  1         0         3 (8)      1 (4)     32
+- *  1         0         4 (16)     1 (4)     64
+- *  0         0         0 (1)      0 (2)      2
+- *  0         0         1 (2)      0 (2)      4
+- *  1         0         2 (4)      0 (2)      8
+- *  1         0         3 (8)      0 (2)     16
+- *  1         0         4 (16)     0 (2)     32
++ *  0         0         1 (2)      0 (no refs) 2 : HS400 (H3/M3)
++ *  0         0         0 (1)      1 (4)       4 : SDR104 / HS200 / HS400 (M3N)
++ *  0         0         1 (2)      1 (4)       8 : SDR50
++ *  1         0         2 (4)      1 (4)      16 : HS / SDR25
++ *  1         0         3 (8)      1 (4)      32 : NS / SDR12
++ *  0         0         0 (1)      0 (2)       2 : (no case)
++ *  1         0         2 (4)      0 (2)       8 : (no case)
++ *  1         0         3 (8)      0 (2)      16 : (no case)
++ *  1         0         4 (16)     0 (2)      32 : (no case)
++ *  1         0         4 (16)     1 (4)      64 : (no case)
   */
+ static const struct sd_div_table cpg_sd_div_table[] = {
+ /*	CPG_SD_DIV_TABLE_DATA(stp_hck,  stp_ck,   sd_srcfc,   sd_fc,  sd_div) */
++	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          0,        2),
+ 	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          1,        4),
+ 	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          1,        8),
+ 	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          1,       16),
+ 	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          1,       32),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          1,       64),
+ 	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          0,        2),
+-	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          0,        4),
+ 	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          0,        8),
+ 	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          0,       16),
+ 	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          0,       32),
++	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          1,       64),
+ };
+ 
+ #define to_sd_clock(_hw) container_of(_hw, struct sd_clock, hw)
+-- 
+2.11.0
