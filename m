@@ -1,96 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50173 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752606AbeABLts (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 06:49:48 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: magnus.damm@gmail.com, geert@glider.be, mchehab@kernel.org,
-        hverkuil@xs4all.nl, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/9] include: media: Add Renesas CEU driver interface
-Date: Tue, 02 Jan 2018 13:50:07 +0200
-Message-ID: <2922415.TB8nfS0gW1@avalon>
-In-Reply-To: <1514469681-15602-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1514469681-15602-1-git-send-email-jacopo+renesas@jmondi.org> <1514469681-15602-3-git-send-email-jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH 0/2] Add R8A77970/Eagle I2C support
+To: Simon Horman <horms@verge.net.au>,
+ Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+ Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+References: <20171116210629.732112911@cogentembedded.com>
+ <20171120102407.v7pqrv7e4zmpwmdb@verge.net.au>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <f08b6a05-4da0-eddc-3a16-67f505cfd8f5@ideasonboard.com>
+Date: Fri, 19 Jan 2018 10:50:12 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20171120102407.v7pqrv7e4zmpwmdb@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+Hi Sergei,
 
-Thank you for the patch.
-
-On Thursday, 28 December 2017 16:01:14 EET Jacopo Mondi wrote:
-> Add renesas-ceu header file.
+On 20/11/17 10:24, Simon Horman wrote:
+> On Fri, Nov 17, 2017 at 12:06:29AM +0300, Sergei Shtylyov wrote:
+>> Hello!
+>>
+>> Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+>> 'renesas-devel-20171113-v4.14' tag. We're adding the R8A77970 I2C nodes
+>> and then describing the PCA9654 I/O expander connected to the I2C0 bus.
+>> These patches depend on the R8A77970/Eagle PFC suport patchset in order
+>> to apply/compile.
 > 
-> Do not remove the existing sh_mobile_ceu.h one as long as the original
-> driver does not go away.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  include/media/drv-intf/renesas-ceu.h | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 include/media/drv-intf/renesas-ceu.h
-> 
-> diff --git a/include/media/drv-intf/renesas-ceu.h
-> b/include/media/drv-intf/renesas-ceu.h new file mode 100644
-> index 0000000..7470c3f
-> --- /dev/null
-> +++ b/include/media/drv-intf/renesas-ceu.h
-> @@ -0,0 +1,20 @@
-> +// SPDX-License-Identifier: GPL-2.0+
+> Given the dependency above I have marked these patches as deferred.
+> Please repost or otherwise ping me once the dependency has been
+> included in an RC release.
 
-Just out of curiosity, any reason you have picked GPL-2.0+ and not GPL-2.0 ?
+And here too - My Eagle patches are dependant upon the I2C support on Eagle-V3M.
 
-You might want to add a copyright header to state copyright ownership
+Is this blocking issue resolved?
+(I think it is based on my ability to apply the patches cleanly to
+renesas-drivers-2018-01-09-v4.15-rc7)
 
-/**
- * renesas-ceu.h - Renesas CEU driver interface
- *
- * Copyright 2017-2018 Jacopo Mondi <jacopo@jmondi.org>
- */
+--
+Regards
 
-That's up to you.
-
-> +#ifndef __ASM_RENESAS_CEU_H__
-
-Maybe __MEDIA_DRV_INTF_RENESAS_CEU_H__ ?
-
-> +#define __ASM_RENESAS_CEU_H__
-> +
-> +#define CEU_MAX_SUBDEVS		2
-> +
-> +struct ceu_async_subdev {
-> +	unsigned long flags;
-> +	unsigned char bus_width;
-> +	unsigned char bus_shift;
-> +	unsigned int i2c_adapter_id;
-> +	unsigned int i2c_address;
-> +};
-> +
-> +struct ceu_info {
-
-This is really platform data, how about calling it ceu_platform_data ?
-
-> +	unsigned int num_subdevs;
-> +	struct ceu_async_subdev subdevs[CEU_MAX_SUBDEVS];
-> +};
-> +
-> +#endif /* __ASM_RENESAS_CEU_H__ */
-
-Don't forget to update the comment here too.
-
-Apart from that,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
--- 
-Regards,
-
-Laurent Pinchart
+Kieran
