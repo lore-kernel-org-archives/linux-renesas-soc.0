@@ -1,58 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:16229 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751213AbeAYSEx (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:42409 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756107AbeASTyk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:04:53 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Fri, 19 Jan 2018 14:54:40 -0500
+Received: by mail-lf0-f66.google.com with SMTP id q17so3425501lfa.9
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 11:54:39 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20180119195435.812317522@cogentembedded.com>
+Date: Fri, 19 Jan 2018 22:42:36 +0300
+To: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 16/37] ARM: dts: r8a7794: Use fallback rst compatible string
-Date: Thu, 25 Jan 2018 18:02:50 +0000
-Message-Id: <1516903391-30467-17-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 3/5] arm64: dts: renesas: r8a77970: add DU support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=arm64-dts-renesas-r8a77970-add-DU-support.patch
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the generic fallback compatible string for the rst node.
+Define the generic R8A77970 part of the DU device node.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi |   28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index a5a23e9..9309887 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -246,7 +246,8 @@
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -630,6 +630,34 @@
+ 			resets = <&cpg 623>;
+ 			renesas,fcp = <&fcpvd0>;
  		};
++
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a77970";
++			reg = <0 0xfeb00000 0 0x80000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>;
++			clock-names = "du.0";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			vsps = <&vspd0>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					du_out_lvds: endpoint {
++					};
++				};
++			};
++		};
+ 	};
  
- 		rst: reset-controller@e6160000 {
--			compatible = "renesas,r8a7794-rst";
-+			compatible = "renesas,r8a7794-rst",
-+				     "renesas,rcar-gen2-rst";
- 			reg = <0 0xe6160000 0 0x0100>;
- 		};
- 
--- 
-2.7.4
+ 	timer {
