@@ -1,122 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:46522 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751735AbeAaSZ5 (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:34249 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754796AbeASAqH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jan 2018 13:25:57 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
-Date: Wed, 31 Jan 2018 18:24:16 +0000
-Message-Id: <1517423070-24236-13-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 18 Jan 2018 19:46:07 -0500
+Received: by mail-lf0-f44.google.com with SMTP id k19so87616lfj.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 16:46:07 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Fri, 19 Jan 2018 01:46:03 +0100
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v9 19/28] rcar-vin: use different v4l2 operations in
+ media controller mode
+Message-ID: <20180119004603.GD10270@bigcity.dyn.berto.se>
+References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se>
+ <20171208010842.20047-20-niklas.soderlund+renesas@ragnatech.se>
+ <4037381.ip89KhYXee@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4037381.ip89KhYXee@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Due to commits:
-* "ARM: shmobile: Add watchdog support",
-* "ARM: shmobile: rcar-gen2: Add watchdog support", and
-* "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
-we now have everything we needed for the watchdog to work on Gen2 and
-RZ/G1.
+Hi Laurent,
 
-This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
-Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
-always ON, when suspending to RAM we need to explicitly disable the
-counting by clearing TME from RWTCSRA.
+Thanks for your comments.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v3->4:
-* in this new version the changes to the driver have been splitted into
-  two commits, this patch takes care of the basic Gen2 support, patch 13/26
-  takes care of the restart handler.
+Apart from the issue with the input API Hans pointed which indicates I 
+need to keep that around until it's fixed in the framework I agree with 
+all your comments but one.
 
- drivers/watchdog/renesas_wdt.c | 42 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 37 insertions(+), 5 deletions(-)
+<snip>
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 831ef83..0a1a402 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -203,13 +203,42 @@ static int rwdt_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--/*
-- * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
-- * to work there, one also needs a RESET (RST) driver which does not exist yet
-- * due to HW issues. This needs to be solved before adding compatibles here.
-- */
-+#ifdef CONFIG_PM
-+static int rwdt_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev;
-+	struct rwdt_priv *priv;
-+
-+	pdev = to_platform_device(dev);
-+	priv = platform_get_drvdata(pdev);
-+	if (watchdog_active(&priv->wdev)) {
-+		rwdt_write(priv, priv->cks, RWTCSRA);
-+	}
-+	return 0;
-+}
-+
-+static int rwdt_resume(struct device *dev)
-+{
-+	struct platform_device *pdev;
-+	struct rwdt_priv *priv;
-+
-+	pdev = to_platform_device(dev);
-+	priv = platform_get_drvdata(pdev);
-+	if (watchdog_active(&priv->wdev)) {
-+		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
-+	}
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops rwdt_pm = {
-+	.suspend = rwdt_suspend,
-+	.resume = rwdt_resume,
-+};
-+#endif
-+
- static const struct of_device_id rwdt_ids[] = {
- 	{ .compatible = "renesas,rcar-gen3-wdt", },
-+	{ .compatible = "renesas,rcar-gen2-wdt", },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, rwdt_ids);
-@@ -218,6 +247,9 @@ static struct platform_driver rwdt_driver = {
- 	.driver = {
- 		.name = "renesas_wdt",
- 		.of_match_table = rwdt_ids,
-+#ifdef CONFIG_PM
-+		.pm = &rwdt_pm,
-+#endif
- 	},
- 	.probe = rwdt_probe,
- 	.remove = rwdt_remove,
+On 2017-12-08 12:14:05 +0200, Laurent Pinchart wrote:
+> > @@ -628,7 +628,8 @@ static int rvin_setup(struct rvin_dev *vin)
+> >  		/* Default to TB */
+> >  		vnmc = VNMC_IM_FULL;
+> >  		/* Use BT if video standard can be read and is 60 Hz format */
+> > -		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+> > +		if (!vin->info->use_mc &&
+> > +		    !v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+> >  			if (std & V4L2_STD_525_60)
+> >  				vnmc = VNMC_IM_FULL | VNMC_FOC;
+> >  		}
+> 
+> I think the subdev should be queried in rcar-v4l2.c and the information cached 
+> in the rvin_dev structure instead of queried here. Interactions with the 
+> subdev should be minimized in rvin-dma.c. You can fix this in a separate patch 
+> if you prefer.
+> 
+
+This can't be a cached value it needs to be read at stream on time. The 
+input source could have changed format, e.g. the user may have 
+disconnected a NTSC source and plugged in a PAL.
+
+This is a shame as I otherwise agree with you that interactions with the 
+subdevice should be kept at a minimum.
+
+<snip>
+
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
