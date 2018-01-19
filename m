@@ -1,42 +1,62 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46583 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756107AbeASTyg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 19 Jan 2018 14:54:36 -0500
+Received: by mail-lf0-f68.google.com with SMTP id q194so3422022lfe.13
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 11:54:36 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-Id: <20180119195432.374037342@cogentembedded.com>
+Date: Fri, 19 Jan 2018 22:42:35 +0300
+To: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 2/3] dt-bindings: usb: renesas_usbhs: Add support for RZ/A1
-Date: Thu,  4 Jan 2018 15:01:49 -0500
-Message-Id: <20180104200150.11352-3-chris.brandt@renesas.com>
-In-Reply-To: <20180104200150.11352-1-chris.brandt@renesas.com>
-References: <20180104200150.11352-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 2/5] arm64: dts: renesass: r8a77970: add VSPD support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=arm64-dts-renesas-r8a77970-add-VSPD-support.patch
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for RZ/A1 SoCs
+Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
+the next patch...
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-index 47394ab788e3..d060172f1529 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-@@ -13,8 +13,10 @@ Required properties:
- 	- "renesas,usbhs-r8a7795" for r8a7795 (R-Car H3) compatible device
- 	- "renesas,usbhs-r8a7796" for r8a7796 (R-Car M3-W) compatible device
- 	- "renesas,usbhs-r8a77995" for r8a77995 (R-Car D3) compatible device
-+	- "renesas,usbhs-r7s72100" for r7s72100 (RZ/A1) compatible device
- 	- "renesas,rcar-gen2-usbhs" for R-Car Gen2 or RZ/G1 compatible devices
- 	- "renesas,rcar-gen3-usbhs" for R-Car Gen3 compatible device
-+	- "renesas,rza1-usbhs" for RZ/A1 compatible device
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -620,6 +620,16 @@
+ 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+ 			resets = <&cpg 603>;
+ 		};
++
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x4000>;
++			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 623>;
++			renesas,fcp = <&fcpvd0>;
++		};
+ 	};
  
- 	When compatible with the generic version, nodes must list the
- 	SoC-specific version corresponding to the platform first followed
--- 
-2.15.1
-
-
+ 	timer {
