@@ -1,40 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:39658 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754805AbeASMdX (ORCPT
+Received: from sauhun.de ([88.99.104.3]:32920 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754562AbeASLjE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 07:33:23 -0500
-Received: by mail-qt0-f194.google.com with SMTP id f4so3363257qtj.6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 04:33:23 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20180119113852.1894-1-wsa+renesas@sang-engineering.com>
-References: <20180119113852.1894-1-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 19 Jan 2018 13:33:22 +0100
-Message-ID: <CAMuHMdU+X0A63YEe68A3qqUuRmgQq-4=3WiwsZB8Vw4y4D5CWA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: renesas_defconfig: add driver for PCA9654
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 19 Jan 2018 06:39:04 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] arm64: renesas_defconfig: add driver for PCA9654
+Date: Fri, 19 Jan 2018 12:38:52 +0100
+Message-Id: <20180119113852.1894-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 19, 2018 at 12:38 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> We enabled it in the DTS, so we should have it here, too.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+We enabled it in the DTS, so we should have it here, too.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm64/configs/renesas_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 515486b5b66f4e..3087bba06d3c40 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -132,6 +132,7 @@ CONFIG_PINCTRL_SINGLE=y
+ CONFIG_GPIOLIB=y
+ CONFIG_GPIO_GENERIC_PLATFORM=y
+ CONFIG_GPIO_RCAR=y
++CONFIG_GPIO_PCA953X=y
+ CONFIG_GPIO_BD9571MWV=y
+ CONFIG_THERMAL=y
+ CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
+-- 
+2.11.0
