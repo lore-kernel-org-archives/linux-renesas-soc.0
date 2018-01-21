@@ -1,135 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38617 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751704AbeAPKNh (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40873 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751019AbeAUMi1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jan 2018 05:13:37 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/4] ARM: dts: r8a7790: consistently use single space after =
-Date: Tue, 16 Jan 2018 11:13:27 +0100
-Message-Id: <20180116101330.21688-2-horms+renesas@verge.net.au>
-In-Reply-To: <20180116101330.21688-1-horms+renesas@verge.net.au>
-References: <20180116101330.21688-1-horms+renesas@verge.net.au>
+        Sun, 21 Jan 2018 07:38:27 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2] gpio: pca953x: add required properties to example in bindings
+Date: Sun, 21 Jan 2018 13:38:22 +0100
+Message-Id: <20180121123822.3059-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Consistently use a single space after a =.
-This patch removes instances where a tab is used instead.
+The binding documentation was missing two required properties in the
+example. Fix it and add them also to the list of required properties.
 
-This patch should not introduce any functional change.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 72 +++++++++++++++++++++---------------------
- 1 file changed, 36 insertions(+), 36 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 13926fc7abfa..26da3b282913 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -291,9 +291,9 @@
+Changes since V1:
+  * reworded text about the second cell
+
+ Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+index 0d0158728f897b..9c60bfb2053c4c 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+@@ -30,6 +30,11 @@ Required properties:
+ 	onnn,pca9654
+ 	exar,xra1202
+ 
++- gpio-controller: Marks the device node as a GPIO controller
++- #gpio-cells: Must be 2. The first cell is the GPIO number and the second
++  cell specifies GPIO flags, as defined in <dt-bindings/gpio/gpio.h>. Note
++  that not all flags may be supported by the hardware or the driver.
++
+ Optional properties:
+  - reset-gpios: GPIO specification for the RESET input. This is an
+ 		active low signal to the PCA953x.
+@@ -44,4 +49,6 @@ Example:
+ 		pinctrl-0 = <&pinctrl_pca9505>;
+ 		interrupt-parent = <&gpio3>;
+ 		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
++		gpio-controller;
++		#gpio-cells = <2>;
  	};
- 
- 	thermal: thermal@e61f0000 {
--		compatible =	"renesas,thermal-r8a7790",
--				"renesas,rcar-gen2-thermal",
--				"renesas,rcar-thermal";
-+		compatible = "renesas,thermal-r8a7790",
-+			     "renesas,rcar-gen2-thermal",
-+			     "renesas,rcar-thermal";
- 		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 522>;
-@@ -423,20 +423,20 @@
- 	audma0: dma-controller@ec700000 {
- 		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
- 		reg = <0 0xec700000 0 0x10000>;
--		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+		              GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error",
- 				"ch0", "ch1", "ch2", "ch3",
- 				"ch4", "ch5", "ch6", "ch7",
-@@ -453,20 +453,20 @@
- 	audma1: dma-controller@ec720000 {
- 		compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
- 		reg = <0 0xec720000 0 0x10000>;
--		interrupts =	<GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error",
- 				"ch0", "ch1", "ch2", "ch3",
- 				"ch4", "ch5", "ch6", "ch7",
-@@ -1438,11 +1438,11 @@
- 		 * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
- 		 */
- 		compatible =  "renesas,rcar_sound-r8a7790", "renesas,rcar_sound-gen2";
--		reg =	<0 0xec500000 0 0x1000>, /* SCU */
--			<0 0xec5a0000 0 0x100>,  /* ADG */
--			<0 0xec540000 0 0x1000>, /* SSIU */
--			<0 0xec541000 0 0x280>,  /* SSI */
--			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
-+		reg = <0 0xec500000 0 0x1000>, /* SCU */
-+		      <0 0xec5a0000 0 0x100>,  /* ADG */
-+		      <0 0xec540000 0 0x1000>, /* SSIU */
-+		      <0 0xec541000 0 0x280>,  /* SSI */
-+		      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
- 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
- 
- 		clocks = <&cpg CPG_MOD 1005>,
 -- 
 2.11.0
