@@ -1,56 +1,173 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41415 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750825AbeAUOpU (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:44872 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751037AbeAVLcX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Jan 2018 09:45:20 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: rcar: fix some trivial typos in comments
-Date: Sun, 21 Jan 2018 15:45:11 +0100
-Message-Id: <20180121144511.20350-1-wsa+renesas@sang-engineering.com>
+        Mon, 22 Jan 2018 06:32:23 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-i2c@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH vY 1/2] ARM: dts: iwg22d-sodimm-dbhd-ca: use demuxer for I2C1
+Date: Mon, 22 Jan 2018 11:29:22 +0000
+Message-Id: <1516620563-7965-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1516620563-7965-1-git-send-email-biju.das@bp.renesas.com>
+References: <1516620563-7965-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Nothing big, but they get annoying after a while ;)
+Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Based on work for r8a7794/Alt by Wolfram Sang: "ARM: dts: alt: use demuxer
+ for I2C1"
+
+Add Fixes: 97b94d256d432ba9 ("ARM: dts: iwg22d-sodimm-dbhd-ca: Add HDMI
+video output")
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- drivers/i2c/busses/i2c-rcar.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+We have observed that randomly HDMI slave device is holding data line after a soft reboot.
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index d4b7b5380c2983..4159ebcec2bb61 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -62,7 +62,7 @@
- #define MIE	(1 << 3)	/* master if enable */
- #define TSBE	(1 << 2)
- #define FSB	(1 << 1)	/* force stop bit */
--#define ESG	(1 << 0)	/* en startbit gen */
-+#define ESG	(1 << 0)	/* enable start bit gen */
+We applied this patch and using an oscilloscope verified that i2c recovery works on the
+failure condition.
+
+ .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 96 +++++++++++++---------
+ 1 file changed, 59 insertions(+), 37 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+index d34de82..de120a3 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+@@ -19,6 +19,8 @@
+ 		serial0 = &scif1;
+ 		serial4 = &scif5;
+ 		serial6 = &hscif2;
++		i2c8 = &gpioi2c1;
++		i2c10 = &i2chdmi;
+ 	};
  
- /* ICSSR (also for ICSIER) */
- #define GCAR	(1 << 6)	/* general call received */
-@@ -331,7 +331,7 @@ static void rcar_i2c_prepare_msg(struct rcar_i2c_priv *priv)
+ 	cec_clock: cec-clock {
+@@ -27,6 +29,16 @@
+ 		clock-frequency = <12000000>;
+ 	};
  
- 	rcar_i2c_write(priv, ICMAR, (priv->msg->addr << 1) | read);
- 	/*
--	 * We don't have a testcase but the HW engineers say that the write order
-+	 * We don't have a test case but the HW engineers say that the write order
- 	 * of ICMSR and ICMCR depends on whether we issue START or REP_START. Since
- 	 * it didn't cause a drawback for me, let's rather be safe than sorry.
- 	 */
-@@ -489,7 +489,7 @@ static void rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
++	gpioi2c1: i2c-8 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio0 11 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio0 12 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -37,6 +49,52 @@
+ 			};
+ 		};
+ 	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C1.
++	 */
++	i2chdmi: i2c-10 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio1>;
++			interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&cec_clock>;
++			clock-names = "cec";
++			pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_rgb0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con>;
++					};
++				};
++			};
++		};
++	};
+ };
  
- 		/*
- 		 * Try to use DMA to transmit the rest of the data if
--		 * address transfer pashe just finished.
-+		 * address transfer phase just finished.
- 		 */
- 		if (msr & MAT)
- 			rcar_i2c_dma(priv);
+ &du {
+@@ -70,45 +128,9 @@
+ 
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+-	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&cec_clock>;
+-		clock-names = "cec";
+-		pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_rgb0>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
+-				};
+-			};
+-		};
+-	};
+ };
+ 
+ &pfc {
 -- 
-2.11.0
+2.7.4
