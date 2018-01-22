@@ -1,44 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:5480 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932740AbeALLF1 (ORCPT
+Received: from coyote.holtmann.net ([212.227.132.17]:39503 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751030AbeAVMDf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 06:05:27 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: gadget: udc: renesas_usb3: fix oops in renesas_usb3_remove()
-Date: Fri, 12 Jan 2018 20:00:56 +0900
-Message-Id: <1515754856-4029-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 22 Jan 2018 07:03:35 -0500
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH] serdev: add method to set parity
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180118022355.GA3286@localhost>
+Date: Mon, 22 Jan 2018 13:03:32 +0100
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        wsa@the-dreams.de, geert@linux-m68k.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <09434305-0622-4213-AFBA-C499134DD874@holtmann.org>
+References: <1516203739-4705-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20180118022355.GA3286@localhost>
+To: Johan Hovold <johan@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that the renesas_usb3_remove() causes
-NULL pointer dereference because the usb3_to_dev() macro will use
-the gadget instance and it will be deleted before.
+Hi Ulrich,
 
-Fixes: cf06df3fae28 ("usb: gadget: udc: renesas_usb3: move pm_runtime_{en,dis}able()")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/gadget/udc/renesas_usb3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> Adds serdev_device_set_parity() and an implementation for ttyport.
+> 
+> Perhaps you can mention that the interface uses an enum and the three
+> settings that you add here.
+> 
+>> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+>> ---
+>> Broken out of the "[PATCH 0/6] serdev multiplexing support" series
+>> because this kind of functionality is apparently also required
+>> for "[RFC v2 0/9] Realtek Bluetooth serdev support (H5 protocol)",
+>> which contains an earlier revision of this patch.
+> 
+> Thanks for submitting this separately.
+> 
+>> drivers/tty/serdev/core.c           | 12 ++++++++++++
+>> drivers/tty/serdev/serdev-ttyport.c | 18 ++++++++++++++++++
+>> include/linux/serdev.h              | 10 ++++++++++
+>> 3 files changed, 40 insertions(+)
+>> 
+>> diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+>> index 5dc88f6..1f25896 100644
+>> --- a/drivers/tty/serdev/core.c
+>> +++ b/drivers/tty/serdev/core.c
+>> @@ -290,6 +290,18 @@ int serdev_device_set_tiocm(struct serdev_device *serdev, int set, int clear)
+>> }
+>> EXPORT_SYMBOL_GPL(serdev_device_set_tiocm);
+>> 
+>> +int serdev_device_set_parity(struct serdev_device *serdev,
+>> +			     enum serdev_parity parity)
+>> +{
+>> +	struct serdev_controller *ctrl = serdev->ctrl;
+>> +
+>> +	if (!ctrl || !ctrl->ops->set_parity)
+>> +		return -ENOTSUPP;
+>> +
+>> +	return ctrl->ops->set_parity(ctrl, parity);
+>> +}
+>> +EXPORT_SYMBOL_GPL(serdev_device_set_parity);
+> 
+> Please place the parity functions (and fields) after the set_flow
+> equivalents so that we keep the line-setting functionality grouped
+> together.
+> 
+>> +static int ttyport_set_parity(struct serdev_controller *ctrl,
+>> +			      enum serdev_parity parity)
+>> +{
+>> +	struct serport *serport = serdev_controller_get_drvdata(ctrl);
+>> +	struct tty_struct *tty = serport->tty;
+>> +	struct ktermios ktermios = tty->termios;
+>> +
+>> +	ktermios.c_cflag &= ~(PARENB | PARODD);
+> 
+> You should also clear CMSPAR.
+> 
+>> +	if (parity != SERDEV_PARITY_NONE) {
+>> +		ktermios.c_cflag |= PARENB;
+>> +		if (parity == SERDEV_PARITY_ODD)
+>> +			ktermios.c_cflag |= PARODD;
+>> +	}
+>> +
+>> +	return tty_set_termios(tty, &ktermios);
+> 
+> Note that tty_set_termios() always return 0. You need to verify that you
+> got what you requested by looking at the termios after the function
+> returns (and possibly return -EINVAL). Not all drivers support (all)
+> parity modes.
+> 
+> Note that we currently do not implement proper error handling for flow
+> control, but that should be fixed.
+> 
+> Looks good otherwise.
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 6e87af2..409cde4 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2410,7 +2410,7 @@ static int renesas_usb3_remove(struct platform_device *pdev)
- 	__renesas_usb3_ep_free_request(usb3->ep0_req);
- 	if (usb3->phy)
- 		phy_put(usb3->phy);
--	pm_runtime_disable(usb3_to_dev(usb3));
-+	pm_runtime_disable(&pdev->dev);
- 
- 	return 0;
- }
--- 
-1.9.1
+can I get an updated patch addressing the comments and also including the Reviewed-by tags.
+
+Regards
+
+Marcel
