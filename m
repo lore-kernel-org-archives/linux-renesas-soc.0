@@ -1,154 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39561 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965417AbeALXOl (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:44872 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751058AbeAVLcZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 18:14:41 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 07/12] ARM: dts: r8a7791: Convert to new LVDS DT bindings
-Date: Sat, 13 Jan 2018 01:14:25 +0200
-Message-Id: <20180112231430.26943-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 22 Jan 2018 06:32:25 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-i2c@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH vY 2/2] ARM: dts: iwg22d-sodimm: use demuxer for I2C5
+Date: Mon, 22 Jan 2018 11:29:23 +0000
+Message-Id: <1516620563-7965-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1516620563-7965-1-git-send-email-biju.das@bp.renesas.com>
+References: <1516620563-7965-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+Create a separate bus for audiocodec related I2C5 and provide fallback to GPIO.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Based on work for r8a7794/Alt by Wolfram Sang: "ARM: dts: alt: use demuxer
+for I2C1"
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
-Changes since v1:
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 44 +++++++++++++++++++++--------
+ 1 file changed, 33 insertions(+), 11 deletions(-)
 
-- Remove the DU reg-names property
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 10 ++++++++--
- arch/arm/boot/dts/r8a7791-porter.dts  | 16 +++++++++++++---
- arch/arm/boot/dts/r8a7791.dtsi        | 34 ++++++++++++++++++++++++++++------
- 3 files changed, 49 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index e164eda69baf..5a0f87ed7f16 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -332,8 +332,7 @@
- 
- 	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
- 		 <&x13_clk>, <&x2_clk>;
--	clock-names = "du.0", "du.1", "lvds.0",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
- 
- 	ports {
- 		port@0 {
-@@ -341,6 +340,13 @@
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
- 		port@1 {
- 			lvds_connector: endpoint {
- 			};
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 9a02d03b23c2..e6d02839d636 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -419,10 +419,9 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- 
--	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
-+	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 		 <&x3_clk>, <&x16_clk>;
--	clock-names = "du.0", "du.1", "lvds.0",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
- 
- 	ports {
- 		port@0 {
-@@ -433,6 +432,17 @@
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index a4058f4..b2ea43f 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -42,6 +42,8 @@
+ 		ethernet0 = &avb;
+ 		serial3 = &scif4;
+ 		serial5 = &hscif1;
++		i2c9 = &gpioi2c5;
++		i2c11 = &i2caudiocodec;
  	};
+ 
+ 	chosen {
+@@ -55,6 +57,36 @@
+ 		clock-frequency = <26000000>;
+ 	};
+ 
++	gpioi2c5: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio0 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio0 15 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C5.
++	 */
++	i2caudiocodec: i2c-11 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c5>, <&gpioi2c5>;
++		i2c-bus-name = "i2c-audiocodec";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		sgtl5000: codec@a {
++			compatible = "fsl,sgtl5000";
++			#sound-dai-cells = <0>;
++			reg = <0x0a>;
++			clocks = <&audio_clock>;
++			VDDA-supply = <&reg_3p3v>;
++			VDDIO-supply = <&reg_3p3v>;
++		};
++	};
++
+ 	rsnd_sgtl5000: sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,format = "i2s";
+@@ -126,19 +158,9 @@
+ 
+ &i2c5 {
+ 	pinctrl-0 = <&i2c5_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-audiocodec";
+ 
+-	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	sgtl5000: codec@a {
+-		compatible = "fsl,sgtl5000";
+-		#sound-dai-cells = <0>;
+-		reg = <0x0a>;
+-		clocks = <&audio_clock>;
+-		VDDA-supply = <&reg_3p3v>;
+-		VDDIO-supply = <&reg_3p3v>;
+-	};
  };
  
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds_connector: endpoint {
-+			};
-+		};
-+	};
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&ssi_pins &audio_clk_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 67831d0405f3..b7fceb210de9 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1103,15 +1103,12 @@
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7791";
--		reg = <0 0xfeb00000 0 0x40000>,
--		      <0 0xfeb90000 0 0x1c>;
--		reg-names = "du", "lvds.0";
-+		reg = <0 0xfeb00000 0 0x40000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 724>,
--			 <&cpg CPG_MOD 723>,
--			 <&cpg CPG_MOD 726>;
--		clock-names = "du.0", "du.1", "lvds.0";
-+			 <&cpg CPG_MOD 723>;
-+		clock-names = "du.0", "du.1";
- 		status = "disabled";
- 
- 		ports {
-@@ -1126,6 +1123,31 @@
- 			port@1 {
- 				reg = <1>;
- 				du_out_lvds0: endpoint {
-+					remote-endpoint = <&lvds0_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	lvds0: lvds@feb90000 {
-+		compatible = "renesas,lvds-r8a7791";
-+		reg = <0 0xfeb90000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 726>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds0_in: endpoint {
-+					remote-endpoint = <&du_out_lvds0>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds0_out: endpoint {
- 				};
- 			};
- 		};
+ &pci1 {
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
