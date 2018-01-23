@@ -1,79 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:42409 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756107AbeASTyk (ORCPT
+Received: from coyote.holtmann.net ([212.227.132.17]:35413 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750934AbeAWIQ7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 14:54:40 -0500
-Received: by mail-lf0-f66.google.com with SMTP id q17so3425501lfa.9
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 11:54:39 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180119195435.812317522@cogentembedded.com>
-Date: Fri, 19 Jan 2018 22:42:36 +0300
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 3/5] arm64: dts: renesas: r8a77970: add DU support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=arm64-dts-renesas-r8a77970-add-DU-support.patch
+        Tue, 23 Jan 2018 03:16:59 -0500
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH v2] serdev: add method to set parity
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1516643792-22840-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Date: Tue, 23 Jan 2018 09:16:56 +0100
+Cc: linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        wsa@the-dreams.de, geert@linux-m68k.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <73650B8B-31E8-4578-BEF9-13ED1217E8B7@holtmann.org>
+References: <1516643792-22840-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77970 part of the DU device node.
+Hi Ulrich,
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+> Adds serdev_device_set_parity() and an implementation for ttyport.
+> The interface uses an enum with the values SERIAL_PARITY_NONE,
+> SERIAL_PARITY_EVEN and SERIAL_PARITY_ODD.
+> 
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> ---
+> 
+> Hi!
+> 
+> This revision addresses Johan's comments (see below for details) and adds
+> Sebastian's Reviewed-by tag. Thank you for your reviews!
+> 
+> CU
+> Uli
+> 
+> 
+> Changes since v1:
+> - added Reviewed-by tag
+> - expanded commit message
+> - shuffled stuff around to keep line-setting bits together
+> - clear CMSPAR
+> - (hopefully) detect errors correctly by checking tty->termios after call
+>  to tty_set_termios().
+> 
+> 
+> drivers/tty/serdev/core.c           | 12 ++++++++++++
+> drivers/tty/serdev/serdev-ttyport.c | 24 ++++++++++++++++++++++++
+> include/linux/serdev.h              | 10 ++++++++++
+> 3 files changed, 46 insertions(+)
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+patch has been applied to bluetooth-next tree.
 
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Regards
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -630,6 +630,34 @@
- 			resets = <&cpg 623>;
- 			renesas,fcp = <&fcpvd0>;
- 		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77970";
-+			reg = <0 0xfeb00000 0 0x80000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>;
-+			clock-names = "du.0";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			vsps = <&vspd0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds: endpoint {
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	timer {
+Marcel
