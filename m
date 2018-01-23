@@ -1,67 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:32862 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751799AbeAEKeC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Jan 2018 05:34:02 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.16 (take two)
-Date: Fri,  5 Jan 2018 11:33:58 +0100
-Message-Id: <1515148438-5569-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20180112133857.GE24794@w540>
+References: <1515515131-13760-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1515515131-13760-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAOFm3uGxm3bAHPryMV8+MAFy+45-3Ld7RbKqo1saigzPUZ8mqg@mail.gmail.com> <20180112133857.GE24794@w540>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Tue, 23 Jan 2018 11:28:00 +0100
+Message-ID: <CAOFm3uGdVkgJ10n=pVKh9h2r7t_UkUS1768tVQLKSaOh8v-buA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/9] v4l: platform: Add Renesas CEU driver
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, geert@glider.be,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Fabio Estevam <festevam@gmail.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-sh@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Linus,
+On Fri, Jan 12, 2018 at 2:38 PM, jacopo mondi <jacopo@jmondi.org> wrote:
+> Hi Philippe, Laurent, Geert,
+>
+> On Fri, Jan 12, 2018 at 11:36:31AM +0100, Philippe Ombredanne wrote:
+>> On Tue, Jan 9, 2018 at 5:25 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>> > Add driver for Renesas Capture Engine Unit (CEU).
+>>
+>> <snip>
+>>
+>> > --- /dev/null
+>> > +++ b/drivers/media/platform/renesas-ceu.c
+>> > @@ -0,0 +1,1648 @@
+>> > +// SPDX-License-Identifier: GPL-2.0
+>>
+>> <snip>
+>>
+>> > +MODULE_DESCRIPTION("Renesas CEU camera driver");
+>> > +MODULE_AUTHOR("Jacopo Mondi <jacopo+renesas@jmondi.org>");
+>> > +MODULE_LICENSE("GPL");
+>>
+>> Jacopo,
+>> the MODULE_LICENSE does not match the SPDX tag. Per module.h "GPL"
+>> means GPL-2.0 or later ;)
+>>
+>> It should be instead:
+>>
+>> > +MODULE_LICENSE("GPL v2");
+>>
+>> ... to match your
+>>
+>> > +// SPDX-License-Identifier: GPL-2.0
+>
+> I will update this in next v5.
+> Laurent, Geert: I'll keep SPDX identifier to "GPL-2.0" until kernel
+> doc does not get updated.
 
-The following changes since commit 527890f72892b127b67567af6bdbdc5288c211c1:
+Thanks. Sorry for the late reply!
 
-  pinctrl: sh-pfc: r8a77995: Add CAN FD support (2017-12-05 14:14:56 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.16-tag2
-
-for you to fetch changes up to 297e5b2b7a8398b4b850d6bdb63f3a3544670b9e:
-
-  pinctrl: sh-pfc: r8a7795: Add SATA pins, groups, and functions (2017-12-21 10:08:23 +0100)
-
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.16 (take two)
-
-  - Add PWM pin groups on various R-Car Gen2 and RZ/G1 SoCs,
-  - Add missing I2C5 pin groups on R-Car E2 and RZ/G1E,
-  - Add SATA pin groups on R-Car H3 ES2.0.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (1):
-      pinctrl: sh-pfc: r8a7794: Add i2c5 pin groups and function
-
-Fabrizio Castro (3):
-      pinctrl: sh-pfc: r8a7794: Add PWM[0123456] support
-      pinctrl: sh-pfc: r8a7794: Add tpu groups and function
-      pinctrl: sh-pfc: r8a7791: Add tpu groups and function
-
-Wolfram Sang (1):
-      pinctrl: sh-pfc: r8a7795: Add SATA pins, groups, and functions
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  42 ++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 307 +++++++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c |  24 +++
- 3 files changed, 371 insertions(+), 2 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+Cordially
+Philippe Ombredanne
