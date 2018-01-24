@@ -1,173 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:44872 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751037AbeAVLcX (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:17936 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933988AbeAXRCO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Jan 2018 06:32:23 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH vY 1/2] ARM: dts: iwg22d-sodimm-dbhd-ca: use demuxer for I2C1
-Date: Mon, 22 Jan 2018 11:29:22 +0000
-Message-Id: <1516620563-7965-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1516620563-7965-1-git-send-email-biju.das@bp.renesas.com>
-References: <1516620563-7965-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 24 Jan 2018 12:02:14 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: =?iso-8859-1?Q?Niklas_S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Fabrizio Castro" <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH v2 1/4] dt-bindings: media: rcar_vin: Reverse SoC part
+ number list
+Date: Wed, 24 Jan 2018 17:02:10 +0000
+Message-ID: <SG2PR06MB0886F472B3CFDE5F2255AB8DC0E20@SG2PR06MB0886.apcprd06.prod.outlook.com>
+References: <1510856571-30281-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1510856571-30281-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+Hello guys,
 
-Based on work for r8a7794/Alt by Wolfram Sang: "ARM: dts: alt: use demuxer
- for I2C1"
+I am sorry to bother you,  just wondering if this patch has any chance to e=
+nd up in v4.16?
 
-Add Fixes: 97b94d256d432ba9 ("ARM: dts: iwg22d-sodimm-dbhd-ca: Add HDMI
-video output")
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
-We have observed that randomly HDMI slave device is holding data line after a soft reboot.
+Thanks,
+Fabrizio
 
-We applied this patch and using an oscilloscope verified that i2c recovery works on the
-failure condition.
+> Subject: [PATCH v2 1/4] dt-bindings: media: rcar_vin: Reverse SoC part nu=
+mber list
+>
+> Change the sorting of the part numbers from descending to ascending to
+> match with other documentation.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> v1->v2:
+> * new patch triggered by Geert's comment, see the below link for details:
+>   https://www.mail-archive.com/linux-media@vger.kernel.org/msg121992.html
+>
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Docum=
+entation/devicetree/bindings/media/rcar_vin.txt
+> index 6e4ef8c..98931f5 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -6,14 +6,14 @@ family of devices. The current blocks are always slaves=
+ and suppot one input
+>  channel which can be either RGB, YUYV or BT656.
+>
+>   - compatible: Must be one or more of the following
+> -   - "renesas,vin-r8a7795" for the R8A7795 device
+> -   - "renesas,vin-r8a7794" for the R8A7794 device
+> -   - "renesas,vin-r8a7793" for the R8A7793 device
+> -   - "renesas,vin-r8a7792" for the R8A7792 device
+> -   - "renesas,vin-r8a7791" for the R8A7791 device
+> -   - "renesas,vin-r8a7790" for the R8A7790 device
+> -   - "renesas,vin-r8a7779" for the R8A7779 device
+>     - "renesas,vin-r8a7778" for the R8A7778 device
+> +   - "renesas,vin-r8a7779" for the R8A7779 device
+> +   - "renesas,vin-r8a7790" for the R8A7790 device
+> +   - "renesas,vin-r8a7791" for the R8A7791 device
+> +   - "renesas,vin-r8a7792" for the R8A7792 device
+> +   - "renesas,vin-r8a7793" for the R8A7793 device
+> +   - "renesas,vin-r8a7794" for the R8A7794 device
+> +   - "renesas,vin-r8a7795" for the R8A7795 device
+>     - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 compatible device.
+>     - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+>
+> --
+> 2.7.4
 
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 96 +++++++++++++---------
- 1 file changed, 59 insertions(+), 37 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-index d34de82..de120a3 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-@@ -19,6 +19,8 @@
- 		serial0 = &scif1;
- 		serial4 = &scif5;
- 		serial6 = &hscif2;
-+		i2c8 = &gpioi2c1;
-+		i2c10 = &i2chdmi;
- 	};
- 
- 	cec_clock: cec-clock {
-@@ -27,6 +29,16 @@
- 		clock-frequency = <12000000>;
- 	};
- 
-+	gpioi2c1: i2c-8 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio0 11 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio0 12 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
- 	hdmi-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -37,6 +49,52 @@
- 			};
- 		};
- 	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-10 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio1>;
-+			interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&cec_clock>;
-+			clock-names = "cec";
-+			pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &du {
-@@ -70,45 +128,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&cec_clock>;
--		clock-names = "cec";
--		pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb0>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con>;
--				};
--			};
--		};
--	};
- };
- 
- &pfc {
--- 
-2.7.4
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
