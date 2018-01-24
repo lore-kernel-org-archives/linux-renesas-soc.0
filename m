@@ -1,68 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:10985 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751774AbeAYNJE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 08:09:04 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] v4l2-dev.h: fix symbol collision in media_entity_to_video_device()
-Date: Thu, 25 Jan 2018 14:08:52 +0100
-Message-Id: <20180125130852.4779-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Wed, 24 Jan 2018 07:17:27 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: rcar: fix some trivial typos in comments
+Message-ID: <20180124061727.phyq2ra5pj73jmua@ninjato>
+References: <20180121144511.20350-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wf6r4vxwhho2do46"
+Content-Disposition: inline
+In-Reply-To: <20180121144511.20350-1-wsa+renesas@sang-engineering.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-A recent change to the media_entity_to_video_device() macro breaks some
-use-cases for the macro due to a symbol collision. Before the change
-this worked:
 
-    vdev = media_entity_to_video_device(link->sink->entity);
+--wf6r4vxwhho2do46
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-While after the change it results in a compiler error "error: 'struct
-video_device' has no member named 'link'; did you mean 'lock'?". While
-the following still works after the change.
+On Sun, Jan 21, 2018 at 03:45:11PM +0100, Wolfram Sang wrote:
+> Nothing big, but they get annoying after a while ;)
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-    struct media_entity *entity = link->sink->entity;
-    vdev = media_entity_to_video_device(entity);
+Applied to for-next, thanks!
 
-Fix the collision by renaming the macro argument to '__entity'.
 
-Fixes: 69b925c5fc36d8f1 ("media: v4l2-dev.h: add kernel-doc to two macros")
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/media/v4l2-dev.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+--wf6r4vxwhho2do46
+Content-Type: application/pgp-signature; name="signature.asc"
 
-* Changes from v1
-- Change argument name to '__entity' as suggested by Geert, Sakari and 
-  Mauro.
-- Added fixes tag.
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
-index 267fd2bed17bd3c1..322b8a9abb8dc45a 100644
---- a/include/media/v4l2-dev.h
-+++ b/include/media/v4l2-dev.h
-@@ -298,10 +298,10 @@ struct video_device
-  * media_entity_to_video_device - Returns a &struct video_device from
-  *	the &struct media_entity embedded on it.
-  *
-- * @entity: pointer to &struct media_entity
-+ * @__entity: pointer to &struct media_entity
-  */
--#define media_entity_to_video_device(entity) \
--	container_of(entity, struct video_device, entity)
-+#define media_entity_to_video_device(__entity) \
-+	container_of(__entity, struct video_device, entity)
- 
- /**
-  * to_video_device - Returns a &struct video_device from the
--- 
-2.15.1
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpoJPcACgkQFA3kzBSg
+KbZ4fg//Ul2o4sTIM35fhvk7bXFVMVydegmZhFQK67q15t4jw6r+QxkjGrdeXLC/
+lTX5CK5SN0sXcYsyd13Q7U6nS0nDzHBXsHb5WQeE1FG+euxQMdiepI7IwJkmApuf
+3Jn8O6yoe1Tf09f3NqMKaKjnQRY99cJBtwrW44B0DjtNNVXPgib7QoD4uIcDW7mz
+wSKBJT6ox41cQ61d0Jelj9EaW2H9E+56hcPcJLgunr0WrIcIyBBTDECRWctg7ku0
+Typ8PhtdrDs14BNI7N0tHij8wa488OWnTT1vlkQV4DwzaDD7miU5aLxX2Rmv0d80
+Du4y0/uXZsV2g3zWjhafcoOliG0KjPvpGtr/b7YXvzhZ3riDZqv+8ueHv1jlIpYx
+QZ0TW3jz5eKIVG2UhZNiBpOiV0lw1WFSoHaDOlx5XZume6R1LjkwyeOGHPz3PbrR
+IXGmG1PfuMw2yhuxmosDPLcaCxRKo11LecSo8WHSTxN5/TgSinVt+j/+QiIm+v6z
+2HwnuK6P4cjy/XsERz9+/qFG7mA1zC41QPtXG3pB5F9wzdyvI3mZ/W4bzm2/3uQU
+ETUMfhW42BupxJH8c9/X0oAHa7AtDa+ZUy9fBmmopKc/9GWfS6SEiEJxuFidptOH
+IL409Q5jjB5BXl6CayaHUMExBlA+RN5tXjyZ6Z9Bntb82EObbnk=
+=04UI
+-----END PGP SIGNATURE-----
+
+--wf6r4vxwhho2do46--
