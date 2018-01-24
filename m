@@ -1,153 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34417 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeAVR4j (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:42485 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934021AbeAXQOw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Jan 2018 12:56:39 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: marcel@holtmann.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        johan@kernel.org, sre@kernel.org, linux-bluetooth@vger.kernel.org,
-        robh@kernel.org, martin.blumenstingl@googlemail.com,
-        gregkh@linuxfoundation.org, magnus.damm@gmail.com,
-        laurent.pinchart@ideasonboard.com, wsa@the-dreams.de,
-        geert@linux-m68k.org, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2] serdev: add method to set parity
-Date: Mon, 22 Jan 2018 18:56:32 +0100
-Message-Id: <1516643792-22840-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Wed, 24 Jan 2018 11:14:52 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  0/2] Add VSP support for r8a774[35]
+Date: Wed, 24 Jan 2018 16:11:50 +0000
+Message-Id: <1516810312-2100-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds serdev_device_set_parity() and an implementation for ttyport.
-The interface uses an enum with the values SERIAL_PARITY_NONE,
-SERIAL_PARITY_EVEN and SERIAL_PARITY_ODD.
+This patch series aims to add VSP support for r8a774[35] SoC.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
----
+It is tested with VSP unit tests available in the below git
 
-Hi!
+git://git.ideasonboard.com/renesas/vsp-tests.git
 
-This revision addresses Johan's comments (see below for details) and adds
-Sebastian's Reviewed-by tag. Thank you for your reviews!
+It is tested against renesas-devel-20180122-v4.15-rc9
 
-CU
-Uli
+This patch depend on
 
+https://patchwork.kernel.org/patch/10182757/ 
 
-Changes since v1:
-- added Reviewed-by tag
-- expanded commit message
-- shuffled stuff around to keep line-setting bits together
-- clear CMSPAR
-- (hopefully) detect errors correctly by checking tty->termios after call
-  to tty_set_termios().
+https://patchwork.kernel.org/patch/10182755/
 
+Biju Das (2):
+  ARM: dts: r8a7743: Add VSP support
+  ARM: dts: r8a7745: Add VSP support
 
- drivers/tty/serdev/core.c           | 12 ++++++++++++
- drivers/tty/serdev/serdev-ttyport.c | 24 ++++++++++++++++++++++++
- include/linux/serdev.h              | 10 ++++++++++
- 3 files changed, 46 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 27 +++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7745.dtsi | 18 ++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-index 5dc88f6..ceee0ca 100644
---- a/drivers/tty/serdev/core.c
-+++ b/drivers/tty/serdev/core.c
-@@ -257,6 +257,18 @@ void serdev_device_set_flow_control(struct serdev_device *serdev, bool enable)
- }
- EXPORT_SYMBOL_GPL(serdev_device_set_flow_control);
- 
-+int serdev_device_set_parity(struct serdev_device *serdev,
-+			     enum serdev_parity parity)
-+{
-+	struct serdev_controller *ctrl = serdev->ctrl;
-+
-+	if (!ctrl || !ctrl->ops->set_parity)
-+		return -ENOTSUPP;
-+
-+	return ctrl->ops->set_parity(ctrl, parity);
-+}
-+EXPORT_SYMBOL_GPL(serdev_device_set_parity);
-+
- void serdev_device_wait_until_sent(struct serdev_device *serdev, long timeout)
- {
- 	struct serdev_controller *ctrl = serdev->ctrl;
-diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-index a5abb05..fa16729 100644
---- a/drivers/tty/serdev/serdev-ttyport.c
-+++ b/drivers/tty/serdev/serdev-ttyport.c
-@@ -194,6 +194,29 @@ static void ttyport_set_flow_control(struct serdev_controller *ctrl, bool enable
- 	tty_set_termios(tty, &ktermios);
- }
- 
-+static int ttyport_set_parity(struct serdev_controller *ctrl,
-+			      enum serdev_parity parity)
-+{
-+	struct serport *serport = serdev_controller_get_drvdata(ctrl);
-+	struct tty_struct *tty = serport->tty;
-+	struct ktermios ktermios = tty->termios;
-+
-+	ktermios.c_cflag &= ~(PARENB | PARODD | CMSPAR);
-+	if (parity != SERDEV_PARITY_NONE) {
-+		ktermios.c_cflag |= PARENB;
-+		if (parity == SERDEV_PARITY_ODD)
-+			ktermios.c_cflag |= PARODD;
-+	}
-+
-+	tty_set_termios(tty, &ktermios);
-+
-+	if ((tty->termios.c_cflag & (PARENB | PARODD | CMSPAR)) !=
-+	    (ktermios.c_cflag & (PARENB | PARODD | CMSPAR)))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static void ttyport_wait_until_sent(struct serdev_controller *ctrl, long timeout)
- {
- 	struct serport *serport = serdev_controller_get_drvdata(ctrl);
-@@ -231,6 +254,7 @@ static const struct serdev_controller_ops ctrl_ops = {
- 	.open = ttyport_open,
- 	.close = ttyport_close,
- 	.set_flow_control = ttyport_set_flow_control,
-+	.set_parity = ttyport_set_parity,
- 	.set_baudrate = ttyport_set_baudrate,
- 	.wait_until_sent = ttyport_wait_until_sent,
- 	.get_tiocm = ttyport_get_tiocm,
-diff --git a/include/linux/serdev.h b/include/linux/serdev.h
-index 48d8ce2..f153b2c 100644
---- a/include/linux/serdev.h
-+++ b/include/linux/serdev.h
-@@ -78,6 +78,12 @@ static inline struct serdev_device_driver *to_serdev_device_driver(struct device
- 	return container_of(d, struct serdev_device_driver, driver);
- }
- 
-+enum serdev_parity {
-+	SERDEV_PARITY_NONE,
-+	SERDEV_PARITY_EVEN,
-+	SERDEV_PARITY_ODD,
-+};
-+
- /*
-  * serdev controller structures
-  */
-@@ -88,6 +94,7 @@ struct serdev_controller_ops {
- 	int (*open)(struct serdev_controller *);
- 	void (*close)(struct serdev_controller *);
- 	void (*set_flow_control)(struct serdev_controller *, bool);
-+	int (*set_parity)(struct serdev_controller *, enum serdev_parity);
- 	unsigned int (*set_baudrate)(struct serdev_controller *, unsigned int);
- 	void (*wait_until_sent)(struct serdev_controller *, long);
- 	int (*get_tiocm)(struct serdev_controller *);
-@@ -301,6 +308,9 @@ static inline int serdev_device_set_rts(struct serdev_device *serdev, bool enabl
- 		return serdev_device_set_tiocm(serdev, 0, TIOCM_RTS);
- }
- 
-+int serdev_device_set_parity(struct serdev_device *serdev,
-+			     enum serdev_parity parity);
-+
- /*
-  * serdev hooks into TTY core
-  */
 -- 
 2.7.4
