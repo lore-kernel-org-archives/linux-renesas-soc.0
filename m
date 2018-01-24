@@ -1,49 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:44904 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933953AbeAXPw0 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:24963 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934161AbeAXPpJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jan 2018 10:52:26 -0500
-Received: by mail-qt0-f194.google.com with SMTP id l20so11400790qtj.11
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Jan 2018 07:52:26 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1516808522-17348-2-git-send-email-biju.das@bp.renesas.com>
-References: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com> <1516808522-17348-2-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 24 Jan 2018 16:52:25 +0100
-Message-ID: <CAMuHMdVH2o1hFU1wLvMu54XjvZv4deE=69G3QBmiVQC_Y-uTDA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: iommu: ipmmu-vmsa: Add device tree
- support for r8a774[35]
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Joerg Roedel <joro@8bytes.org>,
+        Wed, 24 Jan 2018 10:45:09 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Joerg Roedel <joro@8bytes.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         iommu@lists.linux-foundation.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  1/3] dt-bindings: iommu: ipmmu-vmsa: Add device tree support for r8a774[35]
+Date: Wed, 24 Jan 2018 15:42:00 +0000
+Message-Id: <1516808522-17348-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
+References: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 24, 2018 at 4:42 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Document r8a774[35] specific compatible strings. The Renesas RZ/G1[ME]
-> (r8a774[35]) IPMMU are identical to the R-Car Gen2 family.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Document r8a774[35] specific compatible strings. The Renesas RZ/G1[ME]
+(r8a774[35]) IPMMU are identical to the R-Car Gen2 family.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+index 857df92..7d300af 100644
+--- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+@@ -11,12 +11,15 @@ Required Properties:
+     the device is compatible with the R-Car Gen2 VMSA-compatible IPMMU.
+ 
+     - "renesas,ipmmu-r8a73a4" for the R8A73A4 (R-Mobile APE6) IPMMU.
++    - "renesas,ipmmu-r8a7743" for the R8A7743 (RZ/G1M) IPMMU.
++    - "renesas,ipmmu-r8a7745" for the R8A7745 (RZ/G1E) IPMMU.
+     - "renesas,ipmmu-r8a7790" for the R8A7790 (R-Car H2) IPMMU.
+     - "renesas,ipmmu-r8a7791" for the R8A7791 (R-Car M2-W) IPMMU.
+     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
+     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
+     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
+-    - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
++    - "renesas,ipmmu-vmsa" for generic R-Car Gen2 or RZ/G1 VMSA-compatible
++			   IPMMU.
+ 
+   - reg: Base address and size of the IPMMU registers.
+   - interrupts: Specifiers for the MMU fault interrupts. For instances that
+-- 
+2.7.4
