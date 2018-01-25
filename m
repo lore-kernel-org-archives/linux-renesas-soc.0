@@ -1,63 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:44368 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751380AbeABHyY (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:16229 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751213AbeAYSEx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Jan 2018 02:54:24 -0500
-MIME-Version: 1.0
-In-Reply-To: <20171231184448.233694839@cogentembedded.com>
-References: <20171231184448.233694839@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Jan 2018 08:54:23 +0100
-Message-ID: <CAMuHMdXQCYmcDgKKyPTM3mb+eMxt0=PK2e7sP1RDX=SqsdKv5g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] sh_eth: kill redundant check in the probe() method
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: netdev@vger.kernel.org,
-        "open list:RENESAS ETHERNET DRIVERS"
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 25 Jan 2018 13:04:53 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 16/37] ARM: dts: r8a7794: Use fallback rst compatible string
+Date: Thu, 25 Jan 2018 18:02:50 +0000
+Message-Id: <1516903391-30467-17-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-H Sergei,
+Add the generic fallback compatible string for the rst node.
 
-On Sun, Dec 31, 2017 at 7:41 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Browsing thru the driver diassembly, I noticed that gcc was  able to
-> figure  out  that the 'ndev' pointer is always non-NULL when calling
-> free_netdev()  on the probe() method's  error path and  thus skip that
-> redundant NULL check... gcc is smart, be like gcc! :-)
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks for your patch!
-
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-> +++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-> @@ -3282,8 +3282,7 @@ out_napi_del:
->
->  out_release:
->         /* net_dev free */
-> -       if (ndev)
-> -               free_netdev(ndev);
-> +       free_netdev(ndev);
->
->         pm_runtime_put(&pdev->dev);
->         pm_runtime_disable(&pdev->dev);
-
-BTW, there isn't a functional dependency, but you may want to move the
-freeing of the netdev below disabling of Runtime PM for symmetry (use
-reverse order in cleanup).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index a5a23e9..9309887 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -246,7 +246,8 @@
+ 		};
+ 
+ 		rst: reset-controller@e6160000 {
+-			compatible = "renesas,r8a7794-rst";
++			compatible = "renesas,r8a7794-rst",
++				     "renesas,rcar-gen2-rst";
+ 			reg = <0 0xe6160000 0 0x0100>;
+ 		};
+ 
+-- 
+2.7.4
