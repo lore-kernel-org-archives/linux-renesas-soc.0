@@ -1,58 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40776 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750822AbeAUMMx (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46549 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751296AbeAYIfU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Jan 2018 07:12:53 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH V2 RESEND] gpio: of: make example syntactically correct
-Date: Sun, 21 Jan 2018 13:12:43 +0100
-Message-Id: <20180121121243.2038-1-wsa+renesas@sang-engineering.com>
+        Thu, 25 Jan 2018 03:35:20 -0500
+Received: by mail-wr0-f194.google.com with SMTP id g21so6694804wrb.13
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Jan 2018 00:35:20 -0800 (PST)
+Subject: Re: [PATCH v2 1/3] dt-bindings: timer: renesas, cmt: Document
+ r8a774[35] CMT support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1513618743-4773-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513618743-4773-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <SG2PR06MB088625944BCD8F4307315520C0E20@SG2PR06MB0886.apcprd06.prod.outlook.com>
+ <1acdad3b-c2fd-df1d-f25b-cf80b79a9842@linaro.org>
+ <CAMuHMdUX8D6c_ehNJAS8nWprvY60bkoxwTekEEqT5oJcz4QGPA@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <bf1b052d-c8e1-49dc-9e62-13d564d223a4@linaro.org>
+Date: Thu, 25 Jan 2018 09:35:17 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAMuHMdUX8D6c_ehNJAS8nWprvY60bkoxwTekEEqT5oJcz4QGPA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ';' was missing. And cosmetic: there was a space too much.
+On 25/01/2018 09:21, Geert Uytterhoeven wrote:
+> Hi Daniel,
+> 
+> On Thu, Jan 25, 2018 at 9:09 AM, Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>> On 24/01/2018 17:49, Fabrizio Castro wrote:
+>>> I am sorry to bother you, just wondering if you think there are any chances for this patch to applied on top of v4.16?
+>>
+>> You can take it through the renesas tree.
+>>
+>> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> 
+> Thank you!
+> 
+> Unfortunately it's a bit late to get non-bugfixes in v4.16 through the renesas
+> tree and arm-soc.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
+I thought they were going through the renesas tree, so I discarded them :/
 
-No changes since V2, only Niklas' tag added.
+May be Thomas can take them in the tip/timers tree ?
 
-Changes since V1:
-* removed extra spaces (Thanks Sergei!)
+Thomas ?
 
- Documentation/devicetree/bindings/gpio/gpio.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index b5de08e3b1a2f1..91d33f75dd0e4d 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -33,12 +33,12 @@ The following example could be used to describe GPIO pins used as device enable
- and bit-banged data signals:
- 
- 	gpio1: gpio1 {
--		gpio-controller
--		 #gpio-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
- 	};
- 	gpio2: gpio2 {
--		gpio-controller
--		 #gpio-cells = <1>;
-+		gpio-controller;
-+		#gpio-cells = <1>;
- 	};
- 	[...]
- 
 -- 
-2.11.0
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
