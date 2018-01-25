@@ -1,126 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39559 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965416AbeALXOo (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:59989 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751109AbeAYSEm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 18:14:44 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 12/12] arm64: dts: renesas: r8a7796: Convert to new LVDS DT bindings
-Date: Sat, 13 Jan 2018 01:14:30 +0200
-Message-Id: <20180112231430.26943-13-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180112231430.26943-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 25 Jan 2018 13:04:42 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 14/37] ARM: dts: r8a7790: Use fallback rst compatible string
+Date: Thu, 25 Jan 2018 18:02:48 +0000
+Message-Id: <1516903391-30467-15-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+Add the generic fallback compatible string for the rst node.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
-Changes since v1:
+ arch/arm/boot/dts/r8a7790.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-- Remove the DU reg-names property
----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |  3 +-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  3 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 34 ++++++++++++++++++----
- 3 files changed, 30 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index daee1f1a3f68..21bd679062f3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -33,10 +33,9 @@
- 	clocks = <&cpg CPG_MOD 724>,
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock5 1>,
- 		 <&versaclock5 3>,
- 		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2",
- 		      "dclkin.0", "dclkin.1", "dclkin.2";
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 4088bea8d62c..ecbfbcb65df3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -32,11 +32,10 @@
- 	clocks = <&cpg CPG_MOD 724>,
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock5 1>,
- 		 <&x21_clk>,
- 		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2",
- 		      "dclkin.0", "dclkin.1", "dclkin.2";
- };
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 8b34636..88ab60a 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -336,7 +336,8 @@
+ 		};
  
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index f2b2e40c655e..169fd89fe093 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1826,17 +1826,14 @@
+ 		rst: reset-controller@e6160000 {
+-			compatible = "renesas,r8a7790-rst";
++			compatible = "renesas,r8a7790-rst",
++				     "renesas,rcar-gen2-rst";
+ 			reg = <0 0xe6160000 0 0x0100>;
+ 		};
  
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7796";
--			reg = <0 0xfeb00000 0 0x70000>,
--			      <0 0xfeb90000 0 0x14>;
--			reg-names = "du", "lvds.0";
-+			reg = <0 0xfeb00000 0 0x70000>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>,
- 				 <&cpg CPG_MOD 723>,
--				 <&cpg CPG_MOD 722>,
--				 <&cpg CPG_MOD 727>;
--			clock-names = "du.0", "du.1", "du.2", "lvds.0";
-+				 <&cpg CPG_MOD 722>;
-+			clock-names = "du.0", "du.1", "du.2";
- 			status = "disabled";
- 
- 			vsps = <&vspd0 &vspd1 &vspd2>;
-@@ -1859,6 +1856,31 @@
- 				port@2 {
- 					reg = <2>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,lvds-r8a7796";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
