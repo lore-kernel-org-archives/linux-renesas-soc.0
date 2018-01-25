@@ -1,54 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750959AbeA2SV3 (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:55248 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751391AbeAYNQd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 13:21:29 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 2/2] arm64: dts: r8a7795: Update OPPs to support CA53 dfs
-Date: Mon, 29 Jan 2018 19:21:21 +0100
-Message-Id: <20180129182121.833-3-horms+renesas@verge.net.au>
-In-Reply-To: <20180129182121.833-1-horms+renesas@verge.net.au>
-References: <20180129182121.833-1-horms+renesas@verge.net.au>
+        Thu, 25 Jan 2018 08:16:33 -0500
+Date: Thu, 25 Jan 2018 15:16:30 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] v4l2-dev.h: fix symbol collision in
+ media_entity_to_video_device()
+Message-ID: <20180125131630.jzxunfs427s7vc2r@valkosipuli.retiisi.org.uk>
+References: <20180125130852.4779-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180125130852.4779-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dien Pham <dien.pham.ry@renesas.com>
+On Thu, Jan 25, 2018 at 02:08:52PM +0100, Niklas S�derlund wrote:
+> A recent change to the media_entity_to_video_device() macro breaks some
+> use-cases for the macro due to a symbol collision. Before the change
+> this worked:
+> 
+>     vdev = media_entity_to_video_device(link->sink->entity);
+> 
+> While after the change it results in a compiler error "error: 'struct
+> video_device' has no member named 'link'; did you mean 'lock'?". While
+> the following still works after the change.
+> 
+>     struct media_entity *entity = link->sink->entity;
+>     vdev = media_entity_to_video_device(entity);
+> 
+> Fix the collision by renaming the macro argument to '__entity'.
+> 
+> Fixes: 69b925c5fc36d8f1 ("media: v4l2-dev.h: add kernel-doc to two macros")
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Describe frequencies, other than the default for CA53 cores.  This is a
-pre-requisite for using providing alternative frequencies for use with
-CPUFreq with these cores.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index ce85704976f0..086057cffe7f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -223,6 +223,16 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
- 		opp-1200000000 {
- 			opp-hz = /bits/ 64 <1200000000>;
- 			opp-microvolt = <820000>;
 -- 
-2.11.0
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
