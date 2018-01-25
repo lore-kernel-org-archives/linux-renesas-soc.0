@@ -1,88 +1,227 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:42813 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751682AbeAYK5c (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35292 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751224AbeAYVks (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 05:57:32 -0500
-Date: Thu, 25 Jan 2018 11:57:20 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH/RFC 4/4] drm: rcar-du: Add support for color keying on
- Gen3
-Message-ID: <20180125105720.zey6c67jf23hlg6z@flea.lan>
-References: <20171217001724.1348-1-laurent.pinchart+renesas@ideasonboard.com>
- <20171217001724.1348-5-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 25 Jan 2018 16:40:48 -0500
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v2] v4l: async: Protect against double notifier
+ registrations
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+References: <1516146473-18234-1-git-send-email-kieran.bingham@ideasonboard.com>
+ <CAMuHMdUsCMqSG5kci9FhAfwvgxgXo5xy=JRtiQbYdESsmVYvPw@mail.gmail.com>
+Message-ID: <7f6c248e-6644-dafa-70e4-0839c31818fc@ideasonboard.com>
+Date: Thu, 25 Jan 2018 21:40:43 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="n4koyawtsohwbygi"
-Content-Disposition: inline
-In-Reply-To: <20171217001724.1348-5-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <CAMuHMdUsCMqSG5kci9FhAfwvgxgXo5xy=JRtiQbYdESsmVYvPw@mail.gmail.com>
+Content-Type: multipart/mixed;
+ boundary="------------A500F309CA27E77D5F9407DA"
+Content-Language: en-GB
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+This is a multi-part message in MIME format.
+--------------A500F309CA27E77D5F9407DA
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
---n4koyawtsohwbygi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Geert,
+
+Thanks for the review
+
+On 17/01/18 08:00, Geert Uytterhoeven wrote:
+> Hi Kieran,
+> 
+> On Wed, Jan 17, 2018 at 12:47 AM, Kieran Bingham
+> <kieran.bingham@ideasonboard.com> wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> It can be easy to attempt to register the same notifier twice
+>> in mis-handled error cases such as working with -EPROBE_DEFER.
+>>
+>> This results in odd kernel crashes where the notifier_list becomes
+>> corrupted due to adding the same entry twice.
+>>
+>> Protect against this so that a developer has some sense of the pending
+>> failure, and use a WARN_ON to identify the fault.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> Thanks for your patch!
+> 
+> However, I have several comments:
+>   1. Instead of walking notifier_list (O(n)), can't you just check if
+>      notifier.list is part of a list or not (O(1))?
+
+Not safely as far as I can see: (unless you know better)
+
+Looks like I'd have to at least check something like the following:
+  notifier->next != LIST_POISON1 && notifier->next != NULL &&
+  notifier->prev != LIST_POISON2 && notifier->prev != NULL &&
+  notifier->next != notifier->prev
+
+Although - that doesn't count the possibility that the struct list_head in the
+object being added is essentially un-initialised before being added to the list
+- so it could technically contain any value ...
+
+(Looking forward to being told I'm completely missing something obvious here...)
+
+
+>   2. Isn't notifier usually (always?) allocated dynamically, so if will be a
+>      different pointer after a previous -EPROBE_DEFER anyway?
+
+Nope. The notifier can be part of the device context structure to reduce
+allocations.
+
+
+
+>   3. If you enable CONFIG_DEBUG_LIST, it should scream, too.
+
+Aha - maybe that was my missing link. -E_NOT_ENOUGH_DEBUG_ENABLED.
+
+Although I've just looked through the code that checks against a double entry.
+It may have helped me find my bug in fact, but I think that would only fire if
+the entry tried to add twice consecutively, which certainly wouldn't be
+guaranteed if a driver returned with -EPROBE_DEFER.
+
+So - I've just tested that if you have A B C and HEAD,
+
+list_add(A, HEAD);
+list_add(A, HEAD);
+  // would fire in __list_add_valid as (new == prev || new == next)
+
+However,
+
+list_add(A, HEAD);
+list_add(B, HEAD);
+list_add(C, HEAD);
+list_add(B, HEAD);
+
+Will not catch this double-add-B in __list_add_valid(), and will generate an
+infinitely looping list if you try to then walk it with list_for_each_entry()
+
+(As demonstrated by the attached list-test.c module which I used to test this)
+
+Oh what fun :D
+
+--
+Kieran
+
+
+> 
+>> --- a/drivers/media/v4l2-core/v4l2-async.c
+>> +++ b/drivers/media/v4l2-core/v4l2-async.c
+>> @@ -374,17 +374,26 @@ static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
+>>         struct device *dev =
+>>                 notifier->v4l2_dev ? notifier->v4l2_dev->dev : NULL;
+>>         struct v4l2_async_subdev *asd;
+>> +       struct v4l2_async_notifier *n;
+>>         int ret;
+>>         int i;
+>>
+>>         if (notifier->num_subdevs > V4L2_MAX_SUBDEVS)
+>>                 return -EINVAL;
+>>
+>> +       mutex_lock(&list_lock);
+>> +
+>> +       /* Avoid re-registering a notifier. */
+>> +       list_for_each_entry(n, &notifier_list, list) {
+>> +               if (WARN_ON(n == notifier)) {
+>> +                       ret = -EEXIST;
+>> +                       goto err_unlock;
+>> +               }
+>> +       }
+>> +
+>>         INIT_LIST_HEAD(&notifier->waiting);
+>>         INIT_LIST_HEAD(&notifier->done);
+>>
+>> -       mutex_lock(&list_lock);
+>> -
+>>         for (i = 0; i < notifier->num_subdevs; i++) {
+>>                 asd = notifier->subdevs[i];
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
+
+
+--------------A500F309CA27E77D5F9407DA
+Content-Type: text/x-csrc;
+ name="list-test.c"
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="list-test.c"
 
-Hi,
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/list.h>
 
-On Sun, Dec 17, 2017 at 02:17:24AM +0200, Laurent Pinchart wrote:
-> +static const struct drm_prop_enum_list colorkey_modes[] =3D {
-> +	{ 0, "disabled" },
-> +	{ 1, "source" },
-> +};
-> +
->  int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
->  		     unsigned int crtcs)
->  {
-> @@ -441,6 +453,10 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct=
- device_node *np,
->  					   rcdu->props.alpha, 255);
->  		drm_plane_create_zpos_property(&plane->plane, 1, 1,
->  					       vsp->num_planes - 1);
-> +		drm_plane_create_colorkey_properties(&plane->plane,
-> +						     colorkey_modes,
-> +						     ARRAY_SIZE(colorkey_modes),
-> +						     true);
 
-You seem to define the same list in your enumeration between your
-patch 2 and this one. Can this be something made generic too?
+struct item {
+	struct list_head list;
+	int i;
+};
 
-Maxime
+struct item items[5];
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+int __init helloworld_init(void)
+{
+	int a;
+	struct list_head head;
+	struct item * ob;
+	bool catch_double_add =3D 1;
 
---n4koyawtsohwbygi
-Content-Type: application/pgp-signature; name="signature.asc"
+	INIT_LIST_HEAD(&head);
 
------BEGIN PGP SIGNATURE-----
+	printk("Hello World !\n");
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlppuA8ACgkQ0rTAlCFN
-r3Qy+g/7B1jzNP8yUBb4/Yv05AF5kRfzAbVB01XaJWhUTXyK5L6gTrYD37N7YNES
-LMulrX77o/DwacUiGoOt8iHZ0MDNJHdTDHUornPXKq2sxE6WTPBgDP100U5Cu0i2
-On6clRVsqxpmKq5+hCs55Ux0OY9o6n+27tJ12Qsxi9f86qi1cFjkXmD/A2VDoiRm
-I8K8lk8xDfbWImTAHe6TeOIziIAscpzaoU3wkvFIsGZh7ZQwgO5JZTXxsd4klQlI
-UfrUrm5wxZ4m+mr+rLQjF1hjahgqmwZ+Jom01WZy+D/jSQu0TdzebnVn4YciQzdm
-3HNwgkhKUkYNvmpc1fCd2WBy/h2ozZM+qywwiW1oFaz4ldyDtaJryA9aTX9UMnPQ
-q8CzsWZo0FRU+WmDy2Fd1ODMShffeVul8pc/FHMlR3vZz9Deb/+sXGZurV1G0d4C
-r2Plotuh/YCHbzJ6UjGx1NKpMW5+TtnQeklHKUr35gc5CJMm/jspts5Gm4apAv3o
-MTc2jNtVLPfBumxODL/EKxC0LdSRHr7HJwMXprrrz510dXPnp46f3MNBG6ZS2BnZ
-8WvYlRAGeSoqOjV0cM78TxUYBzHa9jY6gDUgQtsTiUtXiA1T7s7NqUy5X4ReBgx4
-u9t+XvqZ9u9wA+DhykVXTJEOSNjtNmttVIB1dcl8gny+T3IvYIs=
-=gf5T
------END PGP SIGNATURE-----
+	for (a =3D 0; a < 5; a++) {
+		items[a].i =3D a;
+		list_add(&items[a].list, &head);
+	}
 
---n4koyawtsohwbygi--
+	for (a =3D 0; a < 5; a++)
+		printk("Item[%d] =3D %d\n", a, items[a].i);
+
+	list_for_each_entry(ob, &head, list) {
+		printk("ob =3D %d\n", ob->i);
+	}
+
+	if (catch_double_add)
+		list_add(&items[4].list, &head);
+	else
+		list_add(&items[2].list, &head);
+
+	list_for_each_entry(ob, &head, list) {
+		printk("ob =3D %d\n", ob->i);
+	}
+
+	return 0;
+}
+
+void __exit helloworld_exit(void)
+{
+	pr_info("Goodbye cruel world...\n");
+}
+
+module_init(helloworld_init);
+module_exit(helloworld_exit);
+MODULE_LICENSE("GPL");
+
+--------------A500F309CA27E77D5F9407DA--
