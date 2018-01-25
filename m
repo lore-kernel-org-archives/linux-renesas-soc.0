@@ -1,18 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:45472 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752138AbeAZKcL (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:53807 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751105AbeAYSGk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Jan 2018 05:32:11 -0500
-MIME-Version: 1.0
-In-Reply-To: <1516903391-30467-37-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-37-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 11:32:10 +0100
-Message-ID: <CAMuHMdWMtOV2wWVzbuk7zzPOonV0_uo5EdPDCv2KKjz90P9ZRQ@mail.gmail.com>
-Subject: Re: [RFC 36/37] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Thu, 25 Jan 2018 13:06:40 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
@@ -23,37 +16,45 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [RFC 36/37] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
+Date: Thu, 25 Jan 2018 18:03:10 +0000
+Message-Id: <1516903391-30467-37-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch enables the watchdog from within the iwg20m SoM dtsi.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+This patch enables the watchdog from within the iwg20m SoM dtsi.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+index 1d3e950..d364685 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
++++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+@@ -91,6 +91,11 @@
+ 	};
+ };
+ 
++&rwdt {
++	timeout-sec = <60>;
++	status = "okay";
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.7.4
