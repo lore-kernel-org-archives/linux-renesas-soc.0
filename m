@@ -1,60 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:44272 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751255AbeAYH7h (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:22899 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932250AbeAYAlY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 02:59:37 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180125003430.18558-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180125003430.18558-1-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 25 Jan 2018 08:59:35 +0100
-Message-ID: <CAMuHMdVH8vHN3Q0zCKRn_KnfKf8P7yhqSSKjASp=u6qCZHzkNg@mail.gmail.com>
-Subject: Re: [PATCH] v4l2-dev.h: fix symbol collision in media_entity_to_video_device()
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        Wed, 24 Jan 2018 19:41:24 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] v4l2-dev.h: fix symbol collision in media_entity_to_video_device()
+Date: Thu, 25 Jan 2018 01:34:30 +0100
+Message-Id: <20180125003430.18558-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+A recent change to the media_entity_to_video_device() macro breaks some
+use-cases for the macro due to a symbol collision. Before the change
+this worked:
 
-On Thu, Jan 25, 2018 at 1:34 AM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> A recent change to the media_entity_to_video_device() macro breaks some
-> use-cases for the macro due to a symbol collision. Before the change
-> this worked:
->
->     vdev =3D media_entity_to_video_device(link->sink->entity);
->
-> While after the change it results in a compiler error "error: 'struct
-> video_device' has no member named 'link'; did you mean 'lock'?". While
-> the following still works after the change.
->
->     struct media_entity *entity =3D link->sink->entity;
->     vdev =3D media_entity_to_video_device(entity);
->
-> Fix the collision by renaming the macro argument to 'media_entity'.
+    vdev = media_entity_to_video_device(link->sink->entity);
 
-Thanks!
-Given there also exists a "struct media_entity", using "_media_entity" seem=
-s
-safe to me.
+While after the change it results in a compiler error "error: 'struct
+video_device' has no member named 'link'; did you mean 'lock'?". While
+the following still works after the change.
 
-Gr{oetje,eeting}s,
+    struct media_entity *entity = link->sink->entity;
+    vdev = media_entity_to_video_device(entity);
 
-                        Geert
+Fix the collision by renaming the macro argument to 'media_entity'.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ include/media/v4l2-dev.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Hi Mauro,
+
+As the offending commit is not yet upstream and I'm not sure if the 
+commit ids in the media-tree are stable. If they are please attach the 
+following fixes tag.
+
+Fixes: 69b925c5fc36d8f1 ("media: v4l2-dev.h: add kernel-doc to two macros")
+
+Regards,
+// Niklas
+
+diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+index 267fd2bed17bd3c1..f0fc1ebda47244b3 100644
+--- a/include/media/v4l2-dev.h
++++ b/include/media/v4l2-dev.h
+@@ -298,10 +298,10 @@ struct video_device
+  * media_entity_to_video_device - Returns a &struct video_device from
+  *	the &struct media_entity embedded on it.
+  *
+- * @entity: pointer to &struct media_entity
++ * @media_entity: pointer to &struct media_entity
+  */
+-#define media_entity_to_video_device(entity) \
+-	container_of(entity, struct video_device, entity)
++#define media_entity_to_video_device(media_entity) \
++	container_of(media_entity, struct video_device, entity)
+ 
+ /**
+  * to_video_device - Returns a &struct video_device from the
+-- 
+2.15.1
