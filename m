@@ -1,45 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53723 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751733AbeACMTA (ORCPT
+Received: from osg.samsung.com ([64.30.133.232]:34121 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750937AbeAYKl7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 07:19:00 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 5/6] clk: renesas: r8a7796: Add Z clock
-Date: Wed,  3 Jan 2018 13:18:39 +0100
-Message-Id: <20180103121840.29316-6-horms+renesas@verge.net.au>
-In-Reply-To: <20180103121840.29316-1-horms+renesas@verge.net.au>
-References: <20180103121840.29316-1-horms+renesas@verge.net.au>
+        Thu, 25 Jan 2018 05:41:59 -0500
+Date: Thu, 25 Jan 2018 08:41:44 -0200
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] v4l2-dev.h: fix symbol collision in
+ media_entity_to_video_device()
+Message-ID: <20180125084116.6eec66e0@vela.lan>
+In-Reply-To: <20180125003430.18558-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180125003430.18558-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Niklas,
 
-This patch adds Z clock for R8A7796 SoC.
+Em Thu, 25 Jan 2018 01:34:30 +0100
+Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se> escreveu:
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+> A recent change to the media_entity_to_video_device() macro breaks some
+> use-cases for the macro due to a symbol collision. Before the change
+> this worked:
+> 
+>     vdev = media_entity_to_video_device(link->sink->entity);
+> 
+> While after the change it results in a compiler error "error: 'struct
+> video_device' has no member named 'link'; did you mean 'lock'?". While
+> the following still works after the change.
+> 
+>     struct media_entity *entity = link->sink->entity;
+>     vdev = media_entity_to_video_device(entity);
+> 
+> Fix the collision by renaming the macro argument to 'media_entity'.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  include/media/v4l2-dev.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> Hi Mauro,
+> 
+> As the offending commit is not yet upstream and I'm not sure if the 
+> commit ids in the media-tree are stable. If they are please attach the 
+> following fixes tag.
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index b3767472088a..82b444ac66c6 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -74,6 +74,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
- 
- 	/* Core Clock Outputs */
-+	DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
- 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A7796_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A7796_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
--- 
-2.11.0
+They are. 
+
+> 
+> Fixes: 69b925c5fc36d8f1 ("media: v4l2-dev.h: add kernel-doc to two macros")
+> 
+> Regards,
+> // Niklas
+> 
+> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+> index 267fd2bed17bd3c1..f0fc1ebda47244b3 100644
+> --- a/include/media/v4l2-dev.h
+> +++ b/include/media/v4l2-dev.h
+> @@ -298,10 +298,10 @@ struct video_device
+>   * media_entity_to_video_device - Returns a &struct video_device from
+>   *	the &struct media_entity embedded on it.
+>   *
+> - * @entity: pointer to &struct media_entity
+> + * @media_entity: pointer to &struct media_entity
+>   */
+> -#define media_entity_to_video_device(entity) \
+> -	container_of(entity, struct video_device, entity)
+> +#define media_entity_to_video_device(media_entity) \
+> +	container_of(media_entity, struct video_device, entity)
+
+Instead, the best would be to use __entity (or __media_entity).
+That would very likely prevent future conflicts.
+
+>  
+>  /**
+>   * to_video_device - Returns a &struct video_device from the
+
+
+
+
+Cheers,
+Mauro
