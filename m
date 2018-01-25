@@ -1,56 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54550 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751207AbeACMlN (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:16269 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751213AbeAYSFO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 07:41:13 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 25 Jan 2018 13:05:14 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 0/3] arm64: dts: r8a779[56]: Add OPPs table for cpu devices
-Date: Wed,  3 Jan 2018 13:41:02 +0100
-Message-Id: <20180103124105.1999-1-horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC 20/37] arm64: dts: renesas: r8a77995: Use fallback rst compatible string
+Date: Thu, 25 Jan 2018 18:02:54 +0000
+Message-Id: <1516903391-30467-21-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-These are dependencies for supporting CPUFreq. The remainder of that
-work is being posted separately and can be found at:
+Add the generic fallback compatible string for the rst node.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq-v4
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
-Patch 1: Cleanup of DTS, only related as its an apply-time conflict
-Patches 2 & 3: Add OPPs
-
-Changes since v2:
-* Preserve alphabetical order of sub-nodes of root node
-* Do not provide unit name for opps, they have no base address
-* Describe clock dependency for all CPU cores
-
-Changes since v1:
-* Only provide one operating points node for each operating-points-v2 node
-  as per the binding; other nodes were unused and have been removed
-
-A description of steps taken to lightly exercise the same feature for the
-r8a7795 the above can be found at the link below. The results are the same
-for the r8a7796 with the exception that it has two active CPU cores rather
-than four.
-
-http://elinux.org/Tests:R-CAR-GEN3-CPUFreq
-
-
-Dien Pham (2):
-  arm64: dts: renesas: r8a7795: Add OPPs table for cpu devices
-  arm64: dts: renesas: r8a7796: Add OPPs table for cpu devices
-
-Simon Horman (1):
-  arm64: dts: renesas: r8a7795: move scif node into alphabetical order
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 71 +++++++++++++++++++++++++++++---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 62 ++++++++++++++++++++++++++++
- 2 files changed, 128 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 23f763b..2cd8ef0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -196,7 +196,8 @@
+ 		};
+ 
+ 		rst: reset-controller@e6160000 {
+-			compatible = "renesas,r8a77995-rst";
++			compatible = "renesas,r8a77995-rst",
++				     "renesas,rcar-gen3-rst";
+ 			reg = <0 0xe6160000 0 0x0200>;
+ 		};
+ 
 -- 
-2.11.0
+2.7.4
