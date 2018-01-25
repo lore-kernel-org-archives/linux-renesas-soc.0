@@ -1,76 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:39876 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750734AbeAYGsd (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34399 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbeAYGr6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 01:48:33 -0500
+        Thu, 25 Jan 2018 01:47:58 -0500
 Subject: Re: [RFC PATCH v2 0/1] of: easier debugging for node life cycle
  issues
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org
-Cc: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        devicetree@vger.kernel.org,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-renesas-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         Rob Herring <robh+dt@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         linux-kernel@vger.kernel.org
 References: <20180121143117.19805-1-wsa+renesas@sang-engineering.com>
+ <ac4f02e1-6d49-158a-4fb6-56ac0d474a44@gmail.com>
+ <20180122114948.mm5mg6zqw3hmjj4o@katana>
 From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <9c03edf1-564b-dd40-bbdf-e21e499869a6@gmail.com>
-Date: Wed, 24 Jan 2018 22:48:31 -0800
+Message-ID: <11cf8fac-d2fe-ecdb-546f-de3c3b42a637@gmail.com>
+Date: Wed, 24 Jan 2018 22:47:55 -0800
 MIME-Version: 1.0
-In-Reply-To: <20180121143117.19805-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180122114948.mm5mg6zqw3hmjj4o@katana>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/21/18 06:31, Wolfram Sang wrote:
-> I got a bug report for a DT node refcounting problem in the I2C subsystem. This
-> patch was a huge help in validating the bug report and the proposed solution.
-> So, I thought I bring it to attention again. Thanks Tyrel, for the initial
-> work!
+On 01/22/18 03:49, Wolfram Sang wrote:
+> Hi Frank,
 > 
-> Note that I did not test the dynamic updates, only of_node_{get|put} so far. I
-> read that Tyrel checked dynamic updates extensively with this patch. And since
-> DT overlays are also used within our Renesas dev team, this will help there, as
-> well.
-
-It's been nine months since version 1.  If you are going to include the
-dynamic updates part of the patch then please test them.
-
-
-> Tested on a Renesas Salvator-XS board (R-Car H3).
+>> Please go back and read the thread for version 1.  Simply resubmitting a
+>> forward port is ignoring that whole conversation.
+>>
+>> There is a lot of good info in that thread.  I certainly learned stuff in it.
 > 
-> Changes since RFC v1:
-> 	* rebased to v4.15-rc8
-> 	* fixed commit abbrev and one of the sysfs paths in commit desc
-> 	* removed trailing space and fixed pointer declaration in code
+> Yes, I did that and learned stuff, too. My summary of the discussion was:
 > 
+> - you mentioned some drawbacks you saw (like the mixture of trace output
+>   and printk output)> - most of them look like addressed to me? (e.g. Steven showed a way to redirect
+>   printk to trace
+> - you posted your version (which was, however, marked as "not user friendly"
+>   even by yourself)
 
-> I consider all the remaining checkpatch issues irrelevant for this patch.
+Not exactly a fair quoting.  There were two things I said:
 
-I am OK with the line length warnings in this patch.
+  "Here is a patch that I have used.  It is not as user friendly in terms
+  of human readable stack traces (though a very small user space program
+  should be able to fix that)."
 
-Why can't the macro error be fixed?
+     So easy to fix using existing userspace programs to convert kernel
+     addresses to symbols.
 
-A file entry needs to be added to MAINTAINERS.
+  "FIXME: Currently using pr_err() so I don't need to set loglevel on boot.
+
+          So obviously not a user friendly tool!!!
+          The process is:
+             - apply patch
+             - configure, build, boot kernel
+             - analyze data
+             - remove patch"
+
+     So not friendly because it uses pr_err() instead of pr_debug().  In
+     a reply I said if I submitted my patches I would change it to use
+     pr_debug() instead.  So not an issue.
+
+     And not user friendly because it requires patching the kernel.
+     Again a NOP if I submitted my patch, because the patch would
+     already be in the kernel.
+
+But whatever, let's ignore that - a poor quoting is not a reason to
+reject this version of the patch.
 
 
-> 
-> So what about applying it?
+> - The discussion stalled over having two approaches
+
+Then you should have stated such when you resubmitted.
+
+
+> So, I thought reposting would be a good way of finding out if your
+> concerns were addressed in the discussion or not. If I overlooked
+
+Then you should have stated that there were concerns raised in the
+discussion and asked me if my concerns were addressed.
+
+
+> something, I am sorry for that. Still, my intention is to continue the
+> discussion, not to ignore it. Because as it stands, we don't have such a
+> debugging mechanism in place currently, and with people working with DT
+> overlays, I'd think it would be nice to have.
 > 
 > Kind regards,
 > 
 >    Wolfram
 > 
-> 
-> Tyrel Datwyler (1):
->   of: introduce event tracepoints for dynamic device_node lifecyle
-> 
->  drivers/of/dynamic.c      | 32 ++++++----------
->  include/trace/events/of.h | 93 +++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 105 insertions(+), 20 deletions(-)
->  create mode 100644 include/trace/events/of.h
-> 
+
+
+Rob suggested:
+
+     >
+     > @@ -25,8 +28,10 @@
+     >   */
+     >  struct device_node *of_node_get(struct device_node *node)
+     >  {
+     > -       if (node)
+     > +       if (node) {
+     >                 kobject_get(&node->kobj);
+     > +               trace_of_node_get(refcount_read(&node->kobj.kref.refcount), node->full_name);
+
+     Seems like there should be a kobj wrapper to read the refcount.
+
+As far as I noticed, that was never addressed.  I don't know the answer, but
+the question was asked.  And if there is no such function, then there is at
+least kref_read(), which would improve the code a little bit.
+
+I'll reply to the patch 0/1 and patch 1/1 emails with review comments.
+
+-Frank
