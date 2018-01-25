@@ -1,64 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:53728 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751138AbeAYKTu (ORCPT
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:44272 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751255AbeAYH7h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 05:19:50 -0500
-Date: Thu, 25 Jan 2018 12:19:47 +0200
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thu, 25 Jan 2018 02:59:37 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180125003430.18558-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180125003430.18558-1-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 25 Jan 2018 08:59:35 +0100
+Message-ID: <CAMuHMdVH8vHN3Q0zCKRn_KnfKf8P7yhqSSKjASp=u6qCZHzkNg@mail.gmail.com>
+Subject: Re: [PATCH] v4l2-dev.h: fix symbol collision in media_entity_to_video_device()
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] v4l2-dev.h: fix symbol collision in
- media_entity_to_video_device()
-Message-ID: <20180125101947.h6olmmmmbafot6e3@valkosipuli.retiisi.org.uk>
-References: <20180125003430.18558-1-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdVH8vHN3Q0zCKRn_KnfKf8P7yhqSSKjASp=u6qCZHzkNg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdVH8vHN3Q0zCKRn_KnfKf8P7yhqSSKjASp=u6qCZHzkNg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi guys,
+Hi Niklas,
 
-On Thu, Jan 25, 2018 at 08:59:35AM +0100, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Thu, Jan 25, 2018 at 1:34 AM, Niklas S�derlund
-> <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > A recent change to the media_entity_to_video_device() macro breaks some
-> > use-cases for the macro due to a symbol collision. Before the change
-> > this worked:
-> >
-> >     vdev = media_entity_to_video_device(link->sink->entity);
-> >
-> > While after the change it results in a compiler error "error: 'struct
-> > video_device' has no member named 'link'; did you mean 'lock'?". While
-> > the following still works after the change.
-> >
-> >     struct media_entity *entity = link->sink->entity;
-> >     vdev = media_entity_to_video_device(entity);
-> >
-> > Fix the collision by renaming the macro argument to 'media_entity'.
-> 
-> Thanks!
-> Given there also exists a "struct media_entity", using "_media_entity" seems
-> safe to me.
+On Thu, Jan 25, 2018 at 1:34 AM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> A recent change to the media_entity_to_video_device() macro breaks some
+> use-cases for the macro due to a symbol collision. Before the change
+> this worked:
+>
+>     vdev =3D media_entity_to_video_device(link->sink->entity);
+>
+> While after the change it results in a compiler error "error: 'struct
+> video_device' has no member named 'link'; did you mean 'lock'?". While
+> the following still works after the change.
+>
+>     struct media_entity *entity =3D link->sink->entity;
+>     vdev =3D media_entity_to_video_device(entity);
+>
+> Fix the collision by renaming the macro argument to 'media_entity'.
 
-That doesn't matter, does it? As long as the macro argument is used as a
-field name of a struct. I.e. "__entity" would be fine, as well as "e". I'd
-vote for __entity. :-)
+Thanks!
+Given there also exists a "struct media_entity", using "_media_entity" seem=
+s
+safe to me.
 
-In any case,
+Gr{oetje,eeting}s,
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+                        Geert
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
