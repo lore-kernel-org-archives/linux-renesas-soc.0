@@ -1,70 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37665 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751235AbeAEHfz (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40223 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753054AbeAZJxv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Jan 2018 02:35:55 -0500
-Received: by mail-lf0-f68.google.com with SMTP id f3so4251547lfe.4
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Jan 2018 23:35:55 -0800 (PST)
-Date: Thu, 4 Jan 2018 22:52:22 -0800
-From: Olof Johansson <olof@lixom.net>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC Updates for
- v4.16
-Message-ID: <20180105065222.zwpoyylkdjgl2rog@localhost>
-References: <cover.1513936182.git.horms+renesas@verge.net.au>
+        Fri, 26 Jan 2018 04:53:51 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1513936182.git.horms+renesas@verge.net.au>
+In-Reply-To: <1516903391-30467-8-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-8-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 10:53:50 +0100
+Message-ID: <CAMuHMdWxCHWioKKjXUrKh_s8MT67SnDFWaeZoPJ7XJu+ibOi+Q@mail.gmail.com>
+Subject: Re: [RFC 07/37] ARM: dts: r8a7793: Adjust SMP routine size
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Dec 22, 2017 at 11:30:37AM +0100, Simon Horman wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
-> 
-> Please consider these second round of Renesas ARM based SoC updates for v4.16.
-> 
-> This pull request is based on the previous round of
-> such requests, tagged as renesas-soc-for-v4.16,
-> which I have already sent a pull-request for.
-> 
-> 
-> The following changes since commit 90f0d2b344313a8a4c366ef60d0df33008d2be84:
-> 
->   soc: renesas: Identify R-Car M3-W ES1.1 (2017-11-27 11:40:57 +0100)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-soc2-for-v4.16
-> 
-> for you to fetch changes up to 91c719f5ec6671f7b63762d78897af5583dd7693:
-> 
->   soc: renesas: rcar-sysc: Keep wakeup sources active during system suspend (2017-12-20 11:16:05 +0100)
-> 
-> ----------------------------------------------------------------
-> Second Round of Renesas ARM Based SoC Updates for v4.16
-> 
-> * rcar-sysc: Keep wakeup sources active during system suspend
-> 
->   Geert Uytterhoeven says "If an R-Car SYSC slave device is part of the
->   CPG/MSTP or CPG/MSSR Clock Domain and to be used as a wakeup source, it
->   must be kept active during system suspend.
-> 
->   Currently this is handled in device-specific drivers by explicitly
->   increasing the use count of the module clock when the device is
->   configured as a wakeup source.  However, the proper way to prevent the
->   device from being stopped is to inform this requirement to the genpd
->   core, by setting the GENPD_FLAG_ACTIVE_WAKEUP flag.
-> 
->   Note that this will only affect devices configured as wakeup sources."
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adjusts the definition of the SMP routine size according
+> to the latest changes made by commit:
+> "ARM: shmobile: Add watchdog support"
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Merged, thanks.
+I would make it a bit larger, though. "0x64" is the strict minimum =>
+0x80? 0x100?
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
--Olof
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
