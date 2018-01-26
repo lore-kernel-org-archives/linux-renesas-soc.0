@@ -1,160 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34562 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751593AbeA2SCI (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:39776 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751377AbeAZKQK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 13:02:08 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v5 0/6] clk: renesas: r8a779[56]: Add Z and Z2 clock support
-Date: Mon, 29 Jan 2018 19:01:48 +0100
-Message-Id: <20180129180154.29626-1-horms+renesas@verge.net.au>
+        Fri, 26 Jan 2018 05:16:10 -0500
+MIME-Version: 1.0
+In-Reply-To: <1516903391-30467-24-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-24-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:16:09 +0100
+Message-ID: <CAMuHMdVVazZ=OmThKaLM0a-n=rRUiHdpDH1=w8=ANOuV2u1YPA@mail.gmail.com>
+Subject: Re: [RFC 23/37] ARM: shmobile: rcar-gen2: Export shmobile_set_wdt_clock_status
+ function
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Hi Fabrizio,
 
-this patch-set adds Z and Z2 clock support.
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch exposes a function to set the value of variable
+> "shmobile_wdt_clock_status" so that the watchdog driver may communicate
+> critical information to the SMP bring up assembly routine.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-These are dependencies for supporting CPUFreq. The remainder of that
-work is being posted separately and can be found at:
+Thanks for your patch, but this is the part I don't like, as it calls into deep
+platform code from a driver.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq-v5
+Some generic comments below...
 
-Based on v4.15-rc1
+> --- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
+> +++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+> @@ -50,6 +50,16 @@ static inline u32 phys_to_sbar(phys_addr_t addr)
+>  #define SYSCIER 0x0c
+>  #define SYSCIMR 0x10
+>
+> +static void __iomem *shmobile_boot_vector_start;
+> +static unsigned long clock_status;
+> +
+> +void shmobile_set_wdt_clock_status(unsigned long value)
+> +{
+> +       memcpy_toio(shmobile_boot_vector_start + clock_status,
+> +                   &value, sizeof(value));
 
-Changes since v4:
-* Correct off-by one error in usage of __ffs
+writel(shmobile_boot_vector_start + clock_status, value)?
 
-Changes since v3:
-* Rebase
-* Divide parent clock by 2 to give correct rate (again)                         * Take care not to overflow multiplication on 32 but platforms
-* Use __ffs as FIELD_{GET,PREP} don't not work with non-constant masks
-* Use correct mask in cpg_z_clk_recalc_rate()
+> @@ -120,8 +130,12 @@ void __init rcar_gen2_pm_init(void)
+>         if (!p)
+>                 return;
+>
+> +       shmobile_boot_vector_start = p;
+> +       clock_status = (&shmobile_wdt_clock_status -
+> +                               (unsigned long *)shmobile_boot_vector) *
+> +                               sizeof(shmobile_wdt_clock_status);
 
-Changes since v2:
-* Rebase
-* Address review of v2 as noted in patch changelogs
+clock_status = (unsigned long)shmobile_wdt_clock_status -
+               (unsigned long)shmobile_boot_vector?
 
-Takeshi Kihara (6):
-  clk: renesas: rcar-gen3: Add Z clock divider support
-  clk: renesas: rcar-gen3: Add Z2 clock divider support
-  clk: renesas: r8a7795: Add Z clock
-  clk: renesas: r8a7795: Add Z2 clock
-  clk: renesas: r8a7796: Add Z clock
-  clk: renesas: r8a7796: Add Z2 clock
+> +
+>         memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
+> -       iounmap(p);
+>
+>         /* setup reset vectors */
+>         p = ioremap_nocache(RST, 0x63);
 
- drivers/clk/renesas/r8a7795-cpg-mssr.c |   2 +
- drivers/clk/renesas/r8a7796-cpg-mssr.c |   2 +
- drivers/clk/renesas/rcar-gen3-cpg.c    | 143 +++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h    |   2 +
- 4 files changed, 149 insertions(+)
+Gr{oetje,eeting}s,
 
-Results of testing this on an H3 ES2.0 / Salvator-XS are as below.
-Testing has shown equivalent results on an M3W ES1.0 / Salvator-X.
-Testing has also shown equivalent results on an H3 ES1.0 / Salvator-X
-with the following restrictions due to lack of physical access:
-1. No little CPUs are brought up and thus scaling the frequency of
-   those CPUs was not tested
-2. No Suspend-to-RAM
+                        Geert
 
-The results for H3 ES2.0 / Salvator-XS:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-On Boot
--------
-
-Z clock is half of pll0 and corresponds to CPU frequency.
-Z2 clock is half pll2. This is as expected.
-
-# cd /sys/devices/system/cpu/
-# grep -E -w "pll[02]|z|z2" /sys/kernel/debug/clk/clk_summary
-       .pll2                              0            0  2396160000          0 0  
-          z2                              0            0  1198080000          0 0  
-       .pll0                              0            0  2995200000          0 0  
-          z                               0            0  1497600000          0 0  
-# grep . cpu*/cpufreq/*cur*
-cpu0/cpufreq/cpuinfo_cur_freq:1497600
-cpu0/cpufreq/scaling_cur_freq:1497600
-cpu1/cpufreq/cpuinfo_cur_freq:1497600
-cpu1/cpufreq/scaling_cur_freq:1497600
-cpu2/cpufreq/cpuinfo_cur_freq:1497600
-cpu2/cpufreq/scaling_cur_freq:1497600
-cpu3/cpufreq/cpuinfo_cur_freq:1497600
-cpu3/cpufreq/scaling_cur_freq:1497600
-cpu4/cpufreq/cpuinfo_cur_freq:1198080
-cpu4/cpufreq/scaling_cur_freq:1198080
-cpu5/cpufreq/cpuinfo_cur_freq:1198080
-cpu5/cpufreq/scaling_cur_freq:1198080
-cpu6/cpufreq/cpuinfo_cur_freq:1198080
-cpu6/cpufreq/scaling_cur_freq:1198080
-cpu7/cpufreq/cpuinfo_cur_freq:1198080
-cpu7/cpufreq/scaling_cur_freq:1198080
-
-BIG CPU Freq scaled to 500000 and little CPU Freq scaled to 800000
-------------------------------------------------------------------
-
-Z and Z2 clocks corresponds to new CPU frequencies.
-PLL0 and PLL2 are unchanged.
-This is the expected result.
-
-# echo 500000 > cpu0/cpufreq/scaling_max_freq
-# echo 800000 > cpu4/cpufreq/scaling_max_freq
-# grep -E -w "pll[02]|z|z2" /sys/kernel/debug/clk/clk_summary
-       .pll2                              0            0  2396160000          0 0  
-          z2                              0            0   786240000          0 0  
-       .pll0                              0            0  2995200000          0 0  
-          z                               0            0   468000000          0 0  
-# grep . cpu*/cpufreq/*cur*
-cpu0/cpufreq/cpuinfo_cur_freq:468000
-cpu0/cpufreq/scaling_cur_freq:468000
-cpu1/cpufreq/cpuinfo_cur_freq:468000
-cpu1/cpufreq/scaling_cur_freq:468000
-cpu2/cpufreq/cpuinfo_cur_freq:468000
-cpu2/cpufreq/scaling_cur_freq:468000
-cpu3/cpufreq/cpuinfo_cur_freq:468000
-cpu3/cpufreq/scaling_cur_freq:468000
-cpu4/cpufreq/cpuinfo_cur_freq:786240
-cpu4/cpufreq/scaling_cur_freq:786240
-cpu5/cpufreq/cpuinfo_cur_freq:786240
-cpu5/cpufreq/scaling_cur_freq:786240
-cpu6/cpufreq/cpuinfo_cur_freq:786240
-cpu6/cpufreq/scaling_cur_freq:786240
-cpu7/cpufreq/cpuinfo_cur_freq:786240
-cpu7/cpufreq/scaling_cur_freq:786240
-
-
-After Resume from Suspend-to-RAM
---------------------------------
-
-Clocks and CPU freqiencies are restored to their values before
-suspend. This is the expected result.
-
-# grep -E -w "pll[02]|z|z2" /sys/kernel/debug/clk/clk_summary
-       .pll2                              0            0  2396160000          0 0  
-          z2                              0            0   786240000          0 0  
-       .pll0                              0            0  2995200000          0 0  
-          z                               0            0   468000000          0 0  
-# grep . cpu*/cpufreq/*cur*
-cpu0/cpufreq/cpuinfo_cur_freq:468000
-cpu0/cpufreq/scaling_cur_freq:500000
-cpu1/cpufreq/cpuinfo_cur_freq:468000
-cpu1/cpufreq/scaling_cur_freq:500000
-cpu2/cpufreq/cpuinfo_cur_freq:468000
-cpu2/cpufreq/scaling_cur_freq:500000
-cpu3/cpufreq/cpuinfo_cur_freq:468000
-cpu3/cpufreq/scaling_cur_freq:500000
-cpu4/cpufreq/cpuinfo_cur_freq:786240
-cpu4/cpufreq/scaling_cur_freq:800000
-cpu5/cpufreq/cpuinfo_cur_freq:786240
-cpu5/cpufreq/scaling_cur_freq:800000
-cpu6/cpufreq/cpuinfo_cur_freq:786240
-cpu6/cpufreq/scaling_cur_freq:800000
-cpu7/cpufreq/cpuinfo_cur_freq:786240
-cpu7/cpufreq/scaling_cur_freq:800000
-
-
-
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
