@@ -1,45 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:24963 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934263AbeAXPpI (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:42143 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752076AbeAZKYv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jan 2018 10:45:08 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Joerg Roedel <joro@8bytes.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 26 Jan 2018 05:24:51 -0500
+MIME-Version: 1.0
+In-Reply-To: <1516903391-30467-28-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-28-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:24:50 +0100
+Message-ID: <CAMuHMdWWK5GSziCPr6T1KEp_Xd_b5Juw4Ehq8g6vAfw72j5Rhw@mail.gmail.com>
+Subject: Re: [RFC 27/37] clk: renesas: r8a7745: Add rwdt clock
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/3] Add IPMMU support for r8a774[35]
-Date: Wed, 24 Jan 2018 15:41:59 +0000
-Message-Id: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add IPMMU support for r8a774[35] SoC.
+Hi Fabrizio,
 
-It is tested with modetest utility and the patches present
-in the below git for enabling ipmmu support in the vsp1 and DU.
+On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Add "rwdt" clock to r8a7745_mod_clks. Also, since we may need to access
+> the watchdog registers at any time, declare the clock as critical.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-git://linuxtv.org/pinchartl/media.git iommu/devel/dt
+With the critical clock handling removed (that can be done by the driver,
+if really needed)
 
-It is tested against renesas-devel-20180122-v4.15-rc9
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+> --- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+> @@ -114,6 +114,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+>         DEF_MOD("cmt1",                  329,   R8A7745_CLK_R),
+>         DEF_MOD("usbhs-dmac0",           330,   R8A7745_CLK_HP),
+>         DEF_MOD("usbhs-dmac1",           331,   R8A7745_CLK_HP),
+> +       DEF_MOD("rwdt",                  402,   R8A7745_CLK_R),
+>         DEF_MOD("irqc",                  407,   R8A7745_CLK_CP),
+>         DEF_MOD("intc-sys",              408,   R8A7745_CLK_ZS),
+>         DEF_MOD("audio-dmac0",           502,   R8A7745_CLK_HP),
+> @@ -180,6 +181,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+>  };
+>
+>  static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
+> +       MOD_CLK_ID(402),        /* RWDT */
+>         MOD_CLK_ID(408),        /* INTC-SYS (GIC) */
+>  };
 
-Biju Das (3):
-  dt-bindings: iommu: ipmmu-vmsa: Add device tree support for r8a774[35]
-  ARM: dts: r8a7743: Add IPMMU DT nodes
-  ARM: dts: r8a7745: Add IPMMU DT nodes
+Gr{oetje,eeting}s,
 
- .../bindings/iommu/renesas,ipmmu-vmsa.txt          |  5 +-
- arch/arm/boot/dts/r8a7743.dtsi                     | 58 ++++++++++++++++++++++
- arch/arm/boot/dts/r8a7745.dtsi                     | 58 ++++++++++++++++++++++
- 3 files changed, 120 insertions(+), 1 deletion(-)
+                        Geert
 
--- 
-2.7.4
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
