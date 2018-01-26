@@ -1,45 +1,103 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] arm64: dts: r8a7795: update register size for thermal
-Date: Thu,  4 Jan 2018 22:31:07 +0100
-Message-Id: <20180104213108.24080-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180104213108.24080-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180104213108.24080-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50139 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752642AbeAZKIC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 26 Jan 2018 05:08:02 -0500
+Subject: Re: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can
+ support
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <SG2PR06MB0886FFF48DD9DBE7693EEDBDC0E20@SG2PR06MB0886.apcprd06.prod.outlook.com>
+ <da4afc82-aeb6-05d9-4a41-b2627f736064@pengutronix.de>
+Message-ID: <8b8be356-e725-0dfe-a81c-dd495d97af88@pengutronix.de>
+Date: Fri, 26 Jan 2018 11:07:17 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <da4afc82-aeb6-05d9-4a41-b2627f736064@pengutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="GH2yxKvaNZHfgciUvIYaiCKImHgjAlJjP"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To be able to read fused calibration values from hardware the size of
-the register resource of TSC1 needs to be incremented to cover one more
-register which holds the information if the calibration values have been
-fused or not.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--GH2yxKvaNZHfgciUvIYaiCKImHgjAlJjP
+Content-Type: multipart/mixed; boundary="y7NX3G3pfh4eygjeTGUUmebJhBiDYRWAg";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ Chris Paterson <Chris.Paterson2@renesas.com>,
+ Biju Das <biju.das@bp.renesas.com>, Wolfgang Grandegger <wg@grandegger.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Message-ID: <8b8be356-e725-0dfe-a81c-dd495d97af88@pengutronix.de>
+Subject: Re: [PATCH 1/8] dt-bindings: can: rcar_can: document r8a774[35] can
+ support
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1510067449-17017-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <SG2PR06MB0886FFF48DD9DBE7693EEDBDC0E20@SG2PR06MB0886.apcprd06.prod.outlook.com>
+ <da4afc82-aeb6-05d9-4a41-b2627f736064@pengutronix.de>
+In-Reply-To: <da4afc82-aeb6-05d9-4a41-b2627f736064@pengutronix.de>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--y7NX3G3pfh4eygjeTGUUmebJhBiDYRWAg
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 19b7de57704c67e8..1214a5e777596a3c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2385,7 +2385,7 @@
- 
- 		tsc: thermal@e6198000 {
- 			compatible = "renesas,r8a7795-thermal";
--			reg = <0 0xe6198000 0 0x68>,
-+			reg = <0 0xe6198000 0 0x6c>,
- 			      <0 0xe61a0000 0 0x5c>,
- 			      <0 0xe61a8000 0 0x5c>;
- 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.15.1
+On 01/25/2018 09:53 AM, Marc Kleine-Budde wrote:
+> On 01/24/2018 06:22 PM, Fabrizio Castro wrote:
+>> thank you for Acking the patch, just wondering if this patch has any
+>> chance to end up in v4.16?
+>=20
+> I can take this via the linux-can tree, if no one else takes it.
 
+Done - included in the latest pull request.
+
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--y7NX3G3pfh4eygjeTGUUmebJhBiDYRWAg--
+
+--GH2yxKvaNZHfgciUvIYaiCKImHgjAlJjP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEE4bay/IylYqM/npjQHv7KIOw4HPYFAlpq/dUACgkQHv7KIOw4
+HPYKnQgAoOaCK8795WzFTTSwyvwVo3zvZ8fkrnVCpK26OC/HyJ3O9KHIYTdU3ZIO
+l58Km/422bz82DOmvN695z8xj70N/kvyXjlyWL/QOHrD/9GQ2HozHuVSQhQbqpp+
+S8F5c2Uibs0NplY4vRyvlubLtJo/i9pZqd+9RQ+b4Kr/AyCLVSDi5hIcuANPXY07
+aFy96t2rU4zQrfVzoJveqpj3fQLr8PNoRMLjTQ5LQppJS/Nrt/kB/IUl0zgciZCc
+lxgv3pOheerCFK/nB+4TnkkCPaxPjSlVJyRF4ACYmkEzEvsX57lNuG/4JCf0aGIU
+9vDTu5yjxWAMnNOyhjoTXMWoj2k8+Q==
+=mPm2
+-----END PGP SIGNATURE-----
+
+--GH2yxKvaNZHfgciUvIYaiCKImHgjAlJjP--
