@@ -1,124 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37746 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750750AbeAPOjV (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:43929 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752888AbeAZJxf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jan 2018 09:39:21 -0500
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-ide@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Simon Horman <horms@verge.net.au>,
+        Fri, 26 Jan 2018 04:53:35 -0500
+MIME-Version: 1.0
+In-Reply-To: <1516903391-30467-7-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-7-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 10:53:33 +0100
+Message-ID: <CAMuHMdXKEDHc6WX1oNbBtj7p0HcMXhqyAhmcFnekwgSJMdCjkA@mail.gmail.com>
+Subject: Re: [RFC 06/37] ARM: dts: r8a7792: Adjust SMP routine size
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] sata: sata_rcar: Reset SATA PHY when Salvator-X board resumes
-Date: Tue, 16 Jan 2018 23:39:12 +0900
-Message-Id: <1516113552-27701-1-git-send-email-ykaneko0929@gmail.com>
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adjusts the definition of the SMP routine size according
+> to the latest changes made by commit:
+> "ARM: shmobile: Add watchdog support"
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Because power of Salvator-X board is cut off in suspend,
-it needs to reset SATA PHY state in resume.
-Otherwise, SATA partition could not be accessed anymore.
+I would make it a bit larger, though. "0x64" is the strict minimum =>
+0x80? 0x100?
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Signed-off-by: Hien Dang <hien.dang.eb@rvc.renesas.com>
-[reinit phy in sata_rcar_resume() function on R-Car Gen3 only]
-[fixed the prefix for the subject]
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch is based on the for-next branch of libata tree.
+Gr{oetje,eeting}s,
 
-v2 [Yoshihiro Kaneko]
-* reinit phy on R-Car Gen3 only as suggested by Geert Uytterhoeven
-* use "sata_rcar" prefix for the subject as suggested by Sergei Shtylyov
+                        Geert
 
- drivers/ata/sata_rcar.c | 38 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index 80ee2f2..4adc0d6 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -146,6 +146,7 @@
- enum sata_rcar_type {
- 	RCAR_GEN1_SATA,
- 	RCAR_GEN2_SATA,
-+	RCAR_GEN3_SATA,
- 	RCAR_R8A7790_ES1_SATA,
- };
- 
-@@ -796,6 +797,7 @@ static void sata_rcar_init_controller(struct ata_host *host)
- 		sata_rcar_gen1_phy_init(priv);
- 		break;
- 	case RCAR_GEN2_SATA:
-+	case RCAR_GEN3_SATA:
- 	case RCAR_R8A7790_ES1_SATA:
- 		sata_rcar_gen2_phy_init(priv);
- 		break;
-@@ -856,7 +858,7 @@ static void sata_rcar_init_controller(struct ata_host *host)
- 	},
- 	{
- 		.compatible = "renesas,sata-r8a7795",
--		.data = (void *)RCAR_GEN2_SATA
-+		.data = (void *)RCAR_GEN3_SATA
- 	},
- 	{
- 		.compatible = "renesas,rcar-gen2-sata",
-@@ -864,7 +866,7 @@ static void sata_rcar_init_controller(struct ata_host *host)
- 	},
- 	{
- 		.compatible = "renesas,rcar-gen3-sata",
--		.data = (void *)RCAR_GEN2_SATA
-+		.data = (void *)RCAR_GEN3_SATA
- 	},
- 	{ },
- };
-@@ -977,11 +979,43 @@ static int sata_rcar_resume(struct device *dev)
- 	struct sata_rcar_priv *priv = host->private_data;
- 	void __iomem *base = priv->base;
- 	int ret;
-+	u32 val;
- 
- 	ret = clk_prepare_enable(priv->clk);
- 	if (ret)
- 		return ret;
- 
-+	/* reinit phy on R-Car Gen3 only */
-+	switch (priv->type) {
-+	case RCAR_GEN1_SATA:
-+	case RCAR_GEN2_SATA:
-+	case RCAR_R8A7790_ES1_SATA:
-+		break;
-+	case RCAR_GEN3_SATA:
-+		sata_rcar_gen2_phy_init(priv);
-+		break;
-+	default:
-+		dev_warn(host->dev, "SATA phy is not initialized\n");
-+		break;
-+	}
-+
-+	/* SATA-IP reset state */
-+	val = ioread32(base + ATAPI_CONTROL1_REG);
-+	val |= ATAPI_CONTROL1_RESET;
-+	iowrite32(val, base + ATAPI_CONTROL1_REG);
-+
-+	/* ISM mode, PRD mode, DTEND flag at bit 0 */
-+	val = ioread32(base + ATAPI_CONTROL1_REG);
-+	val |= ATAPI_CONTROL1_ISM;
-+	val |= ATAPI_CONTROL1_DESE;
-+	val |= ATAPI_CONTROL1_DTA32M;
-+	iowrite32(val, base + ATAPI_CONTROL1_REG);
-+
-+	/* Release the SATA-IP from the reset state */
-+	val = ioread32(base + ATAPI_CONTROL1_REG);
-+	val &= ~ATAPI_CONTROL1_RESET;
-+	iowrite32(val, base + ATAPI_CONTROL1_REG);
-+
- 	/* ack and mask */
- 	iowrite32(0, base + SATAINTSTAT_REG);
- 	iowrite32(0x7ff, base + SATAINTMASK_REG);
--- 
-1.9.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
