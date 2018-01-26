@@ -1,65 +1,130 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:33633 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751213AbeAYSGT (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:58607 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751449AbeAZRuX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:06:19 -0500
+        Fri, 26 Jan 2018 12:50:23 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
+To: Guenter Roeck <linux@roeck-us.net>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 32/37] ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-Date: Thu, 25 Jan 2018 18:03:06 +0000
-Message-Id: <1516903391-30467-33-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: RE: [RFC 22/37] watchdog: renesas_wdt: Add restart support
+Date: Fri, 26 Jan 2018 17:50:16 +0000
+Message-ID: <TY1PR06MB0895CE80DD4121A7EB6B3B05C0E00@TY1PR06MB0895.apcprd06.prod.outlook.com>
 References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1516903391-30467-23-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180126171418.GA16194@roeck-us.net>
+In-Reply-To: <20180126171418.GA16194@roeck-us.net>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds watchdog support to the r8a7745 SoC dtsi.
+Hello Guenter,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7745.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+thank you for your feedback.
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 9009056..bf24c2e4 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -322,6 +322,16 @@
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7745-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7745-sysc";
- 			reg = <0 0xe6180000 0 0x200>;
--- 
-2.7.4
+> Subject: Re: [RFC 22/37] watchdog: renesas_wdt: Add restart support
+>
+> On Thu, Jan 25, 2018 at 06:02:56PM +0000, Fabrizio Castro wrote:
+> > This commit extends the driver to add restart support by implementing
+> > the restart callback to trigger the watchdog as quickly as possible.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.rene=
+sas.com>
+> > ---
+> >  drivers/watchdog/renesas_wdt.c | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >
+> > diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_=
+wdt.c
+> > index 831ef83..120ddac 100644
+> > --- a/drivers/watchdog/renesas_wdt.c
+> > +++ b/drivers/watchdog/renesas_wdt.c
+> > @@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watch=
+dog_device *wdev)
+> >  return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+> >  }
+> >
+> > +static int rwdt_restart(struct watchdog_device *wdev, unsigned long ac=
+tion,
+> > +void *data)
+> > +{
+> > +struct rwdt_priv *priv =3D watchdog_get_drvdata(wdev);
+> > +
+> > +pm_runtime_get_sync(wdev->parent);
+> > +
+> > +rwdt_write(priv, 0x00, RWTCSRB);
+> > +rwdt_write(priv, 0x00, RWTCSRA);
+> > +rwdt_write(priv, 0xffff, RWTCNT);
+> > +
+> > +while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
+> > +cpu_relax();
+>
+> Can this get stuck forever or should there be a timeout ?
+
+This won't get stuck forever, the particular bit we are checking marks the =
+period of time writing to register RWTCNT is prohibited due to synchronizat=
+ion from the previous write. It gets cleared eventually (quite quickly). Al=
+so, we use exactly the same logic for the "start" callback.
+
+Best regards,
+Fabrizio
+
+>
+> Guenter
+>
+> > +
+> > +rwdt_write(priv, 0x80, RWTCSRA);
+> > +return 0;
+> > +}
+> > +
+> >  static const struct watchdog_info rwdt_ident =3D {
+> >  .options =3D WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT=
+,
+> >  .identity =3D "Renesas WDT Watchdog",
+> > @@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops =3D {
+> >  .stop =3D rwdt_stop,
+> >  .ping =3D rwdt_init_timeout,
+> >  .get_timeleft =3D rwdt_get_timeleft,
+> > +.restart =3D rwdt_restart,
+> >  };
+> >
+> >  static int rwdt_probe(struct platform_device *pdev)
+> > --
+> > 2.7.4
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-watchdo=
+g" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
