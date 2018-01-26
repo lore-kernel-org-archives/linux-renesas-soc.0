@@ -1,125 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36694 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753853AbeAQQ3d (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35643 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751382AbeAZBI7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:29:33 -0500
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
+        Thu, 25 Jan 2018 20:08:59 -0500
+Subject: Re: [RFC PATCH v2 0/1] of: easier debugging for node life cycle
+ issues
+To: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
         linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 07/16] mmc: renesas_sdhi: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own flag
-Date: Thu, 18 Jan 2018 01:28:07 +0900
-Message-Id: <1516206496-16612-8-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linuxppc-dev@lists.ozlabs.org
+References: <20180121143117.19805-1-wsa+renesas@sang-engineering.com>
+ <00fc90ee-de26-f819-9c81-27d06918564d@gmail.com>
+ <20180125060330.781667e9@vmware.local.home>
+ <a30d4cd3-0068-8cca-cc2f-ca207d0d278b@gmail.com>
+ <c20ffeb2-f17a-ddab-7327-b8854b301d18@linux.vnet.ibm.com>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <2f47d3ca-2533-62d3-9db1-6d16bbd64545@gmail.com>
+Date: Thu, 25 Jan 2018 17:08:56 -0800
+MIME-Version: 1.0
+In-Reply-To: <c20ffeb2-f17a-ddab-7327-b8854b301d18@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-TMIO_MMC_WRPROTECT_DISABLE is equivalent to MMC_CAP2_NO_WRITE_PROTECT.
+On 01/25/18 15:53, Tyrel Datwyler wrote:
+> On 01/25/2018 01:49 PM, Frank Rowand wrote:
+>> Hi Wolfram,
+>>
+>> On 01/25/18 03:03, Steven Rostedt wrote:
+>>> On Wed, 24 Jan 2018 22:55:13 -0800
+>>> Frank Rowand <frowand.list@gmail.com> wrote:
+>>>
+>>>> Hi Steve,
+>>>
+>>>>
+>>>> Off the top of your head, can you tell me know early in the boot
+>>>> process a trace_event can be called and successfully provide the
+>>>> data to someone trying to debug early boot issues?
+>>>
+>>> The trace events are enabled by early_initcall().
+>>
+>> < snip >
+>>
+>> This means that ftrace can not be used for the of_node_get(),
+>> of_node_put(), and of_node_release() debug info, because
+>> these functions are called before early_initcall().  Please
+>> use pr_debug() for these functions.
+> 
+> I would argue that early boot debugging doesn't completely negate the
+> usefulness of this tracing infrastructure.
 
-The flag is propagated as follows:
-       renesas_sdhi_of_data::capabilities2
-    -> tmio_mmc_data::capabilities2
-    -> mmc_host::caps2
+I did not say or imply that it did.  I am pointing out that this
+implementation does not meet the needs of other use cases.  And
+potentially provides misleading information (or more precisely
+misleading lack of information) in some other use cases.
 
-Only the difference is the TMIO_... makes tmio_mmc_get_ro() return 0
-(i.e. it does not affect mmc_gpio_get_ro() at all), while MMC_CAP2_...
-returns 0 before calling ->get_ro() hook (i.e. it affects both IP own
-logic and GPIO detection).
 
-The TMIO MMC drivers do not set-up gpio_ro by themselves.  Only the
-possibility, if any, would be DT specifies "wp-gpios" property, and
-gpio_ro is set by mmc_gpiod_request_ro() called from mmc_of_parse().
-However, it does not make sense to specify "wp-gpios" property and
-TMIO_MMC_WRPROTECT_DISABLE at the same time.
+> I get that no information
+> is available in the trace up until ftrace is setup by its
+> early_initcall, but I still found issues after early boot using this
+> patch and I would hope that it would be somewhat obvious if
+> references are out of whack once the ftrace data becomes available.
+> In the dynamic case on Power we often do reconfig well after boot on
+> live systems which produces a lot of reference put/gets. This patch
+> made it easy to identify several reference leaks and underflows in
+> our attach and detach logic with the added aid of being able to turn
+> on the stacktrace for each call in the ftrace data.
 
-I checked under arch/arm/boot/dts/ and arch/arm64/boot/dts/renesas/,
-and I did not see any Renesas boards with "wp-gpios".  So, this
-conversion should be safe.
+Yes, you can get stacktraces relatively easily.  This is the strongest
+argument for using ftrace.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+My assumption has been that the stack trace is useful for of_node_get()
+and of_node_put().  Is there _large_ value to the stack trace for
+of_reconfig_notify()?
 
-Changes in v3:
-  - newly added
 
-Changes in v2: None
+> Another thought is it would be nice if we could have the best of both
+> worlds such that the tracepoints were pr_debugs up until the ftrace
+> early_initcall. Or, I suppose we could ifdef it and make the ftrace
+> tracepoints a configuration option, such that if it wasn't configured
+> we implement the tracepoint functions as pr_debugs. This makes early
+> boot an option. Just spit balling ideas.
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  6 +++---
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 16 ++++++++--------
- 2 files changed, 11 insertions(+), 11 deletions(-)
+An overly complex solution.  This is just debug.  Worst case alternative
+is that the patches live on, out of tree.  So nope.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 02c2724..0d1f95e 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -71,11 +71,11 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- };
- 
- static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
--			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_HAVE_CBSY |
--			  TMIO_MMC_MIN_RCAR2,
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
-+			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index c8a74b2..afdb66b 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -40,9 +40,9 @@ static const struct renesas_sdhi_of_data of_rz_compatible = {
- };
- 
- static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
--			  TMIO_MMC_CLK_ACTUAL,
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- };
- 
- /* Definitions for sampling clocks */
-@@ -58,11 +58,11 @@ static struct renesas_sdhi_scc rcar_gen2_scc_taps[] = {
- };
- 
- static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
--			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_HAVE_CBSY |
--			  TMIO_MMC_MIN_RCAR2,
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
-+			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
- 	.dma_rx_offset	= 0x2000,
- 	.scc_offset	= 0x0300,
-@@ -79,11 +79,11 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- };
- 
- static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
--			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_HAVE_CBSY |
--			  TMIO_MMC_MIN_RCAR2,
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
-+			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
--- 
-2.7.4
+
+> 
+> -Tyrel
+> 
+>>
+>> As far as I know, the of_reconfig_notify() could remain an
+>> ftrace instrumented function.  But now that the only thing
+>> that would be ftrace instrumented is of_reconfig_notify(),
+>> I don't see a strong justification for changing the existing
+>> pr_debug() calls to an ftrace alternative.  Though I suspect
+>> the original author of the patch still might desire to have
+>> the "#ifdef DEBUG" surrounding the pr_debug() calls removed
+>> since one of his issues was having to recompile his kernel
+>> to do his debugging.
+>>
+>> -Frank
+>>
+> 
+> 
