@@ -1,4 +1,9 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:35718 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752777AbeAZNt7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 26 Jan 2018 08:49:59 -0500
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
         geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
@@ -9,11 +14,11 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: [PATCH v7 07/11] media: i2c: ov772x: Support frame interval handling
-Date: Fri, 26 Jan 2018 14:55:26 +0100
-Message-Id: <1516974930-11713-8-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1516974930-11713-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1516974930-11713-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Date: Fri, 26 Jan 2018 14:48:41 +0100
+Message-Id: <1516974528-11120-10-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1516974528-11120-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1516974528-11120-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Add support to ov772x driver for frame intervals handling and enumeration.
