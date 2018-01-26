@@ -1,6 +1,18 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36870 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751606AbeAZKKa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 26 Jan 2018 05:10:30 -0500
+MIME-Version: 1.0
+In-Reply-To: <1516903391-30467-22-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-22-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:10:28 +0100
+Message-ID: <CAMuHMdVn-XbsT1PQpcxKNHJ3ErecZtHy9=oJAGKd+heGLpLgcg@mail.gmail.com>
+Subject: Re: [RFC 21/37] dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
@@ -11,51 +23,80 @@ To: Philipp Zabel <p.zabel@pengutronix.de>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 34/37] ARM: dts: r8a7791: Add watchdog support to SoC dtsi
-Date: Thu, 25 Jan 2018 18:03:08 +0000
-Message-Id: <1516903391-30467-35-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This commit adds watchdog support to the r8a7791 dtsi.
+Hi Fabrizio,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7791.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This commit documents the compatibility with R-Car Gen2 and RZ/G
+> devices by defining the generifc compatible string "renesas,rcar-gen2-wdt".
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 09d1e4f..dacec25 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -289,6 +289,16 @@
- 			reg = <0 0xe6160000 0 0x0100>;
- 		};
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7791-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7791-sysc";
- 			reg = <0 0xe6180000 0 0x0200>;
--- 
-2.7.4
+generic
 
++ SoC-specific compatible values.
+
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> index bf6d1ca..436dca5 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> @@ -1,17 +1,20 @@
+>  Renesas Watchdog Timer (WDT) Controller
+>
+>  Required properties:
+> -- compatible : Should be "renesas,<soctype>-wdt", and
+> -              "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
+> + - compatible : Must be "renesas,<soctype>-wdt", followed by a generic
+> +               fallback compatible string when compatible with the generic
+> +               version.
+>                Examples with soctypes are:
+> +                - "renesas,r8a7743-wdt" (RZ/G1M)
+> +                - "renesas,r8a7745-wdt" (RZ/G1E)
+
+I guess you wanted to add r8a779[0-4], too, as you use (some of) them in
+later patches in this series?
+
+>                  - "renesas,r8a7795-wdt" (R-Car H3)
+>                  - "renesas,r8a7796-wdt" (R-Car M3-W)
+>                  - "renesas,r8a77995-wdt" (R-Car D3)
+>                  - "renesas,r7s72100-wdt" (RZ/A1)
+> +               The generic compatible string must be:
+> +                - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
+> +                - "renesas,rcar-gen3-wdt" for R-Car Gen3
+>
+> -  When compatible with the generic version, nodes must list the SoC-specific
+> -  version corresponding to the platform first, followed by the generic
+> -  version.
+>
+>  - reg : Should contain WDT registers location and length
+>  - clocks : the clock feeding the watchdog timer.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
