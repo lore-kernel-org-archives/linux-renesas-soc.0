@@ -1,4 +1,4 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
         geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
@@ -9,11 +9,11 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: [PATCH v7 05/11] media: i2c: Copy ov772x soc_camera sensor driver
-Date: Fri, 26 Jan 2018 14:55:24 +0100
-Message-Id: <1516974930-11713-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1516974930-11713-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1516974930-11713-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Date: Fri, 26 Jan 2018 14:48:38 +0100
+Message-Id: <1516974528-11120-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1516974528-11120-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1516974528-11120-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Copy the soc_camera based driver in v4l2 sensor driver directory.
@@ -1161,3 +1161,4 @@ index 0000000..8063835
 +MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
+
