@@ -1,87 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:32176 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751112AbeAZQ7N (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:39647 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751606AbeAZKGA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Jan 2018 11:59:13 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: Guenter Roeck <linux@roeck-us.net>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Fri, 26 Jan 2018 05:06:00 -0500
+MIME-Version: 1.0
+In-Reply-To: <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:05:58 +0100
+Message-ID: <CAMuHMdWiVu9hs3PvXypJyeG0iDQkDvyPzHkTfq4NyPVdaYZKew@mail.gmail.com>
+Subject: Re: [RFC 10/37] soc: renesas: rcar-rst: Enable watchdog as reset
+ trigger for Gen2
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        "Will Deacon" <will.deacon@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: RE: [RFC 10/37] soc: renesas: rcar-rst: Enable watchdog as reset
- trigger for Gen2
-Date: Fri, 26 Jan 2018 16:59:05 +0000
-Message-ID: <TY1PR06MB0895CA9B4668F49991FD607FC0E00@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
- <e1670c79-2fef-b45b-4688-a6ba8ebd8c24@cogentembedded.com>
-In-Reply-To: <e1670c79-2fef-b45b-4688-a6ba8ebd8c24@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gU2VyZ2VpLA0KDQp0aGFuayB5b3UgZm9yIHlvdXIgZmVlZGJhY2suDQoNCj4gU3ViamVj
-dDogUmU6IFtSRkMgMTAvMzddIHNvYzogcmVuZXNhczogcmNhci1yc3Q6IEVuYWJsZSB3YXRjaGRv
-ZyBhcyByZXNldCB0cmlnZ2VyIGZvciBHZW4yDQo+DQo+IEhlbGxvIQ0KPg0KPiBPbiAxLzI1LzIw
-MTggOTowMiBQTSwgRmFicml6aW8gQ2FzdHJvIHdyb3RlOg0KPg0KPiA+IFRoaXMgcGF0Y2ggYWxs
-b3dzIGZvciBwbGF0Zm9ybSBzcGVjaWZpYyBxdWlya3MgYXMgc29tZSBvZiB0aGUgU29DIG5lZWQN
-Cj4gPiBmdXJ0aGVyIGN1c3RvbWl6YXRpb24gZm9yIHRoZSB3YXRjaGRvZyB0byB3b3JrIHByb3Bl
-cmx5LCBsaWtlIGZvciBSLUNhcg0KPiA+IEdlbjIgYW5kIGZvciBSWi9HLg0KPiA+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5j
-b20+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0gPHJhbWVzaC5z
-aGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+ICAgZHJpdmVycy9z
-b2MvcmVuZXNhcy9yY2FyLXJzdC5jIHwgMjEgKysrKysrKysrKysrKysrKysrKystDQo+ID4gICAx
-IGZpbGUgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL3JlbmVzYXMvcmNhci1yc3QuYyBiL2RyaXZlcnMvc29j
-L3JlbmVzYXMvcmNhci1yc3QuYw0KPiA+IGluZGV4IGY3YTBkNTQuLjVmNTJhZWEgMTAwNjQ0DQo+
-ID4gLS0tIGEvZHJpdmVycy9zb2MvcmVuZXNhcy9yY2FyLXJzdC5jDQo+ID4gKysrIGIvZHJpdmVy
-cy9zb2MvcmVuZXNhcy9yY2FyLXJzdC5jDQo+ID4gQEAgLTEzLDggKzEzLDE4IEBADQo+ID4gICAj
-aW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPiA+ICAgI2luY2x1ZGUgPGxpbnV4L3NvYy9y
-ZW5lc2FzL3JjYXItcnN0Lmg+DQo+ID4NCj4gPiArI2RlZmluZSBXRFRSU1RDUl9SRVNFVDB4QTU1
-QTAwMDINCj4gPiArI2RlZmluZSBXRFRSU1RDUjB4MDA1NA0KPiA+ICsNCj4gPiArc3RhdGljIGlu
-dCBnZW4yX2NvbmZpZ3VyYXRpb24odm9pZCBfX2lvbWVtICpiYXNlKQ0KPiA+ICt7DQo+ID4gK2lv
-d3JpdGUzMihXRFRSU1RDUl9SRVNFVCwgYmFzZSArIFdEVFJTVENSKTsNCj4gPiArcmV0dXJuIDA7
-DQo+ID4gK30NCj4gPiArDQo+ID4gICBzdHJ1Y3QgcnN0X2NvbmZpZyB7DQo+ID4gLXVuc2lnbmVk
-IGludCBtb2RlbXI7LyogTW9kZSBNb25pdG9yaW5nIFJlZ2lzdGVyIE9mZnNldCAqLw0KPiA+ICt1
-bnNpZ25lZCBpbnQgbW9kZW1yOy8qIE1vZGUgTW9uaXRvcmluZyBSZWdpc3RlciBPZmZzZXQgKi8N
-Cj4gPiAraW50ICgqY29uZmlndXJlKSh2b2lkICpiYXNlKTsvKiBQbGF0Zm9ybSBzcGVjaWZpYyBj
-b25maWd1cmF0aW9uICovDQo+ID4gICB9Ow0KPiA+DQo+ID4gICBzdGF0aWMgY29uc3Qgc3RydWN0
-IHJzdF9jb25maWcgcmNhcl9yc3RfZ2VuMSBfX2luaXRjb25zdCA9IHsNCj4gPiBAQCAtMjMsNiAr
-MzMsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHJzdF9jb25maWcgcmNhcl9yc3RfZ2VuMSBfX2lu
-aXRjb25zdCA9IHsNCj4gPg0KPiA+ICAgc3RhdGljIGNvbnN0IHN0cnVjdCByc3RfY29uZmlnIHJj
-YXJfcnN0X2dlbjIgX19pbml0Y29uc3QgPSB7DQo+ID4gICAubW9kZW1yID0gMHg2MCwNCj4gPiAr
-LmNvbmZpZ3VyZSA9IGdlbjJfY29uZmlndXJhdGlvbiwNCj4NCj4gICAgIFdoeSBub3QgY2FsbCB0
-aGUgbWV0aG9kIGdlbjJfY29uZmlndXJlKCkgdGhlbj8NCg0KWWVhaCwgdGhlIG5hbWUgZ2VuMl9j
-b25maWd1cmF0aW9uIGlzbid0IGdyZWF0IQ0KQXMgeW91IG1heSBoYXZlIG5vdGljZWQgYWxyZWFk
-eSwgR2VlcnQgc3VnZ2VzdGVkIHJjYXJfcnN0X2VuYWJsZV93ZHRfcmVzZXQuDQpJIGFtIGRlZmlu
-aXRlbHkgZ29pbmcgdG8gY2hhbmdlIGl0IChpZiBJIGFtIGtlZXBpbmcgdGhlIGZ1bmN0aW9uIHBv
-aW50ZXIgYXQgYWxsISksIGV4cGVjdCB0byBzZWUgYW5vdGhlciB2ZXJzaW9uIG9mIHRoaXMgcGF0
-Y2ggaW4gdGhlIG5leHQgZmV3IGRheXMgdG8gYWRkcmVzcyB0aGlzLg0KDQpUaGFua3MsDQpGYWIN
-Cg0KPg0KPiBbLi4uXQ0KPg0KPiBNQlIsIFNlcmdlaQ0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmlj
-cyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBC
-dWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxl
-cyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
+Hi Fabrizio,
+
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch allows for platform specific quirks as some of the SoC need
+> further customization for the watchdog to work properly, like for R-Car
+> Gen2 and for RZ/G.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/soc/renesas/rcar-rst.c
+> +++ b/drivers/soc/renesas/rcar-rst.c
+> @@ -13,8 +13,18 @@
+>  #include <linux/of_address.h>
+>  #include <linux/soc/renesas/rcar-rst.h>
+>
+> +#define WDTRSTCR_RESET         0xA55A0002
+> +#define WDTRSTCR               0x0054
+> +
+> +static int gen2_configuration(void __iomem *base)
+
+rcar_rst_enable_wdt_reset()?
+
+> +{
+> +       iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
+> +       return 0;
+> +}
+> +
+>  struct rst_config {
+> -       unsigned int modemr;    /* Mode Monitoring Register Offset */
+> +       unsigned int modemr;            /* Mode Monitoring Register Offset */
+> +       int (*configure)(void *base);   /* Platform specific configuration */
+>  };
+>
+>  static const struct rst_config rcar_rst_gen1 __initconst = {
+> @@ -23,6 +33,7 @@ static const struct rst_config rcar_rst_gen1 __initconst = {
+>
+>  static const struct rst_config rcar_rst_gen2 __initconst = {
+>         .modemr = 0x60,
+> +       .configure = gen2_configuration,
+
+BTW, does it hurt to do this on R-Car Gen3, too?
+
+Instead of a function pointer, you could also just have a feature bit.
+
+>  };
+>
+>  static const struct rst_config rcar_rst_gen3 __initconst = {
+> @@ -79,6 +90,14 @@ static int __init rcar_rst_init(void)
+>         rcar_rst_base = base;
+>         cfg = match->data;
+>         saved_mode = ioread32(base + cfg->modemr);
+> +       if (cfg->configure) {
+> +               error = cfg->configure(base);
+> +               if (error) {
+> +                       pr_warn("%pOF: Cannot run SoC specific configuration\n",
+> +                               np);
+> +                       goto out_put;
+> +               }
+> +       }
+>
+>         pr_debug("%pOF: MODE = 0x%08x\n", np, saved_mode);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
