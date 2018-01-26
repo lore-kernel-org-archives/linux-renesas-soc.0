@@ -1,43 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:44872 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750886AbeAVLcU (ORCPT
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:44983 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752260AbeAZKkX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Jan 2018 06:32:20 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 0/2] Use demuxer for i2c1 and i2c5
-Date: Mon, 22 Jan 2018 11:29:21 +0000
-Message-Id: <1516620563-7965-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 26 Jan 2018 05:40:23 -0500
+Received: by mail-qt0-f176.google.com with SMTP id l20so134429qtj.11
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2018 02:40:23 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20180126094052.17119-3-horms+renesas@verge.net.au>
+References: <20180126094052.17119-1-horms+renesas@verge.net.au> <20180126094052.17119-3-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:40:22 +0100
+Message-ID: <CAMuHMdU_ttQ7KVpVHMd2+uZfubZCjvu1ioqH4ZAYtJDCi4H_Kg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7745: sort subnodes of soc node
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have observed that on iWave RZ/G1E boards, randomly HDMI slave device
-is holding data line after a soft reboot.
+On Fri, Jan 26, 2018 at 10:40 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Sort the subnodes of the soc node to improve maintainability.
+> The sort key is the address on the bus with instances of the same
+> IP block grouped together and sorted alphabetically.
+>
+> Minor whitespace and line-wrapping changes are also made
+> to match the formatting of R-Car Gen2 SoCs.
+>
+> This patch should not introduce any functional change.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-We applied demuxer patch for i2c1 and using an oscilloscope verified that
-i2c recovery works on the failure condition.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+using dtx_diff
 
-This patch depends on the below patch set
+Gr{oetje,eeting}s,
 
-https://patchwork.ozlabs.org/cover/857505/
+                        Geert
 
-it is tested against renesas-devel-20180122-v4.15-rc9
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Biju Das (2):
-  ARM: dts: iwg22d-sodimm-dbhd-ca: use demuxer for I2C1
-  ARM: dts: iwg22d-sodimm: use demuxer for I2C5
-
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 96 +++++++++++++---------
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts        | 44 +++++++---
- 2 files changed, 92 insertions(+), 48 deletions(-)
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
