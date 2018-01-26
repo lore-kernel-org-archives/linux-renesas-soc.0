@@ -1,65 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39346 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753294AbeADQDv (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39683 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752871AbeAZJxJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 11:03:51 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/9] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
-Date: Thu,  4 Jan 2018 17:03:12 +0100
-Message-Id: <1515081797-17174-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1515081797-17174-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1515081797-17174-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 26 Jan 2018 04:53:09 -0500
+MIME-Version: 1.0
+In-Reply-To: <1516903391-30467-5-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-5-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 10:53:08 +0100
+Message-ID: <CAMuHMdUHX6KdtUdvgKjXEKLZEu293BA=JZmCAADOwNgOOd-R3g@mail.gmail.com>
+Subject: Re: [RFC 04/37] ARM: dts: r8a7790: Adjust SMP routine size
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add Capture Engine Unit (CEU) node to device tree.
+On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adjusts the definition of the SMP routine size according
+> to the latest changes made by commit:
+> "ARM: shmobile: Add watchdog support"
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+I would make it a bit larger, though. "0x64" is the strict minimum =>
+0x80? 0x100?
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- arch/arm/boot/dts/r7s72100.dtsi | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index ab9645a..5fe62f9 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -135,9 +135,9 @@
- 			#clock-cells = <1>;
- 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0xfcfe042c 4>;
--			clocks = <&p0_clk>;
--			clock-indices = <R7S72100_CLK_RTC>;
--			clock-output-names = "rtc";
-+			clocks = <&b_clk>, <&p0_clk>;
-+			clock-indices = <R7S72100_CLK_CEU R7S72100_CLK_RTC>;
-+			clock-output-names = "ceu", "rtc";
- 		};
- 
- 		mstp7_clks: mstp7_clks@fcfe0430 {
-@@ -667,4 +667,13 @@
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-+
-+	ceu: ceu@e8210000 {
-+		reg = <0xe8210000 0x3000>;
-+		compatible = "renesas,r7s72100-ceu";
-+		interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp6_clks R7S72100_CLK_CEU>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
- };
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
