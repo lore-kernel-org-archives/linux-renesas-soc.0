@@ -1,50 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:47320 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754406AbeAQSo3 (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:32841 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752151AbeAZKch (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 13:44:29 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] drm: rcar-du: Remove zpos field from rcar_du_vsp_plane_state structure
-Date: Wed, 17 Jan 2018 20:44:29 +0200
-Message-Id: <20180117184429.7809-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 26 Jan 2018 05:32:37 -0500
+MIME-Version: 1.0
+In-Reply-To: <1516903391-30467-38-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-38-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:32:35 +0100
+Message-ID: <CAMuHMdU+_b6503dea70GuZsrpeQM8WQF1i+Z-RTBo6nYVmhCOQ@mail.gmail.com>
+Subject: Re: [RFC 37/37] ARM: dts: iwg22m: Add watchdog support to SoM dtsi
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commit 2fc4d838aaf2 ("drm: rcar: use generic code for managing
-zpos plane property") the rcar-du driver stores the plane zpos in the
-drm_plane_state structure. The commit however forgot to remove the zpos
-field from the rcar_du_vsp_plane_state structure. Remove it.
+On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch enables the watchdog from within the iwg20m SoM dtsi.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Fixes: 2fc4d838aaf2 ("drm: rcar: use generic code for managing zpos plane property")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_vsp.h | 2 --
- 1 file changed, 2 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-index f876c512163c..4c5d7bbce6aa 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-@@ -45,7 +45,6 @@ static inline struct rcar_du_vsp_plane *to_rcar_vsp_plane(struct drm_plane *p)
-  * @format: information about the pixel format used by the plane
-  * @sg_tables: scatter-gather tables for the frame buffer memory
-  * @alpha: value of the plane alpha property
-- * @zpos: value of the plane zpos property
-  */
- struct rcar_du_vsp_plane_state {
- 	struct drm_plane_state state;
-@@ -54,7 +53,6 @@ struct rcar_du_vsp_plane_state {
- 	struct sg_table sg_tables[3];
- 
- 	unsigned int alpha;
--	unsigned int zpos;
- };
- 
- static inline struct rcar_du_vsp_plane_state *
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
