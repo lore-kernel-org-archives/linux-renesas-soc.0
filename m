@@ -1,40 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38502 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751745AbeAaTyK (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:44819 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752642AbeAZKac (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jan 2018 14:54:10 -0500
-Received: by mail-lf0-f66.google.com with SMTP id g72so22548115lfg.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jan 2018 11:54:09 -0800 (PST)
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 26 Jan 2018 05:30:32 -0500
+MIME-Version: 1.0
+In-Reply-To: <1516903391-30467-35-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-35-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Jan 2018 11:30:31 +0100
+Message-ID: <CAMuHMdWLGthxoePFg2fLyuKq1UkgorvMe+BqHPaBjzv8c=w6Pw@mail.gmail.com>
+Subject: Re: [RFC 34/37] ARM: dts: r8a7791: Add watchdog support to SoC dtsi
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/2] Add initial support for R-Car V3H (R8A77980)
-Message-ID: <fbdd08a3-1ab3-8e70-20f1-d9c41493b11c@cogentembedded.com>
-Date: Wed, 31 Jan 2018 22:54:06 +0300
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Thu, Jan 25, 2018 at 7:03 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This commit adds watchdog support to the r8a7791 dtsi.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Here are 2 patches against the 'renesas-devel-20180130v2-v4.15' tag of Simon Horman's
-'renesas.git' repo. They 1st docuement the SoC DT bindings, and then add the SoC Kconfig
-symbol.
+If inserted before gpio@e6050000:
 
-[1/2] DT: arm: shmobile: document R8A77980 SoC bindings
-[2/2] arm64: add Renesas R8A77980 support
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-MBR, Sergei
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
