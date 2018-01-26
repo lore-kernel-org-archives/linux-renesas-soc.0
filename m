@@ -1,404 +1,411 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:33572 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751213AbeAYSFg (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37390 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752543AbeAZN4O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:05:36 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 24/37] watchdog: renesas_wdt_gen2: Add Gen2 specific driver
-Date: Thu, 25 Jan 2018 18:02:58 +0000
-Message-Id: <1516903391-30467-25-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 26 Jan 2018 08:56:14 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 06/11] media: i2c: ov772x: Remove soc_camera dependencies
+Date: Fri, 26 Jan 2018 14:55:25 +0100
+Message-Id: <1516974930-11713-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1516974930-11713-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1516974930-11713-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 (and RZ/G1) platforms need some tweaking for SMP and watchdog
-to coexist nicely.
-This new driver is based on top of Wolfram Sang's driver
-(drivers/watchdog/renesas_wdt.c), and it contains the quirks necessary
-for R-Car Gen2 and RZ/G1 to work properly and in harmony with the rest of
-the system. In particular, the driver:
-* expects the device clock to be ON all the time,
-* "pauses" the watchdog operation during suspend, and
-* "reassures" the SMP bringup function about the availability of the
-  watchdog registers.
+Remove soc_camera framework dependencies from ov772x sensor driver.
+- Handle clock and gpios
+- Register async subdevice
+- Remove soc_camera specific g/s_mbus_config operations
+- Change image format colorspace from JPEG to SRGB as the two use the
+  same colorspace information but JPEG makes assumptions on color
+  components quantization that do not apply to the sensor
+- Remove sizes crop from get_selection as driver can't scale
+- Add kernel doc to driver interface header file
+- Adjust build system
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+This commit does not remove the original soc_camera based driver as long
+as other platforms depends on soc_camera-based CEU driver.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/watchdog/Kconfig            |  15 +-
- drivers/watchdog/Makefile           |   1 +
- drivers/watchdog/renesas_wdt_gen2.c | 270 ++++++++++++++++++++++++++++++++++++
- drivers/watchdog/renesas_wdt_gen2.h |  22 +++
- 4 files changed, 306 insertions(+), 2 deletions(-)
- create mode 100644 drivers/watchdog/renesas_wdt_gen2.c
- create mode 100644 drivers/watchdog/renesas_wdt_gen2.h
+ drivers/media/i2c/Kconfig  |  11 +++
+ drivers/media/i2c/Makefile |   1 +
+ drivers/media/i2c/ov772x.c | 169 ++++++++++++++++++++++++++++++---------------
+ include/media/i2c/ov772x.h |   6 +-
+ 4 files changed, 130 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index ca200d1..e580c72 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -725,12 +725,23 @@ config ATLAS7_WATCHDOG
- 	  module will be called atlas7_wdt.
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index 9f18cd2..e71e968 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -645,6 +645,17 @@ config VIDEO_OV5670
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called ov5670.
  
- config RENESAS_WDT
--	tristate "Renesas WDT Watchdog"
-+	tristate "Renesas R-Car Gen3 WDT Watchdog"
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select WATCHDOG_CORE
- 	help
- 	  This driver adds watchdog support for the integrated watchdogs in the
--	  Renesas R-Car and other SH-Mobile SoCs (usually named RWDT or SWDT).
-+	  Renesas R-Car Gen3 devices.
-+
-+config RENESAS_WDT_GEN2
-+	tristate "Renesas R-Car Gen2 and RZ/G1 WDT Watchdog"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	select WATCHDOG_CORE
-+	help
-+	  This driver adds watchdog support for the integrated watchdogs in the
-+	  Renesas R-Car Gen2 and RZ/G1 devices.
++config VIDEO_OV772X
++	tristate "OmniVision OV772x sensor support"
++	depends on I2C && VIDEO_V4L2
++	depends on MEDIA_CAMERA_SUPPORT
++	---help---
++	  This is a Video4Linux2 sensor-level driver for the OmniVision
++	  OV772x camera.
 +
 +	  To compile this driver as a module, choose M here: the
-+	  module will be called renesas_wdt_gen2.
++	  module will be called ov772x.
++
+ config VIDEO_OV7640
+ 	tristate "OmniVision OV7640 sensor support"
+ 	depends on I2C && VIDEO_V4L2
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index c0f94cd..b0489a1 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -68,6 +68,7 @@ obj-$(CONFIG_VIDEO_OV5670) += ov5670.o
+ obj-$(CONFIG_VIDEO_OV6650) += ov6650.o
+ obj-$(CONFIG_VIDEO_OV7640) += ov7640.o
+ obj-$(CONFIG_VIDEO_OV7670) += ov7670.o
++obj-$(CONFIG_VIDEO_OV772X) += ov772x.o
+ obj-$(CONFIG_VIDEO_OV7740) += ov7740.o
+ obj-$(CONFIG_VIDEO_OV9650) += ov9650.o
+ obj-$(CONFIG_VIDEO_OV13858) += ov13858.o
+diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
+index 8063835..912b1b9 100644
+--- a/drivers/media/i2c/ov772x.c
++++ b/drivers/media/i2c/ov772x.c
+@@ -1,6 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * ov772x Camera Driver
+  *
++ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ *
+  * Copyright (C) 2008 Renesas Solutions Corp.
+  * Kuninori Morimoto <morimoto.kuninori@renesas.com>
+  *
+@@ -9,27 +12,25 @@
+  * Copyright 2006-7 Jonathan Corbet <corbet@lwn.net>
+  * Copyright (C) 2008 Magnus Damm
+  * Copyright (C) 2008, Guennadi Liakhovetski <kernel@pengutronix.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
  
- config RENESAS_RZAWDT
- 	tristate "Renesas RZ/A WDT Watchdog"
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index 715a210..57ab810 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -83,6 +83,7 @@ obj-$(CONFIG_LPC18XX_WATCHDOG) += lpc18xx_wdt.o
- obj-$(CONFIG_BCM7038_WDT) += bcm7038_wdt.o
- obj-$(CONFIG_ATLAS7_WATCHDOG) += atlas7_wdt.o
- obj-$(CONFIG_RENESAS_WDT) += renesas_wdt.o
-+obj-$(CONFIG_RENESAS_WDT_GEN2) += renesas_wdt_gen2.o
- obj-$(CONFIG_RENESAS_RZAWDT) += rza_wdt.o
- obj-$(CONFIG_ASPEED_WATCHDOG) += aspeed_wdt.o
- obj-$(CONFIG_ZX2967_WATCHDOG) += zx2967_wdt.o
-diff --git a/drivers/watchdog/renesas_wdt_gen2.c b/drivers/watchdog/renesas_wdt_gen2.c
-new file mode 100644
-index 0000000..c841636
---- /dev/null
-+++ b/drivers/watchdog/renesas_wdt_gen2.c
-@@ -0,0 +1,270 @@
-+/*
-+ * Watchdog driver for Renesas WDT watchdog
-+ *
-+ * Copyright (C) 2015-17 Wolfram Sang, Sang Engineering <wsa@sang-engineering.com>
-+ * Copyright (C) 2018    Renesas Electronics Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ */
-+#include <linux/bitops.h>
 +#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/watchdog.h>
-+#include "renesas_wdt_gen2.h"
++#include <linux/delay.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/i2c.h>
+ #include <linux/slab.h>
+-#include <linux/delay.h>
+ #include <linux/v4l2-mediabus.h>
+ #include <linux/videodev2.h>
+ 
+ #include <media/i2c/ov772x.h>
+-#include <media/soc_camera.h>
+-#include <media/v4l2-clk.h>
 +
-+#define RWTCNT			0
-+#define RWTCSRA			4
-+#define RWTCSRA_WOVF		BIT(4)
-+#define RWTCSRA_WRFLG		BIT(5)
-+#define RWTCSRA_TME		BIT(7)
-+#define RWTCSRB			8
-+
-+#define RWDT_DEFAULT_TIMEOUT	60U
-+
-+/*
-+ * In probe, clk_rate is checked to be not more than 16 bit * biggest clock
-+ * divider (12 bits). d is only a factor to fully utilize the WDT counter and
-+ * will not exceed its 16 bits. Thus, no overflow, we stay below 32 bits.
-+ */
-+#define MUL_BY_CLKS_PER_SEC(p, d) \
-+	DIV_ROUND_UP((d) * (p)->clk_rate, clk_divs[(p)->cks])
-+
-+/* d is 16 bit, clk_divs 12 bit -> no 32 bit overflow */
-+#define DIV_BY_CLKS_PER_SEC(p, d) ((d) * clk_divs[(p)->cks] / (p)->clk_rate)
-+
-+static const unsigned int clk_divs[] = { 1, 4, 16, 32, 64, 128, 1024, 4096 };
-+
-+static bool nowayout = WATCHDOG_NOWAYOUT;
-+module_param(nowayout, bool, 0);
-+MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
-+				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-+
-+struct rwdt_priv {
-+	void __iomem *base;
-+	struct watchdog_device wdev;
-+	unsigned long clk_rate;
-+	bool enabled;
-+	u8 cks;
-+};
-+
-+static void rwdt_write(struct rwdt_priv *priv, u32 val, unsigned int reg)
+ #include <media/v4l2-ctrls.h>
+-#include <media/v4l2-subdev.h>
++#include <media/v4l2-device.h>
+ #include <media/v4l2-image-sizes.h>
++#include <media/v4l2-subdev.h>
+ 
+ /*
+  * register offset
+@@ -393,8 +394,10 @@ struct ov772x_win_size {
+ struct ov772x_priv {
+ 	struct v4l2_subdev                subdev;
+ 	struct v4l2_ctrl_handler	  hdl;
+-	struct v4l2_clk			 *clk;
++	struct clk			 *clk;
+ 	struct ov772x_camera_info        *info;
++	struct gpio_desc		 *pwdn_gpio;
++	struct gpio_desc		 *rstb_gpio;
+ 	const struct ov772x_color_format *cfmt;
+ 	const struct ov772x_win_size     *win;
+ 	unsigned short                    flag_vflip:1;
+@@ -409,7 +412,7 @@ struct ov772x_priv {
+ static const struct ov772x_color_format ov772x_cfmts[] = {
+ 	{
+ 		.code		= MEDIA_BUS_FMT_YUYV8_2X8,
+-		.colorspace	= V4L2_COLORSPACE_JPEG,
++		.colorspace	= V4L2_COLORSPACE_SRGB,
+ 		.dsp3		= 0x0,
+ 		.dsp4		= DSP_OFMT_YUV,
+ 		.com3		= SWAP_YUV,
+@@ -417,7 +420,7 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
+ 	},
+ 	{
+ 		.code		= MEDIA_BUS_FMT_YVYU8_2X8,
+-		.colorspace	= V4L2_COLORSPACE_JPEG,
++		.colorspace	= V4L2_COLORSPACE_SRGB,
+ 		.dsp3		= UV_ON,
+ 		.dsp4		= DSP_OFMT_YUV,
+ 		.com3		= SWAP_YUV,
+@@ -425,7 +428,7 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
+ 	},
+ 	{
+ 		.code		= MEDIA_BUS_FMT_UYVY8_2X8,
+-		.colorspace	= V4L2_COLORSPACE_JPEG,
++		.colorspace	= V4L2_COLORSPACE_SRGB,
+ 		.dsp3		= 0x0,
+ 		.dsp4		= DSP_OFMT_YUV,
+ 		.com3		= 0x0,
+@@ -550,7 +553,7 @@ static int ov772x_reset(struct i2c_client *client)
+ }
+ 
+ /*
+- * soc_camera_ops function
++ * subdev ops
+  */
+ 
+ static int ov772x_s_stream(struct v4l2_subdev *sd, int enable)
+@@ -650,13 +653,65 @@ static int ov772x_s_register(struct v4l2_subdev *sd,
+ }
+ #endif
+ 
++static int ov772x_power_on(struct ov772x_priv *priv)
 +{
-+	if (reg == RWTCNT)
-+		val |= 0x5a5a0000;
-+	else
-+		val |= 0xa5a5a500;
++	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
++	int ret;
 +
-+	writel_relaxed(val, priv->base + reg);
-+}
-+
-+static int rwdt_init_timeout(struct watchdog_device *wdev)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	rwdt_write(priv, 65536 - MUL_BY_CLKS_PER_SEC(priv, wdev->timeout),
-+		   RWTCNT);
-+
-+	return 0;
-+}
-+
-+static int rwdt_start(struct watchdog_device *wdev)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	rwdt_write(priv, 0, RWTCSRB);
-+	rwdt_write(priv, priv->cks, RWTCSRA);
-+	rwdt_init_timeout(wdev);
-+
-+	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-+		cpu_relax();
-+
-+	rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
-+
-+	return 0;
-+}
-+
-+static int rwdt_stop(struct watchdog_device *wdev)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	rwdt_write(priv, priv->cks, RWTCSRA);
-+
-+	return 0;
-+}
-+
-+static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+	u16 val = readw_relaxed(priv->base + RWTCNT);
-+
-+	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
-+}
-+
-+static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-+			void *data)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	rwdt_write(priv, 0x00, RWTCSRB);
-+	rwdt_write(priv, 0x00, RWTCSRA);
-+	rwdt_write(priv, 0xffff, RWTCNT);
-+
-+	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-+		cpu_relax();
-+
-+	rwdt_write(priv, 0x80, RWTCSRA);
-+	return 0;
-+}
-+
-+static const struct watchdog_info rwdt_ident = {
-+	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
-+	.identity = "Renesas WDT Watchdog",
-+};
-+
-+static const struct watchdog_ops rwdt_ops = {
-+	.owner = THIS_MODULE,
-+	.start = rwdt_start,
-+	.stop = rwdt_stop,
-+	.ping = rwdt_init_timeout,
-+	.get_timeleft = rwdt_get_timeleft,
-+	.restart = rwdt_restart,
-+};
-+
-+static int rwdt_probe(struct platform_device *pdev)
-+{
-+	struct rwdt_priv *priv;
-+	struct resource *res;
-+	struct clk *clk;
-+	unsigned long clks_per_sec;
-+	int ret, i;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	priv->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+
-+	priv->clk_rate = clk_get_rate(clk);
-+
-+	if (!priv->clk_rate)
-+		return -ENOENT;
-+
-+	for (i = ARRAY_SIZE(clk_divs) - 1; i >= 0; i--) {
-+		clks_per_sec = priv->clk_rate / clk_divs[i];
-+		if (clks_per_sec && clks_per_sec < 65536) {
-+			priv->cks = i;
-+			break;
-+		}
++	if (priv->clk) {
++		ret = clk_prepare_enable(priv->clk);
++		if (ret)
++			return ret;
 +	}
 +
-+	if (i < 0) {
-+		dev_err(&pdev->dev, "Can't find suitable clock divider\n");
-+		return -ERANGE;
++	if (priv->pwdn_gpio) {
++		gpiod_set_value(priv->pwdn_gpio, 1);
++		usleep_range(500, 1000);
 +	}
 +
-+	priv->wdev.info = &rwdt_ident,
-+	priv->wdev.ops = &rwdt_ops,
-+	priv->wdev.parent = &pdev->dev;
-+	priv->wdev.min_timeout = 1;
-+	priv->wdev.max_timeout = DIV_BY_CLKS_PER_SEC(priv, 65536);
-+	priv->wdev.timeout = min(priv->wdev.max_timeout, RWDT_DEFAULT_TIMEOUT);
++	/*
++	 * FIXME: The reset signal is connected to a shared GPIO on some
++	 * platforms (namely the SuperH Migo-R). Until a framework becomes
++	 * available to handle this cleanly, request the GPIO temporarily
++	 * to avoid conflicts.
++	 */
++	priv->rstb_gpio = gpiod_get_optional(&client->dev, "rstb",
++					     GPIOD_OUT_LOW);
++	if (IS_ERR(priv->rstb_gpio)) {
++		dev_info(&client->dev, "Unable to get GPIO \"rstb\"");
++		return PTR_ERR(priv->rstb_gpio);
++	}
 +
-+	platform_set_drvdata(pdev, priv);
-+	watchdog_set_drvdata(&priv->wdev, priv);
-+	watchdog_set_nowayout(&priv->wdev, nowayout);
++	if (priv->rstb_gpio) {
++		gpiod_set_value(priv->rstb_gpio, 1);
++		usleep_range(500, 1000);
++		gpiod_set_value(priv->rstb_gpio, 0);
++		usleep_range(500, 1000);
 +
-+	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
++		gpiod_put(priv->rstb_gpio);
++	}
++
++	return 0;
++}
++
++static int ov772x_power_off(struct ov772x_priv *priv)
++{
++	clk_disable_unprepare(priv->clk);
++
++	if (priv->pwdn_gpio) {
++		gpiod_set_value(priv->pwdn_gpio, 0);
++		usleep_range(500, 1000);
++	}
++
++	return 0;
++}
++
+ static int ov772x_s_power(struct v4l2_subdev *sd, int on)
+ {
+-	struct i2c_client *client = v4l2_get_subdevdata(sd);
+-	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+ 	struct ov772x_priv *priv = to_ov772x(sd);
+ 
+-	return soc_camera_set_power(&client->dev, ssdd, priv->clk, on);
++	return on ? ov772x_power_on(priv) :
++		    ov772x_power_off(priv);
+ }
+ 
+ static const struct ov772x_win_size *ov772x_select_win(u32 width, u32 height)
+@@ -855,6 +910,8 @@ static int ov772x_get_selection(struct v4l2_subdev *sd,
+ 		struct v4l2_subdev_pad_config *cfg,
+ 		struct v4l2_subdev_selection *sel)
+ {
++	struct ov772x_priv *priv = to_ov772x(sd);
++
+ 	if (sel->which != V4L2_SUBDEV_FORMAT_ACTIVE)
+ 		return -EINVAL;
+ 
+@@ -863,12 +920,9 @@ static int ov772x_get_selection(struct v4l2_subdev *sd,
+ 	switch (sel->target) {
+ 	case V4L2_SEL_TGT_CROP_BOUNDS:
+ 	case V4L2_SEL_TGT_CROP_DEFAULT:
+-		sel->r.width = OV772X_MAX_WIDTH;
+-		sel->r.height = OV772X_MAX_HEIGHT;
+-		return 0;
+ 	case V4L2_SEL_TGT_CROP:
+-		sel->r.width = VGA_WIDTH;
+-		sel->r.height = VGA_HEIGHT;
++		sel->r.width = priv->win->rect.width;
++		sel->r.height = priv->win->rect.height;
+ 		return 0;
+ 	default:
+ 		return -EINVAL;
+@@ -997,24 +1051,8 @@ static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
+-static int ov772x_g_mbus_config(struct v4l2_subdev *sd,
+-				struct v4l2_mbus_config *cfg)
+-{
+-	struct i2c_client *client = v4l2_get_subdevdata(sd);
+-	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+-
+-	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
+-		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_HIGH |
+-		V4L2_MBUS_DATA_ACTIVE_HIGH;
+-	cfg->type = V4L2_MBUS_PARALLEL;
+-	cfg->flags = soc_camera_apply_board_flags(ssdd, cfg);
+-
+-	return 0;
+-}
+-
+ static const struct v4l2_subdev_video_ops ov772x_subdev_video_ops = {
+ 	.s_stream	= ov772x_s_stream,
+-	.g_mbus_config	= ov772x_g_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_pad_ops ov772x_subdev_pad_ops = {
+@@ -1038,12 +1076,11 @@ static int ov772x_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *did)
+ {
+ 	struct ov772x_priv	*priv;
+-	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
+-	struct i2c_adapter	*adapter = to_i2c_adapter(client->dev.parent);
++	struct i2c_adapter	*adapter = client->adapter;
+ 	int			ret;
+ 
+-	if (!ssdd || !ssdd->drv_priv) {
+-		dev_err(&client->dev, "OV772X: missing platform data!\n");
++	if (!client->dev.platform_data) {
++		dev_err(&client->dev, "Missing ov772x platform data\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1059,7 +1096,7 @@ static int ov772x_probe(struct i2c_client *client,
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	priv->info = ssdd->drv_priv;
++	priv->info = client->dev.platform_data;
+ 
+ 	v4l2_i2c_subdev_init(&priv->subdev, client, &ov772x_subdev_ops);
+ 	v4l2_ctrl_handler_init(&priv->hdl, 3);
+@@ -1073,22 +1110,42 @@ static int ov772x_probe(struct i2c_client *client,
+ 	if (priv->hdl.error)
+ 		return priv->hdl.error;
+ 
+-	priv->clk = v4l2_clk_get(&client->dev, "mclk");
++	priv->clk = clk_get(&client->dev, "xclk");
+ 	if (IS_ERR(priv->clk)) {
++		dev_err(&client->dev, "Unable to get xclk clock\n");
+ 		ret = PTR_ERR(priv->clk);
+-		goto eclkget;
++		goto error_ctrl_free;
+ 	}
+ 
+-	ret = ov772x_video_probe(priv);
+-	if (ret < 0) {
+-		v4l2_clk_put(priv->clk);
+-eclkget:
+-		v4l2_ctrl_handler_free(&priv->hdl);
+-	} else {
+-		priv->cfmt = &ov772x_cfmts[0];
+-		priv->win = &ov772x_win_sizes[0];
++	priv->pwdn_gpio = gpiod_get_optional(&client->dev, "pwdn",
++					     GPIOD_OUT_LOW);
++	if (IS_ERR(priv->pwdn_gpio)) {
++		dev_info(&client->dev, "Unable to get GPIO \"pwdn\"");
++		ret = PTR_ERR(priv->pwdn_gpio);
++		goto error_clk_put;
+ 	}
+ 
++	ret = ov772x_video_probe(priv);
++	if (ret < 0)
++		goto error_gpio_put;
++
++	priv->cfmt = &ov772x_cfmts[0];
++	priv->win = &ov772x_win_sizes[0];
++
++	ret = v4l2_async_register_subdev(&priv->subdev);
 +	if (ret)
-+		dev_warn(&pdev->dev,
-+			 "Specified timeout value invalid, using default\n");
-+	shmobile_set_wdt_clock_status(RWDT_CLOCK_ON);
-+
-+	ret = watchdog_register_device(&priv->wdev);
-+	return ret;
-+}
-+
-+static int rwdt_remove(struct platform_device *pdev)
-+{
-+	struct rwdt_priv *priv = platform_get_drvdata(pdev);
-+
-+	watchdog_unregister_device(&priv->wdev);
++		goto error_gpio_put;
 +
 +	return 0;
-+}
 +
-+#ifdef CONFIG_PM
-+static int rwdt_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev;
-+	struct rwdt_priv *priv;
-+	u8 val;
++error_gpio_put:
++	if (priv->pwdn_gpio)
++		gpiod_put(priv->pwdn_gpio);
++error_clk_put:
++	clk_put(priv->clk);
++error_ctrl_free:
++	v4l2_ctrl_handler_free(&priv->hdl);
 +
-+	pdev = to_platform_device(dev);
-+	priv = platform_get_drvdata(pdev);
-+	val = readb_relaxed(priv->base + RWTCSRA);
-+	if (val & RWTCSRA_TME) {
-+		priv->enabled = true;
-+		rwdt_write(priv, val & ~RWTCSRA_TME, RWTCSRA);
-+	} else {
-+		priv->enabled = false;
-+	}
-+	return 0;
-+}
-+
-+static int rwdt_resume(struct device *dev)
-+{
-+	struct platform_device *pdev;
-+	struct rwdt_priv *priv;
-+	u8 val;
-+
-+	pdev = to_platform_device(dev);
-+	priv = platform_get_drvdata(pdev);
-+	if (priv->enabled) {
-+		val = readb_relaxed(priv->base + RWTCSRA);
-+		rwdt_write(priv, val | RWTCSRA_TME, RWTCSRA);
-+	}
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops rwdt_pm = {
-+	.suspend = rwdt_suspend,
-+	.resume = rwdt_resume,
-+};
-+#endif
-+
-+static const struct of_device_id rwdt_ids[] = {
-+	{ .compatible = "renesas,rcar-gen2-wdt", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rwdt_ids);
-+
-+static struct platform_driver rwdt_driver = {
-+	.driver = {
-+		.name = "renesas_wdt_gen2",
-+		.of_match_table = rwdt_ids,
-+#ifdef CONFIG_PM
-+		.pm = &rwdt_pm,
-+#endif
-+	},
-+	.probe = rwdt_probe,
-+	.remove = rwdt_remove,
-+};
-+module_platform_driver(rwdt_driver);
-+
-+MODULE_DESCRIPTION("Renesas R-Car Gen2 Watchdog Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Fabrizio Castro <fabrizio.castro@bp.renesas.com>");
-diff --git a/drivers/watchdog/renesas_wdt_gen2.h b/drivers/watchdog/renesas_wdt_gen2.h
-new file mode 100644
-index 0000000..41b9e9c
---- /dev/null
-+++ b/drivers/watchdog/renesas_wdt_gen2.h
-@@ -0,0 +1,22 @@
-+/*
-+ * drivers/watchdog/renesas_wdt_gen2.h
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corporation
-+ *
-+ * R-Car Gen2 and RZ/G specific symbols
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef RENESAS_WDT_GEN2_H
-+#define RENESAS_WDT_GEN2_H
-+
-+#define RWDT_CLOCK_ON		0xdeadbeef
-+#define RWDT_CLOCK_OFF		0x00000000
-+
-+extern void shmobile_set_wdt_clock_status(unsigned long value);
-+
-+#endif /* RENESAS_WDT_GEN2_H */
+ 	return ret;
+ }
+ 
+@@ -1096,7 +1153,9 @@ static int ov772x_remove(struct i2c_client *client)
+ {
+ 	struct ov772x_priv *priv = to_ov772x(i2c_get_clientdata(client));
+ 
+-	v4l2_clk_put(priv->clk);
++	clk_put(priv->clk);
++	if (priv->pwdn_gpio)
++		gpiod_put(priv->pwdn_gpio);
+ 	v4l2_device_unregister_subdev(&priv->subdev);
+ 	v4l2_ctrl_handler_free(&priv->hdl);
+ 	return 0;
+@@ -1119,6 +1178,6 @@ static struct i2c_driver ov772x_i2c_driver = {
+ 
+ module_i2c_driver(ov772x_i2c_driver);
+ 
+-MODULE_DESCRIPTION("SoC Camera driver for ov772x");
++MODULE_DESCRIPTION("V4L2 driver for OV772x image sensor");
+ MODULE_AUTHOR("Kuninori Morimoto");
+ MODULE_LICENSE("GPL v2");
+diff --git a/include/media/i2c/ov772x.h b/include/media/i2c/ov772x.h
+index 00dbb7c..27d087b 100644
+--- a/include/media/i2c/ov772x.h
++++ b/include/media/i2c/ov772x.h
+@@ -48,8 +48,10 @@ struct ov772x_edge_ctrl {
+ 	.threshold = (t & OV772X_EDGE_THRESHOLD_MASK),	\
+ }
+ 
+-/*
+- * ov772x camera info
++/**
++ * ov772x_camera_info -	ov772x driver interface structure
++ * @flags:		Sensor configuration flags
++ * @edgectrl:		Sensor edge control
+  */
+ struct ov772x_camera_info {
+ 	unsigned long		flags;
 -- 
 2.7.4
