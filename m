@@ -1,19 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:39647 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751606AbeAZKGA (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37508 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752385AbeAZIal (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Jan 2018 05:06:00 -0500
-MIME-Version: 1.0
-In-Reply-To: <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com> <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jan 2018 11:05:58 +0100
-Message-ID: <CAMuHMdWiVu9hs3PvXypJyeG0iDQkDvyPzHkTfq4NyPVdaYZKew@mail.gmail.com>
+        Fri, 26 Jan 2018 03:30:41 -0500
+Received: by mail-lf0-f68.google.com with SMTP id 63so6861292lfv.4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Jan 2018 00:30:40 -0800 (PST)
 Subject: Re: [RFC 10/37] soc: renesas: rcar-rst: Enable watchdog as reset
  trigger for Gen2
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
@@ -24,94 +20,72 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e1670c79-2fef-b45b-4688-a6ba8ebd8c24@cogentembedded.com>
+Date: Fri, 26 Jan 2018 11:30:38 +0300
+MIME-Version: 1.0
+In-Reply-To: <1516903391-30467-11-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Fabrizio,
+Hello!
 
-On Thu, Jan 25, 2018 at 7:02 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
+On 1/25/2018 9:02 PM, Fabrizio Castro wrote:
+
 > This patch allows for platform specific quirks as some of the SoC need
 > further customization for the watchdog to work properly, like for R-Car
 > Gen2 and for RZ/G.
->
+> 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-
-Thanks for your patch!
-
+> ---
+>   drivers/soc/renesas/rcar-rst.c | 21 ++++++++++++++++++++-
+>   1 file changed, 20 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+> index f7a0d54..5f52aea 100644
 > --- a/drivers/soc/renesas/rcar-rst.c
 > +++ b/drivers/soc/renesas/rcar-rst.c
 > @@ -13,8 +13,18 @@
->  #include <linux/of_address.h>
->  #include <linux/soc/renesas/rcar-rst.h>
->
-> +#define WDTRSTCR_RESET         0xA55A0002
-> +#define WDTRSTCR               0x0054
+>   #include <linux/of_address.h>
+>   #include <linux/soc/renesas/rcar-rst.h>
+>   
+> +#define WDTRSTCR_RESET		0xA55A0002
+> +#define WDTRSTCR		0x0054
 > +
 > +static int gen2_configuration(void __iomem *base)
-
-rcar_rst_enable_wdt_reset()?
-
 > +{
-> +       iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
-> +       return 0;
+> +	iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
+> +	return 0;
 > +}
 > +
->  struct rst_config {
-> -       unsigned int modemr;    /* Mode Monitoring Register Offset */
-> +       unsigned int modemr;            /* Mode Monitoring Register Offset */
-> +       int (*configure)(void *base);   /* Platform specific configuration */
->  };
->
->  static const struct rst_config rcar_rst_gen1 __initconst = {
+>   struct rst_config {
+> -	unsigned int modemr;	/* Mode Monitoring Register Offset */
+> +	unsigned int modemr;		/* Mode Monitoring Register Offset */
+> +	int (*configure)(void *base);	/* Platform specific configuration */
+>   };
+>   
+>   static const struct rst_config rcar_rst_gen1 __initconst = {
 > @@ -23,6 +33,7 @@ static const struct rst_config rcar_rst_gen1 __initconst = {
->
->  static const struct rst_config rcar_rst_gen2 __initconst = {
->         .modemr = 0x60,
-> +       .configure = gen2_configuration,
+>   
+>   static const struct rst_config rcar_rst_gen2 __initconst = {
+>   	.modemr = 0x60,
+> +	.configure = gen2_configuration,
 
-BTW, does it hurt to do this on R-Car Gen3, too?
+    Why not call the method gen2_configure() then?
 
-Instead of a function pointer, you could also just have a feature bit.
+[...]
 
->  };
->
->  static const struct rst_config rcar_rst_gen3 __initconst = {
-> @@ -79,6 +90,14 @@ static int __init rcar_rst_init(void)
->         rcar_rst_base = base;
->         cfg = match->data;
->         saved_mode = ioread32(base + cfg->modemr);
-> +       if (cfg->configure) {
-> +               error = cfg->configure(base);
-> +               if (error) {
-> +                       pr_warn("%pOF: Cannot run SoC specific configuration\n",
-> +                               np);
-> +                       goto out_put;
-> +               }
-> +       }
->
->         pr_debug("%pOF: MODE = 0x%08x\n", np, saved_mode);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
