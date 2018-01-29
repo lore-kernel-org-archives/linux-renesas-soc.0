@@ -1,419 +1,206 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:43830 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759288AbeAIQ0g (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:46027 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751273AbeA2QfK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 11:26:36 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, mchehab@kernel.org, hverkuil@xs4all.nl,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/9] media: i2c: ov772x: Remove soc_camera dependencies
-Date: Tue,  9 Jan 2018 17:25:28 +0100
-Message-Id: <1515515131-13760-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1515515131-13760-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1515515131-13760-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 29 Jan 2018 11:35:10 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 01/30] rcar-vin: add Gen3 devicetree bindings documentation
+Date: Mon, 29 Jan 2018 17:34:06 +0100
+Message-Id: <20180129163435.24936-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove soc_camera framework dependencies from ov772x sensor driver.
-- Handle clock and gpios
-- Register async subdevice
-- Remove soc_camera specific g/s_mbus_config operations
-- Change image format colorspace from JPEG to SRGB as the two use the
-  same colorspace information but JPEG makes assumptions on color
-  components quantization that do not apply to the sensor
-- Remove sizes crop from get_selection as driver can't scale
-- Add kernel doc to driver interface header file
-- Adjust build system
+Document the devicetree bindings for the CSI-2 inputs available on Gen3.
 
-This commit does not remove the original soc_camera based driver as long
-as other platforms depends on soc_camera-based CEU driver.
+There is a need to add a custom property 'renesas,id' and to define
+which CSI-2 input is described in which endpoint under the port@1 node.
+This information is needed since there are a set of predefined routes
+between each VIN and CSI-2 block. This routing table will be kept
+inside the driver but in order for it to act on it it must know which
+VIN and CSI-2 is which.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/media/i2c/Kconfig  |  11 +++
- drivers/media/i2c/Makefile |   1 +
- drivers/media/i2c/ov772x.c | 177 ++++++++++++++++++++++++++++++---------------
- include/media/i2c/ov772x.h |   6 +-
- 4 files changed, 133 insertions(+), 62 deletions(-)
+ .../devicetree/bindings/media/rcar_vin.txt         | 118 ++++++++++++++++++---
+ 1 file changed, 106 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index cb5d7ff..a61d7f4 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -645,6 +645,17 @@ config VIDEO_OV5670
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called ov5670.
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index c60e6b0a89b67a8c..90d92836284b7f68 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -2,8 +2,12 @@ Renesas R-Car Video Input driver (rcar_vin)
+ -------------------------------------------
  
-+config VIDEO_OV772X
-+	tristate "OmniVision OV772x sensor support"
-+	depends on I2C && VIDEO_V4L2
-+	depends on MEDIA_CAMERA_SUPPORT
-+	---help---
-+	  This is a Video4Linux2 sensor-level driver for the OmniVision
-+	  OV772x camera.
+ The rcar_vin device provides video input capabilities for the Renesas R-Car
+-family of devices. The current blocks are always slaves and suppot one input
+-channel which can be either RGB, YUYV or BT656.
++family of devices.
 +
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called ov772x.
-+
- config VIDEO_OV7640
- 	tristate "OmniVision OV7640 sensor support"
- 	depends on I2C && VIDEO_V4L2
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index 548a9ef..fb99293 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -66,6 +66,7 @@ obj-$(CONFIG_VIDEO_OV5645) += ov5645.o
- obj-$(CONFIG_VIDEO_OV5647) += ov5647.o
- obj-$(CONFIG_VIDEO_OV5670) += ov5670.o
- obj-$(CONFIG_VIDEO_OV6650) += ov6650.o
-+obj-$(CONFIG_VIDEO_OV772X) += ov772x.o
- obj-$(CONFIG_VIDEO_OV7640) += ov7640.o
- obj-$(CONFIG_VIDEO_OV7670) += ov7670.o
- obj-$(CONFIG_VIDEO_OV9650) += ov9650.o
-diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
-index 8063835..df2516c 100644
---- a/drivers/media/i2c/ov772x.c
-+++ b/drivers/media/i2c/ov772x.c
-@@ -1,6 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ov772x Camera Driver
-  *
-+ * Copyright (C) 2017 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ *
-  * Copyright (C) 2008 Renesas Solutions Corp.
-  * Kuninori Morimoto <morimoto.kuninori@renesas.com>
-  *
-@@ -9,27 +12,25 @@
-  * Copyright 2006-7 Jonathan Corbet <corbet@lwn.net>
-  * Copyright (C) 2008 Magnus Damm
-  * Copyright (C) 2008, Guennadi Liakhovetski <kernel@pengutronix.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
++Each VIN instance has a single parallel input that supports RGB and YUV video,
++with both external synchronization and BT.656 synchronization for the latter.
++Depending on the instance the VIN input is connected to external SoC pins, or
++on Gen3 platforms to a CSI-2 receiver.
  
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/i2c.h>
- #include <linux/slab.h>
--#include <linux/delay.h>
- #include <linux/v4l2-mediabus.h>
- #include <linux/videodev2.h>
+  - compatible: Must be one or more of the following
+    - "renesas,vin-r8a7743" for the R8A7743 device
+@@ -16,6 +20,8 @@ channel which can be either RGB, YUYV or BT656.
+    - "renesas,vin-r8a7793" for the R8A7793 device
+    - "renesas,vin-r8a7794" for the R8A7794 device
+    - "renesas,vin-r8a7795" for the R8A7795 device
++   - "renesas,vin-r8a7796" for the R8A7796 device
++   - "renesas,vin-r8a77970" for the R8A77970 device
+    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
+      device.
+    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+@@ -31,21 +37,38 @@ channel which can be either RGB, YUYV or BT656.
+ Additionally, an alias named vinX will need to be created to specify
+ which video input device this is.
  
- #include <media/i2c/ov772x.h>
--#include <media/soc_camera.h>
--#include <media/v4l2-clk.h>
-+
- #include <media/v4l2-ctrls.h>
--#include <media/v4l2-subdev.h>
-+#include <media/v4l2-device.h>
- #include <media/v4l2-image-sizes.h>
-+#include <media/v4l2-subdev.h>
+-The per-board settings:
++The per-board settings Gen2 platforms:
+  - port sub-node describing a single endpoint connected to the vin
+    as described in video-interfaces.txt[1]. Only the first one will
+    be considered as each vin interface has one input port.
  
- /*
-  * register offset
-@@ -393,8 +394,10 @@ struct ov772x_win_size {
- struct ov772x_priv {
- 	struct v4l2_subdev                subdev;
- 	struct v4l2_ctrl_handler	  hdl;
--	struct v4l2_clk			 *clk;
-+	struct clk			 *clk;
- 	struct ov772x_camera_info        *info;
-+	struct gpio_desc		 *pwdn_gpio;
-+	struct gpio_desc		 *rstb_gpio;
- 	const struct ov772x_color_format *cfmt;
- 	const struct ov772x_win_size     *win;
- 	unsigned short                    flag_vflip:1;
-@@ -409,7 +412,7 @@ struct ov772x_priv {
- static const struct ov772x_color_format ov772x_cfmts[] = {
- 	{
- 		.code		= MEDIA_BUS_FMT_YUYV8_2X8,
--		.colorspace	= V4L2_COLORSPACE_JPEG,
-+		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.dsp3		= 0x0,
- 		.dsp4		= DSP_OFMT_YUV,
- 		.com3		= SWAP_YUV,
-@@ -417,7 +420,7 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
- 	},
- 	{
- 		.code		= MEDIA_BUS_FMT_YVYU8_2X8,
--		.colorspace	= V4L2_COLORSPACE_JPEG,
-+		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.dsp3		= UV_ON,
- 		.dsp4		= DSP_OFMT_YUV,
- 		.com3		= SWAP_YUV,
-@@ -425,7 +428,7 @@ static const struct ov772x_color_format ov772x_cfmts[] = {
- 	},
- 	{
- 		.code		= MEDIA_BUS_FMT_UYVY8_2X8,
--		.colorspace	= V4L2_COLORSPACE_JPEG,
-+		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.dsp3		= 0x0,
- 		.dsp4		= DSP_OFMT_YUV,
- 		.com3		= 0x0,
-@@ -550,7 +553,7 @@ static int ov772x_reset(struct i2c_client *client)
- }
+-   These settings are used to work out video input format and widths
+-   into the system.
++The per-board settings Gen3 platforms:
  
- /*
-- * soc_camera_ops function
-+ * subdev ops
-  */
++Gen3 platforms can support both a single connected parallel input source
++from external SoC pins (port0) and/or multiple parallel input sources
++from local SoC CSI-2 receivers (port1) depending on SoC.
  
- static int ov772x_s_stream(struct v4l2_subdev *sd, int enable)
-@@ -650,13 +653,65 @@ static int ov772x_s_register(struct v4l2_subdev *sd,
- }
- #endif
+-Device node example
+--------------------
++- renesas,id - ID number of the VIN, VINx in the documentation.
++- ports
++    - port 0 - sub-node describing a single endpoint connected to the VIN
++      from external SoC pins described in video-interfaces.txt[1].
++      Describing more then one endpoint in port 0 is invalid. Only VIN
++      instances that are connected to external pins should have port 0.
++    - port 1 - sub-nodes describing one or more endpoints connected to
++      the VIN from local SoC CSI-2 receivers. The endpoint numbers must
++      use the following schema.
  
-+static int ov772x_power_on(struct ov772x_priv *priv)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(&priv->subdev);
-+	int ret;
+-	aliases {
+-	       vin0 = &vin0;
+-	};
++        - Endpoint 0 - sub-node describing the endpoint connected to CSI20
++        - Endpoint 1 - sub-node describing the endpoint connected to CSI21
++        - Endpoint 2 - sub-node describing the endpoint connected to CSI40
++        - Endpoint 3 - sub-node describing the endpoint connected to CSI41
 +
-+	if (priv->clk) {
-+		ret = clk_prepare_enable(priv->clk);
-+		if (ret)
-+			return ret;
-+	}
++Device node example for Gen2 platforms
++--------------------------------------
 +
-+	if (priv->pwdn_gpio) {
-+		gpiod_set_value(priv->pwdn_gpio, 1);
-+		usleep_range(500, 1000);
-+	}
-+
-+	/*
-+	 * FIXME: The reset signal is connected to a shared GPIO on some
-+	 * platforms (namely the SuperH Migo-R). Until a framework becomes
-+	 * available to handle this cleanly, request the GPIO temporarily
-+	 * to avoid conflicts.
-+	 */
-+	priv->rstb_gpio = gpiod_get_optional(&client->dev, "rstb",
-+					     GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->rstb_gpio)) {
-+		dev_info(&client->dev, "Unable to get GPIO \"rstb\"");
-+		return PTR_ERR(priv->rstb_gpio);
-+	}
-+
-+	if (priv->rstb_gpio) {
-+		gpiod_set_value(priv->rstb_gpio, 1);
-+		usleep_range(500, 1000);
-+		gpiod_set_value(priv->rstb_gpio, 0);
-+		usleep_range(500, 1000);
-+
-+		gpiod_put(priv->rstb_gpio);
-+	}
-+
-+	return 0;
-+}
-+
-+static int ov772x_power_off(struct ov772x_priv *priv)
-+{
-+	clk_disable_unprepare(priv->clk);
-+
-+	if (priv->pwdn_gpio) {
-+		gpiod_set_value(priv->pwdn_gpio, 0);
-+		usleep_range(500, 1000);
-+	}
-+
-+	return 0;
-+}
-+
- static int ov772x_s_power(struct v4l2_subdev *sd, int on)
- {
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
- 	struct ov772x_priv *priv = to_ov772x(sd);
++        aliases {
++                vin0 = &vin0;
++        };
  
--	return soc_camera_set_power(&client->dev, ssdd, priv->clk, on);
-+	return on ? ov772x_power_on(priv) :
-+		    ov772x_power_off(priv);
- }
+         vin0: vin@e6ef0000 {
+                 compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
+@@ -55,8 +78,8 @@ Device node example
+                 status = "disabled";
+         };
  
- static const struct ov772x_win_size *ov772x_select_win(u32 width, u32 height)
-@@ -855,24 +910,21 @@ static int ov772x_get_selection(struct v4l2_subdev *sd,
- 		struct v4l2_subdev_pad_config *cfg,
- 		struct v4l2_subdev_selection *sel)
- {
-+	struct ov772x_priv *priv = to_ov772x(sd);
-+
- 	if (sel->which != V4L2_SUBDEV_FORMAT_ACTIVE)
- 		return -EINVAL;
+-Board setup example (vin1 composite video input)
+-------------------------------------------------
++Board setup example for Gen2 platforms (vin1 composite video input)
++-------------------------------------------------------------------
  
--	sel->r.left = 0;
--	sel->r.top = 0;
- 	switch (sel->target) {
- 	case V4L2_SEL_TGT_CROP_BOUNDS:
- 	case V4L2_SEL_TGT_CROP_DEFAULT:
--		sel->r.width = OV772X_MAX_WIDTH;
--		sel->r.height = OV772X_MAX_HEIGHT;
--		return 0;
- 	case V4L2_SEL_TGT_CROP:
--		sel->r.width = VGA_WIDTH;
--		sel->r.height = VGA_HEIGHT;
--		return 0;
--	default:
--		return -EINVAL;
-+		sel->r.width = priv->win->rect.width;
-+		sel->r.height = priv->win->rect.height;
-+		break;
- 	}
-+
-+	return 0;
- }
- 
- static int ov772x_get_fmt(struct v4l2_subdev *sd,
-@@ -997,24 +1049,8 @@ static int ov772x_enum_mbus_code(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
--static int ov772x_g_mbus_config(struct v4l2_subdev *sd,
--				struct v4l2_mbus_config *cfg)
--{
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
--
--	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
--		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_HIGH |
--		V4L2_MBUS_DATA_ACTIVE_HIGH;
--	cfg->type = V4L2_MBUS_PARALLEL;
--	cfg->flags = soc_camera_apply_board_flags(ssdd, cfg);
--
--	return 0;
--}
--
- static const struct v4l2_subdev_video_ops ov772x_subdev_video_ops = {
- 	.s_stream	= ov772x_s_stream,
--	.g_mbus_config	= ov772x_g_mbus_config,
+ &i2c2   {
+         status = "ok";
+@@ -95,6 +118,77 @@ Board setup example (vin1 composite video input)
+         };
  };
  
- static const struct v4l2_subdev_pad_ops ov772x_subdev_pad_ops = {
-@@ -1038,12 +1074,11 @@ static int ov772x_probe(struct i2c_client *client,
- 			const struct i2c_device_id *did)
- {
- 	struct ov772x_priv	*priv;
--	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
--	struct i2c_adapter	*adapter = to_i2c_adapter(client->dev.parent);
-+	struct i2c_adapter	*adapter = client->adapter;
- 	int			ret;
++Device node example for Gen3 platforms
++--------------------------------------
  
--	if (!ssdd || !ssdd->drv_priv) {
--		dev_err(&client->dev, "OV772X: missing platform data!\n");
-+	if (!client->dev.platform_data) {
-+		dev_err(&client->dev, "Missing OV7725 platform data\n");
- 		return -EINVAL;
- 	}
- 
-@@ -1059,7 +1094,7 @@ static int ov772x_probe(struct i2c_client *client,
- 	if (!priv)
- 		return -ENOMEM;
- 
--	priv->info = ssdd->drv_priv;
-+	priv->info = client->dev.platform_data;
- 
- 	v4l2_i2c_subdev_init(&priv->subdev, client, &ov772x_subdev_ops);
- 	v4l2_ctrl_handler_init(&priv->hdl, 3);
-@@ -1073,22 +1108,42 @@ static int ov772x_probe(struct i2c_client *client,
- 	if (priv->hdl.error)
- 		return priv->hdl.error;
- 
--	priv->clk = v4l2_clk_get(&client->dev, "mclk");
-+	priv->clk = clk_get(&client->dev, "xclk");
- 	if (IS_ERR(priv->clk)) {
-+		dev_err(&client->dev, "Unable to get xclk clock\n");
- 		ret = PTR_ERR(priv->clk);
--		goto eclkget;
-+		goto error_ctrl_free;
- 	}
- 
--	ret = ov772x_video_probe(priv);
--	if (ret < 0) {
--		v4l2_clk_put(priv->clk);
--eclkget:
--		v4l2_ctrl_handler_free(&priv->hdl);
--	} else {
--		priv->cfmt = &ov772x_cfmts[0];
--		priv->win = &ov772x_win_sizes[0];
-+	priv->pwdn_gpio = gpiod_get_optional(&client->dev, "pwdn",
-+					     GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->pwdn_gpio)) {
-+		dev_info(&client->dev, "Unable to get GPIO \"pwdn\"");
-+		ret = PTR_ERR(priv->pwdn_gpio);
-+		goto error_clk_put;
- 	}
- 
-+	ret = ov772x_video_probe(priv);
-+	if (ret < 0)
-+		goto error_gpio_put;
++        vin0: video@e6ef0000 {
++                compatible = "renesas,vin-r8a7795";
++                reg = <0 0xe6ef0000 0 0x1000>;
++                interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cpg CPG_MOD 811>;
++                power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++                resets = <&cpg 811>;
++                renesas,id = <0>;
 +
-+	priv->cfmt = &ov772x_cfmts[0];
-+	priv->win = &ov772x_win_sizes[0];
++                ports {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
 +
-+	ret = v4l2_async_register_subdev(&priv->subdev);
-+	if (ret)
-+		goto error_gpio_put;
++                        port@1 {
++                                #address-cells = <1>;
++                                #size-cells = <0>;
 +
-+	return 0;
++                                reg = <1>;
 +
-+error_gpio_put:
-+	if (priv->pwdn_gpio)
-+		gpiod_put(priv->pwdn_gpio);
-+error_clk_put:
-+	clk_put(priv->clk);
-+error_ctrl_free:
-+	v4l2_ctrl_handler_free(&priv->hdl);
++                                vin0csi20: endpoint@0 {
++                                        reg = <0>;
++                                        remote-endpoint= <&csi20vin0>;
++                                };
++                                vin0csi21: endpoint@1 {
++                                        reg = <1>;
++                                        remote-endpoint= <&csi21vin0>;
++                                };
++                                vin0csi40: endpoint@2 {
++                                        reg = <2>;
++                                        remote-endpoint= <&csi40vin0>;
++                                };
++                        };
++                };
++        };
 +
- 	return ret;
- }
++        csi20: csi2@fea80000 {
++                compatible = "renesas,r8a7795-csi2";
++                reg = <0 0xfea80000 0 0x10000>;
++                interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cpg CPG_MOD 714>;
++                power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++                resets = <&cpg 714>;
++
++                ports {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
++
++                        port@0 {
++                                reg = <0>;
++                                csi20_in: endpoint {
++                                        clock-lanes = <0>;
++                                        data-lanes = <1>;
++                                        remote-endpoint = <&adv7482_txb>;
++                                };
++                        };
++
++                        port@1 {
++                                #address-cells = <1>;
++                                #size-cells = <0>;
++
++                                reg = <1>;
++
++                                csi20vin0: endpoint@0 {
++                                        reg = <0>;
++                                        remote-endpoint = <&vin0csi20>;
++                                };
++                        };
++                };
++        };
  
-@@ -1096,7 +1151,9 @@ static int ov772x_remove(struct i2c_client *client)
- {
- 	struct ov772x_priv *priv = to_ov772x(i2c_get_clientdata(client));
- 
--	v4l2_clk_put(priv->clk);
-+	clk_put(priv->clk);
-+	if (priv->pwdn_gpio)
-+		gpiod_put(priv->pwdn_gpio);
- 	v4l2_device_unregister_subdev(&priv->subdev);
- 	v4l2_ctrl_handler_free(&priv->hdl);
- 	return 0;
-@@ -1119,6 +1176,6 @@ static struct i2c_driver ov772x_i2c_driver = {
- 
- module_i2c_driver(ov772x_i2c_driver);
- 
--MODULE_DESCRIPTION("SoC Camera driver for ov772x");
-+MODULE_DESCRIPTION("V4L2 driver for OV772x image sensor");
- MODULE_AUTHOR("Kuninori Morimoto");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/media/i2c/ov772x.h b/include/media/i2c/ov772x.h
-index 00dbb7c..27d087b 100644
---- a/include/media/i2c/ov772x.h
-+++ b/include/media/i2c/ov772x.h
-@@ -48,8 +48,10 @@ struct ov772x_edge_ctrl {
- 	.threshold = (t & OV772X_EDGE_THRESHOLD_MASK),	\
- }
- 
--/*
-- * ov772x camera info
-+/**
-+ * ov772x_camera_info -	ov772x driver interface structure
-+ * @flags:		Sensor configuration flags
-+ * @edgectrl:		Sensor edge control
-  */
- struct ov772x_camera_info {
- 	unsigned long		flags;
+ [1] video-interfaces.txt common video media interface
 -- 
-2.7.4
+2.16.1
