@@ -1,61 +1,159 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 26/26] ARM: dts: iwg22m: Add watchdog support to SoM dtsi
-Date: Wed, 31 Jan 2018 18:24:30 +0000
-Message-Id: <1517423070-24236-27-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:5450 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751608AbeA2Qff (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 Jan 2018 11:35:35 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 15/30] rcar-vin: break out format alignment and checking
+Date: Mon, 29 Jan 2018 17:34:20 +0100
+Message-Id: <20180129163435.24936-16-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables the watchdog from within the iwg20m SoM dtsi.
+Part of the format alignment and checking can be shared with the Gen3
+format handling. Break that part out to a separate function.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v3->4:
-* no change
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 93 ++++++++++++++++-------------
+ 1 file changed, 50 insertions(+), 43 deletions(-)
 
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-index 8d0a392b..29b6e10 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-+++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
-@@ -91,6 +91,11 @@
- 	};
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index c606942e59b5d934..1169e6a279ecfb55 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -86,6 +86,55 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
+ 	return pix->bytesperline * pix->height;
+ }
  
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
++static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
++{
++	u32 walign;
 +
- &sdhi1 {
- 	pinctrl-0 = <&sdhi1_pins>;
- 	pinctrl-names = "default";
++	/* If requested format is not supported fallback to the default */
++	if (!rvin_format_from_pixel(pix->pixelformat)) {
++		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
++			pix->pixelformat, RVIN_DEFAULT_FORMAT);
++		pix->pixelformat = RVIN_DEFAULT_FORMAT;
++	}
++
++	/* Reject ALTERNATE  until support is added to the driver */
++	switch (pix->field) {
++	case V4L2_FIELD_TOP:
++	case V4L2_FIELD_BOTTOM:
++	case V4L2_FIELD_NONE:
++	case V4L2_FIELD_INTERLACED_TB:
++	case V4L2_FIELD_INTERLACED_BT:
++	case V4L2_FIELD_INTERLACED:
++		break;
++	default:
++		pix->field = V4L2_FIELD_NONE;
++		break;
++	}
++
++	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
++	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
++
++	/* Limit to VIN capabilities */
++	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
++			      &pix->height, 4, vin->info->max_height, 2, 0);
++
++	pix->bytesperline = max_t(u32, pix->bytesperline,
++				  rvin_format_bytesperline(pix));
++	pix->sizeimage = max_t(u32, pix->sizeimage,
++			       rvin_format_sizeimage(pix));
++
++	if (vin->info->model == RCAR_M1 &&
++	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
++		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
++		return -EINVAL;
++	}
++
++	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
++		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
++
++	return 0;
++}
++
+ /* -----------------------------------------------------------------------------
+  * V4L2
+  */
+@@ -215,19 +264,12 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ static int __rvin_try_format(struct rvin_dev *vin,
+ 			     u32 which, struct v4l2_pix_format *pix)
+ {
+-	u32 walign;
+ 	int ret;
+ 
+ 	/* Keep current field if no specific one is asked for */
+ 	if (pix->field == V4L2_FIELD_ANY)
+ 		pix->field = vin->format.field;
+ 
+-	/* If requested format is not supported fallback to the default */
+-	if (!rvin_format_from_pixel(pix->pixelformat)) {
+-		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
+-			pix->pixelformat, RVIN_DEFAULT_FORMAT);
+-		pix->pixelformat = RVIN_DEFAULT_FORMAT;
+-	}
+ 
+ 	/* Always recalculate */
+ 	pix->bytesperline = 0;
+@@ -238,42 +280,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Reject ALTERNATE  until support is added to the driver */
+-	switch (pix->field) {
+-	case V4L2_FIELD_TOP:
+-	case V4L2_FIELD_BOTTOM:
+-	case V4L2_FIELD_NONE:
+-	case V4L2_FIELD_INTERLACED_TB:
+-	case V4L2_FIELD_INTERLACED_BT:
+-	case V4L2_FIELD_INTERLACED:
+-		break;
+-	default:
+-		pix->field = V4L2_FIELD_NONE;
+-		break;
+-	}
+-
+-	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
+-	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+-
+-	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
+-			      &pix->height, 4, vin->info->max_height, 2, 0);
+-
+-	pix->bytesperline = max_t(u32, pix->bytesperline,
+-				  rvin_format_bytesperline(pix));
+-	pix->sizeimage = max_t(u32, pix->sizeimage,
+-			       rvin_format_sizeimage(pix));
+-
+-	if (vin->info->model == RCAR_M1 &&
+-	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+-		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+-		return -EINVAL;
+-	}
+-
+-	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
+-		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+-
+-	return 0;
++	return rvin_format_align(vin, pix);
+ }
+ 
+ static int rvin_querycap(struct file *file, void *priv,
 -- 
-2.7.4
-
+2.16.1
