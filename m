@@ -1,65 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:33598 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751213AbeAYSFw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34804 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750959AbeA2SV3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:05:52 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 27/37] clk: renesas: r8a7745: Add rwdt clock
-Date: Thu, 25 Jan 2018 18:03:01 +0000
-Message-Id: <1516903391-30467-28-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 29 Jan 2018 13:21:29 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 2/2] arm64: dts: r8a7795: Update OPPs to support CA53 dfs
+Date: Mon, 29 Jan 2018 19:21:21 +0100
+Message-Id: <20180129182121.833-3-horms+renesas@verge.net.au>
+In-Reply-To: <20180129182121.833-1-horms+renesas@verge.net.au>
+References: <20180129182121.833-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add "rwdt" clock to r8a7745_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+From: Dien Pham <dien.pham.ry@renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Describe frequencies, other than the default for CA53 cores.  This is a
+pre-requisite for using providing alternative frequencies for use with
+CPUFreq with these cores.
+
+Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-index 2859504..87f5a36 100644
---- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-@@ -114,6 +114,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7745_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7745_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7745_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7745_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7745_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7745_CLK_ZS),
- 	DEF_MOD("audio-dmac0",		 502,	R8A7745_CLK_HP),
-@@ -180,6 +181,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index ce85704976f0..086057cffe7f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -223,6 +223,16 @@
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
  
- static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
- 
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <820000>;
 -- 
-2.7.4
+2.11.0
