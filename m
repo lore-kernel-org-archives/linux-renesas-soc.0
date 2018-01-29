@@ -1,205 +1,223 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:38102 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751738AbeA2Qfy (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34562 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeA2SCH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:35:54 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 26/30] rcar-vin: add link notify for Gen3
-Date: Mon, 29 Jan 2018 17:34:31 +0100
-Message-Id: <20180129163435.24936-27-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 29 Jan 2018 13:02:07 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v5 1/6] clk: renesas: rcar-gen3: Add Z clock divider support
+Date: Mon, 29 Jan 2018 19:01:49 +0100
+Message-Id: <20180129180154.29626-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180129180154.29626-1-horms+renesas@verge.net.au>
+References: <20180129180154.29626-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the ability to process media device link change request. Link
-enabling is a bit complicated on Gen3, whether or not it's possible to
-enable a link depends on what other links already are enabled. On Gen3
-the 8 VINs are split into two subgroup's (VIN0-3 and VIN4-7) and from a
-routing perspective these two groups are independent of each other.
-Each subgroup's routing is controlled by the subgroup VIN master
-instance (VIN0 and VIN4).
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-There are a limited number of possible route setups available for each
-subgroup and the configuration of each setup is dictated by the
-hardware. On H3 for example there are 6 possible route setups for each
-subgroup to choose from.
+This patch adds Z clock divider support for R-Car Gen3 SoC.
 
-This leads to the media device link notification code being rather large
-since it will find the best routing configuration to try and accommodate
-as many links as possible. When it's not possible to enable a new link
-due to hardware constrains the link_notifier callback will return
--EMLINK.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 129 ++++++++++++++++++++++++++++
- 1 file changed, 129 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index f08277a0dc11f477..7ceff0de40078580 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -24,6 +24,7 @@
- 
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
-+#include <media/v4l2-mc.h>
- 
- #include "rcar-vin.h"
- 
-@@ -44,6 +45,133 @@
+v4 [Simon Horman]
+* Rebase
+* Divide parent clock by 2 to give correct rate (again)
+* Take care not to overflow multiplication on 32 but platforms
+
+v3 [Simon Horman]
+* Use DIV_ROUND_CLOSEST_ULL instead of open-coding the same behaviour
+  using div_u64()
+* Do not round rate to 100MHz in cpg_z_clk_recalc_rate
+* Remove calculation for PLL post-divider, this is bogus.
+  Instead do not round to closest in cpg_z_clk_round_rate()
+* Drop check for !prate in cpg_z_clk_round_rate
+
+v1 [Simon Horman]
+* Divide parent clock by 2 to give correct rate
+* Use GENMASK, FIELD_{GET,PREP}
+* Correct whitespace
+* Arrange local variables in reverse Christmas tree order
+
+v0 [Takeshi Kihara]
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 133 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.h |   1 +
+ 2 files changed, 134 insertions(+)
+
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 0904886f5501..b85918fa62c6 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -13,6 +13,7 @@
   */
- #define rvin_group_id_to_master(vin) ((vin) < 4 ? 0 : 4)
  
-+/* -----------------------------------------------------------------------------
-+ * Media Controller link notification
+ #include <linux/bug.h>
++#include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+@@ -62,6 +63,134 @@ static void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
+ }
+ 
+ /*
++ * Z Clock
++ *
++ * Traits of this clock:
++ * prepare - clk_prepare only ensures that parents are prepared
++ * enable - clk_enable only ensures that parents are enabled
++ * rate - rate is adjustable.  clk->rate = (parent->rate * mult / 32 ) / 2
++ * parent - fixed parent.  No clk_set_parent support
 + */
++#define CPG_FRQCRB			0x00000004
++#define CPG_FRQCRB_KICK			BIT(31)
++#define CPG_FRQCRC			0x000000e0
++#define CPG_FRQCRC_ZFC_MASK		GENMASK(12, 8)
 +
-+/* group lock should be held when calling this function */
-+static int rvin_group_entity_to_csi_id(struct rvin_group *group,
-+					struct media_entity *entity)
-+{
-+	struct v4l2_subdev *sd;
-+	int i;
-+
-+	if (!is_media_entity_v4l2_subdev(entity))
-+		return -ENODEV;
-+
-+	sd = media_entity_to_v4l2_subdev(entity);
-+
-+	for (i = 0; i < RVIN_CSI_MAX; i++)
-+		if (group->csi[i].subdev == sd)
-+			return i;
-+
-+	return -ENODEV;
-+}
-+
-+static unsigned int rvin_group_get_mask(struct rvin_dev *vin,
-+					enum rvin_csi_id csi_id,
-+					unsigned char chan)
-+{
-+	const struct rvin_group_route *route;
-+	unsigned int mask = 0;
-+
-+	for (route = vin->info->routes; route->mask; route++) {
-+		if (route->vin == vin->id &&
-+		    route->csi == csi_id &&
-+		    route->chan == chan) {
-+			vin_dbg(vin, "Adding route: vin: %d csi: %d chan: %d\n",
-+				route->vin, route->csi, route->chan);
-+			mask |= route->mask;
-+		}
-+	}
-+
-+	return mask;
-+}
-+
-+static int rvin_group_link_notify(struct media_link *link, u32 flags,
-+				  unsigned int notification)
-+{
-+	struct rvin_group *group = container_of(link->graph_obj.mdev,
-+						struct rvin_group, mdev);
-+	unsigned int i, master_id, chan, mask_new, mask = ~0;
-+	struct media_entity *entity;
-+	struct video_device *vdev;
-+	struct media_pad *csi_pad;
-+	struct rvin_dev *vin = NULL;
-+	int csi_id, ret;
-+
-+	ret = v4l2_pipeline_link_notify(link, flags, notification);
-+	if (ret)
-+		return ret;
-+
-+	/* Only care about link enablement for VIN nodes */
-+	if (!(flags & MEDIA_LNK_FL_ENABLED) ||
-+	    !is_media_entity_v4l2_video_device(link->sink->entity))
-+		return 0;
-+
-+	/* If any entity are in use don't allow link changes */
-+	media_device_for_each_entity(entity, &group->mdev)
-+		if (entity->use_count)
-+			return -EBUSY;
-+
-+	mutex_lock(&group->lock);
-+
-+	/* Find VIN and its master for which the link */
-+	entity = link->sink->entity;
-+	vdev = media_entity_to_video_device(entity);
-+	for (i = 0; i < RCAR_VIN_NUM; i++) {
-+		if (group->vin[i] && &group->vin[i]->vdev == vdev) {
-+			vin = group->vin[i];
-+			master_id = rvin_group_id_to_master(vin->id);
-+			break;
-+		}
-+	}
-+	if (WARN_ON(!vin || !group->vin[master_id])) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
-+	/* Build a mask for already enabled links */
-+	for (i = master_id; i < master_id + 4; i++) {
-+		if (!group->vin[i])
-+			continue;
-+
-+		/* Get remote CSI-2, if any */
-+		csi_pad = media_entity_remote_pad(
-+				&group->vin[i]->vdev.entity.pads[0]);
-+		if (!csi_pad)
-+			continue;
-+
-+		csi_id = rvin_group_entity_to_csi_id(group, csi_pad->entity);
-+		chan = rvin_group_csi_pad_to_chan(csi_pad->index);
-+
-+		mask &= rvin_group_get_mask(group->vin[i], csi_id, chan);
-+	}
-+
-+	/* Add the new link to the existing mask and check if it works */
-+	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
-+	chan = rvin_group_csi_pad_to_chan(link->source->index);
-+	mask_new = mask & rvin_group_get_mask(vin, csi_id, chan);
-+
-+	vin_dbg(vin, "Try link change mask: 0x%x new: 0x%x\n", mask, mask_new);
-+
-+	if (!mask_new) {
-+		ret = -EMLINK;
-+		goto out;
-+	}
-+
-+	/* New valid CHSEL found, set the new value */
-+	rvin_set_channel_routing(group->vin[master_id], __ffs(mask_new));
-+out:
-+	mutex_unlock(&group->lock);
-+
-+	return ret;
-+}
-+
-+static const struct media_device_ops rvin_media_ops = {
-+	.link_notify = rvin_group_link_notify,
++struct cpg_z_clk {
++	struct clk_hw hw;
++	void __iomem *reg;
++	void __iomem *kick_reg;
 +};
 +
- /* -----------------------------------------------------------------------------
-  * Gen3 CSI2 Group Allocator
++#define to_z_clk(_hw)	container_of(_hw, struct cpg_z_clk, hw)
++
++static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct cpg_z_clk *zclk = to_z_clk(hw);
++	unsigned int mult;
++
++	mult = 32 - FIELD_GET(CPG_FRQCRC_ZFC_MASK, clk_readl(zclk->reg));
++
++	/* Factor of 2 is for fixed divider */
++	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, 32 * 2);
++}
++
++static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *parent_rate)
++{
++	/* Factor of 2 is for fixed divider */
++	unsigned long prate = *parent_rate / 2;
++	unsigned int mult;
++
++	mult = div_u64(rate * 32ULL, prate);
++	mult = clamp(mult, 1U, 32U);
++
++	return (u64)prate * mult / 32;
++}
++
++static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct cpg_z_clk *zclk = to_z_clk(hw);
++	unsigned int mult;
++	unsigned int i;
++	u32 val, kick;
++
++	/* Factor of 2 is for fixed divider */
++	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * 2, parent_rate);
++	mult = clamp(mult, 1U, 32U);
++
++	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
++		return -EBUSY;
++
++	val = clk_readl(zclk->reg) & ~CPG_FRQCRC_ZFC_MASK;
++	val |= FIELD_PREP(CPG_FRQCRC_ZFC_MASK, 32 - mult);
++	clk_writel(val, zclk->reg);
++
++	/*
++	 * Set KICK bit in FRQCRB to update hardware setting and wait for
++	 * clock change completion.
++	 */
++	kick = clk_readl(zclk->kick_reg);
++	kick |= CPG_FRQCRB_KICK;
++	clk_writel(kick, zclk->kick_reg);
++
++	/*
++	 * Note: There is no HW information about the worst case latency.
++	 *
++	 * Using experimental measurements, it seems that no more than
++	 * ~10 iterations are needed, independently of the CPU rate.
++	 * Since this value might be dependent of external xtal rate, pll1
++	 * rate or even the other emulation clocks rate, use 1000 as a
++	 * "super" safe value.
++	 */
++	for (i = 1000; i; i--) {
++		if (!(clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
++			return 0;
++
++		cpu_relax();
++	}
++
++	return -ETIMEDOUT;
++}
++
++static const struct clk_ops cpg_z_clk_ops = {
++	.recalc_rate = cpg_z_clk_recalc_rate,
++	.round_rate = cpg_z_clk_round_rate,
++	.set_rate = cpg_z_clk_set_rate,
++};
++
++static struct clk * __init cpg_z_clk_register(const char *name,
++					      const char *parent_name,
++					      void __iomem *reg)
++{
++	struct clk_init_data init;
++	struct cpg_z_clk *zclk;
++	struct clk *clk;
++
++	zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
++	if (!zclk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &cpg_z_clk_ops;
++	init.flags = 0;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	zclk->reg = reg + CPG_FRQCRC;
++	zclk->kick_reg = reg + CPG_FRQCRB;
++	zclk->hw.init = &init;
++
++	clk = clk_register(NULL, &zclk->hw);
++	if (IS_ERR(clk))
++		kfree(zclk);
++
++	return clk;
++}
++
++/*
+  * SDn Clock
   */
-@@ -85,6 +213,7 @@ static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
- 	vin_dbg(vin, "found %u enabled VIN's in DT", group->count);
+ #define CPG_SD_STP_HCK		BIT(9)
+@@ -420,6 +549,10 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		mult = 1;
+ 		break;
  
- 	mdev->dev = vin->dev;
-+	mdev->ops = &rvin_media_ops;
++	case CLK_TYPE_GEN3_Z:
++		return cpg_z_clk_register(core->name, __clk_get_name(parent),
++					  base);
++
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index 2e4284399f53..c73d4d6fdc85 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -21,6 +21,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_SD,
+ 	CLK_TYPE_GEN3_R,
+ 	CLK_TYPE_GEN3_PE,
++	CLK_TYPE_GEN3_Z,
+ };
  
- 	match = of_match_node(vin->dev->driver->of_match_table,
- 			      vin->dev->of_node);
+ #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
 -- 
-2.16.1
+2.11.0
