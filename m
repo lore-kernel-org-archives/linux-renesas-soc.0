@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:39078 "EHLO
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:60765 "EHLO
         bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751529AbeA2QfY (ORCPT
+        by vger.kernel.org with ESMTP id S1751739AbeA2Qfw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:35:24 -0500
+        Mon, 29 Jan 2018 11:35:52 -0500
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -12,9 +12,9 @@ Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 09/30] rcar-vin: read subdevice format for crop only when needed
-Date: Mon, 29 Jan 2018 17:34:14 +0100
-Message-Id: <20180129163435.24936-10-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 25/30] rcar-vin: parse Gen3 OF and setup media graph
+Date: Mon, 29 Jan 2018 17:34:30 +0100
+Message-Id: <20180129163435.24936-26-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -23,306 +23,346 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instead of caching the subdevice format each time the video device
-format is set read it directly when it's needed. As it turns out the
-format is only needed when figuring out the max rectangle for cropping.
+The parsing and registering CSI-2 subdevices with the v4l2 async
+framework is a collaborative effort shared between the VIN instances
+which are part of the group. When the last VIN in the group is probed it
+asks all other VINs to parse its share of OF and record the async
+subdevices it finds in the notifier belonging to the last probed VIN.
 
-This simplifies the code and makes it clearer what the source format is
-used for.
+Once all CSI-2 subdevices in this notifier are bound proceed to register
+all VIN video devices of the group and crate media device links between
+all CSI-2 and VIN entities according to the SoC specific routing
+configuration.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 112 +++++++++++++++-------------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  12 ---
- 2 files changed, 61 insertions(+), 63 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 250 +++++++++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  12 +-
+ 2 files changed, 258 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index c2265324c7c96308..4d5be2d0c79c9c9a 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -90,35 +90,54 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
-  * V4L2
-  */
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 4a64df5019ce45f7..f08277a0dc11f477 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -27,6 +27,23 @@
  
--static void rvin_reset_crop_compose(struct rvin_dev *vin)
-+static int rvin_get_source_format(struct rvin_dev *vin,
-+				  struct v4l2_mbus_framefmt *mbus_fmt)
- {
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.pad = vin->digital->source_pad,
-+	};
+ #include "rcar-vin.h"
+ 
++/*
++ * The companion CSI-2 receiver driver (rcar-csi2) is known
++ * and we know it have one source pad (pad 0) and four sink
++ * pads (pad 1-4). So to translate a pad on the remote
++ * CSI-2 receiver to/from the VIN internal channel number simply
++ * subtract/add or one from the pad/chan number.
++ */
++#define rvin_group_csi_pad_to_chan(pad) ((pad) - 1)
++#define rvin_group_csi_chan_to_pad(chan) ((chan) + 1)
++
++/*
++ * Not all VINs are created equal, master VINs control the
++ * routing for other VIN's. We can figure out which VIN is
++ * master by looking at a VINs id
++ */
++#define rvin_group_id_to_master(vin) ((vin) < 4 ? 0 : 4)
++
+ /* -----------------------------------------------------------------------------
+  * Gen3 CSI2 Group Allocator
+  */
+@@ -77,6 +94,8 @@ static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
+ 	snprintf(mdev->bus_info, sizeof(mdev->bus_info), "platform:%s",
+ 		 dev_name(mdev->dev));
+ 
++	group->notifier = NULL;
++
+ 	media_device_init(mdev);
+ 
+ 	ret = media_device_register(&group->mdev);
+@@ -406,6 +425,218 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 	return 0;
+ }
+ 
++/* -----------------------------------------------------------------------------
++ * Group async notifier
++ */
++
++static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
++{
++	struct rvin_dev *vin = notifier_to_vin(notifier);
++	const struct rvin_group_route *route;
++	unsigned int i;
 +	int ret;
 +
-+	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
-+	if (ret)
++	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
++	if (ret) {
++		vin_err(vin, "Failed to register subdev nodes\n");
 +		return ret;
++	}
 +
-+	memcpy(mbus_fmt, &fmt.format, sizeof(*mbus_fmt));
++	/* Register all video nodes for the group */
++	for (i = 0; i < RCAR_VIN_NUM; i++) {
++		if (vin->group->vin[i]) {
++			ret = rvin_v4l2_register(vin->group->vin[i]);
++			if (ret)
++				return ret;
++		}
++	}
++
++	/* Create all media device links between VINs and CSI-2's */
++	mutex_lock(&vin->group->lock);
++	for (route = vin->info->routes; route->mask; route++) {
++		struct media_pad *source_pad, *sink_pad;
++		struct media_entity *source, *sink;
++		unsigned int source_idx;
++
++		/* Check that VIN is part of the group */
++		if (!vin->group->vin[route->vin])
++			continue;
++
++		/* Check that VIN' master is part of the group */
++		if (!vin->group->vin[rvin_group_id_to_master(route->vin)])
++			continue;
++
++		/* Check that CSI-2 is part of the group */
++		if (!vin->group->csi[route->csi].subdev)
++			continue;
++
++		source = &vin->group->csi[route->csi].subdev->entity;
++		source_idx = rvin_group_csi_chan_to_pad(route->chan);
++		source_pad = &source->pads[source_idx];
++
++		sink = &vin->group->vin[route->vin]->vdev.entity;
++		sink_pad = &sink->pads[0];
++
++		/* Skip if link already exists */
++		if (media_entity_find_link(source_pad, sink_pad))
++			continue;
++
++		ret = media_create_pad_link(source, source_idx, sink, 0, 0);
++		if (ret) {
++			vin_err(vin, "Error adding link from %s to %s\n",
++				source->name, sink->name);
++			break;
++		}
++	}
++	mutex_unlock(&vin->group->lock);
++
++	return ret;
++}
++
++static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
++				     struct v4l2_subdev *subdev,
++				     struct v4l2_async_subdev *asd)
++{
++	struct rvin_dev *vin = notifier_to_vin(notifier);
++	unsigned int i;
++
++	for (i = 0; i < RCAR_VIN_NUM; i++)
++		if (vin->group->vin[i])
++			rvin_v4l2_unregister(vin->group->vin[i]);
++
++	mutex_lock(&vin->group->lock);
++
++	for (i = 0; i < RVIN_CSI_MAX; i++) {
++		if (vin->group->csi[i].fwnode != asd->match.fwnode)
++			continue;
++		vin->group->csi[i].subdev = NULL;
++		vin_dbg(vin, "Unbind CSI-2 %s from slot %u\n", subdev->name, i);
++		break;
++	}
++
++	mutex_unlock(&vin->group->lock);
++}
++
++static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
++				   struct v4l2_subdev *subdev,
++				   struct v4l2_async_subdev *asd)
++{
++	struct rvin_dev *vin = notifier_to_vin(notifier);
++	unsigned int i;
++
++	mutex_lock(&vin->group->lock);
++
++	for (i = 0; i < RVIN_CSI_MAX; i++) {
++		if (vin->group->csi[i].fwnode != asd->match.fwnode)
++			continue;
++		vin->group->csi[i].subdev = subdev;
++		vin_dbg(vin, "Bound CSI-2 %s to slot %u\n", subdev->name, i);
++		break;
++	}
++
++	mutex_unlock(&vin->group->lock);
 +
 +	return 0;
 +}
 +
-+static int rvin_reset_crop_compose(struct rvin_dev *vin)
++static const struct v4l2_async_notifier_operations rvin_group_notify_ops = {
++	.bound = rvin_group_notify_bound,
++	.unbind = rvin_group_notify_unbind,
++	.complete = rvin_group_notify_complete,
++};
++
++static int rvin_mc_parse_v4l2(struct device *dev,
++				   struct v4l2_fwnode_endpoint *vep,
++				   struct v4l2_async_subdev *asd)
 +{
-+	struct v4l2_mbus_framefmt source_fmt;
-+	int ret;
++	struct rvin_dev *vin = dev_get_drvdata(dev);
++	struct v4l2_async_notifier *notifier = vin->group->notifier;
++	unsigned int i;
 +
-+	ret = rvin_get_source_format(vin, &source_fmt);
-+	if (ret)
-+		return ret;
++	if (vep->base.port != 1 || vep->base.id >= RVIN_CSI_MAX)
++		return -EINVAL;
 +
- 	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = vin->source.width;
--	vin->crop.height = vin->source.height;
-+	vin->crop.width = source_fmt.width;
-+	vin->crop.height = source_fmt.height;
- 
- 	vin->compose.top = vin->compose.left = 0;
- 	vin->compose.width = vin->format.width;
- 	vin->compose.height = vin->format.height;
++	if (!of_device_is_available(to_of_node(asd->match.fwnode))) {
++		vin_dbg(vin, "Subdevice %pOF disabled, ignoring\n",
++			to_of_node(asd->match.fwnode));
++		return -ENOTCONN;
++
++	}
++
++	for (i = 0; i < notifier->num_subdevs; i++) {
++		if (notifier->subdevs[i]->match.fwnode == asd->match.fwnode) {
++			vin_dbg(vin, "Subdevice %pOF already handled\n",
++				to_of_node(asd->match.fwnode));
++			return -ENOTCONN;
++		}
++	}
++
++	vin->group->csi[vep->base.id].fwnode = asd->match.fwnode;
++
++	vin_dbg(vin, "Add group subdevice %pOF to slot %u\n",
++		to_of_node(asd->match.fwnode), vep->base.id);
 +
 +	return 0;
- }
- 
- static int rvin_reset_format(struct rvin_dev *vin)
++}
++
++static int rvin_mc_try_parse(struct rvin_dev *vin)
++{
++	unsigned int i, count = 0;
++	int ret;
++
++	mutex_lock(&vin->group->lock);
++
++	/* If there already is a notifier something have gone wrong, bail */
++	if (WARN_ON(vin->group->notifier)) {
++		mutex_unlock(&vin->group->lock);
++		return -EINVAL;
++	}
++
++	/* If not all VIN's are registered don't register the notifier */
++	for (i = 0; i < RCAR_VIN_NUM; i++)
++		if (vin->group->vin[i])
++			count++;
++
++	if (vin->group->count != count) {
++		mutex_unlock(&vin->group->lock);
++		return 0;
++	}
++
++	/*
++	 * Have all VIN's look for subdevices. Some subdevices will overlap
++	 * but the parser function can handle it, so each subdevice will
++	 * only be registered once with the notifier
++	 */
++
++	vin->group->notifier = &vin->notifier;
++
++	for (i = 0; i < RCAR_VIN_NUM; i++) {
++		if (!vin->group->vin[i])
++			continue;
++
++		ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
++				vin->group->vin[i]->dev, vin->group->notifier,
++				sizeof(struct v4l2_async_subdev), 1,
++				rvin_mc_parse_v4l2);
++		if (ret) {
++			mutex_unlock(&vin->group->lock);
++			return ret;
++		}
++	}
++
++	mutex_unlock(&vin->group->lock);
++
++	vin->group->notifier->ops = &rvin_group_notify_ops;
++
++	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
++	if (ret < 0) {
++		vin_err(vin, "Notifier registration failed\n");
++		return ret;
++	}
++
++	return 0;
++}
++
+ static int rvin_mc_init(struct rvin_dev *vin)
  {
--	struct v4l2_subdev_format fmt = {
--		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
--	};
--	struct v4l2_mbus_framefmt *mf = &fmt.format;
-+	struct v4l2_mbus_framefmt source_fmt;
  	int ret;
- 
--	fmt.pad = vin->digital->source_pad;
--
--	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
-+	ret = rvin_get_source_format(vin, &source_fmt);
+@@ -419,7 +650,15 @@ static int rvin_mc_init(struct rvin_dev *vin)
  	if (ret)
  		return ret;
  
--	vin->format.width	= mf->width;
--	vin->format.height	= mf->height;
--	vin->format.colorspace	= mf->colorspace;
--	vin->format.field	= mf->field;
-+	v4l2_fill_pix_format(&vin->format, &source_fmt);
- 
- 	/*
- 	 * If the subdevice uses ALTERNATE field mode and G_STD is
-@@ -147,7 +166,9 @@ static int rvin_reset_format(struct rvin_dev *vin)
- 		break;
- 	}
- 
--	rvin_reset_crop_compose(vin);
-+	ret = rvin_reset_crop_compose(vin);
+-	return rvin_group_get(vin);
++	ret = rvin_group_get(vin);
 +	if (ret)
 +		return ret;
- 
- 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
- 	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
-@@ -156,9 +177,7 @@ static int rvin_reset_format(struct rvin_dev *vin)
++
++	ret = rvin_mc_try_parse(vin);
++	if (ret)
++		rvin_group_put(vin);
++
++	return ret;
  }
  
- static int __rvin_try_format_source(struct rvin_dev *vin,
--				    u32 which,
--				    struct v4l2_pix_format *pix,
--				    struct rvin_source_fmt *source)
-+				    u32 which, struct v4l2_pix_format *pix)
- {
- 	struct v4l2_subdev *sd;
- 	struct v4l2_subdev_pad_config *pad_cfg;
-@@ -190,25 +209,16 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ /* -----------------------------------------------------------------------------
+@@ -539,10 +778,15 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
  
- 	v4l2_fill_pix_format(pix, &format.format);
+-	if (vin->info->use_mc)
++	if (vin->info->use_mc) {
++		mutex_lock(&vin->group->lock);
++		if (vin->group->notifier == &vin->notifier)
++			vin->group->notifier = NULL;
++		mutex_unlock(&vin->group->lock);
+ 		rvin_group_put(vin);
+-	else
++	} else {
+ 		v4l2_ctrl_handler_free(&vin->ctrl_handler);
++	}
  
--	source->width = pix->width;
--	source->height = pix->height;
--
- 	pix->field = field;
- 	pix->width = width;
- 	pix->height = height;
--
--	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
--		source->height);
--
- done:
- 	v4l2_subdev_free_pad_config(pad_cfg);
- 	return ret;
- }
+ 	rvin_dma_unregister(vin);
  
- static int __rvin_try_format(struct rvin_dev *vin,
--			     u32 which,
--			     struct v4l2_pix_format *pix,
--			     struct rvin_source_fmt *source)
-+			     u32 which, struct v4l2_pix_format *pix)
- {
- 	u32 walign;
- 	int ret;
-@@ -229,7 +239,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	pix->sizeimage = 0;
- 
- 	/* Limit to source capabilities */
--	ret = __rvin_try_format_source(vin, which, pix, source);
-+	ret = __rvin_try_format_source(vin, which, pix);
- 	if (ret)
- 		return ret;
- 
-@@ -238,7 +248,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	case V4L2_FIELD_BOTTOM:
- 	case V4L2_FIELD_ALTERNATE:
- 		pix->height /= 2;
--		source->height /= 2;
- 		break;
- 	case V4L2_FIELD_NONE:
- 	case V4L2_FIELD_INTERLACED_TB:
-@@ -290,35 +299,26 @@ static int rvin_try_fmt_vid_cap(struct file *file, void *priv,
- 				struct v4l2_format *f)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
--	struct rvin_source_fmt source;
- 
--	return __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, &f->fmt.pix,
--				 &source);
-+	return __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, &f->fmt.pix);
- }
- 
- static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
- 			      struct v4l2_format *f)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
--	struct rvin_source_fmt source;
- 	int ret;
- 
- 	if (vb2_is_busy(&vin->queue))
- 		return -EBUSY;
- 
--	ret = __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_ACTIVE, &f->fmt.pix,
--				&source);
-+	ret = __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_ACTIVE, &f->fmt.pix);
- 	if (ret)
- 		return ret;
- 
--	vin->source.width = source.width;
--	vin->source.height = source.height;
--
- 	vin->format = f->fmt.pix;
- 
--	rvin_reset_crop_compose(vin);
--
--	return 0;
-+	return rvin_reset_crop_compose(vin);
- }
- 
- static int rvin_g_fmt_vid_cap(struct file *file, void *priv,
-@@ -346,6 +346,8 @@ static int rvin_g_selection(struct file *file, void *fh,
- 			    struct v4l2_selection *s)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
-+	struct v4l2_mbus_framefmt source_fmt;
-+	int ret;
- 
- 	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
- 		return -EINVAL;
-@@ -353,9 +355,12 @@ static int rvin_g_selection(struct file *file, void *fh,
- 	switch (s->target) {
- 	case V4L2_SEL_TGT_CROP_BOUNDS:
- 	case V4L2_SEL_TGT_CROP_DEFAULT:
-+		ret = rvin_get_source_format(vin, &source_fmt);
-+		if (ret)
-+			return ret;
- 		s->r.left = s->r.top = 0;
--		s->r.width = vin->source.width;
--		s->r.height = vin->source.height;
-+		s->r.width = source_fmt.width;
-+		s->r.height = source_fmt.height;
- 		break;
- 	case V4L2_SEL_TGT_CROP:
- 		s->r = vin->crop;
-@@ -380,6 +385,7 @@ static int rvin_s_selection(struct file *file, void *fh,
- 			    struct v4l2_selection *s)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
-+	struct v4l2_mbus_framefmt source_fmt;
- 	const struct rvin_video_format *fmt;
- 	struct v4l2_rect r = s->r;
- 	struct v4l2_rect max_rect;
-@@ -387,6 +393,7 @@ static int rvin_s_selection(struct file *file, void *fh,
- 		.width = 6,
- 		.height = 2,
- 	};
-+	int ret;
- 
- 	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
- 		return -EINVAL;
-@@ -396,22 +403,25 @@ static int rvin_s_selection(struct file *file, void *fh,
- 	switch (s->target) {
- 	case V4L2_SEL_TGT_CROP:
- 		/* Can't crop outside of source input */
-+		ret = rvin_get_source_format(vin, &source_fmt);
-+		if (ret)
-+			return ret;
- 		max_rect.top = max_rect.left = 0;
--		max_rect.width = vin->source.width;
--		max_rect.height = vin->source.height;
-+		max_rect.width = source_fmt.width;
-+		max_rect.height = source_fmt.height;
- 		v4l2_rect_map_inside(&r, &max_rect);
- 
--		v4l_bound_align_image(&r.width, 2, vin->source.width, 1,
--				      &r.height, 4, vin->source.height, 2, 0);
-+		v4l_bound_align_image(&r.width, 2, source_fmt.width, 1,
-+				      &r.height, 4, source_fmt.height, 2, 0);
- 
--		r.top  = clamp_t(s32, r.top, 0, vin->source.height - r.height);
--		r.left = clamp_t(s32, r.left, 0, vin->source.width - r.width);
-+		r.top  = clamp_t(s32, r.top, 0, source_fmt.height - r.height);
-+		r.left = clamp_t(s32, r.left, 0, source_fmt.width - r.width);
- 
- 		vin->crop = s->r = r;
- 
- 		vin_dbg(vin, "Cropped %dx%d@%d:%d of %dx%d\n",
- 			r.width, r.height, r.left, r.top,
--			vin->source.width, vin->source.height);
-+			source_fmt.width, source_fmt.height);
- 		break;
- 	case V4L2_SEL_TGT_COMPOSE:
- 		/* Make sure compose rect fits inside output format */
 diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 8daba9db0e927a49..39051da31650bd79 100644
+index ca2c2a23cef8506c..6cef78df42047c8c 100644
 --- a/drivers/media/platform/rcar-vin/rcar-vin.h
 +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -48,16 +48,6 @@ enum rvin_dma_state {
- 	STOPPING,
+@@ -207,9 +207,13 @@ struct rvin_dev {
+  *
+  * @mdev:		media device which represents the group
+  *
+- * @lock:		protects the count and vin members
++ * @lock:		protects the count, notifier, vin and csi members
+  * @count:		number of enabled VIN instances found in DT
++ * @notifier:		pointer to the notifier of a VIN which handles the
++ *			groups async sub-devices.
+  * @vin:		VIN instances which are part of the group
++ * @csi:		array of pairs of fwnode and subdev pointers
++ *			to all CSI-2 subdevices.
+  */
+ struct rvin_group {
+ 	struct kref refcount;
+@@ -218,7 +222,13 @@ struct rvin_group {
+ 
+ 	struct mutex lock;
+ 	unsigned int count;
++	struct v4l2_async_notifier *notifier;
+ 	struct rvin_dev *vin[RCAR_VIN_NUM];
++
++	struct {
++		struct fwnode_handle *fwnode;
++		struct v4l2_subdev *subdev;
++	} csi[RVIN_CSI_MAX];
  };
  
--/**
-- * struct rvin_source_fmt - Source information
-- * @width:	Width from source
-- * @height:	Height from source
-- */
--struct rvin_source_fmt {
--	u32 width;
--	u32 height;
--};
--
- /**
-  * struct rvin_video_format - Data format stored in memory
-  * @fourcc:	Pixelformat
-@@ -124,7 +114,6 @@ struct rvin_info {
-  * @sequence:		V4L2 buffers sequence number
-  * @state:		keeps track of operation state
-  *
-- * @source:		active format from the video source
-  * @format:		active V4L2 pixel format
-  *
-  * @crop:		active cropping
-@@ -151,7 +140,6 @@ struct rvin_dev {
- 	unsigned int sequence;
- 	enum rvin_dma_state state;
- 
--	struct rvin_source_fmt source;
- 	struct v4l2_pix_format format;
- 
- 	struct v4l2_rect crop;
+ int rvin_dma_register(struct rvin_dev *vin, int irq);
 -- 
 2.16.1
