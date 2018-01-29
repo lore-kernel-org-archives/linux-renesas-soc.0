@@ -1,57 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:24963 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934161AbeAXPpJ (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43692 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751072AbeA2RSx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jan 2018 10:45:09 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Joerg Roedel <joro@8bytes.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  1/3] dt-bindings: iommu: ipmmu-vmsa: Add device tree support for r8a774[35]
-Date: Wed, 24 Jan 2018 15:42:00 +0000
-Message-Id: <1516808522-17348-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
-References: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 29 Jan 2018 12:18:53 -0500
+Date: Mon, 29 Jan 2018 11:18:51 -0600
+From: Rob Herring <robh@kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 11/16] mmc: tmio: deprecate
+ "toshiba,mmc-wrprotect-disable" DT property
+Message-ID: <20180129171851.rlraudj2bq7irmdw@rob-hp-laptop>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-12-git-send-email-yamada.masahiro@socionext.com>
+ <CAK7LNAQUJw-fjuJO68Kvskn8BRYW3rZj4YMtbo-Oxfv7c=6Ggg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQUJw-fjuJO68Kvskn8BRYW3rZj4YMtbo-Oxfv7c=6Ggg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document r8a774[35] specific compatible strings. The Renesas RZ/G1[ME]
-(r8a774[35]) IPMMU are identical to the R-Car Gen2 family.
+On Thu, Jan 18, 2018 at 10:58:36AM +0900, Masahiro Yamada wrote:
+> 2018-01-18 1:28 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> > This property is equivalent to "disable-wp" defined in
+> > Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> 
+> This is mistake.
+> 
+> "disable-wp" is defined in
+> 
+> Documentation/devicetree/bindings/mmc/mmc.txt
+> 
+> 
+> 
+> 
+> > The TMIO MMC core calls mmc_of_parse(), and it sets
+> > MMC_CAP2_NO_WRITE_PROTECT if "disable-wp" property is present.
+> >
+> > We do not need a vendor-specific property to do the same thing.
+> >
+> > Let's remove the description from the dt-binding to prevent new boards
+> > from using it.
+> >
+> > I am keeping the driver code for existing DT files, but added
+> > comments that this is deprecated.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> > Changes in v3:
+> >   - newly added
+> >
+> > Changes in v2: None
+> >
+> >  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 -
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Other than the above,
 
-diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-index 857df92..7d300af 100644
---- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-@@ -11,12 +11,15 @@ Required Properties:
-     the device is compatible with the R-Car Gen2 VMSA-compatible IPMMU.
- 
-     - "renesas,ipmmu-r8a73a4" for the R8A73A4 (R-Mobile APE6) IPMMU.
-+    - "renesas,ipmmu-r8a7743" for the R8A7743 (RZ/G1M) IPMMU.
-+    - "renesas,ipmmu-r8a7745" for the R8A7745 (RZ/G1E) IPMMU.
-     - "renesas,ipmmu-r8a7790" for the R8A7790 (R-Car H2) IPMMU.
-     - "renesas,ipmmu-r8a7791" for the R8A7791 (R-Car M2-W) IPMMU.
-     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
-     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
-     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
--    - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
-+    - "renesas,ipmmu-vmsa" for generic R-Car Gen2 or RZ/G1 VMSA-compatible
-+			   IPMMU.
- 
-   - reg: Base address and size of the IPMMU registers.
-   - interrupts: Specifiers for the MMU fault interrupts. For instances that
--- 
-2.7.4
+Acked-by: Rob Herring <robh@kernel.org>
+
+> >  drivers/mmc/host/tmio_mmc_core.c                   | 5 +++++
+> >  2 files changed, 5 insertions(+), 1 deletion(-)
