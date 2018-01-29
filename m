@@ -1,78 +1,38 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:35557 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751378AbeA2Pqy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 Jan 2018 10:46:54 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdX1iitObng0nvhmP4r5yb1CnqBwbchu6qDQLtqjPLbDQg@mail.gmail.com>
+References: <1510759526-30346-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1510759526-30346-6-git-send-email-ulrich.hecht+renesas@gmail.com> <CAMuHMdX1iitObng0nvhmP4r5yb1CnqBwbchu6qDQLtqjPLbDQg@mail.gmail.com>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Date: Mon, 29 Jan 2018 16:46:52 +0100
+Message-ID: <CAO3366w0GA+MsL-vyUsDtVAhNnHuX9zEy2KaZxQh_YQ4uJsL0Q@mail.gmail.com>
+Subject: Re: [PATCH 5/6] arm64: renesas: draak: enable I2C controller 1
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 22/37] watchdog: renesas_wdt: Add restart support
-Date: Thu, 25 Jan 2018 18:02:56 +0000
-Message-Id: <1516903391-30467-23-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Linux I2C <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This commit extends the driver to add restart support by implementing
-the restart callback to trigger the watchdog as quickly as possible.
+On Thu, Nov 16, 2017 at 10:31 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> If no devices are connected, perhaps it's wise to defer the status update
+> to e.g. an overlay that describes what's connected to CN23?
+>
+> Or do you want it enabled to allow adding devices manually using
+> /sys/bus/i2c/devices/i2c-1/new_device?
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/watchdog/renesas_wdt.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Indeed. It's an unpopulated bus on a development board with an
+external connector, so I think it's valid to assume that it is
+intended to be used for experimentation.
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 831ef83..120ddac 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
- 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
- }
- 
-+static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-+			void *data)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	pm_runtime_get_sync(wdev->parent);
-+
-+	rwdt_write(priv, 0x00, RWTCSRB);
-+	rwdt_write(priv, 0x00, RWTCSRA);
-+	rwdt_write(priv, 0xffff, RWTCNT);
-+
-+	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-+		cpu_relax();
-+
-+	rwdt_write(priv, 0x80, RWTCSRA);
-+	return 0;
-+}
-+
- static const struct watchdog_info rwdt_ident = {
- 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
- 	.identity = "Renesas WDT Watchdog",
-@@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
- 	.stop = rwdt_stop,
- 	.ping = rwdt_init_timeout,
- 	.get_timeleft = rwdt_get_timeleft,
-+	.restart = rwdt_restart,
- };
- 
- static int rwdt_probe(struct platform_device *pdev)
--- 
-2.7.4
-
+CU
+Uli
