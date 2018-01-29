@@ -1,106 +1,206 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60158 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbeACRoE (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:21635 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751764AbeA2QgB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 12:44:04 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: Fix timeout failures for TX-only DMA transfers" to the spi tree
-In-Reply-To: <1514999474-22288-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1eWn56-0005rw-N5@debutante>
-Date: Wed, 03 Jan 2018 17:44:00 +0000
+        Mon, 29 Jan 2018 11:36:01 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 28/30] rcar-vin: enable support for r8a7795
+Date: Mon, 29 Jan 2018 17:34:33 +0100
+Message-Id: <20180129163435.24936-29-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Add the SoC specific information for Renesas r8a7795 ES1.x and ES2.0.
 
-   spi: sh-msiof: Fix timeout failures for TX-only DMA transfers
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 89434c3c35081439627baa2225622d5bd12242fe Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 3 Jan 2018 18:11:14 +0100
-Subject: [PATCH] spi: sh-msiof: Fix timeout failures for TX-only DMA transfers
-
-When using RX (with or without TX), the DMA interrupt triggers
-completion when the RX FIFO has been emptied, i.e. after the full
-transfer has finished.
-
-However, when using TX without RX, the DMA interrupt triggers completion
-as soon as the DMA engine has filled the TX FIFO, i.e. before the full
-transfer has finished.  Then sh_msiof_modify_ctr_wait() will spin until
-the transfer has really finished and the TFSE bit is cleared, for at
-most 1 ms.  For slow speeds and/or large transfers, this may cause
-timeouts and transfer failures:
-
-    spi_sh_msiof e6e10000.spi: failed to shut down hardware
-    74x164 spi2.0: SPI transfer failed: -110
-    spi_master spi2: failed to transfer one message from queue
-    74x164 spi2.0: Failed writing: -110
-
-Fix this by waiting explicitly until the TX FIFO has been emptied.
-
-Based on a patch in the BSP by Hiromitsu Yamasaki.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/spi/spi-sh-msiof.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/media/platform/rcar-vin/Kconfig     |   2 +-
+ drivers/media/platform/rcar-vin/rcar-core.c | 120 ++++++++++++++++++++++++++++
+ 2 files changed, 121 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index fcd261f98b9f..06bc4b170c47 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -784,11 +784,21 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 		goto stop_dma;
- 	}
+diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
+index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
+--- a/drivers/media/platform/rcar-vin/Kconfig
++++ b/drivers/media/platform/rcar-vin/Kconfig
+@@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
+ 	select V4L2_FWNODE
+ 	---help---
+ 	  Support for Renesas R-Car Video Input (VIN) driver.
+-	  Supports R-Car Gen2 SoCs.
++	  Supports R-Car Gen2 and Gen3 SoCs.
  
--	/* wait for tx fifo to be emptied / rx fifo to be filled */
-+	/* wait for tx/rx DMA completion */
- 	ret = sh_msiof_wait_for_completion(p);
- 	if (ret)
- 		goto stop_reset;
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called rcar-vin.
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 7ceff0de40078580..43d2fa83875817f0 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -21,6 +21,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
++#include <linux/sys_soc.h>
  
-+	if (!rx) {
-+		reinit_completion(&p->done);
-+		sh_msiof_write(p, IER, IER_TEOFE);
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-fwnode.h>
+@@ -815,6 +816,104 @@ static const struct rvin_info rcar_info_gen2 = {
+ 	.max_height = 2048,
+ };
+ 
++static const struct rvin_group_route rcar_info_r8a7795_routes[] = {
++	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
++	{ .vin = 0, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
++	{ .vin = 0, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(2) },
++	{ .vin = 1, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
++	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(1) | BIT(3) },
++	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
++	{ .vin = 1, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(0) },
++	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
++	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
++	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
++	{ .vin = 3, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) | BIT(2) },
++	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
++	{ .vin = 3, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
++	{ .vin = 4, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(0) | BIT(3) },
++	{ .vin = 4, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
++	{ .vin = 4, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(2) },
++	{ .vin = 5, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
++	{ .vin = 5, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(1) | BIT(3) },
++	{ .vin = 5, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(2) },
++	{ .vin = 5, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(0) },
++	{ .vin = 6, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(1) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
++	{ .vin = 6, .csi = RVIN_CSI41, .chan = 2, .mask = BIT(3) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
++	{ .vin = 7, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(0) },
++	{ .vin = 7, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) | BIT(2) },
++	{ .vin = 7, .csi = RVIN_CSI41, .chan = 3, .mask = BIT(3) },
++	{ .vin = 7, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
++	{ /* Sentinel */ }
++};
 +
-+		/* wait for tx fifo to be emptied */
-+		ret = sh_msiof_wait_for_completion(p);
-+		if (ret)
-+			goto stop_reset;
-+	}
++static const struct rvin_info rcar_info_r8a7795 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a7795_routes,
++};
 +
- 	/* clear status bits */
- 	sh_msiof_reset_str(p);
++static const struct rvin_group_route rcar_info_r8a7795es1_routes[] = {
++	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
++	{ .vin = 0, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
++	{ .vin = 0, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(2) | BIT(5) },
++	{ .vin = 1, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
++	{ .vin = 1, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(1) },
++	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
++	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(3) },
++	{ .vin = 1, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
++	{ .vin = 1, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(5) },
++	{ .vin = 2, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(0) },
++	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
++	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
++	{ .vin = 2, .csi = RVIN_CSI21, .chan = 2, .mask = BIT(5) },
++	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
++	{ .vin = 3, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
++	{ .vin = 3, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(2) },
++	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
++	{ .vin = 3, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
++	{ .vin = 3, .csi = RVIN_CSI21, .chan = 3, .mask = BIT(5) },
++	{ .vin = 4, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(0) | BIT(3) },
++	{ .vin = 4, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
++	{ .vin = 4, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(2) | BIT(5) },
++	{ .vin = 5, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
++	{ .vin = 5, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(1) },
++	{ .vin = 5, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(2) },
++	{ .vin = 5, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(3) },
++	{ .vin = 5, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
++	{ .vin = 5, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(5) },
++	{ .vin = 6, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(0) },
++	{ .vin = 6, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(1) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
++	{ .vin = 6, .csi = RVIN_CSI41, .chan = 2, .mask = BIT(3) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
++	{ .vin = 6, .csi = RVIN_CSI21, .chan = 2, .mask = BIT(5) },
++	{ .vin = 7, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(0) },
++	{ .vin = 7, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
++	{ .vin = 7, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(2) },
++	{ .vin = 7, .csi = RVIN_CSI41, .chan = 3, .mask = BIT(3) },
++	{ .vin = 7, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
++	{ .vin = 7, .csi = RVIN_CSI21, .chan = 3, .mask = BIT(5) },
++	{ /* Sentinel */ }
++};
++
++static const struct rvin_info rcar_info_r8a7795es1 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a7795es1_routes,
++};
++
+ static const struct of_device_id rvin_of_id_table[] = {
+ 	{
+ 		.compatible = "renesas,vin-r8a7778",
+@@ -844,12 +943,25 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,rcar-gen2-vin",
+ 		.data = &rcar_info_gen2,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a7795",
++		.data = &rcar_info_r8a7795,
++	},
+ 	{ /* Sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
  
++static const struct soc_device_attribute r8a7795es1[] = {
++	{
++		.soc_id = "r8a7795", .revision = "ES1.*",
++		.data = &rcar_info_r8a7795es1,
++	},
++	{ /* Sentinel */ }
++};
++
+ static int rcar_vin_probe(struct platform_device *pdev)
+ {
++	const struct soc_device_attribute *attr;
+ 	struct rvin_dev *vin;
+ 	struct resource *mem;
+ 	int irq, ret;
+@@ -861,6 +973,14 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 	vin->dev = &pdev->dev;
+ 	vin->info = of_device_get_match_data(&pdev->dev);
+ 
++	/*
++	 * Special care is needed on r8a7795 ES1.x since it
++	 * uses different routing than r8a7795 ES2.0.
++	 */
++	attr = soc_device_match(r8a7795es1);
++	if (attr)
++		vin->info = attr->data;
++
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (mem == NULL)
+ 		return -EINVAL;
 -- 
-2.15.1
+2.16.1
