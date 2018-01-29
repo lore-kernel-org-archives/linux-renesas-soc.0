@@ -1,105 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60436 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932746AbeALA7F (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34562 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751603AbeA2SCK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Jan 2018 19:59:05 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH 01/10] dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
-Date: Fri, 12 Jan 2018 02:58:49 +0200
-Message-Id: <20180112005858.26472-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180112005858.26472-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 29 Jan 2018 13:02:10 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v5 3/6] clk: renesas: r8a7795: Add Z clock
+Date: Mon, 29 Jan 2018 19:01:51 +0100
+Message-Id: <20180129180154.29626-4-horms+renesas@verge.net.au>
+In-Reply-To: <20180129180154.29626-1-horms+renesas@verge.net.au>
+References: <20180129180154.29626-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R-Car Gen2 and Gen3 SoCs have internal LVDS encoders. Add
-corresponding device tree bindings.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This patch adds Z clock for R8A7795 SoC.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../bindings/display/bridge/renesas,lvds.txt       | 54 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-new file mode 100644
-index 000000000000..459c56822eda
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-@@ -0,0 +1,54 @@
-+Renesas R-Car LVDS Encoder
-+==========================
-+
-+These DT bindings describe the LVDS encoder embedded in the Renesas R-Car Gen2
-+and Gen3 SoCs.
-+
-+Required properties:
-+
-+- compatible : Shall contain one of
-+  - "renesas,lvds-r8a7743" for R8A7790 (R-Car RZ/G1M) compatible LVDS encoders
-+  - "renesas,lvds-r8a7790" for R8A7790 (R-Car H2) compatible LVDS encoders
-+  - "renesas,lvds-r8a7791" for R8A7791 (R-Car M2-W) compatible LVDS encoders
-+  - "renesas,lvds-r8a7793" for R8A7791 (R-Car M2-N) compatible LVDS encoders
-+  - "renesas,lvds-r8a7795" for R8A7795 (R-Car H3) compatible LVDS encoders
-+  - "renesas,lvds-r8a7796" for R8A7796 (R-Car M3-W) compatible LVDS encoders
-+
-+- reg: Base address and length for the memory-mapped registers
-+- clocks: A phandle + clock-specifier pair for the functional clock
-+
-+Requires nodes:
-+
-+The LVDS encoder has two video ports. Their connections are modelled using the
-+OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-+
-+- Video port 0 corresponds to the parallel input
-+- Video port 1 corresponds to the LVDS output
-+
-+Each port shall have a single endpoint.
-+
-+
-+Example:
-+
-+	lvds0: lvds@feb90000 {
-+		compatible = "renesas,lvds-r8a7790";
-+		reg = <0 0xfeb90000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 726>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds0_in: endpoint {
-+					remote-endpoint = <&du_out_lvds0>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds0_out: endpoint {
-+				};
-+			};
-+		};
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 40aea858c7ea..5609a7f5ac4d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4725,6 +4725,7 @@ F:	drivers/gpu/drm/rcar-du/
- F:	drivers/gpu/drm/shmobile/
- F:	include/linux/platform_data/shmob_drm.h
- F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-+F:	Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
- F:	Documentation/devicetree/bindings/display/renesas,du.txt
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index b1d9f48eae9e..995a4c4fb01e 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -74,6 +74,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+ 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
  
- DRM DRIVERS FOR ROCKCHIP
+ 	/* Core Clock Outputs */
++	DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+ 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
