@@ -1,62 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56212 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751405AbeA3KnS (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54164 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751858AbeA2PqJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 05:43:18 -0500
-Date: Tue, 30 Jan 2018 11:43:16 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, kieran.bingham@ideasonboard.com,
-        magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] arm64: renesas: draak: enable I2C controller 0
- and EEPROM
-Message-ID: <20180130104314.wttl5wzddz75qmi4@ninjato>
+        Mon, 29 Jan 2018 10:46:09 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, kieran.bingham@ideasonboard.com
+Cc: wsa@the-dreams.de, magnus.damm@gmail.com,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v2 2/5] arm64: renesas: draak: enable I2C controller 0 and EEPROM
+Date: Mon, 29 Jan 2018 16:45:45 +0100
+Message-Id: <1517240748-14780-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1517240748-14780-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="njph3ojqjfipt7td"
-Content-Disposition: inline
-In-Reply-To: <1517240748-14780-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Enables EEPROM on I2C0 on the Draak board.
 
---njph3ojqjfipt7td
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-On Mon, Jan 29, 2018 at 04:45:45PM +0100, Ulrich Hecht wrote:
-> Enables EEPROM on I2C0 on the Draak board.
->=20
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---njph3ojqjfipt7td
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpwTEIACgkQFA3kzBSg
-Kbak9g//TE/AAqpeHCVft4/FDUAx9kSAPMZgAWM2hAk9apYPYS/sgycwxlXxDOJ9
-uQ1UsCrB4AS0T72FxdzjI4m2kWZnTALCpq7EYljPpbDPiVmR7ZPG1+PjPqidDZw5
-JNMgSOW3+NP3oxyZlB5qxgmgSfOIcI6Bv69n79aijGMD7H0erzluUNEcatAKjANg
-n4FoePGTGHhOd4E0gxQWkrCbSkio7qA3rRLqr/79E0Fvx69EHOToI0lx97zJxFzu
-E4nO0rN26IIa5TXSNacEXhUimg+oLBXDAzYJ69PfDCtU4tB8TWlvea++WGfaMeu3
-Z4/BfD8qsU67pm78vGYRLVmTNyi38J+J0v5eDAv0VBMcBPqGc96mIYlqqbFjemNq
-5CoxgUTC9d7MPHhYnALNUSOKTaaoLZCcFvoIB8TVfN7QSWolGRUieLPo/LNFZrzc
-0DYv3e66UPPmwgXEau7/ZsRNspCA3gqMKBAZ2m1ooM57YuqXt+EFNfa0y1TWuTIO
-37N2NPHWpSB40YYLcdrrOz7ZMRLz5e3witccslLvQAVmGaIaDLj+3s1w8gfnmRXS
-AA2qoljFxqO1zcqtyNw5bsjYKvTCj7+99kLusi7ez4HDkpc3jDJ1gneQEApMl3Wl
-OJZ5jfKmMlM2q2cSv6fIw13ozHzJIOiOwH+Ih8A0nfBtmVINRkA=
-=adcL
------END PGP SIGNATURE-----
-
---njph3ojqjfipt7td--
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index 09de73b..6ff9d3e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -46,6 +46,11 @@
+ 		};
+ 	};
+ 
++	i2c0_pins: i2c0 {
++		groups = "i2c0";
++		function = "i2c0";
++	};
++
+ 	pwm0_pins: pwm0 {
+ 		groups = "pwm0_c";
+ 		function = "pwm0";
+@@ -67,6 +72,18 @@
+ 	};
+ };
+ 
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	eeprom@50 {
++		compatible = "rohm,br24t01", "atmel,24c01";
++		reg = <0x50>;
++		pagesize = <8>;
++	};
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+-- 
+2.7.4
