@@ -1,51 +1,35 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] usb: renesas_usbhs: Add RZ/A1 support
-Date: Fri,  5 Jan 2018 13:46:06 -0500
-Message-Id: <20180105184609.24106-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34807 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750959AbeA2SVb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 Jan 2018 13:21:31 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 0/2] arm64: dts: renesas: Update OPPs to support CA53 dfs
+Date: Mon, 29 Jan 2018 19:21:19 +0100
+Message-Id: <20180129182121.833-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds RZ/A1 gadget support to the renesas_usbhs driver.
-Basically, it's almost the same HW as the R-Car (and SH) parts.
-The only real difference is the some extra registers for the PHY.
+Describe frequencies, other than the default for CA53 cores.  This is a
+pre-requisite for using providing alternative frequencies for use with
+CPUFreq with these cores.
 
-This was tested on an RSK board by connecting to a PC as an
-Ethernet CDC gadget.
+CPUFreq requires Z and Z2 clock support to function.
+That this patchset and that dependency can be found at:
 
-v2:
- * Node name is now generic 'usb@'
- * GIC_SPI (73-32) is now just GIC_SPI 41
- * All hex number are lower case
- * Added Reviewed-by
+https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq-v5
 
-Chris Brandt (3):
-  usb: renesas_usbhs: Add support for RZ/A1
-  dt-bindings: usb: renesas_usbhs: Add support for RZ/A1
-  ARM: dts: r7s72100: add USB device to device tree
+Dien Pham (2):
+  arm64: dts: r8a7796: Update OPPs to support CA53 dfs
+  arm64: dts: r8a7795: Update OPPs to support CA53 dfs
 
- .../devicetree/bindings/usb/renesas_usbhs.txt      |  2 +
- arch/arm/boot/dts/r7s72100.dtsi                    | 20 +++++++++
- drivers/usb/renesas_usbhs/Makefile                 |  2 +-
- drivers/usb/renesas_usbhs/common.c                 | 17 +++++++
- drivers/usb/renesas_usbhs/common.h                 |  6 +++
- drivers/usb/renesas_usbhs/rza.c                    | 52 ++++++++++++++++++++++
- drivers/usb/renesas_usbhs/rza.h                    |  4 ++
- include/linux/usb/renesas_usbhs.h                  |  1 +
- 8 files changed, 103 insertions(+), 1 deletion(-)
- create mode 100644 drivers/usb/renesas_usbhs/rza.c
- create mode 100644 drivers/usb/renesas_usbhs/rza.h
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 10 ++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
 -- 
-2.15.1
-
-
+2.11.0
