@@ -1,37 +1,57 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33056 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751635AbeAaUX1 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jan 2018 15:23:27 -0500
-Received: by mail-lf0-f67.google.com with SMTP id t139so22714784lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jan 2018 12:23:27 -0800 (PST)
-To: Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/2] Renesas R8A77980 CPG/MSSR clock support
-Message-ID: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
-Date: Wed, 31 Jan 2018 23:23:23 +0300
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 18/30] rcar-vin: add check for colorspace
+Date: Mon, 29 Jan 2018 17:34:23 +0100
+Message-Id: <20180129163435.24936-19-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Add a check to ensure the colorspace from user-space is good. On Gen2 it
+works without this change as the sensor sets the colorspace but on Gen3
+this can fail if the colorspace provided by the user is not good. The
+values to check for comes from v4l2-compliance sources which is the tool
+that found this error. If this check is not preformed v4l2-compliance
+fails when it tests colorspace.
 
-Here's the set of 2 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
-'renesas-drivers.git' repo.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-[1/2] dt-bindings: clock: add R8A77980 CPG core clock definitions
-[2/2] clk: renesas: cpg-mssr: add R8A77980 support
-
-MBR, Sergei
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 841d62ca27e026d7..6403650aff22a2ed 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -23,6 +23,7 @@
+ #include "rcar-vin.h"
+ 
+ #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
++#define RVIN_DEFAULT_COLORSPACE	V4L2_COLORSPACE_SRGB
+ 
+ /* -----------------------------------------------------------------------------
+  * Format Conversions
+@@ -115,6 +116,10 @@ static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
+ 		break;
+ 	}
+ 
++	/* Check that colorspace is reasonable */
++	if (!pix->colorspace || pix->colorspace >= 0xff)
++		pix->colorspace = RVIN_DEFAULT_COLORSPACE;
++
+ 	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
+ 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+ 
+-- 
+2.16.1
