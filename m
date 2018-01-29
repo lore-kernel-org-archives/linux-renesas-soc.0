@@ -1,54 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47834 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753841AbeASNjR (ORCPT
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:33875 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753287AbeA2UJY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 08:39:17 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 0/3] mmc: renesas_sdhi: add eMMC HS400 mode support
-Date: Fri, 19 Jan 2018 14:39:03 +0100
-Message-Id: <20180119133906.11280-1-horms+renesas@verge.net.au>
+        Mon, 29 Jan 2018 15:09:24 -0500
+Date: Mon, 29 Jan 2018 14:09:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/2] drm: adv7511: Add support for
+ i2c_new_secondary_device
+Message-ID: <20180129200923.dp5maqyfh2v3wlnd@rob-hp-laptop>
+References: <1516625389-6362-1-git-send-email-kieran.bingham@ideasonboard.com>
+ <1516625389-6362-3-git-send-email-kieran.bingham@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1516625389-6362-3-git-send-email-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Mon, Jan 22, 2018 at 12:50:01PM +0000, Kieran Bingham wrote:
+> The ADV7511 has four 256-byte maps that can be accessed via the main I�C
+> ports. Each map has it own I�C address and acts as a standard slave
+> device on the I�C bus.
+> 
+> Allow a device tree node to override the default addresses so that
+> address conflicts with other devices on the same bus may be resolved at
+> the board description level.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> ---
+>  .../bindings/display/bridge/adi,adv7511.txt        | 10 +++++-
 
-this patch-set provides SDHI driver support for eMMC HS400.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Based on mmc/next
-
-Dependencies for applying these patches: none
-
-Dependencies to test eMMC HS400:
-* [PATCH] clk: renesas: rcar-gen3: Fix SD divider setting
-* [PATCH v2] arm64: dts: salvator-common: Enable HS400 of SDHI2
-
-To assist testing and review this patch and the above mentioned
-dependencies, which are necessary and sufficient to enable HS400 on H3 /
-Salvator-X, M3-W 1.0 / Salvator-X and H3 ES2.0 Salvator-XS are available
-at:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/hs400-v2
-
-Changes since v2:
-* Use updated code from BSP v3.6.0
-* Ironed out dependencies, eMMC HS400 is now working on
-  H3 / Salvator-X, M3-W 1.0 / Salvator-X and H3 ES2.0 Salvator-XS.
-
-
-Masaharu Hayakawa (3):
-  mmc: tmio: correct treatment of errors during tuning
-  mmc: tmio: add eMMC HS400 mode support
-  mmc: renesas_sdhi: add eMMC HS400 mode support
-
- drivers/mmc/host/renesas_sdhi_core.c | 125 ++++++++++++++++++++++++++++++-----
- drivers/mmc/host/tmio_mmc.h          |   6 ++
- drivers/mmc/host/tmio_mmc_core.c     |  33 +++++++--
- 3 files changed, 143 insertions(+), 21 deletions(-)
-
--- 
-2.11.0
+>  drivers/gpu/drm/bridge/adv7511/adv7511.h           |  4 +++
+>  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 36 ++++++++++++++--------
+>  3 files changed, 37 insertions(+), 13 deletions(-)
