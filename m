@@ -1,45 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:18172 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751829AbeADUD1 (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:4244 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751072AbeA2QfM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 15:03:27 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 0/3] usb: renesas_usbhs: Add RZ/A1 support
-Date: Thu,  4 Jan 2018 15:01:47 -0500
-Message-Id: <20180104200150.11352-1-chris.brandt@renesas.com>
+        Mon, 29 Jan 2018 11:35:12 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 03/30] rcar-vin: unregister video device on driver removal
+Date: Mon, 29 Jan 2018 17:34:08 +0100
+Message-Id: <20180129163435.24936-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds RZ/A1 gadget support to the renesas_usbhs driver.
-Basically, it's almost the same HW as the R-Car (and SH) parts.
-The only real difference is the some extra registers for the PHY.
+If the video device was registered by the complete() callback it should
+be unregistered when a device is unbound from the driver. Protect from
+printing an uninitialized video device node name by adding a check in
+rvin_v4l2_unregister() to identify that the video device is registered.
 
-This was tested on an RSK board by connecting to a PC as an
-Ethernet CDC gadget.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 +++
+ 2 files changed, 5 insertions(+)
 
-Chris Brandt (3):
-  usb: renesas_usbhs: Add support for RZ/A1
-  dt-bindings: usb: renesas_usbhs: Add support for RZ/A1
-  ARM: dts: r7s72100: add USB device to device tree
-
- .../devicetree/bindings/usb/renesas_usbhs.txt      |  2 +
- arch/arm/boot/dts/r7s72100.dtsi                    | 20 +++++++++
- drivers/usb/renesas_usbhs/Makefile                 |  2 +-
- drivers/usb/renesas_usbhs/common.c                 | 17 +++++++
- drivers/usb/renesas_usbhs/common.h                 |  6 +++
- drivers/usb/renesas_usbhs/rza.c                    | 52 ++++++++++++++++++++++
- drivers/usb/renesas_usbhs/rza.h                    |  4 ++
- include/linux/usb/renesas_usbhs.h                  |  1 +
- 8 files changed, 103 insertions(+), 1 deletion(-)
- create mode 100644 drivers/usb/renesas_usbhs/rza.c
- create mode 100644 drivers/usb/renesas_usbhs/rza.h
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 2bedf20abcf3ca07..47f06acde2e698f2 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -272,6 +272,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	rvin_v4l2_unregister(vin);
++
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 178aecc94962abe2..32a658214f48fa49 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -841,6 +841,9 @@ static const struct v4l2_file_operations rvin_fops = {
+ 
+ void rvin_v4l2_unregister(struct rvin_dev *vin)
+ {
++	if (!video_is_registered(&vin->vdev))
++		return;
++
+ 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+ 		  video_device_node_name(&vin->vdev));
+ 
 -- 
-2.15.1
+2.16.1
