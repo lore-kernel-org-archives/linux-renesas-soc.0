@@ -1,71 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:38346 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750970AbeACRLW (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:61093 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751451AbeA2Qfd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jan 2018 12:11:22 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] spi: sh-msiof: Fix timeout failures for TX-only DMA transfers
-Date: Wed,  3 Jan 2018 18:11:14 +0100
-Message-Id: <1514999474-22288-1-git-send-email-geert+renesas@glider.be>
+        Mon, 29 Jan 2018 11:35:33 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 13/30] rcar-vin: add function to manipulate Gen3 chsel value
+Date: Mon, 29 Jan 2018 17:34:18 +0100
+Message-Id: <20180129163435.24936-14-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When using RX (with or without TX), the DMA interrupt triggers
-completion when the RX FIFO has been emptied, i.e. after the full
-transfer has finished.
+On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
+feature of this register is that it's only present in the VIN0 and VIN4
+instances. The register in VIN0 controls the routing for VIN0-3 and the
+register in VIN4 controls routing for VIN4-7.
 
-However, when using TX without RX, the DMA interrupt triggers completion
-as soon as the DMA engine has filled the TX FIFO, i.e. before the full
-transfer has finished.  Then sh_msiof_modify_ctr_wait() will spin until
-the transfer has really finished and the TFSE bit is cleared, for at
-most 1 ms.  For slow speeds and/or large transfers, this may cause
-timeouts and transfer failures:
+To be able to control routing from a media device this function is need
+to control runtime PM for the subgroup master (VIN0 and VIN4). The
+subgroup master must be switched on before the register is manipulated,
+once the operation is complete it's safe to switch the master off and
+the new routing will still be in effect.
 
-    spi_sh_msiof e6e10000.spi: failed to shut down hardware
-    74x164 spi2.0: SPI transfer failed: -110
-    spi_master spi2: failed to transfer one message from queue
-    74x164 spi2.0: Failed writing: -110
-
-Fix this by waiting explicitly until the TX FIFO has been emptied.
-
-Based on a patch in the BSP by Hiromitsu Yamasaki.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/spi/spi-sh-msiof.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 28 ++++++++++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index e1d18de1e55c50e7..6c1914a1cddeec17 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -912,11 +912,21 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 		goto stop_dma;
- 	}
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 2f9ad1bec1c8a92f..ae286742f15a3ab5 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -16,6 +16,7 @@
  
--	/* wait for tx fifo to be emptied / rx fifo to be filled */
-+	/* wait for tx/rx DMA completion */
- 	ret = sh_msiof_wait_for_completion(p);
- 	if (ret)
- 		goto stop_reset;
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
++#include <linux/pm_runtime.h>
  
-+	if (!rx) {
-+		reinit_completion(&p->done);
-+		sh_msiof_write(p, IER, IER_TEOFE);
+ #include <media/videobuf2-dma-contig.h>
+ 
+@@ -1228,3 +1229,30 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
+ 
+ 	return ret;
+ }
 +
-+		/* wait for tx fifo to be emptied */
-+		ret = sh_msiof_wait_for_completion(p);
-+		if (ret)
-+			goto stop_reset;
-+	}
++/* -----------------------------------------------------------------------------
++ * Gen3 CHSEL manipulation
++ */
 +
- 	/* clear status bits */
- 	sh_msiof_reset_str(p);
++void rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
++{
++	u32 ifmd, vnmc;
++
++	pm_runtime_get_sync(vin->dev);
++
++	/* Make register writes take effect immediately */
++	vnmc = rvin_read(vin, VNMC_REG);
++	rvin_write(vin, vnmc & ~VNMC_VUP, VNMC_REG);
++
++	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
++		VNCSI_IFMD_CSI_CHSEL(chsel);
++
++	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
++
++	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
++
++	/* Restore VNMC */
++	rvin_write(vin, vnmc, VNMC_REG);
++
++	pm_runtime_put(vin->dev);
++}
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 146683142e6533fa..a5dae5b5e9cb704b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -165,4 +165,6 @@ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
+ /* Cropping, composing and scaling */
+ void rvin_crop_scale_comp(struct rvin_dev *vin);
  
++void rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
++
+ #endif
 -- 
-2.7.4
+2.16.1
