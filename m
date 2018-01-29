@@ -1,68 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:4244 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751072AbeA2QfM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34807 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750959AbeA2SVa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:35:12 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 03/30] rcar-vin: unregister video device on driver removal
-Date: Mon, 29 Jan 2018 17:34:08 +0100
-Message-Id: <20180129163435.24936-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 29 Jan 2018 13:21:30 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 1/2] arm64: dts: r8a7796: Update OPPs to support CA53 dfs
+Date: Mon, 29 Jan 2018 19:21:20 +0100
+Message-Id: <20180129182121.833-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180129182121.833-1-horms+renesas@verge.net.au>
+References: <20180129182121.833-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the video device was registered by the complete() callback it should
-be unregistered when a device is unbound from the driver. Protect from
-printing an uninitialized video device node name by adding a check in
-rvin_v4l2_unregister() to identify that the video device is registered.
+From: Dien Pham <dien.pham.ry@renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Describe frequencies, other than the default for CA53 cores.  This is a
+pre-requisite for using providing alternative frequencies for use with
+CPUFreq with these cores.
+
+Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 +++
- 2 files changed, 5 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 2bedf20abcf3ca07..47f06acde2e698f2 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -272,6 +272,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index f8e9313f9405..0c7ad930aebf 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -204,11 +204,27 @@
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
  
- 	pm_runtime_disable(&pdev->dev);
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <820000>;
+ 			clock-latency-ns = <300000>;
+ 		};
++		opp-1300000000 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
+ 	};
  
-+	rvin_v4l2_unregister(vin);
-+
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 178aecc94962abe2..32a658214f48fa49 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -841,6 +841,9 @@ static const struct v4l2_file_operations rvin_fops = {
- 
- void rvin_v4l2_unregister(struct rvin_dev *vin)
- {
-+	if (!video_is_registered(&vin->vdev))
-+		return;
-+
- 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
- 		  video_device_node_name(&vin->vdev));
- 
+ 	/* External PCIe clock - can be overridden by the board */
 -- 
-2.16.1
+2.11.0
