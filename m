@@ -1,57 +1,252 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:28078 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751213AbeAYSFl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:05:41 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 25/37] ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN2
-Date: Thu, 25 Jan 2018 18:02:59 +0000
-Message-Id: <1516903391-30467-26-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 20/30] rcar-vin: use different v4l2 operations in media controller mode
+Date: Mon, 29 Jan 2018 17:34:25 +0100
+Message-Id: <20180129163435.24936-21-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-its driver by default.
+When the driver runs in media controller mode it should not directly
+control the subdevice instead userspace will be responsible for
+configuring the pipeline. To be able to run in this mode a different set
+of v4l2 operations needs to be used.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Add a new set of v4l2 operations to support operation without directly
+interacting with the source subdevice.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/rcar-vin/rcar-dma.c  |   3 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 155 +++++++++++++++++++++++++++-
+ 2 files changed, 154 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 578434c..f25bd1c 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -132,6 +132,7 @@ CONFIG_CPU_THERMAL=y
- CONFIG_RCAR_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_DA9063_WATCHDOG=y
-+CONFIG_RENESAS_WDT_GEN2=y
- CONFIG_MFD_AS3711=y
- CONFIG_MFD_DA9063=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index ae286742f15a3ab5..811d8f8638d21200 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -628,7 +628,8 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		/* Default to TB */
+ 		vnmc = VNMC_IM_FULL;
+ 		/* Use BT if video standard can be read and is 60 Hz format */
+-		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
++		if (!vin->info->use_mc &&
++		    !v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+ 			if (std & V4L2_STD_525_60)
+ 				vnmc = VNMC_IM_FULL | VNMC_FOC;
+ 		}
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index f69ae76b3fda50c7..292e1f22a4be36c7 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -18,11 +18,14 @@
+ 
+ #include <media/v4l2-event.h>
+ #include <media/v4l2-ioctl.h>
++#include <media/v4l2-mc.h>
+ #include <media/v4l2-rect.h>
+ 
+ #include "rcar-vin.h"
+ 
+ #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
++#define RVIN_DEFAULT_WIDTH	800
++#define RVIN_DEFAULT_HEIGHT	600
+ #define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
+ #define RVIN_DEFAULT_COLORSPACE	V4L2_COLORSPACE_SRGB
+ 
+@@ -698,6 +701,83 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
+ 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
+ };
+ 
++/* -----------------------------------------------------------------------------
++ * V4L2 Media Controller
++ */
++
++static int __rvin_mc_try_format(struct rvin_dev *vin,
++				struct v4l2_pix_format *pix)
++{
++	if (pix->field == V4L2_FIELD_ANY)
++		pix->field = RVIN_DEFAULT_FIELD;
++
++	return rvin_format_align(vin, pix);
++}
++
++static int rvin_mc_try_fmt_vid_cap(struct file *file, void *priv,
++				   struct v4l2_format *f)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++
++	return __rvin_mc_try_format(vin, &f->fmt.pix);
++}
++
++static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
++				 struct v4l2_format *f)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++	int ret;
++
++	if (vb2_is_busy(&vin->queue))
++		return -EBUSY;
++
++	ret = __rvin_mc_try_format(vin, &f->fmt.pix);
++	if (ret)
++		return ret;
++
++	vin->format = f->fmt.pix;
++
++	return 0;
++}
++
++static int rvin_mc_enum_input(struct file *file, void *priv,
++			      struct v4l2_input *i)
++{
++	if (i->index != 0)
++		return -EINVAL;
++
++	i->type = V4L2_INPUT_TYPE_CAMERA;
++	strlcpy(i->name, "Camera", sizeof(i->name));
++
++	return 0;
++}
++
++static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
++	.vidioc_querycap		= rvin_querycap,
++	.vidioc_try_fmt_vid_cap		= rvin_mc_try_fmt_vid_cap,
++	.vidioc_g_fmt_vid_cap		= rvin_g_fmt_vid_cap,
++	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
++	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
++
++	.vidioc_enum_input		= rvin_mc_enum_input,
++	.vidioc_g_input			= rvin_g_input,
++	.vidioc_s_input			= rvin_s_input,
++
++	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
++	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
++	.vidioc_querybuf		= vb2_ioctl_querybuf,
++	.vidioc_qbuf			= vb2_ioctl_qbuf,
++	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
++	.vidioc_expbuf			= vb2_ioctl_expbuf,
++	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
++	.vidioc_streamon		= vb2_ioctl_streamon,
++	.vidioc_streamoff		= vb2_ioctl_streamoff,
++
++	.vidioc_log_status		= v4l2_ctrl_log_status,
++	.vidioc_subscribe_event		= rvin_subscribe_event,
++	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
++};
++
+ /* -----------------------------------------------------------------------------
+  * File Operations
+  */
+@@ -841,6 +921,60 @@ static const struct v4l2_file_operations rvin_fops = {
+ 	.read		= vb2_fop_read,
+ };
+ 
++/* -----------------------------------------------------------------------------
++ * Media controller file operations
++ */
++
++static int rvin_mc_open(struct file *file)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++	int ret;
++
++	mutex_lock(&vin->lock);
++
++	file->private_data = vin;
++
++	ret = v4l2_fh_open(file);
++	if (ret)
++		goto unlock;
++
++	pm_runtime_get_sync(vin->dev);
++	v4l2_pipeline_pm_use(&vin->vdev.entity, 1);
++
++unlock:
++	mutex_unlock(&vin->lock);
++
++	return ret;
++}
++
++static int rvin_mc_release(struct file *file)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++	int ret;
++
++	mutex_lock(&vin->lock);
++
++	/* the release helper will cleanup any on-going streaming */
++	ret = _vb2_fop_release(file, NULL);
++
++	v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
++	pm_runtime_put(vin->dev);
++
++	mutex_unlock(&vin->lock);
++
++	return ret;
++}
++
++static const struct v4l2_file_operations rvin_mc_fops = {
++	.owner		= THIS_MODULE,
++	.unlocked_ioctl	= video_ioctl2,
++	.open		= rvin_mc_open,
++	.release	= rvin_mc_release,
++	.poll		= vb2_fop_poll,
++	.mmap		= vb2_fop_mmap,
++	.read		= vb2_fop_read,
++};
++
+ void rvin_v4l2_unregister(struct rvin_dev *vin)
+ {
+ 	if (!video_is_registered(&vin->vdev))
+@@ -876,18 +1010,33 @@ int rvin_v4l2_register(struct rvin_dev *vin)
+ 	vin->v4l2_dev.notify = rvin_notify;
+ 
+ 	/* video node */
+-	vdev->fops = &rvin_fops;
+ 	vdev->v4l2_dev = &vin->v4l2_dev;
+ 	vdev->queue = &vin->queue;
+ 	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
+ 	vdev->release = video_device_release_empty;
+-	vdev->ioctl_ops = &rvin_ioctl_ops;
+ 	vdev->lock = &vin->lock;
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+ 		V4L2_CAP_READWRITE;
+ 
++	/* Set a default format */
+ 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
+-	rvin_reset_format(vin);
++	vin->format.width = RVIN_DEFAULT_WIDTH;
++	vin->format.height = RVIN_DEFAULT_HEIGHT;
++	vin->format.field = RVIN_DEFAULT_FIELD;
++	vin->format.colorspace = RVIN_DEFAULT_COLORSPACE;
++
++	if (vin->info->use_mc) {
++		vdev->fops = &rvin_mc_fops;
++		vdev->ioctl_ops = &rvin_mc_ioctl_ops;
++	} else {
++		vdev->fops = &rvin_fops;
++		vdev->ioctl_ops = &rvin_ioctl_ops;
++		rvin_reset_format(vin);
++	}
++
++	ret = rvin_format_align(vin, &vin->format);
++	if (ret)
++		return ret;
+ 
+ 	ret = video_register_device(&vin->vdev, VFL_TYPE_GRABBER, -1);
+ 	if (ret) {
 -- 
-2.7.4
+2.16.1
