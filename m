@@ -1,58 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52904 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752993AbeAZJgy (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35667 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbeA2Tnx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Jan 2018 04:36:54 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/3] ARM: dts: r8a7793: consistently use single space before =
-Date: Fri, 26 Jan 2018 10:36:35 +0100
-Message-Id: <20180126093635.16945-4-horms+renesas@verge.net.au>
-In-Reply-To: <20180126093635.16945-1-horms+renesas@verge.net.au>
-References: <20180126093635.16945-1-horms+renesas@verge.net.au>
+        Mon, 29 Jan 2018 14:43:53 -0500
+Date: Mon, 29 Jan 2018 13:43:51 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/3] DT: display: renesas,lvds: document R8A77970 bindings
+Message-ID: <20180129194351.djxaykajpdijsnq5@rob-hp-laptop>
+References: <20180119183553.649510876@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180119183553.649510876@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Consistently use a single space before a =.
+On Fri, Jan 19, 2018 at 09:29:20PM +0300, Sergei Shtylyov wrote:
+> Document the R-Car V3M (R8A77970) SoC in the R-Car LVDS bindings.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt |    1 +
+>  1 file changed, 1 insertion(+)
 
-This patch fixes instances where a tab is used instead.
-
-This patch should not introduce any functional change.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7793.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index aa7d7792fb13..f9c5a557107d 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1362,16 +1362,16 @@
- 
- 	thermal-zones {
- 		cpu_thermal: cpu-thermal {
--			polling-delay-passive	= <0>;
--			polling-delay		= <0>;
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
- 
- 			thermal-sensors = <&thermal>;
- 
- 			trips {
- 				cpu-crit {
--					temperature	= <95000>;
--					hysteresis	= <0>;
--					type		= "critical";
-+					temperature = <95000>;
-+					hysteresis = <0>;
-+					type = "critical";
- 				};
- 			};
- 			cooling-maps {
--- 
-2.11.0
+Reviewed-by: Rob Herring <robh@kernel.org>
