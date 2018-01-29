@@ -1,65 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:24924 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751911AbeA3UZX (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:40249 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751475AbeA2Qfe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:25:23 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 24/25] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-Date: Tue, 30 Jan 2018 20:22:57 +0000
-Message-Id: <1517343778-27902-25-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 29 Jan 2018 11:35:34 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 14/30] rcar-vin: add flag to switch to media controller mode
+Date: Mon, 29 Jan 2018 17:34:19 +0100
+Message-Id: <20180129163435.24936-15-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables the watchdog from within the iwg20m SoM dtsi.
+On Gen3 a media controller API needs to be used to allow userspace to
+configure the subdevices in the pipeline instead of directly controlling
+a single source subdevice, which is and will continue to be the mode of
+operation on Gen2.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Prepare for these two modes of operation by adding a flag to struct
+rvin_info which will control which mode to use.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v1->v3:
-* no change
+ drivers/media/platform/rcar-vin/rcar-core.c | 6 +++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index 1d3e950..d364685 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -91,6 +91,11 @@
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index ce1c90405c6002eb..64034c96f384b3ed 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -243,18 +243,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 
+ static const struct rvin_info rcar_info_h1 = {
+ 	.model = RCAR_H1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
  };
  
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
+ static const struct rvin_info rcar_info_m1 = {
+ 	.model = RCAR_M1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.model = RCAR_GEN2,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+@@ -349,7 +352,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
+ 
+-	v4l2_ctrl_handler_free(&vin->ctrl_handler);
++	if (!vin->info->use_mc)
++		v4l2_ctrl_handler_free(&vin->ctrl_handler);
+ 
+ 	rvin_dma_unregister(vin);
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index a5dae5b5e9cb704b..64476bc5c8abc6d0 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -77,11 +77,13 @@ struct rvin_graph_entity {
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @model:		VIN model
++ * @use_mc:		use media controller instead of controlling subdevice
+  * @max_width:		max input width the VIN supports
+  * @max_height:		max input height the VIN supports
+  */
+ struct rvin_info {
+ 	enum model_id model;
++	bool use_mc;
+ 
+ 	unsigned int max_width;
+ 	unsigned int max_height;
 -- 
-2.7.4
+2.16.1
