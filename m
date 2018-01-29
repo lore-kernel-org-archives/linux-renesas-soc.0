@@ -1,66 +1,65 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v4 22/26] ARM: dts: r8a7790: Add watchdog support to SoC dtsi
-Date: Wed, 31 Jan 2018 18:24:26 +0000
-Message-Id: <1517423070-24236-23-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:6837 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751618AbeA2Qfg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 Jan 2018 11:35:36 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 16/30] rcar-vin: update bytesperline and sizeimage calculation
+Date: Mon, 29 Jan 2018 17:34:21 +0100
+Message-Id: <20180129163435.24936-17-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This commit adds watchdog support to the r8a7790 dtsi.
+Remove over complicated logic to calculate the value for bytesperline
+and sizeimage that was carried over from the soc_camera port. Update the
+calculations to match how other drivers are doing it.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v3->4:
-* no change
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
- arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index a84bf35..83d6704 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -218,6 +218,16 @@
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 1169e6a279ecfb55..bca6e204a574772f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -118,10 +118,8 @@ static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
+ 	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
+ 			      &pix->height, 4, vin->info->max_height, 2, 0);
  
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7790-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7790",
- 				     "renesas,rcar-gen2-gpio";
+-	pix->bytesperline = max_t(u32, pix->bytesperline,
+-				  rvin_format_bytesperline(pix));
+-	pix->sizeimage = max_t(u32, pix->sizeimage,
+-			       rvin_format_sizeimage(pix));
++	pix->bytesperline = rvin_format_bytesperline(pix);
++	pix->sizeimage = rvin_format_sizeimage(pix);
+ 
+ 	if (vin->info->model == RCAR_M1 &&
+ 	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+@@ -270,11 +268,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	if (pix->field == V4L2_FIELD_ANY)
+ 		pix->field = vin->format.field;
+ 
+-
+-	/* Always recalculate */
+-	pix->bytesperline = 0;
+-	pix->sizeimage = 0;
+-
+ 	/* Limit to source capabilities */
+ 	ret = __rvin_try_format_source(vin, which, pix);
+ 	if (ret)
 -- 
-2.7.4
-
+2.16.1
