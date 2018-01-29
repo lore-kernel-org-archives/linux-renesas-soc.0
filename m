@@ -1,109 +1,201 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:40860 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755940AbeASSgB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 13:36:01 -0500
-Received: by mail-lf0-f67.google.com with SMTP id h92so3197124lfi.7
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 10:36:01 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180119183557.226328412@cogentembedded.com>
-Date: Fri, 19 Jan 2018 21:29:21 +0300
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: devicetree@vger.kernel.org
-Subject: [PATCH 3/3] drm: rcar-du: lvds: add R8A77970 support
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v10 11/30] rcar-vin: move media bus configuration to struct rvin_info
+Date: Mon, 29 Jan 2018 17:34:16 +0100
+Message-Id: <20180129163435.24936-12-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=drm-rcar-du-lvds-add-R8A77970-support.patch
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the R-Car V3M (R8A77970) SoC to the LVDS encoder driver.
-Note that there are some differences with the other R-Car gen3 SoCs, e.g.
-LVDPLLCR has the same layout as in the R-Car gen2 SoCs...
+Bus configuration will once the driver is extended to support Gen3
+contain information not specific to only the directly connected parallel
+subdevice. Move it to struct rvin_dev to show it's not always coupled
+to the parallel subdevice.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c |   21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 18 +++++++++---------
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 11 ++++++-----
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  2 +-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  9 ++++-----
+ 4 files changed, 20 insertions(+), 20 deletions(-)
 
-Index: linux/drivers/gpu/drm/rcar-du/rcar_lvds.c
-===================================================================
---- linux.orig/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ linux/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -32,6 +32,10 @@ enum rcar_lvds_mode {
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index cc863e4ec9a4d4b3..ce1c90405c6002eb 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -65,10 +65,10 @@ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
+ 	vin->digital->sink_pad = ret < 0 ? 0 : ret;
  
- #define RCAR_LVDS_QUIRK_LANES	(1 << 0)	/* LVDS lanes 1 and 3 inverted */
-+#define RCAR_LVDS_QUIRK_GEN2_PLLCR (1 << 1)	/* LVDPLLCR has gen2-like */
-+						/* layout on R8A77970 */
-+#define RCAR_LVDS_QUIRK_PHY	(1 << 2)	/* LVDS has PHY on R8A77970 */
-+						/* and  R8A7799{0|5} */
- 
- struct rcar_lvds_device_info {
- 	unsigned int gen;
-@@ -162,6 +166,7 @@ static void rcar_lvds_enable(struct drm_
- 	 */
- 	struct drm_crtc *crtc = lvds->bridge.encoder->crtc;
- 	const struct drm_display_mode *mode = &lvds->display_mode;
-+	unsigned int quirks = lvds->info->quirks;
- 	unsigned int gen = lvds->info->gen;
- 	u32 lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
- 	u32 lvdpllcr;
-@@ -186,7 +191,7 @@ static void rcar_lvds_enable(struct drm_
- 			LVDCTRCR_CTR2SEL_DISP | LVDCTRCR_CTR1SEL_VSYNC |
- 			LVDCTRCR_CTR0SEL_HSYNC);
- 
--	if (lvds->info->quirks & RCAR_LVDS_QUIRK_LANES)
-+	if (quirks & RCAR_LVDS_QUIRK_LANES)
- 		lvdhcr = LVDCHCR_CHSEL_CH(0, 0) | LVDCHCR_CHSEL_CH(1, 3)
- 		       | LVDCHCR_CHSEL_CH(2, 2) | LVDCHCR_CHSEL_CH(3, 1);
- 	else
-@@ -195,7 +200,7 @@ static void rcar_lvds_enable(struct drm_
- 	rcar_lvds_write(lvds, LVDCHCR, lvdhcr);
- 
- 	/* PLL clock configuration */
--	if (gen < 3)
-+	if (gen < 3 || quirks & RCAR_LVDS_QUIRK_GEN2_PLLCR)
- 		lvdpllcr = rcar_lvds_lvdpllcr_gen2(mode->clock);
- 	else
- 		lvdpllcr = rcar_lvds_lvdpllcr_gen3(mode->clock);
-@@ -227,6 +232,12 @@ static void rcar_lvds_enable(struct drm_
- 		rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+ 	/* Find compatible subdevices mbus format */
+-	vin->digital->code = 0;
++	vin->code = 0;
+ 	code.index = 0;
+ 	code.pad = vin->digital->source_pad;
+-	while (!vin->digital->code &&
++	while (!vin->code &&
+ 	       !v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL, &code)) {
+ 		code.index++;
+ 		switch (code.code) {
+@@ -76,16 +76,16 @@ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
+ 		case MEDIA_BUS_FMT_UYVY8_2X8:
+ 		case MEDIA_BUS_FMT_UYVY10_2X10:
+ 		case MEDIA_BUS_FMT_RGB888_1X24:
+-			vin->digital->code = code.code;
++			vin->code = code.code;
+ 			vin_dbg(vin, "Found media bus format for %s: %d\n",
+-				subdev->name, vin->digital->code);
++				subdev->name, vin->code);
+ 			break;
+ 		default:
+ 			break;
+ 		}
  	}
  
-+	if (quirks & RCAR_LVDS_QUIRK_PHY) {
-+		/* Turn on the LVDS PHY. */
-+		lvdcr0 |= LVDCR0_LVEN;
-+		rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-+	}
+-	if (!vin->digital->code) {
++	if (!vin->code) {
+ 		vin_err(vin, "Unsupported media bus format for %s\n",
+ 			subdev->name);
+ 		return -EINVAL;
+@@ -190,16 +190,16 @@ static int rvin_digital_parse_v4l2(struct device *dev,
+ 	if (vep->base.port || vep->base.id)
+ 		return -ENOTCONN;
+ 
+-	rvge->mbus_cfg.type = vep->bus_type;
++	vin->mbus_cfg.type = vep->bus_type;
+ 
+-	switch (rvge->mbus_cfg.type) {
++	switch (vin->mbus_cfg.type) {
+ 	case V4L2_MBUS_PARALLEL:
+ 		vin_dbg(vin, "Found PARALLEL media bus\n");
+-		rvge->mbus_cfg.flags = vep->bus.parallel.flags;
++		vin->mbus_cfg.flags = vep->bus.parallel.flags;
+ 		break;
+ 	case V4L2_MBUS_BT656:
+ 		vin_dbg(vin, "Found BT656 media bus\n");
+-		rvge->mbus_cfg.flags = 0;
++		vin->mbus_cfg.flags = 0;
+ 		break;
+ 	default:
+ 		vin_err(vin, "Unknown media bus type\n");
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index c8831e189d362c8b..561500f65cfa2e74 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -633,7 +633,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	/*
+ 	 * Input interface
+ 	 */
+-	switch (vin->digital->code) {
++	switch (vin->code) {
+ 	case MEDIA_BUS_FMT_YUYV8_1X16:
+ 		/* BT.601/BT.1358 16bit YCbCr422 */
+ 		vnmc |= VNMC_INF_YUV16;
+@@ -641,7 +641,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		break;
+ 	case MEDIA_BUS_FMT_UYVY8_2X8:
+ 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
+-		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
++		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
+ 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
+ 		input_is_yuv = true;
+ 		break;
+@@ -650,7 +650,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		break;
+ 	case MEDIA_BUS_FMT_UYVY10_2X10:
+ 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
+-		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
++		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
+ 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
+ 		input_is_yuv = true;
+ 		break;
+@@ -662,11 +662,11 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+ 
+ 	/* Hsync Signal Polarity Select */
+-	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
++	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+ 		dmr2 |= VNDMR2_HPS;
+ 
+ 	/* Vsync Signal Polarity Select */
+-	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
++	if (!(vin->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
+ 		dmr2 |= VNDMR2_VPS;
+ 
+ 	/*
+@@ -875,6 +875,7 @@ static void rvin_capture_stop(struct rvin_dev *vin)
+ 	rvin_write(vin, rvin_read(vin, VNMC_REG) & ~VNMC_ME, VNMC_REG);
+ }
+ 
 +
- 	/* Wait for the startup delay. */
- 	usleep_range(100, 150);
+ /* -----------------------------------------------------------------------------
+  * DMA Functions
+  */
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 9f7902d29c62e205..c606942e59b5d934 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -185,7 +185,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
  
-@@ -499,6 +510,11 @@ static const struct rcar_lvds_device_inf
- 	.gen = 3,
+ 	sd = vin_to_source(vin);
+ 
+-	v4l2_fill_mbus_format(&format.format, pix, vin->digital->code);
++	v4l2_fill_mbus_format(&format.format, pix, vin->code);
+ 
+ 	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
+ 	if (pad_cfg == NULL)
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 39051da31650bd79..b852e7f4fa3db017 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -62,8 +62,6 @@ struct rvin_video_format {
+  * struct rvin_graph_entity - Video endpoint from async framework
+  * @asd:	sub-device descriptor for async framework
+  * @subdev:	subdevice matched using async framework
+- * @code:	Media bus format from source
+- * @mbus_cfg:	Media bus format from DT
+  * @source_pad:	source pad of remote subdevice
+  * @sink_pad:	sink pad of remote subdevice
+  */
+@@ -71,9 +69,6 @@ struct rvin_graph_entity {
+ 	struct v4l2_async_subdev asd;
+ 	struct v4l2_subdev *subdev;
+ 
+-	u32 code;
+-	struct v4l2_mbus_config mbus_cfg;
+-
+ 	unsigned int source_pad;
+ 	unsigned int sink_pad;
  };
+@@ -114,6 +109,8 @@ struct rvin_info {
+  * @sequence:		V4L2 buffers sequence number
+  * @state:		keeps track of operation state
+  *
++ * @mbus_cfg:		media bus configuration from DT
++ * @code:		media bus format code
+  * @format:		active V4L2 pixel format
+  *
+  * @crop:		active cropping
+@@ -140,6 +137,8 @@ struct rvin_dev {
+ 	unsigned int sequence;
+ 	enum rvin_dma_state state;
  
-+static const struct rcar_lvds_device_info rcar_lvds_r8a77970_info = {
-+	.gen = 3,
-+	.quirks = RCAR_LVDS_QUIRK_GEN2_PLLCR | RCAR_LVDS_QUIRK_PHY,
-+};
-+
- static const struct of_device_id rcar_lvds_of_table[] = {
- 	{ .compatible = "renesas,r8a7743-lvds", .data = &rcar_lvds_gen2_info },
- 	{ .compatible = "renesas,r8a7790-lvds", .data = &rcar_lvds_r8a7790_info },
-@@ -506,6 +522,7 @@ static const struct of_device_id rcar_lv
- 	{ .compatible = "renesas,r8a7793-lvds", .data = &rcar_lvds_gen2_info },
- 	{ .compatible = "renesas,r8a7795-lvds", .data = &rcar_lvds_gen3_info },
- 	{ .compatible = "renesas,r8a7796-lvds", .data = &rcar_lvds_gen3_info },
-+	{ .compatible = "renesas,r8a77970-lvds", .data = &rcar_lvds_r8a77970_info },
- 	{ }
- };
++	struct v4l2_mbus_config mbus_cfg;
++	u32 code;
+ 	struct v4l2_pix_format format;
  
+ 	struct v4l2_rect crop;
+-- 
+2.16.1
