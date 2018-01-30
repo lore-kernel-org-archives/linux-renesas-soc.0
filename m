@@ -1,148 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:19614 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751109AbeAYSDc (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56218 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751476AbeA3Kng (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:03:32 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 01/37] ARM: shmobile: Add watchdog support
-Date: Thu, 25 Jan 2018 18:02:35 +0000
-Message-Id: <1516903391-30467-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 30 Jan 2018 05:43:36 -0500
+Date: Tue, 30 Jan 2018 11:43:31 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, kieran.bingham@ideasonboard.com,
+        magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] arm64: renesas: draak: enable I2C controller 1
+Message-ID: <20180130104330.46ggunr7hwh7akd7@ninjato>
+References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1517240748-14780-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d5mn7c7zkxw2gvgk"
+Content-Disposition: inline
+In-Reply-To: <1517240748-14780-4-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
-boot CPUs run a routine designed to bring up SMP and deal with hot plug.
-The value contained in the SBAR registers is not initialized by a WDT
-triggered reset, which means that after a WDT triggered reset we jump
-to the SMP bring up routine, preventing the system from executing the
-bootrom code.
 
-The purpose of this patch is to jump to the bootrom code in case of a
-WDT triggered reset, and keep the SMP functionality untouched.
-In order to tell if the code had been called due to the WDT overflowing
-we need to inspect flag WOVF from register RWTCSRA, however for this
-to work smoothly we need to make sure that RWDT clock is ON.
-Since it's not wise to interfere with the clock configuration from
-within this routine, a flag has been put in place
-(shmobile_wdt_clock_status) so that the watchdog driver can tell
-shmobile_boot_vector when the clock is ON, and therefore there is no
-need for shmobile_boot_vector to mess up with the clock registers.
+--d5mn7c7zkxw2gvgk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bit WOVF survives a watchdog triggered reset, and it is usually cleared
-by the bootloader. Checking the MMU enable bit from register SCTLR
-allows us to make the code a little bit more robust (just in case the
-bit wasn't cleared up), as right after a reset the MMU is disabled,
-and when Linux is running the MMU is enabled. Also, accessing RWTCSRA
-physical address is safe when the MMU is down.
+On Mon, Jan 29, 2018 at 04:45:46PM +0100, Ulrich Hecht wrote:
+> No devices to add, I2C1 has an external connector only.
+>=20
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-SMP bringup, CPU hot plug, and suspend to RAM work as normal.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Since shmobile_boot_vector has become bigger, "reg" property of nodes
-compatible with "renesas,smp-sram" now need to be set to "<0 0x64>".
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- arch/arm/mach-shmobile/headsmp.S | 53 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+--d5mn7c7zkxw2gvgk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
-index 32e0bf6..835bddc 100644
---- a/arch/arm/mach-shmobile/headsmp.S
-+++ b/arch/arm/mach-shmobile/headsmp.S
-@@ -16,6 +16,13 @@
- #include <asm/assembler.h>
- #include <asm/memory.h>
- 
-+#define RWDT_CLOCK_ON	0xdeadbeef
-+#define RWDT_CLOCK_OFF	0x00000000
-+#define SCTLR_MMU	0x01
-+#define BOOTROM_ADDRESS	0xE6340000
-+#define RWTCSRA_ADDRESS 0xE6020004
-+#define RWTCSRA_WOVF	0x10
-+
- /*
-  * Reset vector for secondary CPUs.
-  * This will be mapped at address 0 by SBAR register.
-@@ -24,11 +31,57 @@
- 	.arm
- 	.align  12
- ENTRY(shmobile_boot_vector)
-+/*
-+	if (SCTLR_MMU == 1)
-+		goto shmobile_smp_continue;
-+*/
-+	mrc	p15, 0, r1, c1, c0, 0		@ r1 = SCTLR
-+	and	r0, r1, #SCTLR_MMU
-+	cmp	r0, #SCTLR_MMU
-+	beq	shmobile_smp_continue
-+/*
-+	if (shmobile_wdt_clock_status != RWDT_CLOCK_ON)
-+		goto shmobile_smp_continue;
-+*/
-+	ldr	r0, #shmobile_wdt_clock_status
-+	ldr	r1, #clock_on
-+	cmp	r0, r1
-+	bne	shmobile_smp_continue
-+
-+/*
-+	if (RWTCSRA_WOVF == 0)
-+		goto shmobile_smp_continue;
-+*/
-+	ldr	r0, rwtcsra
-+	mov	r1, #0
-+	ldrb	r1, [r0]
-+	and	r0, r1, #RWTCSRA_WOVF
-+	cmp	r0, #RWTCSRA_WOVF
-+	bne	shmobile_smp_continue
-+
-+/*
-+	goto bootrom;
-+*/
-+	ldr	r0, bootrom
-+	bx	r0
-+
-+shmobile_smp_continue:
- 	ldr     r1, 1f
- 	bx	r1
- 
- ENDPROC(shmobile_boot_vector)
- 
-+	.align	4
-+rwtcsra:
-+	.word	RWTCSRA_ADDRESS
-+bootrom:
-+	.word	BOOTROM_ADDRESS
-+clock_on:
-+	.word	RWDT_CLOCK_ON
-+	.globl	shmobile_wdt_clock_status
-+shmobile_wdt_clock_status:
-+	.word	RWDT_CLOCK_OFF
-+
- 	.align	2
- 	.globl	shmobile_boot_fn
- shmobile_boot_fn:
--- 
-2.7.4
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpwTFIACgkQFA3kzBSg
+KbarNA/7B+iMRXIfK6oIe0v7737JxU7Jom7MCHevAkwnzVzMAm+Hil2Vg4JXHOgc
+2p2i9oLxt489FAe6fdfIIEaTYtBPGxvm/klMp58YG4lRIDyFeqduL/kTozToJzmn
+o0z80kTZ7JcO0DPXuZvnbQI10cr0VkbpMJ3NdfuCeshLUScz+xVdVGysg6eeq0wz
+CvySDHC1+2Wi5gfKhHX2Jlc+awD5d6LzP1VUmhjSaIhAWYQLPRGF3LSUtJUzFGUV
+QLmHuemJuAUXwAGo+dJsZHXoXTgbkU/YTpCHwYMErCqYI7MyHdomLO+Rgk9SBsjU
+pccnPP5bg3Z5GRI71YS/FKcKCHdeh1tDGWP8s4Q53+/2qJHGj592koVZC1FMgihp
+1AMLTyHTlscK20pqLQiFSOREzRVemX4ni4oQUN7J5n+dG7H3K8kEPSkI6kNe7gVl
+ysLrL/BVpz7xrtJIC7FSe4krbMGVRf33rPcGjK5/Vw9TYrg9N90c0KZv5lOAO2rJ
+90bk2KykEeCeFVCgjYpyV7akePTBB0RJ3f9lsoBV1JFcXSrFIzd4wyWnwHCQNrAk
+O4H5q4X0OE3oqBpKL8B6n5y0Y9ZY2LIRySuZhG2S+2DPVsUM0+MJ0gPjJzcT23j6
+BzVXTaNIckdLLGvHHEUox0bNWqk+H6vwp2vwoLJHmsttCUkFxpY=
+=KKC/
+-----END PGP SIGNATURE-----
+
+--d5mn7c7zkxw2gvgk--
