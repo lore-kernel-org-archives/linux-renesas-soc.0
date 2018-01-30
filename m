@@ -1,206 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:21635 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751764AbeA2QgB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:36:01 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 28/30] rcar-vin: enable support for r8a7795
-Date: Mon, 29 Jan 2018 17:34:33 +0100
-Message-Id: <20180129163435.24936-29-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 30 Jan 2018 10:26:56 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        kieran.bingham@ideasonboard.com, wsa@the-dreams.de,
+        magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] R-Car D3 (r8a77995) I2C integration
+Message-ID: <20180130092656.7zetd2w5nmi6moc4@verge.net.au>
+References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a7795 ES1.x and ES2.0.
+On Mon, Jan 29, 2018 at 04:45:43PM +0100, Ulrich Hecht wrote:
+> Hi!
+> 
+> This adds I2C controllers to the D3 device tree and enables I2C busses 0
+> and 1 on the Draak board. (I2C2 is not connected on that board.)
+> 
+> This revision addresses Geert's review comments and adds Reviewed-Bys.
+> See below for details.
+> 
+> CU
+> Uli
+> 
+> 
+> Changes since v1:
+> - pinctrl: patch dropped, has been picked up
+> - i2c-rcar: patch dropped, redundant
+> - dtsi: added dmac2 for i2c0-2
+> - dtsi: fixed internal SCL delays
+> - dts: fixed EEPROM compatible string
+> - bindings: added Rohm EEPROM
+> - bindings: fixed typo in i2c-rcar bindings
+> 
+> 
+> Ulrich Hecht (5):
+>   arm64: renesas: r8a77995: add I2C support
+>   arm64: renesas: draak: enable I2C controller 0 and EEPROM
+>   arm64: renesas: draak: enable I2C controller 1
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/Kconfig     |   2 +-
- drivers/media/platform/rcar-vin/rcar-core.c | 120 ++++++++++++++++++++++++++++
- 2 files changed, 121 insertions(+), 1 deletion(-)
+Thanks, I have applied the arm64 patches after updating their prefix to
+"arm64: dts: renesas:".
 
-diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
---- a/drivers/media/platform/rcar-vin/Kconfig
-+++ b/drivers/media/platform/rcar-vin/Kconfig
-@@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
- 	select V4L2_FWNODE
- 	---help---
- 	  Support for Renesas R-Car Video Input (VIN) driver.
--	  Supports R-Car Gen2 SoCs.
-+	  Supports R-Car Gen2 and Gen3 SoCs.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rcar-vin.
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 7ceff0de40078580..43d2fa83875817f0 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -21,6 +21,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- 
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
-@@ -815,6 +816,104 @@ static const struct rvin_info rcar_info_gen2 = {
- 	.max_height = 2048,
- };
- 
-+static const struct rvin_group_route rcar_info_r8a7795_routes[] = {
-+	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 0, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 0, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(2) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(1) | BIT(3) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) | BIT(2) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ .vin = 4, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 4, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 4, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(2) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 5, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(1) | BIT(3) },
-+	{ .vin = 5, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 6, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 6, .csi = RVIN_CSI41, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 7, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) | BIT(2) },
-+	{ .vin = 7, .csi = RVIN_CSI41, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a7795 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a7795_routes,
-+};
-+
-+static const struct rvin_group_route rcar_info_r8a7795es1_routes[] = {
-+	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 0, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 0, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(2) | BIT(5) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 1, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(3) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 1, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(5) },
-+	{ .vin = 2, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 2, .csi = RVIN_CSI21, .chan = 2, .mask = BIT(5) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
-+	{ .vin = 3, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(2) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ .vin = 3, .csi = RVIN_CSI21, .chan = 3, .mask = BIT(5) },
-+	{ .vin = 4, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 4, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 4, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(2) | BIT(5) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 5, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 5, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 5, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(3) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 5, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(5) },
-+	{ .vin = 6, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 6, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 6, .csi = RVIN_CSI41, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 6, .csi = RVIN_CSI21, .chan = 2, .mask = BIT(5) },
-+	{ .vin = 7, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
-+	{ .vin = 7, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(2) },
-+	{ .vin = 7, .csi = RVIN_CSI41, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ .vin = 7, .csi = RVIN_CSI21, .chan = 3, .mask = BIT(5) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a7795es1 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a7795es1_routes,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -844,12 +943,25 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,rcar-gen2-vin",
- 		.data = &rcar_info_gen2,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a7795",
-+		.data = &rcar_info_r8a7795,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
- 
-+static const struct soc_device_attribute r8a7795es1[] = {
-+	{
-+		.soc_id = "r8a7795", .revision = "ES1.*",
-+		.data = &rcar_info_r8a7795es1,
-+	},
-+	{ /* Sentinel */ }
-+};
-+
- static int rcar_vin_probe(struct platform_device *pdev)
- {
-+	const struct soc_device_attribute *attr;
- 	struct rvin_dev *vin;
- 	struct resource *mem;
- 	int irq, ret;
-@@ -861,6 +973,14 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	vin->dev = &pdev->dev;
- 	vin->info = of_device_get_match_data(&pdev->dev);
- 
-+	/*
-+	 * Special care is needed on r8a7795 ES1.x since it
-+	 * uses different routing than r8a7795 ES2.0.
-+	 */
-+	attr = soc_device_match(r8a7795es1);
-+	if (attr)
-+		vin->info = attr->data;
-+
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (mem == NULL)
- 		return -EINVAL;
--- 
-2.16.1
+>   i2c: rcar: document R8A77995 bindings
+>   dt-bindings: at24: add bindings for Rohm BR24T01
+> 
+>  Documentation/devicetree/bindings/eeprom/at24.txt  |  2 +
+>  Documentation/devicetree/bindings/i2c/i2c-rcar.txt |  1 +
+>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 28 +++++++++
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 67 ++++++++++++++++++++++
+>  4 files changed, 98 insertions(+)
+> 
+> -- 
+> 2.7.4
+> 
