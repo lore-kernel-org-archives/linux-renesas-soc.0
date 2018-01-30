@@ -1,70 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:61765 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751735AbeA3UYz (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56230 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751405AbeA3Kop (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:24:55 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 19/25] ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-Date: Tue, 30 Jan 2018 20:22:52 +0000
-Message-Id: <1517343778-27902-20-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 30 Jan 2018 05:44:45 -0500
+Date: Tue, 30 Jan 2018 11:44:43 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, kieran.bingham@ideasonboard.com,
+        magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] dt-bindings: at24: add bindings for Rohm BR24T01
+Message-ID: <20180130104443.ffys4y6ulo6fd7va@ninjato>
+References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1517240748-14780-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="24i2lxt4rv2gku6v"
+Content-Disposition: inline
+In-Reply-To: <1517240748-14780-6-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds watchdog support to the r8a7743 SoC dtsi.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v3:
-* no change
+--24i2lxt4rv2gku6v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/arm/boot/dts/r8a7743.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Mon, Jan 29, 2018 at 04:45:48PM +0100, Ulrich Hecht wrote:
+> Both manufacturer and name variant.
+>=20
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index c2943d7..1d4505f 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -368,6 +368,16 @@
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7743-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7743-sysc";
- 			reg = <0 0xe6180000 0 0x200>;
--- 
-2.7.4
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--24i2lxt4rv2gku6v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpwTJsACgkQFA3kzBSg
+KbZI2Q//cH5zU2rZ3UeXoWZzUaMQxu45C+oARRKqp4woybTWQzpVRZGSrr8SMn5O
+6ceQdn4ojzARc2KyJ7K8FRd7jkmIs5y2RX8Gtssv+HtdGmNmZ3+sIW368jXUjX+s
+jdTl1GYQU43mU6sEAfTZvXX3PFHN8E3DMtL9zXMPlg+cDuhZHmIpxVblB6krWNii
+Bd630sJy5efHi2JVF+MKUm1rwHAvMuQQp967sFGcfB4E5lHthH/04+4HjIVEjP8v
+bElrEM3N5zGia9nVrlKxhXn7w0ALZ29TT7cdrLKMAbemtoPk/4SsWvba7o4rQogZ
+9f4bTvjsAs9CjAN9AedNImeSBjKDnfycSP8dNlMBqGW/O7VAfP88op4Wrd8v1Hwz
+4qgOGLAJ8iFDsTQXL9BgpIzJy4RKnW7IVh4hsoELcT4lR889RGNsVo8occ8VgALn
+PkIXfqyfsD8nUXmWLOE+lNufJu8kXIQaqM8gKo0GfDJ8YE2oLUziqlMquOvHXRb8
+aTEgWcEs7WxNPADY39F0vqWjoOTCJS3hQi70ly6Bqm9BJumXi0ftltgFlaexMy5I
+STVtckYROD1hJtaCDtTCVNDjCuJxQ8RitOuWcstJRdj+yvWOvHojZaCNb13wCK1I
+IArGwRgMvyzobKoBQ+KVcipAUd9++AT5UPmcQRo9I3atU0PYPcw=
+=PwgN
+-----END PGP SIGNATURE-----
+
+--24i2lxt4rv2gku6v--
