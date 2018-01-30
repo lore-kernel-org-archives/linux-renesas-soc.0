@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:15523 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751213AbeAYSGN (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:6160 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752134AbeA3UYV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:06:13 -0500
+        Tue, 30 Jan 2018 15:24:21 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -16,7 +16,8 @@ To: Philipp Zabel <p.zabel@pengutronix.de>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
         linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
@@ -24,42 +25,37 @@ Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
         Biju Das <biju.das@bp.renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 31/37] ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-Date: Thu, 25 Jan 2018 18:03:05 +0000
-Message-Id: <1516903391-30467-32-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [RFC v3 13/25] ARM: shmobile: defconfig: Enable CONFIG_RENESAS_WDT
+Date: Tue, 30 Jan 2018 20:22:46 +0000
+Message-Id: <1517343778-27902-14-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds watchdog support to the r8a7743 SoC dtsi.
+R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
+its driver by default.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+v1->v3:
+* CONFIG_RENESAS_WDT_GEN2 -> CONFIG_RENESAS_WDT
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 8606955..b44f53f 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -369,6 +369,16 @@
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7743-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7743-sysc";
- 			reg = <0 0xe6180000 0 0x200>;
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 578434c..d5cdad8 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -132,6 +132,7 @@ CONFIG_CPU_THERMAL=y
+ CONFIG_RCAR_THERMAL=y
+ CONFIG_WATCHDOG=y
+ CONFIG_DA9063_WATCHDOG=y
++CONFIG_RENESAS_WDT=y
+ CONFIG_MFD_AS3711=y
+ CONFIG_MFD_DA9063=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
 -- 
 2.7.4
