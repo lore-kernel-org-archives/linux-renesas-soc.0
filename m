@@ -1,105 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:47666 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934058AbeAXPpJ (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:6211 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751219AbeA3UYt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jan 2018 10:45:09 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Joerg Roedel <joro@8bytes.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 30 Jan 2018 15:24:49 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  2/3] ARM: dts: r8a7743: Add IPMMU DT nodes
-Date: Wed, 24 Jan 2018 15:42:01 +0000
-Message-Id: <1516808522-17348-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
-References: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 18/25] clk: renesas: r8a7794: Add rwdt clock
+Date: Tue, 30 Jan 2018 20:22:51 +0000
+Message-Id: <1517343778-27902-19-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the six IPMMU instances found in the r8a7743 to DT with a disabled
-status.
+Add "rwdt" clock to r8a7794_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 58 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+v1->v3:
+* no change
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 0b74c6c..759ce97 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1457,6 +1457,64 @@
- 			status = "disabled";
- 		};
+ drivers/clk/renesas/r8a7794-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7794-cpg-mssr.c b/drivers/clk/renesas/r8a7794-cpg-mssr.c
+index ec091a4..2a40bbe 100644
+--- a/drivers/clk/renesas/r8a7794-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7794-cpg-mssr.c
+@@ -121,6 +121,7 @@ static const struct mssr_mod_clk r8a7794_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7794_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7794_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7794_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7794_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7794_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7794_CLK_ZS),
+ 	DEF_MOD("audio-dmac0",		 502,	R8A7794_CLK_HP),
+@@ -190,6 +191,7 @@ static const struct mssr_mod_clk r8a7794_mod_clks[] __initconst = {
+ };
  
-+		ipmmu_sy0: mmu@e6280000 {
-+			compatible = "renesas,ipmmu-r8a7743",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xe6280000 0 0x1000>;
-+			interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_sy1: mmu@e6290000 {
-+			compatible = "renesas,ipmmu-r8a7743",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xe6290000 0 0x1000>;
-+			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_ds: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a7743",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xe6740000 0 0x1000>;
-+			interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mp: mmu@ec680000 {
-+			compatible = "renesas,ipmmu-r8a7743",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xec680000 0 0x1000>;
-+			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mx: mmu@fe951000 {
-+			compatible = "renesas,ipmmu-r8a7743",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xfe951000 0 0x1000>;
-+			interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_gp: mmu@e62a0000 {
-+			compatible = "renesas,ipmmu-r8a7743",
-+				     "renesas,ipmmu-vmsa";
-+			reg = <0 0xe62a0000 0 0x1000>;
-+			interrupts = <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		rcar_sound: sound@ec500000 {
- 			/*
- 			 * #sound-dai-cells is required
+ static const unsigned int r8a7794_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
+ 
 -- 
 2.7.4
