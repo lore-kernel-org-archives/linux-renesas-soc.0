@@ -1,58 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52894 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752992AbeAZJgt (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56212 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751405AbeA3KnS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Jan 2018 04:36:49 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] ARM: dts: r8a7791: consistently use single space before =
-Date: Fri, 26 Jan 2018 10:36:34 +0100
-Message-Id: <20180126093635.16945-3-horms+renesas@verge.net.au>
-In-Reply-To: <20180126093635.16945-1-horms+renesas@verge.net.au>
-References: <20180126093635.16945-1-horms+renesas@verge.net.au>
+        Tue, 30 Jan 2018 05:43:18 -0500
+Date: Tue, 30 Jan 2018 11:43:16 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, kieran.bingham@ideasonboard.com,
+        magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] arm64: renesas: draak: enable I2C controller 0
+ and EEPROM
+Message-ID: <20180130104314.wttl5wzddz75qmi4@ninjato>
+References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1517240748-14780-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="njph3ojqjfipt7td"
+Content-Disposition: inline
+In-Reply-To: <1517240748-14780-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Consistently use a single space before a =.
 
-This patch fixes instances where a tab is used instead.
+--njph3ojqjfipt7td
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch should not introduce any functional change.
+On Mon, Jan 29, 2018 at 04:45:45PM +0100, Ulrich Hecht wrote:
+> Enables EEPROM on I2C0 on the Draak board.
+>=20
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index dc659351472f..f11dab71b03a 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1703,16 +1703,16 @@
- 
- 	thermal-zones {
- 		cpu_thermal: cpu-thermal {
--			polling-delay-passive	= <0>;
--			polling-delay		= <0>;
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
- 
- 			thermal-sensors = <&thermal>;
- 
- 			trips {
- 				cpu-crit {
--					temperature	= <95000>;
--					hysteresis	= <0>;
--					type		= "critical";
-+					temperature = <95000>;
-+					hysteresis = <0>;
-+					type = "critical";
- 				};
- 			};
- 			cooling-maps {
--- 
-2.11.0
+
+--njph3ojqjfipt7td
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpwTEIACgkQFA3kzBSg
+Kbak9g//TE/AAqpeHCVft4/FDUAx9kSAPMZgAWM2hAk9apYPYS/sgycwxlXxDOJ9
+uQ1UsCrB4AS0T72FxdzjI4m2kWZnTALCpq7EYljPpbDPiVmR7ZPG1+PjPqidDZw5
+JNMgSOW3+NP3oxyZlB5qxgmgSfOIcI6Bv69n79aijGMD7H0erzluUNEcatAKjANg
+n4FoePGTGHhOd4E0gxQWkrCbSkio7qA3rRLqr/79E0Fvx69EHOToI0lx97zJxFzu
+E4nO0rN26IIa5TXSNacEXhUimg+oLBXDAzYJ69PfDCtU4tB8TWlvea++WGfaMeu3
+Z4/BfD8qsU67pm78vGYRLVmTNyi38J+J0v5eDAv0VBMcBPqGc96mIYlqqbFjemNq
+5CoxgUTC9d7MPHhYnALNUSOKTaaoLZCcFvoIB8TVfN7QSWolGRUieLPo/LNFZrzc
+0DYv3e66UPPmwgXEau7/ZsRNspCA3gqMKBAZ2m1ooM57YuqXt+EFNfa0y1TWuTIO
+37N2NPHWpSB40YYLcdrrOz7ZMRLz5e3witccslLvQAVmGaIaDLj+3s1w8gfnmRXS
+AA2qoljFxqO1zcqtyNw5bsjYKvTCj7+99kLusi7ez4HDkpc3jDJ1gneQEApMl3Wl
+OJZ5jfKmMlM2q2cSv6fIw13ozHzJIOiOwH+Ih8A0nfBtmVINRkA=
+=adcL
+-----END PGP SIGNATURE-----
+
+--njph3ojqjfipt7td--
