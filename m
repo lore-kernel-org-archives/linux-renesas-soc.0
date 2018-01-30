@@ -1,86 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:40884 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751019AbeAQJii (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:6241 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751755AbeA3UZR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 04:38:38 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Vinod Koul <vinod.koul@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>
-Cc: dmaengine@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dmaengine: rcar-dmac: Make DMAC reinit during system resume explicit
-Date: Wed, 17 Jan 2018 10:38:28 +0100
-Message-Id: <1516181908-16930-1-git-send-email-geert+renesas@glider.be>
+        Tue, 30 Jan 2018 15:25:17 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 23/25] ARM: dts: r8a7794: Add watchdog support to SoC dtsi
+Date: Tue, 30 Jan 2018 20:22:56 +0000
+Message-Id: <1517343778-27902-24-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current (empty) system sleep callbacks rely on the PM core to force
-a runtime resume to reinitialize the DMAC registers during system
-resume.  Without a reinitialization, e.g. SCIF DMA will hang silently
-after a system resume on R-Car Gen3.
+This commit adds watchdog support to the r8a7794 dtsi.
 
-Make this explicit by using pm_runtime_force_{suspend,resume}() as the
-system sleep callbacks instead.  Use SET_LATE_SYSTEM_SLEEP_PM_OPS() as
-DMA engines must be initialized before all DMA slave devices.
-
-Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This is a dependency for "[PATCH 1/2] PM / genpd: Stop/start devices
-without pm_runtime_force_suspend/resume()"
-(https://www.spinics.net/lists/kernel/msg2696802.html), so perhaps it
-makes most sense if Rafael takes it through the PM tree?
+v1->v3:
+* rwdt moved before gpio@e6050000
 
-Thanks!
----
- drivers/dma/sh/rcar-dmac.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index fb06b193ad252086..06e4e604eebb79f6 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1657,22 +1657,6 @@ static struct dma_chan *rcar_dmac_of_xlate(struct of_phandle_args *dma_spec,
-  * Power management
-  */
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index e47c5f4..1c9b149 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -119,6 +119,16 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
--#ifdef CONFIG_PM_SLEEP
--static int rcar_dmac_sleep_suspend(struct device *dev)
--{
--	/*
--	 * TODO: Wait for the current transfer to complete and stop the device.
--	 */
--	return 0;
--}
--
--static int rcar_dmac_sleep_resume(struct device *dev)
--{
--	/* TODO: Resume transfers, if any. */
--	return 0;
--}
--#endif
--
- #ifdef CONFIG_PM
- static int rcar_dmac_runtime_suspend(struct device *dev)
- {
-@@ -1688,7 +1672,13 @@ static int rcar_dmac_runtime_resume(struct device *dev)
- #endif
- 
- static const struct dev_pm_ops rcar_dmac_pm = {
--	SET_SYSTEM_SLEEP_PM_OPS(rcar_dmac_sleep_suspend, rcar_dmac_sleep_resume)
-+	/*
-+	 * TODO for system sleep/resume:
-+	 *   - Wait for the current transfer to complete and stop the device,
-+	 *   - Resume transfers, if any.
-+	 */
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				     pm_runtime_force_resume)
- 	SET_RUNTIME_PM_OPS(rcar_dmac_runtime_suspend, rcar_dmac_runtime_resume,
- 			   NULL)
- };
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7794-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a7794",
+ 				     "renesas,rcar-gen2-gpio";
 -- 
 2.7.4
