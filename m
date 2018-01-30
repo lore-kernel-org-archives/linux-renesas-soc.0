@@ -1,91 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34830 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932123AbeAQQTq (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:14213 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751755AbeA3UYo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:19:46 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 30 Jan 2018 15:24:44 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 13/16] ARM: dts: r8a7794: consistently use single space after =
-Date: Wed, 17 Jan 2018 17:17:14 +0100
-Message-Id: <20180117161717.14589-14-horms+renesas@verge.net.au>
-In-Reply-To: <20180117161717.14589-1-horms+renesas@verge.net.au>
-References: <20180117161717.14589-1-horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 17/25] clk: renesas: r8a7791/r8a7793: Add rwdt clock
+Date: Tue, 30 Jan 2018 20:22:50 +0000
+Message-Id: <1517343778-27902-18-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Consistently use a single space after a =.
+Add "rwdt" clock to r8a7791_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-This patch removes instances where a tab is used instead.
-
-This patch should not introduce any functional change.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
-v2
-* New patch
----
- arch/arm/boot/dts/r8a7794.dtsi | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+v1->v3:
+* no change
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 106b4e1649ff..79263377ded3 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -319,20 +319,20 @@
- 	audma0: dma-controller@ec700000 {
- 		compatible = "renesas,dmac-r8a7794", "renesas,rcar-dmac";
- 		reg = <0 0xec700000 0 0x10000>;
--		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error",
- 				  "ch0", "ch1", "ch2", "ch3", "ch4", "ch5",
- 				  "ch6", "ch7", "ch8", "ch9", "ch10", "ch11",
-@@ -1186,11 +1186,11 @@
- 		 */
- 		compatible = "renesas,rcar_sound-r8a7794",
- 			     "renesas,rcar_sound-gen2";
--		reg =	<0 0xec500000 0 0x1000>, /* SCU */
--			<0 0xec5a0000 0 0x100>,  /* ADG */
--			<0 0xec540000 0 0x1000>, /* SSIU */
--			<0 0xec541000 0 0x280>,  /* SSI */
--			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri */
-+		reg = <0 0xec500000 0 0x1000>, /* SCU */
-+		      <0 0xec5a0000 0 0x100>,  /* ADG */
-+		      <0 0xec540000 0 0x1000>, /* SSIU */
-+		      <0 0xec541000 0 0x280>,  /* SSI */
-+		      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri */
- 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
+ drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
+index c0b51f9..820b220 100644
+--- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
+@@ -128,6 +128,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7791_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7791_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7791_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7791_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7791_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7791_CLK_ZS),
+ 	DEF_MOD("audio-dmac1",		 501,	R8A7791_CLK_HP),
+@@ -209,6 +210,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
+ };
  
- 		clocks = <&cpg CPG_MOD 1005>,
+ static const unsigned int r8a7791_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
+ 
 -- 
-2.11.0
+2.7.4
