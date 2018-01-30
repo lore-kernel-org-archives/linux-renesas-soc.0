@@ -1,58 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:36559 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753146AbeANVHk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44436 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeA3J5B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 14 Jan 2018 16:07:40 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] extcon: int3496: don't use GPIOF_* with gpiod_get_direction
-Date: Sun, 14 Jan 2018 22:07:08 +0100
-Message-Id: <20180114210711.13863-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180114210711.13863-1-wsa+renesas@sang-engineering.com>
-References: <20180114210711.13863-1-wsa+renesas@sang-engineering.com>
+        Tue, 30 Jan 2018 04:57:01 -0500
+Date: Tue, 30 Jan 2018 10:56:58 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH  2/2] ARM: dts: r8a7745: Add VSP support
+Message-ID: <20180130095657.hji3mqyii4bt5ew4@verge.net.au>
+References: <1516810312-2100-1-git-send-email-biju.das@bp.renesas.com>
+ <1516810312-2100-3-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516810312-2100-3-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The documentation was wrong, gpiod_get_direction() returns 0/1 instead
-of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
-("gpio: correct docs about return value of gpiod_get_direction"). Now,
-fix this user (until a better, system-wide solution is in place). This
-also means we can drop the deprecated use of 'linux/gpio.h'. Yay!
+On Wed, Jan 24, 2018 at 04:11:52PM +0000, Biju Das wrote:
+> Add VSP support to SoC DT.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-Only build tested!
-
- drivers/extcon/extcon-intel-int3496.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/extcon/extcon-intel-int3496.c b/drivers/extcon/extcon-intel-int3496.c
-index c8691b5a9cb00c..256a25e511671d 100644
---- a/drivers/extcon/extcon-intel-int3496.c
-+++ b/drivers/extcon/extcon-intel-int3496.c
-@@ -20,7 +20,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/extcon-provider.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -112,7 +112,7 @@ static int int3496_probe(struct platform_device *pdev)
- 		ret = PTR_ERR(data->gpio_usb_id);
- 		dev_err(dev, "can't request USB ID GPIO: %d\n", ret);
- 		return ret;
--	} else if (gpiod_get_direction(data->gpio_usb_id) != GPIOF_DIR_IN) {
-+	} else if (gpiod_get_direction(data->gpio_usb_id) != 1) {
- 		dev_warn(dev, FW_BUG "USB ID GPIO not in input mode, fixing\n");
- 		gpiod_direction_input(data->gpio_usb_id);
- 	}
--- 
-2.11.0
+Thanks, applied manually - there was some fuzz, most likely due to recent
+sorting of the nodes in this file.
