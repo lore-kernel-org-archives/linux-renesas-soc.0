@@ -1,49 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38833 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751412AbeA2PqO (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:60548 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752067AbeA3J76 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 10:46:14 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, kieran.bingham@ideasonboard.com
-Cc: wsa@the-dreams.de, magnus.damm@gmail.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 5/5] dt-bindings: at24: add bindings for Rohm BR24T01
-Date: Mon, 29 Jan 2018 16:45:48 +0100
-Message-Id: <1517240748-14780-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Tue, 30 Jan 2018 04:59:58 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v8 11/11] media: i2c: ov7670: Fully set mbus frame fmt
+Date: Tue, 30 Jan 2018 10:58:22 +0100
+Message-Id: <1517306302-27957-12-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Both manufacturer and name variant.
+The sensor driver sets mbus format colorspace information and sizes,
+but not ycbcr encoding, quantization and xfer function. When supplied
+with an badly initialized mbus frame format structure, those fields
+need to be set explicitly not to leave them uninitialized. This is
+tested by v4l2-compliance, which supplies a mbus format description
+structure and checks for all fields to be properly set.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Without this commit, v4l2-compliance fails when testing formats with:
+fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/i2c/ov7670.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
-index 1812c84..dd29937 100644
---- a/Documentation/devicetree/bindings/eeprom/at24.txt
-+++ b/Documentation/devicetree/bindings/eeprom/at24.txt
-@@ -40,6 +40,7 @@ Required properties:
-                 "microchip",
-                 "ramtron",
-                 "renesas",
-+                "rohm",
-                 "nxp",
-                 "st",
+diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+index 25b26d4..61c472e 100644
+--- a/drivers/media/i2c/ov7670.c
++++ b/drivers/media/i2c/ov7670.c
+@@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct v4l2_subdev *sd,
+ 	fmt->height = wsize->height;
+ 	fmt->colorspace = ov7670_formats[index].colorspace;
  
-@@ -47,6 +48,7 @@ Required properties:
-                 variants of the above. Known such exceptions are listed below:
++	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
++	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
++	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
++
+ 	info->format = *fmt;
  
-                 "renesas,r1ex24002" - the fallback is "atmel,24c02"
-+                "rohm,br24t01" - the fallback is "atmel,24c01"
- 
-   - reg: The I2C address of the EEPROM.
- 
+ 	return 0;
 -- 
 2.7.4
