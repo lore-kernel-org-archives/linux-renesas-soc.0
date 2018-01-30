@@ -1,87 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34784 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751889AbeANRwH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49693 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752868AbeA3Qpk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 14 Jan 2018 12:52:07 -0500
-Received: by mail-lf0-f65.google.com with SMTP id h140so10877049lfg.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 14 Jan 2018 09:52:06 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180114175203.191929089@cogentembedded.com>
-Date: Sun, 14 Jan 2018 20:47:44 +0300
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: linux-sh@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/2] sh_eth: get Ether port # only when needed
+        Tue, 30 Jan 2018 11:45:40 -0500
+Date: Tue, 30 Jan 2018 17:45:36 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 0/9] ARM: dts: gen2: add IP core switcher for all
+ busses
+Message-ID: <20180130164536.a6us6f4lyfq7vq6a@verge.net.au>
+References: <20171231112320.3461-1-wsa+renesas@sang-engineering.com>
+ <20180130105135.3vxze4xrjvfmvtwq@ninjato>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=sh_eth-get-Ether-port-#-only-when-needed.patch
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180130105135.3vxze4xrjvfmvtwq@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The dual-port Ether configurations always have a shared TSU to e.g. pass
-the packets between those  ports.  With the  TSU init. code gathered under
-the single *if*, we now can only get the port # from 'platform_device::id'
-only when we actually  need it  (and not recalculate it each time)...
+On Tue, Jan 30, 2018 at 11:51:37AM +0100, Wolfram Sang wrote:
+> On Sun, Dec 31, 2017 at 12:23:11PM +0100, Wolfram Sang wrote:
+> > Here is the updated series to add the I2C IP core switcher to all busses of
+> > Gen2 boards where some kind of switching is possible (mostly to/from GPIO).
+> > 
+> > These patches were tested locally on Lager and Alt, and remotely on Koelsch,
+> > Porter and Gose. We have no Silk board available but the patch follows the same
+> > style as the other patches. In addition, these patches have been double-checked
+> > by vimdiff-comparing the i2c-bus blobs before and after this patchset.
+> > 
+> > As discussed previously: the tested boards boot fine. No regression encountered
+> > there. However, changing masters at runtime for HDMI-named busses and PWR-named
+> > busses will likely cause kernel warnings and maybe OOPSes. This is due to the
+> > rebind-issues in the V4L and regulator subsystems. For the former, fixing is
+> > WIP. For the latter, it is unknown how to deal with rebinding in general (but
+> > I'd need to look at this issue again if this is desired). It was decided that
+> > we consider those follow-up problems which should not hold back these patches
+> > anymore. The EXIO named busses seemed to work fine as far as this could be
+> > remotely tested.
+> > 
+> > Changes since V1:
+> > 
+> > * fixed I2C4 pinmux for Koelsch and Gose (thanks Geert for the report!)
+> > * rebased to current renesas/dt-for-v4.16
+> > * fixed typo in branch name (s/topc/topic/)
+> > 
+> > The branch can be found here:
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/ip-switch-rework-2017
+> > 
+> > It is based on v4.15-rc1 + renesas/dt-for-v4.16 merged in.
+> > 
+> > Please review, comment...
+> 
+> Simon, any issues left before applying this series?
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I'm a bit uncomfortable about the OOpses, but if that was the consensus
+(in San Sebastian?) then I'm happy to accept these patches.
 
----
- drivers/net/ethernet/renesas/sh_eth.c |   13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3125,7 +3125,7 @@ static int sh_eth_drv_probe(struct platf
- 	const struct platform_device_id *id = platform_get_device_id(pdev);
- 	struct sh_eth_private *mdp;
- 	struct net_device *ndev;
--	int ret, devno;
-+	int ret;
- 
- 	/* get base addr */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -3137,10 +3137,6 @@ static int sh_eth_drv_probe(struct platf
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_sync(&pdev->dev);
- 
--	devno = pdev->id;
--	if (devno < 0)
--		devno = 0;
--
- 	ret = platform_get_irq(pdev, 0);
- 	if (ret < 0)
- 		goto out_release;
-@@ -3223,6 +3219,7 @@ static int sh_eth_drv_probe(struct platf
- 	}
- 
- 	if (mdp->cd->tsu) {
-+		int port = pdev->id < 0 ? 0 : pdev->id % 2;
- 		struct resource *rtsu;
- 
- 		rtsu = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-@@ -3234,7 +3231,7 @@ static int sh_eth_drv_probe(struct platf
- 		/* We can only request the  TSU region  for the first port
- 		 * of the two  sharing this TSU for the probe to succeed...
- 		 */
--		if (devno % 2 == 0 &&
-+		if (port == 0 &&
- 		    !devm_request_mem_region(&pdev->dev, rtsu->start,
- 					     resource_size(rtsu),
- 					     dev_name(&pdev->dev))) {
-@@ -3250,11 +3247,11 @@ static int sh_eth_drv_probe(struct platf
- 			ret = -ENOMEM;
- 			goto out_release;
- 		}
--		mdp->port = devno % 2;
-+		mdp->port = port;
- 		ndev->features = NETIF_F_HW_VLAN_CTAG_FILTER;
- 
- 		/* Need to init only the first port of the two sharing a TSU */
--		if (devno % 2 == 0) {
-+		if (port == 0) {
- 			if (mdp->cd->chip_reset)
- 				mdp->cd->chip_reset(ndev);
- 
+Could you rebase the series? It does not seem to apply (likely due to my
+recent clean-up efforts).
