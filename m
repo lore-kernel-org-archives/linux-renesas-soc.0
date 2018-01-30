@@ -1,99 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:46007 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751379AbeAIJDu (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:61745 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752246AbeA3UYi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jan 2018 04:03:50 -0500
-Received: by mail-lf0-f67.google.com with SMTP id y71so15046935lfd.12
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 09 Jan 2018 01:03:49 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 30 Jan 2018 15:24:38 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v4 2/2] PM / core: Propagate wakeup_path status flag in __device_suspend_late()
-Date: Tue,  9 Jan 2018 10:03:40 +0100
-Message-Id: <1515488620-10575-3-git-send-email-ulf.hansson@linaro.org>
-In-Reply-To: <1515488620-10575-1-git-send-email-ulf.hansson@linaro.org>
-References: <1515488620-10575-1-git-send-email-ulf.hansson@linaro.org>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 16/25] clk: renesas: r8a7790: Add rwdt clock
+Date: Tue, 30 Jan 2018 20:22:49 +0000
+Message-Id: <1517343778-27902-17-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the wakeup_path status flag becomes propagated from a child
-device to its parent device at __device_suspend(). This allows a driver
-dealing with a parent device to act on the flag from its ->suspend()
-callback.
+Add "rwdt" clock to r8a7790_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-However, in situations when the wakeup_path status flag needs to be set
-from a ->suspend_late() callback, its value doesn't get propagated to the
-parent by the PM core. Let's address this limitation, by also propagating
-the flag at __device_suspend_late().
-
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/base/power/main.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+v1->v3:
+* no change
 
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index 720e36e..02a497e 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -1447,6 +1447,21 @@ int dpm_suspend_noirq(pm_message_t state)
- 	return ret;
- }
+ drivers/clk/renesas/r8a7790-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7790-cpg-mssr.c b/drivers/clk/renesas/r8a7790-cpg-mssr.c
+index 46bb55b..f936cb7 100644
+--- a/drivers/clk/renesas/r8a7790-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7790-cpg-mssr.c
+@@ -140,6 +140,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7790_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7790_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7790_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7790_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7790_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7790_CLK_ZS),
+ 	DEF_MOD("audio-dmac1",		 501,	R8A7790_CLK_HP),
+@@ -211,6 +212,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+ };
  
-+static void dpm_propagate_wakeup_to_parent(struct device *dev)
-+{
-+	struct device *parent = dev->parent;
-+
-+	if (!parent)
-+		return;
-+
-+	spin_lock_irq(&parent->power.lock);
-+
-+	if (dev->power.wakeup_path && !parent->power.ignore_children)
-+		parent->power.wakeup_path = true;
-+
-+	spin_unlock_irq(&parent->power.lock);
-+}
-+
- static pm_callback_t dpm_subsys_suspend_late_cb(struct device *dev,
- 						pm_message_t state,
- 						const char **info_p)
-@@ -1527,6 +1542,7 @@ static int __device_suspend_late(struct device *dev, pm_message_t state, bool as
- 		async_error = error;
- 		goto Complete;
- 	}
-+	dpm_propagate_wakeup_to_parent(dev);
+ static const unsigned int r8a7790_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
  
- Skip:
- 	dev->power.is_late_suspended = true;
-@@ -1660,21 +1676,6 @@ static int legacy_suspend(struct device *dev, pm_message_t state,
- 	return error;
- }
- 
--static void dpm_propagate_wakeup_to_parent(struct device *dev)
--{
--	struct device *parent = dev->parent;
--
--	if (!parent)
--		return;
--
--	spin_lock_irq(&parent->power.lock);
--
--	if (dev->power.wakeup_path && !parent->power.ignore_children)
--		parent->power.wakeup_path = true;
--
--	spin_unlock_irq(&parent->power.lock);
--}
--
- static void dpm_clear_superiors_direct_complete(struct device *dev)
- {
- 	struct device_link *link;
 -- 
 2.7.4
