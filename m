@@ -1,69 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:32999 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752426AbeAaKbl (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:33738 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752363AbeA3NYn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jan 2018 05:31:41 -0500
-Received: by mail-io0-f193.google.com with SMTP id n7so14687612iob.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jan 2018 02:31:41 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1517318680-14918-1-git-send-email-geert@linux-m68k.org>
-References: <1517318680-14918-1-git-send-email-geert@linux-m68k.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 31 Jan 2018 11:31:40 +0100
-Message-ID: <CAPDyKFqRwGgZ17eteN8nytS2ub-tqoY2kHec7N05GK6ipAUUcg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: MMC_SDHI_{SYS,INTERNAL}_DMAC should depend on HAS_DMA
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 30 Jan 2018 08:24:43 -0500
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] mmc: MMC_SDHI_{SYS,INTERNAL}_DMAC should depend on HAS_DMA
+Date: Tue, 30 Jan 2018 14:24:40 +0100
+Message-Id: <1517318680-14918-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 30 January 2018 at 14:24, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> If NO_DMA=y:
->
->     ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
->     ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_internal_dmac.ko] undefined!
->
-> Add dependencies on HAS_DMA to fix this.
->
-> Fixes: e578afab6e5f57e7 ("mmc: renesas_sdhi: remove wrong depends on to enable compile test")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+If NO_DMA=y:
 
-Thanks, applied for fixes!
+    ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
+    ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_internal_dmac.ko] undefined!
 
-Kind regards
-Uffe
+Add dependencies on HAS_DMA to fix this.
 
-> ---
->  drivers/mmc/host/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 67bd3344dd03a1ae..0eae619419d9ddeb 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -605,7 +605,7 @@ config MMC_SDHI
->
->  config MMC_SDHI_SYS_DMAC
->         tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
-> -       depends on MMC_SDHI
-> +       depends on MMC_SDHI && HAS_DMA
->         default MMC_SDHI if (SUPERH || ARM)
->         help
->           This provides DMA support for SDHI SD/SDIO controllers
-> @@ -615,7 +615,7 @@ config MMC_SDHI_SYS_DMAC
->  config MMC_SDHI_INTERNAL_DMAC
->         tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
->         depends on ARM64 || COMPILE_TEST
-> -       depends on MMC_SDHI
-> +       depends on MMC_SDHI && HAS_DMA
->         default MMC_SDHI if ARM64
->         help
->           This provides DMA support for SDHI SD/SDIO controllers
-> --
-> 2.7.4
->
+Fixes: e578afab6e5f57e7 ("mmc: renesas_sdhi: remove wrong depends on to enable compile test")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/mmc/host/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 67bd3344dd03a1ae..0eae619419d9ddeb 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -605,7 +605,7 @@ config MMC_SDHI
+ 
+ config MMC_SDHI_SYS_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
+-	depends on MMC_SDHI
++	depends on MMC_SDHI && HAS_DMA
+ 	default MMC_SDHI if (SUPERH || ARM)
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+@@ -615,7 +615,7 @@ config MMC_SDHI_SYS_DMAC
+ config MMC_SDHI_INTERNAL_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+ 	depends on ARM64 || COMPILE_TEST
+-	depends on MMC_SDHI
++	depends on MMC_SDHI && HAS_DMA
+ 	default MMC_SDHI if ARM64
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+-- 
+2.7.4
