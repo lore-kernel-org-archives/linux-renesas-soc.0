@@ -1,83 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:42769 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751428AbeAYK4G (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:61814 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751769AbeA3UZ3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 05:56:06 -0500
-Date: Thu, 25 Jan 2018 11:55:54 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Tue, 30 Jan 2018 15:25:29 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
         Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH/RFC 1/4] drm: Add colorkey properties
-Message-ID: <20180125105554.ytfpuob2ap7aewnm@flea.lan>
-References: <20171217001724.1348-1-laurent.pinchart+renesas@ideasonboard.com>
- <20171217001724.1348-2-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6lk6enxvp5qwo73w"
-Content-Disposition: inline
-In-Reply-To: <20171217001724.1348-2-laurent.pinchart+renesas@ideasonboard.com>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v3 25/25] ARM: dts: iwg22m: Add watchdog support to SoM dtsi
+Date: Tue, 30 Jan 2018 20:22:58 +0000
+Message-Id: <1517343778-27902-26-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+This patch enables the watchdog from within the iwg20m SoM dtsi.
 
---6lk6enxvp5qwo73w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v1->v3:
+* no change
 
-On Sun, Dec 17, 2017 at 02:17:21AM +0200, Laurent Pinchart wrote:
-> Color keying is the action of replacing pixels matching a given color
-> (or range of colors) with transparent pixels in an overlay when
-> performing blitting. Depending on the hardware capabilities, the
-> matching pixel can either become fully transparent, or gain a
-> programmable alpha value.
->=20
-> Color keying is found in a large number of devices whose capabilities
-> often differ, but they still have enough common features in range to
-> standardize color key properties. This commit adds four properties
-> related to color keying named colorkey.min, colorkey.max, colorkey.alpha
-> and colorkey.mode. Additional properties can be defined by drivers to
-> expose device-specific features.
->=20
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
-m>
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Sorry for the delay,
-Reviewed-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---6lk6enxvp5qwo73w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlppt7kACgkQ0rTAlCFN
-r3Q8rQ//cmqF0IWwUuok9EEW6whNO1C1kdRwWjGciopjyKaQlNoHww0e3jJbT6Ko
-KBL0EHuIK3GwLQw9VrAyQznsSE6CfNu9YwPZwzduU1j++zlX0Lu9uwXcudbXq6xm
-txxl0pDzX42d7Pumx+vlMxAJdbqAj4RWQBdgonqMmBhLKB6nv9y8HyDNipNoi7vb
-BOg/64Hb+7PVNfHzx1gwMgwM6s9fhPCLghIv23jE4Pb8rBbCtByBs5aIU9Izm5hs
-dY8TebtgQcVfNOwWYBzPlM13E6+kp8ZUDl29MLTfbMAUi8gEvzC4EgEM8BxehCxJ
-XOTeEGpxbgdJKVD3sDj/55/BQ6TKSXrLzSzlZ3Fc4KZfUxSj3qo/yMic5kfb64Qc
-Wp93vVZc0LWAoPEZ7v/1WV1kDV4XWlbPZl8NhdsC2kg02RY9UTa9vMxyWCN4HWJ2
-tlTUadIRtddRiKCD9TiXk4pHZDVRQOPhSZ5dyoB4UstAaF2e5ZBf7a6WnDmM8LrC
-WVpDBewrq35TxsaoPGI+q/0PvvOUvrFnAzOensK+qjJHKVrmtvyVMVOeTWI5wDJV
-X+Cn1okyk3cZcf8F73eczqhyhH7hrH5c3lEYg8YXYEEGNpYX1mIOqbnKuld+ZTrv
-dy7V739CCL8s9Gal9eKWjy7BLPpOi8+C72hUdWUP6ic6rf2Ajo4=
-=Jp3O
------END PGP SIGNATURE-----
-
---6lk6enxvp5qwo73w--
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+index 8d0a392b..29b6e10 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
++++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+@@ -91,6 +91,11 @@
+ 	};
+ };
+ 
++&rwdt {
++	timeout-sec = <60>;
++	status = "okay";
++};
++
+ &sdhi1 {
+ 	pinctrl-0 = <&sdhi1_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.7.4
