@@ -1,47 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:55430 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751952AbeADVbV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jan 2018 16:31:21 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] arm64: dts: r8a779[56]: update register size for thermal
-Date: Thu,  4 Jan 2018 22:31:06 +0100
-Message-Id: <20180104213108.24080-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 30 Jan 2018 11:42:44 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, kieran.bingham@ideasonboard.com,
+        magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] arm64: renesas: r8a77995: add I2C support
+Message-ID: <20180130104243.wui3okjqoxrws4cb@ninjato>
+References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1517240748-14780-2-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="apzmgxdnlwuapemr"
+Content-Disposition: inline
+In-Reply-To: <1517240748-14780-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
 
-This series updates the register size for the thermal hardware. In later 
-versions of the datasheet one additional register is documented. This 
-register is needed to be able to determine if calibration data should be 
-read from register or if static values from the driver should be used.
+--apzmgxdnlwuapemr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There is already a posted RFC patch which make use of this additional 
-register (THSCP) if the register size described in DT covers it.  
-Currently no hardware where the calibration value is fused have been 
-found so that patch is not tested and therefore kept back until such a 
-system is found. In the mean time there is no harm in getting the 
-correct register size described in DT now that it's documented in the 
-datasheet (Rev 0.80).
+On Mon, Jan 29, 2018 at 04:45:44PM +0100, Ulrich Hecht wrote:
+> Defines R-Car D3 I2C controllers 0-3.
+>=20
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Niklas Söderlund (2):
-  arm64: dts: r8a7795: update register size for thermal
-  arm64: dts: r8a7796: update register size for thermal
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
--- 
-2.15.1
+--apzmgxdnlwuapemr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlpwTB8ACgkQFA3kzBSg
+Kbaadw/9FvVRYEJtyYHNclMFRqmeK0FTOS1LEoljZrZLXDrj/oBUwILi5x9K7H2i
+XQPQq/PWnADdLNhjtC1wz83whJd5aQnC41NvyPh/8JQzdNsgALSAp4OJYPUDxqW1
+EY/NT67AVM2OyUMi05s1ch3J+G/0wMlEjTPSfcR5O7shL9k0rMl3cEhgUmtdiH6o
+qgYBZGcj+QsYg8ldsM6egAZUaE82GU/0X4jpq9H4zhN60NMDJ8b3/hDjMj3zGz91
+tcJ1RzDKJe4U/Sz1paB+SIl8nwp3cv3AlzY9RJbmyN7N0sGYVbiiTEccDBNsBWmm
+NiIXEn3DeSSkdTUE/T9u1Q4IKbLRLRjkGXHD69odIlGpg/QxJ/m5kbRHAoHn4KV0
+4vWzHWjU5bO1+nUmvm1IPhbIu8T2fdidWjrAVpASa/ycsueKrToUWSFKYuNIFmzw
+pth2gTcRs0ZixPb+35hw5ZCKO5NM2ED43bwKPgSjark4aZw879PRPZkgoj/7E7rp
+HjVcuMvkxFt8VQpznpFFLt+qsa0HDjSh0NVfTHvAdcMv1ftfUXewNG/K9DmIw4a3
+ejrnVmJ97ihtTGZcM/SY3SZM4TsK7/+7itKIULQUZeRF6WKCwqz5nFDYwPeRZ43v
+VR7F8Bi/HxCSWUOMLUEMUTiMw25c5hRqT1lhmoODcdsZD4Rn0/E=
+=IO8B
+-----END PGP SIGNATURE-----
+
+--apzmgxdnlwuapemr--
