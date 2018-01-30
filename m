@@ -8,11 +8,11 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 01/11] dt-bindings: media: Add Renesas CEU bindings
-Date: Fri, 26 Jan 2018 14:48:33 +0100
-Message-Id: <1516974528-11120-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1516974528-11120-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1516974528-11120-1-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v8 01/11] dt-bindings: media: Add Renesas CEU bindings
+Date: Tue, 30 Jan 2018 10:58:12 +0100
+Message-Id: <1517306302-27957-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1517306302-27957-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -29,7 +29,7 @@ Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
 diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
 new file mode 100644
-index 0000000..590ee27
+index 0000000..3fc66df
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
 @@ -0,0 +1,81 @@
@@ -43,8 +43,8 @@ index 0000000..590ee27
 +bits.
 +
 +Required properties:
-+- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1-H
-+  and RZ/A1-M SoCs.
++- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
++  and RZ/A1M SoCs.
 +- reg: Registers address base and size.
 +- interrupts: The interrupt specifier.
 +
