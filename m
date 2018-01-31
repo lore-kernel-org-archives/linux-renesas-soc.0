@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:15892 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751827AbeAaS02 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 31 Jan 2018 13:26:28 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -11,7 +16,8 @@ To: Philipp Zabel <p.zabel@pengutronix.de>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
         linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
@@ -19,36 +25,45 @@ Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
         Biju Das <biju.das@bp.renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 18/37] arm64: dts: renesas: r8a7796: Use fallback rst compatible string
-Date: Thu, 25 Jan 2018 18:02:52 +0000
-Message-Id: <1516903391-30467-19-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [RFC v4 17/26] clk: renesas: r8a7790: Add rwdt clock
+Date: Wed, 31 Jan 2018 18:24:21 +0000
+Message-Id: <1517423070-24236-18-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the generic fallback compatible string for the rst node.
+Add "rwdt" clock to r8a7790_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v3->4:
+* no change
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index f8e9313..7b347d8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -510,7 +510,8 @@
- 		};
+ drivers/clk/renesas/r8a7790-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7790-cpg-mssr.c b/drivers/clk/renesas/r8a7790-cpg-mssr.c
+index 46bb55b..f936cb7 100644
+--- a/drivers/clk/renesas/r8a7790-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7790-cpg-mssr.c
+@@ -140,6 +140,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7790_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7790_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7790_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7790_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7790_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7790_CLK_ZS),
+ 	DEF_MOD("audio-dmac1",		 501,	R8A7790_CLK_HP),
+@@ -211,6 +212,7 @@ static const struct mssr_mod_clk r8a7790_mod_clks[] __initconst = {
+ };
  
- 		rst: reset-controller@e6160000 {
--			compatible = "renesas,r8a7796-rst";
-+			compatible = "renesas,r8a7796-rst",
-+				     "renesas,rcar-gen3-rst";
- 			reg = <0 0xe6160000 0 0x0200>;
- 		};
+ static const unsigned int r8a7790_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
  
 -- 
 2.7.4
-
