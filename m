@@ -1,65 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54164 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751858AbeA2PqJ (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44392 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750829AbeAaT7H (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 10:46:09 -0500
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, kieran.bingham@ideasonboard.com
-Cc: wsa@the-dreams.de, magnus.damm@gmail.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 2/5] arm64: renesas: draak: enable I2C controller 0 and EEPROM
-Date: Mon, 29 Jan 2018 16:45:45 +0100
-Message-Id: <1517240748-14780-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Wed, 31 Jan 2018 14:59:07 -0500
+Received: by mail-lf0-f68.google.com with SMTP id v188so22577700lfa.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jan 2018 11:59:06 -0800 (PST)
+Subject: [PATCH 2/2] arm64: add Renesas R8A77980 support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Cc: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+References: <fbdd08a3-1ab3-8e70-20f1-d9c41493b11c@cogentembedded.com>
+Message-ID: <4bf1d0e3-7389-cd24-ff6a-c750d8ea42d6@cogentembedded.com>
+Date: Wed, 31 Jan 2018 22:59:03 +0300
+MIME-Version: 1.0
+In-Reply-To: <fbdd08a3-1ab3-8e70-20f1-d9c41493b11c@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enables EEPROM on I2C0 on the Draak board.
+Add a configuration option for the R-Car V3H (R8A77980) SoC.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm64/Kconfig.platforms |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 09de73b..6ff9d3e 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -46,6 +46,11 @@
- 		};
- 	};
+Index: renesas/arch/arm64/Kconfig.platforms
+===================================================================
+--- renesas.orig/arch/arm64/Kconfig.platforms
++++ renesas/arch/arm64/Kconfig.platforms
+@@ -195,6 +195,12 @@ config ARCH_R8A77970
+ 	help
+ 	  This enables support for the Renesas R-Car V3M SoC.
  
-+	i2c0_pins: i2c0 {
-+		groups = "i2c0";
-+		function = "i2c0";
-+	};
++config ARCH_R8A77980
++	bool "Renesas R-Car V3H SoC Platform"
++	depends on ARCH_RENESAS
++	help
++	  This enables support for the Renesas R-Car V3H SoC.
 +
- 	pwm0_pins: pwm0 {
- 		groups = "pwm0_c";
- 		function = "pwm0";
-@@ -67,6 +72,18 @@
- 	};
- };
- 
-+&i2c0 {
-+	pinctrl-0 = <&i2c0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	eeprom@50 {
-+		compatible = "rohm,br24t01", "atmel,24c01";
-+		reg = <0x50>;
-+		pagesize = <8>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
--- 
-2.7.4
+ config ARCH_R8A77995
+ 	bool "Renesas R-Car D3 SoC Platform"
+ 	depends on ARCH_RENESAS
