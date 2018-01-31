@@ -1,58 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41325 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751147AbeAUOd5 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:15942 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751858AbeAaS0x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Jan 2018 09:33:57 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: devicetree@vger.kernel.org
-Cc: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Wed, 31 Jan 2018 13:26:53 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v2 0/1] of: easier debugging for node life cycle issues
-Date: Sun, 21 Jan 2018 15:31:16 +0100
-Message-Id: <20180121143117.19805-1-wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 21/26] ARM: dts: r8a7745: Add watchdog support to SoC dtsi
+Date: Wed, 31 Jan 2018 18:24:25 +0000
+Message-Id: <1517423070-24236-22-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I got a bug report for a DT node refcounting problem in the I2C subsystem. This
-patch was a huge help in validating the bug report and the proposed solution.
-So, I thought I bring it to attention again. Thanks Tyrel, for the initial
-work!
+This patch adds watchdog support to the r8a7745 SoC dtsi.
 
-Note that I did not test the dynamic updates, only of_node_{get|put} so far. I
-read that Tyrel checked dynamic updates extensively with this patch. And since
-DT overlays are also used within our Renesas dev team, this will help there, as
-well.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3->4:
+* no change
 
-Tested on a Renesas Salvator-XS board (R-Car H3).
+ arch/arm/boot/dts/r8a7745.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Changes since RFC v1:
-	* rebased to v4.15-rc8
-	* fixed commit abbrev and one of the sysfs paths in commit desc
-	* removed trailing space and fixed pointer declaration in code
-
-I consider all the remaining checkpatch issues irrelevant for this patch.
-
-So what about applying it?
-
-Kind regards,
-
-   Wolfram
-
-
-Tyrel Datwyler (1):
-  of: introduce event tracepoints for dynamic device_node lifecyle
-
- drivers/of/dynamic.c      | 32 ++++++----------
- include/trace/events/of.h | 93 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 105 insertions(+), 20 deletions(-)
- create mode 100644 include/trace/events/of.h
-
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 6bc1cf4..5d1b8f2 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -321,6 +321,16 @@
+ 			reg = <0 0xe6160000 0 0x100>;
+ 		};
+ 
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7745-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7745-sysc";
+ 			reg = <0 0xe6180000 0 0x200>;
 -- 
-2.11.0
+2.7.4
