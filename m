@@ -1,152 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:27809 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751476AbeA2QfV (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:45147 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752674AbeAaInY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:35:21 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 08/30] rcar-vin: all Gen2 boards can scale simplify logic
-Date: Mon, 29 Jan 2018 17:34:13 +0100
-Message-Id: <20180129163435.24936-9-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 31 Jan 2018 03:43:24 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1517343778-27902-6-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com> <1517343778-27902-6-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 31 Jan 2018 09:43:22 +0100
+Message-ID: <CAMuHMdVF2HsgPP7zbvtbOgfrNXdAQQr64g5=RS1fOFiYsbEQ1g@mail.gmail.com>
+Subject: Re: [RFC v3 05/25] ARM: dts: r8a7791: Adjust SMP routine size
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The logic to preserve the requested format width and height are too
-complex and come from a premature optimization for Gen3. All Gen2 SoC
-can scale and the Gen3 implementation will not use these functions at
-all so simply preserve the width and height when interacting with the
-subdevice much like the field is preserved simplifies the logic quite a
-bit.
+On Tue, Jan 30, 2018 at 9:22 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adjusts the definition of the SMP routine size according
+> to the latest changes made by commit:
+> "ARM: shmobile: Add watchdog support"
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-dma.c  |  8 --------
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 25 +++++++++++--------------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  2 --
- 3 files changed, 11 insertions(+), 24 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index a7cda3922cb74baa..fd14be20a6604d7a 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -585,14 +585,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
- 		0, 0);
- }
- 
--void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
--		    u32 width, u32 height)
--{
--	/* All VIN channels on Gen2 have scalers */
--	pix->width = width;
--	pix->height = height;
--}
--
- /* -----------------------------------------------------------------------------
-  * Hardware setup
-  */
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 8805d7911a761019..c2265324c7c96308 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -166,6 +166,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 		.which = which,
- 	};
- 	enum v4l2_field field;
-+	u32 width, height;
- 	int ret;
- 
- 	sd = vin_to_source(vin);
-@@ -178,7 +179,10 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	format.pad = vin->digital->source_pad;
- 
-+	/* Allow the video device to override field and to scale */
- 	field = pix->field;
-+	width = pix->width;
-+	height = pix->height;
- 
- 	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
-@@ -186,11 +190,13 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	v4l2_fill_pix_format(pix, &format.format);
- 
--	pix->field = field;
--
- 	source->width = pix->width;
- 	source->height = pix->height;
- 
-+	pix->field = field;
-+	pix->width = width;
-+	pix->height = height;
-+
- 	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
- 		source->height);
- 
-@@ -204,13 +210,9 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 			     struct v4l2_pix_format *pix,
- 			     struct rvin_source_fmt *source)
- {
--	u32 rwidth, rheight, walign;
-+	u32 walign;
- 	int ret;
- 
--	/* Requested */
--	rwidth = pix->width;
--	rheight = pix->height;
--
- 	/* Keep current field if no specific one is asked for */
- 	if (pix->field == V4L2_FIELD_ANY)
- 		pix->field = vin->format.field;
-@@ -248,10 +250,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 		break;
- 	}
- 
--	/* If source can't match format try if VIN can scale */
--	if (source->width != rwidth || source->height != rheight)
--		rvin_scale_try(vin, pix, rwidth, rheight);
--
- 	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
- 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
- 
-@@ -270,9 +268,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 		return -EINVAL;
- 	}
- 
--	vin_dbg(vin, "Requested %ux%u Got %ux%u bpl: %d size: %d\n",
--		rwidth, rheight, pix->width, pix->height,
--		pix->bytesperline, pix->sizeimage);
-+	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
-+		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
- 
- 	return 0;
- }
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index f195d174eeacda10..8daba9db0e927a49 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -175,8 +175,6 @@ void rvin_v4l2_unregister(struct rvin_dev *vin);
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
- /* Cropping, composing and scaling */
--void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
--		    u32 width, u32 height);
- void rvin_crop_scale_comp(struct rvin_dev *vin);
- 
- #endif
--- 
-2.16.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
