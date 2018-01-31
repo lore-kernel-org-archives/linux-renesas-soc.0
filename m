@@ -1,150 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:6139 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752051AbeA3UYL (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:32999 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752426AbeAaKbl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jan 2018 15:24:11 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC v3 11/25] watchdog: renesas_wdt: Add R-Car Gen2 support
-Date: Tue, 30 Jan 2018 20:22:44 +0000
-Message-Id: <1517343778-27902-12-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 31 Jan 2018 05:31:41 -0500
+Received: by mail-io0-f193.google.com with SMTP id n7so14687612iob.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jan 2018 02:31:41 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1517318680-14918-1-git-send-email-geert@linux-m68k.org>
+References: <1517318680-14918-1-git-send-email-geert@linux-m68k.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 31 Jan 2018 11:31:40 +0100
+Message-ID: <CAPDyKFqRwGgZ17eteN8nytS2ub-tqoY2kHec7N05GK6ipAUUcg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: MMC_SDHI_{SYS,INTERNAL}_DMAC should depend on HAS_DMA
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car Gen2 and RZ/G1 the rwdt clock needs to be always ON, therefore
-when suspending to RAM we need to explicitly disable the counting by
-clearing TME from RWTCSRA.
-Also, on some systems RWDT is the only piece of HW that allows the SoC
-to be restarted, therefore this patch implements the restart callback.
+On 30 January 2018 at 14:24, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> If NO_DMA=y:
+>
+>     ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
+>     ERROR: "bad_dma_ops" [drivers/mmc/host/renesas_sdhi_internal_dmac.ko] undefined!
+>
+> Add dependencies on HAS_DMA to fix this.
+>
+> Fixes: e578afab6e5f57e7 ("mmc: renesas_sdhi: remove wrong depends on to enable compile test")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-Wolfram, was the restart callback implementation missing for a reason?
-Is its implementation going to break any Gen3 platform?
+Thanks, applied for fixes!
 
-v1->v3:
-* unified Gen2 and Gen3 drivers.
+Kind regards
+Uffe
 
- drivers/watchdog/renesas_wdt.c | 61 ++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 56 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 831ef83..eedb016 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
- 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
- }
- 
-+static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-+			void *data)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	pm_runtime_get_sync(wdev->parent);
-+
-+	rwdt_write(priv, 0x00, RWTCSRB);
-+	rwdt_write(priv, 0x00, RWTCSRA);
-+	rwdt_write(priv, 0xffff, RWTCNT);
-+
-+	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-+		cpu_relax();
-+
-+	rwdt_write(priv, 0x80, RWTCSRA);
-+	return 0;
-+}
-+
- static const struct watchdog_info rwdt_ident = {
- 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
- 	.identity = "Renesas WDT Watchdog",
-@@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
- 	.stop = rwdt_stop,
- 	.ping = rwdt_init_timeout,
- 	.get_timeleft = rwdt_get_timeleft,
-+	.restart = rwdt_restart,
- };
- 
- static int rwdt_probe(struct platform_device *pdev)
-@@ -203,13 +222,42 @@ static int rwdt_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--/*
-- * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
-- * to work there, one also needs a RESET (RST) driver which does not exist yet
-- * due to HW issues. This needs to be solved before adding compatibles here.
-- */
-+#ifdef CONFIG_PM
-+static int rwdt_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev;
-+	struct rwdt_priv *priv;
-+
-+	pdev = to_platform_device(dev);
-+	priv = platform_get_drvdata(pdev);
-+	if (watchdog_active(&priv->wdev)) {
-+		rwdt_write(priv, priv->cks, RWTCSRA);
-+	}
-+	return 0;
-+}
-+
-+static int rwdt_resume(struct device *dev)
-+{
-+	struct platform_device *pdev;
-+	struct rwdt_priv *priv;
-+
-+	pdev = to_platform_device(dev);
-+	priv = platform_get_drvdata(pdev);
-+	if (watchdog_active(&priv->wdev)) {
-+		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
-+	}
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops rwdt_pm = {
-+	.suspend = rwdt_suspend,
-+	.resume = rwdt_resume,
-+};
-+#endif
-+
- static const struct of_device_id rwdt_ids[] = {
- 	{ .compatible = "renesas,rcar-gen3-wdt", },
-+	{ .compatible = "renesas,rcar-gen2-wdt", },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, rwdt_ids);
-@@ -218,6 +266,9 @@ static struct platform_driver rwdt_driver = {
- 	.driver = {
- 		.name = "renesas_wdt",
- 		.of_match_table = rwdt_ids,
-+#ifdef CONFIG_PM
-+		.pm = &rwdt_pm,
-+#endif
- 	},
- 	.probe = rwdt_probe,
- 	.remove = rwdt_remove,
--- 
-2.7.4
+> ---
+>  drivers/mmc/host/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 67bd3344dd03a1ae..0eae619419d9ddeb 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -605,7 +605,7 @@ config MMC_SDHI
+>
+>  config MMC_SDHI_SYS_DMAC
+>         tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
+> -       depends on MMC_SDHI
+> +       depends on MMC_SDHI && HAS_DMA
+>         default MMC_SDHI if (SUPERH || ARM)
+>         help
+>           This provides DMA support for SDHI SD/SDIO controllers
+> @@ -615,7 +615,7 @@ config MMC_SDHI_SYS_DMAC
+>  config MMC_SDHI_INTERNAL_DMAC
+>         tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+>         depends on ARM64 || COMPILE_TEST
+> -       depends on MMC_SDHI
+> +       depends on MMC_SDHI && HAS_DMA
+>         default MMC_SDHI if ARM64
+>         help
+>           This provides DMA support for SDHI SD/SDIO controllers
+> --
+> 2.7.4
+>
