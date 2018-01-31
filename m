@@ -1,68 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36682 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753794AbeAQQ3d (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:63792 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751326AbeAaSZB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:29:33 -0500
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
+        Wed, 31 Jan 2018 13:25:01 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 05/16] mmc: slot-gpio: add a helper to check capability of GPIO WP detection
-Date: Thu, 18 Jan 2018 01:28:05 +0900
-Message-Id: <1516206496-16612-6-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 03/26] ARM: dts: r8a7745: Adjust SMP routine size
+Date: Wed, 31 Jan 2018 18:24:07 +0000
+Message-Id: <1517423070-24236-4-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Like mmc_can_gpio_cd(), mmc_can_gpio_ro() will also be useful for host
-drivers to know whether GPIO write-protect detection is supported.
+This patch adjusts the definition of the SMP routine size according
+to the latest changes made by commit:
+"ARM: shmobile: Add watchdog support"
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+v3->4:
+* no change
 
-Changes in v3:
-  - newly added
+ arch/arm/boot/dts/r8a7745.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2: None
-
- drivers/mmc/core/slot-gpio.c  | 8 ++++++++
- include/linux/mmc/slot-gpio.h | 1 +
- 2 files changed, 9 insertions(+)
-
-diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
-index f7c6e05..3698b05 100644
---- a/drivers/mmc/core/slot-gpio.c
-+++ b/drivers/mmc/core/slot-gpio.c
-@@ -305,3 +305,11 @@ int mmc_gpiod_request_ro(struct mmc_host *host, const char *con_id,
- 	return 0;
- }
- EXPORT_SYMBOL(mmc_gpiod_request_ro);
-+
-+bool mmc_can_gpio_ro(struct mmc_host *host)
-+{
-+	struct mmc_gpio *ctx = host->slot.handler_priv;
-+
-+	return ctx->ro_gpio ? true : false;
-+}
-+EXPORT_SYMBOL(mmc_can_gpio_ro);
-diff --git a/include/linux/mmc/slot-gpio.h b/include/linux/mmc/slot-gpio.h
-index 82f0d28..91f1ba0 100644
---- a/include/linux/mmc/slot-gpio.h
-+++ b/include/linux/mmc/slot-gpio.h
-@@ -33,5 +33,6 @@ void mmc_gpio_set_cd_isr(struct mmc_host *host,
- 			 irqreturn_t (*isr)(int irq, void *dev_id));
- void mmc_gpiod_request_cd_irq(struct mmc_host *host);
- bool mmc_can_gpio_cd(struct mmc_host *host);
-+bool mmc_can_gpio_ro(struct mmc_host *host);
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index ddc3da2..6bc1cf4 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -755,7 +755,7 @@
  
- #endif
+ 			smp-sram@0 {
+ 				compatible = "renesas,smp-sram";
+-				reg = <0 0x10>;
++				reg = <0 0x100>;
+ 			};
+ 		};
+ 
 -- 
 2.7.4
