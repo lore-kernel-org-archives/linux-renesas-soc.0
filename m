@@ -1,65 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:53807 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751109AbeAYSGf (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36422 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755364AbeAaXKK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jan 2018 13:06:35 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 35/37] ARM: dts: r8a7794: Add watchdog support to SoC dtsi
-Date: Thu, 25 Jan 2018 18:03:09 +0000
-Message-Id: <1516903391-30467-36-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1516903391-30467-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 31 Jan 2018 18:10:10 -0500
+Received: by mail-lf0-f68.google.com with SMTP id t79so23306873lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jan 2018 15:10:09 -0800 (PST)
+Date: Thu, 1 Feb 2018 00:10:07 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] gmsl-yavta: Save output frames to .ppm files
+Message-ID: <20180131231007.GB14701@bigcity.dyn.berto.se>
+References: <20180131210116.28098-1-laurent.pinchart@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180131210116.28098-1-laurent.pinchart@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This commit adds watchdog support to the r8a7794 dtsi.
+Hi Laurent,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Thanks for your patch.
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 9309887..5f9e6d3 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -251,6 +251,16 @@
- 			reg = <0 0xe6160000 0 0x0100>;
- 		};
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7794-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7794-sysc";
- 			reg = <0 0xe6180000 0 0x0200>;
+On 2018-01-31 23:01:16 +0200, Laurent Pinchart wrote:
+> The script produces the PPM variant of PNM, the correct file extension
+> is .ppm.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Applied.
+
+> ---
+>  gmsl-yavta.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/gmsl-yavta.sh b/gmsl-yavta.sh
+> index a123bf52a16d..0ec0560441d8 100755
+> --- a/gmsl-yavta.sh
+> +++ b/gmsl-yavta.sh
+> @@ -83,5 +83,5 @@ wait
+>  
+>  for f in $out/*bin; do
+>      name=$(basename $f .bin)
+> -    raw2rgbpnm -f YUYV -s 1280x800 $out/$name.bin $out/$name.pnm
+> +    raw2rgbpnm -f YUYV -s 1280x800 $out/$name.bin $out/$name.ppm
+>  done
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
