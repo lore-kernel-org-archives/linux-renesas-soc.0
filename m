@@ -1,108 +1,153 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:54511 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751662AbeA2Qfm (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:33823 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751447AbeAaPh2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:35:42 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 21/30] rcar-vin: prepare for media controller mode initialization
-Date: Mon, 29 Jan 2018 17:34:26 +0100
-Message-Id: <20180129163435.24936-22-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 31 Jan 2018 10:37:28 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <007dd1e3-70fd-69ad-fd02-4719e958b41c@roeck-us.net>
+References: <1517343778-27902-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517343778-27902-12-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180130220504.GA16709@roeck-us.net> <TY1PR06MB0895ECB2936323F9D281C1EFC0FB0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <CAMuHMdViQgCjVFbs0kkBObAAoFTzvz8yPFUHPWHrtYzkbnYm_g@mail.gmail.com> <007dd1e3-70fd-69ad-fd02-4719e958b41c@roeck-us.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 31 Jan 2018 16:37:27 +0100
+Message-ID: <CAMuHMdXPntakrTvdOs4p5xvzJOS7ujmyztSuGEyMDnen5QZOxg@mail.gmail.com>
+Subject: Re: [RFC v3 11/25] watchdog: renesas_wdt: Add R-Car Gen2 support
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Prepare for media controller by calling a different initialization then
-for when running in device centric mode. Add trivial configuration of
-the mbus and creation of the media pad for the video device entity.
+Hi G=C3=BCnter,
 
-While we are at it clearly mark the digital device centric notifier
-functions with a comment.
+On Wed, Jan 31, 2018 at 3:48 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 01/31/2018 04:13 AM, Geert Uytterhoeven wrote:
+>> On Wed, Jan 31, 2018 at 11:47 AM, Fabrizio Castro
+>> <fabrizio.castro@bp.renesas.com> wrote:
+>>>> Subject: Re: [RFC v3 11/25] watchdog: renesas_wdt: Add R-Car Gen2
+>>>> support
+>>>> On Tue, Jan 30, 2018 at 08:22:44PM +0000, Fabrizio Castro wrote:
+>>>>>
+>>>>> On R-Car Gen2 and RZ/G1 the rwdt clock needs to be always ON, therefo=
+re
+>>>>> when suspending to RAM we need to explicitly disable the counting by
+>>>>> clearing TME from RWTCSRA.
+>>>>> Also, on some systems RWDT is the only piece of HW that allows the So=
+C
+>>>>> to be restarted, therefore this patch implements the restart callback=
+.
+>>>>>
+>>>>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>>>>> Signed-off-by: Ramesh Shanmugasundaram
+>>>>> <ramesh.shanmugasundaram@bp.renesas.com>
+>>>>> ---
+>>>>> Wolfram, was the restart callback implementation missing for a reason=
+?
+>>>>> Is its implementation going to break any Gen3 platform?
+>>>>
+>>>> The changes clearly are way more than claimed in the subject. Adding
+>>>> restart handler and PM support may be prerequisites for Gen2, but the
+>>>> changes apply to Gen3 as well. What happened to "one patch per logical
+>>>> change" ?
+>>>
+>>> The PM implementation should be ok for Gen3 too, without this patch
+>>> series the kernel
+>>> would disable the rwdt clock when suspending to RAM, this would "pause"
+>>> the counting.
+>>> This patch series declares the rwdt clock as critical for Gen2 and RZ/G=
+1,
+>>> which means we
+>>> need to explicitly disable the counting to keep the same behaviour in
+>>> place.
+>>
+>> Note that if the kernel crashes after rwdt_suspend(), the watchdog won't
+>> restart the system. But that's an issue common to many watchdog driver,
+>> right?
+>>
+> If so, that would be buggy.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
- 2 files changed, 22 insertions(+), 2 deletions(-)
+All watchdog drivers implementing a system suspend handler stop the watchdo=
+g
+before suspending the system. I guess if they wouldn't do that, the watchdo=
+g
+would restart the system while asleep?
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 64034c96f384b3ed..0c6960756c33f86c 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- /* The vin lock shuld be held when calling the subdevice attach and detach */
- static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
- 					 struct v4l2_subdev *subdev)
-@@ -237,6 +241,16 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	return 0;
- }
- 
-+static int rvin_mc_init(struct rvin_dev *vin)
-+{
-+	/* All our sources are CSI-2 */
-+	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-+	vin->mbus_cfg.flags = 0;
-+
-+	vin->pad.flags = MEDIA_PAD_FL_SINK;
-+	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -325,8 +339,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	platform_set_drvdata(pdev, vin);
--
--	ret = rvin_digital_graph_init(vin);
-+	if (vin->info->use_mc)
-+		ret = rvin_mc_init(vin);
-+	else
-+		ret = rvin_digital_graph_init(vin);
- 	if (ret < 0)
- 		goto error;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 64476bc5c8abc6d0..4caef7193db09c5b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -101,6 +101,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @pad:		media pad for the video device entity
-+ *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
-  *
-@@ -130,6 +132,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct media_pad pad;
-+
- 	struct mutex lock;
- 	struct vb2_queue queue;
- 
--- 
-2.16.1
+Exceptions are:
+  - atlas7_wdt, sirfsoc_wdt: these seem to rely on another driver stopping
+    the watchdog clock, so it behaves the same as all above,
+  - diag288_wdt: this returns -EBUSY when trying to suspend the system
+    while the watchdog is enabled, to put the burden of disabling the
+    watchdog on the user,
+  - ux500_wdt: this seems to use a hardware feature to automatically
+    disable the watchdog during suspend.
+
+So only the last one seems to protect against kernel crashes after the
+watchdog's suspend method is called...
+
+Note that two drivers (iTCO_wdt and wdat_wdt) implements suspend_noirq
+instead of suspend, which decreases the window of running without a watchdo=
+g
+a bit.
+
+>>> With respect to the restart callback implementation, that may well have
+>>> consequences on
+>>> Gen3, hopefully Wolfram will give us a feedback on this.
+>>> In particular I would like to know if we should be installing the resta=
+rt
+>>> callback only when
+>>> we use "renesas,rcar-gen2-wdt" as compatible string, or it's ok to make
+>>> it available for
+>>> Gen3 as well.
+>>
+>> IIRC, the reason we don't have the restart callback on R-Car Gen3 is the
+>> arm64 maintainers insisting on using PSCI, and vetoing other means,
+>> to restart the system.
+>
+> You could just give it lower priority than PSCI.
+>
+>> Which leaves us with a few boards where we have to use the watchdog, and
+>> wait until the timeout triggers...
+>
+> Which means the veto is counter-productive and thus meaningless.
+
+I do welcome that point of view ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
