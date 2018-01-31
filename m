@@ -1,71 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36691 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753845AbeAQQ3d (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:39989 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751582AbeAaU1u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:29:33 -0500
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 10/16] mmc: tmio: remove TMIO_MMC_WRPROTECT_DISABLE
-Date: Thu, 18 Jan 2018 01:28:10 +0900
-Message-Id: <1516206496-16612-11-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 31 Jan 2018 15:27:50 -0500
+Received: by mail-lf0-f65.google.com with SMTP id h92so22716802lfi.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jan 2018 12:27:50 -0800 (PST)
+Subject: [PATCH 1/2] dt-bindings: clock: add R8A77980 CPG core clock
+ definitions
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+Message-ID: <4281b305-ff0d-cf56-ce6b-dff4589c39f6@cogentembedded.com>
+Date: Wed, 31 Jan 2018 23:27:47 +0300
+MIME-Version: 1.0
+In-Reply-To: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The use of this flag has been replaced with MMC_CAP2_NO_WRITE_PROTECT.
-No platform defines this flag any more.  Remove.
+Add macros usable by the device tree sources to reference the R8A77980
+CPG core clocks by index. The data come from the table 8.2e of the R-Car
+Series, 3rd Generation User's Manual: Hardware (Rev. 0.80, Oct, 2017),
+however I had to add the Z2 clock which is somehow present only on the
+figure 8.1e...
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
+ include/dt-bindings/clock/r8a77980-cpg-mssr.h |   51 ++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-Changes in v3:
-  - newly added
-
-Changes in v2: None
-
- drivers/mmc/host/tmio_mmc_core.c | 5 ++---
- include/linux/mfd/tmio.h         | 1 -
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index bdbff2d..7ad3433c 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1075,10 +1075,9 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- static int tmio_mmc_get_ro(struct mmc_host *mmc)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
--	struct tmio_mmc_data *pdata = host->pdata;
- 
--	return !((pdata->flags & TMIO_MMC_WRPROTECT_DISABLE) ||
--		 (sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) & TMIO_STAT_WRPROTECT));
-+	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
-+		 TMIO_STAT_WRPROTECT);
- }
- 
- static int tmio_multi_io_quirk(struct mmc_card *card,
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 396a103c..91f9221 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -36,7 +36,6 @@
- 	} while (0)
- 
- /* tmio MMC platform flags */
--#define TMIO_MMC_WRPROTECT_DISABLE	BIT(0)
- /*
-  * Some controllers can support a 2-byte block size when the bus width
-  * is configured in 4-bit mode.
--- 
-2.7.4
+Index: renesas-drivers/include/dt-bindings/clock/r8a77980-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ renesas-drivers/include/dt-bindings/clock/r8a77980-cpg-mssr.h
+@@ -0,0 +1,51 @@
++/* SPDX-License-Identifier: GPL-2.0+
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A77980_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A77980_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a77980 CPG Core Clocks */
++#define R8A77980_CLK_Z2			0
++#define R8A77980_CLK_ZR			1
++#define R8A77980_CLK_ZTR		2
++#define R8A77980_CLK_ZTRD2		3
++#define R8A77980_CLK_ZT			4
++#define R8A77980_CLK_ZX			5
++#define R8A77980_CLK_S0D1		6
++#define R8A77980_CLK_S0D2		7
++#define R8A77980_CLK_S0D3		8
++#define R8A77980_CLK_S0D4		9
++#define R8A77980_CLK_S0D6		10
++#define R8A77980_CLK_S0D12		11
++#define R8A77980_CLK_S0D24		12
++#define R8A77980_CLK_S1D1		13
++#define R8A77980_CLK_S1D2		14
++#define R8A77980_CLK_S1D4		15
++#define R8A77980_CLK_S2D1		16
++#define R8A77980_CLK_S2D2		17
++#define R8A77980_CLK_S2D4		18
++#define R8A77980_CLK_S3D1		19
++#define R8A77980_CLK_S3D2		20
++#define R8A77980_CLK_S3D4		21
++#define R8A77980_CLK_LB			22
++#define R8A77980_CLK_CL			23
++#define R8A77980_CLK_ZB3		24
++#define R8A77980_CLK_ZB3D2		25
++#define R8A77980_CLK_ZB3D4		26
++#define R8A77980_CLK_SD0H		27
++#define R8A77980_CLK_SD0		28
++#define R8A77980_CLK_RPC		29
++#define R8A77980_CLK_RPCD2		30
++#define R8A77980_CLK_MSO		31
++#define R8A77980_CLK_CANFD		32
++#define R8A77980_CLK_CSI0		33
++#define R8A77980_CLK_CP			34
++#define R8A77980_CLK_CPEX		35
++#define R8A77980_CLK_R			36
++#define R8A77980_CLK_OSC		37
++
++#endif /* __DT_BINDINGS_CLOCK_R8A77980_CPG_MSSR_H__ */
