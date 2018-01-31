@@ -1,64 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:44191 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751747AbeASIEF (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:12051 "EHLO
+        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752211AbeAaQSc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Jan 2018 03:04:05 -0500
-Received: by mail-qt0-f194.google.com with SMTP id l20so567840qtj.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Jan 2018 00:04:05 -0800 (PST)
+        Wed, 31 Jan 2018 11:18:32 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/5] arm64: dts: renesas: r8a77970: add DU instance
+Date: Wed, 31 Jan 2018 17:18:09 +0100
+Message-Id: <20180131161811.12699-4-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20180131161811.12699-1-niklas.soderlund@ragnatech.se>
+References: <20180131161811.12699-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20171221120859.14729-1-wsa+renesas@sang-engineering.com>
-References: <20171221120859.14729-1-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 19 Jan 2018 09:04:04 +0100
-Message-ID: <CAMuHMdVUcXDf82zupm0BRqjPwBV_kxbtVGhg951ypNoz9c+J_Q@mail.gmail.com>
-Subject: Re: [RFC] arm64: renesas_defconfig: add driver for PCA9654
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-On Thu, Dec 21, 2017 at 1:08 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Do you actually want patches for renesas_defconfig?
+Add the DU device to r8a77970.dtsi in a disabled state.
 
-Yes we do!
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
->  arch/arm64/configs/renesas_defconfig | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-> index 88cbd4f769d15b..69a0e107c75bb7 100644
-> --- a/arch/arm64/configs/renesas_defconfig
-> +++ b/arch/arm64/configs/renesas_defconfig
-> @@ -131,6 +131,8 @@ CONFIG_PINCTRL_SINGLE=y
->  CONFIG_GPIOLIB=y
->  CONFIG_GPIO_GENERIC_PLATFORM=y
->  CONFIG_GPIO_RCAR=y
-> +CONFIG_GPIO_PCA953X=y
-> +CONFIG_GPIO_PCA953X_IRQ=y
-
-Why enable CONFIG_GPIO_PCA953X_IRQ if you don't want to add an
-interrupts property to the device node in DT yet? ;-)
-
->  CONFIG_GPIO_BD9571MWV=y
->  CONFIG_THERMAL=y
->  CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 8419576dab50f460..e1d8aa0fbc1e4f90 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -632,6 +632,33 @@
+ 			resets = <&cpg 603>;
+ 			iommus = <&ipmmu_vi0 8>;
+ 		};
++
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a77970";
++			reg = <0 0xfeb00000 0 0x70000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>;
++			clock-names = "du.0";
++			status = "disabled";
++
++			vsps = <&vspd0>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++				port@1 {
++					reg = <1>;
++					du_out_lvds0: endpoint {
++					};
++				};
++			};
++		};
+ 	};
+ 
+ 	timer {
+-- 
+2.16.1
