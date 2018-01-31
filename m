@@ -1,72 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41915 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753875AbeALUPy (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jan 2018 15:15:54 -0500
-Received: by mail-lf0-f68.google.com with SMTP id h137so7181456lfe.8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jan 2018 12:15:54 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180112201550.368547609@cogentembedded.com>
-Date: Fri, 12 Jan 2018 23:12:04 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 1/2] drm: rcar-du: lvds: fix LVDS startup on R-Car gen3
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=drm-rcar-du-lvds-fix-LVDS-startup-on-R-Car-gen3.patch
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 24/26] ARM: dts: r8a7794: Add watchdog support to SoC dtsi
+Date: Wed, 31 Jan 2018 18:24:28 +0000
+Message-Id: <1517423070-24236-25-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the latest revisions of the R-Car gen3 manual, the LVDS mode
-must be set before the LVDS I/O pins are enabled, not after --  fix  the
-gen3 LVDS startup sequence accordingly...
+This commit adds watchdog support to the r8a7794 dtsi.
 
-While  at it,  also fix the comment  preceding the first LVDCR0 write in
-the R-Car gen2 startup code that still talks about hardcoding the LVDS
-mode 0...
-
-Fixes: e947eccbeba4 ("drm: rcar-du: Add support for LVDS mode selection")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+v3->4:
+* no change
 
-Index: linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-===================================================================
---- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-+++ linux/drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
-@@ -60,8 +60,8 @@ static void rcar_du_lvdsenc_start_gen2(s
- 	rcar_lvds_write(lvds, LVDPLLCR, pllcr);
+ arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index e47c5f4..1c9b149 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -119,6 +119,16 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
- 	/*
--	 * Select the input, hardcode mode 0, enable LVDS operation and turn
--	 * bias circuitry on.
-+	 * Set the  LVDS mode, select the input, enable LVDS operation,
-+	 * and turn bias circuitry on.
- 	 */
- 	lvdcr0 = (lvds->mode << LVDCR0_LVMD_SHIFT) | LVDCR0_BEN | LVDCR0_LVEN;
- 	if (rcrtc->index == 2)
-@@ -106,6 +106,9 @@ static void rcar_du_lvdsenc_start_gen3(s
- 
- 	rcar_lvds_write(lvds, LVDPLLCR, pllcr);
- 
-+	lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
-+	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7794-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
 +
- 	/* Turn all the channels on. */
- 	rcar_lvds_write(lvds, LVDCR1,
- 			LVDCR1_CHSTBY(3) | LVDCR1_CHSTBY(2) |
-@@ -115,7 +118,8 @@ static void rcar_du_lvdsenc_start_gen3(s
- 	 * Turn the PLL on, set it to LVDS normal mode, wait for the startup
- 	 * delay and turn the output on.
- 	 */
--	lvdcr0 = (lvds->mode << LVDCR0_LVMD_SHIFT) | LVDCR0_PLLON;
-+
-+	lvdcr0 = | LVDCR0_PLLON;
- 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
- 
- 	lvdcr0 |= LVDCR0_PWD;
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a7794",
+ 				     "renesas,rcar-gen2-gpio";
+-- 
+2.7.4
+
