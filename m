@@ -1,91 +1,98 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 29/30] rcar-vin: enable support for r8a7796
-Date: Mon, 29 Jan 2018 17:34:34 +0100
-Message-Id: <20180129163435.24936-30-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:15863 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751747AbeAaS0D (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 31 Jan 2018 13:26:03 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
+Date: Wed, 31 Jan 2018 18:24:17 +0000
+Message-Id: <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a7796.
+On iWave's boards iwg20d and iwg22d the only way to reboot the system is
+by means of the watchdog.
+This patch adds a restart handler to rwdt_ops, and also makes sure we
+keep its priority to a medium level, in order to not override other more
+effective handlers.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 44 +++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+v3->v4:
+* New patch spawn out from patch 12/16. The restart handler on Gen3 is
+  controversial, hopefully this patch will help finalizing the discussion.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 43d2fa83875817f0..2305fedd293db241 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -914,6 +914,46 @@ static const struct rvin_info rcar_info_r8a7795es1 = {
- 	.routes = rcar_info_r8a7795es1_routes,
+ drivers/watchdog/renesas_wdt.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 0a1a402..6d1c4b9 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
+ 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+ }
+ 
++static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
++			void *data)
++{
++	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
++
++	pm_runtime_get_sync(wdev->parent);
++
++	rwdt_write(priv, 0x00, RWTCSRB);
++	rwdt_write(priv, 0x00, RWTCSRA);
++	rwdt_write(priv, 0xffff, RWTCNT);
++
++	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
++		cpu_relax();
++
++	rwdt_write(priv, 0x80, RWTCSRA);
++	return 0;
++}
++
+ static const struct watchdog_info rwdt_ident = {
+ 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
+ 	.identity = "Renesas WDT Watchdog",
+@@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
+ 	.stop = rwdt_stop,
+ 	.ping = rwdt_init_timeout,
+ 	.get_timeleft = rwdt_get_timeleft,
++	.restart = rwdt_restart,
  };
  
-+static const struct rvin_group_route rcar_info_r8a7796_routes[] = {
-+	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 0, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(3) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ .vin = 4, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 4, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 5, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 5, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(3) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 6, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 6, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 7, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
-+	{ .vin = 7, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a7796 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a7796_routes,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -947,6 +987,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,vin-r8a7795",
- 		.data = &rcar_info_r8a7795,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a7796",
-+		.data = &rcar_info_r8a7796,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+ static int rwdt_probe(struct platform_device *pdev)
+@@ -176,6 +195,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, priv);
+ 	watchdog_set_drvdata(&priv->wdev, priv);
+ 	watchdog_set_nowayout(&priv->wdev, nowayout);
++	watchdog_set_restart_priority(&priv->wdev, 128);
+ 
+ 	/* This overrides the default timeout only if DT configuration was found */
+ 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
 -- 
-2.16.1
+2.7.4
