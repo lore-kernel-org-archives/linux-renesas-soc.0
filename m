@@ -1,75 +1,61 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:37468 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751748AbeA2QgE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jan 2018 11:36:04 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v10 30/30] rcar-vin: enable support for r8a77970
-Date: Mon, 29 Jan 2018 17:34:35 +0100
-Message-Id: <20180129163435.24936-31-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 26/26] ARM: dts: iwg22m: Add watchdog support to SoM dtsi
+Date: Wed, 31 Jan 2018 18:24:30 +0000
+Message-Id: <1517423070-24236-27-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a77970.
+This patch enables the watchdog from within the iwg20m SoM dtsi.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+v3->4:
+* no change
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 2305fedd293db241..496b7d2189d73d37 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -954,6 +954,25 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 	.routes = rcar_info_r8a7796_routes,
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+index 8d0a392b..29b6e10 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
++++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+@@ -91,6 +91,11 @@
+ 	};
  };
  
-+static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
-+	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(3) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
-+	{ /* Sentinel */ }
++&rwdt {
++	timeout-sec = <60>;
++	status = "okay";
 +};
 +
-+static const struct rvin_info rcar_info_r8a77970 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = _rcar_info_r8a77970_routes,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -991,6 +1010,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,vin-r8a7796",
- 		.data = &rcar_info_r8a7796,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a77970",
-+		.data = &rcar_info_r8a77970,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+ &sdhi1 {
+ 	pinctrl-0 = <&sdhi1_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.16.1
+2.7.4
+
