@@ -1,96 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36664 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753762AbeAQQ3b (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:15820 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751712AbeAaSZo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jan 2018 11:29:31 -0500
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org,
+        Wed, 31 Jan 2018 13:25:44 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 13/16] mmc: tmio: fix never-detected card insertion bug
-Date: Thu, 18 Jan 2018 01:28:13 +0900
-Message-Id: <1516206496-16612-14-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 10/26] ARM: shmobile: rcar-gen2: Add watchdog support
+Date: Wed, 31 Jan 2018 18:24:14 +0000
+Message-Id: <1517423070-24236-11-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The TMIO mmc cannot detect the card insertion in native_hotplug mode
-if the driver is probed without a card inserted.
+This patch adds watchdog support by installing shmobile_boot_vector_gen2
+to ICRAM1 when enough memory is available, in which case we also keep a
+copy of MPIDR to complete the reset vector logic.
 
-The reason is obvious; all IRQs are disabled by tmio_mmc_host_probe(),
-as follows:
-
-  tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
-
-The card event IRQs are first enabled by tmio_mmc_start_command() as
-follows:
-
-  if (!host->native_hotplug)
-          irq_mask &= ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
-  tmio_mmc_enable_mmc_irqs(host, irq_mask);
-
-If the driver is probed without a card, tmio_mmc_start_command() is
-never called in the first place.  So, the card is never detected.
-
-The card event IRQs must be enabled in probe/resume functions.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
+v3->4:
+* no change
 
-Changes in v3: None
-Changes in v2:
-  - Newly added
+ arch/arm/mach-shmobile/platsmp-apmu.c |  1 +
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 13 ++++++++++---
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
- drivers/mmc/host/tmio_mmc_core.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index b20d5c5..0e3dc8c 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -350,8 +350,6 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host,
- 			c |= TRANSFER_READ;
- 	}
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index 4422b61..ba732ef 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -191,6 +191,7 @@ static void __init shmobile_smp_apmu_setup_boot(void)
+ {
+ 	/* install boot code shared by all CPUs */
+ 	shmobile_boot_fn = __pa_symbol(shmobile_smp_boot);
++	shmobile_boot_fn_gen2 = shmobile_boot_fn;
+ }
  
--	if (!host->native_hotplug)
--		irq_mask &= ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
- 	tmio_mmc_enable_mmc_irqs(host, irq_mask);
+ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index e5f215c..bfad202 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -17,6 +17,7 @@
+ #include <linux/smp.h>
+ #include <linux/soc/renesas/rcar-sysc.h>
+ #include <asm/io.h>
++#include <asm/cputype.h>
+ #include "common.h"
+ #include "rcar-gen2.h"
  
- 	/* Fire off the command */
-@@ -1294,11 +1292,13 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 		irq_mask |= TMIO_MASK_READOP;
- 	if (!_host->chan_tx)
- 		irq_mask |= TMIO_MASK_WRITEOP;
--	if (!_host->native_hotplug)
--		irq_mask &= ~(TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
+@@ -37,7 +38,6 @@
+ #define CA7RESCNT_CODE	0x5a5a0000
+ #define CA7RESCNT_CPUS	0xf		/* CPU0-3 */
  
- 	_host->sdcard_irq_mask &= ~irq_mask;
+-
+ /* On-chip RAM */
+ #define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
  
-+	if (_host->native_hotplug)
-+		tmio_mmc_enable_mmc_irqs(_host,
-+				TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
-+
- 	spin_lock_init(&_host->lock);
- 	mutex_init(&_host->ios_lock);
+@@ -119,8 +119,15 @@ void __init rcar_gen2_pm_init(void)
+ 	p = ioremap(res.start, resource_size(&res));
+ 	if (!p)
+ 		return;
+-
+-	memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
++	/* install the reset vector, use the largest version if we have enough
++	 * memory available */
++	if (resource_size(&res) >= shmobile_boot_size_gen2) {
++		shmobile_boot_cpu_gen2 = read_cpuid_mpidr();
++		memcpy_toio(p, shmobile_boot_vector_gen2,
++			    shmobile_boot_size_gen2);
++	} else {
++		memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
++	}
+ 	iounmap(p);
  
-@@ -1382,6 +1382,10 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
- 	if (host->clk_cache)
- 		tmio_mmc_set_clock(host, host->clk_cache);
- 
-+	if (host->native_hotplug)
-+		tmio_mmc_enable_mmc_irqs(host,
-+				TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
-+
- 	tmio_mmc_enable_dma(host, true);
- 
- 	if (tmio_mmc_can_retune(host) && host->select_tuning(host))
+ 	/* setup reset vectors */
 -- 
 2.7.4
