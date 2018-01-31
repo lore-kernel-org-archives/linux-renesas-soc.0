@@ -1,78 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:37897 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753406AbeARVKb (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:46522 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751735AbeAaSZ5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Jan 2018 16:10:31 -0500
-Received: by mail-lf0-f65.google.com with SMTP id g72so22967960lfg.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Jan 2018 13:10:31 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20180118211027.375081728@cogentembedded.com>
-Date: Fri, 19 Jan 2018 00:05:59 +0300
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-To: devicetree@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 2/2] drm: rcar-du: add R8A77970 support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=drm-rcar-du-add-R8A77970-support-v2.patch
+        Wed, 31 Jan 2018 13:25:57 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [RFC v4 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
+Date: Wed, 31 Jan 2018 18:24:16 +0000
+Message-Id: <1517423070-24236-13-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the R-Car V3M (R8A77970) SoC to the R-Car DU driver.
+Due to commits:
+* "ARM: shmobile: Add watchdog support",
+* "ARM: shmobile: rcar-gen2: Add watchdog support", and
+* "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
+we now have everything we needed for the watchdog to work on Gen2 and
+RZ/G1.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
+Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
+always ON, when suspending to RAM we need to explicitly disable the
+counting by clearing TME from RWTCSRA.
 
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
-Changes in version 2:
-- removed  the 'model' and 'dpll_ch' field initializers;
-- fixed up the DU port numbers;
-- split the DU bindings and the LVDS driver updates into a separate patches;
-- removed  the check before the DPTSR write (to be done in a separate patch).
+v3->4:
+* in this new version the changes to the driver have been splitted into
+  two commits, this patch takes care of the basic Gen2 support, patch 13/26
+  takes care of the restart handler.
 
- drivers/gpu/drm/rcar-du/rcar_du_drv.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/watchdog/renesas_wdt.c | 42 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 37 insertions(+), 5 deletions(-)
 
-Index: linux/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-===================================================================
---- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ linux/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -249,6 +249,26 @@ static const struct rcar_du_device_info
- 	.dpll_ch =  BIT(1),
- };
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 831ef83..0a1a402 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -203,13 +203,42 @@ static int rwdt_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
-+static const struct rcar_du_device_info rcar_du_r8a77970_info = {
-+	.gen = 3,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+	.num_crtcs = 1,
-+	.routes = {
-+		/* R8A77970 has one RGB output and one LVDS output. */
-+		[RCAR_DU_OUTPUT_DPAD0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_LVDS0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 1,
-+		},
-+	},
-+	.num_lvds = 1,
-+};
+-/*
+- * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
+- * to work there, one also needs a RESET (RST) driver which does not exist yet
+- * due to HW issues. This needs to be solved before adding compatibles here.
+- */
++#ifdef CONFIG_PM
++static int rwdt_suspend(struct device *dev)
++{
++	struct platform_device *pdev;
++	struct rwdt_priv *priv;
 +
- static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
- 	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
-@@ -260,6 +280,7 @@ static const struct of_device_id rcar_du
- 	{ .compatible = "renesas,du-r8a7794", .data = &rcar_du_r8a7794_info },
- 	{ .compatible = "renesas,du-r8a7795", .data = &rcar_du_r8a7795_info },
- 	{ .compatible = "renesas,du-r8a7796", .data = &rcar_du_r8a7796_info },
-+	{ .compatible = "renesas,du-r8a77970", .data = &rcar_du_r8a77970_info },
- 	{ }
++	pdev = to_platform_device(dev);
++	priv = platform_get_drvdata(pdev);
++	if (watchdog_active(&priv->wdev)) {
++		rwdt_write(priv, priv->cks, RWTCSRA);
++	}
++	return 0;
++}
++
++static int rwdt_resume(struct device *dev)
++{
++	struct platform_device *pdev;
++	struct rwdt_priv *priv;
++
++	pdev = to_platform_device(dev);
++	priv = platform_get_drvdata(pdev);
++	if (watchdog_active(&priv->wdev)) {
++		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
++	}
++	return 0;
++}
++
++static const struct dev_pm_ops rwdt_pm = {
++	.suspend = rwdt_suspend,
++	.resume = rwdt_resume,
++};
++#endif
++
+ static const struct of_device_id rwdt_ids[] = {
+ 	{ .compatible = "renesas,rcar-gen3-wdt", },
++	{ .compatible = "renesas,rcar-gen2-wdt", },
+ 	{ /* sentinel */ }
  };
- 
+ MODULE_DEVICE_TABLE(of, rwdt_ids);
+@@ -218,6 +247,9 @@ static struct platform_driver rwdt_driver = {
+ 	.driver = {
+ 		.name = "renesas_wdt",
+ 		.of_match_table = rwdt_ids,
++#ifdef CONFIG_PM
++		.pm = &rwdt_pm,
++#endif
+ 	},
+ 	.probe = rwdt_probe,
+ 	.remove = rwdt_remove,
+-- 
+2.7.4
