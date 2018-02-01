@@ -1,29 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40985 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751950AbeBBIpM (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:41632 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754594AbeBAUAc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 03:45:12 -0500
-Date: Fri, 2 Feb 2018 09:45:07 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: vinod.koul@intel.com, robh+dt@kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] DT: dma: renesas,rcar-dmac: document R8A77980 support
-Message-ID: <20180202084507.sz47whvmhek7qwgt@verge.net.au>
-References: <8302f1c8-3deb-584b-d6c8-b46240275e9e@cogentembedded.com>
+        Thu, 1 Feb 2018 15:00:32 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <8302f1c8-3deb-584b-d6c8-b46240275e9e@cogentembedded.com>
+References: <8302f1c8-3deb-584b-d6c8-b46240275e9e@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Feb 2018 21:00:31 +0100
+Message-ID: <CAMuHMdXBTfyiup+6t77an_dvDA28SgUb-HaLQaR6r9QGmyiZhQ@mail.gmail.com>
+Subject: Re: [PATCH] DT: dma: renesas,rcar-dmac: document R8A77980 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Vinod Koul <vinod.koul@intel.com>,
+        Rob Herring <robh+dt@kernel.org>, dmaengine@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 10:09:25PM +0300, Sergei Shtylyov wrote:
+On Thu, Feb 1, 2018 at 8:09 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 > Renesas  R-Car V3H SoC has the R-Car gen3 compatible DMA controllers.
 > Document R-Car V3H (also known as R8A77980) SoC bindings.
-> 
+>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
