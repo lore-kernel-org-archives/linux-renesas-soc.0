@@ -1,41 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:43280 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754957AbeBAU1O (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Feb 2018 15:27:14 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] DT: net: renesas,ravb: document R8A77980 bindings
+To: Rob Herring <robh+dt@kernel.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org
+Message-ID: <1eb6b81c-500e-ef21-7c21-e8bc7a1ff227@cogentembedded.com>
+Date: Thu, 1 Feb 2018 23:13:45 +0300
 MIME-Version: 1.0
-In-Reply-To: <1eb6b81c-500e-ef21-7c21-e8bc7a1ff227@cogentembedded.com>
-References: <1eb6b81c-500e-ef21-7c21-e8bc7a1ff227@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Feb 2018 21:27:12 +0100
-Message-ID: <CAMuHMdWeN8hf3rxHRofn9rD3MKD4rcPVVNM3W3+7nBatmUvxjw@mail.gmail.com>
-Subject: Re: [PATCH] DT: net: renesas,ravb: document R8A77980 bindings
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>, netdev <netdev@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 1, 2018 at 9:13 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Renesas R-Car V3H (R8A77980) SoC has the R-Car gen3 compatible EtherAVB
-> device, so document the SoC specific bindings.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Renesas R-Car V3H (R8A77980) SoC has the R-Car gen3 compatible EtherAVB
+device, so document the SoC specific bindings.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+The patch is against DaveM's 'net-next.git' repo but I wouldn't mind if it's
+applied to 'net.git' instead. :-)
 
-                        Geert
+ Documentation/devicetree/bindings/net/renesas,ravb.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: net-next/Documentation/devicetree/bindings/net/renesas,ravb.txt
+===================================================================
+--- net-next.orig/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ net-next/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -18,6 +18,7 @@ Required properties:
+       - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
+       - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
+       - "renesas,etheravb-r8a77970" for the R8A77970 SoC.
++      - "renesas,etheravb-r8a77980" for the R8A77980 SoC.
+       - "renesas,etheravb-r8a77995" for the R8A77995 SoC.
+       - "renesas,etheravb-rcar-gen3" as a fallback for the above
+ 		R-Car Gen3 devices.
