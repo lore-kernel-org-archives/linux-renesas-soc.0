@@ -1,43 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41674 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751425AbeBBJgQ (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44659 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751900AbeBAIQ1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 04:36:16 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH topic/renesas_defconfig] arm64: renesas_defconfig: enable R8A77970 SoC
-Date: Fri,  2 Feb 2018 10:36:09 +0100
-Message-Id: <20180202093609.19306-1-horms+renesas@verge.net.au>
+        Thu, 1 Feb 2018 03:16:27 -0500
+Received: by mail-lf0-f68.google.com with SMTP id v188so24821298lfa.11
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Feb 2018 00:16:27 -0800 (PST)
+Subject: Re: [PATCH 0/5] arm64: dts: renesas: r8a77970: enable HDMI output
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+References: <20180131161811.12699-1-niklas.soderlund@ragnatech.se>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <5da7d5be-87ed-2515-b9f9-70cadd8a8819@cogentembedded.com>
+Date: Thu, 1 Feb 2018 11:16:25 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180131161811.12699-1-niklas.soderlund@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the Renesas R-Car V3H (R8A77970) SoC in the ARM64 renesas_defconfig.
+On 1/31/2018 7:18 PM, Niklas Söderlund wrote:
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/configs/renesas_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Hi,
+> 
+> This series enables the HDMI out put on V3M. It is based on top of the
+> latest renesas-drivers release and depends on patches from both Laurent
+> and Sergei.
+> 
+> - [PATCH v2 00/12] R-Car DU: Convert LVDS code to bridge driver
+> - [PATCH v2 0/2] Add R-Car V3M (R8A77970) support to the DU driver
+> - [PATCH 0/3] Add R-Car V3M (R8A77970) support to the R-Car LVDS driver
+> 
+> It is tested on V3M by connecting the HDMI output to a monitor and
+> booting the board. To console shall eventually show up on the screen.
+> 
+> Niklas Söderlund (5):
+>    arm64: dts: renesas: r8a77970: add FCPVD node
+>    arm64: dts: renesas: r8a77970: Add VSPD instance
+>    arm64: dts: renesas: r8a77970: add DU instance
+>    arm64: dts: renesas: r8a77970: add the LVDS instance
 
- Based on renesas-devel-20180202-v4.15
+    I have already posted such series, hadn't you seen it?
 
- Not for upstream merge
+>    arm64: dts: renesas: eagle: add HDMI output using the ADV7511W
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 3087bba06d3c..386211464efa 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -34,6 +34,7 @@ CONFIG_ARCH_RENESAS=y
- CONFIG_ARCH_R8A7795=y
- CONFIG_ARCH_R8A7796=y
- CONFIG_ARCH_R8A77970=y
-+CONFIG_ARCH_R8A77980=y
- CONFIG_ARCH_R8A77995=y
- CONFIG_PCI=y
- CONFIG_PCIEPORTBUS=y
--- 
-2.11.0
+    Not posted this patch, however -- I was only doing it for the V3M Starter 
+Kit board.
+
+>   arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 66 +++++++++++++++++++++++
+>   arch/arm64/boot/dts/renesas/r8a77970.dtsi      | 72 ++++++++++++++++++++++++++
+>   2 files changed, 138 insertions(+)
+
+MBR, Sergei
