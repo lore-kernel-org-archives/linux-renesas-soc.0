@@ -1,14 +1,14 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 5 Feb 2018 00:09:27 -0600
-From: Rob Herring <robh@kernel.org>
+Date: Fri, 2 Feb 2018 09:47:13 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] DT: serial: renesas,sci-serial: document R8A77980
  bindings
-Message-ID: <20180205041307.n3wo7kfshc6swd3x@rob-hp-laptop>
+Message-ID: <20180202084713.5ax3ve3p4qqn4674@verge.net.au>
 References: <2182bb59-d16f-54f0-d992-65b49815ce1d@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -22,9 +22,6 @@ On Thu, Feb 01, 2018 at 10:36:20PM +0300, Sergei Shtylyov wrote:
 > so document the SoC specific bindings.
 > 
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
->  Documentation/devicetree/bindings/serial/renesas,sci-serial.txt |    2 ++
->  1 file changed, 2 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
