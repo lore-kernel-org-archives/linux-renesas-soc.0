@@ -1,72 +1,209 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45980 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752903AbeBFL6L (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:33372 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754166AbeBBSjN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 06:58:11 -0500
-MIME-Version: 1.0
-In-Reply-To: <169ed4ac-1b8b-cf8c-45c4-957ebbdf3f5e@cogentembedded.com>
-References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com> <169ed4ac-1b8b-cf8c-45c4-957ebbdf3f5e@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Feb 2018 12:58:09 +0100
-Message-ID: <CAMuHMdWXc=1s5rMU5Tc_=tH4jrH+5P6z52J3ihiyYfseTpQ-kw@mail.gmail.com>
-Subject: Re: [PATCH 07/11] arm64: dts: renesas: r8a77980: add [H]SCIF support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Fri, 2 Feb 2018 13:39:13 -0500
+Received: by mail-lf0-f68.google.com with SMTP id t139so32892187lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Feb 2018 10:39:12 -0800 (PST)
+Subject: [PATCH 07/11] arm64: dts: renesas: r8a77980: add [H]SCIF support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
+Message-ID: <169ed4ac-1b8b-cf8c-45c4-957ebbdf3f5e@cogentembedded.com>
+Date: Fri, 2 Feb 2018 21:39:08 +0300
+MIME-Version: 1.0
+In-Reply-To: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Describe [H]SCIF ports in the R8A77980 device tree.
 
-On Fri, Feb 2, 2018 at 7:39 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe [H]SCIF ports in the R8A77980 device tree.
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Based on the original (and large) patch by Vladimir Barinov.
 
-Thanks for your patch!
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |  151 ++++++++++++++++++++++++++++++
+ 1 file changed, 151 insertions(+)
 
-> @@ -85,6 +92,150 @@
->                         #power-domain-cells = <1>;
->                 };
->
-> +               hscif0: serial@e6540000 {
-> +                       compatible = "renesas,hscif-r8a77980",
-> +                                    "renesas,rcar-gen3-hscif",
-> +                                    "renesas,hscif";
-> +                       reg = <0 0xe6540000 0 0x60>;
-> +                       interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&cpg CPG_MOD 520>,
-> +                                <&cpg CPG_CORE 16>,
-
-Shouldn't this be 19 (S3D1) instead of 16 (S2D1)?
-
-With that fixed (for all (H)SCIF ports);
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -56,6 +56,13 @@
+ 		method = "smc";
+ 	};
+ 
++	/* External SCIF clock - to be overridden by boards that provide it */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+@@ -85,6 +92,150 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		hscif0: serial@e6540000 {
++			compatible = "renesas,hscif-r8a77980",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6540000 0 0x60>;
++			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 520>,
++				 <&cpg CPG_CORE 16>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
++			       <&dmac2 0x31>, <&dmac2 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 520>;
++			status = "disabled";
++		};
++
++		hscif1: serial@e6550000 {
++			compatible = "renesas,hscif-r8a77980",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6550000 0 0x60>;
++			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 519>,
++				 <&cpg CPG_CORE 16>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
++			       <&dmac2 0x33>, <&dmac2 0x32>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 519>;
++			status = "disabled";
++		};
++
++		hscif2: serial@e6560000 {
++			compatible = "renesas,hscif-r8a77980",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6560000 0 0x60>;
++			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 518>,
++				 <&cpg CPG_CORE 16>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
++			       <&dmac2 0x35>, <&dmac2 0x34>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 518>;
++			status = "disabled";
++		};
++
++		hscif3: serial@e66a0000 {
++			compatible = "renesas,hscif-r8a77980",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe66a0000 0 0x60>;
++			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 517>,
++				 <&cpg CPG_CORE 16>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
++			       <&dmac2 0x37>, <&dmac2 0x36>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 517>;
++			status = "disabled";
++		};
++
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a77980",
++				     "renesas,rcar-gen3-scif",
++				     "renesas,scif";
++			reg = <0 0xe6e60000 0 0x40>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 207>,
++				 <&cpg CPG_CORE 16>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
++			       <&dmac2 0x51>, <&dmac2 0x50>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 207>;
++			status = "disabled";
++		};
++
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a77980",
++				     "renesas,rcar-gen3-scif",
++				     "renesas,scif";
++			reg = <0 0xe6e68000 0 0x40>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 206>,
++				 <&cpg CPG_CORE 16>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
++			       <&dmac2 0x53>, <&dmac2 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 206>;
++			status = "disabled";
++		};
++
++		scif3: serial@e6c50000 {
++			compatible = "renesas,scif-r8a77980",
++				     "renesas,rcar-gen3-scif",
++				     "renesas,scif";
++			reg = <0 0xe6c50000 0 0x40>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 204>,
++				 <&cpg CPG_CORE 16>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
++			       <&dmac2 0x57>, <&dmac2 0x56>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 204>;
++			status = "disabled";
++		};
++
++		scif4: serial@e6c40000 {
++			compatible = "renesas,scif-r8a77980",
++				     "renesas,rcar-gen3-scif",
++				     "renesas,scif";
++			reg = <0 0xe6c40000 0 0x40>;
++			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 203>,
++				 <&cpg CPG_CORE 16>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
++			       <&dmac2 0x59>, <&dmac2 0x58>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 203>;
++			status = "disabled";
++		};
++
+ 		dmac1: dma-controller@e7300000 {
+ 			compatible = "renesas,dmac-r8a77980",
+ 				     "renesas,rcar-dmac";
