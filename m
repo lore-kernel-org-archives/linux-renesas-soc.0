@@ -1,123 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40163 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753572AbeBFWaC (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42567 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeBBSsP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:30:02 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 6/9] ARM: dts: alt: use demuxer for I2C1
-Date: Tue,  6 Feb 2018 23:29:55 +0100
-Message-Id: <20180206222958.18941-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
-References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+        Fri, 2 Feb 2018 13:48:15 -0500
+Received: by mail-lf0-f68.google.com with SMTP id q17so32896031lfa.9
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Feb 2018 10:48:14 -0800 (PST)
+Subject: [PATCH 11/11] arm64: dts: renesas: condor: add EtherAVB support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
+Message-ID: <605dfcae-6866-e57f-1bae-d052cfcbd2f6@cogentembedded.com>
+Date: Fri, 2 Feb 2018 21:48:12 +0300
+MIME-Version: 1.0
+In-Reply-To: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+Define the Condor board dependent part of the EtherAVB device node.
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+Based  on the original (and large) patch by Vladimir Barinov.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 53 +++++++++++++++++++++++++++------------
- 1 file changed, 37 insertions(+), 16 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 60c6515c499660..26a883484ea814 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -18,7 +18,9 @@
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -15,6 +15,7 @@
  
  	aliases {
- 		serial0 = &scif2;
-+		i2c9 = &gpioi2c1;
- 		i2c10 = &gpioi2c4;
-+		i2c11 = &i2chdmi;
- 		i2c12 = &i2cexio4;
+ 		serial0 = &scif0;
++		ethernet0 = &avb;
  	};
  
-@@ -138,17 +140,50 @@
- 		clock-frequency = <148500000>;
+ 	chosen {
+@@ -28,6 +29,16 @@
  	};
- 
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	};
-+
- 	gpioi2c4: i2c-10 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
- 		status = "disabled";
--		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		scl-gpios = <&gpio4 8 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
- 	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-11 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+	};
-+
-+	/*
- 	 * I2C4 is routed to EXIO connector B, pins 73 (SCL) + 74 (SDA).
- 	 * A fallback to GPIO is provided.
- 	 */
-@@ -324,23 +359,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
  };
  
- &i2c4 {
--- 
-2.11.0
++&avb {
++	phy-handle = <&phy0>;
++	status = "okay";
++
++	phy0: ethernet-phy@0 {
++		rxc-skew-ps = <1500>;
++		reg = <0>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
