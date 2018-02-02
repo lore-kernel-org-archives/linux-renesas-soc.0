@@ -1,61 +1,36 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 5 Feb 2018 00:07:32 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, kieran.bingham@ideasonboard.com,
-        wsa@the-dreams.de, magnus.damm@gmail.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] dt-bindings: at24: add bindings for Rohm BR24T01
-Message-ID: <20180205060732.ufy2w37uc4okclew@rob-hp-laptop>
-References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1517240748-14780-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ot0-f170.google.com ([74.125.82.170]:41098 "EHLO
+        mail-ot0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751376AbeBBJCE (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 2 Feb 2018 04:02:04 -0500
+Received: by mail-ot0-f170.google.com with SMTP id r23so18139020ote.8
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Feb 2018 01:02:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517240748-14780-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <20180130104443.ffys4y6ulo6fd7va@ninjato>
+References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1517240748-14780-6-git-send-email-ulrich.hecht+renesas@gmail.com> <20180130104443.ffys4y6ulo6fd7va@ninjato>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 2 Feb 2018 10:02:03 +0100
+Message-ID: <CAMRc=MdiKp+vaoCoASv3wkKHjGS5dNwXkcv9vdP2FxtpzZLLUw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] dt-bindings: at24: add bindings for Rohm BR24T01
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, kieran.bingham@ideasonboard.com,
+        magnus.damm@gmail.com, linux-i2c <linux-i2c@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 29, 2018 at 04:45:48PM +0100, Ulrich Hecht wrote:
-> Both manufacturer and name variant.
-> 
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> ---
->  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
->  1 file changed, 2 insertions(+)
+2018-01-30 11:44 GMT+01:00 Wolfram Sang <wsa@the-dreams.de>:
+> On Mon, Jan 29, 2018 at 04:45:48PM +0100, Ulrich Hecht wrote:
+>> Both manufacturer and name variant.
+>>
+>> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> 
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
-> index 1812c84..dd29937 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at24.txt
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.txt
-> @@ -40,6 +40,7 @@ Required properties:
->                  "microchip",
->                  "ramtron",
->                  "renesas",
-> +                "rohm",
-
-This is going to comflict with a patch sorting these IIRC. So they 
-should go thru the same tree.
-
->                  "nxp",
->                  "st",
->  
-> @@ -47,6 +48,7 @@ Required properties:
->                  variants of the above. Known such exceptions are listed below:
->  
->                  "renesas,r1ex24002" - the fallback is "atmel,24c02"
-> +                "rohm,br24t01" - the fallback is "atmel,24c01"
->  
->    - reg: The I2C address of the EEPROM.
->  
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
