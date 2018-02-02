@@ -1,73 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:46412 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966940AbeBNJz3 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41132 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751165AbeBBI4K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 04:55:29 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Fri, 2 Feb 2018 03:56:10 -0500
+Date: Fri, 2 Feb 2018 09:56:06 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 5/5] arm64: dts: renesas: r8a7796: Fix register mappings on VSPs
-Date: Wed, 14 Feb 2018 09:55:08 +0000
-Message-Id: <1518602108-1724-6-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
-References: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/2] arm64: add Renesas R8A77980 support
+Message-ID: <20180202085605.l2gkj2jrga5igda6@verge.net.au>
+References: <fbdd08a3-1ab3-8e70-20f1-d9c41493b11c@cogentembedded.com>
+ <4bf1d0e3-7389-cd24-ff6a-c750d8ea42d6@cogentembedded.com>
+ <CAMuHMdXDDe3Ss0hz8Ve=AM3RB7fReGpvLqx-yuJj2c3YVFcp5A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXDDe3Ss0hz8Ve=AM3RB7fReGpvLqx-yuJj2c3YVFcp5A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Thu, Feb 01, 2018 at 09:02:47PM +0100, Geert Uytterhoeven wrote:
+> On Wed, Jan 31, 2018 at 8:59 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Add a configuration option for the R-Car V3H (R8A77980) SoC.
+> >
+> > Based on the original (and large) patch by Vladimir Barinov.
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The VSPD includes a CLUT on RPF2. Ensure that the register space is
-mapped correctly to support this.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 60755117cba5..3fe5566e0630 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2285,7 +2285,7 @@
- 
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x4000>;
-+			reg = <0 0xfea20000 0 0x8000>;
- 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-@@ -2305,7 +2305,7 @@
- 
- 		vspd1: vsp@fea28000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea28000 0 0x4000>;
-+			reg = <0 0xfea28000 0 0x8000>;
- 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 622>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-@@ -2325,7 +2325,7 @@
- 
- 		vspd2: vsp@fea30000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea30000 0 0x4000>;
-+			reg = <0 0xfea30000 0 0x8000>;
- 			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 621>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
--- 
-2.7.4
+Thanks, applied.
