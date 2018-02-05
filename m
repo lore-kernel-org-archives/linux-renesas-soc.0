@@ -1,61 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33174 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932247AbeBLPof (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:44:35 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20180205060732.ufy2w37uc4okclew@rob-hp-laptop>
+References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1517240748-14780-6-git-send-email-ulrich.hecht+renesas@gmail.com> <20180205060732.ufy2w37uc4okclew@rob-hp-laptop>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 5 Feb 2018 08:56:34 +0100
+Message-ID: <CAMRc=Mf+g6HNnu1ARPg8Uk9oeLQ+JkJcZrw_H48LzKByp_CM_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] dt-bindings: at24: add bindings for Rohm BR24T01
+To: Rob Herring <robh@kernel.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, geert@linux-m68k.org,
+        kieran.bingham@ideasonboard.com, Wolfram Sang <wsa@the-dreams.de>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/5] soc: renesas: Add symbols for R-Car Gen3 register offsets
-Date: Mon, 12 Feb 2018 16:44:18 +0100
-Message-Id: <20180212154422.13900-2-horms+renesas@verge.net.au>
-In-Reply-To: <20180212154422.13900-1-horms+renesas@verge.net.au>
-References: <20180212154422.13900-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add symbols for Gen3 register offsets.
-These may be used to improve readability of users of these offsets.
+2018-02-05 7:07 GMT+01:00 Rob Herring <robh@kernel.org>:
+> On Mon, Jan 29, 2018 at 04:45:48PM +0100, Ulrich Hecht wrote:
+>> Both manufacturer and name variant.
+>>
+>> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+>> ---
+>>  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
+>>  1 file changed, 2 insertions(+)
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+>
+>>
+>> diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
+>> index 1812c84..dd29937 100644
+>> --- a/Documentation/devicetree/bindings/eeprom/at24.txt
+>> +++ b/Documentation/devicetree/bindings/eeprom/at24.txt
+>> @@ -40,6 +40,7 @@ Required properties:
+>>                  "microchip",
+>>                  "ramtron",
+>>                  "renesas",
+>> +                "rohm",
+>
+> This is going to comflict with a patch sorting these IIRC. So they
+> should go thru the same tree.
+>
+>>                  "nxp",
+>>                  "st",
+>>
+>> @@ -47,6 +48,7 @@ Required properties:
+>>                  variants of the above. Known such exceptions are listed below:
+>>
+>>                  "renesas,r1ex24002" - the fallback is "atmel,24c02"
+>> +                "rohm,br24t01" - the fallback is "atmel,24c01"
+>>
+>>    - reg: The I2C address of the EEPROM.
+>>
+>> --
+>> 2.7.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-This does not introduce any functional change.
+AT24 patches go through Wolfram's tree, but since he already sent his
+PR for 4.16, I can pick them up for 4.17 (except for Peter's sorting
+patch which should go in after 4.16-rc1).
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/soc/renesas/rcar-sysc.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 9d9daf9eb91b..c6041e29fbcb 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -24,6 +24,25 @@
- #define PD_CPU_NOCR	PD_CPU | PD_NO_CR /* CPU area lacks CR (R-Car Gen2/3) */
- #define PD_ALWAYS_ON	PD_NO_CR	  /* Always-on area */
- 
-+/*
-+ * R-Car Gen3 register offsets
-+ */
-+
-+#define RCAR_GEN3_SYSCSR  0
-+#define RCAR_GEN3_PWRSR0  0x80
-+#define RCAR_GEN3_PWRSR2  0x100
-+#define RCAR_GEN3_PWRSR3  0x140
-+#define RCAR_GEN3_PWRSR4  0x180
-+#define RCAR_GEN3_PWRSR5  0x1c0
-+#define RCAR_GEN3_PWRSR6  0x200
-+#define RCAR_GEN3_PWRSR7  0x240
-+#define RCAR_GEN3_PWRSR8  0x340
-+#define RCAR_GEN3_PWRSR9  0x380
-+#define RCAR_GEN3_PWRSR10 0x3c0
-+#define RCAR_GEN3_PWRSR11 0x400
-+#define RCAR_GEN3_PWRSR12 0x2c0
-+#define RCAR_GEN3_PWRSR13 0x300
-+#define RCAR_GEN3_PWRSR14 0x280
- 
- /*
-  * Description of a Power Area
--- 
-2.11.0
+Thanks,
+Bartosz
