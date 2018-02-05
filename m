@@ -1,28 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752246AbeBFJqk (ORCPT
+Received: from sauhun.de ([88.99.104.3]:60968 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752316AbeBEN2b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 04:46:40 -0500
-Date: Tue, 6 Feb 2018 10:46:35 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] mmc: sh_mmcif: remove some cruft
-Message-ID: <20180206094635.dzhst4rtd4sfqtjh@verge.net.au>
-References: <20180205132822.14529-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180205132822.14529-1-wsa+renesas@sang-engineering.com>
+        Mon, 5 Feb 2018 08:28:31 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] mmc: sh_mmcif: remove some cruft
+Date: Mon,  5 Feb 2018 14:28:22 +0100
+Message-Id: <20180205132822.14529-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 05, 2018 at 02:28:22PM +0100, Wolfram Sang wrote:
-> The TODO section from 2010 is obsolete. We have DMA and PM meanwhile and
-> we always want to handle errors better, if possible. Also DRIVER_VERSION
-> is not used anymore these days.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The TODO section from 2010 is obsolete. We have DMA and PM meanwhile and
+we always want to handle errors better, if possible. Also DRIVER_VERSION
+is not used anymore these days.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/sh_mmcif.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
+index 7bb00c68a7561a..4c2a1f8ddbf324 100644
+--- a/drivers/mmc/host/sh_mmcif.c
++++ b/drivers/mmc/host/sh_mmcif.c
+@@ -7,13 +7,6 @@
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation; either version 2 of the License.
+- *
+- *
+- * TODO
+- *  1. DMA
+- *  2. Power management
+- *  3. Handle MMC errors better
+- *
+  */
+ 
+ /*
+@@ -67,7 +60,6 @@
+ #include <linux/module.h>
+ 
+ #define DRIVER_NAME	"sh_mmcif"
+-#define DRIVER_VERSION	"2010-04-28"
+ 
+ /* CE_CMD_SET */
+ #define CMD_MASK		0x3f000000
+-- 
+2.11.0
