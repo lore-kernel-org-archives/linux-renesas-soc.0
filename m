@@ -1,14 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42372 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeBEI7z (ORCPT
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:44643 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752866AbeBEGIr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:59:55 -0500
-Date: Mon, 5 Feb 2018 09:59:51 +0100
-From: Simon Horman <horms@verge.net.au>
+        Mon, 5 Feb 2018 01:08:47 -0500
+Date: Mon, 5 Feb 2018 00:08:45 -0600
+From: Rob Herring <robh@kernel.org>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -17,7 +16,7 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A77980 support
-Message-ID: <20180205085951.vcsoqcmuqjdcqhsa@verge.net.au>
+Message-ID: <20180205060845.ksaczxkdil7wuir6@rob-hp-laptop>
 References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
  <9008a12c-e5c8-9289-c47b-50ea9e049c67@cogentembedded.com>
 MIME-Version: 1.0
@@ -36,5 +35,15 @@ On Wed, Jan 31, 2018 at 11:31:05PM +0300, Sergei Shtylyov wrote:
 > 
 > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    5 
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+>  drivers/clk/renesas/Kconfig                                  |    5 
+>  drivers/clk/renesas/Makefile                                 |    1 
+>  drivers/clk/renesas/r8a77980-cpg-mssr.c                      |  227 +++++++++++
+>  drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
+>  drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
+>  6 files changed, 243 insertions(+), 2 deletions(-)
