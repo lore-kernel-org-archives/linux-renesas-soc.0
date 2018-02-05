@@ -1,66 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:27720 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753300AbeBLRrI (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:20841 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750962AbeBEIRV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:47:08 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 25/26] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-Date: Mon, 12 Feb 2018 17:44:34 +0000
-Message-Id: <1518457475-4480-26-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 5 Feb 2018 03:17:21 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: renesas_usbhs: missed the "running" flag in usb_dmac with rx path
+Date: Mon,  5 Feb 2018 17:12:35 +0900
+Message-Id: <1517818355-8513-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables the watchdog from within the iwg20m SoM dtsi.
+This fixes an issue that a gadget driver (usb_f_fs) is possible to
+stop rx transactions after the usb-dmac is used because the following
+functions missed to set/check the "running" flag.
+ - usbhsf_dma_prepare_pop_with_usb_dmac()
+ - usbhsf_dma_pop_done_with_usb_dmac()
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+So, if next transaction uses pio, the usbhsf_prepare_pop() can not
+start the transaction because the "running" flag is 0.
+
+Fixes: 8355b2b3082d ("usb: renesas_usbhs: fix the behavior of some usbhs_pkt_handle")
+Cc: <stable@vger.kernel.org> # v3.19+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-v4->v5:
-* no change
-
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 5 +++++
+ drivers/usb/renesas_usbhs/fifo.c | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index 1d3e950..d364685 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -91,6 +91,11 @@
- 	};
- };
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index 2d24ef3..b295e20 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -989,6 +989,10 @@ static int usbhsf_dma_prepare_pop_with_usb_dmac(struct usbhs_pkt *pkt,
+ 	if ((uintptr_t)pkt->buf & (USBHS_USB_DMAC_XFER_SIZE - 1))
+ 		goto usbhsf_pio_prepare_pop;
  
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
++	/* return at this time if the pipe is running */
++	if (usbhs_pipe_is_running(pipe))
++		return 0;
 +
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
+ 	usbhs_pipe_config_change_bfre(pipe, 1);
+ 
+ 	ret = usbhsf_fifo_select(pipe, fifo, 0);
+@@ -1179,6 +1183,7 @@ static int usbhsf_dma_pop_done_with_usb_dmac(struct usbhs_pkt *pkt,
+ 	usbhsf_fifo_clear(pipe, fifo);
+ 	pkt->actual = usbhs_dma_calc_received_size(pkt, chan, rcv_len);
+ 
++	usbhs_pipe_running(pipe, 0);
+ 	usbhsf_dma_stop(pipe, fifo);
+ 	usbhsf_dma_unmap(pkt);
+ 	usbhsf_fifo_unselect(pipe, pipe->fifo);
 -- 
-2.7.4
+1.9.1
