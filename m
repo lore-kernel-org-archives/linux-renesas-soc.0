@@ -1,20 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42387 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752199AbeBEJAa (ORCPT
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:36486 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752856AbeBEGIq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Feb 2018 04:00:30 -0500
-Date: Mon, 5 Feb 2018 10:00:26 +0100
-From: Simon Horman <horms@verge.net.au>
+        Mon, 5 Feb 2018 01:08:46 -0500
+Date: Mon, 5 Feb 2018 00:08:43 -0600
+From: Rob Herring <robh@kernel.org>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Subject: Re: [PATCH 1/2] dt-bindings: clock: add R8A77980 CPG core clock
  definitions
-Message-ID: <20180205090025.bvdzdgh6ebebmaw3@verge.net.au>
+Message-ID: <20180205060843.pwkfh5ntu6bj3d25@rob-hp-laptop>
 References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
  <4281b305-ff0d-cf56-ce6b-dff4589c39f6@cogentembedded.com>
 MIME-Version: 1.0
@@ -35,5 +34,18 @@ On Wed, Jan 31, 2018 at 11:27:47PM +0300, Sergei Shtylyov wrote:
 > 
 > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  include/dt-bindings/clock/r8a77980-cpg-mssr.h |   51 ++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+> 
+> Index: renesas-drivers/include/dt-bindings/clock/r8a77980-cpg-mssr.h
+> ===================================================================
+> --- /dev/null
+> +++ renesas-drivers/include/dt-bindings/clock/r8a77980-cpg-mssr.h
+> @@ -0,0 +1,51 @@
+> +/* SPDX-License-Identifier: GPL-2.0+
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+This should end with ' */' and be its own comment. Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
