@@ -1,142 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:33828 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751550AbeBIPRv (ORCPT
+Received: from mail-qk0-f180.google.com ([209.85.220.180]:43575 "EHLO
+        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752738AbeBETS0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:17:51 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Auger Eric <eric.auger@redhat.com>,
-        Xiao Feng Ren <renxiaof@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 2/5] hw/arm/sysbus-fdt: Allow device matching with compat string
-Date: Fri,  9 Feb 2018 16:17:33 +0100
-Message-Id: <1518189456-2873-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518189456-2873-1-git-send-email-geert+renesas@glider.be>
-References: <1518189456-2873-1-git-send-email-geert+renesas@glider.be>
+        Mon, 5 Feb 2018 14:18:26 -0500
+MIME-Version: 1.0
+In-Reply-To: <9008a12c-e5c8-9289-c47b-50ea9e049c67@cogentembedded.com>
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <9008a12c-e5c8-9289-c47b-50ea9e049c67@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Feb 2018 20:18:24 +0100
+Message-ID: <CAMuHMdVScQSc6O10XuA9jcmGpn6ifSRQpF6-Kauz=yc56zyNWQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A77980 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Auger Eric <eric.auger@redhat.com>
+Hi Sergei,
 
-Up to now we have relied on the device type to identify a device tree
-node creation function. Since we would like the VFIO-PLATFORM
-device to be instantiable with different compatibility strings
-we introduce the capability to specialize the node creation depending
-on a manufacturer/model combo.
+On Wed, Jan 31, 2018 at 9:31 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add R-Car V3H (R8A77980) Clock Pulse Generator / Module Standby and
+> Software Reset support,  using the CPG/MSSR driver core and the common
+> R-Car Gen3 code.
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-NodeCreationPair is renamed into BindingEntry. The struct is enhanced
-with manufacturer, model and match_fn() fields. We introduce a new
-matching function adapted to vfio-platform generic device.
+Thanks for your patch!
 
->From now on, the AMD XGBE can be instantiated with either manner, ie:
--device vfio-amd-xgbe,host=e0900000.xgmac
-or new option line:
--device vfio-platform,host=e0900000.xgmac,manufacturer=amd,model=xgbe-seattle-v1a
+> --- /dev/null
+> +++ renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
+> @@ -0,0 +1,227 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * r8a77980 Clock Pulse Generator / Module Standby and Software Reset
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Corp.
+> + * Copyright (C) 2018 Cogent Embedded, Inc.
+> + *
+> + * Based on r8a7795-cpg-mssr.c
+> + *
+> + * Copyright (C) 2016 Renesas Electronics Corp.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- hw/arm/sysbus-fdt.c | 61 +++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 48 insertions(+), 13 deletions(-)
+Interesting, the above copyright line isn't present in r8a7795-cpg-mssr.c?
 
-diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
-index d68e3dcdbd260895..c5d4fd5604c28118 100644
---- a/hw/arm/sysbus-fdt.c
-+++ b/hw/arm/sysbus-fdt.c
-@@ -58,11 +58,14 @@ typedef struct PlatformBusFDTNotifierParams {
-     ARMPlatformBusFDTParams *fdt_params;
- } PlatformBusFDTNotifierParams;
- 
--/* struct that associates a device type name and a node creation function */
--typedef struct NodeCreationPair {
-+/* struct that allows to match a device and create its FDT node */
-+typedef struct BindingEntry {
-     const char *typename;
--    int (*add_fdt_node_fn)(SysBusDevice *sbdev, void *opaque);
--} NodeCreationPair;
-+    const char *manufacturer;
-+    const char *model;
-+    int  (*add_fn)(SysBusDevice *sbdev, void *opaque);
-+    bool (*match_fn)(SysBusDevice *sbdev, const struct BindingEntry *combo);
-+} BindingEntry;
- 
- /* helpers */
- 
-@@ -413,15 +416,46 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
-     return 0;
- }
- 
-+/* manufacturer/model matching */
-+static bool vfio_platform_match(SysBusDevice *sbdev,
-+                                const BindingEntry *entry)
-+{
-+    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
-+
-+    if (strcmp(entry->model, vdev->model)) {
-+        return false;
-+    }
-+
-+    if (entry->manufacturer) {
-+        if (!vdev->manufacturer) {
-+            return false;
-+        }
-+        return !strcmp(entry->manufacturer, vdev->manufacturer);
-+    }
-+    return true;
-+}
-+
-+#define VFIO_PLATFORM_BINDING(manuf, model, add_fn) \
-+    {TYPE_VFIO_PLATFORM, (manuf), (model), (add_fn), vfio_platform_match}
-+
- #endif /* CONFIG_LINUX */
- 
--/* list of supported dynamic sysbus devices */
--static const NodeCreationPair add_fdt_node_functions[] = {
-+/* Device type based matching */
-+static bool type_match(SysBusDevice *sbdev, const BindingEntry *entry)
-+{
-+    return !strcmp(object_get_typename(OBJECT(sbdev)), entry->typename);
-+}
-+
-+#define TYPE_BINDING(type, add_fn) {(type), NULL, NULL, (add_fn), type_match}
-+
-+/* list of supported dynamic sysbus bindings */
-+static const BindingEntry bindings[] = {
- #ifdef CONFIG_LINUX
--    {TYPE_VFIO_CALXEDA_XGMAC, add_calxeda_midway_xgmac_fdt_node},
--    {TYPE_VFIO_AMD_XGBE, add_amd_xgbe_fdt_node},
-+    TYPE_BINDING(TYPE_VFIO_CALXEDA_XGMAC, add_calxeda_midway_xgmac_fdt_node),
-+    TYPE_BINDING(TYPE_VFIO_AMD_XGBE, add_amd_xgbe_fdt_node),
-+    VFIO_PLATFORM_BINDING("amd", "xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
- #endif
--    {"", NULL}, /* last element */
-+    TYPE_BINDING("", NULL), /* last element */
- };
- 
- /* Generic Code */
-@@ -440,10 +474,11 @@ static void add_fdt_node(SysBusDevice *sbdev, void *opaque)
- {
-     int i, ret;
- 
--    for (i = 0; i < ARRAY_SIZE(add_fdt_node_functions); i++) {
--        if (!strcmp(object_get_typename(OBJECT(sbdev)),
--                    add_fdt_node_functions[i].typename)) {
--            ret = add_fdt_node_functions[i].add_fdt_node_fn(sbdev, opaque);
-+    for (i = 0; i < ARRAY_SIZE(bindings); i++) {
-+        const BindingEntry *iter = &bindings[i];
-+
-+        if (iter->match_fn(sbdev, iter)) {
-+            ret = iter->add_fn(sbdev, opaque);
-             assert(!ret);
-             return;
-         }
--- 
-2.7.4
+> +static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+> +       DEF_MOD("tmu4",                  121,   R8A77980_CLK_S0D6),
+> +       DEF_MOD("tmu3",                  122,   R8A77980_CLK_S0D6),
+> +       DEF_MOD("tmu2",                  123,   R8A77980_CLK_S0D6),
+> +       DEF_MOD("tmu1",                  124,   R8A77980_CLK_S0D6),
+> +       DEF_MOD("tmu0",                  125,   R8A77980_CLK_CP),
+> +       DEF_MOD("scif4",                 203,   R8A77980_CLK_S3D4),
+> +       DEF_MOD("scif3",                 204,   R8A77980_CLK_S3D4),
+> +       DEF_MOD("scif1",                 206,   R8A77980_CLK_S3D4),
+> +       DEF_MOD("scif0",                 207,   R8A77980_CLK_S3D4),
+> +       DEF_MOD("msiof3",                208,   R8A77980_CLK_MSO),
+> +       DEF_MOD("msiof2",                209,   R8A77980_CLK_MSO),
+> +       DEF_MOD("msiof1",                210,   R8A77980_CLK_MSO),
+> +       DEF_MOD("msiof0",                211,   R8A77980_CLK_MSO),
+> +       DEF_MOD("sys-dmac2",             217,   R8A77980_CLK_S0D3),
+> +       DEF_MOD("sys-dmac1",             218,   R8A77980_CLK_S0D3),
+> +       DEF_MOD("tpu0",                  304,   R8A77980_CLK_S3D4),
+> +       DEF_MOD("sdif",                  314,   R8A77980_CLK_SD0), /* OK */
+
+Please remove the "OK" comment.
+
+> +       DEF_MOD("pciec0",                319,   R8A77980_CLK_S3D1),
+> +       DEF_MOD("intc-ex",               407,   R8A77980_CLK_CP), /* OK */
+
+Please remove the "OK" comment.
+
+> +       DEF_MOD("intc-ap",               408,   R8A77980_CLK_S0D3),
+> +       DEF_MOD("hscif3",                517,   R8A77980_CLK_S3D1),
+> +       DEF_MOD("hscif2",                518,   R8A77980_CLK_S3D1),
+> +       DEF_MOD("hscif1",                519,   R8A77980_CLK_S3D1),
+> +       DEF_MOD("hscif0",                520,   R8A77980_CLK_S3D1),
+> +       DEF_MOD("imp4",                  521,   R8A77980_CLK_S1D1), /* OK? */
+
+Please remove the "OK" comment.
+
+I couldn't verify all parent clocks though, especially for multimedia-related
+blocks.
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
