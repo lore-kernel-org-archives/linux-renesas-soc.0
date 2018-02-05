@@ -1,57 +1,31 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Mon, 26 Feb 2018 21:01:17 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 5 Feb 2018 00:07:31 -0600
+From: Rob Herring <robh@kernel.org>
 To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
         geert@linux-m68k.org, kieran.bingham@ideasonboard.com,
-        magnus.damm@gmail.com, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org
+        wsa@the-dreams.de, magnus.damm@gmail.com,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
 Subject: Re: [PATCH v2 4/5] i2c: rcar: document R8A77995 bindings
-Message-ID: <20180226200117.hgeqz5z3b5phgbp2@ninjato>
+Message-ID: <20180205022942.kwvs6jcx4mecj6rj@rob-hp-laptop>
 References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com>
  <1517240748-14780-5-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mzhsimgij3wdtp3x"
-Content-Disposition: inline
-In-Reply-To: <1517240748-14780-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-List-ID: <linux-renesas-soc.vger.kernel.org>
-
-
---mzhsimgij3wdtp3x
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1517240748-14780-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: devicetree-owner@vger.kernel.org
+List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On Mon, Jan 29, 2018 at 04:45:47PM +0100, Ulrich Hecht wrote:
 > R-Car D3 (R8A77995) SoC has a R-Car Gen3-compatible I2C controller.
->=20
+> 
 > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-rcar.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Fixed $subject according to Rob's request and applied to for-next,
-thanks!
+"dt-bindings: i2c: " for the subject. Otherwise,
 
-
---mzhsimgij3wdtp3x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqUZ40ACgkQFA3kzBSg
-KbY3Lw//ZVnWVt/RKIJbYvQhtpx9Mlxn1MElPv+ce64xfN0djoSDllJ5I/TI+/er
-PrJmk9FEcs61LzqTRUp3PkttuhBttLm4Ur00SSp84NafzJ+OHHd6m9C7rDk4wE7d
-w1w/qBf8TW1s8SX/yZSxgyA8/ndncri6ciM9u0mghmnnQc7VA8WLfEQO7AdyUHma
-o8Z6+Ky7LjxP0Wx8Mc0T+Z8mGcjlz0yJjucAwbBhae5JBmjrABgjrOA3IDV2kMt4
-0YESTP0G55iyQFyTc5lPvKSTfYD6yUuwnlKAFJqfv7zYDYx3Stjp5RYsWQmdAcl2
-xcRoK6DPw245Jk9uRllLJFmjWylZr772JOizwk3V4mlKa5RUs3/w7r9hw021gZd2
-+Bc4k5NRhg8iEN4wa4CCL7hkr8TN2i7u8R6gatXFb2K27kzLbt8dTEM2BkusQJC8
-MdwVp0QClbdma9ezY7Ghnb0ZvX7Kj0AUGXgtQfcYTtKVSOrQsXhLQpdYIiL3t043
-hQ0SR1vmvv56c5MAHUte5s96dwz0Gt6WrEj6SiqSNxQGmT+BbBVTBYLZKL65aAIZ
-eB4ygkcfHEIAxDpLJJPr+4Utan4EEYao2ZIISds3zIUshbynzgHeZSqIbihEY3zf
-9UpqRWStXNT+j0Smj2vrFwSz5hXqQ9UPklRqaJpBmk7ri222RFo=
-=gUVx
------END PGP SIGNATURE-----
-
---mzhsimgij3wdtp3x--
+Reviewed-by: Rob Herring <robh@kernel.org>
