@@ -1,45 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f181.google.com ([209.85.220.181]:33032 "EHLO
-        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751271AbeBLRXE (ORCPT
+Received: from mail-ot0-f171.google.com ([74.125.82.171]:45209 "EHLO
+        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752494AbeBEMnZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:23:04 -0500
-Date: Mon, 12 Feb 2018 09:22:59 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-ide@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Mon, 5 Feb 2018 07:43:25 -0500
+MIME-Version: 1.0
+In-Reply-To: <1ca78555-fea3-3fea-090d-66dca48dc4ea@cogentembedded.com>
+References: <1517771931-17157-1-git-send-email-ykaneko0929@gmail.com> <1ca78555-fea3-3fea-090d-66dca48dc4ea@cogentembedded.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Date: Mon, 5 Feb 2018 21:43:23 +0900
+Message-ID: <CAH1o70J63hXEgj_U6dKOzX+uXjEcd2cn4JvBKr_dBrgvGgFwBQ@mail.gmail.com>
+Subject: Re: [PATCH/RFT v3] sata_rcar: Reset SATA PHY when Salvator-X board resumes
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-ide@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH/RFT v3] sata_rcar: Reset SATA PHY when Salvator-X board
- resumes
-Message-ID: <20180212172259.GE695913@devbig577.frc2.facebook.com>
-References: <1517771931-17157-1-git-send-email-ykaneko0929@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1517771931-17157-1-git-send-email-ykaneko0929@gmail.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 05, 2018 at 04:18:51AM +0900, Yoshihiro Kaneko wrote:
-> From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-> 
-> Because power of Salvator-X board is cut off in suspend,
-> it needs to reset SATA PHY state in resume.
-> Otherwise, SATA partition could not be accessed anymore.
-> 
-> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-> Signed-off-by: Hien Dang <hien.dang.eb@rvc.renesas.com>
-> [reinit phy in sata_rcar_resume() function on R-Car Gen3 only]
-> [factor out SATA module init sequence]
-> [fixed the prefix for the subject]
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Hi Sergei,
 
-Applied to libata/for-4.16-fixes.
+2018-02-05 17:33 GMT+09:00 Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>:
+> Hello!
+>
+> On 2/4/2018 10:18 PM, Yoshihiro Kaneko wrote:
+>
+>> From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+>>
+>> Because power of Salvator-X board is cut off in suspend,
+>> it needs to reset SATA PHY state in resume.
+>> Otherwise, SATA partition could not be accessed anymore.
+>>
+>> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+>> Signed-off-by: Hien Dang <hien.dang.eb@rvc.renesas.com>
+>> [reinit phy in sata_rcar_resume() function on R-Car Gen3 only]
+>> [factor out SATA module init sequence]
+>> [fixed the prefix for the subject]
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>
+> [...]
+>
+>    OK, this one seems better.
 
-Thanks.
+Thank you as always for your help.
 
--- 
-tejun
+Best regards,
+Kaneko
+
+>
+> MBR, Sergei
