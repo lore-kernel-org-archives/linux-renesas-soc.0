@@ -1,24 +1,26 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37646 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752997AbeBEGJb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 5 Feb 2018 01:09:31 -0500
+Date: Mon, 5 Feb 2018 00:09:29 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] DT: net: renesas,ravb: document R8A77980 bindings
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org,
-        David Miller <davem@davemloft.net>
+Message-ID: <20180205060929.bg2b25fhzi7olhzi@rob-hp-laptop>
 References: <1eb6b81c-500e-ef21-7c21-e8bc7a1ff227@cogentembedded.com>
-Message-ID: <ad5fce6e-81df-f898-387e-3c40417fe691@cogentembedded.com>
-Date: Sat, 24 Feb 2018 21:01:15 +0300
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <1eb6b81c-500e-ef21-7c21-e8bc7a1ff227@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 02/01/2018 11:13 PM, Sergei Shtylyov wrote:
-
+On Thu, Feb 01, 2018 at 11:13:45PM +0300, Sergei Shtylyov wrote:
 > Renesas R-Car V3H (R8A77980) SoC has the R-Car gen3 compatible EtherAVB
 > device, so document the SoC specific bindings.
 > 
@@ -27,8 +29,8 @@ On 02/01/2018 11:13 PM, Sergei Shtylyov wrote:
 > ---
 > The patch is against DaveM's 'net-next.git' repo but I wouldn't mind if it's
 > applied to 'net.git' instead. :-)
+> 
+>  Documentation/devicetree/bindings/net/renesas,ravb.txt |    1 +
+>  1 file changed, 1 insertion(+)
 
-   David, I see this patch was marked as "not applicable" in patchwork. Why, because
-it was posted during the merge window?
-
-MNBR, Sergei
+Reviewed-by: Rob Herring <robh@kernel.org>
