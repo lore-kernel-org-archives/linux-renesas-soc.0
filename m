@@ -1,84 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33174 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932094AbeBLPoj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:44:39 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 6 Feb 2018 13:52:26 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/5] soc: renesas: Use symbols for register offsets for R-Car V3M power areas
-Date: Mon, 12 Feb 2018 16:44:21 +0100
-Message-Id: <20180212154422.13900-5-horms+renesas@verge.net.au>
-In-Reply-To: <20180212154422.13900-1-horms+renesas@verge.net.au>
-References: <20180212154422.13900-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/11] arm64: dts: renesas: initial R8A77980 SoC device
+ tree
+Message-ID: <20180206125225.apsqhtozwy4iaijc@verge.net.au>
+References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
+ <32142684-d5cf-035f-8401-86a36dcbafd6@cogentembedded.com>
+ <CAMuHMdWad2OJ33Hu0KbYS3nLWhgmj81_wRbtwApw-N81q3+nsA@mail.gmail.com>
+ <ad83625d-c166-cacb-eae2-a6d64f7d2b26@cogentembedded.com>
+ <CAMuHMdVfuruK36OUVdOcHaJogoM8oee_+b+4UzjBfUBoMiEbOQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVfuruK36OUVdOcHaJogoM8oee_+b+4UzjBfUBoMiEbOQ@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use symbols rather for register offsets for R-Car V3M power areas
-to improve readability.
+On Mon, Feb 05, 2018 at 02:51:43PM +0100, Geert Uytterhoeven wrote:
+> Hi Sergei,
+> 
+> On Mon, Feb 5, 2018 at 2:48 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > On 2/5/2018 4:32 PM, Geert Uytterhoeven wrote:
+> >>> The initial R8A77980 SoC device tree including Cortex-A53 CPU, GIC,
+> >>> timer,
+> >>> CPG, RST, and SYSC.
+> >>>
+> >>> Based on the original (and large) patch by Vladimir Barinov.
+> >>>
+> >>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> >>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >>
+> >> Thanks for your patch!
+> >>
+> >>> --- /dev/null
+> >>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> >>> @@ -0,0 +1,122 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0
+> >>> +/*
+> >>> + * Device Tree Source for the r8a77980 SoC
+> >>> + *
+> >>> + * Copyright (C) 2018 Renesas Electronics Corp.
+> >>> + * Copyright (C) 2018 Cogent Embedded, Inc.
+> >>> + */
+> >>> +
+> >>> +#include <dt-bindings/interrupt-controller/irq.h>
+> >>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> >>> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> >>
+> >> I think you want to leave out the above #include, as it will go upstream
+> >> through a different path (you're already using hardcoded clock numbers,
+> >> assuming the same).
+> >
+> >    I still need CPG_{CORE|MOD}.
+> 
+> You're right. Please ignore my comment.
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Also line-wrap at 80 columns for consistency with R-Car H3 and M3-W
-implementations.
-
-This does not have any functional change.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/soc/renesas/r8a77970-sysc.c | 39 +++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/soc/renesas/r8a77970-sysc.c b/drivers/soc/renesas/r8a77970-sysc.c
-index 8c614164718e..a21066bd5ba7 100644
---- a/drivers/soc/renesas/r8a77970-sysc.c
-+++ b/drivers/soc/renesas/r8a77970-sysc.c
-@@ -16,21 +16,30 @@
- #include "rcar-sysc.h"
- 
- static const struct rcar_sysc_area r8a77970_areas[] __initconst = {
--	{ "always-on",	    0, 0, R8A77970_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
--	{ "ca53-scu",	0x140, 0, R8A77970_PD_CA53_SCU,	R8A77970_PD_ALWAYS_ON,
--	  PD_SCU },
--	{ "ca53-cpu0",	0x200, 0, R8A77970_PD_CA53_CPU0, R8A77970_PD_CA53_SCU,
--	  PD_CPU_NOCR },
--	{ "ca53-cpu1",	0x200, 1, R8A77970_PD_CA53_CPU1, R8A77970_PD_CA53_SCU,
--	  PD_CPU_NOCR },
--	{ "cr7",	0x240, 0, R8A77970_PD_CR7,	R8A77970_PD_ALWAYS_ON },
--	{ "a3ir",	0x180, 0, R8A77970_PD_A3IR,	R8A77970_PD_ALWAYS_ON },
--	{ "a2ir0",	0x400, 0, R8A77970_PD_A2IR0,	R8A77970_PD_ALWAYS_ON },
--	{ "a2ir1",	0x400, 1, R8A77970_PD_A2IR1,	R8A77970_PD_A2IR0 },
--	{ "a2ir2",	0x400, 2, R8A77970_PD_A2IR2,	R8A77970_PD_A2IR0 },
--	{ "a2ir3",	0x400, 3, R8A77970_PD_A2IR3,	R8A77970_PD_A2IR0 },
--	{ "a2sc0",	0x400, 4, R8A77970_PD_A2SC0,	R8A77970_PD_ALWAYS_ON },
--	{ "a2sc1",	0x400, 5, R8A77970_PD_A2SC1,	R8A77970_PD_A2SC0 },
-+	{ "always-on",	RCAR_GEN3_SYSCSR, 0, R8A77970_PD_ALWAYS_ON,
-+	  -1, PD_ALWAYS_ON },
-+	{ "ca53-scu",	RCAR_GEN3_PWRSR3, 0, R8A77970_PD_CA53_SCU,
-+	  R8A77970_PD_ALWAYS_ON, PD_SCU },
-+	{ "ca53-cpu0",	RCAR_GEN3_PWRSR6, 0, R8A77970_PD_CA53_CPU0,
-+	  R8A77970_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "ca53-cpu1",	RCAR_GEN3_PWRSR6, 1, R8A77970_PD_CA53_CPU1,
-+	  R8A77970_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "cr7",	RCAR_GEN3_PWRSR7, 0, R8A77970_PD_CR7,
-+	  R8A77970_PD_ALWAYS_ON },
-+	{ "a3ir",	RCAR_GEN3_PWRSR4, 0, R8A77970_PD_A3IR,
-+	  R8A77970_PD_ALWAYS_ON },
-+	{ "a2ir0",	RCAR_GEN3_PWRSR11, 0, R8A77970_PD_A2IR0,
-+	  R8A77970_PD_ALWAYS_ON },
-+	{ "a2ir1",	RCAR_GEN3_PWRSR11, 1, R8A77970_PD_A2IR1,
-+	  R8A77970_PD_A2IR0 },
-+	{ "a2ir2",	RCAR_GEN3_PWRSR11, 2, R8A77970_PD_A2IR2,
-+	  R8A77970_PD_A2IR0 },
-+	{ "a2ir3",	RCAR_GEN3_PWRSR11, 3, R8A77970_PD_A2IR3,
-+	  R8A77970_PD_A2IR0 },
-+	{ "a2sc0",	RCAR_GEN3_PWRSR11, 4, R8A77970_PD_A2SC0,
-+	  R8A77970_PD_ALWAYS_ON },
-+	{ "a2sc1",	RCAR_GEN3_PWRSR11, 5, R8A77970_PD_A2SC1,
-+	  R8A77970_PD_A2SC0 },
- };
- 
- const struct rcar_sysc_info r8a77970_sysc_info __initconst = {
--- 
-2.11.0
+Thanks, applied.
