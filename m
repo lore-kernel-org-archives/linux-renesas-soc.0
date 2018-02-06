@@ -1,58 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40955 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754538AbeBBSWS (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44962 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752182AbeBFPTh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 13:22:18 -0500
-Received: by mail-lf0-f65.google.com with SMTP id h92so32800520lfi.7
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Feb 2018 10:22:17 -0800 (PST)
-Subject: [PATCH 01/11] soc: renesas: identify R-Car V3H
+        Tue, 6 Feb 2018 10:19:37 -0500
+Received: by mail-lf0-f68.google.com with SMTP id v188so3229517lfa.11
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Feb 2018 07:19:37 -0800 (PST)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 08/11] arm64: dts: renesas: r8a77980: add EtherAVB support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
 References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Message-ID: <1e3dd4b4-4775-ab05-ac66-7b61a881a673@cogentembedded.com>
-Date: Fri, 2 Feb 2018 21:22:14 +0300
+ <99e9e3a5-a626-282a-3e8b-9c74945d55bc@cogentembedded.com>
+ <CAMuHMdU1Xfc3u90TLQc0g6COuRa+hf5fukr+XAkSxgjSBV6vhg@mail.gmail.com>
+Message-ID: <bdc34fdf-26af-0e2d-2d7f-44ab52a7c245@cogentembedded.com>
+Date: Tue, 6 Feb 2018 18:19:34 +0300
 MIME-Version: 1.0
-In-Reply-To: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
+In-Reply-To: <CAMuHMdU1Xfc3u90TLQc0g6COuRa+hf5fukr+XAkSxgjSBV6vhg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for identifying the R-Car V3H (R8A77980) SoC.
+On 02/06/2018 03:04 PM, Geert Uytterhoeven wrote:
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> Define the generic R8A77980 part of the EtherAVB device node.
+>>
+>> Based on the original (and large) patch by Vladimir Barinov.
+>>
+>> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Thanks for your patch!
+> 
+>> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+>> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+>> @@ -164,6 +164,50 @@
+>>                         status = "disabled";
+>>                 };
+>>
+>> +               avb: ethernet@e6800000 {
+>> +                       compatible = "renesas,etheravb-r8a77980",
+>> +                                    "renesas,etheravb-rcar-gen3";
+>> +                       reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
+> 
+> According to the Hardware User Manual 0.80, V3H does not have the Stream
+> Buffer (second region).
 
----
- drivers/soc/renesas/renesas-soc.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+   Indeed, I forgot to check the manual. TY for noticing!
 
-Index: renesas/drivers/soc/renesas/renesas-soc.c
-===================================================================
---- renesas.orig/drivers/soc/renesas/renesas-soc.c
-+++ renesas/drivers/soc/renesas/renesas-soc.c
-@@ -149,6 +149,11 @@ static const struct renesas_soc soc_rcar
- 	.id	= 0x54,
- };
- 
-+static const struct renesas_soc soc_rcar_v3h __initconst __maybe_unused = {
-+	.family	= &fam_rcar_gen3,
-+	.id	= 0x56,
-+};
-+
- static const struct renesas_soc soc_rcar_d3 __initconst __maybe_unused = {
- 	.family	= &fam_rcar_gen3,
- 	.id	= 0x58,
-@@ -212,6 +217,9 @@ static const struct of_device_id renesas
- #ifdef CONFIG_ARCH_R8A77970
- 	{ .compatible = "renesas,r8a77970",	.data = &soc_rcar_v3m },
- #endif
-+#ifdef CONFIG_ARCH_R8A77980
-+	{ .compatible = "renesas,r8a77980",	.data = &soc_rcar_v3h },
-+#endif
- #ifdef CONFIG_ARCH_R8A77995
- 	{ .compatible = "renesas,r8a77995",	.data = &soc_rcar_d3 },
- #endif
+>> +                       phy-mode = "rgmii-id";
+> 
+> This is different from H3, M3-W, and D3. Care to elaborate for the layman
+> in me?
+
+   See Documentation/devicetree/bindings/net/ethernet.txt, I don't know anything beyond that anyway. :-)
+   Based on the manual, I'd think we should use "rgmii" here and override it in the board DT if needed...
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+
+MBR, Sergei
