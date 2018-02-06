@@ -1,62 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:38188 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752802AbeBLSEJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58805 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbeBFMp7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:04:09 -0500
-Received: by mail-lf0-f65.google.com with SMTP id g72so21600904lfg.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Feb 2018 10:04:08 -0800 (PST)
-Subject: Re: [PATCH 0/3] Add R8A77970/Eagle PFC support
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Tue, 6 Feb 2018 07:45:59 -0500
+Date: Tue, 6 Feb 2018 13:45:55 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20171110200218.747996672@cogentembedded.com>
- <20171113075303.zmkmq6bt3lfuttwu@verge.net.au>
- <049b0a0a-b1c2-73e6-c471-ca8342bba6ab@ideasonboard.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <19d23fa2-1205-89a0-786f-f301ca7a0f7b@cogentembedded.com>
-Date: Mon, 12 Feb 2018 21:04:06 +0300
+        Magnus Damm <magnus.damm@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 02/11] soc: renesas: rcar-rst: add R8A77980 support
+Message-ID: <20180206124555.62vty4lwp7gakmgi@verge.net.au>
+References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
+ <76b4144e-423a-65fd-fe17-bfedbc0deb8e@cogentembedded.com>
+ <CAMuHMdVcKEH4FMf8UazacV86DFtJq8sdxfT+c7UX+67k5vXugA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <049b0a0a-b1c2-73e6-c471-ca8342bba6ab@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVcKEH4FMf8UazacV86DFtJq8sdxfT+c7UX+67k5vXugA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/19/2018 01:48 PM, Kieran Bingham wrote:
-
->>> Here's the set of 3 patches against Simon Horman's 'renesas.git' repo's
->>> 'renesas-devel-20171110-v4.14-rc8' tag.  We're adding the R8A77970 PFC node
->>> and then describing the pins for SCIF0 and EtherAVB devices declared earlier.
->>> These patches depend on the R8A77970 PFC suport in order to work properly.
->>>
->>> [1/3] arm64: dts: renesas: r8a77970: add PFC support
->>> [2/3] arm64: dts: renesas: eagle: add SCIF0 pins
->>> [3/3] arm64: dts: renesas: eagle: add EtherAVB pins
->>
->> Hi Sergei,
->>
->> I have marked these patches as deferred pending acceptance of the PFC
->> driver. Please repost or otherwise ping me once that dependency has been
->> accepted.
+On Mon, Feb 05, 2018 at 01:37:04PM +0100, Geert Uytterhoeven wrote:
+> On Fri, Feb 2, 2018 at 7:27 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Add support for R-Car V3H (R8A77980) to the R-Car RST driver -- this driver
+> > is  needed  for the clock driver to work.
 > 
-> Has the dependency blocking this series been resolved yet ?
-
-   Now it is, except for the 3rd patch... Simon, do I need to repost the first two?
-The 1st one did apply to 4.16-rc1 here with a fuzz...
-
-> (I have patches for the Eagle-V3M which are blocked waiting for the PFC support)
+> Please drop the extra spaces in between words that are part of the same
+> sentence.
 > 
-> --
-> Regards
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > 
-> Kieran
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-MBR, Sergei
+Thanks, applied with whitespace fixes suggested above.
