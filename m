@@ -1,124 +1,66 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au,
-        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:44569 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752212AbeBFAGY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 5 Feb 2018 19:06:24 -0500
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Message-id: <5A78F17D.1010400@samsung.com>
+Date: Tue, 06 Feb 2018 09:06:21 +0900
+From: Inki Dae <inki.dae@samsung.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 00/10] R-Car M3-N: Enable EtherAVB device node
-Date: Tue, 27 Feb 2018 11:22:44 +0100
-Message-Id: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/4] drm/exynos: fix comparison to bitshift when dealing
+ with a mask
+In-reply-to: <20180205201002.23621-3-wsa+renesas@sang-engineering.com>
+References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
+        <CGME20180205201026epcas5p214598aead48b3d8118b8f1fe114da8ec@epcas5p2.samsung.com>
+        <20180205201002.23621-3-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon, Geert,
-   in this second iteration I have dropped iommu dependencies for EtherAVB
-and have changed "phy-mode" for all mainlines Gen-3 boards, this time including
-ULCB, Draak, Eagle and V3MSK.
 
-The series add phy-mode as a board property to the following board files:
-- salvator-common.dtsi
-- ulcb.dtsi
-- r8a77995-draak.dts
-- r8a77970-eagle.dts
-- r8a77970-v3msk.dts
 
-And reset the EtherAVB phy-mode to "rgmii" in the following SoC DTSI:
-- r8a7795.dtsi
-- r8a7796.dtsi
-- r8a77995.dtsi
-- r8a77970.dtsi
+2018년 02월 06일 05:09에 Wolfram Sang 이(가) 쓴 글:
+> Due to a typo, the mask was destroyed by a comparison instead of a bit
+> shift.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> Only build tested. To be applied individually per subsystem.
+> 
+>  drivers/gpu/drm/exynos/regs-fimc.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/regs-fimc.h b/drivers/gpu/drm/exynos/regs-fimc.h
+> index 30496134a3d072..d7cbe53c4c01f4 100644
+> --- a/drivers/gpu/drm/exynos/regs-fimc.h
+> +++ b/drivers/gpu/drm/exynos/regs-fimc.h
+> @@ -569,7 +569,7 @@
+>  #define EXYNOS_CIIMGEFF_FIN_EMBOSSING		(4 << 26)
+>  #define EXYNOS_CIIMGEFF_FIN_SILHOUETTE		(5 << 26)
+>  #define EXYNOS_CIIMGEFF_FIN_MASK			(7 << 26)
+> -#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff < 13) | (0xff < 0))
+> +#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff << 13) | (0xff << 0))
+>  
 
-And finally, I added EtherAVB device node for M3-N on top.
+Oops. Picked it up.
 
-I have verified with scripts/dtc/dtx_diff that the only difference compared to
-the previous version for all DTS files is the newly introduced EtherAVB node for
-r8a77965 Salvator-X board.
+Thanks,
+Inki Dae
 
-------------------------------------------------------------------------------
-$ for i in `ls dts-new/*.dtb`; do
-	dt=`basename $i`;
-	echo $dt;
-	./scripts/dtc/dtx_diff dts-old/$dt dts-new/$dt;
-  done
-
-$ r8a7795-es1-h3ulcb.dtb
- r8a7795-es1-h3ulcb-kf.dtb
- r8a7795-es1-salvator-x.dtb
- r8a7795-h3ulcb.dtb
- r8a7795-h3ulcb-kf.dtb
- r8a7795-salvator-x.dtb
- r8a7795-salvator-xs.dtb
- r8a77965-salvator-x.dtb
- --- dts-old/r8a77965-salvator-x.dtb
- +++ dts-new/r8a77965-salvator-x.dtb
- @@ -413,10 +413,17 @@
-  		ethernet@e6800000 {
-  			#address-cells = <0x1>;
-  			#size-cells = <0x0>;
- +			clocks = <0x6 0x1 0x32c>;
- +			compatible = "renesas,etheravb-r8a77965", "renesas,etheravb-rcar-gen3";
- +			interrupt-names = "ch0", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "ch9", "ch10", "ch11", "ch12", "ch13", "ch14", "ch15", "ch16", "ch17", "ch18", "ch19", "ch20", "ch21", "ch22", "ch23", "ch24";
- +			interrupts = <0x0 0x27 0x4 0x0 0x28 0x4 0x0 0x29 0x4 0x0 0x2a 0x4 0x0 0x2b 0x4 0x0 0x2c 0x4 0x0 0x2d 0x4 0x0 0x2e 0x4 0x0 0x2f 0x4 0x0 0x30 0x4 0x0 0x31 0x4 0x0 0x32 0x4 0x0 0x33 0x4 0x0 0x34 0x4 0x0 0x35 0x4 0x0 0x36 0x4 0x0 0x37 0x4 0x0 0x38 0x4 0x0 0x39 0x4 0x0 0x3a 0x4 0x0 0x3b 0x4 0x0 0x3c 0x4 0x0 0x3d 0x4 0x0 0x3e 0x4 0x0 0x3f 0x4>;
-  			phy-handle = <0x12>;
- +			phy-mode = "rgmii-txid";
-  			pinctrl-0 = <0x11>;
-  			pinctrl-names = "default";
- +			power-domains = <0x1 0x20>;
-  			reg = <0x0 0xe6800000 0x0 0x800 0x0 0xe6a00000 0x0 0x10000>;
- +			resets = <0x6 0x32c>;
-  			status = "okay";
-
-  			ethernet-phy@0 {
- r8a7796-m3ulcb.dtb
- r8a7796-m3ulcb-kf.dtb
- r8a7796-salvator-x.dtb
- r8a7796-salvator-xs.dtb
- r8a77970-eagle.dtb
- r8a77970-v3msk.dtb
- r8a77995-draak.dtb
-------------------------------------------------------------------------------
-
-As per the previous version, this is based on what Simon already picked in his
-development branch.
-
-Branch for testing available at:
-git://jmondi.org/linux m3-n/renesas-drivers-2018-02-13-v4.16-rc1/v2-simon
-
-Thanks
-   j
-
-v1 -> v2:
-- Change rgmii mode in ULCB, Draak, Eagle and V3MSK
-- Reset rgmii mode for r8a77970
-- Drop iommu dependencies and associated patches
-
-Jacopo Mondi (10):
-  arm64: dts: renesas: salvator-common: Override EtherAVB phy-mode
-  arm64: dts: renesas: ulcb: Override EtherAVB phy-mode
-  arm64: dts: renesas: draak: Override EtherAVB phy-mode
-  arm64: dts: renesas: eagle: Override EtherAVB phy-mode
-  arm64: dts: renesas: v3msk: Override EtherAVB phy-mode
-  arm64: dts: renesas: r8a7796: Set EtherAVB phy mode to "rgmii"
-  arm64: dts: renesas: r8a7795: Set EtherAVB phy mode to "rgmii"
-  arm64: dts: renesas: r8a77995: Set EtherAVB phy mode to "rgmii"
-  arm64: dts: renesas: r8a77970: Set EtherAVB phy mode to "rgmii"
-  arm64: dts: renesas: r8a77965: Add EtherAVB device node
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi         |  2 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi         |  2 +-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi        | 43 ++++++++++++++++++++++--
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts   |  1 +
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts   |  1 +
- arch/arm64/boot/dts/renesas/r8a77970.dtsi        |  2 +-
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts   |  1 +
- arch/arm64/boot/dts/renesas/r8a77995.dtsi        |  2 +-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi |  1 +
- arch/arm64/boot/dts/renesas/ulcb.dtsi            |  1 +
- 10 files changed, 49 insertions(+), 7 deletions(-)
-
---
-2.7.4
-
+>  /* Real input DMA size register */
+>  #define EXYNOS_CIREAL_ISIZE_AUTOLOAD_ENABLE	(1 << 31)
+> 
