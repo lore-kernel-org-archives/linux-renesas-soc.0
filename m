@@ -1,37 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:39220 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752166AbeBFO4o (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59352 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751963AbeBFNRR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 09:56:44 -0500
-Received: by mail-lf0-f66.google.com with SMTP id w27so3138479lfd.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Feb 2018 06:56:43 -0800 (PST)
-Subject: Re: [PATCH 1/3] dt-bindings: net: renesas-ravb: Make stream buffer
- optional
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 6 Feb 2018 08:17:17 -0500
+Date: Tue, 6 Feb 2018 14:17:13 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: net: renesas-ravb: Make stream buffer
+ optional
+Message-ID: <20180206131712.yzobmc7utxt7n77i@verge.net.au>
 References: <1517922354-28421-1-git-send-email-geert+renesas@glider.be>
  <1517922354-28421-2-git-send-email-geert+renesas@glider.be>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <d0ef917e-7663-daad-660e-af07838d3806@cogentembedded.com>
-Date: Tue, 6 Feb 2018 17:56:40 +0300
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <1517922354-28421-2-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 02/06/2018 04:05 PM, Geert Uytterhoeven wrote:
-
+On Tue, Feb 06, 2018 at 02:05:52PM +0100, Geert Uytterhoeven wrote:
 > The Stream Buffer for EtherAVB-IF (STBE) is an optional component, and
 > is not present on all SoCs.
 > 
@@ -42,26 +38,4 @@ On 02/06/2018 04:05 PM, Geert Uytterhoeven wrote:
 > Fixes: f231c4178a655b09 ("dt-bindings: net: renesas-ravb: Add support for R8A77995 RAVB")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-> ---
->  Documentation/devicetree/bindings/net/renesas,ravb.txt | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-> index c902261893b913f5..296191c323a64403 100644
-> --- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-> +++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-> @@ -26,7 +26,10 @@ Required properties:
->  	SoC-specific version corresponding to the platform first followed by
->  	the generic version.
->  
-> -- reg: offset and length of (1) the register block and (2) the stream buffer.
-> +- reg: Offset and length of (1) the register block and (2) the stream buffer.
-> +       The region for the register block is mandatory.
-> +       The region for the stream buffer is optional, as it is only present on
-> +       R-Car Gen2, RZ/G1, and R-Car H3 and M3-W.
-
-   Did you deliberately omit M3-N for now?
-
-MBR, Sergei
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
