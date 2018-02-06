@@ -1,64 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from userp2120.oracle.com ([156.151.31.85]:50458 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752847AbeBFNMA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:12:00 -0500
-Date: Tue, 6 Feb 2018 16:10:44 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Tue, 6 Feb 2018 09:28:56 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org, netdev <netdev@vger.kernel.org>
 Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
  with a mask
-Message-ID: <20180206131044.oso33fvv553trrd7@mwanda>
+Message-ID: <20180206082856.qx4pj7of36yytetc@ninjato>
 References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWnV17DCxr71k6n3w+5jPtQmeuPugr58xadq9U_qchJnQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i7fjmlnpcylye3br"
 Content-Disposition: inline
-In-Reply-To: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdWnV17DCxr71k6n3w+5jPtQmeuPugr58xadq9U_qchJnQ@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 05, 2018 at 09:09:57PM +0100, Wolfram Sang wrote:
-> In one Renesas driver, I found a typo which turned an intended bit shift ('<<')
-> into a comparison ('<'). Because this is a subtle issue, I looked tree wide for
-> similar patterns. This small patch series is the outcome.
-> 
-> Buildbot and checkpatch are happy. Only compile-tested. To be applied
-> individually per sub-system, I think. I'd think only the net: amd: patch needs
-> to be conisdered for stable, but I leave this to people who actually know this
-> driver.
-> 
-> CCing Dan. Maybe he has an idea how to add a test to smatch? In my setup, only
-> cppcheck reported a 'coding style' issue with a low prio.
-> 
 
-Most of these are inside macros so it makes it complicated for Smatch
-to warn about them.  It might be easier in Coccinelle.  Julia the bugs
-look like this:
+--i7fjmlnpcylye3br
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--			reissue_mask |= 0xffff < 4;
-+			reissue_mask |= 0xffff << 4;
 
-regards,
-dan carpenter
+> I found two more using "git grep 'define.*0x[0-9a-f]* < '":
 
-> Wolfram Sang (4):
->   v4l: vsp1: fix mask creation for MULT_ALPHA_RATIO
->   drm/exynos: fix comparison to bitshift when dealing with a mask
->   v4l: dvb-frontends: stb0899: fix comparison to bitshift when dealing
->     with a mask
->   net: amd-xgbe: fix comparison to bitshift when dealing with a mask
-> 
->  drivers/gpu/drm/exynos/regs-fimc.h        | 2 +-
->  drivers/media/dvb-frontends/stb0899_reg.h | 8 ++++----
->  drivers/media/platform/vsp1/vsp1_regs.h   | 2 +-
->  drivers/net/ethernet/amd/xgbe/xgbe-drv.c  | 2 +-
->  4 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 2.11.0
+I added '[0-9]\+' at the end of the regex to reduce the number of false
+positives...
+
+> drivers/net/can/m_can/m_can.c:#define RXFC_FWM_MASK     (0x7f < RXFC_FWM_SHIFT)
+> drivers/usb/gadget/udc/goku_udc.h:#define INT_EPnNAK(n)
+> (0x00100 < (n))         /* 0 < n < 4 */
+
+... but you found those two true positives in there. Nice, thanks!
+
+
+--i7fjmlnpcylye3br
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp5Z0QACgkQFA3kzBSg
+KbbYSA//brJm3Wk+jt6LxTyCknABbUX/AufrL2WXLokJ0ZmBYFIXcLww7cpJsl87
+xpIkpfJmefWYgLTI3pqDWKZmAFKSV3r4auXeGTfGcZs+TceknU4GubxM75Swq0v9
+1hXwREddK/RO5nnpfIER8oubrmZgCmHF6Z9ZrLOAOvXDaIbsxkLDnVXtxi3Xkii3
+JvQ6tEer53ghJsLUj+PFN28yxgcBbQScisgr0Help/yEld++jf9nyAf02Ktccn9D
+HPpXfqOrIgE9XYplI4dl0dDUYM6wV7yOPvj4cQSTDRLX2Qf1iZ9sNVdkAAXFRSia
+9YlmKE9+Zc0rcCrIjkbmFz+RDwYiT1/2UmxjPUvvPJskXqbdw6DBYEkcEqs/Xy7G
+Api/nktPfnbyT2f17k7kTWKh5YK5ZQfuf4WGTC/Nf54a2k8lASZrFyMqigxq1YXA
+DW5ypA/mqS+jZTi9R8FaZNz+oVn5HCMts2aDrATJ7+u2RaqzlN+rHk2qoa7AVEQW
+4pRelcKxktnxIQWr1N/KH7EX4ktREprBRPAQH6O6CG/pIO+t9uILs0+ba21tt/Uf
+fFgoM+xBO/SO9R43kcYKq5uNs57KYI/Y9qyMln4ae4MmsDDRx3XM/6EoSJa5Q+Yu
+bpSI8U7C1v1elUOudk8RqPy7eWn2x7ufHBApRBkFZNvsqb/4CzY=
+=7Gs7
+-----END PGP SIGNATURE-----
+
+--i7fjmlnpcylye3br--
