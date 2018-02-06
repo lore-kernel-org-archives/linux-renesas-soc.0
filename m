@@ -1,136 +1,187 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/15] ARM64: dts: r8a77965: Add SCIF device nodes
-Date: Tue, 13 Feb 2018 10:45:57 +0100
-Message-Id: <1518515162-23663-11-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:40164 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753578AbeBFWaD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 6 Feb 2018 17:30:03 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 7/9] ARM: dts: silk: use demuxer for I2C1
+Date: Tue,  6 Feb 2018 23:29:56 +0100
+Message-Id: <20180206222958.18941-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SCIF[0-5] device nodes for M3-N (r8a77965) SoC.
+Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Based on work for the r8a7790/lager by Wolfram Sang.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, fixed aliases, switched to named GPIOs]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 85 ++++++++++++++++++++++++++++---
- 1 file changed, 79 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7794-silk.dts | 128 ++++++++++++++++++++++---------------
+ 1 file changed, 75 insertions(+), 53 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 9e57a08..236592b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -340,27 +340,100 @@
- 		};
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index edfad0e5ac53a0..f1afe2dda13a36 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -31,6 +31,8 @@
  
- 		scif0: serial@e6e60000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-+			       <&dmac2 0x51>, <&dmac2 0x50>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 207>;
-+			status = "disabled";
- 		};
+ 	aliases {
+ 		serial0 = &scif2;
++		i2c9 = &gpioi2c1;
++		i2c10 = &i2chdmi;
+ 	};
  
- 		scif1: serial@e6e68000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-+			       <&dmac2 0x53>, <&dmac2 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 206>;
-+			status = "disabled";
+ 	chosen {
+@@ -153,6 +155,78 @@
+ 			clocks = <&x9_clk>;
  		};
+ 	};
++
++	gpioi2c1: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C1.
++	 */
++	i2chdmi: i2c-10 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ak4643: codec@12 {
++			compatible = "asahi-kasei,ak4643";
++			#sound-dai-cells = <0>;
++			reg = <0x12>;
++		};
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin0>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin0ep>;
++				};
++			};
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio5>;
++			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_rgb0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con>;
++					};
++				};
++			};
++		};
++	};
+ };
  
- 		scif2: serial@e6e88000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e88000 0 64>;
-+			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 310>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 310>;
-+			status = "disabled";
- 		};
+ &extal_clk {
+@@ -268,61 +342,9 @@
  
- 		scif3: serial@e6c50000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a7796",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c50000 0 64>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 204>;
-+			status = "disabled";
- 		};
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
  
- 		scif4: serial@e6c40000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a7796",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c40000 0 64>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 203>;
-+			status = "disabled";
- 		};
+-	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	ak4643: codec@12 {
+-		compatible = "asahi-kasei,ak4643";
+-		#sound-dai-cells = <0>;
+-		reg = <0x12>;
+-	};
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin0>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio5>;
+-		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_rgb0>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
+-				};
+-			};
+-		};
+-	};
+ };
  
- 		scif5: serial@e6f30000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a7796",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6f30000 0 64>;
-+			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 202>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
-+			       <&dmac2 0x5b>, <&dmac2 0x5a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 202>;
-+			status = "disabled";
- 		};
- 
- 		avb: ethernet@e6800000 {
+ &mmcif0 {
 -- 
-2.7.4
-
+2.11.0
