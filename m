@@ -1,44 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from userp2130.oracle.com ([156.151.31.86]:37572 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751319AbeBFN7z (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38002 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751624AbeBFN5y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:59:55 -0500
-Date: Tue, 6 Feb 2018 16:59:23 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
+        Tue, 6 Feb 2018 08:57:54 -0500
+Date: Tue, 6 Feb 2018 14:57:51 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org
 Subject: Re: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing
  with a mask
-Message-ID: <20180206135923.3zthazmsapuzfxra@mwanda>
+Message-ID: <20180206135751.o7z7sxs3xtm5kbag@ninjato>
 References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
  <20180206131044.oso33fvv553trrd7@mwanda>
  <alpine.DEB.2.20.1802061414340.3306@hadrien>
  <20180206132335.luut6em3kut7f7ej@mwanda>
  <alpine.DEB.2.20.1802061439110.3306@hadrien>
+ <20180206135310.deiaz55xemc26xn4@ninjato>
+ <alpine.DEB.2.20.1802061453440.3306@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mahk6tikjhx33ffa"
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1802061439110.3306@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1802061453440.3306@hadrien>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-That found 4 that I think Wolfram's grep missed.
 
- arch/um/drivers/vector_user.h             |    2 --
- drivers/gpu/drm/mxsfb/mxsfb_regs.h        |    2 --
- drivers/video/fbdev/mxsfb.c               |    2 --
- include/drm/drm_scdc_helper.h             |    3 ---
+--mahk6tikjhx33ffa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-But it didn't find the two bugs that Geert found where the right side
-wasn't a number literal.
 
-drivers/net/can/m_can/m_can.c:#define RXFC_FWM_MASK     (0x7f < RXFC_FWM_SHIFT)
-drivers/usb/gadget/udc/goku_udc.h:#define INT_EPnNAK(n) (0x00100 < (n))         /* 0 < n < 4 */
+> I did that too but got no results.  Perhaps right shifting constants is
+> pretty uncommon.  I can put that in the complete rule though.
 
-regards,
-dan carpenter
+Please do. Even if rare, we would want this bug pointed out, right? :)
+
+
+--mahk6tikjhx33ffa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp5tF8ACgkQFA3kzBSg
+Kbaulg//Uy+7N6z27n0M2XlhBexh66B4hi11mW+Iajq+i8SUCUOOByD4uW//bBTb
+JuPWFvFlhQXZ+PyegluGubEH8k/pLeLU30NAKgGsy4+/p32PRFaJ/L91RtZw9Cv+
+r6yK2nnVIrkrWNV2xzT6sWDItCmejBpa6AyziTHFfyMNggc4keI7/AovCVxDgFTi
+BKws/o6zU9/jDJosdWrxHU3e0qmDhgYCWUP7atQKReksZdpFqLqSrW3SyjSAR4xa
+ZNLGwx/O8tCFUDrRrvUschbt38ou/QMJY7+4vF2lYTu3/hRKWBjIty8XbxU3N0i0
+A6W/vtEn9dyj+IPSkQHklgKmg3boCAbkCq1RK17R0bzkkUgODbZYdyIvx3SsTtjF
+v/6LpnVIZTauPlhDMjpwOQyAj3qXUdlvx7h2Fw/BZhYbN+LLGTYHzCNTtiJ1r3aP
+VlESEFJ5ogRYSX5q6NJGgDt0rhOxWCLSWaqG0t0w7+10Z0fDnglV+hdEp50Y/UTt
+A8wwLFu1q0pf35+DZJVzRuDeMeWQKEhrYd8XQRMEekU6x3cCD8afCGlrnXBmMIMF
+qhP+Xuba6Bi5rkKYOhDuKuLPYt+LNW6oXfnuNJfnje07SbMMkUU8EeUiBBUIVGNi
+eBiMpVD5lUZz9lzCOqF03aqq7H4ACLUwG9efHTdeewL/moEGIAw=
+=QEjS
+-----END PGP SIGNATURE-----
+
+--mahk6tikjhx33ffa--
