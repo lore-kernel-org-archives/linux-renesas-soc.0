@@ -1,85 +1,292 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54490 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbeBTMjM (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40141 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753573AbeBFWaB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 07:39:12 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: Fix resume from suspend to idle" to the regulator tree
-In-Reply-To: <1518514679-27782-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1eo7CP-0005FM-5m@debutante>
-Date: Tue, 20 Feb 2018 12:39:09 +0000
+        Tue, 6 Feb 2018 17:30:01 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 1/9] ARM: dts: lager: use demuxer for IIC2/I2C2
+Date: Tue,  6 Feb 2018 23:29:50 +0100
+Message-Id: <20180206222958.18941-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Create a separate bus for HDMI related I2C slaves.
 
-   regulator: Fix resume from suspend to idle
+Based on work by Wolfram Sang.
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 35b5f14ec6dab281346a2d0ceb34abe2dba94190 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Tue, 13 Feb 2018 10:37:59 +0100
-Subject: [PATCH] regulator: Fix resume from suspend to idle
-
-When resuming from idle with the new suspend mode configuration support
-we go through the resume callbacks with a state of PM_SUSPEND_TO_IDLE
-which we don't have regulator constraints for, causing an error:
-
-    dpm_run_callback(): regulator_resume_early+0x0/0x64 returns -22
-    PM: Device regulator.0 failed to resume early: error -22
-
-Avoid this and similar errors by treating missing constraints as a noop.
-
-See also commit 57a0dd187956ea04 ("regulator: Fix suspend to idle"),
-which fixed the suspend part.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, removed typo in comment, fixed aliases, switched to
+named GPIOS, sort SCL pins first]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/regulator/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 213 +++++++++++++++++++++---------------
+ 1 file changed, 124 insertions(+), 89 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index dd4708c58480..1fc0c0811da4 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -4310,7 +4310,7 @@ static int _regulator_resume_early(struct device *dev, void *data)
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 7892b113ecaa14..9f511d4fac109f 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -51,8 +51,10 @@
+ 		serial0 = &scif0;
+ 		serial1 = &scifa1;
+ 		i2c8 = &gpioi2c1;
++		i2c9 = &gpioi2c2;
+ 		i2c10 = &i2cexio0;
+ 		i2c11 = &i2cexio1;
++		i2c12 = &i2chdmi;
+ 	};
  
- 	rstate = regulator_get_suspend_state(rdev, *state);
- 	if (rstate == NULL)
--		return -EINVAL;
-+		return 0;
+ 	chosen {
+@@ -272,8 +274,18 @@
+ 		#size-cells = <0>;
+ 		compatible = "i2c-gpio";
+ 		status = "disabled";
+-		sda-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 		scl-gpios = <&gpio1 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	gpioi2c2: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio5 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio5 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 		i2c-gpio,delay-us = <5>;
+ 	};
  
- 	mutex_lock(&rdev->mutex);
+@@ -308,6 +320,104 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
++
++        /*
++         * IIC2 and I2C2 may be switched using pinmux.
++         * A fallback to GPIO is also provided.
++         */
++	i2chdmi: i2c-12 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&iic2>, <&i2c2>, <&gpioi2c2>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ak4643: codec@12 {
++			compatible = "asahi-kasei,ak4643";
++			#sound-dai-cells = <0>;
++			reg = <0x12>;
++		};
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin1>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin1ep0>;
++				};
++			};
++		};
++
++		cec_clock: cec-clock {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <12000000>;
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio1>;
++			interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&cec_clock>;
++			clock-names = "cec";
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con_out>;
++					};
++				};
++			};
++		};
++
++		hdmi-in@4c {
++			compatible = "adi,adv7612";
++			reg = <0x4c>;
++			interrupt-parent = <&gpio1>;
++			interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++			default-input = <0>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7612_in: endpoint {
++						remote-endpoint = <&hdmi_con_in>;
++					};
++				};
++
++				port@2 {
++					reg = <2>;
++					adv7612_out: endpoint {
++						remote-endpoint = <&vin0ep2>;
++					};
++				};
++			};
++		};
++	};
+ };
  
+ &du {
+@@ -437,6 +547,11 @@
+ 		function = "iic1";
+ 	};
+ 
++	i2c2_pins: i2c2 {
++		groups = "i2c2";
++		function = "i2c2";
++	};
++
+ 	iic2_pins: iic2 {
+ 		groups = "iic2";
+ 		function = "iic2";
+@@ -643,98 +758,18 @@
+ 	pinctrl-names = "i2c-exio1";
+ };
+ 
+-&iic2	{
+-	status = "okay";
+-	pinctrl-0 = <&iic2_pins>;
+-	pinctrl-names = "default";
++&i2c2	{
++	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-names = "i2c-hdmi";
+ 
+ 	clock-frequency = <100000>;
++};
+ 
+-	ak4643: codec@12 {
+-		compatible = "asahi-kasei,ak4643";
+-		#sound-dai-cells = <0>;
+-		reg = <0x12>;
+-	};
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin1>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin1ep0>;
+-			};
+-		};
+-	};
+-
+-	cec_clock: cec-clock {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <12000000>;
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&cec_clock>;
+-		clock-names = "cec";
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_lvds0>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con_out>;
+-				};
+-			};
+-		};
+-	};
+-
+-	hdmi-in@4c {
+-		compatible = "adi,adv7612";
+-		reg = <0x4c>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
+-		default-input = <0>;
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7612_in: endpoint {
+-					remote-endpoint = <&hdmi_con_in>;
+-				};
+-			};
++&iic2	{
++	pinctrl-0 = <&iic2_pins>;
++	pinctrl-names = "i2c-hdmi";
+ 
+-			port@2 {
+-				reg = <2>;
+-				adv7612_out: endpoint {
+-					remote-endpoint = <&vin0ep2>;
+-				};
+-			};
+-		};
+-	};
++	clock-frequency = <100000>;
+ };
+ 
+ &iic3 {
 -- 
-2.16.1
+2.11.0
