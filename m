@@ -1,40 +1,123 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59458 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752016AbeBFNUu (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40163 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753572AbeBFWaC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:20:50 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
+        Tue, 6 Feb 2018 17:30:02 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+Cc: Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: defconfig: enable R8A77980 SoC
-Date: Tue,  6 Feb 2018 14:20:45 +0100
-Message-Id: <20180206132045.23487-1-horms+renesas@verge.net.au>
+Subject: [PATCH v3 6/9] ARM: dts: alt: use demuxer for I2C1
+Date: Tue,  6 Feb 2018 23:29:55 +0100
+Message-Id: <20180206222958.18941-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the Renesas R-Car V3H (R8A77980) SoC in the ARM64 defconfig.
+Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+
+Based on work for the r8a7790/lager by Wolfram Sang.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, fixed aliases, switched to named GPIOs]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7794-alt.dts | 53 +++++++++++++++++++++++++++------------
+ 1 file changed, 37 insertions(+), 16 deletions(-)
 
- Based on renesas-devel-20180206-v4.15
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 6356c6da34ea..45a423f845c7 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -52,6 +52,7 @@ CONFIG_ARCH_RENESAS=y
- CONFIG_ARCH_R8A7795=y
- CONFIG_ARCH_R8A7796=y
- CONFIG_ARCH_R8A77970=y
-+CONFIG_ARCH_R8A77980=y
- CONFIG_ARCH_R8A77995=y
- CONFIG_ARCH_STRATIX10=y
- CONFIG_ARCH_TEGRA=y
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 60c6515c499660..26a883484ea814 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -18,7 +18,9 @@
+ 
+ 	aliases {
+ 		serial0 = &scif2;
++		i2c9 = &gpioi2c1;
+ 		i2c10 = &gpioi2c4;
++		i2c11 = &i2chdmi;
+ 		i2c12 = &i2cexio4;
+ 	};
+ 
+@@ -138,17 +140,50 @@
+ 		clock-frequency = <148500000>;
+ 	};
+ 
++	gpioi2c1: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++	};
++
+ 	gpioi2c4: i2c-10 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		compatible = "i2c-gpio";
+ 		status = "disabled";
+-		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 		scl-gpios = <&gpio4 8 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio4 9 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+ 		i2c-gpio,delay-us = <5>;
+ 	};
+ 
+ 	/*
++	 * A fallback to GPIO is provided for I2C1.
++	 */
++	i2chdmi: i2c-11 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin0>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin0ep>;
++				};
++			};
++		};
++	};
++
++	/*
+ 	 * I2C4 is routed to EXIO connector B, pins 73 (SCL) + 74 (SDA).
+ 	 * A fallback to GPIO is provided.
+ 	 */
+@@ -324,23 +359,9 @@
+ 
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+-	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin0>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+ };
+ 
+ &i2c4 {
 -- 
 2.11.0
