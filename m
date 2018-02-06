@@ -1,50 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54092 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965783AbeBMX32 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:36858 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752528AbeBFIyY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 18:29:28 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] ARM: shmobile: Document Renesas H2-based Stout DT bindings
-Date: Wed, 14 Feb 2018 00:29:16 +0100
-Message-Id: <20180213232916.31470-1-marek.vasut+renesas@gmail.com>
+        Tue, 6 Feb 2018 03:54:24 -0500
+Date: Tue, 6 Feb 2018 09:54:22 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: udc: change comparison to bitshift when
+ dealing with a mask
+Message-ID: <20180206085422.qokhonesh6oqtaof@ninjato>
+References: <20180206085040.3018-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pouaakhr7brj4bh2"
+Content-Disposition: inline
+In-Reply-To: <20180206085040.3018-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the Renesas H2 Stout (ADAS Starter Kit) device tree bindings,
-listing it as a supported board.
 
-This allows to use checkpatch.pl to validate .dts files referring to
-the Stout board.
+--pouaakhr7brj4bh2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+On Tue, Feb 06, 2018 at 09:50:40AM +0100, Wolfram Sang wrote:
+> Due to a typo, the mask was destroyed by a comparison instead of a bit
+> shift.
+>=20
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> Only build tested.
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 41d3920aaa5e..bf9bb6eda4a6 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -94,6 +94,8 @@ Boards:
-     compatible = "renesas,kzm9g", "renesas,sh73a0"
-   - Lager (RTP0RC7790SEB00010S)
-     compatible = "renesas,lager", "renesas,r8a7790"
-+  - Stout (Y-R-CAR-ADAS-SKH2-BOARD)
-+    compatible = "renesas,stout", "renesas,r8a7790"
-   - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
-     compatible = "renesas,m3ulcb", "renesas,r8a7796"
-   - Marzen (R0P7779A00010S)
--- 
-2.15.1
+Add. note: according to 'git grep', this macro is unused currently, so
+no regression.
+
+
+--pouaakhr7brj4bh2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp5bT4ACgkQFA3kzBSg
+KbZ7KA//QLqcAARl4SwJ6us+/7ONAlbxEUypFJIWc/z2VymBZCEqSGV+xk+OSZon
+sRemx6vsRSLrGCQ3++Vx9T/aajE8m5kIqm+2oDYNuYr2CyteLE60yL1g3VvWvQE2
+OtvyWHimxaYDriWv4AH+XGUPBXzvtzwRBa6ih+4e9EoCVNzKsuXdxWf+N7yOEQSs
+mRl9htiOpxASYkdJ9q8fywn48oPjKjy6j0fTN88dsXpk0C/7E5YlsGyrHnVT2EtB
+IYPEIwGNeOqX6zfZUDImH8thGMYVPxw94pXrG53/5i1gH6kEP7K5PtIRt7lqGtjD
+zV8toebfyCwlxvTfNS+EmnNUq9wy7V6O5/n2unNT02IQBj8sPs/7TKATG5QrD5yB
+ODiruPrbu5KCiEL8Us6r9SW573DIAq1ZqoHSPfgnc5XjBnZb7dFpJMwggjle/6rm
+CKysNcxa3L9osq6B+jMz6sUiIMdm687jTTLm/B2DHmiu2fd8ANH2EG254mGNB28H
+Wd/y4z+9iEyP24MtjLQMJascT5bagmyzZ3ZQCjWASWTndptjfEMWEvDQ091mWZyw
+sNcUnJzp5l6GGqmfLwY9lShHJziZBjsV9lvWbhL8EY8n8k9AQ7iP1KsrGEIaqvWa
+m5kt1RPKpJvPiHn5qclnPOprnPOu9Cn115B6bWovUyqI8A3w0mk=
+=Ik6a
+-----END PGP SIGNATURE-----
+
+--pouaakhr7brj4bh2--
