@@ -1,58 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:39316 "EHLO mail.kernel.org"
+Received: from sauhun.de ([88.99.104.3]:44349 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751053AbeBIOuk (ORCPT
+        id S1753149AbeBGTb5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 09:50:40 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        "Stable v4.14+" <stable@vger.kernel.org>
-Subject: [PATCH] v4l: vsp1: Fix header display list status check in continuous mode
-Date: Fri,  9 Feb 2018 14:50:34 +0000
-Message-Id: <1518187834-21267-1-git-send-email-kbingham@kernel.org>
+        Wed, 7 Feb 2018 14:31:57 -0500
+Date: Wed, 7 Feb 2018 20:31:55 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 10/16] mmc: tmio: remove TMIO_MMC_WRPROTECT_DISABLE
+Message-ID: <20180207193155.42phpprycb3nx3nv@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-11-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ifrazsdmgitbusor"
+Content-Disposition: inline
+In-Reply-To: <1516206496-16612-11-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-To allow dual pipelines utilising two WPF entities when available, the
-VSP was updated to support header-mode display list in continuous
-pipelines.
+--ifrazsdmgitbusor
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-A small bug in the status check of the command register causes the
-second pipeline to be directly afflicted by the running of the first;
-appearing as a perceived performance issue with stuttering display.
+On Thu, Jan 18, 2018 at 01:28:10AM +0900, Masahiro Yamada wrote:
+> The use of this flag has been replaced with MMC_CAP2_NO_WRITE_PROTECT.
+> No platform defines this flag any more.  Remove.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Fix the vsp1_dl_list_hw_update_pending() call to ensure that the read
-comparison corresponds to the correct pipeline.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Fixes: eaf4bfad6ad8 ("v4l: vsp1: Add support for header display
-lists in continuous mode")
-Cc: "Stable v4.14+" <stable@vger.kernel.org>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--ifrazsdmgitbusor
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 8cd03ee45f79..34b5ed2592f8 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -509,7 +509,8 @@ static bool vsp1_dl_list_hw_update_pending(struct vsp1_dl_manager *dlm)
- 		return !!(vsp1_read(vsp1, VI6_DL_BODY_SIZE)
- 			  & VI6_DL_BODY_SIZE_UPD);
- 	else
--		return !!(vsp1_read(vsp1, VI6_CMD(dlm->index) & VI6_CMD_UPDHDR));
-+		return !!(vsp1_read(vsp1, VI6_CMD(dlm->index))
-+			  & VI6_CMD_UPDHDR);
- }
- 
- static bool vsp1_dl_hw_active(struct vsp1_dl_manager *dlm)
--- 
-2.7.4
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7VCsACgkQFA3kzBSg
+KbYp6hAAlxqCwtGDsyOvTHHCdI7ovmAjVOm/kBzKXAF8jHUAAe+Z7W9VSssrbIYx
+wssHlpeW1lUHIvhiFINTyZGLKpD4qFOULxUBuQF5yJr369M/KUT8aGaUuaLHUCOs
+wmV47rdtusho6Bt+skW9InE3q+0dACD58YHYe6ZRuTeZ65T48DyC+Lm6JPlfqC13
+/VwWykk5xBcaLnjCiEkFvYXsQwXJSX/EDdt6ZIst0JehBhuX4X58gkBDBgNeWY/d
+BbvH5mRDFWxzQgdj0BojKhDorMXFpraQdreJuX7V6xvtuML3ogfQsUV9ALNaDe2i
+40uElQKlE9aDGGnp6FtxppbDmVE74pvuQI4OTUKf4GF+i778IngAZQl6QsQ3f3FW
+DZd2DodhnzrAHLHEWjn6sTeJLXuKWIHeC9G6WAJrJULGvo+RSyjGhsO59oSTiC2h
+lvtuuy0//noRrlh8Jp8/f9Bz4bC5OF1hmKm1TnWRk/ZRMFT1f0p+t2lo6jz6GFkP
+LhLzc3d7syx8mdydAJV1IkEiTycYGi7HY6KHb8vAu9LTJcvWVamuOHhLp4w5LAdJ
+D06hfC1PkXy4YT4yc13+WpXqCV6zEq8nH/nLwNjxnPn7974uIHU3+6h9AQHZN0sB
+npiVbIz/iMQU+Fd6Qt12mg6A/YMK0qEKAhvnBm61UHPJGUUwdzw=
+=7HNv
+-----END PGP SIGNATURE-----
+
+--ifrazsdmgitbusor--
