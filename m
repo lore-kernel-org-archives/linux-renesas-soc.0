@@ -1,66 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:53660 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934979AbeBMQhB (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44320 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754599AbeBGT24 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:37:01 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] vfio: platform: Fix reset module leak in error path
-Date: Tue, 13 Feb 2018 17:36:54 +0100
-Message-Id: <1518539815-13774-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
-References: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
+        Wed, 7 Feb 2018 14:28:56 -0500
+Date: Wed, 7 Feb 2018 20:28:54 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Subject: Re: [PATCH v3 08/16] sh: kfr2r09: use MMC_CAP2_NO_WRITE_PROTECT
+ instead of TMIO own flag
+Message-ID: <20180207192854.fnzanswn52zm6es3@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-9-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qryj6jou2wpnfecu"
+Content-Disposition: inline
+In-Reply-To: <1516206496-16612-9-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the IOMMU group setup fails, the reset module is not released.
 
-Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/vfio/platform/vfio_platform_common.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+--qryj6jou2wpnfecu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-index 35469af87f88678e..b60bb5326668498c 100644
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -680,18 +680,23 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
- 	group = vfio_iommu_group_get(dev);
- 	if (!group) {
- 		pr_err("VFIO: No IOMMU group for device %s\n", vdev->name);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto put_reset;
- 	}
- 
- 	ret = vfio_add_group_dev(dev, &vfio_platform_ops, vdev);
--	if (ret) {
--		vfio_iommu_group_put(group, dev);
--		return ret;
--	}
-+	if (ret)
-+		goto put_iommu;
- 
- 	mutex_init(&vdev->igate);
- 
- 	return 0;
-+
-+put_iommu:
-+	vfio_iommu_group_put(group, dev);
-+put_reset:
-+	vfio_platform_put_reset(vdev);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(vfio_platform_probe_common);
- 
--- 
-2.7.4
+On Thu, Jan 18, 2018 at 01:28:08AM +0900, Masahiro Yamada wrote:
+> TMIO_MMC_WRPROTECT_DISABLE is equivalent to MMC_CAP2_NO_WRITE_PROTECT.
+>=20
+> The flag is propagated as follows:
+>     tmio_mmc_data::capabilities2 -> mmc_host::caps2
+>=20
+> Only the difference is the TMIO_... makes tmio_mmc_get_ro() return 0
+> (i.e. it does not affect mmc_gpio_get_ro() at all), while MMC_CAP2_...
+> returns 0 before calling ->get_ro() hook (i.e. it affects both IP own
+> logic and GPIO detection).
+>=20
+> The TMIO MMC drivers do not set-up gpio_ro by themselves, so gpio_ro
+> is obviously unused by legacy boards like this.  So, this conversion
+> should be safe.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--qryj6jou2wpnfecu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7U3YACgkQFA3kzBSg
+Kbbwjw/7BOZTH8WCzr0tdfHQhYR61u6eShFWFx2Ow4SiRxP2P3qGE46XoAvSeJ9h
+wL08flsd2kXBOjlhTxWolZjZPjqB+PYpb3RhL5Hd5SCyeGRyEjRP6ZMsY0vHPz9V
+3QgV8eaHXUJlHtTrNwoChpaJRZzV/0uvX4wGoUTr2LHoyRogtqUrw6de3NPVdB0+
+KZornPKsbHYqic8/PXw4iHM0XlFt8Qh+WdCEA6NSc/9tiCSDc/bGccfzLYrloCyI
+tfdFP1RBdY3HemK9ZyfHbelT5Fm3EEolbkhq1heLVk+81NudVp9T3bpTlhEVKO2I
+7UF4VXPGV8CVYXfaA592F56cTHwJrKr4AVj7DeTA2ls6e4SeDu+aPjM9+oru26mJ
+5eW7zuDfQxPMHkSbdYAAN2vGe3+Dfe8VoiC1K9frQBaFDCc2i97cj+2Yg+5YbdPM
+B/fGaY7U4NGlKjLsLHX5drqteeDOepziAwtmt/vpGugGRnyWCj45ndcrdA9cB5PO
+GKz9CQ2O91lp/UKWSwUjc+pkJiQSXS7CKvTsmQ64Rhdtmb49rDTl+dWGiR/QksGb
+3sF3Xs23jHzjh/UaosEF9eupKyQYfMgmxMnqm4vkWG5bJlU8uBh+17Jox1bJo77l
+wCo0iwYSIyP3t48kqa82eWewTy+Qob9ol19Y+9KpRtr86bEFFMY=
+=VhT6
+-----END PGP SIGNATURE-----
+
+--qryj6jou2wpnfecu--
