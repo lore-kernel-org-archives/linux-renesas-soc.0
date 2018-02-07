@@ -1,6 +1,13 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from www.zeus03.de ([194.117.254.33]:39184 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751186AbeBGXRK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Feb 2018 18:17:10 -0500
+Date: Thu, 8 Feb 2018 00:17:08 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
@@ -12,75 +19,60 @@ To: Philipp Zabel <p.zabel@pengutronix.de>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
         linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 11/26] dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
-Date: Mon, 12 Feb 2018 17:44:20 +0000
-Message-Id: <1518457475-4480-12-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Subject: Re: [RFC v4 18/26] clk: renesas: r8a7791/r8a7793: Add rwdt clock
+Message-ID: <20180207231707.3caruy3zp5rnvebv@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-19-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zcki4zdcdy3esctc"
+Content-Disposition: inline
+In-Reply-To: <1517423070-24236-19-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This commit documents the compatibility with R-Car Gen2 and RZ/G
-devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
-Also, this patch expands the list of SoC-specific compatible strings to
-include RZ/G and R-Car Gen2 devices.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
+--zcki4zdcdy3esctc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jan 31, 2018 at 06:24:22PM +0000, Fabrizio Castro wrote:
+> Add "rwdt" clock to r8a7791_mod_clks. Also, since we may need to access
+> the watchdog registers at any time, declare the clock as critical.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v4->v5:
-* no change
 
- .../devicetree/bindings/watchdog/renesas-wdt.txt      | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index bf6d1ca..4815128 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -1,17 +1,26 @@
- Renesas Watchdog Timer (WDT) Controller
- 
- Required properties:
--- compatible : Should be "renesas,<soctype>-wdt", and
--	       "renesas,rcar-gen3-wdt" or "renesas,rza-wdt" as fallback.
-+ - compatible : Must be "renesas,<soctype>-wdt", followed by a generic
-+		fallback compatible string when compatible with the generic
-+		version.
- 	       Examples with soctypes are:
-+		 - "renesas,r8a7743-wdt" (RZ/G1M)
-+		 - "renesas,r8a7745-wdt" (RZ/G1E)
-+	         - "renesas,r8a7790-wdt" (R-Car H2)
-+	         - "renesas,r8a7791-wdt" (R-Car M2-W)
-+	         - "renesas,r8a7792-wdt" (R-Car V2H)
-+	         - "renesas,r8a7793-wdt" (R-Car M2-N)
-+	         - "renesas,r8a7794-wdt" (R-Car E2)
- 	         - "renesas,r8a7795-wdt" (R-Car H3)
- 	         - "renesas,r8a7796-wdt" (R-Car M3-W)
- 	         - "renesas,r8a77995-wdt" (R-Car D3)
- 	         - "renesas,r7s72100-wdt" (RZ/A1)
-+		The generic compatible string must be:
-+		 - "renesas,rza-wdt" for RZ/A
-+		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
-+		 - "renesas,rcar-gen3-wdt" for R-Car Gen3
- 
--  When compatible with the generic version, nodes must list the SoC-specific
--  version corresponding to the platform first, followed by the generic
--  version.
- 
- - reg : Should contain WDT registers location and length
- - clocks : the clock feeding the watchdog timer.
--- 
-2.7.4
+--zcki4zdcdy3esctc
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7iPMACgkQFA3kzBSg
+KbbpfQ/+O5orwvj8IimES8Emd6JKNsSEI387lSOlNKExT1lmxdbjLr6rcy5czrkV
+VFphBrVAj+a+s4tXeJ55/FWDBg3b+HgkfgiruqnVI+oHs4BPonATjd9y5UngNgps
+VM+MmYke+Gb85LznkxJQ++ePDNzgfEWUII/R37e2fWn0r6T3wg29KV4qX2X/vbqv
+xHIPByMQpC3AVa/9mNRkPenEmOUsWlyfxPRrNw/XdKycE6keIGzpEDZqPy50Nixk
+l/j2GACVPa7qjVkW8d3khgxAEu7NeVdovcZ+tNyOq6qjkGimeYZqniOxt1RE1Hln
+sj7fmT4nrc+4EBywsvmQ4lNWyzGiQStgJrEOUteOe5XGtt0gSE6Eb/WEo25OBFpd
+vAOCuVLhNvDCX7ol80aS7/CkzwWq4+WySe5Kgunbqno6I6b81d6kxob48SAAMluU
+xJT3sLZGk2B1SW2f6Ec3lOGNZf0ZIXlDyAH4zfODhhMi7RXGfofJIq/aOp0N/xf4
+X84PFrkXxpUM2AjKaWyRW0rM3UBzKVhPCvMJV/xsIcg1nqNCgb06dqvK1ACxUgd3
+0+7D2ObVAwMkjSr9QFOv5sqBl2El/MK4RIQ054hBvIcJErzVzrBLmqTacftRKlh7
+9m46pJyZp7GXsJFE3cGetd/X8cWfV7DW9YkHA6D3oYRqQFtJPyc=
+=2zxp
+-----END PGP SIGNATURE-----
+
+--zcki4zdcdy3esctc--
