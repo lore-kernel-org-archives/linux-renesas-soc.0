@@ -1,93 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:12086 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932558AbeBLKdz (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:36660 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751094AbeBGXDM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 05:33:55 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        Wed, 7 Feb 2018 18:03:12 -0500
+Date: Thu, 8 Feb 2018 00:03:10 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        "Michael Turquette" <mturquette@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: RE: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
-Date: Mon, 12 Feb 2018 10:33:47 +0000
-Message-ID: <TY1PR06MB089578618AA33335D90D16CEC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+Subject: Re: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
+Message-ID: <20180207230309.goxig2irkpxrw5el@katana>
 References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
- <20180207230309.goxig2irkpxrw5el@katana>
-In-Reply-To: <20180207230309.goxig2irkpxrw5el@katana>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ii2okpc4xrkcaei4"
+Content-Disposition: inline
+In-Reply-To: <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Wolfram,
 
-thank you for your feedback!
-
-> Subject: Re: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
->
->
-> > +static int rwdt_restart(struct watchdog_device *wdev, unsigned long ac=
-tion,
-> > +void *data)
-> > +{
-> > +struct rwdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> > +
-> > +pm_runtime_get_sync(wdev->parent);
-> > +
-> > +rwdt_write(priv, 0x00, RWTCSRB);
-> > +rwdt_write(priv, 0x00, RWTCSRA);
-> > +rwdt_write(priv, 0xffff, RWTCNT);
-> > +
-> > +while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-> > +cpu_relax();
-> > +
-> > +rwdt_write(priv, 0x80, RWTCSRA);
-> > +return 0;
-> > +}
->
-> I used to have this simpler version (back then for the UP case):
->
-> +rwdt_start(wdev);
-> +rwdt_write(priv, 0xffff, RWTCNT);
-> +return 0;
->
-> It should still work probably...
-
-It should still work, but it would be slower, I would stick with the versio=
-n I have submitted if you don't mind.
-
-Thanks,
-Fabrizio
+--ii2okpc4xrkcaei4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+> +static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
+> +			void *data)
+> +{
+> +	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
+> +
+> +	pm_runtime_get_sync(wdev->parent);
+> +
+> +	rwdt_write(priv, 0x00, RWTCSRB);
+> +	rwdt_write(priv, 0x00, RWTCSRA);
+> +	rwdt_write(priv, 0xffff, RWTCNT);
+> +
+> +	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
+> +		cpu_relax();
+> +
+> +	rwdt_write(priv, 0x80, RWTCSRA);
+> +	return 0;
+> +}
+
+I used to have this simpler version (back then for the UP case):
+
++	rwdt_start(wdev);
++	rwdt_write(priv, 0xffff, RWTCNT);
++	return 0;
+
+It should still work probably...
 
 
+--ii2okpc4xrkcaei4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ha0ACgkQFA3kzBSg
+KbacvQ/8D8XYr0uC7zXPoAzE+CXEN7xox41cu1uhV5RPnDWwkmI/jHoVq9STySZB
+ifUMM4hsbFUgeKnmZ+viMxa5tTKSj9at6WiUeyQ+K2rkhZ0Sqkmn3O7RFuyq0pf9
+o52ysxCWQuch5ep/lj4N4O7aUU1nPlPIimX7b8QgaYDxYvVqdZSBhYymwhN+0fZB
+X1uf+PXlzIxVPNKV7R0kg4yX7YdDU90S6jQ94szgGH0n+0y66K/ImeFV5eKeKBhi
+jZWbLwt4+q63D+6r6vZBViJ1xivkiwe8mcAsth0ZyxLKEsqUSCJZkTU+l3XSN6dP
+2BemCvP41GCTNDsxbrXMLd5X0YnXSV+PLJ+QZH2DggQTIu7ytFCfm6KLXVc9evx7
+AVX6DnlbAXzuKOewB8Tx356P17p92EMQ9Qc5i7KbrUmpjoNPoNYpO+/6j/9GwvcQ
+A+kYJUhK6QOcTvRWIY7JqOt3cz35Hn1TjBdqUEux09mG2f3fvdSHfALQM3iCM3G0
+yjRkmk+EUx2zzD7p3LB6fAzG21ggcLLKD1h/oy4u0INM2bu+393YzK5uHgbWY+PN
+X88AJZKY0cPvG9yT7QVRJ10MhaawGE6ohiNo6NfLtbZHrjPgYV6bM3/bfxGSXqrH
+turo0tDcQr3fllKxAP4B8WbCS9vj1iNTnWRY/8yZhPQbCYrHsZ8=
+=fuGM
+-----END PGP SIGNATURE-----
+
+--ii2okpc4xrkcaei4--
