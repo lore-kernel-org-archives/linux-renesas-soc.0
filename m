@@ -1,41 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:51320 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751091AbeBIRed (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:39960 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750815AbeBGXU2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 12:34:33 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, geert@linux-m68k.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: shmobile: Enable RZA1 pin controller
-Date: Fri,  9 Feb 2018 18:34:18 +0100
-Message-Id: <1518197658-30806-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 7 Feb 2018 18:20:28 -0500
+Date: Thu, 8 Feb 2018 00:20:25 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 20/26] ARM: dts: r8a7743: Add watchdog support to SoC
+ dtsi
+Message-ID: <20180207232025.cm4mdr4l65lwej2j@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-21-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2bzzwp6v4ficjmmb"
+Content-Disposition: inline
+In-Reply-To: <1517423070-24236-21-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable PINCTRL_RZA1 option in shmobile_defconfig
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
-Hi Simon,
-  this fixes the issue you reported on Genmai when applying shmobile_defconfig.
+--2bzzwp6v4ficjmmb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Jan 31, 2018 at 06:24:24PM +0000, Fabrizio Castro wrote:
+> This patch adds watchdog support to the r8a7743 SoC dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 7b4fc01..12af8f4 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -120,6 +120,7 @@ CONFIG_SPI=y
- CONFIG_SPI_RSPI=y
- CONFIG_SPI_SH_MSIOF=y
- CONFIG_SPI_SH_HSPI=y
-+CONFIG_PINCTRL_RZA1=y
- CONFIG_GPIO_EM=y
- CONFIG_GPIO_RCAR=y
- CONFIG_GPIO_PCF857X=y
---
-2.7.4
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--2bzzwp6v4ficjmmb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ibkACgkQFA3kzBSg
+KbbEKhAAsGL4jtMZjwlGDZZBSTLblrBqh1HCII4vwxPudWz/FM3TomJ7qjtk7Dl7
+ytCgwcJ7V9mmENc7PnC92AfYiPhuYFQP+9q/+UP9BjGW1z6gUfhJ8UbjwLWYHffj
+z/MMhzpwQScdtbznY/vCM8RU6157b5z0ZUh2ANF3DxnV18WZ3kz/VA6arqQ4et2a
+fALAhp0juJoghpZtXGhuV9x9ot0mEHRXirlHfcLKCts8+FsXTxwuxqy02qCeSNhi
+eoefthCmD0VdB20bvav8nLP5iJyn9BvXhuhjBbzFt833jtF3Wbq5TYNvHML49OG+
+A9n/Ebi++d+6aHvJyN4JDlgNeOalDGJiLLvsMPsCzYcqCeC+BReK0Ty/XIvDKkiG
+Qer+2WxROyM7uMI/pjyZ6C7nf7QsIhdbAbHcP/TpweyF2PsttuNVHAgUiD7kkxRS
+qPM4PoVfnO6cBj8FieWtBrGzjuuWJdbCkwu/oE5MAixHlRbBgslbRV7ZRL5aqZH5
+7Z9QOgtc4IQGlwPZHiqnstP4+yS7el8P5kxL6SuOkVaOgAzB7utZfgqZQ3HY5np9
+LaAGoIF+n5tXTLRFEWjxTyodoPdfCLpz6x3aJyiVPFWR9mXdZdEBUHHFxlkxjd7e
+PCQLErJH6ZnHsrO1sCsyz/1Cd+ZXMCmlZ0lQA+HkQNU26tyKSQs=
+=OPdP
+-----END PGP SIGNATURE-----
+
+--2bzzwp6v4ficjmmb--
