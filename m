@@ -1,36 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58078 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752666AbeBSN2w (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:36842 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751186AbeBGXED (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Feb 2018 08:28:52 -0500
-Date: Mon, 19 Feb 2018 14:28:34 +0100
-From: Simon Horman <horms@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 0/2] arm64: dts: renesas: Update OPPs to support CA53 dfs
-Message-ID: <20180219132834.suxvodokl4vzdzqj@verge.net.au>
-References: <20180129182121.833-1-horms+renesas@verge.net.au>
+        Wed, 7 Feb 2018 18:04:03 -0500
+Date: Thu, 8 Feb 2018 00:04:01 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 11/26] dt-bindings: watchdog: renesas-wdt: Add R-Car
+ Gen2 support
+Message-ID: <20180207230401.uvpare7cwk7tpqk7@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-12-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i7htazl5c3cbyi6c"
 Content-Disposition: inline
-In-Reply-To: <20180129182121.833-1-horms+renesas@verge.net.au>
+In-Reply-To: <1517423070-24236-12-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 29, 2018 at 07:21:19PM +0100, Simon Horman wrote:
-> Describe frequencies, other than the default for CA53 cores.  This is a
-> pre-requisite for using providing alternative frequencies for use with
-> CPUFreq with these cores.
-> 
-> CPUFreq requires Z and Z2 clock support to function.
-> That this patchset and that dependency can be found at:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/rcar-gen3-cpufreq-v5
-> 
-> Dien Pham (2):
->   arm64: dts: r8a7796: Update OPPs to support CA53 dfs
->   arm64: dts: r8a7795: Update OPPs to support CA53 dfs
 
-Applied for v4.17.
+--i7htazl5c3cbyi6c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jan 31, 2018 at 06:24:15PM +0000, Fabrizio Castro wrote:
+> This commit documents the compatibility with R-Car Gen2 and RZ/G
+> devices by defining the generic compatible string "renesas,rcar-gen2-wdt".
+> Also, this patch expands the list of SoC-specific compatible strings to
+> include RZ/G and R-Car Gen2 devices.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--i7htazl5c3cbyi6c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7heAACgkQFA3kzBSg
+KbYriw/7BT40MBbg0dFnn3nMKJv8vGFJ/C3BIVsh0gy5T+crZE+9Famm2EYPRAU5
+l5gmh/e38DCrves2Eys2ifrfVzG8kp/69Zkp89hhkkDzNddji3+JjMsMgBsjePTZ
+dPZKMWPFI05mR+SlvdLmmjLX0hAODG+3llEjCCd02YvM6P1PrWVdFB5IPA0NSOCG
+LXKuFAobA93/Q58J4oBGwKsbPvptRFxUVuNoCjyd5bmAzY3QuemXYuVTclrVjUZc
+9dTlRfstdhazi3gkHSv3bN2yR2NH6cqc7cCV0LTN6rUFZPtXU4XF6tEk9oYMp78R
+RpaGl3TFrWym2IBLGoDEZLDH0FDmp3m3qou7Bxek1UpbuytmTOHr8TSLU7Iz1b6z
+1ccDL5Q8A7ESf6rxenttuIrC/gp8VJm4mNmW0NK8rVf4xpU7lfnARXVL9FG70EUj
+lYAJ5hJCUQX7QOsZBhu8y0odB4GlkEw3Zbc2L3s14In2uvmqKwF86mTDCqKXeuFG
+RxXAxAXyX4BSwEpq1ZXbHRlvDyKzinlwf0wOXdFLJxGvdgQzOPNpKMoJw4Izo5UE
+szFfjDa0s6JpAwHps/Qzt31/FmuVA48CyOf8K5KJXZTinHdPcWv1GHMHFs3d9DSI
+RpnZ+wBczYVS+uCFRrYlFJwPCSCV7iFTTeyIqMJLVpJnuzpymhY=
+=DrUQ
+-----END PGP SIGNATURE-----
+
+--i7htazl5c3cbyi6c--
