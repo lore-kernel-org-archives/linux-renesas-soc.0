@@ -1,20 +1,7 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f172.google.com ([209.85.223.172]:38173 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966706AbeBNJgo (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 04:36:44 -0500
-Received: by mail-io0-f172.google.com with SMTP id d13so24495325iog.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Feb 2018 01:36:44 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20180207191152.kvqrugblst2cko3c@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com> <20180207191152.kvqrugblst2cko3c@ninjato>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 14 Feb 2018 10:36:42 +0100
-Message-ID: <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
-To: Wolfram Sang <wsa@the-dreams.de>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 7 Feb 2018 20:11:52 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -32,34 +19,58 @@ Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
         Lee Jones <lee.jones@linaro.org>,
         Rich Felker <dalias@libc.org>,
         Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
+ cleanups
+Message-ID: <20180207191152.kvqrugblst2cko3c@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hmv3ictfz5w3jtha"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 7 February 2018 at 20:11, Wolfram Sang <wsa@the-dreams.de> wrote:
->
->> I picked patch5 and patch6, as those seemed trivial. Unless there is a
->> rc9, let's aim for 4.17 for the rest.
->
-> I can't find the branch where you picked these patches? I wanted to use
-> it to apply the rest of the patches. They don't seem to fit on v4.15
-> or current linus/master. Can you share this branch?
 
-You need to check again. :-)
+--hmv3ictfz5w3jtha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Patches up and to patch6 is already in Linus' tree v.16rc1, those I
-carried for quite a while on my next branch before sending them in the
-PR to Linus.
 
->
-> I will do reviewing now "visually". But please wait until I tested them
-> before applying.
+> I picked patch5 and patch6, as those seemed trivial. Unless there is a
+> rc9, let's aim for 4.17 for the rest.
 
-I am eager to apply those patches you already have reviewed (to
-patch14), as those mostly seemed rather trivial and should be nice
-cleanups.
+I can't find the branch where you picked these patches? I wanted to use
+it to apply the rest of the patches. They don't seem to fit on v4.15
+or current linus/master. Can you share this branch?
 
-Do you mind me going ahead, then you can continue and review/test the rest?
+I will do reviewing now "visually". But please wait until I tested them
+before applying.
 
-Kind regards
-Uffe
+Thanks,
+
+   Wolfram
+
+
+--hmv3ictfz5w3jtha
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7T3gACgkQFA3kzBSg
+KbYcLRAAi0hE9uVMzeGBlvgjQGw54Uj+EbBvYeUyO4pa7I38zge+HfGCGjF0mhBB
+y7ABAjSittWqEubxBhY1PRgkx3SduAyMV2muz4mUSYbn6fpllR9ov89t273b02FE
+d17wq52rLPUpQxw3TlBGmR9yKIxPW0fKVM91Pg+NfpbtMChwri+HMY4z5iT+qdSE
+757D3k1xwxr33yBQrlj83DA1ipusuGkYNzcKneDwT1qIheQUAZ/aSR5Q3m4AHKJ0
+dVTBpeepl7ei1enze8EhM/zi3fH5l4icGmnqT9WJbyYN48StYa7dEYpvECpqaG23
+cSo4ce3verU12aI/+BXkoGIQUc5xT8bQwVWqTdkX6fqp/hI5tV4kVMfd8H080Yv8
+mbqc/CjU2AV94EIgHrzaIlAm+DBeCzbdRlmFg/Pa2tINfQjzhxfBaSu02nfIqEsa
+uJ/G2BUPjanzVWebP2/mQtvMAVm67ZAiRMjg91aE2BXWK+LqSqaQ+L22MgBJiVf0
+b0QaCGMUmS12P+shRSqUn56Pxs33YGEEw3agIGYRhhsrns67lDiKrt63tK6rkINQ
+HM5TSfHviIVBtj75Lq9XoyPpqBj1askTtRsQxXUkTGqVrJI50UyJC3ANVzteOm/Y
+IKAmVgx+wn4eKr3A29PXQmpTlxuLqt0v5KKn+1x1rEW+b5e9hkU=
+=bDb4
+-----END PGP SIGNATURE-----
+
+--hmv3ictfz5w3jtha--
