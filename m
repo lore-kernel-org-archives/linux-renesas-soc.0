@@ -1,80 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:38222 "EHLO mail.zeus03.de"
+Received: from sauhun.de ([88.99.104.3]:44213 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751022AbeBGXL7 (ORCPT
+        id S1754038AbeBGTJx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 18:11:59 -0500
-Date: Thu, 8 Feb 2018 00:11:56 +0100
+        Wed, 7 Feb 2018 14:09:53 -0500
+Date: Wed, 7 Feb 2018 20:09:51 +0100
 From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC v4 14/26] ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
-Message-ID: <20180207231156.3o2eeymgb7eec3e3@katana>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-15-git-send-email-fabrizio.castro@bp.renesas.com>
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 06/16] mmc: tmio: refactor .get_ro hook
+Message-ID: <20180207190951.viniisquogyk2av6@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-7-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ghjh2tvtbi7qarpp"
+        protocol="application/pgp-signature"; boundary="4hyxqrgwjik2wcxf"
 Content-Disposition: inline
-In-Reply-To: <1517423070-24236-15-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1516206496-16612-7-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---ghjh2tvtbi7qarpp
+--4hyxqrgwjik2wcxf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 31, 2018 at 06:24:18PM +0000, Fabrizio Castro wrote:
-> R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-> its driver by default.
+On Thu, Jan 18, 2018 at 01:28:06AM +0900, Masahiro Yamada wrote:
+> This IP provides the write protect signal level in the status
+> register, but it is also possible to use GPIO for WP.  They are
+> exclusive, so it is not efficient to call mmc_gpio_get_ro() every
+> time from tmio_mmc_get_ro() if we know gpio_ro is not used.
 >=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
-
-Given the rest of the series works (same for the later patches):
+> Check the capability of gpio_ro just once in the probe function,
+> then set mmc_gpio_get_ro to .get_ro if it is the case.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---ghjh2tvtbi7qarpp
+--4hyxqrgwjik2wcxf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7h7wACgkQFA3kzBSg
-KbbNhg/8CA58qpPJ8IG15ptynCnCyyFcFrz0ljGiJXpGcuL2MI1FBxN7gPc1BsqE
-kFOghwLAbv/meyZ4JjU1YjPMGm2Iqed0JAs1563VScCL0uoaCEjTo7RZnWTs1AFa
-x+fY4OQIpr4VqenJRhak/fGx0l8OPcgetXUoaSNyJzj3UWeLnDV2738tB0F48ggT
-RjKJdZguE/UmPMewIGUoyCgeS4U4qM7IfoQrygh1Phdg8Ia9rYlCW9oXb4ZzQdy8
-FPu5LVRlC8wHBccXiKuwmQxgDMp8Ve9NgTLVMSXAgckFv+WW0brqcUkMJrGPzGg8
-W1tlVq+8w2hNf/Kw6ZvjAAAI2a7315P4t7rn78AdfVu7oDHEYZimdJ4BobANDQ6m
-m41Jx3I85T5EtDiYqk9rWJ5ZqD9j8C3NJ3AqwZjfFsoiUV/gLjiEC7u71boy48wc
-YoDjVTyNhZCoLtljuPJTojSoZTwoNzCpd80wI+HqPzPxqph0m1ah0sufvY7Izpj5
-4/NcPErVPFL0g2VHx7fM7IHJRMS05V1yEcvA34lM78hJE83l7oYmnSGM25vy4RYI
-b65K4T9iKFpebv/EbJ82f7tWCEikdUvvjNaJEDh1FLX1S5yBOKml/409vG9aMQvF
-PoILsfiOq6tuvDySZmWnwUsshqZQjW4rrwGHYLLuadOAgoAQ0os=
-=krTo
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7Tv4ACgkQFA3kzBSg
+KbZwZQ//TWe1qgH1C2ufhOJ0BrEo4/hqT7Q/Qiq1m2vwNxFoQL51ZH1mV9iURMeg
+WNR3SQlRs49vUYhylEIoTu78KWaCnSPYt1PnXPLWNc5/P5LJWp0AwHPUkbmgptXL
+VnbKWtchCK0XUrYVL6gc5wBshZXMdBETy3L7l/MZCdeBDcL69/8fxWW9bhjhqekT
+Bbz/DXk0ge8SPQ4K8rpXFn3GHy8wf3mbSg561JMYRyWOF0zx6MmTQkNtlLPcyXxq
+U4zQ+UUgN4yT3pn1HOfxtI8atVqiP/DcIs3eauOgvmneH19N3uGcVF3LjUhb7+Xt
+4xfG0gURmfNffVicNJ+Xzw20ofzPCiQ5fCc50H0csjyx05+FVjLaHXBJh6XPiOJg
+cdUOz+rQBi1lhrYDO8ryZnIcyiIBphsUrLsRfV+28E7hqcPEHZ6SYbWcM3c5o9G7
++6mUNU6UzSN337R1eGsQ4T1H9lywrA5KSidd3Il3X+qJd8nawKiNN9ekMpzei8M0
+ZxJ5Sb4vpS45REvRJV6FniXNzDcpDdsC2vrrA3t/thlQ0YIuHyWh8IwVXbY5KewQ
+lrN58vLg5LKW/fJedxZExdr5tdTkpupgluZNcZpsN6ACHJ1cYu7VQ9GsxfUcP/6g
+jErcmxGJIgFC/eLO4iCxJfozKa7NTf3R8KTpSs9hjAwr3lLo8zY=
+=I/jZ
 -----END PGP SIGNATURE-----
 
---ghjh2tvtbi7qarpp--
+--4hyxqrgwjik2wcxf--
