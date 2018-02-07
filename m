@@ -1,104 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33907 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752809AbeBBSq6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41931 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753580AbeBGJpY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 13:46:58 -0500
-Received: by mail-lf0-f67.google.com with SMTP id k19so32949412lfj.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Feb 2018 10:46:57 -0800 (PST)
-Subject: [PATCH 10/11] arm64: dts: renesas: initial Condor board device tree
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
+        Wed, 7 Feb 2018 04:45:24 -0500
+Date: Wed, 7 Feb 2018 10:45:20 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Message-ID: <c35dca71-fc63-7628-d483-ad690bea7ced@cogentembedded.com>
-Date: Fri, 2 Feb 2018 21:46:55 +0300
+        "David S . Miller" <davem@davemloft.net>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a77970: Remove non-existing
+ STBE region
+Message-ID: <20180207094519.bvq24lgacqsopnbc@verge.net.au>
+References: <1517922354-28421-1-git-send-email-geert+renesas@glider.be>
+ <1517922354-28421-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517922354-28421-3-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device  tree for  the R8A77980 SoC based Condor board.
-The board has 1 debug serial port (SCIF0); include support for it, so
-that the serial console can work.
+On Tue, Feb 06, 2018 at 02:05:53PM +0100, Geert Uytterhoeven wrote:
+> R-Car V3M does not have the Stream Buffer for EtherAVB-IF (STBE).
+> 
+> Note that the RAVB driver does not use this region.
+> 
+> Fixes: bea2ab136eaacec2 ("arm64: dts: renesas: r8a77970: add EtherAVB support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
- arch/arm64/boot/dts/renesas/Makefile            |    1 
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   46 ++++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/Makefile
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/Makefile
-+++ renesas/arch/arm64/boot/dts/renesas/Makefile
-@@ -8,4 +8,5 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-sa
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
-+dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- /dev/null
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the Condor board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2018 Cogent Embedded, Inc.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77980.dtsi"
-+
-+/ {
-+	model = "Renesas Condor board based on r8a77980";
-+	compatible = "renesas,condor", "renesas,r8a77980";
-+
-+	aliases {
-+		serial0 = &scif0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <16666666>;
-+};
-+
-+&extalr_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
-+
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+	status = "okay";
-+};
+Thanks, applied for v4.17.
