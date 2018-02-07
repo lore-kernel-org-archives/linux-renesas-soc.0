@@ -1,114 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:34972 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753947AbeBLNmj (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:40372 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751146AbeBGXVL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:42:39 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] sh_eth: Remove obsolete explicit clock handling for WoL
-Date: Mon, 12 Feb 2018 14:42:36 +0100
-Message-Id: <1518442956-32115-1-git-send-email-geert+renesas@glider.be>
+        Wed, 7 Feb 2018 18:21:11 -0500
+Date: Thu, 8 Feb 2018 00:21:08 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 26/26] ARM: dts: iwg22m: Add watchdog support to SoM dtsi
+Message-ID: <20180207232108.j2kei6djpxdzpflh@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-27-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="osvn6dhlwkouweck"
+Content-Disposition: inline
+In-Reply-To: <1517423070-24236-27-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently, if Wake-on-LAN is enabled, the SH-ETH device's module clock
-is manually kept running during system suspend, to make sure the device
-stays active.
 
-Since commits 91c719f5ec6671f7 ("soc: renesas: rcar-sysc: Keep wakeup
-sources active during system suspend") and 744dddcae84441b1 ("clk:
-renesas: mstp: Keep wakeup sources active during system suspend"), this
-workaround is no longer needed.  Hence remove all explicit clock
-handling to keep the device active.
+--osvn6dhlwkouweck
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
----
-v2:
-  - Add Reviewed-by,
-  - Drop RFC state, now the dependencies are upstream.
----
- drivers/net/ethernet/renesas/sh_eth.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
+On Wed, Jan 31, 2018 at 06:24:30PM +0000, Fabrizio Castro wrote:
+> This patch enables the watchdog from within the iwg20m SoM dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index a197e11f3a564470..92dcf8717fc6e7bc 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -40,7 +40,6 @@
- #include <linux/slab.h>
- #include <linux/ethtool.h>
- #include <linux/if_vlan.h>
--#include <linux/clk.h>
- #include <linux/sh_eth.h>
- #include <linux/of_mdio.h>
- 
-@@ -2304,7 +2303,7 @@ static void sh_eth_get_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
- 	wol->supported = 0;
- 	wol->wolopts = 0;
- 
--	if (mdp->cd->magic && mdp->clk) {
-+	if (mdp->cd->magic) {
- 		wol->supported = WAKE_MAGIC;
- 		wol->wolopts = mdp->wol_enabled ? WAKE_MAGIC : 0;
- 	}
-@@ -2314,7 +2313,7 @@ static int sh_eth_set_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
- 
--	if (!mdp->cd->magic || !mdp->clk || wol->wolopts & ~WAKE_MAGIC)
-+	if (!mdp->cd->magic || wol->wolopts & ~WAKE_MAGIC)
- 		return -EOPNOTSUPP;
- 
- 	mdp->wol_enabled = !!(wol->wolopts & WAKE_MAGIC);
-@@ -3153,11 +3152,6 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
- 		goto out_release;
- 	}
- 
--	/* Get clock, if not found that's OK but Wake-On-Lan is unavailable */
--	mdp->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(mdp->clk))
--		mdp->clk = NULL;
--
- 	ndev->base_addr = res->start;
- 
- 	spin_lock_init(&mdp->lock);
-@@ -3278,7 +3272,7 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto out_napi_del;
- 
--	if (mdp->cd->magic && mdp->clk)
-+	if (mdp->cd->magic)
- 		device_set_wakeup_capable(&pdev->dev, 1);
- 
- 	/* print device information */
-@@ -3331,9 +3325,6 @@ static int sh_eth_wol_setup(struct net_device *ndev)
- 	/* Enable MagicPacket */
- 	sh_eth_modify(ndev, ECMR, ECMR_MPDE, ECMR_MPDE);
- 
--	/* Increased clock usage so device won't be suspended */
--	clk_enable(mdp->clk);
--
- 	return enable_irq_wake(ndev->irq);
- }
- 
-@@ -3359,9 +3350,6 @@ static int sh_eth_wol_restore(struct net_device *ndev)
- 	if (ret < 0)
- 		return ret;
- 
--	/* Restore clock usage count */
--	clk_disable(mdp->clk);
--
- 	return disable_irq_wake(ndev->irq);
- }
- 
--- 
-2.7.4
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--osvn6dhlwkouweck
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ieQACgkQFA3kzBSg
+KbbDKg/+Lu6pn0FAn5PH4KYmlG5IurP0F7ID4CGz3wn+qkxF+VKykyZEVoizWcGF
+BRwnEEgzEa9lNj9IPGHXc8HzSnYBrpOyFL4CoUJwvimqHsVCH+DSoFuKdDTiAi+M
+pnoyMjaQKs96DxFAzWKDf4bpsjDSjtIEKcWqkK0bLE84E2F0DPEo2NsWl8elUOOw
+aI1hSOsga8U48xABThbLyfxFE4T72xPC1fV2hONbYmOwp/5b/HN7EZ/dgclxuvDG
+PzJuulPzO9uol9WzJ5zrH0BHSokLX5eJ34+VwYfnGPbH+tQ3r1CFLDiKsVmX2s9X
+HcEmIT+1NdyCrnTCiWrIVSG61sT1yryt4qfsUIX9ZIanZ2uqbC5/IsZTOn7ZGoou
+qkCdvHt9IoJRnc6Qi8UYYBNcbfXezc3I0X/+RyfyTivJhuVybOqfylMmWCFbI9JW
+HfVw7/6gIZ8f9TJWqY2bJUGpBgjPRnLnw42T2jYLCusTZkKJ0FPcuRGLN/HTTMLM
+Bn8KtxoblDcEEAyzaqR/MI99REekraW7JeDpJxa6SLIXQH4ukM++LsuQRZDgsYYt
+egs9nGEYxs/nnUao9mEQ8o9rr4Y5ukhGxU8wB4XiOPVteu+5zVIRMMvapdq29dSy
+rkDzt2/35utCKpUrDP1Rs35iXHO/SJ/eg0vZVbi/Macdc9te5oE=
+=qzOw
+-----END PGP SIGNATURE-----
+
+--osvn6dhlwkouweck--
