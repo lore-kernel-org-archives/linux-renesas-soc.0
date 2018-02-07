@@ -1,11 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:10030 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752952AbeBLRo5 (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:40096 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750810AbeBGXUi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:44:57 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Wed, 7 Feb 2018 18:20:38 -0500
+Date: Thu, 8 Feb 2018 00:20:36 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
@@ -17,48 +19,61 @@ To: Philipp Zabel <p.zabel@pengutronix.de>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
         linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 02/26] ARM: dts: r8a7743: Adjust SMP routine size
-Date: Mon, 12 Feb 2018 17:44:11 +0000
-Message-Id: <1518457475-4480-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: Re: [RFC v4 22/26] ARM: dts: r8a7790: Add watchdog support to SoC
+ dtsi
+Message-ID: <20180207232036.jrbaqx6wszeqto2c@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-23-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="u7l36mxx4tportae"
+Content-Disposition: inline
+In-Reply-To: <1517423070-24236-23-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4->v5:
-* no change
+--u7l36mxx4tportae
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/arm/boot/dts/r8a7743.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Jan 31, 2018 at 06:24:26PM +0000, Fabrizio Castro wrote:
+> This commit adds watchdog support to the r8a7790 dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 47b62f6..c2943d7 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -973,7 +973,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
--- 
-2.7.4
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--u7l36mxx4tportae
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7icQACgkQFA3kzBSg
+KbYtjRAArwnZ+Jeb6rbsuMYgWKT54EjBlN9YeQjCOLUv6NC+dFSBuuQVTjYigJMI
+ARTVYdCErYKzQ0rOwKlC0F0zP7YYNxtkOwvCDcx1elkbPw8N9Sh9oCkYEZhuhhCb
+L/lXdTJwP7H1IvEDnOCfpygkwJnPBeURF5Yc86CKywojCXzq8GOHPKcug4Z5SRMT
+DhW+h9IMnr3Cnu6WCrYiSlX2IjFDD02jNjKbIRAvNRirhEtlgvQbj6f4PlbVzPhl
++aRVfwXA7j780EMMYXpixM8PmlZxS+nj+kKckqoeh98uhTzWVm6hgpwV2JwbrEf1
+U0JOLh2Rg0NecJeiJcgh5CR1YfEdprHYrVagxq5VGvENNVVmfRbqQc8BSmrSR47K
+ve0yWt4hASG0qi91WElEeL5aCapEfULtmkwBFxqPeEZLOsKPxydDYQoZZMLHCeuQ
+o4YD/zM2Q1hnm0gYp8LD9UpJ+VFi4WGFFOc7CKeXdRDnWVeGDG9DgJPaCroEjbxg
+Huwke+m1LGPIVSXdgA5sZhVHfk0KiRJ2L0L20F5RtqcYmKQoth+AAhZ85pviUs9W
+55GMMwU44rGAEXjzvKnd77Z0hHiVmUOnLWSnCTaIvCJtPYIPcN2DAnQ0WbvZEfQV
+osXLFrE5FFxCALc+GKLDFx+bc6RcFHOE7/Q87EUsWniigbIvJQ4=
+=2/Em
+-----END PGP SIGNATURE-----
+
+--u7l36mxx4tportae--
