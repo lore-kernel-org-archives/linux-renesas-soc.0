@@ -1,119 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33174 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932094AbeBLPoi (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:40314 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751544AbeBGXVG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:44:38 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 7 Feb 2018 18:21:06 -0500
+Date: Thu, 8 Feb 2018 00:21:03 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/5] soc: renesas: Use symbols for register offsets for R-Car H3 power areas
-Date: Mon, 12 Feb 2018 16:44:19 +0100
-Message-Id: <20180212154422.13900-3-horms+renesas@verge.net.au>
-In-Reply-To: <20180212154422.13900-1-horms+renesas@verge.net.au>
-References: <20180212154422.13900-1-horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 25/26] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
+Message-ID: <20180207232103.p5ynehmgngoalq5x@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-26-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="465r3sfkhjhucg7t"
+Content-Disposition: inline
+In-Reply-To: <1517423070-24236-26-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use symbols rather for register offsets for R-Car H3 power areas
-to improve readability.
 
-This does not have any functional change.
+--465r3sfkhjhucg7t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/soc/renesas/r8a7795-sysc.c | 76 ++++++++++++++++++++++----------------
- 1 file changed, 44 insertions(+), 32 deletions(-)
+On Wed, Jan 31, 2018 at 06:24:29PM +0000, Fabrizio Castro wrote:
+> This patch enables the watchdog from within the iwg20m SoM dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/soc/renesas/r8a7795-sysc.c b/drivers/soc/renesas/r8a7795-sysc.c
-index 7412666187b3..0c8440741b58 100644
---- a/drivers/soc/renesas/r8a7795-sysc.c
-+++ b/drivers/soc/renesas/r8a7795-sysc.c
-@@ -17,39 +17,51 @@
- #include "rcar-sysc.h"
- 
- static struct rcar_sysc_area r8a7795_areas[] __initdata = {
--	{ "always-on",	    0, 0, R8A7795_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
--	{ "ca57-scu",	0x1c0, 0, R8A7795_PD_CA57_SCU,	R8A7795_PD_ALWAYS_ON,
--	  PD_SCU },
--	{ "ca57-cpu0",	 0x80, 0, R8A7795_PD_CA57_CPU0,	R8A7795_PD_CA57_SCU,
--	  PD_CPU_NOCR },
--	{ "ca57-cpu1",	 0x80, 1, R8A7795_PD_CA57_CPU1,	R8A7795_PD_CA57_SCU,
--	  PD_CPU_NOCR },
--	{ "ca57-cpu2",	 0x80, 2, R8A7795_PD_CA57_CPU2,	R8A7795_PD_CA57_SCU,
--	  PD_CPU_NOCR },
--	{ "ca57-cpu3",	 0x80, 3, R8A7795_PD_CA57_CPU3,	R8A7795_PD_CA57_SCU,
--	  PD_CPU_NOCR },
--	{ "ca53-scu",	0x140, 0, R8A7795_PD_CA53_SCU,	R8A7795_PD_ALWAYS_ON,
--	  PD_SCU },
--	{ "ca53-cpu0",	0x200, 0, R8A7795_PD_CA53_CPU0,	R8A7795_PD_CA53_SCU,
--	  PD_CPU_NOCR },
--	{ "ca53-cpu1",	0x200, 1, R8A7795_PD_CA53_CPU1,	R8A7795_PD_CA53_SCU,
--	  PD_CPU_NOCR },
--	{ "ca53-cpu2",	0x200, 2, R8A7795_PD_CA53_CPU2,	R8A7795_PD_CA53_SCU,
--	  PD_CPU_NOCR },
--	{ "ca53-cpu3",	0x200, 3, R8A7795_PD_CA53_CPU3,	R8A7795_PD_CA53_SCU,
--	  PD_CPU_NOCR },
--	{ "a3vp",	0x340, 0, R8A7795_PD_A3VP,	R8A7795_PD_ALWAYS_ON },
--	{ "cr7",	0x240, 0, R8A7795_PD_CR7,	R8A7795_PD_ALWAYS_ON },
--	{ "a3vc",	0x380, 0, R8A7795_PD_A3VC,	R8A7795_PD_ALWAYS_ON },
-+	{ "always-on",	RCAR_GEN3_SYSCSR,  0, R8A7795_PD_ALWAYS_ON,
-+	  -1, PD_ALWAYS_ON },
-+	{ "ca57-scu",	RCAR_GEN3_PWRSR5,  0, R8A7795_PD_CA57_SCU,
-+	  R8A7795_PD_ALWAYS_ON, PD_SCU },
-+	{ "ca57-cpu0",	RCAR_GEN3_PWRSR0,  0, R8A7795_PD_CA57_CPU0,
-+	  R8A7795_PD_CA57_SCU, PD_CPU_NOCR },
-+	{ "ca57-cpu1",	RCAR_GEN3_PWRSR0,  1, R8A7795_PD_CA57_CPU1,
-+	  R8A7795_PD_CA57_SCU, PD_CPU_NOCR },
-+	{ "ca57-cpu2",	RCAR_GEN3_PWRSR0,  2, R8A7795_PD_CA57_CPU2,
-+	  R8A7795_PD_CA57_SCU, PD_CPU_NOCR },
-+	{ "ca57-cpu3",	RCAR_GEN3_PWRSR0,  3, R8A7795_PD_CA57_CPU3,
-+	  R8A7795_PD_CA57_SCU, PD_CPU_NOCR },
-+	{ "ca53-scu",	RCAR_GEN3_PWRSR3,  0, R8A7795_PD_CA53_SCU,
-+	  R8A7795_PD_ALWAYS_ON, PD_SCU },
-+	{ "ca53-cpu0",	RCAR_GEN3_PWRSR6,  0, R8A7795_PD_CA53_CPU0,
-+	  R8A7795_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "ca53-cpu1",	RCAR_GEN3_PWRSR6,  1, R8A7795_PD_CA53_CPU1,
-+	  R8A7795_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "ca53-cpu2",	RCAR_GEN3_PWRSR6,  2, R8A7795_PD_CA53_CPU2,
-+	  R8A7795_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "ca53-cpu3",	RCAR_GEN3_PWRSR6,  3, R8A7795_PD_CA53_CPU3,
-+	  R8A7795_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "a3vp",	RCAR_GEN3_PWRSR8,  0, R8A7795_PD_A3VP,
-+	  R8A7795_PD_ALWAYS_ON },
-+	{ "cr7",	RCAR_GEN3_PWRSR7,  0, R8A7795_PD_CR7,
-+	  R8A7795_PD_ALWAYS_ON },
-+	{ "a3vc",	RCAR_GEN3_PWRSR9,  0, R8A7795_PD_A3VC,
-+	  R8A7795_PD_ALWAYS_ON },
- 	/* A2VC0 exists on ES1.x only */
--	{ "a2vc0",	0x3c0, 0, R8A7795_PD_A2VC0,	R8A7795_PD_A3VC },
--	{ "a2vc1",	0x3c0, 1, R8A7795_PD_A2VC1,	R8A7795_PD_A3VC },
--	{ "3dg-a",	0x100, 0, R8A7795_PD_3DG_A,	R8A7795_PD_ALWAYS_ON },
--	{ "3dg-b",	0x100, 1, R8A7795_PD_3DG_B,	R8A7795_PD_3DG_A },
--	{ "3dg-c",	0x100, 2, R8A7795_PD_3DG_C,	R8A7795_PD_3DG_B },
--	{ "3dg-d",	0x100, 3, R8A7795_PD_3DG_D,	R8A7795_PD_3DG_C },
--	{ "3dg-e",	0x100, 4, R8A7795_PD_3DG_E,	R8A7795_PD_3DG_D },
--	{ "a3ir",	0x180, 0, R8A7795_PD_A3IR,	R8A7795_PD_ALWAYS_ON },
-+	{ "a2vc0",	RCAR_GEN3_PWRSR10, 0, R8A7795_PD_A2VC0,
-+	  R8A7795_PD_A3VC },
-+	{ "a2vc1",	RCAR_GEN3_PWRSR10, 1, R8A7795_PD_A2VC1,
-+	  R8A7795_PD_A3VC },
-+	{ "3dg-a",	RCAR_GEN3_PWRSR2,  0, R8A7795_PD_3DG_A,
-+	  R8A7795_PD_ALWAYS_ON },
-+	{ "3dg-b",	RCAR_GEN3_PWRSR2,  1, R8A7795_PD_3DG_B,
-+	  R8A7795_PD_3DG_A },
-+	{ "3dg-c",	RCAR_GEN3_PWRSR2,  2, R8A7795_PD_3DG_C,
-+	  R8A7795_PD_3DG_B },
-+	{ "3dg-d",	RCAR_GEN3_PWRSR2,  3, R8A7795_PD_3DG_D,
-+	  R8A7795_PD_3DG_C },
-+	{ "3dg-e",	RCAR_GEN3_PWRSR2,  4, R8A7795_PD_3DG_E,
-+	  R8A7795_PD_3DG_D },
-+	{ "a3ir",	RCAR_GEN3_PWRSR4,  0, R8A7795_PD_A3IR,
-+	  R8A7795_PD_ALWAYS_ON },
- };
- 
- 
--- 
-2.11.0
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--465r3sfkhjhucg7t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7id8ACgkQFA3kzBSg
+KbYzQRAAlvPTx08aRzmDIK3C1VadQr8UcUhoztAC9o7zTzLsqFCxe/8SSHEhMQSx
+IoZ/j2jCC/MP1K5Xrue71jW2urf+igpn0MiAaSDOcpFYHas/cZfM8It3G++yLigC
+0JMymDqyJm5HN/4EQDh91YlGav1gbDodMHdN+9rLc7hSHiFExIAOsoKkIBnnJ2CQ
+z8g+Gt78fPS6ocwsXmnyT41Qf08eJ7XjF4ri7xqLocjv6+U1Vao/SyfyEsph0vOq
+Ly2oE+X5PAGMrOOXskzUXuYqRh5KSa51hxg8FNQkjK+baBUczUvTr3xDrT50+apr
+xqFntQo917bj0mLoqc9E+ednuv+Vxup3LEmwKM0UvuL06Ql4ipYkeUww3QBPLZWH
+QZy6vbHAwgWUIU6fbsbURDoSnk0VjYXkERsGM/I7x5udlaZm6imYTUv8gV/gaeCf
+aLqF+PsOexFjU9Va0ta/PWPzLOKhG64w8lvxxYcndw6XuG89TpUkknhRvdTiU5ZS
+BFomSsMHFtmqKBVI19nDsYkHjY4W9r27ssTzP3OpiidhPDBbQL1x+Y4C08DKLRob
+96iFzwYKPWkcWwk0VN3zUlU3AKA9oMCrgaYaLSSS0lE6S9pux3QCSQ3DxehqtAcR
+dREbcnyz9ePpl6A2khZOuXRJcvdk5lm2Pghk0xYzxFgRiPLCtl0=
+=V973
+-----END PGP SIGNATURE-----
+
+--465r3sfkhjhucg7t--
