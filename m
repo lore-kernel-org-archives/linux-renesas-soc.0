@@ -1,33 +1,33 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:6986 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754191AbeBNG2Y (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 01:28:24 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/4] arm64: defconfig: Enable PWM and USB for R-Car
-Date: Wed, 14 Feb 2018 15:23:28 +0900
-Message-Id: <1518589412-7330-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 7 Feb 2018 10:45:35 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a77995: Remove non-existing
+ STBE region
+Message-ID: <20180207094534.yuydjkdtxmgkddm4@verge.net.au>
+References: <1517922354-28421-1-git-send-email-geert+renesas@glider.be>
+ <1517922354-28421-4-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517922354-28421-4-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the renesas.git / renesas-devel-20180213v2-v4.16-rc1
-tag.
+On Tue, Feb 06, 2018 at 02:05:54PM +0100, Geert Uytterhoeven wrote:
+> R-Car D3 does not have the Stream Buffer for EtherAVB-IF (STBE).
+> 
+> Note that the RAVB driver does not use this region.
+> 
+> Fixes: f9ba0c4cfe6169b7 ("arm64: dts: renesas: r8a77995: Add EthernetAVB device node")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yoshihiro Shimoda (4):
-  arm64: defconfig: Enable PWM for R-Car
-  arm64: defconfig: Enable USB-DMAC for R-Car
-  arm64: defconfig: Enable USB 3.0 PHY for R-Car
-  arm64: defconfig: Enable USB 3.0 peripheral for R-Car
-
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
-
--- 
-1.9.1
+Thanks, applied for v4.17.
