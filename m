@@ -1,164 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:55976 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934684AbeBLNz0 (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:40156 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751186AbeBGXUn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:55:26 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 1/3] irqchip/renesas-intc-irqpin: Use wakeup_path i.s.o. explicit clock handling
-Date: Mon, 12 Feb 2018 14:55:11 +0100
-Message-Id: <1518443713-1835-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+        Wed, 7 Feb 2018 18:20:43 -0500
+Date: Thu, 8 Feb 2018 00:20:41 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 23/26] ARM: dts: r8a7791: Add watchdog support to SoC
+ dtsi
+Message-ID: <20180207232041.vgo2i7cmkljwvluy@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-24-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5lywdttzvhqp5tef"
+Content-Disposition: inline
+In-Reply-To: <1517423070-24236-24-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commit 705bc96c2c15313c ("irqchip: renesas-intc-irqpin: Add
-minimal runtime PM support"), when an IRQ is used for wakeup, the INTC
-block's module clock (if exists) is manually kept running during system
-suspend, to make sure the device stays active.
 
-However, this explicit clock handling is merely a workaround for a
-failure to properly communicate wakeup information to the device core.
+--5lywdttzvhqp5tef
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Instead, set the device's power.wakeup_path field, to indicate this
-device is part of the wakeup path.  Depending on the PM Domain's
-active_wakeup configuration, the genpd core code will keep the device
-enabled (and the clock running) during system suspend when needed.
-This allows for the removal of all explicit clock handling code from the
-driver.
+On Wed, Jan 31, 2018 at 06:24:27PM +0000, Fabrizio Castro wrote:
+> This commit adds watchdog support to the r8a7791 dtsi.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Revert to v1, as WAKEUP_PATH didn't make it,
-  - Use an atomic_t instead of a boolean flag, as the boolean tracked
-    only the status of the last configured GPIO, while multiple
-    interrupt pins on the same interrupt controller may be involved with
-    wake-up,
-  - Use new helper device_set_wakeup_path(),
-  - Drop checks for CONFIG_PM_SLEEP, as device_set_wakeup_path() is
-    always available, unlike dev_pm_info.wakeup_path,
-  - Mark intc_irqpin_suspend() __maybe_unused,
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-v2 (sent by Ulf Hanson):
-  - Convert to use the WAKEUP_PATH driver PM flag (Ulf).
----
- drivers/irqchip/irq-renesas-intc-irqpin.c | 40 +++++++++++++------------------
- 1 file changed, 16 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
-index cee59fe1321c44f9..c6e6c9e9137ad1d2 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -17,7 +17,6 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
- 
--#include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -78,16 +77,14 @@ struct intc_irqpin_priv {
- 	struct platform_device *pdev;
- 	struct irq_chip irq_chip;
- 	struct irq_domain *irq_domain;
--	struct clk *clk;
-+	atomic_t wakeup_path;
- 	unsigned shared_irqs:1;
--	unsigned needs_clk:1;
- 	u8 shared_irq_mask;
- };
- 
- struct intc_irqpin_config {
- 	unsigned int irlm_bit;
- 	unsigned needs_irlm:1;
--	unsigned needs_clk:1;
- };
- 
- static unsigned long intc_irqpin_read32(void __iomem *iomem)
-@@ -287,14 +284,10 @@ static int intc_irqpin_irq_set_wake(struct irq_data *d, unsigned int on)
- 	int hw_irq = irqd_to_hwirq(d);
- 
- 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
--
--	if (!p->clk)
--		return 0;
--
- 	if (on)
--		clk_enable(p->clk);
-+		atomic_inc(&p->wakeup_path);
- 	else
--		clk_disable(p->clk);
-+		atomic_dec(&p->wakeup_path);
- 
- 	return 0;
- }
-@@ -369,12 +362,10 @@ static const struct irq_domain_ops intc_irqpin_irq_domain_ops = {
- static const struct intc_irqpin_config intc_irqpin_irlm_r8a777x = {
- 	.irlm_bit = 23, /* ICR0.IRLM0 */
- 	.needs_irlm = 1,
--	.needs_clk = 0,
- };
- 
- static const struct intc_irqpin_config intc_irqpin_rmobile = {
- 	.needs_irlm = 0,
--	.needs_clk = 1,
- };
- 
- static const struct of_device_id intc_irqpin_dt_ids[] = {
-@@ -426,18 +417,6 @@ static int intc_irqpin_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, p);
- 
- 	config = of_device_get_match_data(dev);
--	if (config)
--		p->needs_clk = config->needs_clk;
--
--	p->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(p->clk)) {
--		if (p->needs_clk) {
--			dev_err(dev, "unable to get clock\n");
--			ret = PTR_ERR(p->clk);
--			goto err0;
--		}
--		p->clk = NULL;
--	}
- 
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
-@@ -606,12 +585,25 @@ static int intc_irqpin_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int __maybe_unused intc_irqpin_suspend(struct device *dev)
-+{
-+	struct intc_irqpin_priv *p = dev_get_drvdata(dev);
-+
-+	if (atomic_read(&p->wakeup_path))
-+		device_set_wakeup_path(dev);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(intc_irqpin_pm_ops, intc_irqpin_suspend, NULL);
-+
- static struct platform_driver intc_irqpin_device_driver = {
- 	.probe		= intc_irqpin_probe,
- 	.remove		= intc_irqpin_remove,
- 	.driver		= {
- 		.name	= "renesas_intc_irqpin",
- 		.of_match_table = intc_irqpin_dt_ids,
-+		.pm	= &intc_irqpin_pm_ops,
- 	}
- };
- 
--- 
-2.7.4
+--5lywdttzvhqp5tef
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ickACgkQFA3kzBSg
+KbbmUA/9GVhdEFtaR7aTq7KbbW4Vcee6HlK7E9Bnhcxwqvc9pXckaReLWp+NcsBo
+O4KMkEfPFuylGXnAGTADDBgZnb0+mgQw03NsBN6Gclo/E3O0QwLv9DVCBimjjPs5
+ePQw2FDC1hXxrr6hE5BZ4RNycamyEj5l5N++KtmPc/IXgiuRX0iOphAUrEpCO0gD
+CKCom0bM0Uh3J3kS3CreGu0xH1JIdF80DzTqH4JJ+R1WzOM+th/TKN1aJh4ClOx1
+V74+rTG6dc1JNIhgNUiDwgMe75TzMoD+K/gYDdYNHPdBZGo67vzM5ers+EwEy3Li
+PldfJIcK8dmF/y8aj3/hEXKxghg+qEBWhlhRubk3PcXgqAmtwm30YdjYBpI07Zpf
+oruYV5nE5zlaY/SI4OzPENIyT1A4LCz93qSxFCdYzFmV1y5ESsgJIv2M14ZOb7cK
+0ZdvJvbfwsuiDPoWjNiX37KVl+2aA7AhyZLbI04SuHdqUplHLomqekeSgA8nTXwN
+oiD1fw91jmxClBKlc94lhAYJgMg7mJadqaSmy7Ee20O92nVjVy9t1UT4Ljm8C9kz
+jz1t+lDRm4SBvXWDn0TMbFpAdrnnNJsZvfckM+FiQUtvsd01vs8buv7c/3ZBl81t
+YdSfuUyA/MKPXtgk0bpDJTBQGfzcZo1cMCSczyOnGWFF3X3I0Yo=
+=OeS1
+-----END PGP SIGNATURE-----
+
+--5lywdttzvhqp5tef--
