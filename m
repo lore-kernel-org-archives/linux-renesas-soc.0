@@ -1,42 +1,78 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-renesas-soc@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from www.zeus03.de ([194.117.254.33]:39274 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751190AbeBGXRR (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Feb 2018 18:17:17 -0500
+Date: Thu, 8 Feb 2018 00:17:15 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH 0/4] tree-wide: fix comparison to bitshift when dealing with a mask
-Date: Mon,  5 Feb 2018 21:09:57 +0100
-Message-Id: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
-Sender: linux-media-owner@vger.kernel.org
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [RFC v4 19/26] clk: renesas: r8a7794: Add rwdt clock
+Message-ID: <20180207231715.r42l7aekecwszeqd@katana>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-20-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2ppkhvycs7w7moi3"
+Content-Disposition: inline
+In-Reply-To: <1517423070-24236-20-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In one Renesas driver, I found a typo which turned an intended bit shift ('<<')
-into a comparison ('<'). Because this is a subtle issue, I looked tree wide for
-similar patterns. This small patch series is the outcome.
 
-Buildbot and checkpatch are happy. Only compile-tested. To be applied
-individually per sub-system, I think. I'd think only the net: amd: patch needs
-to be conisdered for stable, but I leave this to people who actually know this
-driver.
+--2ppkhvycs7w7moi3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-CCing Dan. Maybe he has an idea how to add a test to smatch? In my setup, only
-cppcheck reported a 'coding style' issue with a low prio.
+On Wed, Jan 31, 2018 at 06:24:23PM +0000, Fabrizio Castro wrote:
+> Add "rwdt" clock to r8a7794_mod_clks. Also, since we may need to access
+> the watchdog registers at any time, declare the clock as critical.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
 
-Wolfram Sang (4):
-  v4l: vsp1: fix mask creation for MULT_ALPHA_RATIO
-  drm/exynos: fix comparison to bitshift when dealing with a mask
-  v4l: dvb-frontends: stb0899: fix comparison to bitshift when dealing
-    with a mask
-  net: amd-xgbe: fix comparison to bitshift when dealing with a mask
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
- drivers/gpu/drm/exynos/regs-fimc.h        | 2 +-
- drivers/media/dvb-frontends/stb0899_reg.h | 8 ++++----
- drivers/media/platform/vsp1/vsp1_regs.h   | 2 +-
- drivers/net/ethernet/amd/xgbe/xgbe-drv.c  | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
 
--- 
-2.11.0
+--2ppkhvycs7w7moi3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7iPoACgkQFA3kzBSg
+Kbabqg/+PRinXdRPLN9NnawvsTfFj6IjK5Nou7kfTGjvbEMRZMhZSf4fOwB3Df73
+O9Wsc5kG9fUC/R1qrSl+H7wQflfGazbY9WrwUjfH0DTcdbFFjnLgjiZg4S6rzK4W
+OV10rOnayOQCcb3H8UwcjLgk3EZkAfY85vC+T22LglEH9larVmP+EoTpY0zRDb2D
+Iuv0QAuj5VThbIYacFzPjVpJ/S+WnJqV76mPJw8w0i4um3sG4BlV6FSNC0Lvvk7g
+DRpOmilYt91bPzLk7OzLwnbnlR3aLlau+w2yqQur81IZbPWqXVrHhzbJ0k1hDuxM
+RRnH82zlXm/RFirnDOb1s8mut5wRAm8jOy+CT9f1utBI6/aKjIdH30VQGm1khfqP
+HovodgbD3Veh9bQmQYwGV5woh3/lmkTSKcndKII9pWDDqAcBPI1Wr9qquupQkp3I
+MQpY39rhioCi4Hkyea3ctnU4xrdzujcDw94QZNp4KcX2S3/EzlFJXmOEHSstrp5B
+iN/zuEurQyNz44voI5PsY7NYm3NaSxbIiOld45VbWZLrfAKo/ii1FFpVsvvDp3IY
+joIHI9Gqq6GJ1ITDuMk9jSeH8IC6UzfwK4VHASIxSEANSaRXKuqLI+uasFgS1mh+
+8jQwfQzbfIjV6MoEmBeOn6yFmcqUe7pqETe484HqyFAiYyQRVVY=
+=kbA+
+-----END PGP SIGNATURE-----
+
+--2ppkhvycs7w7moi3--
