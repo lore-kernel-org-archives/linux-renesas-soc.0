@@ -1,79 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:40156 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751186AbeBGXUn (ORCPT
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:54292 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751022AbeBHBD0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 18:20:43 -0500
-Date: Thu, 8 Feb 2018 00:20:41 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC v4 23/26] ARM: dts: r8a7791: Add watchdog support to SoC
- dtsi
-Message-ID: <20180207232041.vgo2i7cmkljwvluy@katana>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-24-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 7 Feb 2018 20:03:26 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5lywdttzvhqp5tef"
-Content-Disposition: inline
-In-Reply-To: <1517423070-24236-24-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <20180207193459.tsmci752idkayjxd@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-13-git-send-email-yamada.masahiro@socionext.com> <20180207193459.tsmci752idkayjxd@ninjato>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 8 Feb 2018 10:02:39 +0900
+Message-ID: <CAK7LNARbRW+KyX9_h1mSrse5MSC3Zp40qOFVDWhEXG0ig8zkxQ@mail.gmail.com>
+Subject: Re: [PATCH v3 12/16] mmc: tmio: support IP-builtin card detection logic
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+2018-02-08 4:34 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
+> On Thu, Jan 18, 2018 at 01:28:12AM +0900, Masahiro Yamada wrote:
+>> A card detect GPIO is set up only for platforms with "cd-gpios"
+>> DT property or TMIO_MMC_USE_GPIO_CD flag.  However, the driver
+>> core always uses mmc_gpio_get_cd, which just fails with -ENOSYS
+>> if ctx->cd_gpio is unset.
+>>
+>> The bit 5 of the status register provides the current signal level
+>> of the CD line.  Allow to use it if the GPIO is unused.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+>> @@ -1095,7 +1103,7 @@ static const struct mmc_host_ops tmio_mmc_ops = {
+>
+> I just wonder why the diff-tool puts 'const' in the definition. There is
+> no const in my version here. And there shouldn't be because we modify
+> the struct in this patch.
+>
 
---5lywdttzvhqp5tef
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Which kernel version are you seeing?
 
-On Wed, Jan 31, 2018 at 06:24:27PM +0000, Fabrizio Castro wrote:
-> This commit adds watchdog support to the r8a7791 dtsi.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The following patch was applied and it is in Linus'tree.
 
 
---5lywdttzvhqp5tef
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+commit c055fc75c1757b220108489038cfe60496b13865
+Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sat Nov 25 01:24:41 2017 +0900
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ickACgkQFA3kzBSg
-KbbmUA/9GVhdEFtaR7aTq7KbbW4Vcee6HlK7E9Bnhcxwqvc9pXckaReLWp+NcsBo
-O4KMkEfPFuylGXnAGTADDBgZnb0+mgQw03NsBN6Gclo/E3O0QwLv9DVCBimjjPs5
-ePQw2FDC1hXxrr6hE5BZ4RNycamyEj5l5N++KtmPc/IXgiuRX0iOphAUrEpCO0gD
-CKCom0bM0Uh3J3kS3CreGu0xH1JIdF80DzTqH4JJ+R1WzOM+th/TKN1aJh4ClOx1
-V74+rTG6dc1JNIhgNUiDwgMe75TzMoD+K/gYDdYNHPdBZGo67vzM5ers+EwEy3Li
-PldfJIcK8dmF/y8aj3/hEXKxghg+qEBWhlhRubk3PcXgqAmtwm30YdjYBpI07Zpf
-oruYV5nE5zlaY/SI4OzPENIyT1A4LCz93qSxFCdYzFmV1y5ESsgJIv2M14ZOb7cK
-0ZdvJvbfwsuiDPoWjNiX37KVl+2aA7AhyZLbI04SuHdqUplHLomqekeSgA8nTXwN
-oiD1fw91jmxClBKlc94lhAYJgMg7mJadqaSmy7Ee20O92nVjVy9t1UT4Ljm8C9kz
-jz1t+lDRm4SBvXWDn0TMbFpAdrnnNJsZvfckM+FiQUtvsd01vs8buv7c/3ZBl81t
-YdSfuUyA/MKPXtgk0bpDJTBQGfzcZo1cMCSczyOnGWFF3X3I0Yo=
-=OeS1
------END PGP SIGNATURE-----
+    mmc: tmio: move mmc_host_ops to struct tmio_mmc_host from static data
 
---5lywdttzvhqp5tef--
+    Currently, tmio_mmc_ops is static data and tmio_mmc_host_probe()
+    updates some hooks in the static data.  This is a problem when
+    two or more instances call tmio_mmc_host_probe() and each of them
+    requests to use its own card_busy/start_signal_voltage_switch.
+
+    We can borrow a solution from sdhci_alloc_host().  Copy the whole
+    ops structure to host->mmc_host_ops, then override the hooks in
+    malloc'ed data.  Constify tmio_mmc_ops since it is now a template
+    ops used by default.
+
+    Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+    Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+    Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+    Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
