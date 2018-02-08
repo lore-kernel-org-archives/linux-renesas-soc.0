@@ -1,66 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44349 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753149AbeBGTb5 (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:63154 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750847AbeBHPsD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:31:57 -0500
-Date: Wed, 7 Feb 2018 20:31:55 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 10/16] mmc: tmio: remove TMIO_MMC_WRPROTECT_DISABLE
-Message-ID: <20180207193155.42phpprycb3nx3nv@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-11-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 8 Feb 2018 10:48:03 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 0/5] arm64: dts: renesas: r8a77970: enable HDMI output
+Date: Thu,  8 Feb 2018 16:47:15 +0100
+Message-Id: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ifrazsdmgitbusor"
-Content-Disposition: inline
-In-Reply-To: <1516206496-16612-11-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi,
 
---ifrazsdmgitbusor
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series enables the HDMI out put on V3M. It is based on top of the
+latest renesas-drivers release and depends on patches from both Laurent
+and Sergei.
 
-On Thu, Jan 18, 2018 at 01:28:10AM +0900, Masahiro Yamada wrote:
-> The use of this flag has been replaced with MMC_CAP2_NO_WRITE_PROTECT.
-> No platform defines this flag any more.  Remove.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+- [PATCH v2 00/12] R-Car DU: Convert LVDS code to bridge driver
+- [PATCH v2 0/2] Add R-Car V3M (R8A77970) support to the DU driver
+- [PATCH 0/3] Add R-Car V3M (R8A77970) support to the R-Car LVDS driver
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+It is tested on V3M by connecting the HDMI output to a monitor and
+booting the board. To console will eventually show up on the screen.
 
+* Changes since v1.
+- Replace patches 1-3 by patches posted by Sergei which I had missed.
+- Fixed comment on 4/5 by adding reset and power-domain properties.
 
---ifrazsdmgitbusor
-Content-Type: application/pgp-signature; name="signature.asc"
+Niklas Söderlund (2):
+  arm64: dts: renesas: r8a77970: add the LVDS instance
+  arm64: dts: renesas: eagle: add HDMI output using the ADV7511W
 
------BEGIN PGP SIGNATURE-----
+Sergei Shtylyov (3):
+  arm64: dts: renesass: r8a77970: add FCPVD support
+  arm64: dts: renesass: r8a77970: add VSPD support
+  arm64: dts: renesas: r8a77970: add DU support
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7VCsACgkQFA3kzBSg
-KbYp6hAAlxqCwtGDsyOvTHHCdI7ovmAjVOm/kBzKXAF8jHUAAe+Z7W9VSssrbIYx
-wssHlpeW1lUHIvhiFINTyZGLKpD4qFOULxUBuQF5yJr369M/KUT8aGaUuaLHUCOs
-wmV47rdtusho6Bt+skW9InE3q+0dACD58YHYe6ZRuTeZ65T48DyC+Lm6JPlfqC13
-/VwWykk5xBcaLnjCiEkFvYXsQwXJSX/EDdt6ZIst0JehBhuX4X58gkBDBgNeWY/d
-BbvH5mRDFWxzQgdj0BojKhDorMXFpraQdreJuX7V6xvtuML3ogfQsUV9ALNaDe2i
-40uElQKlE9aDGGnp6FtxppbDmVE74pvuQI4OTUKf4GF+i778IngAZQl6QsQ3f3FW
-DZd2DodhnzrAHLHEWjn6sTeJLXuKWIHeC9G6WAJrJULGvo+RSyjGhsO59oSTiC2h
-lvtuuy0//noRrlh8Jp8/f9Bz4bC5OF1hmKm1TnWRk/ZRMFT1f0p+t2lo6jz6GFkP
-LhLzc3d7syx8mdydAJV1IkEiTycYGi7HY6KHb8vAu9LTJcvWVamuOHhLp4w5LAdJ
-D06hfC1PkXy4YT4yc13+WpXqCV6zEq8nH/nLwNjxnPn7974uIHU3+6h9AQHZN0sB
-npiVbIz/iMQU+Fd6Qt12mg6A/YMK0qEKAhvnBm61UHPJGUUwdzw=
-=7HNv
------END PGP SIGNATURE-----
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 66 +++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi      | 73 ++++++++++++++++++++++++++
+ 2 files changed, 139 insertions(+)
 
---ifrazsdmgitbusor--
+-- 
+2.16.1
