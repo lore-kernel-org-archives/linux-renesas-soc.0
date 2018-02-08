@@ -1,54 +1,125 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:42756 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752167AbeBIPRM (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:29403 "EHLO
+        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751786AbeBHPsM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:17:12 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 1/6] vfio: platform: Allow runtime override of reset_required
-Date: Fri,  9 Feb 2018 16:16:48 +0100
-Message-Id: <1518189413-2761-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
-References: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
+        Thu, 8 Feb 2018 10:48:12 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Simon Horman <horms@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 5/5] arm64: dts: renesas: eagle: add HDMI output using the ADV7511W
+Date: Thu,  8 Feb 2018 16:47:20 +0100
+Message-Id: <20180208154720.5766-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently reset_required can be configured using a module parameter.
-But it cannot be overridden at runtime through sysfs, as the parameter
-is read-only.
+Add the HDMI connector and the ADV7511W, also connect it to LVDS. Enable
+the DU and LVDS to be able to use the HDMI output.
 
-Make it writeable for root, as this is useful if vfio-platform is
-builtin, so the following works:
-
-    echo 0 > /sys/module/vfio_platform/parameters/reset_required
-
-Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-TODO: Implement a vfio reset driver instead.
----
- drivers/vfio/platform/vfio_platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 66 ++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-diff --git a/drivers/vfio/platform/vfio_platform.c b/drivers/vfio/platform/vfio_platform.c
-index 6561751a1063ee29..ef89146deddcea80 100644
---- a/drivers/vfio/platform/vfio_platform.c
-+++ b/drivers/vfio/platform/vfio_platform.c
-@@ -24,7 +24,7 @@
- #define DRIVER_DESC     "VFIO for platform devices - User Level meta-driver"
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+index 359e835cca9876fe..c0fd144970c55fa2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -31,6 +31,17 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_out: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
+ };
  
- static bool reset_required = true;
--module_param(reset_required, bool, 0444);
-+module_param(reset_required, bool, 0644);
- MODULE_PARM_DESC(reset_required, "override reset requirement (default: 1)");
+ &avb {
+@@ -67,9 +78,46 @@
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 	};
++
++	hdmi@39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con_out>;
++				};
++			};
++		};
++	};
+ };
  
- /* probing devices from the linux platform bus */
+ &pfc {
++	du_pins: du {
++		groups = "du_rgb666", "du_sync", "du_oddf", "du_clk_out";
++		function = "du";
++	};
++
+ 	i2c0_pins: i2c0 {
+ 		groups = "i2c0";
+ 		function = "i2c0";
+@@ -92,3 +140,21 @@
+ 
+ 	status = "okay";
+ };
++
++&du {
++	pinctrl-0 = <&du_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&lvds0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			endpoint {
++				remote-endpoint = <&adv7511_in>;
++			};
++		};
++	};
++};
 -- 
-2.7.4
+2.16.1
