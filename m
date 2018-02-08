@@ -1,75 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:48934 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751728AbeB0CV1 (ORCPT
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55251 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751910AbeBHOnh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 21:21:27 -0500
-From: Gaku Inami <gaku.inami.xh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Gaku Inami <gaku.inami.xh@renesas.com>
-Subject: [PATCH 1/5] arm64: dts: renesas: r8a7795: Add multi-cluster definition
-Date: Tue, 27 Feb 2018 11:19:51 +0900
-Message-Id: <1519697995-6061-2-git-send-email-gaku.inami.xh@renesas.com>
-In-Reply-To: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
-References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+        Thu, 8 Feb 2018 09:43:37 -0500
+Subject: Re: [PATCH] can: m_can: change comparison to bitshift when dealing
+ with a mask
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org
+References: <20180206085207.3882-1-wsa+renesas@sang-engineering.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <f76988fc-db62-576c-7cba-58259cf9edf9@pengutronix.de>
+Date: Thu, 8 Feb 2018 15:42:55 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180206085207.3882-1-wsa+renesas@sang-engineering.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="L3QZrDHeHWdmduPP8K6NTogOucdTWDtx4"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds the "cpu-map" for multi-cluster into r8a7795
-device-tree. This definition is used to parse the cpu topology.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--L3QZrDHeHWdmduPP8K6NTogOucdTWDtx4
+Content-Type: multipart/mixed; boundary="glwg4TysMLh9Tqp1Gw8ayyXwr3iIaA7fQ";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfgang Grandegger
+ <wg@grandegger.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org
+Message-ID: <f76988fc-db62-576c-7cba-58259cf9edf9@pengutronix.de>
+Subject: Re: [PATCH] can: m_can: change comparison to bitshift when dealing
+ with a mask
+References: <20180206085207.3882-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180206085207.3882-1-wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+--glwg4TysMLh9Tqp1Gw8ayyXwr3iIaA7fQ
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index ce85704..ffcc91e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -34,6 +34,38 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&a57_0>;
-+				};
-+				core1 {
-+					cpu = <&a57_1>;
-+				};
-+				core2 {
-+					cpu = <&a57_2>;
-+				};
-+				core3 {
-+					cpu = <&a57_3>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&a53_0>;
-+				};
-+				core1 {
-+					cpu = <&a53_1>;
-+				};
-+				core2 {
-+					cpu = <&a53_2>;
-+				};
-+				core3 {
-+					cpu = <&a53_3>;
-+				};
-+			};
-+		};
-+
- 		a57_0: cpu@0 {
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x0>;
--- 
-2.7.4
+On 02/06/2018 09:52 AM, Wolfram Sang wrote:
+> Due to a typo, the mask was destroyed by a comparison instead of a bit
+> shift.
+>=20
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> Only build tested.
+
+Applied to can. Luckily that define is not used :)
+
+Tnx,
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--glwg4TysMLh9Tqp1Gw8ayyXwr3iIaA7fQ--
+
+--L3QZrDHeHWdmduPP8K6NTogOucdTWDtx4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlp8Ye8ACgkQk9IU1zQo
+ZfE5ngf9FfC2VYJ1KD8HcsAYc0Hh9ByscFKRPNMGoAPeLKG5EMvDI8CN0oZXUZCg
+CxZfqEXjcrzHor9YaJAX/mAKNcoPGrypXEtS6jQ1KCNh6mnSNUXGlueLgZ9N8a7c
+rAVey3wSfQA0c2vlZH0u5eoFC9pCDIAai1TXn+wrvolQPcYVBpmOyqNJGwlERF0Q
+SPEXCCHCn3tO+BR2vc4vJYRvTkqGyPUKF5b+dlaBWncbRo64E0TCpAmjfiToPt3o
+Fpp8YCO42IY2cdXFM7tEN4LHzC/TJFggWQyccba7CwtwR3vf93keFGiMlor53wCn
+4RwxobFxSvBypIqy1s9lh50Ky0XLkg==
+=jnP7
+-----END PGP SIGNATURE-----
+
+--L3QZrDHeHWdmduPP8K6NTogOucdTWDtx4--
