@@ -1,55 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:53939 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752142AbeBTPNe (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:38708 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751077AbeBIPRL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:13:34 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 03/19] soc: renesas: Identify R-Car M3-N
-Date: Tue, 20 Feb 2018 16:12:05 +0100
-Message-Id: <1519139541-18783-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 9 Feb 2018 10:17:11 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 3/6] clk: renesas: r8a7795: Mark the GPIO6 clock critical
+Date: Fri,  9 Feb 2018 16:16:50 +0100
+Message-Id: <1518189413-2761-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
+References: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for indentifying R-Car M3-N (R8A77965) SoC.
+The GPIO6 block will be exported to a guest.  As long as the guest won't
+manage its module clock, it must be kept running by the host.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/soc/renesas/renesas-soc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+TODO: Find a way to manage module clocks using PM Domains and Runtime
+      PM on the guest.
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 0008343..7161983 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -149,6 +149,11 @@ static const struct renesas_soc soc_rcar_v3m __initconst __maybe_unused = {
- 	.id	= 0x54,
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index b1d9f48eae9e6ad4..6fbfd5973a889b7d 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -271,6 +271,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ 
+ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
++	MOD_CLK_ID(906),	/* GPIO6 */
  };
  
-+static const struct renesas_soc soc_rcar_m3_n __initconst __maybe_unused = {
-+	.family = &fam_rcar_gen3,
-+	.id     = 0x55,
-+};
-+
- static const struct renesas_soc soc_rcar_v3h __initconst __maybe_unused = {
- 	.family	= &fam_rcar_gen3,
- 	.id	= 0x56,
-@@ -214,6 +219,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
- #ifdef CONFIG_ARCH_R8A7796
- 	{ .compatible = "renesas,r8a7796",	.data = &soc_rcar_m3_w },
- #endif
-+#ifdef CONFIG_ARCH_R8A77965
-+	{ .compatible = "renesas,r8a77965",	.data = &soc_rcar_m3_n },
-+#endif
- #ifdef CONFIG_ARCH_R8A77970
- 	{ .compatible = "renesas,r8a77970",	.data = &soc_rcar_v3m },
- #endif
+ 
 -- 
 2.7.4
