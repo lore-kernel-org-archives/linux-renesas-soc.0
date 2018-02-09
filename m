@@ -1,70 +1,69 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:46033 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932288AbeBLRq2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:46:28 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 18/26] clk: renesas: r8a7791/r8a7793: Add rwdt clock
-Date: Mon, 12 Feb 2018 17:44:27 +0000
-Message-Id: <1518457475-4480-19-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: i2c_new_{secondary_device,dummy,device}() return type.
+To: Heiner Kallweit <hkallweit1@gmail.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>,
+ "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+ <linux-renesas-soc@vger.kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <6f03d1e1-b542-99cb-7cfe-8eae9addd8d9@ideasonboard.com>
+ <19f18d1d-efba-a6ca-32f4-0b55f284f27e@gmail.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <7e3f4e66-aee8-1b48-bc4d-2b9e63d28918@ideasonboard.com>
+Date: Fri, 9 Feb 2018 18:07:05 +0000
+MIME-Version: 1.0
+In-Reply-To: <19f18d1d-efba-a6ca-32f4-0b55f284f27e@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add "rwdt" clock to r8a7791_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+Hi Heiner,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v4->v5:
-* no change
+On 09/02/18 17:59, Heiner Kallweit wrote:
+> Am 09.02.2018 um 11:01 schrieb Kieran Bingham:
+>> Hi Wolfram,
+>>
+>> As part of my work looking at using i2c_new_secondary_device() to move address
+>> mappings into the device tree, it has become evident that the return code of the
+>> i2c_new_secondary_device() is obfuscated, and is simply a valid client - or NULL.
+>>
+>> This means that we must 'guess' as to whether the device failed due to a memory
+>> allocation, or if the device address was already in use (perhaps a more common
+>> failure).
+>>
+>> Because of this - I would like to see the return codes of
+>> i2c_new_secondary_device(), ic2_new_dummy(), and therefore i2c_new_device()
+>> support returning ERR_PTR()s rather than a client or NULL.
+>>
+>> These functions are used fairly extensively - thus it will be a fair bit of work
+>> (or a good coccinelle script) - So I'd like to ask your opinion on the validity
+>> of this task before I commence anything down that rabbit hole!
+>>
+>> Any comments? Pre-ack/nack? (from anyone?)
+>>
+> 
+> This has been addressed as part of adding a devm_i2c_new_dummy().
+> Related patches are in status "under review" since end of December.
+> See also here:
+> https://marc.info/?l=linux-i2c&m=151375074832371&w=2
+> https://patchwork.ozlabs.org/patch/851268/
+> 
+> Maybe these patches cover already what you need.
 
- drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thankyou - I will take a look (albeit - next week now!)
 
-diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-index c0b51f9..820b220 100644
---- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-@@ -128,6 +128,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7791_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7791_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7791_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7791_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7791_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7791_CLK_ZS),
- 	DEF_MOD("audio-dmac1",		 501,	R8A7791_CLK_HP),
-@@ -209,6 +210,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a7791_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
- 
--- 
-2.7.4
+--
+Regards
+
+Kieran
+
+> 
+> Rgds, Heiner
+> 
+>> --
+>> Regards
+>>
+>> Kieran Bingham
+>> .
+>>
+> 
