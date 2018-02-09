@@ -1,123 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36374 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032104AbeBOADy (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:42756 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752167AbeBIPRM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:03:54 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3 09/12] ARM: dts: r8a7793: Convert to new LVDS DT bindings
-Date: Thu, 15 Feb 2018 02:04:12 +0200
-Message-Id: <20180215000415.19077-10-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 9 Feb 2018 10:17:12 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/6] vfio: platform: Allow runtime override of reset_required
+Date: Fri,  9 Feb 2018 16:16:48 +0100
+Message-Id: <1518189413-2761-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
+References: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+Currently reset_required can be configured using a module parameter.
+But it cannot be overridden at runtime through sysfs, as the parameter
+is read-only.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Make it writeable for root, as this is useful if vfio-platform is
+builtin, so the following works:
+
+    echo 0 > /sys/module/vfio_platform/parameters/reset_required
+
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes since v2:
-
-- Fixed LVDS compatible string
-
-Changes since v1:
-
-- Remove the DU reg-names property
+TODO: Implement a vfio reset driver instead.
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 10 +++++++---
- arch/arm/boot/dts/r8a7793.dtsi     | 34 ++++++++++++++++++++++++++++------
- 2 files changed, 35 insertions(+), 9 deletions(-)
+ drivers/vfio/platform/vfio_platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 51b3ffac8efa..c6121f9b72a8 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -303,10 +303,9 @@
- 	pinctrl-names = "default";
- 	status = "okay";
+diff --git a/drivers/vfio/platform/vfio_platform.c b/drivers/vfio/platform/vfio_platform.c
+index 6561751a1063ee29..ef89146deddcea80 100644
+--- a/drivers/vfio/platform/vfio_platform.c
++++ b/drivers/vfio/platform/vfio_platform.c
+@@ -24,7 +24,7 @@
+ #define DRIVER_DESC     "VFIO for platform devices - User Level meta-driver"
  
--	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
-+	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 		 <&x13_clk>, <&x2_clk>;
--	clock-names = "du.0", "du.1", "lvds.0",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
+ static bool reset_required = true;
+-module_param(reset_required, bool, 0444);
++module_param(reset_required, bool, 0644);
+ MODULE_PARM_DESC(reset_required, "override reset requirement (default: 1)");
  
- 	ports {
- 		port@0 {
-@@ -314,6 +313,11 @@
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
-+	};
-+};
-+
-+&lvds0 {
-+	ports {
- 		port@1 {
- 			lvds_connector: endpoint {
- 			};
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 0cd1035de1a4..3a4918dfc1d9 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -976,15 +976,12 @@
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7793";
--		reg = <0 0xfeb00000 0 0x40000>,
--		      <0 0xfeb90000 0 0x1c>;
--		reg-names = "du", "lvds.0";
-+		reg = <0 0xfeb00000 0 0x40000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 724>,
--			 <&cpg CPG_MOD 723>,
--			 <&cpg CPG_MOD 726>;
--		clock-names = "du.0", "du.1", "lvds.0";
-+			 <&cpg CPG_MOD 723>;
-+		clock-names = "du.0", "du.1";
- 		status = "disabled";
- 
- 		ports {
-@@ -999,6 +996,31 @@
- 			port@1 {
- 				reg = <1>;
- 				du_out_lvds0: endpoint {
-+					remote-endpoint = <&lvds0_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	lvds0: lvds@feb90000 {
-+		compatible = "renesas,r8a7793-lvds";
-+		reg = <0 0xfeb90000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 726>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds0_in: endpoint {
-+					remote-endpoint = <&du_out_lvds0>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds0_out: endpoint {
- 				};
- 			};
- 		};
+ /* probing devices from the linux platform bus */
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
