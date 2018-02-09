@@ -1,58 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41240 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750789AbeBIJSw (ORCPT
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:40606 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbeBIH1f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 04:18:52 -0500
-Date: Fri, 9 Feb 2018 10:18:46 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Fri, 9 Feb 2018 02:27:35 -0500
+MIME-Version: 1.0
+In-Reply-To: <30a4e575-a2c9-e0d3-f41f-4e9b15543365@cogentembedded.com>
+References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com> <30a4e575-a2c9-e0d3-f41f-4e9b15543365@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Feb 2018 08:27:34 +0100
+Message-ID: <CAMuHMdV+36Jff6ui1B_90GvPhTb7Xu7+_CaX44EcXxiLi3c=aQ@mail.gmail.com>
+Subject: Re: [PATCH 09/11] DT: arm: shmobile: document Condor board bindings
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 09/11] DT: arm: shmobile: document Condor board bindings
-Message-ID: <20180209091846.cj62onabse2ag47s@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV+36Jff6ui1B_90GvPhTb7Xu7+_CaX44EcXxiLi3c=aQ@mail.gmail.com>
- <20180208201306.peirumr6hvu22uyt@rob-hp-laptop>
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 08, 2018 at 02:13:06PM -0600, Rob Herring wrote:
-> On Fri, Feb 02, 2018 at 09:45:08PM +0300, Sergei Shtylyov wrote:
-> > Document the Condor device tree bindings, listing it as a supported board.
-> > 
-> > This allows to use checkpatch.pl to validate .dts files referring to the
-> > Condor board.
-> > 
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > 
-> > ---
-> >  Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
-> >  1 file changed, 2 insertions(+)
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
+On Fri, Feb 2, 2018 at 7:45 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Document the Condor device tree bindings, listing it as a supported board.
+>
+> This allows to use checkpatch.pl to validate .dts files referring to the
+> Condor board.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On Fri, Feb 09, 2018 at 08:27:34AM +0100, Geert Uytterhoeven wrote:
-> On Fri, Feb 2, 2018 at 7:45 PM, Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
-> > Document the Condor device tree bindings, listing it as a supported board.
-> >
-> > This allows to use checkpatch.pl to validate .dts files referring to the
-> > Condor board.
-> >
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
-Thanks, applied with the following subject:
+                        Geert
 
-dt-bindings: arm: document Condor board bindings
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
