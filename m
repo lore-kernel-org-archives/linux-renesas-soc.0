@@ -1,42 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59442 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753091AbeBFNUo (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:39784 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752046AbeBIPRL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 08:20:44 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 9 Feb 2018 10:17:11 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: renesas_defconfig: enable R8A77980 SoC
-Date: Tue,  6 Feb 2018 14:20:39 +0100
-Message-Id: <20180206132039.23437-1-horms+renesas@verge.net.au>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 4/6] arm64: renesas_defconfig: Enable VFIO_PLATFORM and VFIO_NOIOMMU
+Date: Fri,  9 Feb 2018 16:16:51 +0100
+Message-Id: <1518189413-2761-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
+References: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the Renesas R-Car V3H (R8A77980) SoC in the ARM64 renesas_defconfig.
+Enable VFIO_PLATFORM for platform device pass-through.
+Enable VFIO_NOIOMMU for devices not part of an IOMMU group.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/configs/renesas_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
- Based on renesas-devel-20180206-v4.15
-
- Not for upstream merge
+Not intended for upstream merge.
+---
+ arch/arm64/configs/renesas_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 3087bba06d3c..386211464efa 100644
+index 386211464efa4885..959aa9de8792ae2d 100644
 --- a/arch/arm64/configs/renesas_defconfig
 +++ b/arch/arm64/configs/renesas_defconfig
-@@ -34,6 +34,7 @@ CONFIG_ARCH_RENESAS=y
- CONFIG_ARCH_R8A7795=y
- CONFIG_ARCH_R8A7796=y
- CONFIG_ARCH_R8A77970=y
-+CONFIG_ARCH_R8A77980=y
- CONFIG_ARCH_R8A77995=y
- CONFIG_PCI=y
- CONFIG_PCIEPORTBUS=y
+@@ -259,7 +259,9 @@ CONFIG_DMADEVICES=y
+ CONFIG_RCAR_DMAC=y
+ CONFIG_RENESAS_USB_DMAC=y
+ CONFIG_VFIO=y
++CONFIG_VFIO_NOIOMMU=y
+ CONFIG_VFIO_PCI=y
++CONFIG_VFIO_PLATFORM=y
+ CONFIG_VIRTIO_PCI=y
+ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_MMIO=y
 -- 
-2.11.0
+2.7.4
