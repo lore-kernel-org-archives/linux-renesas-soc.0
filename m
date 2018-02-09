@@ -1,95 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35660 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755216AbeBBSm0 (ORCPT
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:33572 "EHLO
+        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeBIPvx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 13:42:26 -0500
-Received: by mail-lf0-f66.google.com with SMTP id a204so32886911lfa.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Feb 2018 10:42:25 -0800 (PST)
-Subject: [PATCH 08/11] arm64: dts: renesas: r8a77980: add EtherAVB support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Message-ID: <99e9e3a5-a626-282a-3e8b-9c74945d55bc@cogentembedded.com>
-Date: Fri, 2 Feb 2018 21:42:21 +0300
+        Fri, 9 Feb 2018 10:51:53 -0500
 MIME-Version: 1.0
-In-Reply-To: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180129180154.29626-2-horms+renesas@verge.net.au>
+References: <20180129180154.29626-1-horms+renesas@verge.net.au> <20180129180154.29626-2-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Feb 2018 16:51:51 +0100
+Message-ID: <CAMuHMdU11h-iTQtfRJk7_F1UzkzLPJTNFZErs+Vtf9mnmsVT_A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] clk: renesas: rcar-gen3: Add Z clock divider support
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77980 part of the EtherAVB device node.
+On Mon, Jan 29, 2018 at 7:01 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds Z clock divider support for R-Car Gen3 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Based on the original (and large) patch by Vladimir Barinov.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I.e. will queue in clk-renesas-for-v4.17.
 
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   44 ++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Gr{oetje,eeting}s,
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -164,6 +164,50 @@
- 			status = "disabled";
- 		};
- 
-+		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a77980",
-+				     "renesas,etheravb-rcar-gen3";
-+			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15",
-+					  "ch16", "ch17", "ch18", "ch19",
-+					  "ch20", "ch21", "ch22", "ch23",
-+					  "ch24";
-+			clocks = <&cpg CPG_MOD 812>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 812>;
-+			phy-mode = "rgmii-id";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a77980",
- 				     "renesas,rcar-gen3-scif",
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
