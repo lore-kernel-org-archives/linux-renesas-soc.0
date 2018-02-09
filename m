@@ -1,33 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60426 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935755AbeBLN4m (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:51320 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751091AbeBIRed (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:56:42 -0500
-Date: Mon, 12 Feb 2018 14:56:37 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ARM: shmobile: Enable RZA1 pin controller
-Message-ID: <20180212135619.vymu7i2r6eriltxh@verge.net.au>
-References: <1518197658-30806-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518197658-30806-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 9 Feb 2018 12:34:33 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au, geert@linux-m68k.org
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] ARM: shmobile: Enable RZA1 pin controller
+Date: Fri,  9 Feb 2018 18:34:18 +0100
+Message-Id: <1518197658-30806-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Feb 09, 2018 at 06:34:18PM +0100, Jacopo Mondi wrote:
-> Enable PINCTRL_RZA1 option in shmobile_defconfig
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
-> Hi Simon,
->   this fixes the issue you reported on Genmai when applying shmobile_defconfig.
+Enable PINCTRL_RZA1 option in shmobile_defconfig
 
-Thanks!
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+Hi Simon,
+  this fixes the issue you reported on Genmai when applying shmobile_defconfig.
 
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-I will apply this for v4.17.
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 7b4fc01..12af8f4 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -120,6 +120,7 @@ CONFIG_SPI=y
+ CONFIG_SPI_RSPI=y
+ CONFIG_SPI_SH_MSIOF=y
+ CONFIG_SPI_SH_HSPI=y
++CONFIG_PINCTRL_RZA1=y
+ CONFIG_GPIO_EM=y
+ CONFIG_GPIO_RCAR=y
+ CONFIG_GPIO_PCF857X=y
+--
+2.7.4
