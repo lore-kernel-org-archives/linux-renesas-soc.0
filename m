@@ -1,90 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:39786 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751062AbeBIPRu (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:38710 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeBIPRL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:17:50 -0500
+        Fri, 9 Feb 2018 10:17:11 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Peter Maydell <peter.maydell@linaro.org>,
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
         Alex Williamson <alex.williamson@redhat.com>
-Cc: Auger Eric <eric.auger@redhat.com>,
-        Xiao Feng Ren <renxiaof@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
         Magnus Damm <magnus.damm@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/5] R-Car Gen3 GPIO Pass-Through Prototype (QEMU)
-Date: Fri,  9 Feb 2018 16:17:31 +0100
-Message-Id: <1518189456-2873-1-git-send-email-geert+renesas@glider.be>
+        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 2/6] vfio: Ignore real IOMMUs if CONFIG_VFIO_NOIOMMU=y
+Date: Fri,  9 Feb 2018 16:16:49 +0100
+Message-Id: <1518189413-2761-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
+References: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Allow use of the No-IOMMU mode even if a real IOMMU is present.
+This is useful in case the device is not part of an actual IOMMU group.
 
-This RFC patch series is the QEMU side of a GPIO Pass-Through prototype
-for Renesas R-Car platforms using vfio-platform.  Together with its
-counterpart for Linux, it provides direct access from a QEMU+KVM guest
-to a GPIO controller in an R-Car Gen3 SoC.  This allows the guest to
-control the LEDs on a Renesas Salvator-X(S) board.
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Question:
+  - Some devices (e.g. rcar-gpio) don't use DMA, so why do they need an
+    IOMMU group?
+  - Even devices using DMA may do so using a separate DMAC module,
+    pointed to by "dmas" DT properties (e.g. sh-sci), hence they may be
+    not part of an IOMMU group.
+  - How to know which devices do DMA?
+---
+ drivers/vfio/vfio.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-This patch series is not meant to be upstreamed as-is.  Indeed, for
-various reasons (e.g. security, as the different GPIOs on the same GPIO
-controller may control different parts of the system) access to GPIOs is
-better not implemented using Device Pass-Through, but by
-paravirtualization.  Yet, this is still a simple and valuable
-proof-of-concept, which can serve as a basis for the future development
-of Pass-Through support for more complex platform devices on R-Car Gen3
-SoCs.
-
-  - Patches 1-2 (submitted before by Eric Auger) make the vfio-platform
-    device non-abstract, incl. matching using a compatible string.
-  - Patch 3 allows dynamic sysbus devices again, without needing to
-    create device-specific vfio types for each and every new device.
-  - Patch 4 (submitted before by Xiao Feng Ren) adds support for the
-    VFIO No-IOMMU mode, which was added to Linux two years ago (in
-    v4.4).
-  - Patch 5 adds code to instantiate device nodes for Renesas R-Car Gen3
-    GPIO controllers.
-
-Several questions and TODOs are appended to the individual patches.
-
-Please see https://elinux.org/R-Car/Virtualization/VFIO for full usage
-instructions of this prototype.
-
-Thanks for your comments!
-
-Auger Eric (2):
-  vfio/platform: make the vfio-platform device non abstract
-  hw/arm/sysbus-fdt: Allow device matching with compat string
-
-Geert Uytterhoeven (2):
-  hw/arm/virt: Allow dynamic sysbus devices again
-  hw/arm/sysbus-fdt: Enable rcar-gen3-gpio dynamic instatiation
-
-Xiao Feng Ren (1):
-  vfio: No-IOMMU mode support
-
- hw/arm/sysbus-fdt.c             | 108 +++++++++++++++++++++++++++++++++++-----
- hw/arm/virt.c                   |   1 +
- hw/vfio/common.c                |  61 ++++++++++++++++++-----
- hw/vfio/platform.c              |  20 +++++++-
- include/hw/vfio/vfio-common.h   |   2 +
- include/hw/vfio/vfio-platform.h |   2 +
- 6 files changed, 166 insertions(+), 28 deletions(-)
-
+diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+index 2bc3705a99bd2f1a..7736c3fbe468a3da 100644
+--- a/drivers/vfio/vfio.c
++++ b/drivers/vfio/vfio.c
+@@ -129,9 +129,13 @@ struct iommu_group *vfio_iommu_group_get(struct device *dev)
+ 	 * bus.  We set iommudata simply to be able to identify these groups
+ 	 * as special use and for reclamation later.
+ 	 */
+-	if (group || !noiommu || iommu_present(dev->bus))
++	if (group || !noiommu)
+ 		return group;
+ 
++	if (iommu_present(dev->bus))
++		dev_warn(dev, "iommu present (%ps), ignoring\n",
++			 dev->bus->iommu_ops);
++
+ 	group = iommu_group_alloc();
+ 	if (IS_ERR(group))
+ 		return NULL;
 -- 
 2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
