@@ -1,108 +1,87 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40159 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753582AbeBFWaC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:30:02 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 4/9] ARM: dts: koelsch: use demuxer for I2C4
-Date: Tue,  6 Feb 2018 23:29:53 +0100
-Message-Id: <20180206222958.18941-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
-References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <c35dca71-fc63-7628-d483-ad690bea7ced@cogentembedded.com>
+References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com> <c35dca71-fc63-7628-d483-ad690bea7ced@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Feb 2018 08:42:10 +0100
+Message-ID: <CAMuHMdWeRBYK5f4VpfY-YCDASk8RqVy2VCQm51cyR8VUXSxfeQ@mail.gmail.com>
+Subject: Re: [PATCH 10/11] arm64: dts: renesas: initial Condor board device tree
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
+Hi Sergei,
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
+On Fri, Feb 2, 2018 at 7:46 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the initial device  tree for  the R8A77980 SoC based Condor board.
+> The board has 1 debug serial port (SCIF0); include support for it, so
+> that the serial console can work.
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOS, fixed pinmux for I2C4]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Thanks for your patch!
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 4b20db197de629..f40321a1c917e7 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -52,8 +52,10 @@
- 		serial1 = &scif1;
- 		i2c9 = &gpioi2c1;
- 		i2c10 = &gpioi2c2;
-+		i2c11 = &gpioi2c4;
- 		i2c12 = &i2cexio1;
- 		i2c13 = &i2chdmi;
-+		i2c14 = &i2cexio4;
- 	};
- 
- 	chosen {
-@@ -329,6 +331,16 @@
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-+	gpioi2c4: i2c-11 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio7 13 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio7 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
- 	/*
- 	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
- 	 * A fallback to GPIO is provided.
-@@ -437,6 +449,18 @@
- 			pagesize = <16>;
- 		};
- 	};
-+
-+	/*
-+	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio4: i2c-14 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -480,6 +504,11 @@
- 		function = "i2c2";
- 	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4_c";
-+		function = "i2c4";
-+	};
-+
- 	du_pins: du {
- 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
- 		function = "du";
-@@ -735,6 +764,11 @@
- 	clock-frequency = <100000>;
- };
- 
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
-+};
-+
- &i2c6 {
- 	status = "okay";
- 	clock-frequency = <100000>;
--- 
-2.11.0
+> --- /dev/null
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+> @@ -0,0 +1,46 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree Source for the Condor board
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Corp.
+> + * Copyright (C) 2018 Cogent Embedded, Inc.
+> + */
+> +
+> +/dts-v1/;
+> +#include "r8a77980.dtsi"
+> +
+> +/ {
+> +       model = "Renesas Condor board based on r8a77980";
+> +       compatible = "renesas,condor", "renesas,r8a77980";
+> +
+> +       aliases {
+> +               serial0 = &scif0;
+> +       };
+> +
+> +       chosen {
+> +               stdout-path = "serial0:115200n8";
+> +       };
+> +
+> +       memory@48000000 {
+> +               device_type = "memory";
+> +               /* first 128MB is reserved for secure area. */
+> +               reg = <0x0 0x48000000 0x0 0x38000000>;
+
+According to the Samsung website, the LPDDR is a 16 Gib part, i.e. 2 GiB.
+Is there any specific reason you're limiting memory to 1 GiB?
+
+> +       };
+
+With the above resolved:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
