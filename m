@@ -1,146 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:39289 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752588AbeBTPOV (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:40552 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750981AbeBIPlf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:14:21 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 14/19] ARM64: dts: r8a77965: Add SCIF device nodes
-Date: Tue, 20 Feb 2018 16:12:16 +0100
-Message-Id: <1519139541-18783-15-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 9 Feb 2018 10:41:35 -0500
+Received: by mail-lf0-f66.google.com with SMTP id i24so8656464lfc.7
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Feb 2018 07:41:35 -0800 (PST)
+Date: Fri, 9 Feb 2018 16:41:33 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] media: i2c: adv748x: Add missing CBUS page.
+Message-ID: <20180209154133.GF7666@bigcity.dyn.berto.se>
+References: <1518024886-842-1-git-send-email-kbingham@kernel.org>
+ <1518024886-842-3-git-send-email-kbingham@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518024886-842-3-git-send-email-kbingham@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SCIF[0-5] device nodes for M3-N (r8a77965) SoC.
+Hi Kieran,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for your patch,
 
----
-v1 -> v2:
-- Replace clock and power areas definition with raw numbers
-- Fix compatible strings s/r8a7796/r8a77965/
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 85 ++++++++++++++++++++++++++++---
- 1 file changed, 79 insertions(+), 6 deletions(-)
+On 2018-02-07 17:34:46 +0000, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The ADV748x has 12 pages mapped onto I2C addresses.
+> 
+> In the existing implementation only 11 are mapped correctly in the page
+> enumerations, which causes an off-by-one fault on pages above the
+> infoframe definition due to a missing 'CBUS' page.
+> 
+> This causes the address for the CEC, SDP, TXA, and TXB to be incorrectly
+> programmed during the iterations in adv748x_initialise_clients().
+> 
+> Until now this has gone un-noticed due to the fact that following the
+> creation of the clients - the device is reset and the addresses are
+> reprogrammed in manually by the call to "adv748x_write_regs(state,
+> adv748x_set_slave_address);"
+> 
+> As part of moving to dynamic i2c address allocations repair this by
+> providing the missing CBUS page definition.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index b83dafc..3cb1a33 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -335,27 +335,100 @@
- 		};
- 
- 		scif0: serial@e6e60000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE 20>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-+			       <&dmac2 0x51>, <&dmac2 0x50>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 207>;
-+			status = "disabled";
- 		};
- 
- 		scif1: serial@e6e68000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE 20>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-+			       <&dmac2 0x53>, <&dmac2 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 206>;
-+			status = "disabled";
- 		};
- 
- 		scif2: serial@e6e88000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e88000 0 64>;
-+			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 310>,
-+				 <&cpg CPG_CORE 20>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 310>;
-+			status = "disabled";
- 		};
- 
- 		scif3: serial@e6c50000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c50000 0 64>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE 20>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 204>;
-+			status = "disabled";
- 		};
- 
- 		scif4: serial@e6c40000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6c40000 0 64>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE 20>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 203>;
-+			status = "disabled";
- 		};
- 
- 		scif5: serial@e6f30000 {
--			/* placeholder */
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6f30000 0 64>;
-+			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 202>,
-+				 <&cpg CPG_CORE 20>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
-+			       <&dmac2 0x5b>, <&dmac2 0x5a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 202>;
-+			status = "disabled";
- 		};
- 
- 		avb: ethernet@e6800000 {
+I would drop the '.' from the subject line, with that fixed:
+
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/media/i2c/adv748x/adv748x-core.c | 3 +++
+>  drivers/media/i2c/adv748x/adv748x.h      | 2 ++
+>  2 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> index 71c69b816db2..6d62b817ed00 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -52,6 +52,7 @@ static const struct regmap_config adv748x_regmap_cnf[] = {
+>  	ADV748X_REGMAP_CONF("edid"),
+>  	ADV748X_REGMAP_CONF("repeater"),
+>  	ADV748X_REGMAP_CONF("infoframe"),
+> +	ADV748X_REGMAP_CONF("cbus"),
+>  	ADV748X_REGMAP_CONF("cec"),
+>  	ADV748X_REGMAP_CONF("sdp"),
+>  	ADV748X_REGMAP_CONF("txa"),
+> @@ -91,6 +92,7 @@ static int adv748x_i2c_addresses[ADV748X_PAGE_MAX] = {
+>  	ADV748X_I2C_EDID,
+>  	ADV748X_I2C_REPEATER,
+>  	ADV748X_I2C_INFOFRAME,
+> +	ADV748X_I2C_CBUS,
+>  	ADV748X_I2C_CEC,
+>  	ADV748X_I2C_SDP,
+>  	ADV748X_I2C_TXB,
+> @@ -354,6 +356,7 @@ static const struct adv748x_reg_value adv748x_set_slave_address[] = {
+>  	{ADV748X_PAGE_IO, 0xf6, ADV748X_I2C_EDID << 1},
+>  	{ADV748X_PAGE_IO, 0xf7, ADV748X_I2C_REPEATER << 1},
+>  	{ADV748X_PAGE_IO, 0xf8, ADV748X_I2C_INFOFRAME << 1},
+> +	{ADV748X_PAGE_IO, 0xf9, ADV748X_I2C_CBUS << 1},
+>  	{ADV748X_PAGE_IO, 0xfa, ADV748X_I2C_CEC << 1},
+>  	{ADV748X_PAGE_IO, 0xfb, ADV748X_I2C_SDP << 1},
+>  	{ADV748X_PAGE_IO, 0xfc, ADV748X_I2C_TXB << 1},
+> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+> index 6789e2f3bc8c..725662edc4b8 100644
+> --- a/drivers/media/i2c/adv748x/adv748x.h
+> +++ b/drivers/media/i2c/adv748x/adv748x.h
+> @@ -35,6 +35,7 @@
+>  #define ADV748X_I2C_EDID		0x36	/* EDID Map */
+>  #define ADV748X_I2C_REPEATER		0x32	/* HDMI RX Repeater Map */
+>  #define ADV748X_I2C_INFOFRAME		0x31	/* HDMI RX InfoFrame Map */
+> +#define ADV748X_I2C_CBUS		0x30	/* CBUS MHL Map */
+>  #define ADV748X_I2C_CEC			0x41	/* CEC Map */
+>  #define ADV748X_I2C_SDP			0x79	/* SDP Map */
+>  #define ADV748X_I2C_TXB			0x48	/* CSI-TXB Map */
+> @@ -48,6 +49,7 @@ enum adv748x_page {
+>  	ADV748X_PAGE_EDID,
+>  	ADV748X_PAGE_REPEATER,
+>  	ADV748X_PAGE_INFOFRAME,
+> +	ADV748X_PAGE_CBUS,
+>  	ADV748X_PAGE_CEC,
+>  	ADV748X_PAGE_SDP,
+>  	ADV748X_PAGE_TXB,
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
