@@ -1,103 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:55109 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751315AbeBLRpn (ORCPT
+Received: from mx1.redhat.com ([209.132.183.28]:32992 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751126AbeBIRGj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:45:43 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 9 Feb 2018 12:06:39 -0500
+Date: Fri, 9 Feb 2018 10:06:34 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Auger Eric <eric.auger@redhat.com>,
+        Xiao Feng Ren <renxiaof@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 10/26] ARM: shmobile: rcar-gen2: Add watchdog support
-Date: Mon, 12 Feb 2018 17:44:19 +0000
-Message-Id: <1518457475-4480-11-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        qemu-arm <qemu-arm@nongnu.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH/RFC 4/5] vfio: No-IOMMU mode support
+Message-ID: <20180209100634.7a908eb9@w520.home>
+In-Reply-To: <CAMuHMdWaoutP+oFL0Vtw+Z-986_=3wLAu+58N9ZT7t+uZb1ycA@mail.gmail.com>
+References: <1518189456-2873-1-git-send-email-geert+renesas@glider.be>
+        <1518189456-2873-5-git-send-email-geert+renesas@glider.be>
+        <20180209085024.004b6f9e@w520.home>
+        <CAMuHMdWaoutP+oFL0Vtw+Z-986_=3wLAu+58N9ZT7t+uZb1ycA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds watchdog support by installing shmobile_boot_vector_gen2
-to ICRAM1 when enough memory is available, in which case we also keep a
-copy of MPIDR to complete the reset vector logic.
+On Fri, 9 Feb 2018 17:06:34 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v4->v5:
-* reworked comment style
+> Hi Alex,
+> 
+> On Fri, Feb 9, 2018 at 4:50 PM, Alex Williamson
+> <alex.williamson@redhat.com> wrote:
+> > On Fri,  9 Feb 2018 16:17:35 +0100
+> > Geert Uytterhoeven <geert+renesas@glider.be> wrote:  
+> >> From: Xiao Feng Ren <renxiaof@linux.vnet.ibm.com>
+> >>
+> >> Add qemu support for the newly introduced VFIO No-IOMMU driver.
+> >>
+> >> We need to add special handling for:
+> >> - Group character device is /dev/vfio/noiommu-$GROUP.
+> >> - No-IOMMU does not rely on a memory listener.
+> >> - No IOMMU will be set for its group, so no need to call
+> >>   vfio_kvm_device_add_group.
+> >>
+> >> Signed-off-by: Xiao Feng Ren <renxiaof@linux.vnet.ibm.com>
+> >> [geert: Rebase]
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >>  hw/vfio/common.c              | 61 ++++++++++++++++++++++++++++++++++---------
+> >>  include/hw/vfio/vfio-common.h |  2 ++
+> >>  2 files changed, 50 insertions(+), 13 deletions(-)  
+> >
+> > NAK.  I'm opposed to no-iommu support in QEMU in general, but accepting
+> > vfio devices with no-iommu (which provide no DMA translation!!!)
+> > transparently as if they might actually work like a regular vfio device
+> > is absolutely unacceptable.  Without DMA translation and isolation, you
+> > might want to think about another interface, I'm not keen on the idea  
+> 
+> What if the device cannot do DMA?
+> 
+> There are other devices that cannot do DMA, but that can be useful to
+> access from a guest in an embedded system.
+> E.g. smart ADC monitor blocks that monitor and average several ADCs in an
+> automotive environment (drivers/iio/adc/rcar-gyroadc.c).
+> 
+> Should all such devices be paravirtualized?
 
- arch/arm/mach-shmobile/platsmp-apmu.c |  1 +
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 15 ++++++++++++---
- 2 files changed, 13 insertions(+), 3 deletions(-)
+How do we know that a device is not capable of DMA?  The moment we add
+no-iommu support generically to QEMU, I get to deal with a swarm of
+people trying to use it to assign DMA capable PCI devices to VMs and
+failing miserably.  We added no-iommu support because the UIO PCI driver
+was under pressure to add support for MSI/X interrupts and we figured
+we could at least taint the kernel an give people a path to a more
+secure setup with an IOMMU by allowing use of the vfio device
+interface.  For PCI, this makes some sense because PCI has architected
+interrupts and config space and standard layouts.  What's the value of
+vfio over UIO for ad-hoc, non-DMA platform devices?  UIO is intended for
+non-DMA devices.  vfio is intended for IOMMU protected, DMA capable
+devices.  vfio no-IOMMU is a band-aide that hopefully goes away
+eventually.
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 4422b61..ba732ef 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -191,6 +191,7 @@ static void __init shmobile_smp_apmu_setup_boot(void)
- {
- 	/* install boot code shared by all CPUs */
- 	shmobile_boot_fn = __pa_symbol(shmobile_smp_boot);
-+	shmobile_boot_fn_gen2 = shmobile_boot_fn;
- }
- 
- void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index e5f215c..5a798b4 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -17,6 +17,7 @@
- #include <linux/smp.h>
- #include <linux/soc/renesas/rcar-sysc.h>
- #include <asm/io.h>
-+#include <asm/cputype.h>
- #include "common.h"
- #include "rcar-gen2.h"
- 
-@@ -37,7 +38,6 @@
- #define CA7RESCNT_CODE	0x5a5a0000
- #define CA7RESCNT_CPUS	0xf		/* CPU0-3 */
- 
--
- /* On-chip RAM */
- #define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
- 
-@@ -119,8 +119,17 @@ void __init rcar_gen2_pm_init(void)
- 	p = ioremap(res.start, resource_size(&res));
- 	if (!p)
- 		return;
--
--	memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
-+	/*
-+	 * install the reset vector, use the largest version if we have enough
-+	 * memory available
-+	 */
-+	if (resource_size(&res) >= shmobile_boot_size_gen2) {
-+		shmobile_boot_cpu_gen2 = read_cpuid_mpidr();
-+		memcpy_toio(p, shmobile_boot_vector_gen2,
-+			    shmobile_boot_size_gen2);
-+	} else {
-+		memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
-+	}
- 	iounmap(p);
- 
- 	/* setup reset vectors */
--- 
-2.7.4
+> > of corrupting vfio support in order to blink some LEDs.  Thanks,  
+> 
+> This GPIO+LED prototype is just a proof-of-concept. There's no plan to
+> upstream it.
+
+If vfio with no-IOMMU is to be used, it must not enable users to
+casually assign DMA capable devices.  Certainly any PCI/e device needs
+to be assumed to be DMA capable.  I don't know how you tell with
+platform devices since there's no standard interface.  Thanks,
+
+Alex
