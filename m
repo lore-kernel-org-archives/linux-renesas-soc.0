@@ -1,69 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42567 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751907AbeBBSsP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41240 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750789AbeBIJSw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 13:48:15 -0500
-Received: by mail-lf0-f68.google.com with SMTP id q17so32896031lfa.9
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Feb 2018 10:48:14 -0800 (PST)
-Subject: [PATCH 11/11] arm64: dts: renesas: condor: add EtherAVB support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
+        Fri, 9 Feb 2018 04:18:52 -0500
+Date: Fri, 9 Feb 2018 10:18:46 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Message-ID: <605dfcae-6866-e57f-1bae-d052cfcbd2f6@cogentembedded.com>
-Date: Fri, 2 Feb 2018 21:48:12 +0300
+        linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 09/11] DT: arm: shmobile: document Condor board bindings
+Message-ID: <20180209091846.cj62onabse2ag47s@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV+36Jff6ui1B_90GvPhTb7Xu7+_CaX44EcXxiLi3c=aQ@mail.gmail.com>
+ <20180208201306.peirumr6hvu22uyt@rob-hp-laptop>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Condor board dependent part of the EtherAVB device node.
+On Thu, Feb 08, 2018 at 02:13:06PM -0600, Rob Herring wrote:
+> On Fri, Feb 02, 2018 at 09:45:08PM +0300, Sergei Shtylyov wrote:
+> > Document the Condor device tree bindings, listing it as a supported board.
+> > 
+> > This allows to use checkpatch.pl to validate .dts files referring to the
+> > Condor board.
+> > 
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > ---
+> >  Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+> >  1 file changed, 2 insertions(+)
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
 
-Based  on the original (and large) patch by Vladimir Barinov.
+On Fri, Feb 09, 2018 at 08:27:34AM +0100, Geert Uytterhoeven wrote:
+> On Fri, Feb 2, 2018 at 7:45 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Document the Condor device tree bindings, listing it as a supported board.
+> >
+> > This allows to use checkpatch.pl to validate .dts files referring to the
+> > Condor board.
+> >
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
----
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+Thanks, applied with the following subject:
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -15,6 +15,7 @@
- 
- 	aliases {
- 		serial0 = &scif0;
-+		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -28,6 +29,16 @@
- 	};
- };
- 
-+&avb {
-+	phy-handle = <&phy0>;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
+dt-bindings: arm: document Condor board bindings
