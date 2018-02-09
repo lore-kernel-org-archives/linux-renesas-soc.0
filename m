@@ -1,78 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:39032 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750729AbeBGXQy (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:52460 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752089AbeBIPRM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 18:16:54 -0500
-Date: Thu, 8 Feb 2018 00:16:52 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 9 Feb 2018 10:17:12 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC v4 16/26] clk: renesas: r8a7745: Add rwdt clock
-Message-ID: <20180207231652.4rr5xuazarh7lwml@katana>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-17-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="b6h7wdwfbvkfq6zs"
-Content-Disposition: inline
-In-Reply-To: <1517423070-24236-17-git-send-email-fabrizio.castro@bp.renesas.com>
+        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 5/6] gpio: rcar: Add virtualization workarounds
+Date: Fri,  9 Feb 2018 16:16:52 +0100
+Message-Id: <1518189413-2761-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
+References: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Allow to enable the driver if virtualization is enabled.
 
---b6h7wdwfbvkfq6zs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Handle the absence of clocks and interrupts, to support guests that
+don't provide these yet.
 
-On Wed, Jan 31, 2018 at 06:24:20PM +0000, Fabrizio Castro wrote:
-> Add "rwdt" clock to r8a7745_mod_clks. Also, since we may need to access
-> the watchdog registers at any time, declare the clock as critical.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be dropped once clocks and interrupts are supported on the guest.
+---
+ drivers/gpio/Kconfig     |  2 +-
+ drivers/gpio/gpio-rcar.c | 28 ++++++++++++----------------
+ 2 files changed, 13 insertions(+), 17 deletions(-)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---b6h7wdwfbvkfq6zs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7iOQACgkQFA3kzBSg
-Kbav1Q/+Pq0nxXVmD8ouZLqlkab4XbW/KsPGA2K1LZWPYGmS+/b3d5f2DnL6ZAFJ
-wrFlPlhj+TR6e6xXb5C/Ycih13rFXrmkV/getxWSnizDWRFGE6/4vOFbwLvAh0Uo
-dydYbx6nq8FvQOLttz3Ag4TFBeYd6Ck0Jr62ak/Ggu4SpGVxLYtfyvs0/+j/rm/a
-dwhQ8OU83jqeO/ccVlWxtSmNAuw7/FXWjCJprD0IsiXSPr3d67cFcU6Pwg7+y8zj
-thQjg2gIEbTlrA+V1UOUgQ4RR/ZvwjZZpJjEfHG8vZ3sYZOmffokEWQ54q0PM9Rw
-bckDaSEAS4840D8xgBE2ow+g+n1+zifz3KYuM2UdJL0emLB8p7ttlnHB9zKhmfYa
-L6HY8DYy7WeGGlMpzILMbEtZBRnU7w91sVn2oIXzIzTNWjyG0U5I+F3XZj/XMNnv
-uflv+/eknWVVCye0fFXXREsHFx51YfXjty+gpFRlNAcWY5dDROCyuYUZIsGJagqK
-mM/XMbAiLlm1ueZvzI1poQnB6zKR/C0Hy5Lw7PFKEDXGFUiKWa5UZQdPMbn8umJF
-v+zo3t2lQL4bTJAvEQf7LFkoz7Nehy7MECTGa+Kugud4ctveB6LL0ggmJme3LEnf
-lREj8bnnql7e9zE/KmCuQLWVvarET6sAcSpFhMM2WfID1QuMydA=
-=5N09
------END PGP SIGNATURE-----
-
---b6h7wdwfbvkfq6zs--
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index d6a8e851ad13b8e6..50eeaa3bb0749b84 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -386,7 +386,7 @@ config GPIO_PXA
+ 
+ config GPIO_RCAR
+ 	tristate "Renesas R-Car GPIO"
+-	depends on ARCH_RENESAS || COMPILE_TEST
++	depends on ARCH_RENESAS || VIRTIO_MMIO || COMPILE_TEST
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Say yes here to support GPIO on Renesas R-Car SoCs.
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index e76de57dd617d7e2..bc205b7fbb30e892 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -442,22 +442,16 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 
+ 	p->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(p->clk)) {
+-		if (p->needs_clk) {
+-			dev_err(dev, "unable to get clock\n");
+-			ret = PTR_ERR(p->clk);
+-			goto err0;
+-		}
++		if (p->needs_clk)
++			dev_warn(dev, "missing clock, ignoring\n");
+ 		p->clk = NULL;
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+ 
+ 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!irq) {
+-		dev_err(dev, "missing IRQ\n");
+-		ret = -EINVAL;
+-		goto err0;
+-	}
++	if (!irq)
++		dev_warn(dev, "missing IRQ, ignoring\n");
+ 
+ 	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	p->base = devm_ioremap_resource(dev, io);
+@@ -502,12 +496,14 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 		goto err1;
+ 	}
+ 
+-	p->irq_parent = irq->start;
+-	if (devm_request_irq(dev, irq->start, gpio_rcar_irq_handler,
+-			     IRQF_SHARED, name, p)) {
+-		dev_err(dev, "failed to request IRQ\n");
+-		ret = -ENOENT;
+-		goto err1;
++	if (irq) {
++		p->irq_parent = irq->start;
++		if (devm_request_irq(dev, irq->start, gpio_rcar_irq_handler,
++				     IRQF_SHARED, name, p)) {
++			dev_err(dev, "failed to request IRQ\n");
++			ret = -ENOENT;
++			goto err1;
++		}
+ 	}
+ 
+ 	dev_info(dev, "driving %d GPIOs\n", npins);
+-- 
+2.7.4
