@@ -1,47 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:36742 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeBZSDs (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:33022 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934652AbeBLNzZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 13:03:48 -0500
+        Mon, 12 Feb 2018 08:55:25 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] dt-bindings: arm: Document SoC compatible value for Armadillo-800 EVA
-Date: Mon, 26 Feb 2018 19:03:42 +0100
-Message-Id: <1519668225-12548-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
-References: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v3 2/3] irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
+Date: Mon, 12 Feb 2018 14:55:12 +0100
+Message-Id: <1518443713-1835-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The compatible property of the root node in a DTS for Atmark Techno
-Armadillo-800 EVA should include the compatible value for the R-Mobile
-A1 SoC, too.
+Since commit 6f46aedb9c85873b ("irqchip: renesas-irqc: Add wake-up
+support"), when an IRQ is used for wakeup, the INTC
+block's module clock is manually kept running during system suspend, to
+make sure the device stays active.
 
-Fixes: d2c2a0776899ba2d ("ARM: shmobile: Add platform device tree bindings documentation")
+However, this explicit clock handling is merely a workaround for a
+failure to properly communicate wakeup information to the device core.
+
+Instead, set the device's power.wakeup_path field, to indicate this
+device is part of the wakeup path.  Depending on the PM Domain's
+active_wakeup configuration, the genpd core code will keep the device
+enabled (and the clock running) during system suspend when needed.
+This allows for the removal of all explicit clock handling code from the
+driver.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3:
+  - Revert to v1, as WAKEUP_PATH didn't make it,
+  - Use an atomic_t instead of a boolean flag, as the boolean tracked
+    only the status of the last configured GPIO, while multiple
+    interrupt pins on the same interrupt controller may be involved with
+    wake-up,
+  - Use new helper device_set_wakeup_path(),
+  - Drop checks for CONFIG_PM_SLEEP, as device_set_wakeup_path() is
+    always available, unlike dev_pm_info.wakeup_path,
+  - Mark irqc_suspend() __maybe_unused,
+  - Drop RFC state, now the dependencies are upstream.
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 63edc11e83ef287f..ded2cd3b5f4df0c8 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -56,7 +56,7 @@ Boards:
-   - APE6-EVM
-     compatible = "renesas,ape6evm", "renesas,r8a73a4"
-   - Atmark Techno Armadillo-800 EVA
--    compatible = "renesas,armadillo800eva"
-+    compatible = "renesas,armadillo800eva", "renesas,r8a7740"
-   - Blanche (RTP0RC7792SEB00010S)
-     compatible = "renesas,blanche", "renesas,r8a7792"
-   - BOCK-W
+v2 (sent by Ulf Hanson):
+  - Convert to use the WAKEUP_PATH driver PM flag (Ulf).
+---
+ drivers/irqchip/irq-renesas-irqc.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
+index 52304b139aa46a60..a4f11124024dcf32 100644
+--- a/drivers/irqchip/irq-renesas-irqc.c
++++ b/drivers/irqchip/irq-renesas-irqc.c
+@@ -17,7 +17,6 @@
+  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
+-#include <linux/clk.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+@@ -64,7 +63,7 @@ struct irqc_priv {
+ 	struct platform_device *pdev;
+ 	struct irq_chip_generic *gc;
+ 	struct irq_domain *irq_domain;
+-	struct clk *clk;
++	atomic_t wakeup_path;
+ };
+ 
+ static struct irqc_priv *irq_data_to_priv(struct irq_data *data)
+@@ -111,14 +110,10 @@ static int irqc_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	int hw_irq = irqd_to_hwirq(d);
+ 
+ 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
+-
+-	if (!p->clk)
+-		return 0;
+-
+ 	if (on)
+-		clk_enable(p->clk);
++		atomic_inc(&p->wakeup_path);
+ 	else
+-		clk_disable(p->clk);
++		atomic_dec(&p->wakeup_path);
+ 
+ 	return 0;
+ }
+@@ -159,12 +154,6 @@ static int irqc_probe(struct platform_device *pdev)
+ 	p->pdev = pdev;
+ 	platform_set_drvdata(pdev, p);
+ 
+-	p->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(p->clk)) {
+-		dev_warn(&pdev->dev, "unable to get clock\n");
+-		p->clk = NULL;
+-	}
+-
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+@@ -276,6 +265,18 @@ static int irqc_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int __maybe_unused irqc_suspend(struct device *dev)
++{
++	struct irqc_priv *p = dev_get_drvdata(dev);
++
++	if (atomic_read(&p->wakeup_path))
++		device_set_wakeup_path(dev);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(irqc_pm_ops, irqc_suspend, NULL);
++
+ static const struct of_device_id irqc_dt_ids[] = {
+ 	{ .compatible = "renesas,irqc", },
+ 	{},
+@@ -288,6 +289,7 @@ static struct platform_driver irqc_device_driver = {
+ 	.driver		= {
+ 		.name	= "renesas_irqc",
+ 		.of_match_table	= irqc_dt_ids,
++		.pm	= &irqc_pm_ops,
+ 	}
+ };
+ 
 -- 
 2.7.4
