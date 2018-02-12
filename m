@@ -1,31 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:58940 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932717AbeBLWIN (ORCPT
+        id S1752370AbeBLSMN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:08:13 -0500
+        Mon, 12 Feb 2018 13:12:13 -0500
 From: Kieran Bingham <kbingham@kernel.org>
 To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        John Stultz <john.stultz@linaro.org>,
         Hans Verkuil <hans.verkuil@cisco.com>,
+        John Stultz <john.stultz@linaro.org>,
         Mark Brown <broonie@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS)
-Subject: [PATCH v3 2/5] dt-bindings: adv7511: Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 22:07:50 +0000
-Message-Id: <1518473273-6333-3-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
-References: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
+Subject: [PATCH v2 2/5] dt-bindings: adv7511: Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 18:11:54 +0000
+Message-Id: <1518459117-16733-3-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
+References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -51,14 +49,11 @@ v2:
  - Minor reword to commit message to account for DT only change
  - Collected Robs RB tag
 
-v3:
- - Split map register addresses into individual declarations.
-
  .../devicetree/bindings/display/bridge/adi,adv7511.txt | 18 ++++++++++++++++--
  1 file changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-index 0047b1394c70..3f85c351dd39 100644
+index 0047b1394c70..f1b5466b1ca7 100644
 --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
 +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
 @@ -14,7 +14,13 @@ Required properties:
@@ -95,7 +90,7 @@ index 0047b1394c70..3f85c351dd39 100644
 +		 * The EDID page will be accessible on address 0x66 on the i2c
 +		 * bus. All other maps continue to use their default addresses.
 +		 */
-+		reg = <0x39>, <0x66>;
++		reg = <0x39 0x66>;
 +		reg-names = "main", "edid";
  		interrupt-parent = <&gpio3>;
  		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
