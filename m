@@ -1,29 +1,25 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53475 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161053AbeBOTRN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 14:17:13 -0500
-Date: Thu, 15 Feb 2018 20:17:09 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 Subject: Re: [PATCH v2 1/5] arm64: dts: renesass: r8a77970: add FCPVD support
-Message-ID: <20180215191708.6hbgw3senigbzkzy@verge.net.au>
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+ <niklas.soderlund+renesas@ragnatech.se>, Simon Horman <horms@verge.net.au>,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+ Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 References: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
  <20180208154720.5766-2-niklas.soderlund+renesas@ragnatech.se>
+Reply-To: kieran.bingham@ideasonboard.com
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <87f29b6e-4e06-69bd-e09a-376af842f28a@ideasonboard.com>
+Date: Mon, 12 Feb 2018 12:56:29 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <20180208154720.5766-2-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 08, 2018 at 04:47:16PM +0100, Niklas Söderlund wrote:
+Hi Niklas, and Sergei,
+
+On 08/02/18 15:47, Niklas Söderlund wrote:
 > From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > 
 > Describe FCPVD0 in the R8A77970 device tree; it will be used by VSPD0 in
@@ -35,6 +31,11 @@ On Thu, Feb 08, 2018 at 04:47:16PM +0100, Niklas Söderlund wrote:
 > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+Register address and CPG verified:
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 > ---
 >  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 8 ++++++++
 >  1 file changed, 8 insertions(+)
@@ -54,15 +55,8 @@ On Thu, Feb 08, 2018 at 04:47:16PM +0100, Niklas Söderlund wrote:
 > +			clocks = <&cpg CPG_MOD 603>;
 > +			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
 > +			resets = <&cpg 603>;
-
-Any reason the following is omitted?
-
-			iommus = <&ipmmu_vi0 8>;
-
 > +		};
 >  	};
 >  
 >  	timer {
-> -- 
-> 2.16.1
 > 
