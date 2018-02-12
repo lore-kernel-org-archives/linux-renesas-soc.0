@@ -1,93 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44304 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753961AbeBLMbz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60426 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935755AbeBLN4m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:31:55 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: bcm: cygnus: replace platform to component" to the asoc tree
-In-Reply-To: <87mv7t5eyn.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1elDGy-0003NC-CX@debutante>
-Date: Mon, 12 Feb 2018 12:31:52 +0000
+        Mon, 12 Feb 2018 08:56:42 -0500
+Date: Mon, 12 Feb 2018 14:56:37 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: shmobile: Enable RZA1 pin controller
+Message-ID: <20180212135619.vymu7i2r6eriltxh@verge.net.au>
+References: <1518197658-30806-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518197658-30806-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Fri, Feb 09, 2018 at 06:34:18PM +0100, Jacopo Mondi wrote:
+> Enable PINCTRL_RZA1 option in shmobile_defconfig
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+> Hi Simon,
+>   this fixes the issue you reported on Genmai when applying shmobile_defconfig.
 
-   ASoC: bcm: cygnus: replace platform to component
+Thanks!
 
-has been applied to the asoc tree at
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 540b925af4c0456adf220dea991d91bf05ad77c0 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 29 Jan 2018 02:42:37 +0000
-Subject: [PATCH] ASoC: bcm: cygnus: replace platform to component
-
-Now platform can be replaced to component, let's do it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/bcm/cygnus-pcm.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/bcm/cygnus-pcm.c b/sound/soc/bcm/cygnus-pcm.c
-index d616e096462e..123ecf5479d7 100644
---- a/sound/soc/bcm/cygnus-pcm.c
-+++ b/sound/soc/bcm/cygnus-pcm.c
-@@ -820,7 +820,7 @@ static int cygnus_dma_new(struct snd_soc_pcm_runtime *rtd)
- 	return 0;
- }
- 
--static struct snd_soc_platform_driver cygnus_soc_platform = {
-+static struct snd_soc_component_driver cygnus_soc_platform = {
- 	.ops		= &cygnus_pcm_ops,
- 	.pcm_new	= cygnus_dma_new,
- 	.pcm_free	= cygnus_dma_free_dma_buffers,
-@@ -840,7 +840,8 @@ int cygnus_soc_platform_register(struct device *dev,
- 		return rc;
- 	}
- 
--	rc = snd_soc_register_platform(dev, &cygnus_soc_platform);
-+	rc = devm_snd_soc_register_component(dev, &cygnus_soc_platform,
-+					     NULL, 0);
- 	if (rc) {
- 		dev_err(dev, "%s failed\n", __func__);
- 		return rc;
-@@ -851,8 +852,6 @@ int cygnus_soc_platform_register(struct device *dev,
- 
- int cygnus_soc_platform_unregister(struct device *dev)
- {
--	snd_soc_unregister_platform(dev);
--
- 	return 0;
- }
- 
--- 
-2.16.1
+I will apply this for v4.17.
