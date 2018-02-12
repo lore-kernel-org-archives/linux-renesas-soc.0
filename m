@@ -1,44 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:54760 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753977AbeBLQsF (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:34972 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753947AbeBLNmj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 11:48:05 -0500
-Date: Mon, 12 Feb 2018 11:48:04 -0500 (EST)
-Message-Id: <20180212.114804.1183742400393689708.davem@davemloft.net>
-To: geert+renesas@glider.be
-Cc: sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] sh_eth: Remove obsolete explicit clock handling for
- WoL
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1518442956-32115-1-git-send-email-geert+renesas@glider.be>
-References: <1518442956-32115-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+        Mon, 12 Feb 2018 08:42:39 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "David S . Miller" <davem@davemloft.net>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] sh_eth: Remove obsolete explicit clock handling for WoL
+Date: Mon, 12 Feb 2018 14:42:36 +0100
+Message-Id: <1518442956-32115-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Mon, 12 Feb 2018 14:42:36 +0100
+Currently, if Wake-on-LAN is enabled, the SH-ETH device's module clock
+is manually kept running during system suspend, to make sure the device
+stays active.
 
-> Currently, if Wake-on-LAN is enabled, the SH-ETH device's module clock
-> is manually kept running during system suspend, to make sure the device
-> stays active.
-> 
-> Since commits 91c719f5ec6671f7 ("soc: renesas: rcar-sysc: Keep wakeup
-> sources active during system suspend") and 744dddcae84441b1 ("clk:
-> renesas: mstp: Keep wakeup sources active during system suspend"), this
-> workaround is no longer needed.  Hence remove all explicit clock
-> handling to keep the device active.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> ---
-> v2:
->   - Add Reviewed-by,
->   - Drop RFC state, now the dependencies are upstream.
+Since commits 91c719f5ec6671f7 ("soc: renesas: rcar-sysc: Keep wakeup
+sources active during system suspend") and 744dddcae84441b1 ("clk:
+renesas: mstp: Keep wakeup sources active during system suspend"), this
+workaround is no longer needed.  Hence remove all explicit clock
+handling to keep the device active.
 
-Applied.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+v2:
+  - Add Reviewed-by,
+  - Drop RFC state, now the dependencies are upstream.
+---
+ drivers/net/ethernet/renesas/sh_eth.c | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index a197e11f3a564470..92dcf8717fc6e7bc 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -40,7 +40,6 @@
+ #include <linux/slab.h>
+ #include <linux/ethtool.h>
+ #include <linux/if_vlan.h>
+-#include <linux/clk.h>
+ #include <linux/sh_eth.h>
+ #include <linux/of_mdio.h>
+ 
+@@ -2304,7 +2303,7 @@ static void sh_eth_get_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
+ 	wol->supported = 0;
+ 	wol->wolopts = 0;
+ 
+-	if (mdp->cd->magic && mdp->clk) {
++	if (mdp->cd->magic) {
+ 		wol->supported = WAKE_MAGIC;
+ 		wol->wolopts = mdp->wol_enabled ? WAKE_MAGIC : 0;
+ 	}
+@@ -2314,7 +2313,7 @@ static int sh_eth_set_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
+ {
+ 	struct sh_eth_private *mdp = netdev_priv(ndev);
+ 
+-	if (!mdp->cd->magic || !mdp->clk || wol->wolopts & ~WAKE_MAGIC)
++	if (!mdp->cd->magic || wol->wolopts & ~WAKE_MAGIC)
+ 		return -EOPNOTSUPP;
+ 
+ 	mdp->wol_enabled = !!(wol->wolopts & WAKE_MAGIC);
+@@ -3153,11 +3152,6 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+ 		goto out_release;
+ 	}
+ 
+-	/* Get clock, if not found that's OK but Wake-On-Lan is unavailable */
+-	mdp->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(mdp->clk))
+-		mdp->clk = NULL;
+-
+ 	ndev->base_addr = res->start;
+ 
+ 	spin_lock_init(&mdp->lock);
+@@ -3278,7 +3272,7 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto out_napi_del;
+ 
+-	if (mdp->cd->magic && mdp->clk)
++	if (mdp->cd->magic)
+ 		device_set_wakeup_capable(&pdev->dev, 1);
+ 
+ 	/* print device information */
+@@ -3331,9 +3325,6 @@ static int sh_eth_wol_setup(struct net_device *ndev)
+ 	/* Enable MagicPacket */
+ 	sh_eth_modify(ndev, ECMR, ECMR_MPDE, ECMR_MPDE);
+ 
+-	/* Increased clock usage so device won't be suspended */
+-	clk_enable(mdp->clk);
+-
+ 	return enable_irq_wake(ndev->irq);
+ }
+ 
+@@ -3359,9 +3350,6 @@ static int sh_eth_wol_restore(struct net_device *ndev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	/* Restore clock usage count */
+-	clk_disable(mdp->clk);
+-
+ 	return disable_irq_wake(ndev->irq);
+ }
+ 
+-- 
+2.7.4
