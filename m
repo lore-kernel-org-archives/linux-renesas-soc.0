@@ -1,40 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39725 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034268AbeBPOZr (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:46033 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932288AbeBLRq2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:25:47 -0500
-Received: by mail-wm0-f66.google.com with SMTP id b21so3437005wme.4
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 06:25:46 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: laurent.pinchart@ideasonboard.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/3] pinctrl: sh-pfc: add HDMI pins
-Date: Fri, 16 Feb 2018 15:25:39 +0100
-Message-Id: <1518791142-14054-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 12 Feb 2018 12:46:28 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 18/26] clk: renesas: r8a7791/r8a7793: Add rwdt clock
+Date: Mon, 12 Feb 2018 17:44:27 +0000
+Message-Id: <1518457475-4480-19-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Add "rwdt" clock to r8a7791_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-Straight from the BSP, HDMI pins for r8a7795{,-es1} and r8a7796. Magic
-numbers verified according to "pinfunction" document revisions 0.54 (M3-W)
-and 0.553 (H3).
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v4->v5:
+* no change
 
-CU
-Uli
+ drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-Takeshi Kihara (3):
-  pinctrl: sh-pfc: r8a7795: Add HDMI pins, groups and functions
-  pinctrl: sh-pfc: r8a7795-es1: Add HDMI pins, groups and functions
-  pinctrl: sh-pfc: r8a7796: Add HDMI pins, groups and functions
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 30 +++++++++++++++++++++++++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 28 ++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 15 +++++++++++++++
- 3 files changed, 72 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
+index c0b51f9..820b220 100644
+--- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
+@@ -128,6 +128,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7791_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7791_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7791_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7791_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7791_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7791_CLK_ZS),
+ 	DEF_MOD("audio-dmac1",		 501,	R8A7791_CLK_HP),
+@@ -209,6 +210,7 @@ static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
+ };
+ 
+ static const unsigned int r8a7791_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
+ };
+ 
 -- 
 2.7.4
