@@ -1,137 +1,191 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36359 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032091AbeBOADp (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:36441 "EHLO
+        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932231AbeBLXB4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:03:45 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: [PATCH v3 00/12] R-Car DU: Convert LVDS code to bridge driver
-Date: Thu, 15 Feb 2018 02:04:03 +0200
-Message-Id: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 12 Feb 2018 18:01:56 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 0/2] rcar-csi2: add Renesas R-Car MIPI CSI-2
+Date: Tue, 13 Feb 2018 00:01:30 +0100
+Message-Id: <20180212230132.5402-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi,
 
-This patch series addresses a design mistake that dates back from the initial
-DU support. Support for the LVDS encoders, which are IP cores separate from
-the DU, was bundled in the DU driver. Worse, both the DU and LVDS were
-described through a single DT node.
+This is the latest incarnation of R-Car MIPI CSI-2 receiver driver. It's
+based on top of the media-tree and are tested on Renesas Salvator-X
+together with adv7482 and the out-of-tree patches for rcar-vin and to 
+add support for Gen3 VIN.
 
-To fix the, patches 01/12 and 02/12 define new DT bindings for the LVDS
-encoders, and deprecate their description inside the DU bindings. To retain
-backward compatibility with existing DT, patch 03/12 then patches the device
-tree at runtime to convert the legacy bindings to the new ones.
+I hope this is the last incarnation of this patch-set, I do think it is
+ready for upstream consumption :-)
 
-With the DT side addressed, patch 04/12 then converts the LVDS support code to
-a separate bridge driver. After a small fix to the Porter board device tree in
-patch 05/12, patches 06/12 to 12/12 then update all the device tree sources to
-the new DU and LVDS encoders bindings.
+* Changes since v12
+- Fixed spelling mistakes in commit messages and documentation patch, 
+  thanks Laurent.
+- Mark endpoints in port 1 as optional as it is allowed to not connect a 
+  VIN to the CSI-2 and instead have it only use its parallel input 
+  source (for those VIN that have one).
+- Added Ack from Sakari, thanks!
+- Media bus codes are u32 not unsigned int.
+- Ignore error check for v4l2_subdev_call(sd, video, s_stream, 0)
+- Do not set subdev host data as it's not used, 
+  v4l2_set_subdev_hostdata().
+- Fixed spelling errors in commit message.
+- Add SPDX header
+- Rename badly named variable tmp to vcdt_part.
+- Cache subdevice in bound callback instead of looking it up in the 
+  media graph. By doing this rcar_csi2_sd_info() can be removed.
+- Print unsigned using %u not %d.
+- Call pm_runtime_enable() before calling v4l2_async_register_subdev().
+- Dropped of_match_ptr() as OF is required.
 
-I decided to go for live DT patching in patch 03/12 because implementing
-support for both the legacy and new bindings in the driver would have been
-very intrusive, and prevented further cleanups. This version relies more
-heavily on overlays to avoid touching the internals of the OF core compared to
-v2, even if manual fixes to the device tree are still needed.
+* Changes since v11
+- Added missing call to v4l2_async_notifier_unregister().
+- Fixed missing reg popery in bindings documentation.
+- Add Rob's ack to 01/02.
+- Dropped 'media:' prefix from patch subjects as it seems they are added
+  first when a patch is picked up by the maintainer.
+- Fixed typo in comment enpoint -> endpoint, thanks Hans.
+- Added Hans Reviewed-by to driver.
 
-There were a few shortcomings in the OF API that I worked around with local
-code in the driver. If anyone is interested in performing similar live DT
-patching I think we could move some of the code to the OF core. I'm thinking
-in particular about the rcar_du_of_find_node_by_path() function that resembles
-of_find_node_by_path() but with a configurable base node, and about the
-rcar_du_of_add_property() function that adds a property to an existing DT
-node. Rob, Frank, should I submit patches ? Any advice ?
+* Changes since v10
+- Renamed Documentation/devicetree/bindings/media/rcar-csi2.txt to
+  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+- Add extra newline in rcar_csi2_code_to_fmt()
+- Use locally stored format information instead of reading it from the
+  remote subdevice, Sakari pointed out that the pipeline is validated
+  before .s_stream() is called so this is safe.
+- Do not check return from media_entity_to_v4l2_subdev() in
+  rcar_csi2_start(), Sakari pointed out it can't fail. Also move logic
+  to find the remote subdevice is moved to the only user of it,
+  rcar_csi2_calc_phypll().
+- Move pm_runtime_get_sync() and pm_runtime_put() to
+  rcar_csi2_s_stream() and remove rcar_csi2_s_power().
+- Add validation of pixel code to rcar_csi2_set_pad_format().
+- Remove static rcar_csi2_notify_unbind() as it only printed a debug
+  message.
 
-Compared to v2, the biggest change is in patch 03/12. Following Rob's and
-Frank's reviews it was clear that modifying the unflattened DT structure of
-the overlay before applying it wasn't popular. I have thus decided to use one
-overlay source per SoC to move as much of the DT changes to the overlay as
-possible, and only perform manual modifications (that are still needed as some
-of the information is board-specific) on the system DT after applying the
-overlay. As a result the overlay is parsed and applied without being modified.
+* Changes since v9
+- Add reset property to device tree example
+- Use BIT(x) instead of (1 << x)
+- Use u16 in struct phypll_hsfreqrange to pack struct better.
+- Use unsigned int type for loop variable in rcar_csi2_code_to_fmt
+- Move fields inside struct struct rcar_csi2_info and struct rcar_csi2
+  to pack struct's tighter.
+- Use %u instead of %d when printing __u32.
+- Don't check return of platform_get_resource(), let
+  devm_ioremap_resource() handle it.
+- Store quirk workaround for r8a7795 ES1.0 in the data field of struct
+  soc_device_attribute.
 
-Compared to v1, this series update the r8a7792 and r8a7794 device tree sources
-and incorporate review feedback as described by the changelogs of individual
-patches.
+Changes since v8:
+- Updated bindings documentation, thanks Rob!
+- Make use of the now in media-tree sub-notifier V4L2 API
+- Add delay when resetting the IP to allow for a proper reset
+- Fix bug in s_stream error path where the usage count was off if an
+  error was hit.
+- Add support for H3 ES2.0
 
-Laurent Pinchart (12):
-  dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
-  dt-bindings: display: renesas: Deprecate LVDS support in the DU
-    bindings
-  drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
-  drm: rcar-du: Convert LVDS encoder code to bridge driver
-  ARM: dts: porter: Fix HDMI output routing
-  ARM: dts: r8a7790: Convert to new LVDS DT bindings
-  ARM: dts: r8a7791: Convert to new LVDS DT bindings
-  ARM: dts: r8a7792: Convert to new DU DT bindings
-  ARM: dts: r8a7793: Convert to new LVDS DT bindings
-  ARM: dts: r8a7794: Convert to new DU DT bindings
-  arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
-  arm64: dts: renesas: r8a7796: Convert to new LVDS DT bindings
+Changes since v7:
+- Rebase on top of the latest incremental async patches.
+- Fix comments on DT documentation.
+- Use v4l2_ctrl_g_ctrl_int64() instead of v4l2_g_ext_ctrls().
+- Handle try formats in .set_fmt() and .get_fmt().
+- Don't call v4l2_device_register_subdev_nodes() as this is not needed
+  with the complete() callbacks synchronized.
+- Fix line over 80 chars.
+- Fix varies spelling mistakes.
 
- .../bindings/display/bridge/renesas,lvds.txt       |  56 +++
- .../devicetree/bindings/display/renesas,du.txt     |  31 +-
+Changes since v6:
+- Rebased on top of Sakaris fwnode patches.
+- Changed of RCAR_CSI2_PAD_MAX to NR_OF_RCAR_CSI2_PAD.
+- Remove assumption about unknown media bus type, thanks Sakari for
+  pointing this out.
+- Created table for supported format information instead of scattering
+  this information around the driver, thanks Sakari!
+- Small newline fixes and reduce some indentation levels
+
+Changes since v5:
+- Make use of the incremental async subnotifer and helper to map DT
+  endpoint to media pad number. This moves functionality which
+  previously in the Gen3 patches for R-Car VIN driver to this R-Car
+  CSI-2 driver. This is done in preparation to support the ADV7482
+  driver in development by Kieran which will register more then one
+  subdevice and the CSI-2 driver needs to cope wit this. Further more it
+  prepares the driver for another use-case where more then one subdevice
+  is present upstream for the CSI-2.
+- Small cleanups.
+- Add explicit include for linux/io.h, thanks Kieran.
+
+Changes since v4:
+- Match SoC part numbers and drop trailing space in documentation,
+  thanks Geert for pointing this out.
+- Clarify that the driver is a CSI-2 receiver by supervised
+  s/interface/receiver/, thanks Laurent.
+- Add entries in Kconfig and Makefile alphabetically instead of append.
+- Rename struct rcar_csi2 member swap to lane_swap.
+- Remove macros to wrap calls to dev_{dbg,info,warn,err}.
+- Add wrappers for ioread32 and iowrite32.
+- Remove unused interrupt handler, but keep checking in probe that there
+  are a interrupt define in DT.
+- Rework how to wait for LP-11 state, thanks Laurent for the great idea!
+- Remove unneeded delay in rcar_csi2_reset()
+- Remove check for duplicated lane id:s from DT parsing. Broken out to a
+  separate patch adding this check directly to v4l2_of_parse_endpoint().
+- Fixed rcar_csi2_start() to ask it's source subdevice for information
+  about pixel rate and frame format. With this change having
+  {set,get}_fmt operations became redundant, it was only used for
+  figuring out this out so dropped them.
+- Tabulated frequency settings map.
+- Dropped V4L2_SUBDEV_FL_HAS_DEVNODE it should never have been set.
+- Switched from MEDIA_ENT_F_ATV_DECODER to
+  MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER as entity function. I can't
+  find a more suitable function, and what the hardware do is to fetch
+  video from an external chip and passes it on to a another SoC internal
+  IP it's sort of a formatter.
+- Break out DT documentation and code in two patches.
+
+Changes since v3:
+- Update DT binding documentation with input from Geert Uytterhoeven,
+  thanks
+
+Changes since v2:
+- Added media control pads as this is needed by the new rcar-vin driver.
+- Update DT bindings after review comments and to add r8a7796 support.
+- Add get_fmt handler.
+- Fix media bus format error s/YUYV8/UYVY8/
+
+Changes since v1:
+- Drop dependency on a pad aware s_stream operation.
+- Use the DT bindings format "renesas,<soctype>-<device>", thanks Geert
+  for pointing this out.
+
+Niklas Söderlund (2):
+  rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
+  rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
+
+ .../bindings/media/renesas,rcar-csi2.txt           |  99 +++
  MAINTAINERS                                        |   1 +
- arch/arm/boot/dts/r8a7790-lager.dts                |  22 +-
- arch/arm/boot/dts/r8a7790.dtsi                     |  60 ++-
- arch/arm/boot/dts/r8a7791-koelsch.dts              |  10 +-
- arch/arm/boot/dts/r8a7791-porter.dts               |  18 +-
- arch/arm/boot/dts/r8a7791.dtsi                     |  34 +-
- arch/arm/boot/dts/r8a7792.dtsi                     |   1 -
- arch/arm/boot/dts/r8a7793-gose.dts                 |  10 +-
- arch/arm/boot/dts/r8a7793.dtsi                     |  34 +-
- arch/arm/boot/dts/r8a7794.dtsi                     |   1 -
- .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |   3 +-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |   3 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   3 +-
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |   3 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  34 +-
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |   3 +-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |   3 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  34 +-
- drivers/gpu/drm/rcar-du/Kconfig                    |   6 +-
- drivers/gpu/drm/rcar-du/Makefile                   |  10 +-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c             |   7 -
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h             |   3 -
- drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  21 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   5 -
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 175 +------
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |  12 -
- drivers/gpu/drm/rcar-du/rcar_du_group.c            |  13 +-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  14 +-
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  93 ----
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h          |  24 -
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c          | 238 ----------
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h          |  64 ---
- drivers/gpu/drm/rcar-du/rcar_du_of.c               | 374 +++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 +
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  81 ++++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  55 +++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  55 +++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  55 +++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  55 +++
- drivers/gpu/drm/rcar-du/rcar_lvds.c                | 524 +++++++++++++++++++++
- 42 files changed, 1561 insertions(+), 707 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_lvds.c
+ drivers/media/platform/rcar-vin/Kconfig            |  12 +
+ drivers/media/platform/rcar-vin/Makefile           |   1 +
+ drivers/media/platform/rcar-vin/rcar-csi2.c        | 884 +++++++++++++++++++++
+ 5 files changed, 997 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+ create mode 100644 drivers/media/platform/rcar-vin/rcar-csi2.c
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.16.1
