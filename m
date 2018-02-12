@@ -1,42 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:43551 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754202AbeBNG2Y (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60779 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932629AbeBLOjq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 01:28:24 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/4] arm64: defconfig: Enable PWM for R-Car
-Date: Wed, 14 Feb 2018 15:23:29 +0900
-Message-Id: <1518589412-7330-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1518589412-7330-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1518589412-7330-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 12 Feb 2018 09:39:46 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/4] ARM: dts: r7s72100: sort subnodes of root node
+Date: Mon, 12 Feb 2018 15:39:30 +0100
+Message-Id: <20180212143930.4763-5-horms+renesas@verge.net.au>
+In-Reply-To: <20180212143930.4763-1-horms+renesas@verge.net.au>
+References: <20180212143930.4763-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the Renesas R-Car's PWM controller.
+Sort the subnodes of the soc node to improve maintainability.
+The sort has been done alphabetically with the node name as the key.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch should not introduce any functional change.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r7s72100.dtsi | 78 +++++++++++++++++++++--------------------
+ 1 file changed, 40 insertions(+), 38 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a850bc5..59c11a5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -548,6 +548,7 @@ CONFIG_PWM=y
- CONFIG_PWM_BCM2835=m
- CONFIG_PWM_CROS_EC=m
- CONFIG_PWM_MESON=m
-+CONFIG_PWM_RCAR=m
- CONFIG_PWM_ROCKCHIP=y
- CONFIG_PWM_SAMSUNG=y
- CONFIG_PWM_TEGRA=m
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index d69d4810e597..ecf9516bcda8 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -30,43 +30,45 @@
+ 		spi4 = &spi4;
+ 	};
+ 
+-	/* External clocks */
+-	extal_clk: extal {
++	/* Fixed factor clocks */
++	b_clk: b {
+ 		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		/* If clk present, value must be set by board */
+-		clock-frequency = <0>;
++		compatible = "fixed-factor-clock";
++		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
++		clock-mult = <1>;
++		clock-div = <3>;
+ 	};
+ 
+-	usb_x1_clk: usb_x1 {
+-		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		/* If clk present, value must be set by board */
+-		clock-frequency = <0>;
+-	};
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 
+-	rtc_x1_clk: rtc_x1 {
+-		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		/* If clk present, value must be set by board to 32678 */
+-		clock-frequency = <0>;
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <0>;
++			clock-frequency = <400000000>;
++			clocks = <&cpg_clocks R7S72100_CLK_I>;
++			next-level-cache = <&L2>;
++		};
+ 	};
+ 
+-	rtc_x3_clk: rtc_x3 {
++	/* External clocks */
++	extal_clk: extal {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+-		/* If clk present, value must be set by board to 4000000 */
++		/* If clk present, value must be set by board */
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	/* Fixed factor clocks */
+-	b_clk: b {
++	p0_clk: p0 {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-factor-clock";
+ 		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
+ 		clock-mult = <1>;
+-		clock-div = <3>;
++		clock-div = <12>;
+ 	};
++
+ 	p1_clk: p1 {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-factor-clock";
+@@ -74,26 +76,19 @@
+ 		clock-mult = <1>;
+ 		clock-div = <6>;
+ 	};
+-	p0_clk: p0 {
++
++	rtc_x1_clk: rtc_x1 {
+ 		#clock-cells = <0>;
+-		compatible = "fixed-factor-clock";
+-		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
+-		clock-mult = <1>;
+-		clock-div = <12>;
++		compatible = "fixed-clock";
++		/* If clk present, value must be set by board to 32678 */
++		clock-frequency = <0>;
+ 	};
+ 
+-	cpus {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		cpu@0 {
+-			device_type = "cpu";
+-			compatible = "arm,cortex-a9";
+-			reg = <0>;
+-			clock-frequency = <400000000>;
+-			clocks = <&cpg_clocks R7S72100_CLK_I>;
+-			next-level-cache = <&L2>;
+-		};
++	rtc_x3_clk: rtc_x3 {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		/* If clk present, value must be set by board to 4000000 */
++		clock-frequency = <0>;
+ 	};
+ 
+ 	soc {
+@@ -689,4 +684,11 @@
+ 			status = "disabled";
+ 		};
+ 	};
++
++	usb_x1_clk: usb_x1 {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		/* If clk present, value must be set by board */
++		clock-frequency = <0>;
++	};
+ };
 -- 
-1.9.1
+2.11.0
