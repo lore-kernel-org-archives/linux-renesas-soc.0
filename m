@@ -1,39 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:33801 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034273AbeBPO0Q (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:60466 "EHLO
+        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932835AbeBLWEN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:26:16 -0500
-Received: by mail-wr0-f194.google.com with SMTP id m5so3107363wrg.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 06:26:15 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/3] pinctrl: sh-pfc: add TMU pins
-Date: Fri, 16 Feb 2018 15:26:08 +0100
-Message-Id: <1518791171-14162-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 12 Feb 2018 17:04:13 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] v4l: subdev: compat: update handling for VIDIOC_SUBDEV_[GS]_ROUTING
+Date: Mon, 12 Feb 2018 23:03:52 +0100
+Message-Id: <20180212220352.21629-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Implement compat IOCTL handling for VIDIOC_SUBDEV_G_ROUTING and
+VIDIOC_SUBDEV_S_ROUTING IOCTLs.
 
-Straight from the BSP, TMU pins for r8a7795{,-es1} and r8a7796. Magic
-numbers verified according to "pinfunction" document revisions 0.54 (M3-W)
-and 0.553 (H3).
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-CU
-Uli
+Hi Sakari,
 
+With this fix on-top of your vc branch I get it work with v4.16-rc1, 
+feel free to squash it into your branch where appropriate. I tested this 
+with a ARM64 kernel and a ARM user-land with v4l2-ctl + my 
+--{get,set}-routing patches for v4l-utils.
 
-Takeshi Kihara (3):
-  pinctrl: sh-pfc: r8a7795: Add TMU pins, groups and functions
-  pinctrl: sh-pfc: r8a7795-es1: Add TMU pins, groups and functions
-  pinctrl: sh-pfc: r8a7796: Add TMU pins, groups and functions
+// Niklas
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 42 ++++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 42 ++++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 42 ++++++++++++++++++++++++++++++++
- 3 files changed, 126 insertions(+)
-
+diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+index a1f71a83ac076d7f..30700658963d3227 100644
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -1124,7 +1124,10 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 
+ 	case VIDIOC_SUBDEV_G_ROUTING:
+ 	case VIDIOC_SUBDEV_S_ROUTING:
+-		err = get_v4l2_subdev_routing(&karg.subdev_routing, up);
++		err = alloc_userspace(sizeof(struct v4l2_subdev_routing),
++				      0, &up_native);
++		if (!err)
++			err = get_v4l2_subdev_routing(up_native, up);
+ 		compatible_arg = 0;
+ 		break;
+ 
+@@ -1257,7 +1260,7 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 		break;
+ 	case VIDIOC_SUBDEV_G_ROUTING:
+ 	case VIDIOC_SUBDEV_S_ROUTING:
+-		err = put_v4l2_subdev_routing(&karg.subdev_routing, up);
++		err = put_v4l2_subdev_routing(up_native, up);
+ 		break;
+ 	}
+ 	if (err)
 -- 
-2.7.4
+2.16.1
