@@ -1,125 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:29403 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751786AbeBHPsM (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:9778 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751109AbeBLRv1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:48:12 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 5/5] arm64: dts: renesas: eagle: add HDMI output using the ADV7511W
-Date: Thu,  8 Feb 2018 16:47:20 +0100
-Message-Id: <20180208154720.5766-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 12 Feb 2018 12:51:27 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC 02/11] ARM: dts: r8a7792: Add RWDT node
+Date: Mon, 12 Feb 2018 17:51:23 +0000
+Message-ID: <TY1PR06MB08951801EB337C7748D9116BC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+ <1518086057-19448-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518086057-19448-3-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the HDMI connector and the ADV7511W, also connect it to LVDS. Enable
-the DU and LVDS to be able to use the HDMI output.
+> Subject: [PATCH/RFC 02/11] ARM: dts: r8a7792: Add RWDT node
+>
+> Add a device node for the Watchdog Timer (WDT) controller on the Renesas
+> R-Car V2H (r8a7792) SoC.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 66 ++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+Acked-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index 359e835cca9876fe..c0fd144970c55fa2 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -31,6 +31,17 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
- };
- 
- &avb {
-@@ -67,9 +78,46 @@
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
-+
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &pfc {
-+	du_pins: du {
-+		groups = "du_rgb666", "du_sync", "du_oddf", "du_clk_out";
-+		function = "du";
-+	};
-+
- 	i2c0_pins: i2c0 {
- 		groups = "i2c0";
- 		function = "i2c0";
-@@ -92,3 +140,21 @@
- 
- 	status = "okay";
- };
-+
-+&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			endpoint {
-+				remote-endpoint = <&adv7511_in>;
-+			};
-+		};
-+	};
-+};
--- 
-2.16.1
+> ---
+>  arch/arm/boot/dts/r8a7792.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.d=
+tsi
+> index bea0f12f03d36195..d2cf8dd2d9b03624 100644
+> --- a/arch/arm/boot/dts/r8a7792.dtsi
+> +++ b/arch/arm/boot/dts/r8a7792.dtsi
+> @@ -101,6 +101,16 @@
+>  #size-cells =3D <2>;
+>  ranges;
+>
+> +rwdt: watchdog@e6020000 {
+> +compatible =3D "renesas,r8a7792-wdt",
+> +     "renesas,rcar-gen2-wdt";
+> +reg =3D <0 0xe6020000 0 0x0c>;
+> +clocks =3D <&cpg CPG_MOD 402>;
+> +power-domains =3D <&sysc R8A7792_PD_ALWAYS_ON>;
+> +resets =3D <&cpg 402>;
+> +status =3D "disabled";
+> +};
+> +
+>  gpio0: gpio@e6050000 {
+>  compatible =3D "renesas,gpio-r8a7792",
+>       "renesas,rcar-gen2-gpio";
+> --
+> 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
