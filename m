@@ -1,79 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46130 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932925AbeBLMc6 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:37089 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751109AbeBLRzO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:32:58 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: remove rtd->platform checck" to the asoc tree
-In-Reply-To: <87shhl5f0o.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1elDHy-0003UN-ST@debutante>
-Date: Mon, 12 Feb 2018 12:32:54 +0000
+        Mon, 12 Feb 2018 12:55:14 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC 10/11] ARM: dts: alt: Enable watchdog support
+Date: Mon, 12 Feb 2018 17:55:11 +0000
+Message-ID: <TY1PR06MB0895B21EAD78244F4F1C0DCDC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+ <1518086057-19448-11-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518086057-19448-11-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+> Subject: [PATCH/RFC 10/11] ARM: dts: alt: Enable watchdog support
+>
+> Enable the watchdog, so the board can be restarted by a watchdog
+> timeout.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   ASoC: remove rtd->platform checck
+Acked-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-has been applied to the asoc tree at
+> ---
+>  arch/arm/boot/dts/r8a7794-alt.dts | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a779=
+4-alt.dts
+> index 60c6515c499660eb..fdc4a311648dc30d 100644
+> --- a/arch/arm/boot/dts/r8a7794-alt.dts
+> +++ b/arch/arm/boot/dts/r8a7794-alt.dts
+> @@ -295,6 +295,11 @@
+>  status =3D "okay";
+>  };
+>
+> +&rwdt {
+> +timeout-sec =3D <60>;
+> +status =3D "okay";
+> +};
+> +
+>  &sdhi0 {
+>  pinctrl-0 =3D <&sdhi0_pins>;
+>  pinctrl-1 =3D <&sdhi0_pins_uhs>;
+> --
+> 2.7.4
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From bbf4d71aa9e21e8ee05e16cbb2cd2999252ce930 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 29 Jan 2018 02:40:28 +0000
-Subject: [PATCH] ASoC: remove rtd->platform checck
-
-Now, we are ready to replace rtd->platform to rtdcom list.
->From this patch, rtd->platform check is no longer needed.
-It will be replaced into rtdcom.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/soc-core.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 96c44f6576c9..9558125b448d 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1162,11 +1162,6 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
- 
- 		rtd->platform = platform;
- 	}
--	if (!rtd->platform) {
--		dev_err(card->dev, "ASoC: platform %s not registered\n",
--			dai_link->platform_name);
--		goto _err_defer;
--	}
- 
- 	soc_add_pcm_runtime(card, rtd);
- 	return 0;
--- 
-2.16.1
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
