@@ -1,13 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:57104 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754064AbeBLU7n (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:46009 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753466AbeBLRqB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 15:59:43 -0500
-Date: Mon, 12 Feb 2018 21:59:39 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Mon, 12 Feb 2018 12:46:01 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
@@ -19,64 +17,74 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
         linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [PATCH v5 13/26] watchdog: renesas_wdt: Add restart handler
-Message-ID: <20180212205939.75pszm5ih6ndw32h@katana>
+Subject: [PATCH v5 13/26] watchdog: renesas_wdt: Add restart handler
+Date: Mon, 12 Feb 2018 17:44:22 +0000
+Message-Id: <1518457475-4480-14-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1518457475-4480-14-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="smjbq6gp6e7bfkkm"
-Content-Disposition: inline
-In-Reply-To: <1518457475-4480-14-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On iWave's boards iwg20d and iwg22d the only way to reboot the system is
+by means of the watchdog.
+This patch adds a restart handler to rwdt_ops, and also makes sure we
+keep its priority to a medium level, in order to not override other more
+effective handlers.
 
---smjbq6gp6e7bfkkm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+---
+v4->v5:
+* changed rwdt_restart implementation as per Wolfram comments
 
-On Mon, Feb 12, 2018 at 05:44:22PM +0000, Fabrizio Castro wrote:
-> On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-> by means of the watchdog.
-> This patch adds a restart handler to rwdt_ops, and also makes sure we
-> keep its priority to a medium level, in order to not override other more
-> effective handlers.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+ drivers/watchdog/renesas_wdt.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---smjbq6gp6e7bfkkm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqCADsACgkQFA3kzBSg
-KbYw3xAAqmVQNhipNdgNc9uvqAS594wbi0zVXZ8vFS4xAklaG28qdwhqnh67w6ev
-CnQdwxtU0XUPgSUvUcx/TWSpTqWF/pGyGiKpKAFZjEYntgDTMPA3LwItRBsAVrhW
-z8v8Hoeq1UBUga0P7o++LNC5N/4IWiDJ/2rjomW6GsR9ubcvh+bLKXxtMQoNInNU
-hU1eRMCAnnZhkTzUQs/1ckcbClub5q6eCDm+P5PqQhhDMLlAOgKlPjkUrjqrRxFK
-glrx+nFDNN9gKyb2DsO2fp4ngIXFWz9j5ajasBIqiTwy8Bto1hCv/eP8p2NgQ3xm
-tszMJrv1JCsxwNqwAAaRfejZmWaE1mA+kRdKoooE51bwqrpmRd216IWIGjhJSXTX
-JiYO0LoGTTrw+uB0AziFbXLZsBKO3EHsx1acOHyPBaSjz7rOQDfgSbAMa7Im6vBW
-tcj8SQ93x3jdoTnqN/6/xqPTqyR7WF2GeJ0u5t+wHuvc+5sT6lJkXL10095qR4is
-C6Ux2JHjizJoJMLD5B+OiVjNWewB+J1b5vuYa5gQs0cBFeEmbUE8H08H8QIRreJM
-efQmbShjMgohs44YjU5EHp6ofBA1D9bH7X3Q8ciK43zvdQrSCxd/WDXUFucIbMen
-lDmnEeZmw1bf7p108qI9Y2d6zQ06pKh+obuAAwSm3EpaDmiBLr0=
-=diQv
------END PGP SIGNATURE-----
-
---smjbq6gp6e7bfkkm--
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index e972b7b..0f88614 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -107,6 +107,16 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
+ 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+ }
+ 
++static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
++			void *data)
++{
++	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
++
++	rwdt_start(wdev);
++	rwdt_write(priv, 0xffff, RWTCNT);
++	return 0;
++}
++
+ static const struct watchdog_info rwdt_ident = {
+ 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
+ 	.identity = "Renesas WDT Watchdog",
+@@ -118,6 +128,7 @@ static const struct watchdog_ops rwdt_ops = {
+ 	.stop = rwdt_stop,
+ 	.ping = rwdt_init_timeout,
+ 	.get_timeleft = rwdt_get_timeleft,
++	.restart = rwdt_restart,
+ };
+ 
+ static int rwdt_probe(struct platform_device *pdev)
+@@ -176,6 +187,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, priv);
+ 	watchdog_set_drvdata(&priv->wdev, priv);
+ 	watchdog_set_nowayout(&priv->wdev, nowayout);
++	watchdog_set_restart_priority(&priv->wdev, 0);
+ 
+ 	/* This overrides the default timeout only if DT configuration was found */
+ 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
+-- 
+2.7.4
