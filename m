@@ -1,56 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33174 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932094AbeBLPok (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:27672 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751274AbeBLRqp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 10:44:40 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 12 Feb 2018 12:46:45 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 5/5] soc: renesas: Use symbols for register offsets for R-Car D3 power areas
-Date: Mon, 12 Feb 2018 16:44:22 +0100
-Message-Id: <20180212154422.13900-6-horms+renesas@verge.net.au>
-In-Reply-To: <20180212154422.13900-1-horms+renesas@verge.net.au>
-References: <20180212154422.13900-1-horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 21/26] ARM: dts: r8a7745: Add watchdog support to SoC dtsi
+Date: Mon, 12 Feb 2018 17:44:30 +0000
+Message-Id: <1518457475-4480-22-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use symbols rather for register offsets for R-Car D3 power areas
-to improve readability.
+This patch adds watchdog support to the r8a7745 SoC dtsi.
 
-Also line-wrap at 80 columns for consistency with R-Car H3 and M3-W
-implementations.
-
-This does not have any functional change.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/soc/renesas/r8a77995-sysc.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+v4->v5:
+* no change
 
-diff --git a/drivers/soc/renesas/r8a77995-sysc.c b/drivers/soc/renesas/r8a77995-sysc.c
-index f718429cab02..45355a5cca34 100644
---- a/drivers/soc/renesas/r8a77995-sysc.c
-+++ b/drivers/soc/renesas/r8a77995-sysc.c
-@@ -17,11 +17,12 @@
- #include "rcar-sysc.h"
+ arch/arm/boot/dts/r8a7745.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 6bc1cf4..5d1b8f2 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -321,6 +321,16 @@
+ 			reg = <0 0xe6160000 0 0x100>;
+ 		};
  
- static struct rcar_sysc_area r8a77995_areas[] __initdata = {
--	{ "always-on",     0, 0, R8A77995_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
--	{ "ca53-scu",  0x140, 0, R8A77995_PD_CA53_SCU,  R8A77995_PD_ALWAYS_ON,
--	  PD_SCU },
--	{ "ca53-cpu0", 0x200, 0, R8A77995_PD_CA53_CPU0, R8A77995_PD_CA53_SCU,
--	  PD_CPU_NOCR },
-+	{ "always-on", RCAR_GEN3_SYSCSR, 0, R8A77995_PD_ALWAYS_ON,
-+	  -1, PD_ALWAYS_ON },
-+	{ "ca53-scu",  RCAR_GEN3_PWRSR3, 0, R8A77995_PD_CA53_SCU,
-+	  R8A77995_PD_ALWAYS_ON, PD_SCU },
-+	{ "ca53-cpu0", RCAR_GEN3_PWRSR6, 0, R8A77995_PD_CA53_CPU0,
-+	  R8A77995_PD_CA53_SCU, PD_CPU_NOCR },
- };
- 
- 
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7745-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7745-sysc";
+ 			reg = <0 0xe6180000 0 0x200>;
 -- 
-2.11.0
+2.7.4
