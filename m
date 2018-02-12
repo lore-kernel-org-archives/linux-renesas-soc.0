@@ -1,24 +1,23 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59072 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:42708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932562AbeBLWIT (ORCPT
+        id S1752741AbeBLSMS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:08:19 -0500
+        Mon, 12 Feb 2018 13:12:18 -0500
 From: Kieran Bingham <kbingham@kernel.org>
 To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH v3 4/5] media: adv7604: Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 22:07:52 +0000
-Message-Id: <1518473273-6333-5-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
-References: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
+Subject: [PATCH v2 4/5] media: adv7604: Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 18:11:56 +0000
+Message-Id: <1518459117-16733-5-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
+References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
