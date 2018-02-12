@@ -1,141 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54324 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751814AbeBZVow (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33174 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932094AbeBLPog (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 16:44:52 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 08/15] v4l: vsp1: Setup BRU at atomic commit time
-Date: Mon, 26 Feb 2018 23:45:09 +0200
-Message-Id: <20180226214516.11559-9-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 12 Feb 2018 10:44:36 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/5] soc: renesas: Use symbols for register offsets for R-Car M3-W power areas
+Date: Mon, 12 Feb 2018 16:44:20 +0100
+Message-Id: <20180212154422.13900-4-horms+renesas@verge.net.au>
+In-Reply-To: <20180212154422.13900-1-horms+renesas@verge.net.au>
+References: <20180212154422.13900-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To implement fully dynamic plane assignment to pipelines, we need to
-reassign the BRU and BRS to the DRM pipelines in the atomic commit
-handler. In preparation for this setup factor out the BRU source pad
-code and call it both at LIF setup and atomic commit time.
+Use symbols rather for register offsets for R-Car M3-W power areas
+to improve readability.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This does not have any functional change.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/vsp1/vsp1_drm.c | 56 +++++++++++++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_drm.h |  5 +++
- 2 files changed, 60 insertions(+), 1 deletion(-)
+ drivers/soc/renesas/r8a7796-sysc.c | 56 ++++++++++++++++++++++----------------
+ 1 file changed, 32 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 7bf697ba7969..6ad8aa6c8138 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -148,12 +148,51 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
- 	return 0;
- }
+diff --git a/drivers/soc/renesas/r8a7796-sysc.c b/drivers/soc/renesas/r8a7796-sysc.c
+index f700c842b9e1..beea0ee0d85e 100644
+--- a/drivers/soc/renesas/r8a7796-sysc.c
++++ b/drivers/soc/renesas/r8a7796-sysc.c
+@@ -16,30 +16,38 @@
+ #include "rcar-sysc.h"
  
-+/* Setup the BRU source pad. */
-+static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
-+				      struct vsp1_pipeline *pipe)
-+{
-+	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
-+	struct v4l2_subdev_format format = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	int ret;
-+
-+	/*
-+	 * Configure the format on the BRU source and verify that it matches the
-+	 * requested format. We don't set the media bus code as it is configured
-+	 * on the BRU sink pad 0 and propagated inside the entity, not on the
-+	 * source pad.
-+	 */
-+	format.pad = pipe->bru->source_pad;
-+	format.format.width = drm_pipe->width;
-+	format.format.height = drm_pipe->height;
-+	format.format.field = V4L2_FIELD_NONE;
-+
-+	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
-+			       &format);
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
-+		__func__, format.format.width, format.format.height,
-+		format.format.code, BRU_NAME(pipe->bru), pipe->bru->source_pad);
-+
-+	if (format.format.width != drm_pipe->width ||
-+	    format.format.height != drm_pipe->height) {
-+		dev_dbg(vsp1->dev, "%s: format mismatch\n", __func__);
-+		return -EPIPE;
-+	}
-+
-+	return 0;
-+}
-+
- static unsigned int rpf_zpos(struct vsp1_device *vsp1, struct vsp1_rwpf *rpf)
- {
- 	return vsp1->drm->inputs[rpf->entity.index].zpos;
- }
+ static const struct rcar_sysc_area r8a7796_areas[] __initconst = {
+-	{ "always-on",	    0, 0, R8A7796_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
+-	{ "ca57-scu",	0x1c0, 0, R8A7796_PD_CA57_SCU,	R8A7796_PD_ALWAYS_ON,
+-	  PD_SCU },
+-	{ "ca57-cpu0",	 0x80, 0, R8A7796_PD_CA57_CPU0,	R8A7796_PD_CA57_SCU,
+-	  PD_CPU_NOCR },
+-	{ "ca57-cpu1",	 0x80, 1, R8A7796_PD_CA57_CPU1,	R8A7796_PD_CA57_SCU,
+-	  PD_CPU_NOCR },
+-	{ "ca53-scu",	0x140, 0, R8A7796_PD_CA53_SCU,	R8A7796_PD_ALWAYS_ON,
+-	  PD_SCU },
+-	{ "ca53-cpu0",	0x200, 0, R8A7796_PD_CA53_CPU0,	R8A7796_PD_CA53_SCU,
+-	  PD_CPU_NOCR },
+-	{ "ca53-cpu1",	0x200, 1, R8A7796_PD_CA53_CPU1,	R8A7796_PD_CA53_SCU,
+-	  PD_CPU_NOCR },
+-	{ "ca53-cpu2",	0x200, 2, R8A7796_PD_CA53_CPU2,	R8A7796_PD_CA53_SCU,
+-	  PD_CPU_NOCR },
+-	{ "ca53-cpu3",	0x200, 3, R8A7796_PD_CA53_CPU3,	R8A7796_PD_CA53_SCU,
+-	  PD_CPU_NOCR },
+-	{ "cr7",	0x240, 0, R8A7796_PD_CR7,	R8A7796_PD_ALWAYS_ON },
+-	{ "a3vc",	0x380, 0, R8A7796_PD_A3VC,	R8A7796_PD_ALWAYS_ON },
+-	{ "a2vc0",	0x3c0, 0, R8A7796_PD_A2VC0,	R8A7796_PD_A3VC },
+-	{ "a2vc1",	0x3c0, 1, R8A7796_PD_A2VC1,	R8A7796_PD_A3VC },
+-	{ "3dg-a",	0x100, 0, R8A7796_PD_3DG_A,	R8A7796_PD_ALWAYS_ON },
+-	{ "3dg-b",	0x100, 1, R8A7796_PD_3DG_B,	R8A7796_PD_3DG_A },
+-	{ "a3ir",	0x180, 0, R8A7796_PD_A3IR,	R8A7796_PD_ALWAYS_ON },
++	{ "always-on",	RCAR_GEN3_SYSCSR, 0, R8A7796_PD_ALWAYS_ON,
++	  -1, PD_ALWAYS_ON },
++	{ "ca57-scu",	RCAR_GEN3_PWRSR5,  0, R8A7796_PD_CA57_SCU,
++	  R8A7796_PD_ALWAYS_ON, PD_SCU },
++	{ "ca57-cpu0",	RCAR_GEN3_PWRSR0,  0, R8A7796_PD_CA57_CPU0,
++	  R8A7796_PD_CA57_SCU, PD_CPU_NOCR },
++	{ "ca57-cpu1",	RCAR_GEN3_PWRSR0,  1, R8A7796_PD_CA57_CPU1,
++	  R8A7796_PD_CA57_SCU, PD_CPU_NOCR },
++	{ "ca53-scu",	RCAR_GEN3_PWRSR3,  0, R8A7796_PD_CA53_SCU,
++	  R8A7796_PD_ALWAYS_ON, PD_SCU },
++	{ "ca53-cpu0",	RCAR_GEN3_PWRSR6,  0, R8A7796_PD_CA53_CPU0,
++	  R8A7796_PD_CA53_SCU, PD_CPU_NOCR },
++	{ "ca53-cpu1",	RCAR_GEN3_PWRSR6,  1, R8A7796_PD_CA53_CPU1,
++	  R8A7796_PD_CA53_SCU, PD_CPU_NOCR },
++	{ "ca53-cpu2",	RCAR_GEN3_PWRSR6,  2, R8A7796_PD_CA53_CPU2,
++	  R8A7796_PD_CA53_SCU, PD_CPU_NOCR },
++	{ "ca53-cpu3",	RCAR_GEN3_PWRSR6,  3, R8A7796_PD_CA53_CPU3,
++	  R8A7796_PD_CA53_SCU, PD_CPU_NOCR },
++	{ "cr7",	RCAR_GEN3_PWRSR7,  0, R8A7796_PD_CR7,
++	  R8A7796_PD_ALWAYS_ON },
++	{ "a3vc",	RCAR_GEN3_PWRSR9,  0, R8A7796_PD_A3VC,
++	  R8A7796_PD_ALWAYS_ON },
++	{ "a2vc0",	RCAR_GEN3_PWRSR10, 0, R8A7796_PD_A2VC0,
++	  R8A7796_PD_A3VC },
++	{ "a2vc1",	RCAR_GEN3_PWRSR10, 1, R8A7796_PD_A2VC1,
++	  R8A7796_PD_A3VC },
++	{ "3dg-a",	RCAR_GEN3_PWRSR2,  0, R8A7796_PD_3DG_A,
++	  R8A7796_PD_ALWAYS_ON },
++	{ "3dg-b",	RCAR_GEN3_PWRSR2,  1, R8A7796_PD_3DG_B,
++	  R8A7796_PD_3DG_A },
++	{ "a3ir",	RCAR_GEN3_PWRSR4,  0, R8A7796_PD_A3IR,
++	  R8A7796_PD_ALWAYS_ON },
+ };
  
--/* Setup the input side of the pipeline (RPFs and BRU sink pads). */
-+/* Setup the input side of the pipeline (RPFs and BRU). */
- static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
- 					struct vsp1_pipeline *pipe)
- {
-@@ -191,6 +230,18 @@ static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
- 		inputs[j] = rpf;
- 	}
- 
-+	/*
-+	 * Setup the BRU. This must be done before setting up the RPF input
-+	 * pipelines as the BRU sink compose rectangles depend on the BRU source
-+	 * format.
-+	 */
-+	ret = vsp1_du_pipeline_setup_bru(vsp1, pipe);
-+	if (ret < 0) {
-+		dev_err(vsp1->dev, "%s: failed to setup %s source\n", __func__,
-+			BRU_NAME(pipe->bru));
-+		return ret;
-+	}
-+
- 	/* Setup the RPF input pipeline for every enabled input. */
- 	for (i = 0; i < pipe->bru->source_pad; ++i) {
- 		struct vsp1_rwpf *rpf = inputs[i];
-@@ -355,6 +406,9 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 		return 0;
- 	}
- 
-+	drm_pipe->width = cfg->width;
-+	drm_pipe->height = cfg->height;
-+
- 	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u\n",
- 		__func__, pipe_index, cfg->width, cfg->height);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
-index 9aa19325cbe9..c8dd75ba01f6 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.h
-+++ b/drivers/media/platform/vsp1/vsp1_drm.h
-@@ -20,12 +20,17 @@
- /**
-  * vsp1_drm_pipeline - State for the API exposed to the DRM driver
-  * @pipe: the VSP1 pipeline used for display
-+ * @width: output display width
-+ * @height: output display height
-  * @du_complete: frame completion callback for the DU driver (optional)
-  * @du_private: data to be passed to the du_complete callback
-  */
- struct vsp1_drm_pipeline {
- 	struct vsp1_pipeline pipe;
- 
-+	unsigned int width;
-+	unsigned int height;
-+
- 	/* Frame synchronisation */
- 	void (*du_complete)(void *, bool);
- 	void *du_private;
+ const struct rcar_sysc_info r8a7796_sysc_info __initconst = {
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
