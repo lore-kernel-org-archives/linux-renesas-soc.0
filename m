@@ -5,22 +5,22 @@ To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
 Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Archit Taneja <architt@codeaurora.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         David Airlie <airlied@linux.ie>,
         Hans Verkuil <hverkuil@xs4all.nl>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Bhumika Goyal <bhumirks@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
         Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v3 5/5] drm: adv7511: Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 22:07:53 +0000
-Message-Id: <1518473273-6333-6-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
-References: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
+Subject: [PATCH v2 5/5] drm: adv7511: Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 18:11:57 +0000
+Message-Id: <1518459117-16733-6-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
+References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -38,6 +38,7 @@ address conflicts with other devices on the same bus may be resolved at
 the board description level.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 ---
 v2:
  - Update missing edid-i2c address setting
