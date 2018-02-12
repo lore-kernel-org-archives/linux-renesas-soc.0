@@ -1,90 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:46009 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753466AbeBLRqB (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:42036 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934036AbeBLLis (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:46:01 -0500
+        Mon, 12 Feb 2018 06:38:48 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wim Van Sebroeck <wim@iguana.be>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 13/26] watchdog: renesas_wdt: Add restart handler
-Date: Mon, 12 Feb 2018 17:44:22 +0000
-Message-Id: <1518457475-4480-14-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: RE: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
+Date: Mon, 12 Feb 2018 11:38:41 +0000
+Message-ID: <TY1PR06MB08958A4A75A0F3BB2BF1D086C0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180207230309.goxig2irkpxrw5el@katana>
+ <TY1PR06MB089578618AA33335D90D16CEC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+ <20180212105456.3zejp3j7hfuzyc3c@ninjato>
+In-Reply-To: <20180212105456.3zejp3j7hfuzyc3c@ninjato>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-by means of the watchdog.
-This patch adds a restart handler to rwdt_ops, and also makes sure we
-keep its priority to a medium level, in order to not override other more
-effective handlers.
+> > > I used to have this simpler version (back then for the UP case):
+> > >
+> > > +rwdt_start(wdev);
+> > > +rwdt_write(priv, 0xffff, RWTCNT);
+> > > +return 0;
+> > >
+> > > It should still work probably...
+> >
+> > It should still work, but it would be slower, I would stick with the
+> > version I have submitted if you don't mind.
+>
+> Actually, I do mind. Because of code duplication reasons. We have a fix
+> in the works for rwdt_start() and it would be too easy to overlook the
+> same fix will be needed for a restart.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
-v4->v5:
-* changed rwdt_restart implementation as per Wolfram comments
+The code is very similar indeed, but not exactly duplicated as it sets the =
+registers in order to reset
+the system as quickly as possible.
+But since you have strong feelings about this I'll reuse this other version=
+ for the next submission.
 
- drivers/watchdog/renesas_wdt.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Thanks,
+Fabrizio
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index e972b7b..0f88614 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -107,6 +107,16 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
- 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
- }
- 
-+static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-+			void *data)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	rwdt_start(wdev);
-+	rwdt_write(priv, 0xffff, RWTCNT);
-+	return 0;
-+}
-+
- static const struct watchdog_info rwdt_ident = {
- 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
- 	.identity = "Renesas WDT Watchdog",
-@@ -118,6 +128,7 @@ static const struct watchdog_ops rwdt_ops = {
- 	.stop = rwdt_stop,
- 	.ping = rwdt_init_timeout,
- 	.get_timeleft = rwdt_get_timeleft,
-+	.restart = rwdt_restart,
- };
- 
- static int rwdt_probe(struct platform_device *pdev)
-@@ -176,6 +187,7 @@ static int rwdt_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, priv);
- 	watchdog_set_drvdata(&priv->wdev, priv);
- 	watchdog_set_nowayout(&priv->wdev, nowayout);
-+	watchdog_set_restart_priority(&priv->wdev, 0);
- 
- 	/* This overrides the default timeout only if DT configuration was found */
- 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
--- 
-2.7.4
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
