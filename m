@@ -1,51 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:46963 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934226AbeBMLYS (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:19775 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751109AbeBLRwv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:24:18 -0500
-Received: by mail-lf0-f67.google.com with SMTP id q194so24599940lfe.13
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Feb 2018 03:24:17 -0800 (PST)
-Subject: [PATCH v2 2/2] arm64: dts: renesas: eagle: specify EtherAVB PHY IRQ
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <038a791d-aa57-9c3d-eaea-09c5704ecb54@cogentembedded.com>
-Message-ID: <0ccd631e-691a-2b15-7680-6e0c847a6ca2@cogentembedded.com>
-Date: Tue, 13 Feb 2018 14:24:14 +0300
+        Mon, 12 Feb 2018 12:52:51 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC 05/11] ARM: dts: koelsch: Enable watchdog support
+Date: Mon, 12 Feb 2018 17:52:47 +0000
+Message-ID: <TY1PR06MB0895BE1B3F7C894F2E88AFECC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+ <1518086057-19448-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518086057-19448-6-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <038a791d-aa57-9c3d-eaea-09c5704ecb54@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Specify  EtherAVB PHY IRQ  in the Eagle board's device tree, now that we
-have the GPIO support (previously phylib had to resort to polling).
+> Subject: [PATCH/RFC 05/11] ARM: dts: koelsch: Enable watchdog support
+>
+> Enable the watchdog, so the board can be restarted by a watchdog
+> timeout.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |    2 ++
- 1 file changed, 2 insertions(+)
+> ---
+>  arch/arm/boot/dts/r8a7791-koelsch.dts | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8=
+a7791-koelsch.dts
+> index a50924d12b6f37d5..c90462dbcd36c836 100644
+> --- a/arch/arm/boot/dts/r8a7791-koelsch.dts
+> +++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+> @@ -499,6 +499,11 @@
+>  status =3D "okay";
+>  };
+>
+> +&rwdt {
+> +timeout-sec =3D <60>;
+> +status =3D "okay";
+> +};
+> +
+>  &sata0 {
+>  status =3D "okay";
+>  };
+> --
+> 2.7.4
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -44,6 +44,8 @@
- 	phy0: ethernet-phy@0 {
- 		rxc-skew-ps = <1500>;
- 		reg = <0>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
- 	};
- };
- 
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
