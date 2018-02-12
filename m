@@ -1,69 +1,93 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Matt Porter <mporter@konsulko.com>,
-        Koen Kooi <koen@dominion.thruhere.net>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Marek Vasut <marex@denx.de>, Wolfram Sang <wsa@the-dreams.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: [PATCH v5 6/8] i2c: demux: Use changeset helpers for clarity
-Date: Thu, 22 Feb 2018 02:05:29 +0200
-Message-Id: <20180222000531.19448-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44304 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753961AbeBLMbz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Feb 2018 07:31:55 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: bcm: cygnus: replace platform to component" to the asoc tree
+In-Reply-To: <87mv7t5eyn.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1elDGy-0003NC-CX@debutante>
+Date: Mon, 12 Feb 2018 12:31:52 +0000
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+The patch
 
-The changeset helpers are easier to use, use them instead of
-using the static property.
+   ASoC: bcm: cygnus: replace platform to component
 
-Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
-["okay" -> "ok"]
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 540b925af4c0456adf220dea991d91bf05ad77c0 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 29 Jan 2018 02:42:37 +0000
+Subject: [PATCH] ASoC: bcm: cygnus: replace platform to component
+
+Now platform can be replaced to component, let's do it.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/i2c/muxes/i2c-demux-pinctrl.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ sound/soc/bcm/cygnus-pcm.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-index 33ce032cb701..0f0046831492 100644
---- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
-+++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-@@ -220,10 +220,7 @@ static int i2c_demux_pinctrl_probe(struct platform_device *pdev)
+diff --git a/sound/soc/bcm/cygnus-pcm.c b/sound/soc/bcm/cygnus-pcm.c
+index d616e096462e..123ecf5479d7 100644
+--- a/sound/soc/bcm/cygnus-pcm.c
++++ b/sound/soc/bcm/cygnus-pcm.c
+@@ -820,7 +820,7 @@ static int cygnus_dma_new(struct snd_soc_pcm_runtime *rtd)
+ 	return 0;
+ }
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv)
- 			   + num_chan * sizeof(struct i2c_demux_pinctrl_chan), GFP_KERNEL);
--
--	props = devm_kcalloc(&pdev->dev, num_chan, sizeof(*props), GFP_KERNEL);
--
--	if (!priv || !props)
-+	if (!priv)
- 		return -ENOMEM;
- 
- 	err = of_property_read_string(np, "i2c-bus-name", &priv->bus_name);
-@@ -241,12 +238,9 @@ static int i2c_demux_pinctrl_probe(struct platform_device *pdev)
- 		}
- 		priv->chan[i].parent_np = adap_np;
- 
--		props[i].name = devm_kstrdup(&pdev->dev, "status", GFP_KERNEL);
--		props[i].value = devm_kstrdup(&pdev->dev, "ok", GFP_KERNEL);
--		props[i].length = 3;
--
- 		of_changeset_init(&priv->chan[i].chgset);
--		of_changeset_update_property(&priv->chan[i].chgset, adap_np, &props[i]);
-+		of_changeset_update_property_string(&priv->chan[i].chgset,
-+						    adap_np, "status", "ok");
+-static struct snd_soc_platform_driver cygnus_soc_platform = {
++static struct snd_soc_component_driver cygnus_soc_platform = {
+ 	.ops		= &cygnus_pcm_ops,
+ 	.pcm_new	= cygnus_dma_new,
+ 	.pcm_free	= cygnus_dma_free_dma_buffers,
+@@ -840,7 +840,8 @@ int cygnus_soc_platform_register(struct device *dev,
+ 		return rc;
  	}
  
- 	priv->num_chan = num_chan;
+-	rc = snd_soc_register_platform(dev, &cygnus_soc_platform);
++	rc = devm_snd_soc_register_component(dev, &cygnus_soc_platform,
++					     NULL, 0);
+ 	if (rc) {
+ 		dev_err(dev, "%s failed\n", __func__);
+ 		return rc;
+@@ -851,8 +852,6 @@ int cygnus_soc_platform_register(struct device *dev,
+ 
+ int cygnus_soc_platform_unregister(struct device *dev)
+ {
+-	snd_soc_unregister_platform(dev);
+-
+ 	return 0;
+ }
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.16.1
