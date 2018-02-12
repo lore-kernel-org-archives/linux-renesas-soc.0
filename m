@@ -1,19 +1,23 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:42558 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751176AbeBLSME (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:12:04 -0500
 From: Kieran Bingham <kbingham@kernel.org>
 To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 0/5] Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 22:07:48 +0000
-Message-Id: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
+Subject: [PATCH v2 0/5] Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 18:11:52 +0000
+Message-Id: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
@@ -40,10 +44,6 @@ v2:
  - fixed up dt binding property descriptions
  - Update missing edid-i2c address setting (adv7511)
  - Provide update for r8a7792 DTB to account for address conflict
-
-v3:
- - Split map register addresses into individual declarations across all uses
-
 
 Jean-Michel Hautbois (2):
   dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
