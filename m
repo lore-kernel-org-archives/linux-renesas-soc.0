@@ -1,26 +1,30 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:42580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752331AbeBLSMI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Feb 2018 13:12:08 -0500
 From: Kieran Bingham <kbingham@kernel.org>
 To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS)
-Subject: [PATCH v3 1/5] dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 22:07:49 +0000
-Message-Id: <1518473273-6333-2-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
-References: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
+Subject: [PATCH v2 1/5] dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
+Date: Mon, 12 Feb 2018 18:11:53 +0000
+Message-Id: <1518459117-16733-2-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
+References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
@@ -47,14 +51,11 @@ v2:
  - Minor reword to commit message to account for DT only change.
  - Collected Rob's RB tag.
 
-v3:
- - Split map register addresses into individual declarations.
-
  .../devicetree/bindings/media/i2c/adv7604.txt          | 18 ++++++++++++++++--
  1 file changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-index 9cbd92eb5d05..ebb5f070c05b 100644
+index 9cbd92eb5d05..b64e313dcc66 100644
 --- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
 +++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
 @@ -13,7 +13,11 @@ Required Properties:
@@ -91,11 +92,10 @@ index 9cbd92eb5d05..ebb5f070c05b 100644
 +		 * The edid page will be accessible @ 0x66 on the i2c bus. All
 +		 * other maps will retain their default addresses.
 +		 */
-+		reg = <0x4c>, <0x66>;
++		reg = <0x4c 0x66>;
 +		reg-names "main", "edid";
  
  		reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
  		hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
 -- 
 2.7.4
-
