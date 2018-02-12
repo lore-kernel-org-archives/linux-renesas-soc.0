@@ -1,292 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40141 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753573AbeBFWaB (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:14621 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751109AbeBLRyk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:30:01 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 1/9] ARM: dts: lager: use demuxer for IIC2/I2C2
-Date: Tue,  6 Feb 2018 23:29:50 +0100
-Message-Id: <20180206222958.18941-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
-References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+        Mon, 12 Feb 2018 12:54:40 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC 09/11] ARM: dts: gose: Enable watchdog support
+Date: Mon, 12 Feb 2018 17:54:36 +0000
+Message-ID: <TY1PR06MB0895FC3467407653F40FA90EC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+ <1518086057-19448-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518086057-19448-10-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C slaves.
+> Subject: [PATCH/RFC 09/11] ARM: dts: gose: Enable watchdog support
+>
+> Enable the watchdog, so the board can be restarted by a watchdog
+> timeout.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Based on work by Wolfram Sang.
+Acked-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, removed typo in comment, fixed aliases, switched to
-named GPIOS, sort SCL pins first]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 213 +++++++++++++++++++++---------------
- 1 file changed, 124 insertions(+), 89 deletions(-)
+> ---
+>  arch/arm/boot/dts/r8a7793-gose.dts | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a77=
+93-gose.dts
+> index 51b3ffac8efaad1d..1c8b4f1b5257216c 100644
+> --- a/arch/arm/boot/dts/r8a7793-gose.dts
+> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
+> @@ -446,6 +446,11 @@
+>  status =3D "okay";
+>  };
+>
+> +&rwdt {
+> +timeout-sec =3D <60>;
+> +status =3D "okay";
+> +};
+> +
+>  &scif0 {
+>  pinctrl-0 =3D <&scif0_pins>;
+>  pinctrl-names =3D "default";
+> --
+> 2.7.4
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 7892b113ecaa14..9f511d4fac109f 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -51,8 +51,10 @@
- 		serial0 = &scif0;
- 		serial1 = &scifa1;
- 		i2c8 = &gpioi2c1;
-+		i2c9 = &gpioi2c2;
- 		i2c10 = &i2cexio0;
- 		i2c11 = &i2cexio1;
-+		i2c12 = &i2chdmi;
- 	};
- 
- 	chosen {
-@@ -272,8 +274,18 @@
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
- 		status = "disabled";
--		sda-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		scl-gpios = <&gpio1 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	gpioi2c2: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio5 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio5 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-@@ -308,6 +320,104 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
-+
-+        /*
-+         * IIC2 and I2C2 may be switched using pinmux.
-+         * A fallback to GPIO is also provided.
-+         */
-+	i2chdmi: i2c-12 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&iic2>, <&i2c2>, <&gpioi2c2>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin1>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin1ep0>;
-+				};
-+			};
-+		};
-+
-+		cec_clock: cec-clock {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <12000000>;
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio1>;
-+			interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&cec_clock>;
-+			clock-names = "cec";
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		hdmi-in@4c {
-+			compatible = "adi,adv7612";
-+			reg = <0x4c>;
-+			interrupt-parent = <&gpio1>;
-+			interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+			default-input = <0>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7612_in: endpoint {
-+						remote-endpoint = <&hdmi_con_in>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					adv7612_out: endpoint {
-+						remote-endpoint = <&vin0ep2>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &du {
-@@ -437,6 +547,11 @@
- 		function = "iic1";
- 	};
- 
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2";
-+		function = "i2c2";
-+	};
-+
- 	iic2_pins: iic2 {
- 		groups = "iic2";
- 		function = "iic2";
-@@ -643,98 +758,18 @@
- 	pinctrl-names = "i2c-exio1";
- };
- 
--&iic2	{
--	status = "okay";
--	pinctrl-0 = <&iic2_pins>;
--	pinctrl-names = "default";
-+&i2c2	{
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "i2c-hdmi";
- 
- 	clock-frequency = <100000>;
-+};
- 
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin1>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin1ep0>;
--			};
--		};
--	};
--
--	cec_clock: cec-clock {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <12000000>;
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&cec_clock>;
--		clock-names = "cec";
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_lvds0>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con_out>;
--				};
--			};
--		};
--	};
--
--	hdmi-in@4c {
--		compatible = "adi,adv7612";
--		reg = <0x4c>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
--		default-input = <0>;
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7612_in: endpoint {
--					remote-endpoint = <&hdmi_con_in>;
--				};
--			};
-+&iic2	{
-+	pinctrl-0 = <&iic2_pins>;
-+	pinctrl-names = "i2c-hdmi";
- 
--			port@2 {
--				reg = <2>;
--				adv7612_out: endpoint {
--					remote-endpoint = <&vin0ep2>;
--				};
--			};
--		};
--	};
-+	clock-frequency = <100000>;
- };
- 
- &iic3 {
--- 
-2.11.0
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
