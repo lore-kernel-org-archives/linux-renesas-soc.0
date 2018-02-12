@@ -1,187 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40164 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753578AbeBFWaD (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:55147 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753350AbeBLRqM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:30:03 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 7/9] ARM: dts: silk: use demuxer for I2C1
-Date: Tue,  6 Feb 2018 23:29:56 +0100
-Message-Id: <20180206222958.18941-8-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
-References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+        Mon, 12 Feb 2018 12:46:12 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 15/26] clk: renesas: r8a7743: Add rwdt clock
+Date: Mon, 12 Feb 2018 17:44:24 +0000
+Message-Id: <1518457475-4480-16-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+Add "rwdt" clock to r8a7743_mod_clks. Also, since we may need to access
+the watchdog registers at any time, declare the clock as critical.
 
-Based on work for the r8a7790/lager by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7794-silk.dts | 128 ++++++++++++++++++++++---------------
- 1 file changed, 75 insertions(+), 53 deletions(-)
+v4->v5:
+* no change
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index edfad0e5ac53a0..f1afe2dda13a36 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -31,6 +31,8 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		i2c9 = &gpioi2c1;
-+		i2c10 = &i2chdmi;
- 	};
- 
- 	chosen {
-@@ -153,6 +155,78 @@
- 			clocks = <&x9_clk>;
- 		};
- 	};
-+
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-10 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio5>;
-+			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+	};
+ drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7743-cpg-mssr.c b/drivers/clk/renesas/r8a7743-cpg-mssr.c
+index 6dc0b30..d3c8b1e 100644
+--- a/drivers/clk/renesas/r8a7743-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7743-cpg-mssr.c
+@@ -117,6 +117,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt1",			 329,	R8A7743_CLK_R),
+ 	DEF_MOD("usbhs-dmac0",		 330,	R8A7743_CLK_HP),
+ 	DEF_MOD("usbhs-dmac1",		 331,	R8A7743_CLK_HP),
++	DEF_MOD("rwdt",			 402,	R8A7743_CLK_R),
+ 	DEF_MOD("irqc",			 407,	R8A7743_CLK_CP),
+ 	DEF_MOD("intc-sys",		 408,	R8A7743_CLK_ZS),
+ 	DEF_MOD("audio-dmac1",		 501,	R8A7743_CLK_HP),
+@@ -195,6 +196,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
  };
  
- &extal_clk {
-@@ -268,61 +342,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb0>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con>;
--				};
--			};
--		};
--	};
+ static const unsigned int r8a7743_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
  };
  
- &mmcif0 {
 -- 
-2.11.0
+2.7.4
