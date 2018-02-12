@@ -1,64 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:39985 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752294AbeBLRpD (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:23860 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751109AbeBLRw1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:45:03 -0500
+        Mon, 12 Feb 2018 12:52:27 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 03/26] ARM: dts: r8a7745: Adjust SMP routine size
-Date: Mon, 12 Feb 2018 17:44:12 +0000
-Message-Id: <1518457475-4480-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC 04/11] ARM: dts: lager: Enable watchdog support
+Date: Mon, 12 Feb 2018 17:52:23 +0000
+Message-ID: <TY1PR06MB08950E0F0F26323782472F02C0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+ <1518086057-19448-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518086057-19448-5-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+> Subject: [PATCH/RFC 04/11] ARM: dts: lager: Enable watchdog support
+>
+> Enable the watchdog, so the board can be restarted by a watchdog
+> timeout.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4->v5:
-* no change
+Acked-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
- arch/arm/boot/dts/r8a7745.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>  arch/arm/boot/dts/r8a7790-lager.dts | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7=
+790-lager.dts
+> index 7892b113ecaa14c6..4d8fb09fdbb816a5 100644
+> --- a/arch/arm/boot/dts/r8a7790-lager.dts
+> +++ b/arch/arm/boot/dts/r8a7790-lager.dts
+> @@ -860,6 +860,11 @@
+>  };
+>  };
+>
+> +&rwdt {
+> +timeout-sec =3D <60>;
+> +status =3D "okay";
+> +};
+> +
+>  &ssi1 {
+>  shared-pin;
+>  };
+> --
+> 2.7.4
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index ddc3da2..6bc1cf4 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -755,7 +755,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
--- 
-2.7.4
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
