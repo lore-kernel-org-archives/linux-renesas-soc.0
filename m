@@ -1,66 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:60466 "EHLO
-        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932835AbeBLWEN (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:36697 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753728AbeBLRyS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:04:13 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] v4l: subdev: compat: update handling for VIDIOC_SUBDEV_[GS]_ROUTING
-Date: Mon, 12 Feb 2018 23:03:52 +0100
-Message-Id: <20180212220352.21629-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 12 Feb 2018 12:54:18 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC 08/11] ARM: dts: wheat: Enable watchdog support
+Date: Mon, 12 Feb 2018 17:54:15 +0000
+Message-ID: <TY1PR06MB0895BE5BAC30FEB82BCE386BC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+ <1518086057-19448-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518086057-19448-9-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement compat IOCTL handling for VIDIOC_SUBDEV_G_ROUTING and
-VIDIOC_SUBDEV_S_ROUTING IOCTLs.
+> Subject: [PATCH/RFC 08/11] ARM: dts: wheat: Enable watchdog support
+>
+> Enable the watchdog, so the board can be restarted by a watchdog
+> timeout.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Acked-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Hi Sakari,
+> ---
+>  arch/arm/boot/dts/r8a7792-wheat.dts | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7=
+792-wheat.dts
+> index b9471b67b72829de..293b9e3b3e70d7b8 100644
+> --- a/arch/arm/boot/dts/r8a7792-wheat.dts
+> +++ b/arch/arm/boot/dts/r8a7792-wheat.dts
+> @@ -168,6 +168,11 @@
+>  };
+>  };
+>
+> +&rwdt {
+> +timeout-sec =3D <60>;
+> +status =3D "okay";
+> +};
+> +
+>  &scif0 {
+>  pinctrl-0 =3D <&scif0_pins>;
+>  pinctrl-names =3D "default";
+> --
+> 2.7.4
 
-With this fix on-top of your vc branch I get it work with v4.16-rc1, 
-feel free to squash it into your branch where appropriate. I tested this 
-with a ARM64 kernel and a ARM user-land with v4l2-ctl + my 
---{get,set}-routing patches for v4l-utils.
 
-// Niklas
 
-diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-index a1f71a83ac076d7f..30700658963d3227 100644
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -1124,7 +1124,10 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
- 
- 	case VIDIOC_SUBDEV_G_ROUTING:
- 	case VIDIOC_SUBDEV_S_ROUTING:
--		err = get_v4l2_subdev_routing(&karg.subdev_routing, up);
-+		err = alloc_userspace(sizeof(struct v4l2_subdev_routing),
-+				      0, &up_native);
-+		if (!err)
-+			err = get_v4l2_subdev_routing(up_native, up);
- 		compatible_arg = 0;
- 		break;
- 
-@@ -1257,7 +1260,7 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
- 		break;
- 	case VIDIOC_SUBDEV_G_ROUTING:
- 	case VIDIOC_SUBDEV_S_ROUTING:
--		err = put_v4l2_subdev_routing(&karg.subdev_routing, up);
-+		err = put_v4l2_subdev_routing(up_native, up);
- 		break;
- 	}
- 	if (err)
--- 
-2.16.1
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
