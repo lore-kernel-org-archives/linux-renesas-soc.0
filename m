@@ -1,84 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42680 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752822AbeBLSMQ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:65416 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752564AbeBLRxR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:12:16 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mon, 12 Feb 2018 12:53:17 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT)
-Subject: [PATCH v2 3/5] [RFT] ARM: dts: wheat: Fix ADV7513 address usage
-Date: Mon, 12 Feb 2018 18:11:55 +0000
-Message-Id: <1518459117-16733-4-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
-References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
+        Magnus Damm <magnus.damm@gmail.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC 06/11] ARM: dts: porter: Enable watchdog support
+Date: Mon, 12 Feb 2018 17:53:14 +0000
+Message-ID: <TY1PR06MB0895CCCD24E15BDFCFA4821FC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+ <1518086057-19448-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518086057-19448-7-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Subject: [PATCH/RFC 06/11] ARM: dts: porter: Enable watchdog support
+>
+> Enable the watchdog, so the board can be restarted by a watchdog
+> timeout.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The r8a7792 Wheat board has two ADV7513 devices sharing a single i2c
-bus, however in low power mode the ADV7513 will reset it's slave maps to
-use the hardware defined default addresses.
+Acked-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-The ADV7511 driver was adapted to allow the two devices to be registered
-correctly - but it did not take into account the fault whereby the
-devices reset the addresses.
+> ---
+>  arch/arm/boot/dts/r8a7791-porter.dts | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a=
+7791-porter.dts
+> index 9a02d03b23c2b7e9..7d06fb24bcdf2fee 100644
+> --- a/arch/arm/boot/dts/r8a7791-porter.dts
+> +++ b/arch/arm/boot/dts/r8a7791-porter.dts
+> @@ -449,6 +449,11 @@
+>  };
+>  };
+>
+> +&rwdt {
+> +timeout-sec =3D <60>;
+> +status =3D "okay";
+> +};
+> +
+>  &ssi1 {
+>  shared-pin;
+>  };
+> --
+> 2.7.4
 
-This results in an address conflict between the device using the default
-addresses, and the other device if it is in low-power-mode.
 
-Repair this issue by moving both devices away from the default address
-definitions.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- arch/arm/boot/dts/r8a7792-wheat.dts | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index b9471b67b728..c94f330392ee 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -240,9 +240,16 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
- 
-+	/*
-+	 * The adv75xx resets its addresses to defaults during low power power
-+	 * mode. Because we have two ADV7513 devices on the same bus, we must
-+	 * change both of them away from the defaults so that they do not
-+	 * conflict.
-+	 */
- 	hdmi@3d {
- 		compatible = "adi,adv7513";
--		reg = <0x3d>;
-+		reg = <0x3d 0x2d 0x4d, 0x5d>;
-+		reg-names = "main", "cec", "edid", "packet";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
-@@ -272,7 +279,8 @@
- 
- 	hdmi@39 {
- 		compatible = "adi,adv7513";
--		reg = <0x39>;
-+		reg = <0x39 0x29 0x49, 0x59>;
-+		reg-names = "main", "cec", "edid", "packet";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
--- 
-2.7.4
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
