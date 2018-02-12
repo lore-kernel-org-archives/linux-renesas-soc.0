@@ -1,62 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:43453 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964887AbeB1XUA (ORCPT
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:33032 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751271AbeBLRXE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Feb 2018 18:20:00 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Jacopo Mondi <jacopo@jmondi.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] media: renesas-ceu: mark PM functions as __maybe_unused
-Date: Thu,  1 Mar 2018 00:19:37 +0100
-Message-Id: <20180228231951.460060-1-arnd@arndb.de>
+        Mon, 12 Feb 2018 12:23:04 -0500
+Date: Mon, 12 Feb 2018 09:22:59 -0800
+From: Tejun Heo <tj@kernel.org>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-ide@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH/RFT v3] sata_rcar: Reset SATA PHY when Salvator-X board
+ resumes
+Message-ID: <20180212172259.GE695913@devbig577.frc2.facebook.com>
+References: <1517771931-17157-1-git-send-email-ykaneko0929@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517771931-17157-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The PM runtime operations are unused when CONFIG_PM is disabled,
-leading to a harmless warning:
+On Mon, Feb 05, 2018 at 04:18:51AM +0900, Yoshihiro Kaneko wrote:
+> From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> 
+> Because power of Salvator-X board is cut off in suspend,
+> it needs to reset SATA PHY state in resume.
+> Otherwise, SATA partition could not be accessed anymore.
+> 
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> Signed-off-by: Hien Dang <hien.dang.eb@rvc.renesas.com>
+> [reinit phy in sata_rcar_resume() function on R-Car Gen3 only]
+> [factor out SATA module init sequence]
+> [fixed the prefix for the subject]
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-drivers/media/platform/renesas-ceu.c:1003:12: error: 'ceu_runtime_suspend' defined but not used [-Werror=unused-function]
- static int ceu_runtime_suspend(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~~
-drivers/media/platform/renesas-ceu.c:987:12: error: 'ceu_runtime_resume' defined but not used [-Werror=unused-function]
- static int ceu_runtime_resume(struct device *dev)
-            ^~~~~~~~~~~~~~~~~~
+Applied to libata/for-4.16-fixes.
 
-This adds a __maybe_unused annotation to shut up the warning.
+Thanks.
 
-Fixes: 32e5a70dc8f4 ("media: platform: Add Renesas CEU driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/platform/renesas-ceu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index 22330c0c2f6a..eccd60a7ebec 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -984,7 +984,7 @@ static int ceu_init_mbus_fmt(struct ceu_device *ceudev)
- /*
-  * ceu_runtime_resume() - soft-reset the interface and turn sensor power on.
-  */
--static int ceu_runtime_resume(struct device *dev)
-+static int __maybe_unused ceu_runtime_resume(struct device *dev)
- {
- 	struct ceu_device *ceudev = dev_get_drvdata(dev);
- 	struct v4l2_subdev *v4l2_sd = ceudev->sd->v4l2_sd;
-@@ -1000,7 +1000,7 @@ static int ceu_runtime_resume(struct device *dev)
-  * ceu_runtime_suspend() - disable capture and interrupts and soft-reset.
-  *			   Turn sensor power off.
-  */
--static int ceu_runtime_suspend(struct device *dev)
-+static int __maybe_unused ceu_runtime_suspend(struct device *dev)
- {
- 	struct ceu_device *ceudev = dev_get_drvdata(dev);
- 	struct v4l2_subdev *v4l2_sd = ceudev->sd->v4l2_sd;
 -- 
-2.9.0
+tejun
