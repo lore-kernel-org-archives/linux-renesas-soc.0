@@ -1,88 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42211 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935060AbeBMMbv (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:39706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932830AbeBLWZk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:31:51 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kbingham@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
+        Mon, 12 Feb 2018 17:25:40 -0500
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] arm64: dts: renesas: r8a77995: add FCPVD nodes
-Date: Tue, 13 Feb 2018 14:32:22 +0200
-Message-ID: <1541765.WkmPmS7X3L@avalon>
-In-Reply-To: <1518474330-8713-3-git-send-email-kbingham@kernel.org>
-References: <1518474330-8713-1-git-send-email-kbingham@kernel.org> <1518474330-8713-3-git-send-email-kbingham@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 2/4] arm64: dts: renesas: r8a77995: add FCPVD nodes
+Date: Mon, 12 Feb 2018 22:25:27 +0000
+Message-Id: <1518474330-8713-3-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518474330-8713-1-git-send-email-kbingham@kernel.org>
+References: <1518474330-8713-1-git-send-email-kbingham@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Thank you for the patch.
+The FCPVD handles the interface between the VSPD and memory.
 
-On Tuesday, 13 February 2018 00:25:27 EET Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> The FCPVD handles the interface between the VSPD and memory.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-I would however squash this with patch 1/4 from the same series.
-
-> ---
->  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index
-> 6cf935d307d9..196a917afea6 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> @@ -700,6 +700,24 @@
->  			resets = <&cpg 607>;
->  			iommus = <&ipmmu_vp0 5>;
->  		};
-> +
-> +		fcpvd0: fcp@fea27000 {
-> +			compatible = "renesas,fcpv";
-> +			reg = <0 0xfea27000 0 0x200>;
-> +			clocks = <&cpg CPG_MOD 603>;
-> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-> +			resets = <&cpg 603>;
-> +			iommus = <&ipmmu_vi0 8>;
-> +		};
-> +
-> +		fcpvd1: fcp@fea2f000 {
-> +			compatible = "renesas,fcpv";
-> +			reg = <0 0xfea2f000 0 0x200>;
-> +			clocks = <&cpg CPG_MOD 602>;
-> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-> +			resets = <&cpg 602>;
-> +			iommus = <&ipmmu_vi0 9>;
-> +		};
->  	};
-> 
->  	timer {
-
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 6cf935d307d9..196a917afea6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -700,6 +700,24 @@
+ 			resets = <&cpg 607>;
+ 			iommus = <&ipmmu_vp0 5>;
+ 		};
++
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++			iommus = <&ipmmu_vi0 8>;
++		};
++
++		fcpvd1: fcp@fea2f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea2f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 602>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 602>;
++			iommus = <&ipmmu_vi0 9>;
++		};
+ 	};
+ 
+ 	timer {
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
