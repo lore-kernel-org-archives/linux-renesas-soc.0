@@ -1,106 +1,79 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v10 29/30] rcar-vin: enable support for r8a7796
-Date: Tue, 13 Feb 2018 23:54:55 +0200
-Message-ID: <5136578.MxM64rYMOm@avalon>
-In-Reply-To: <20180129163435.24936-30-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se> <20180129163435.24936-30-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46130 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932925AbeBLMc6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Feb 2018 07:32:58 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Simon <horms@verge.net.au>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: remove rtd->platform checck" to the asoc tree
+In-Reply-To: <87shhl5f0o.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1elDHy-0003UN-ST@debutante>
+Date: Mon, 12 Feb 2018 12:32:54 +0000
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+The patch
 
-Thank you for the patch.
+   ASoC: remove rtd->platform checck
 
-On Monday, 29 January 2018 18:34:34 EET Niklas S=F6derlund wrote:
-> Add the SoC specific information for Renesas r8a7796.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 44 +++++++++++++++++++++++=
-+++
->  1 file changed, 44 insertions(+)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
-> b/drivers/media/platform/rcar-vin/rcar-core.c index
-> 43d2fa83875817f0..2305fedd293db241 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -914,6 +914,46 @@ static const struct rvin_info rcar_info_r8a7795es1 =
-=3D {
->  	.routes =3D rcar_info_r8a7795es1_routes,
->  };
->=20
-> +static const struct rvin_group_route rcar_info_r8a7796_routes[] =3D {
-> +	{ .vin =3D 0, .csi =3D RVIN_CSI40, .chan =3D 0, .mask =3D BIT(0) | BIT(=
-3) },
-> +	{ .vin =3D 0, .csi =3D RVIN_CSI20, .chan =3D 0, .mask =3D BIT(1) | BIT(=
-4) },
-> +	{ .vin =3D 1, .csi =3D RVIN_CSI20, .chan =3D 0, .mask =3D BIT(0) },
-> +	{ .vin =3D 1, .csi =3D RVIN_CSI40, .chan =3D 0, .mask =3D BIT(2) },
-> +	{ .vin =3D 1, .csi =3D RVIN_CSI40, .chan =3D 1, .mask =3D BIT(3) },
-> +	{ .vin =3D 1, .csi =3D RVIN_CSI20, .chan =3D 1, .mask =3D BIT(4) },
-> +	{ .vin =3D 2, .csi =3D RVIN_CSI40, .chan =3D 0, .mask =3D BIT(1) },
-> +	{ .vin =3D 2, .csi =3D RVIN_CSI20, .chan =3D 0, .mask =3D BIT(2) },
-> +	{ .vin =3D 2, .csi =3D RVIN_CSI40, .chan =3D 2, .mask =3D BIT(3) },
-> +	{ .vin =3D 2, .csi =3D RVIN_CSI20, .chan =3D 2, .mask =3D BIT(4) },
-> +	{ .vin =3D 3, .csi =3D RVIN_CSI40, .chan =3D 1, .mask =3D BIT(0) },
-> +	{ .vin =3D 3, .csi =3D RVIN_CSI20, .chan =3D 1, .mask =3D BIT(1) },
-> +	{ .vin =3D 3, .csi =3D RVIN_CSI40, .chan =3D 3, .mask =3D BIT(3) },
-> +	{ .vin =3D 3, .csi =3D RVIN_CSI20, .chan =3D 3, .mask =3D BIT(4) },
-> +	{ .vin =3D 4, .csi =3D RVIN_CSI40, .chan =3D 0, .mask =3D BIT(0) | BIT(=
-3) },
-> +	{ .vin =3D 4, .csi =3D RVIN_CSI20, .chan =3D 0, .mask =3D BIT(1) | BIT(=
-4) },
-> +	{ .vin =3D 5, .csi =3D RVIN_CSI20, .chan =3D 0, .mask =3D BIT(0) },
-> +	{ .vin =3D 5, .csi =3D RVIN_CSI40, .chan =3D 0, .mask =3D BIT(2) },
-> +	{ .vin =3D 5, .csi =3D RVIN_CSI40, .chan =3D 1, .mask =3D BIT(3) },
-> +	{ .vin =3D 5, .csi =3D RVIN_CSI20, .chan =3D 1, .mask =3D BIT(4) },
-> +	{ .vin =3D 6, .csi =3D RVIN_CSI40, .chan =3D 0, .mask =3D BIT(1) },
-> +	{ .vin =3D 6, .csi =3D RVIN_CSI20, .chan =3D 0, .mask =3D BIT(2) },
-> +	{ .vin =3D 6, .csi =3D RVIN_CSI40, .chan =3D 2, .mask =3D BIT(3) },
-> +	{ .vin =3D 6, .csi =3D RVIN_CSI20, .chan =3D 2, .mask =3D BIT(4) },
-> +	{ .vin =3D 7, .csi =3D RVIN_CSI40, .chan =3D 1, .mask =3D BIT(0) },
-> +	{ .vin =3D 7, .csi =3D RVIN_CSI20, .chan =3D 1, .mask =3D BIT(1) },
-> +	{ .vin =3D 7, .csi =3D RVIN_CSI40, .chan =3D 3, .mask =3D BIT(3) },
-> +	{ .vin =3D 7, .csi =3D RVIN_CSI20, .chan =3D 3, .mask =3D BIT(4) },
-> +	{ /* Sentinel */ }
-> +};
-> +
-> +static const struct rvin_info rcar_info_r8a7796 =3D {
-> +	.model =3D RCAR_GEN3,
-> +	.use_mc =3D true,
-> +	.max_width =3D 4096,
-> +	.max_height =3D 4096,
-> +	.routes =3D rcar_info_r8a7796_routes,
-> +};
-> +
->  static const struct of_device_id rvin_of_id_table[] =3D {
->  	{
->  		.compatible =3D "renesas,vin-r8a7778",
-> @@ -947,6 +987,10 @@ static const struct of_device_id rvin_of_id_table[] =
-=3D {
-> .compatible =3D "renesas,vin-r8a7795",
->  		.data =3D &rcar_info_r8a7795,
->  	},
-> +	{
-> +		.compatible =3D "renesas,vin-r8a7796",
-> +		.data =3D &rcar_info_r8a7796,
-> +	},
->  	{ /* Sentinel */ },
->  };
->  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+has been applied to the asoc tree at
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-=2D-=20
-Regards,
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Laurent Pinchart
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From bbf4d71aa9e21e8ee05e16cbb2cd2999252ce930 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 29 Jan 2018 02:40:28 +0000
+Subject: [PATCH] ASoC: remove rtd->platform checck
+
+Now, we are ready to replace rtd->platform to rtdcom list.
+>From this patch, rtd->platform check is no longer needed.
+It will be replaced into rtdcom.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/soc-core.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 96c44f6576c9..9558125b448d 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1162,11 +1162,6 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
+ 
+ 		rtd->platform = platform;
+ 	}
+-	if (!rtd->platform) {
+-		dev_err(card->dev, "ASoC: platform %s not registered\n",
+-			dai_link->platform_name);
+-		goto _err_defer;
+-	}
+ 
+ 	soc_add_pcm_runtime(card, rtd);
+ 	return 0;
+-- 
+2.16.1
