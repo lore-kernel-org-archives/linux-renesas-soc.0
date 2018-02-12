@@ -1,98 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54808 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751366AbeBVAE5 (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:41443 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754190AbeBLO0Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Feb 2018 19:04:57 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v5 2/8] dt-bindings: display: renesas: Deprecate LVDS support in the DU bindings
-Date: Thu, 22 Feb 2018 02:05:25 +0200
-Message-Id: <20180222000531.19448-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 12 Feb 2018 09:26:25 -0500
+Received: by mail-qt0-f195.google.com with SMTP id a9so12476877qtj.8
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Feb 2018 06:26:25 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1518193418-26969-1-git-send-email-kbingham@kernel.org>
+References: <1518193418-26969-1-git-send-email-kbingham@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Feb 2018 15:26:24 +0100
+Message-ID: <CAMuHMdWc+NK3EXhUCPHJ8Q4twJZNcf-KrhmTvz0Qn2BLtbskSg@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] vsp1/vga-performance-fix
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoders now have their own DT bindings, representing
-them as part of the DU is deprecated.
+Hi Kieran,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes since v1:
+On Fri, Feb 9, 2018 at 5:23 PM, Kieran Bingham <kbingham@kernel.org> wrote:
+> Please consider including this fix for the VSP1 in renesas-drivers.
+>
+> --
+> Regards
+>
+> Kieran
+>
+> The following changes since commit d8a5b80568a9cb66810e75b182018e9edb68e8ff:
+>
+>   Linux 4.15 (2018-01-28 13:20:33 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git vsp1/vga-performance-fix
+>
+> for you to fetch changes up to e0c81de98739197b6fda7ba65fe4f17c7a03c384:
+>
+>   v4l: vsp1: Fix header display list status check in continuous mode (2018-02-09 15:57:49 +0000)
 
-- Remove the LVDS reg range from the example
-- Remove the reg-names property
----
- .../devicetree/bindings/display/renesas,du.txt     | 31 ++++++++--------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
+Thank you, merges cleanly into dotay's linux-next.
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index cd48aba3bc8c..e79cf9b0ad38 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -14,12 +14,7 @@ Required Properties:
-     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
-     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
- 
--  - reg: A list of base address and length of each memory resource, one for
--    each entry in the reg-names property.
--  - reg-names: Name of the memory resources. The DU requires one memory
--    resource for the DU core (named "du") and one memory resource for each
--    LVDS encoder (named "lvds.x" with "x" being the LVDS controller numerical
--    index).
-+  - reg: the memory-mapped I/O registers base address and length
- 
-   - interrupt-parent: phandle of the parent interrupt controller.
-   - interrupts: Interrupt specifiers for the DU interrupts.
-@@ -29,14 +24,13 @@ Required Properties:
-   - clock-names: Name of the clocks. This property is model-dependent.
-     - R8A7779 uses a single functional clock. The clock doesn't need to be
-       named.
--    - All other DU instances use one functional clock per channel and one
--      clock per LVDS encoder (if available). The functional clocks must be
--      named "du.x" with "x" being the channel numerical index. The LVDS clocks
--      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
--    - In addition to the functional and encoder clocks, all DU versions also
--      support externally supplied pixel clocks. Those clocks are optional.
--      When supplied they must be named "dclkin.x" with "x" being the input
--      clock numerical index.
-+    - All other DU instances use one functional clock per channel The
-+      functional clocks must be named "du.x" with "x" being the channel
-+      numerical index.
-+    - In addition to the functional clocks, all DU versions also support
-+      externally supplied pixel clocks. Those clocks are optional. When
-+      supplied they must be named "dclkin.x" with "x" being the input clock
-+      numerical index.
- 
-   - vsps: A list of phandle and channel index tuples to the VSPs that handle
-     the memory interfaces for the DU channels. The phandle identifies the VSP
-@@ -69,9 +63,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7795";
--		reg = <0 0xfeb00000 0 0x80000>,
--		      <0 0xfeb90000 0 0x14>;
--		reg-names = "du", "lvds.0";
-+		reg = <0 0xfeb00000 0 0x80000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-@@ -79,9 +71,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 		clocks = <&cpg CPG_MOD 724>,
- 			 <&cpg CPG_MOD 723>,
- 			 <&cpg CPG_MOD 722>,
--			 <&cpg CPG_MOD 721>,
--			 <&cpg CPG_MOD 727>;
--		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+			 <&cpg CPG_MOD 721>;
-+		clock-names = "du.0", "du.1", "du.2", "du.3";
- 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
- 
- 		ports {
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
