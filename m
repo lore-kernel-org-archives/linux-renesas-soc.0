@@ -1,50 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:40444 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751995AbeBHKeY (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:54760 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753977AbeBLQsF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:34:24 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 07/11] ARM: dts: blanche: Enable watchdog support
-Date: Thu,  8 Feb 2018 11:34:13 +0100
-Message-Id: <1518086057-19448-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
-References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+        Mon, 12 Feb 2018 11:48:05 -0500
+Date: Mon, 12 Feb 2018 11:48:04 -0500 (EST)
+Message-Id: <20180212.114804.1183742400393689708.davem@davemloft.net>
+To: geert+renesas@glider.be
+Cc: sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] sh_eth: Remove obsolete explicit clock handling for
+ WoL
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1518442956-32115-1-git-send-email-geert+renesas@glider.be>
+References: <1518442956-32115-1-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the watchdog, so the board can be restarted by a watchdog
-timeout.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 12 Feb 2018 14:42:36 +0100
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7792-blanche.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+> Currently, if Wake-on-LAN is enabled, the SH-ETH device's module clock
+> is manually kept running during system suspend, to make sure the device
+> stays active.
+> 
+> Since commits 91c719f5ec6671f7 ("soc: renesas: rcar-sysc: Keep wakeup
+> sources active during system suspend") and 744dddcae84441b1 ("clk:
+> renesas: mstp: Keep wakeup sources active during system suspend"), this
+> workaround is no longer needed.  Hence remove all explicit clock
+> handling to keep the device active.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> ---
+> v2:
+>   - Add Reviewed-by,
+>   - Drop RFC state, now the dependencies are upstream.
 
-diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
-index 9b67dca6c9ef550d..04fb70931b3b0772 100644
---- a/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ b/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -239,6 +239,11 @@
- 	};
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+Applied.
