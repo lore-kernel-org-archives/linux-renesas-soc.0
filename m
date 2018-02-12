@@ -1,78 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:40314 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751544AbeBGXVG (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:64440 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751109AbeBLRwG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 18:21:06 -0500
-Date: Thu, 8 Feb 2018 00:21:03 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+        Mon, 12 Feb 2018 12:52:06 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC v4 25/26] ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-Message-ID: <20180207232103.p5ynehmgngoalq5x@katana>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-26-git-send-email-fabrizio.castro@bp.renesas.com>
+        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH/RFC 03/11] ARM: dts: r8a7793: Add RWDT node
+Date: Mon, 12 Feb 2018 17:52:02 +0000
+Message-ID: <TY1PR06MB0895CD1D7318602AC9F9F04BC0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+ <1518086057-19448-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1518086057-19448-4-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="465r3sfkhjhucg7t"
-Content-Disposition: inline
-In-Reply-To: <1517423070-24236-26-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+> Subject: [PATCH/RFC 03/11] ARM: dts: r8a7793: Add RWDT node
+>
+> Add a device node for the Watchdog Timer (WDT) controller on the Renesas
+> R-Car M2-N (r8a7793) SoC.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
---465r3sfkhjhucg7t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-On Wed, Jan 31, 2018 at 06:24:29PM +0000, Fabrizio Castro wrote:
-> This patch enables the watchdog from within the iwg20m SoM dtsi.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  arch/arm/boot/dts/r8a7793.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.d=
+tsi
+> index f0e0415682f89440..5a06ad1788b27ff1 100644
+> --- a/arch/arm/boot/dts/r8a7793.dtsi
+> +++ b/arch/arm/boot/dts/r8a7793.dtsi
+> @@ -126,6 +126,16 @@
+>  #size-cells =3D <2>;
+>  ranges;
+>
+> +rwdt: watchdog@e6020000 {
+> +compatible =3D "renesas,r8a7793-wdt",
+> +     "renesas,rcar-gen2-wdt";
+> +reg =3D <0 0xe6020000 0 0x0c>;
+> +clocks =3D <&cpg CPG_MOD 402>;
+> +power-domains =3D <&sysc R8A7793_PD_ALWAYS_ON>;
+> +resets =3D <&cpg 402>;
+> +status =3D "disabled";
+> +};
+> +
+>  gpio0: gpio@e6050000 {
+>  compatible =3D "renesas,gpio-r8a7793",
+>       "renesas,rcar-gen2-gpio";
+> --
+> 2.7.4
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---465r3sfkhjhucg7t
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7id8ACgkQFA3kzBSg
-KbYzQRAAlvPTx08aRzmDIK3C1VadQr8UcUhoztAC9o7zTzLsqFCxe/8SSHEhMQSx
-IoZ/j2jCC/MP1K5Xrue71jW2urf+igpn0MiAaSDOcpFYHas/cZfM8It3G++yLigC
-0JMymDqyJm5HN/4EQDh91YlGav1gbDodMHdN+9rLc7hSHiFExIAOsoKkIBnnJ2CQ
-z8g+Gt78fPS6ocwsXmnyT41Qf08eJ7XjF4ri7xqLocjv6+U1Vao/SyfyEsph0vOq
-Ly2oE+X5PAGMrOOXskzUXuYqRh5KSa51hxg8FNQkjK+baBUczUvTr3xDrT50+apr
-xqFntQo917bj0mLoqc9E+ednuv+Vxup3LEmwKM0UvuL06Ql4ipYkeUww3QBPLZWH
-QZy6vbHAwgWUIU6fbsbURDoSnk0VjYXkERsGM/I7x5udlaZm6imYTUv8gV/gaeCf
-aLqF+PsOexFjU9Va0ta/PWPzLOKhG64w8lvxxYcndw6XuG89TpUkknhRvdTiU5ZS
-BFomSsMHFtmqKBVI19nDsYkHjY4W9r27ssTzP3OpiidhPDBbQL1x+Y4C08DKLRob
-96iFzwYKPWkcWwk0VN3zUlU3AKA9oMCrgaYaLSSS0lE6S9pux3QCSQ3DxehqtAcR
-dREbcnyz9ePpl6A2khZOuXRJcvdk5lm2Pghk0xYzxFgRiPLCtl0=
-=V973
------END PGP SIGNATURE-----
-
---465r3sfkhjhucg7t--
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
