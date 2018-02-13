@@ -1,70 +1,153 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44213 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754038AbeBGTJx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:09:53 -0500
-Date: Wed, 7 Feb 2018 20:09:51 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 06/16] mmc: tmio: refactor .get_ro hook
-Message-ID: <20180207190951.viniisquogyk2av6@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-7-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 4/5] media: adv7604: Add support for i2c_new_secondary_device
+Date: Tue, 13 Feb 2018 17:48:56 +0000
+Message-Id: <1518544137-2742-5-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4hyxqrgwjik2wcxf"
-Content-Disposition: inline
-In-Reply-To: <1516206496-16612-7-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
 
---4hyxqrgwjik2wcxf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The ADV7604 has thirteen 256-byte maps that can be accessed via the main
+I2C ports. Each map has it own I2C address and acts as a standard slave
+device on the I2C bus.
 
-On Thu, Jan 18, 2018 at 01:28:06AM +0900, Masahiro Yamada wrote:
-> This IP provides the write protect signal level in the status
-> register, but it is also possible to use GPIO for WP.  They are
-> exclusive, so it is not efficient to call mmc_gpio_get_ro() every
-> time from tmio_mmc_get_ro() if we know gpio_ro is not used.
->=20
-> Check the capability of gpio_ro just once in the probe function,
-> then set mmc_gpio_get_ro to .get_ro if it is the case.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Allow a device tree node to override the default addresses so that
+address conflicts with other devices on the same bus may be resolved at
+the board description level.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+[Kieran: Re-adapted for mainline]
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+Based upon the original posting :
+  https://lkml.org/lkml/2014/10/22/469
 
+v2:
+ - Split out DT bindings from driver updates
+ - Return -EINVAL on error paths from adv76xx_dummy_client()
 
---4hyxqrgwjik2wcxf
-Content-Type: application/pgp-signature; name="signature.asc"
+v3:
+ - No change
 
------BEGIN PGP SIGNATURE-----
+v4:
+ - s/struct adv76xx_register/struct adv76xx_register_map/
+ - s/adv76xx_secondary_names/adv76xx_default_addresses/
+ - Normalise I2C usage (s/I²C/I2C/)
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7Tv4ACgkQFA3kzBSg
-KbZwZQ//TWe1qgH1C2ufhOJ0BrEo4/hqT7Q/Qiq1m2vwNxFoQL51ZH1mV9iURMeg
-WNR3SQlRs49vUYhylEIoTu78KWaCnSPYt1PnXPLWNc5/P5LJWp0AwHPUkbmgptXL
-VnbKWtchCK0XUrYVL6gc5wBshZXMdBETy3L7l/MZCdeBDcL69/8fxWW9bhjhqekT
-Bbz/DXk0ge8SPQ4K8rpXFn3GHy8wf3mbSg561JMYRyWOF0zx6MmTQkNtlLPcyXxq
-U4zQ+UUgN4yT3pn1HOfxtI8atVqiP/DcIs3eauOgvmneH19N3uGcVF3LjUhb7+Xt
-4xfG0gURmfNffVicNJ+Xzw20ofzPCiQ5fCc50H0csjyx05+FVjLaHXBJh6XPiOJg
-cdUOz+rQBi1lhrYDO8ryZnIcyiIBphsUrLsRfV+28E7hqcPEHZ6SYbWcM3c5o9G7
-+6mUNU6UzSN337R1eGsQ4T1H9lywrA5KSidd3Il3X+qJd8nawKiNN9ekMpzei8M0
-ZxJ5Sb4vpS45REvRJV6FniXNzDcpDdsC2vrrA3t/thlQ0YIuHyWh8IwVXbY5KewQ
-lrN58vLg5LKW/fJedxZExdr5tdTkpupgluZNcZpsN6ACHJ1cYu7VQ9GsxfUcP/6g
-jErcmxGJIgFC/eLO4iCxJfozKa7NTf3R8KTpSs9hjAwr3lLo8zY=
-=I/jZ
------END PGP SIGNATURE-----
+ drivers/media/i2c/adv7604.c | 62 +++++++++++++++++++++++++++++----------------
+ 1 file changed, 40 insertions(+), 22 deletions(-)
 
---4hyxqrgwjik2wcxf--
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index 1544920ec52d..d52c624a2970 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -2734,6 +2734,27 @@ static const struct v4l2_ctrl_config adv76xx_ctrl_free_run_color = {
+ 
+ /* ----------------------------------------------------------------------- */
+ 
++struct adv76xx_register_map {
++	const char *name;
++	u8 default_addr;
++};
++
++static const struct adv76xx_register_map adv76xx_default_addresses[] = {
++	[ADV76XX_PAGE_IO] = { "main", 0x4c },
++	[ADV7604_PAGE_AVLINK] = { "avlink", 0x42 },
++	[ADV76XX_PAGE_CEC] = { "cec", 0x40 },
++	[ADV76XX_PAGE_INFOFRAME] = { "infoframe", 0x3e },
++	[ADV7604_PAGE_ESDP] = { "esdp", 0x38 },
++	[ADV7604_PAGE_DPP] = { "dpp", 0x3c },
++	[ADV76XX_PAGE_AFE] = { "afe", 0x26 },
++	[ADV76XX_PAGE_REP] = { "rep", 0x32 },
++	[ADV76XX_PAGE_EDID] = { "edid", 0x36 },
++	[ADV76XX_PAGE_HDMI] = { "hdmi", 0x34 },
++	[ADV76XX_PAGE_TEST] = { "test", 0x30 },
++	[ADV76XX_PAGE_CP] = { "cp", 0x22 },
++	[ADV7604_PAGE_VDP] = { "vdp", 0x24 },
++};
++
+ static int adv76xx_core_init(struct v4l2_subdev *sd)
+ {
+ 	struct adv76xx_state *state = to_state(sd);
+@@ -2834,13 +2855,26 @@ static void adv76xx_unregister_clients(struct adv76xx_state *state)
+ }
+ 
+ static struct i2c_client *adv76xx_dummy_client(struct v4l2_subdev *sd,
+-							u8 addr, u8 io_reg)
++					       unsigned int page)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(sd);
++	struct adv76xx_state *state = to_state(sd);
++	struct adv76xx_platform_data *pdata = &state->pdata;
++	unsigned int io_reg = 0xf2 + page;
++	struct i2c_client *new_client;
++
++	if (pdata && pdata->i2c_addresses[page])
++		new_client = i2c_new_dummy(client->adapter,
++					   pdata->i2c_addresses[page]);
++	else
++		new_client = i2c_new_secondary_device(client,
++				adv76xx_default_addresses[page].name,
++				adv76xx_default_addresses[page].default_addr);
+ 
+-	if (addr)
+-		io_write(sd, io_reg, addr << 1);
+-	return i2c_new_dummy(client->adapter, io_read(sd, io_reg) >> 1);
++	if (new_client)
++		io_write(sd, io_reg, new_client->addr << 1);
++
++	return new_client;
+ }
+ 
+ static const struct adv76xx_reg_seq adv7604_recommended_settings_afe[] = {
+@@ -3115,20 +3149,6 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
+ 	/* Disable the interrupt for now as no DT-based board uses it. */
+ 	state->pdata.int1_config = ADV76XX_INT1_CONFIG_DISABLED;
+ 
+-	/* Use the default I2C addresses. */
+-	state->pdata.i2c_addresses[ADV7604_PAGE_AVLINK] = 0x42;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_CEC] = 0x40;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_INFOFRAME] = 0x3e;
+-	state->pdata.i2c_addresses[ADV7604_PAGE_ESDP] = 0x38;
+-	state->pdata.i2c_addresses[ADV7604_PAGE_DPP] = 0x3c;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_AFE] = 0x26;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_REP] = 0x32;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_EDID] = 0x36;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_HDMI] = 0x34;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_TEST] = 0x30;
+-	state->pdata.i2c_addresses[ADV76XX_PAGE_CP] = 0x22;
+-	state->pdata.i2c_addresses[ADV7604_PAGE_VDP] = 0x24;
+-
+ 	/* Hardcode the remaining platform data fields. */
+ 	state->pdata.disable_pwrdnb = 0;
+ 	state->pdata.disable_cable_det_rst = 0;
+@@ -3478,11 +3498,9 @@ static int adv76xx_probe(struct i2c_client *client,
+ 		if (!(BIT(i) & state->info->page_mask))
+ 			continue;
+ 
+-		state->i2c_clients[i] =
+-			adv76xx_dummy_client(sd, state->pdata.i2c_addresses[i],
+-					     0xf2 + i);
++		state->i2c_clients[i] = adv76xx_dummy_client(sd, i);
+ 		if (!state->i2c_clients[i]) {
+-			err = -ENOMEM;
++			err = -EINVAL;
+ 			v4l2_err(sd, "failed to create i2c client %u\n", i);
+ 			goto err_i2c;
+ 		}
+-- 
+2.7.4
