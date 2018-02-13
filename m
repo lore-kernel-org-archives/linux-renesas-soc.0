@@ -1,76 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:50397 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751706AbeBHPsK (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:38348 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934226AbeBMLSH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:48:10 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
+        Tue, 13 Feb 2018 06:18:07 -0500
+Received: by mail-lf0-f45.google.com with SMTP id g72so24586247lfg.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Feb 2018 03:18:07 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 0/2] Add R8A77970/Eagle GPIO support
 To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 4/5] arm64: dts: renesas: r8a77970: add the LVDS instance
-Date: Thu,  8 Feb 2018 16:47:19 +0100
-Message-Id: <20180208154720.5766-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <038a791d-aa57-9c3d-eaea-09c5704ecb54@cogentembedded.com>
+Date: Tue, 13 Feb 2018 14:18:04 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
-the it to the LVDS output of the DU. While at it align the endpoint name
-of the du to du_out_lvds0 which is used in other Renesas DTS files to
-describe this link.
+Hello!
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20180213-v4.16-rc1' tag. We're adding the R8A77970 GPIO
+nodes and then describing the PHY IRQ for EtherAVB device declared earlier.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index c6056635bd372ce3..9c65884cc384952d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -653,7 +653,34 @@
- 
- 				port@1 {
- 					reg = <1>;
--					du_out_lvds: endpoint {
-+					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a77970-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
--- 
-2.16.1
+[1/2] arm64: dts: renesas: r8a77970: add GPIO support
+[2/2] arm64: dts: renesas: eagle: specify EtherAVB PHY IRQ
+
+WBR, Sergei
