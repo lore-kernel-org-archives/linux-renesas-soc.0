@@ -1,51 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:45940 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752378AbeBBSpM (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44889 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965444AbeBMRHu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 13:45:12 -0500
-Received: by mail-lf0-f65.google.com with SMTP id x196so32867254lfd.12
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Feb 2018 10:45:11 -0800 (PST)
-Subject: [PATCH 09/11] DT: arm: shmobile: document Condor board bindings
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Message-ID: <30a4e575-a2c9-e0d3-f41f-4e9b15543365@cogentembedded.com>
-Date: Fri, 2 Feb 2018 21:45:08 +0300
+        Tue, 13 Feb 2018 12:07:50 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v10 18/30] rcar-vin: add check for colorspace
+Date: Tue, 13 Feb 2018 19:08:21 +0200
+Message-ID: <5427648.X2M1hoBuUV@avalon>
+In-Reply-To: <20180129163435.24936-19-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se> <20180129163435.24936-19-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the Condor device tree bindings, listing it as a supported board.
+Hi Niklas,
 
-This allows to use checkpatch.pl to validate .dts files referring to the
-Condor board.
+Thank you for the patch.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Monday, 29 January 2018 18:34:23 EET Niklas S=F6derlund wrote:
+> Add a check to ensure the colorspace from user-space is good. On Gen2 it
+> works without this change as the sensor sets the colorspace but on Gen3
+> this can fail if the colorspace provided by the user is not good. The
+> values to check for comes from v4l2-compliance sources which is the tool
+> that found this error. If this check is not preformed v4l2-compliance
 
----
- Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- 1 file changed, 2 insertions(+)
+s/preformed/performed/
 
-Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -59,6 +59,8 @@ Boards:
-     compatible = "renesas,blanche", "renesas,r8a7792"
-   - BOCK-W
-     compatible = "renesas,bockw", "renesas,r8a7778"
-+  - Condor (RTP0RC77980SEB0010SS/RTP0RC77980SEB0010SA01)
-+    compatible = "renesas,condor", "renesas,r8a77980"
-   - Draak (RTP0RC77995SEB0010S)
-     compatible = "renesas,draak", "renesas,r8a77995"
-   - Eagle (RTP0RC77970SEB0010S)
+> fails when it tests colorspace.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> 841d62ca27e026d7..6403650aff22a2ed 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -23,6 +23,7 @@
+>  #include "rcar-vin.h"
+>=20
+>  #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+> +#define RVIN_DEFAULT_COLORSPACE	V4L2_COLORSPACE_SRGB
+>=20
+>  /* ---------------------------------------------------------------------=
+=2D--
+>   * Format Conversions
+> @@ -115,6 +116,10 @@ static int rvin_format_align(struct rvin_dev *vin,
+> struct v4l2_pix_format *pix) break;
+>  	}
+>=20
+> +	/* Check that colorspace is reasonable */
+> +	if (!pix->colorspace || pix->colorspace >=3D 0xff)
+
+I'd write the first check as
+
+	pix->colorspace =3D=3D V4L2_COLORSPACE_DEFAULT
+
+=46or the second check I don't think 0xff is a meaningful value. We current=
+ly=20
+have 12 colorspaces defined. If we want to be future-proof I'd add a=20
+V4L2_COLORSPACE_MAX entry to enum v4l2_colorspace and use that for the chec=
+k.=20
+Alternatively you could use V4L2_COLORSPACE_DCI_P3 but the driver would nee=
+d=20
+to be updated when new colorspaces get added.
+
+> +		pix->colorspace =3D RVIN_DEFAULT_COLORSPACE;
+> +
+>  	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
+>  	walign =3D vin->format.pixelformat =3D=3D V4L2_PIX_FMT_NV16 ? 5 : 1;
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
