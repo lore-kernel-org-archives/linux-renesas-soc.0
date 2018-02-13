@@ -1,166 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54324 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44858 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751803AbeBZVox (ORCPT
+        with ESMTP id S965285AbeBMRDP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 16:44:53 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Tue, 13 Feb 2018 12:03:15 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 10/15] v4l: vsp1: Move DRM pipeline output setup code to a function
-Date: Mon, 26 Feb 2018 23:45:11 +0200
-Message-Id: <20180226214516.11559-11-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v10 17/30] rcar-vin: update pixelformat check for M1
+Date: Tue, 13 Feb 2018 19:03:46 +0200
+Message-ID: <1940936.O8uNz50EkU@avalon>
+In-Reply-To: <20180129163435.24936-18-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se> <20180129163435.24936-18-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In order to make the vsp1_du_setup_lif() easier to read, and for
-symmetry with the DRM pipeline input setup, move the pipeline output
-setup code to a separate function.
+Hi Niklas,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drm.c | 107 +++++++++++++++++++--------------
- 1 file changed, 61 insertions(+), 46 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 00ce99bd1605..1c8adda47440 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -276,6 +276,66 @@ static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
- 	return 0;
- }
- 
-+/* Setup the output side of the pipeline (WPF and LIF). */
-+static int vsp1_du_pipeline_setup_output(struct vsp1_device *vsp1,
-+					 struct vsp1_pipeline *pipe)
-+{
-+	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
-+	struct v4l2_subdev_format format = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	int ret;
-+
-+	format.pad = RWPF_PAD_SINK;
-+	format.format.width = drm_pipe->width;
-+	format.format.height = drm_pipe->height;
-+	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
-+	format.format.field = V4L2_FIELD_NONE;
-+
-+	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, NULL,
-+			       &format);
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on WPF%u sink\n",
-+		__func__, format.format.width, format.format.height,
-+		format.format.code, pipe->output->entity.index);
-+
-+	format.pad = RWPF_PAD_SOURCE;
-+	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, get_fmt, NULL,
-+			       &format);
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(vsp1->dev, "%s: got format %ux%u (%x) on WPF%u source\n",
-+		__func__, format.format.width, format.format.height,
-+		format.format.code, pipe->output->entity.index);
-+
-+	format.pad = LIF_PAD_SINK;
-+	ret = v4l2_subdev_call(&pipe->lif->subdev, pad, set_fmt, NULL,
-+			       &format);
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on LIF%u sink\n",
-+		__func__, format.format.width, format.format.height,
-+		format.format.code, pipe->lif->index);
-+
-+	/*
-+	 * Verify that the format at the output of the pipeline matches the
-+	 * requested frame size and media bus code.
-+	 */
-+	if (format.format.width != drm_pipe->width ||
-+	    format.format.height != drm_pipe->height ||
-+	    format.format.code != MEDIA_BUS_FMT_ARGB8888_1X32) {
-+		dev_dbg(vsp1->dev, "%s: format mismatch on LIF%u\n", __func__,
-+			pipe->lif->index);
-+		return -EPIPE;
-+	}
-+
-+	return 0;
-+}
-+
- /* Configure all entities in the pipeline. */
- static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
- {
-@@ -356,7 +416,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 	struct vsp1_drm_pipeline *drm_pipe;
- 	struct vsp1_pipeline *pipe;
- 	struct vsp1_bru *bru;
--	struct v4l2_subdev_format format;
- 	unsigned long flags;
- 	unsigned int i;
- 	int ret;
-@@ -417,54 +476,10 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 	if (ret < 0)
- 		return ret;
- 
--	memset(&format, 0, sizeof(format));
--	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
--	format.pad = RWPF_PAD_SINK;
--	format.format.width = cfg->width;
--	format.format.height = cfg->height;
--	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
--	format.format.field = V4L2_FIELD_NONE;
--
--	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, NULL,
--			       &format);
-+	ret = vsp1_du_pipeline_setup_output(vsp1, pipe);
- 	if (ret < 0)
- 		return ret;
- 
--	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on WPF%u sink\n",
--		__func__, format.format.width, format.format.height,
--		format.format.code, pipe->output->entity.index);
--
--	format.pad = RWPF_PAD_SOURCE;
--	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, get_fmt, NULL,
--			       &format);
--	if (ret < 0)
--		return ret;
--
--	dev_dbg(vsp1->dev, "%s: got format %ux%u (%x) on WPF%u source\n",
--		__func__, format.format.width, format.format.height,
--		format.format.code, pipe->output->entity.index);
--
--	format.pad = LIF_PAD_SINK;
--	ret = v4l2_subdev_call(&pipe->lif->subdev, pad, set_fmt, NULL,
--			       &format);
--	if (ret < 0)
--		return ret;
--
--	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on LIF%u sink\n",
--		__func__, format.format.width, format.format.height,
--		format.format.code, pipe_index);
--
--	/*
--	 * Verify that the format at the output of the pipeline matches the
--	 * requested frame size and media bus code.
--	 */
--	if (format.format.width != cfg->width ||
--	    format.format.height != cfg->height ||
--	    format.format.code != MEDIA_BUS_FMT_ARGB8888_1X32) {
--		dev_dbg(vsp1->dev, "%s: format mismatch\n", __func__);
--		return -EPIPE;
--	}
--
- 	/* Enable the VSP1. */
- 	ret = vsp1_device_get(vsp1);
- 	if (ret < 0)
--- 
+On Monday, 29 January 2018 18:34:22 EET Niklas S=F6derlund wrote:
+> If the pixelformat is not supported it should not fail but be set to
+> something that works. While we are at it move the check together with
+> other pixelformat checks of this function.
+
+Please ignore my related comment to patch 16/30 :-) However, could you move=
+=20
+this patch before 16/30 ?
+
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> bca6e204a574772f..841d62ca27e026d7 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -97,6 +97,10 @@ static int rvin_format_align(struct rvin_dev *vin, str=
+uct
+> v4l2_pix_format *pix) pix->pixelformat =3D RVIN_DEFAULT_FORMAT;
+>  	}
+>=20
+> +	if (vin->info->model =3D=3D RCAR_M1 &&
+> +	    pix->pixelformat =3D=3D V4L2_PIX_FMT_XBGR32)
+> +		pix->pixelformat =3D RVIN_DEFAULT_FORMAT;
+> +
+>  	/* Reject ALTERNATE  until support is added to the driver */
+>  	switch (pix->field) {
+>  	case V4L2_FIELD_TOP:
+> @@ -121,12 +125,6 @@ static int rvin_format_align(struct rvin_dev *vin,
+> struct v4l2_pix_format *pix) pix->bytesperline =3D
+> rvin_format_bytesperline(pix);
+>  	pix->sizeimage =3D rvin_format_sizeimage(pix);
+>=20
+> -	if (vin->info->model =3D=3D RCAR_M1 &&
+> -	    pix->pixelformat =3D=3D V4L2_PIX_FMT_XBGR32) {
+> -		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+> -		return -EINVAL;
+> -	}
+> -
+>  	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
+>  		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+
+=2D-=20
 Regards,
 
 Laurent Pinchart
