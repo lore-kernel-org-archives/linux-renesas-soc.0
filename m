@@ -1,214 +1,82 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41314 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751053AbeBPSa1 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 13:30:27 -0500
-Received: by mail-lf0-f66.google.com with SMTP id f136so5251513lff.8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 10:30:27 -0800 (PST)
-Subject: [PATCH v2 2/5] arm64: dts: renesas: r8a77980: add [H]SCIF support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
-Message-ID: <a2b95bb2-ffd0-650c-dca3-69eb9a316417@cogentembedded.com>
-Date: Fri, 16 Feb 2018 21:30:23 +0300
-MIME-Version: 1.0
-In-Reply-To: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 3/5] [RFT] ARM: dts: wheat: Fix ADV7513 address usage
+Date: Tue, 13 Feb 2018 17:48:55 +0000
+Message-Id: <1518544137-2742-4-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe [H]SCIF ports in the R8A77980 device tree.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Based on the original (and large) patch by Vladimir Barinov.
+The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
+bus, however in low power mode the ADV7513 will reset it's slave maps to
+use the hardware defined default addresses.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The ADV7511 driver was adapted to allow the two devices to be registered
+correctly - but it did not take into account the fault whereby the
+devices reset the addresses.
 
+This results in an address conflict between the device using the default
+addresses, and the other device if it is in low-power-mode.
+
+Repair this issue by moving both devices away from the default address
+definitions.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-Changes in version 2:
-- fixed the internal BRG clock to S3D1 for all ports;
-- added Geert's tag.
+v2:
+ - Addition to series
 
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |  151 ++++++++++++++++++++++++++++++
- 1 file changed, 151 insertions(+)
+v3:
+ - Split map register addresses into individual declarations.
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -56,6 +56,13 @@
- 		method = "smc";
- 	};
+v4:
+ - Normalise I2C usage
+
+ arch/arm/boot/dts/r8a7792-wheat.dts | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
+index b9471b67b728..42fff8837eab 100644
+--- a/arch/arm/boot/dts/r8a7792-wheat.dts
++++ b/arch/arm/boot/dts/r8a7792-wheat.dts
+@@ -240,9 +240,16 @@
+ 	status = "okay";
+ 	clock-frequency = <400000>;
  
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -85,6 +92,150 @@
- 			#power-domain-cells = <1>;
- 		};
++	/*
++	 * The adv75xx resets its addresses to defaults during low power power
++	 * mode. Because we have two ADV7513 devices on the same bus, we must
++	 * change both of them away from the defaults so that they do not
++	 * conflict.
++	 */
+ 	hdmi@3d {
+ 		compatible = "adi,adv7513";
+-		reg = <0x3d>;
++		reg = <0x3d>, <0x2d>, <0x4d>, <0x5d>;
++		reg-names = "main", "cec", "edid", "packet";
  
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a77980",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6540000 0 0x60>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 520>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-+			       <&dmac2 0x31>, <&dmac2 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 520>;
-+			status = "disabled";
-+		};
-+
-+		hscif1: serial@e6550000 {
-+			compatible = "renesas,hscif-r8a77980",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6550000 0 0x60>;
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 519>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-+			       <&dmac2 0x33>, <&dmac2 0x32>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 519>;
-+			status = "disabled";
-+		};
-+
-+		hscif2: serial@e6560000 {
-+			compatible = "renesas,hscif-r8a77980",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6560000 0 0x60>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 518>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-+			       <&dmac2 0x35>, <&dmac2 0x34>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 518>;
-+			status = "disabled";
-+		};
-+
-+		hscif3: serial@e66a0000 {
-+			compatible = "renesas,hscif-r8a77980",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe66a0000 0 0x60>;
-+			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 517>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
-+			       <&dmac2 0x37>, <&dmac2 0x36>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 517>;
-+			status = "disabled";
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a77980",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6e60000 0 0x40>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-+			       <&dmac2 0x51>, <&dmac2 0x50>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 207>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a77980",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6e68000 0 0x40>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-+			       <&dmac2 0x53>, <&dmac2 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 206>;
-+			status = "disabled";
-+		};
-+
-+		scif3: serial@e6c50000 {
-+			compatible = "renesas,scif-r8a77980",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6c50000 0 0x40>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
-+			       <&dmac2 0x57>, <&dmac2 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 204>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial@e6c40000 {
-+			compatible = "renesas,scif-r8a77980",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6c40000 0 0x40>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
-+			       <&dmac2 0x59>, <&dmac2 0x58>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 203>;
-+			status = "disabled";
-+		};
-+
- 		dmac1: dma-controller@e7300000 {
- 			compatible = "renesas,dmac-r8a77980",
- 				     "renesas,rcar-dmac";
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
+@@ -272,7 +279,8 @@
+ 
+ 	hdmi@39 {
+ 		compatible = "adi,adv7513";
+-		reg = <0x39>;
++		reg = <0x39>, <0x29>, <0x49>, <0x59>;
++		reg-names = "main", "cec", "edid", "packet";
+ 
+ 		adi,input-depth = <8>;
+ 		adi,input-colorspace = "rgb";
+-- 
+2.7.4
