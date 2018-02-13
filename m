@@ -1,46 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:34433 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965313AbeBMTp2 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:49662 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934210AbeBMQlZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 14:45:28 -0500
-Received: by mail-ot0-f194.google.com with SMTP id l10so18342993oth.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Feb 2018 11:45:27 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1518540077-14481-1-git-send-email-geert+renesas@glider.be>
-References: <1518540077-14481-1-git-send-email-geert+renesas@glider.be>
-From: Peter Maydell <peter.maydell@linaro.org>
-Date: Tue, 13 Feb 2018 19:45:07 +0000
-Message-ID: <CAFEAcA-8xMm8+ta_z-g2L9ynrSd+Bn_GUueV=4n6gb2nxpWc-g@mail.gmail.com>
-Subject: Re: [Qemu-devel] [PATCH] device_tree: Increase FDT_MAX_SIZE to 128 KiB
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Peter Crosthwaite <crosthwaite.peter@gmail.com>,
-        Alexander Graf <agraf@suse.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Feb 2018 11:41:25 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Peter Crosthwaite <crosthwaite.peter@gmail.com>,
+        Alexander Graf <agraf@suse.de>
+Cc: qemu-devel@nongnu.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] device_tree: Increase FDT_MAX_SIZE to 128 KiB
+Date: Tue, 13 Feb 2018 17:41:17 +0100
+Message-Id: <1518540077-14481-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 13 February 2018 at 16:41, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> It is not uncommon for a contemporary FDT to be larger than 64 KiB,
-> leading to failures loading the device tree from sysfs:
->
->     qemu-system-aarch64: qemu_fdt_setprop: Couldn't set ...: FDT_ERR_NOSPACE
->
-> For reference, the largest arm64 DTB created from the Linux sources is
-> 70 KiB large (93 KiB when built with symbols/fixup support).
+It is not uncommon for a contemporary FDT to be larger than 64 KiB,
+leading to failures loading the device tree from sysfs:
 
-I think we should probably give ourselves a bit more headroom,
-then -- at least 256K.
+    qemu-system-aarch64: qemu_fdt_setprop: Couldn't set ...: FDT_ERR_NOSPACE
 
-The ppc boards actually define their own version of this constant:
+For reference, the largest arm64 DTB created from the Linux sources is
+70 KiB large (93 KiB when built with symbols/fixup support).
 
-#define FDT_MAX_SIZE            0x00100000
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ device_tree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-so I think we might as well just go with that in device_tree.c for
-consistency.
-
-thanks
--- PMM
+diff --git a/device_tree.c b/device_tree.c
+index a24ddff02bdd857c..1ba9b8e0a49e6bbc 100644
+--- a/device_tree.c
++++ b/device_tree.c
+@@ -29,7 +29,7 @@
+ 
+ #include <libfdt.h>
+ 
+-#define FDT_MAX_SIZE  0x10000
++#define FDT_MAX_SIZE  0x20000
+ 
+ void *create_device_tree(int *sizep)
+ {
+-- 
+2.7.4
