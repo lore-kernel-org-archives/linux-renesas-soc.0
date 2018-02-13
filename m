@@ -1,76 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38011 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752237AbeBALoO (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:45047 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965277AbeBMRuy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Feb 2018 06:44:14 -0500
-Received: by mail-lf0-f68.google.com with SMTP id g72so25713252lfg.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Feb 2018 03:44:13 -0800 (PST)
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: eagle: Remove renesas,
- no-ether-link property
-To: Simon Horman <horms+renesas@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-References: <20180115084125.8112-1-horms+renesas@verge.net.au>
- <20180115084125.8112-3-horms+renesas@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <05026363-9ae6-cd3b-15fe-4b9d8320cd6f@cogentembedded.com>
-Date: Thu, 1 Feb 2018 14:44:10 +0300
+        Tue, 13 Feb 2018 12:50:54 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v10 19/30] rcar-vin: set a default field to fallback on
+Date: Tue, 13 Feb 2018 19:51:25 +0200
+Message-ID: <2513002.daXBhrgmYI@avalon>
+In-Reply-To: <20180129163435.24936-20-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se> <20180129163435.24936-20-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20180115084125.8112-3-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/15/2018 11:41 AM, Simon Horman wrote:
+Hi Niklas,
 
-> Regarding Salvator-X and ULCB boards, Bogdan Mirea says:
-> 
->     The present change is a bug fix for AVB link iteratively up/down.
-> 
->     Steps to reproduce:
->     - start AVB TX stream (Using aplay via MSE),
->     - disconnect+reconnect the eth cable,
->     - after a reconnection the eth connection goes iteratively up/down
->       without user interaction,
->     - this may heal after some seconds or even stay for minutes.
-> 
->     As the documentation specifies, the "renesas,no-ether-link" option
->     should be used when a board does not provide a proper AVB_LINK signal.
->     There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
->     and ULCB starter kits since the AVB_LINK is correctly handled by HW.
-> 
->     Choosing to keep or remove the "renesas,no-ether-link" option will
->     have impact on the code flow in the following ways:
->     - keeping this option enabled may lead to unexpected behavior since
->       the RX & TX are enabled/disabled directly from adjust_link function
->       without any HW interrogation,
->     - removing this option, the RX & TX will only be enabled/disabled after
->       HW interrogation. The HW check is made through the LMON pin in PSR
->       register which specifies AVB_LINK signal value (0 - at low level;
->       1 - at high level).
-> 
->     In conclusion, the present change is also a safety improvement because
->     it removes the "renesas,no-ether-link" option leading to a proper way
->     of detecting the link state based on HW interrogation and not on
->     software heuristic.
-> 
-> On examination of the documentation for the Eagle board this change seems
-> necessary as AVB_LINK is documented as being connected.
-> 
-> Fixes: 38525608952a ("arm64: dts: renesas: eagle: add EtherAVB support")
-> Cc: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
-> Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Thank you for the patch.
 
-   This one seems to work, or at least I can still mount NFS. :-)
-   Couldn't do any other tests as the board is only available remotely...
+On Monday, 29 January 2018 18:34:24 EET Niklas S=F6derlund wrote:
+> If the field is not supported by the driver it should not try to keep
+> the current field. Instead it should set it to a default fallback. Since
+> trying a format should always result in the same state regardless of the
+> current state of the device.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> 6403650aff22a2ed..f69ae76b3fda50c7 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -23,6 +23,7 @@
+>  #include "rcar-vin.h"
+>=20
+>  #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+> +#define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
+>  #define RVIN_DEFAULT_COLORSPACE	V4L2_COLORSPACE_SRGB
+>=20
+>  /* ---------------------------------------------------------------------=
+=2D--
+> @@ -171,7 +172,7 @@ static int rvin_get_source_format(struct rvin_dev
+> *vin, fmt.format.height *=3D 2;
+>  		break;
+>  	default:
+> -		vin->format.field =3D V4L2_FIELD_NONE;
+> +		vin->format.field =3D RVIN_DEFAULT_FIELD;
+>  		break;
+>  	}
+>=20
+> @@ -267,9 +268,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+>  {
+>  	int ret;
+>=20
+> -	/* Keep current field if no specific one is asked for */
+>  	if (pix->field =3D=3D V4L2_FIELD_ANY)
+> -		pix->field =3D vin->format.field;
+> +		pix->field =3D RVIN_DEFAULT_FIELD;
 
-MBR, Sergei
+Won't this also be caught by the field check in the above function, called=
+=20
+from __rvin_try_format_source() ? You could just remove this check complete=
+ly.
+
+However as mentioned in a comment for a previous patch I don't think the fi=
+eld=20
+handling belongs in rvin_get_source_format(), so you could merge both here.=
+=20
+Or, if you repurpose and rename rvin_get_source_format(), then the check ca=
+n=20
+probably be removed completely. I haven't checked the consolidated code aft=
+er=20
+applying all patches from this series, but some refactoring might be useful=
+=2E=20
+We'll see.
+
+>  	/* Limit to source capabilities */
+>  	ret =3D __rvin_try_format_source(vin, which, pix);
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
