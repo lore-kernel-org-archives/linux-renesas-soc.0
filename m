@@ -1,58 +1,84 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org,
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/4] arm64: dts: renesas: r8a77995: add VSPBS instance
-Date: Mon, 12 Feb 2018 22:25:28 +0000
-Message-Id: <1518474330-8713-4-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518474330-8713-1-git-send-email-kbingham@kernel.org>
-References: <1518474330-8713-1-git-send-email-kbingham@kernel.org>
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] arm64: dts: renesas: r8a7796: Fix register mappings on VSPs
+Date: Wed, 14 Feb 2018 00:04:25 +0200
+Message-ID: <2359831.uGrFDBvd62@avalon>
+In-Reply-To: <1518550237-16753-5-git-send-email-kbingham@kernel.org>
+References: <1518550237-16753-1-git-send-email-kbingham@kernel.org> <1518550237-16753-5-git-send-email-kbingham@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Kieran,
 
-The r8a77995 has a VSPBS to support image processing such as blending of
-2 input images.
+Thank you for the patch.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Tuesday, 13 February 2018 21:30:37 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The VSPD includes a CLUT on RPF2. Ensure that the register space is
+> mapped correctly to support this.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 196a917afea6..50c891f6649f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -692,6 +692,16 @@
- 			status = "disabled";
- 		};
- 
-+		vspbs: vsp@fe960000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe960000 0 0x4000>;
-+			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 627>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 627>;
-+			renesas,fcp = <&fcpvb0>;
-+		};
-+
- 		fcpvb0: fcp@fe96f000 {
- 			compatible = "renesas,fcpv";
- 			reg = <0 0xfe96f000 0 0x200>;
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a7796.dtsi index 60755117cba5..3fe5566e0630
+> 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -2285,7 +2285,7 @@
+> 
+>  		vspd0: vsp@fea20000 {
+>  			compatible = "renesas,vsp2";
+> -			reg = <0 0xfea20000 0 0x4000>;
+> +			reg = <0 0xfea20000 0 0x8000>;
+>  			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cpg CPG_MOD 623>;
+>  			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> @@ -2305,7 +2305,7 @@
+> 
+>  		vspd1: vsp@fea28000 {
+>  			compatible = "renesas,vsp2";
+> -			reg = <0 0xfea28000 0 0x4000>;
+> +			reg = <0 0xfea28000 0 0x8000>;
+>  			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cpg CPG_MOD 622>;
+>  			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> @@ -2325,7 +2325,7 @@
+> 
+>  		vspd2: vsp@fea30000 {
+>  			compatible = "renesas,vsp2";
+> -			reg = <0 0xfea30000 0 0x4000>;
+> +			reg = <0 0xfea30000 0 0x8000>;
+>  			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cpg CPG_MOD 621>;
+>  			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
 
