@@ -1,76 +1,423 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:38586 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751596AbeBNGFs (ORCPT
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:42249 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965783AbeBMXaK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 01:05:48 -0500
-Date: Wed, 14 Feb 2018 07:05:47 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Tue, 13 Feb 2018 18:30:10 -0500
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, robh+dt@kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH] ARM: dts: stout: Initial r8a7790 Stout board support
-Message-ID: <20180214060547.bf6upib2mbgoexas@katana>
-References: <20180213232948.31521-1-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tfe42vr6wdjrzf5u"
-Content-Disposition: inline
-In-Reply-To: <20180213232948.31521-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH] ARM: dts: stout: Initial r8a7790 Stout board support
+Date: Wed, 14 Feb 2018 00:29:48 +0100
+Message-Id: <20180213232948.31521-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Stout base board support making use of 1 GiB of memory,
+the Renesas H2 r8a7790 SoC with the SCIFA0 serial port
+and CA15 with ARM architected timer.
 
---tfe42vr6wdjrzf5u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Furthermore, this device tree contains entries for:
+  - 4x LEDs
+  - SDHI SD/MMC controller
+  - Display unit with HDMI output
+  - SH fast ethernet controller
+  - QSPI controller with S25FL512S attached to it
+  - I2C controller with DA9210 and DA 9063 PMICs
 
-> +	chosen {
-> +		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-> +		stdout-path = "serial0:38400n8";
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/Makefile          |   1 +
+ arch/arm/boot/dts/r8a7790-stout.dts | 360 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 361 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7790-stout.dts
 
-Hmm, that would be our first board to not have 115200, or? We already
-have some other boards upstream where UBoot has 38400 and Linux 115200.
-I'd prefer consistency here a little, but no strong opinion and asking
-for other opinions.
-
-
-> +	vcc_sdhi0: regulator-vcc-sdhi0 {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "SDHI0 Vcc";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +
-> +		gpio = <&gpio5 24 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +	};
-
-Just double checking: No 1.8V for SDR50/104?
-
-
---tfe42vr6wdjrzf5u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqD0boACgkQFA3kzBSg
-KbY+WhAAnjqAroQBHObE2Jp1a79suXhYcgrESbuJ/Jk3A3iuqOpGBKRxUoL7rECg
-y5TKMAhJ0xE/3GjOe9axAKwhH9dWS/i+9SwBOBKnO0Qn12282mMBXRIGDxzgxN5O
-tAuIpGjMjR1bHuInTbz5GiKfZxDPCktLk/K09E6TlBL0gMDqgXaf9zFJ+amst3Nh
-8kBvuqcXfLIMPxVAP/mYry9zF3srMep0wLk1t5S6xNBAQ/TQhjD0ON6dZJieaKM0
-0qYJM8bOwuGZPu3nQXs67dJy0LGVKTXUoR5CKPcDV9EWirqFNgKJOxTrXnSIWkKP
-mx4/A6nL7FDWkqEVndYPp+ZQwaCTkLREFfz+Tom6YWemFJe1hpAVszc80JVMXYRX
-4c6b/6nHeyxsRO+Hw2g68yMS/pz62WBGo0kKoN+XBhw+c9ivpp0Mhka6gWYgQz0d
-II7zP8/deft+vxdtsnPwarNQLTuAEp8TxTEStR8uy0ioLLE2Q+l4Glz5eHYanKFj
-G4ihL717ZO6C3tJ+imKuom8keWzjWQovv9hWrTT0QNlhfSb7UIbr9DRB7tG7SKQf
-bHWkIU9CGqztaoYL907xuGqBBJUxkDuz8VtZgzDAouRlwTuPTyDKV68MR2WI+o7h
-wxpCNzKozWpw0BLG4CvvhmIvkERMSJbE5Tf8vSkUPW4mOasvGlI=
-=TK5M
------END PGP SIGNATURE-----
-
---tfe42vr6wdjrzf5u--
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index f7b73c825231..6d1999467f2e 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -790,6 +790,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7778-bockw.dtb \
+ 	r8a7779-marzen.dtb \
+ 	r8a7790-lager.dtb \
++	r8a7790-stout.dtb \
+ 	r8a7791-koelsch.dtb \
+ 	r8a7791-porter.dtb \
+ 	r8a7792-blanche.dtb \
+diff --git a/arch/arm/boot/dts/r8a7790-stout.dts b/arch/arm/boot/dts/r8a7790-stout.dts
+new file mode 100644
+index 000000000000..9bc892eacc97
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7790-stout.dts
+@@ -0,0 +1,360 @@
++/*
++ * Device Tree Source for the Stout board
++ *
++ * Copyright (C) 2018 Marek Vasut <marek.vasut@gmail.com>
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7790.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	model = "Stout";
++	compatible = "renesas,stout", "renesas,r8a7790";
++
++	aliases {
++		serial0 = &scifa0;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
++		stdout-path = "serial0:38400n8";
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x40000000>;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		led1 {
++			gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
++		};
++		led2 {
++			gpios = <&gpio4 23 GPIO_ACTIVE_HIGH>;
++		};
++		led3 {
++			gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
++		};
++		led5 {
++			gpios = <&gpio4 24 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	fixedregulator3v3: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	vcc_sdhi0: regulator-vcc-sdhi0 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "SDHI0 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio5 24 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_out: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
++
++	x2_clk: x2-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <148500000>;
++	};
++
++	x13_clk: x13-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <148500000>;
++	};
++};
++
++&du {
++	pinctrl-0 = <&du_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 726>, <&cpg CPG_MOD 725>,
++		 <&x13_clk>, <&x2_clk>;
++	clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1",
++		      "dclkin.0", "dclkin.1";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&adv7511_in>;
++			};
++		};
++		port@1 {
++			lvds_connector0: endpoint {
++			};
++		};
++		port@2 {
++			lvds_connector1: endpoint {
++			};
++		};
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
++
++&pfc {
++
++	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-names = "default";
++
++	du_pins: du {
++		groups = "du_rgb888", "du_sync_1", "du_clk_out_0";
++		function = "du";
++	};
++
++	scifa0_pins: scifa0 {
++		groups = "scifa0_data_b";
++		function = "scifa0";
++	};
++
++	scif_clk_pins: scif_clk {
++		groups = "scif_clk";
++		function = "scif_clk";
++	};
++
++	ether_pins: ether {
++		groups = "eth_link", "eth_mdio", "eth_rmii";
++		function = "eth";
++	};
++
++	phy1_pins: phy1 {
++		groups = "intc_irq1";
++		function = "intc";
++	};
++
++	sdhi0_pins: sd0 {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <3300>;
++	};
++
++	qspi_pins: qspi {
++		groups = "qspi_ctrl", "qspi_data4";
++		function = "qspi";
++	};
++
++	iic2_pins: iic2 {
++		groups = "iic2_b";
++		function = "iic2";
++	};
++
++	iic3_pins: iic3 {
++		groups = "iic3";
++		function = "iic3";
++	};
++
++	usb0_pins: usb0 {
++		groups = "usb0";
++		function = "usb0";
++	};
++};
++
++&ether {
++	pinctrl-0 = <&ether_pins &phy1_pins>;
++	pinctrl-names = "default";
++
++	phy-handle = <&phy1>;
++	renesas,ether-link-active-low;
++	status = "okay";
++
++	phy1: ethernet-phy@1 {
++		reg = <1>;
++		interrupt-parent = <&irqc0>;
++		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
++		micrel,led-mode = <1>;
++	};
++};
++
++&cmt0 {
++	status = "okay";
++};
++
++&qspi {
++	pinctrl-0 = <&qspi_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	flash: flash@0 {
++		compatible = "spansion,s25fl512s", "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <30000000>;
++		spi-tx-bus-width = <4>;
++		spi-rx-bus-width = <4>;
++		spi-cpha;
++		spi-cpol;
++		m25p,fast-read;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "loader";
++				reg = <0x00000000 0x00040000>;
++				read-only;
++			};
++			partition@40000 {
++				label = "user";
++				reg = <0x00040000 0x00400000>;
++				read-only;
++			};
++			partition@440000 {
++				label = "flash";
++				reg = <0x00440000 0x03bc0000>;
++			};
++		};
++	};
++};
++
++&scifa0 {
++	pinctrl-0 = <&scifa0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&scif_clk {
++	clock-frequency = <14745600>;
++};
++
++&sdhi0 {
++	pinctrl-0 = <&sdhi0_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&vcc_sdhi0>;
++	cd-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++&cpu0 {
++	cpu0-supply = <&vdd_dvfs>;
++};
++
++&iic2	{
++	status = "okay";
++	pinctrl-0 = <&iic2_pins>;
++	pinctrl-names = "default";
++
++	clock-frequency = <100000>;
++
++	hdmi@39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con_out>;
++				};
++			};
++		};
++	};
++};
++
++&iic3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&iic3_pins>;
++	status = "okay";
++
++	pmic@58 {
++		compatible = "dlg,da9063";
++		reg = <0x58>;
++		interrupt-parent = <&irqc0>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++
++		rtc {
++			compatible = "dlg,da9063-rtc";
++		};
++
++		wdt {
++			compatible = "dlg,da9063-watchdog";
++		};
++	};
++
++	vdd_dvfs: regulator@68 {
++		compatible = "dlg,da9210";
++		reg = <0x68>;
++		interrupt-parent = <&irqc0>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1000000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	vdd: regulator@70 {
++		compatible = "dlg,da9210";
++		reg = <0x70>;
++		interrupt-parent = <&irqc0>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1000000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++};
++
++&pci0 {
++	status = "okay";
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
++};
++
++&usbphy {
++	status = "okay";
++};
+-- 
+2.15.1
