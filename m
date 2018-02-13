@@ -1,100 +1,143 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:42774 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752172AbeBIPRM (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51466 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965610AbeBMUTW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:17:12 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/6] R-Car Gen3 GPIO Pass-Through Prototype (Linux)
-Date: Fri,  9 Feb 2018 16:16:47 +0100
-Message-Id: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
+        Tue, 13 Feb 2018 15:19:22 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v10 24/30] rcar-vin: add chsel information to rvin_info
+Date: Tue, 13 Feb 2018 22:19:53 +0200
+Message-ID: <27633644.2B73Dt8uGP@avalon>
+In-Reply-To: <20180129163435.24936-25-niklas.soderlund+renesas@ragnatech.se>
+References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se> <20180129163435.24936-25-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Hi Niklas,
 
-This RFC patch series is the Linux side of a GPIO Pass-Through prototype
-for Renesas R-Car platforms using vfio-platform.  Together with its
-counterpart for QEMU, it provides direct access from a QEMU+KVM guest to
-a GPIO controller in an R-Car Gen3 SoC.  This allows the guest to
-control the LEDs on a Renesas Salvator-X(S) board.
+Thank you for the patch.
 
-This patch series is not meant to be upstreamed as-is.  Indeed, for
-various reasons (e.g. security, as the different GPIOs on the same GPIO
-controller may control different parts of the system) access to GPIOs is
-better not implemented using Device Pass-Through, but by
-paravirtualization.  Yet, this is still a simple and valuable
-proof-of-concept, which can serve as a basis for the future development
-of Pass-Through support for more complex platform devices on R-Car Gen3
-SoCs.
+On Monday, 29 January 2018 18:34:29 EET Niklas S=F6derlund wrote:
+> Each Gen3 SoC has a limited set of predefined routing possibilities for
+> which CSI-2 device and virtual channel can be routed to which VIN
+> instance. Prepare to store this information in the struct rvin_info.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-vin.h | 30 ++++++++++++++++++++++++=
++++
+>  1 file changed, 30 insertions(+)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
+> b/drivers/media/platform/rcar-vin/rcar-vin.h index
+> 903d8fb8426a7860..ca2c2a23cef8506c 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -43,6 +43,14 @@ enum model_id {
+>  	RCAR_GEN3,
+>  };
+>=20
+> +enum rvin_csi_id {
+> +	RVIN_CSI20,
+> +	RVIN_CSI21,
+> +	RVIN_CSI40,
+> +	RVIN_CSI41,
+> +	RVIN_CSI_MAX,
+> +};
+> +
+>  /**
+>   * STOPPED  - No operation in progress
+>   * RUNNING  - Operation in progress have buffers
+> @@ -81,12 +89,33 @@ struct rvin_graph_entity {
+>  	unsigned int sink_pad;
+>  };
+>=20
+> +/** struct rvin_group_route - Map a CSI-2 receiver and channel to a CHSEL
 
-This patch series consists of two parts:
+If my understanding is correct an entry describes a route from a channel of=
+ a=20
+CSI-2 receiver to a VIN, and how to configure the hardware to enable that=20
+route (in the mask field). Could you expand this single line of documentati=
+on=20
+to explain that more clearly ?
 
-  1. Patches 1-4 are Linux host patches.
+> + * @vin:		Which VIN the CSI-2 and VC describes
 
-     They provide workarounds for missing virtualization platform
-     support (vfio reset, IOMMU group, clock domain), and a defconfig
-     update for testing.
+VC ? Is that virtual channel ? Isn't that internal to the CSI-2 receiver on=
+ly=20
+?
 
-     These allow a GPIO controller to be unbound from its host driver,
-     and rebound to vfio-platform, for pass-through to a guest:
+> + * @csi:		VIN internal number for CSI-2 device
 
-	echo e6055400.gpio > /sys/bus/platform/drivers/gpio_rcar/unbind
-	echo vfio-platform > \
-		/sys/bus/platform/devices/e6055400.gpio/driver_override
-	echo e6055400.gpio > /sys/bus/platform/drivers/vfio-platform/bind
+Or just "CSI-2 receiver ID" ?
 
-  2. Patches 5-6 are Linux guest patches.
+> + * @chan:		Output channel of the CSI-2 receiver. Each R-Car CSI-2
 
-     They provide workarounds for missing pass-through support (clock,
-     interrupt), and a guest defconfig for testing.
+Would "channel" be too long ?
 
-     These allow the gpio-rcar driver to bind to a pass-through GPIO
-     device, and thus control the LEDs from the guest.
+> + *			receiver has four output channels facing the VIN
+> + *			devices, each channel can carry one CSI-2 Virtual
+> + *			Channel (VC) and there are no correlation between
+> + *			output channel number and CSI-2 VC. It's up to the
+> + *			CSI-2 receiver driver to configure which VC is
+> + *			outputted on which channel, the VIN devices only
 
-Several questions and TODOs are appended to the individual patches.
+s/outputted/output/
 
-Please see https://elinux.org/R-Car/Virtualization/VFIO for full usage
-instructions of this prototype.
+> + *			cares about output channels.
 
-Thanks for your comments!
+s/cares/care/
 
-Geert Uytterhoeven (6):
-  vfio: platform: Allow runtime override of reset_required
-  vfio: Ignore real IOMMUs if CONFIG_VFIO_NOIOMMU=y
-  clk: renesas: r8a7795: Mark the GPIO6 clock critical
-  arm64: renesas_defconfig: Enable VFIO_PLATFORM and VFIO_NOIOMMU
-  gpio: rcar: Add virtualization workarounds
-  arm64: Add virt_defconfig
+> + * @mask:		Bitmask of chsel values which accommodates route
 
- arch/arm64/configs/renesas_defconfig   |   2 +
- arch/arm64/configs/virt_defconfig      | 722 +++++++++++++++++++++++++++++++++
- drivers/clk/renesas/r8a7795-cpg-mssr.c |   1 +
- drivers/gpio/Kconfig                   |   2 +-
- drivers/gpio/gpio-rcar.c               |  28 +-
- drivers/vfio/platform/vfio_platform.c  |   2 +-
- drivers/vfio/vfio.c                    |   6 +-
- 7 files changed, 744 insertions(+), 19 deletions(-)
- create mode 100644 arch/arm64/configs/virt_defconfig
+s/which/that/
 
--- 
-2.7.4
+Reading the documentation I'm not sure to understand how this works. In=20
+particular the mask field documentation isn't clear enough.
 
-Gr{oetje,eeting}s,
+> + */
+> +struct rvin_group_route {
+> +	unsigned int vin;
+> +	enum rvin_csi_id csi;
+> +	unsigned char chan;
 
-						Geert
+You can make this an unsigned int, the compiler will pad the field anyway.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I think it would be clearer to order the fields in "from -> to: configurati=
+on"=20
+order (csi, channel, vin, mask).
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> +	unsigned int mask;
+> +};
+> +
+>  /**
+>   * struct rvin_info - Information about the particular VIN implementation
+>   * @model:		VIN model
+>   * @use_mc:		use media controller instead of controlling subdevice
+>   * @max_width:		max input width the VIN supports
+>   * @max_height:		max input height the VIN supports
+> + * @routes:		routing table VIN <-> CSI-2 for the chsel values
+>   */
+>  struct rvin_info {
+>  	enum model_id model;
+> @@ -94,6 +123,7 @@ struct rvin_info {
+>=20
+>  	unsigned int max_width;
+>  	unsigned int max_height;
+> +	const struct rvin_group_route *routes;
+>  };
+>=20
+>  /**
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
