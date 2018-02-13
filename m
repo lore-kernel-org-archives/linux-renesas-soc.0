@@ -1,102 +1,85 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:16067 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751641AbeB0CV0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 21:21:26 -0500
-From: Gaku Inami <gaku.inami.xh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Gaku Inami <gaku.inami.xh@renesas.com>
-Subject: [PATCH 3/5] arm64: dts: renesas: r8a7795: Add cpu capacity-dmips-mhz
-Date: Tue, 27 Feb 2018 11:19:53 +0900
-Message-Id: <1519697995-6061-4-git-send-email-gaku.inami.xh@renesas.com>
-In-Reply-To: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
-References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] arm64: dts: renesas: r8a7795: Fix register mappings on VSPs
+Date: Wed, 14 Feb 2018 00:04:06 +0200
+Message-ID: <3018772.vufxKlmmgK@avalon>
+In-Reply-To: <1518550237-16753-4-git-send-email-kbingham@kernel.org>
+References: <1518550237-16753-1-git-send-email-kbingham@kernel.org> <1518550237-16753-4-git-send-email-kbingham@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the capacity-dmips-mhz for r8a7795, that is based on dhrystone.
+Hi Kieran,
 
-Expected cpu capacity:
-Cortex-A57@1.5GHz: 1024, Cortex-A53@1.2GHz: 411
+Thank you for the patch.
 
-Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Tuesday, 13 February 2018 21:30:36 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The VSPD includes a CLUT on RPF2. Ensure that the register space is
+> mapped correctly to support this.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index ffcc91e..be15864 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -75,6 +75,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -87,6 +88,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -99,6 +101,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -111,6 +114,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -123,6 +127,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <411>;
- 		};
- 
- 		a53_1: cpu@101 {
-@@ -134,6 +139,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <411>;
- 		};
- 
- 		a53_2: cpu@102 {
-@@ -145,6 +151,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <411>;
- 		};
- 
- 		a53_3: cpu@103 {
-@@ -156,6 +163,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <411>;
- 		};
- 
- 		L2_CA57: cache-controller-0 {
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a7795.dtsi index 1f32340af2d1..772991db8820
+> 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -2607,7 +2607,7 @@
+> 
+>  		vspd0: vsp@fea20000 {
+>  			compatible = "renesas,vsp2";
+> -			reg = <0 0xfea20000 0 0x4000>;
+> +			reg = <0 0xfea20000 0 0x8000>;
+>  			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cpg CPG_MOD 623>;
+>  			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> @@ -2627,7 +2627,7 @@
+> 
+>  		vspd1: vsp@fea28000 {
+>  			compatible = "renesas,vsp2";
+> -			reg = <0 0xfea28000 0 0x4000>;
+> +			reg = <0 0xfea28000 0 0x8000>;
+>  			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cpg CPG_MOD 622>;
+>  			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> @@ -2647,7 +2647,7 @@
+> 
+>  		vspd2: vsp@fea30000 {
+>  			compatible = "renesas,vsp2";
+> -			reg = <0 0xfea30000 0 0x4000>;
+> +			reg = <0 0xfea30000 0 0x8000>;
+>  			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cpg CPG_MOD 621>;
+>  			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
+
