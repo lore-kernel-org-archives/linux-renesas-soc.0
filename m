@@ -1,95 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36812 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934268AbeBMJqc (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42051 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934801AbeBMMJx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:46:32 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 00/15] R-Car M3-N initial support
-Date: Tue, 13 Feb 2018 10:45:47 +0100
-Message-Id: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 13 Feb 2018 07:09:53 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mark Brown <broonie@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 2/5] dt-bindings: adv7511: Add support for i2c_new_secondary_device
+Date: Tue, 13 Feb 2018 14:10:23 +0200
+Message-ID: <138061694.kW5LlSP0Rd@avalon>
+In-Reply-To: <1518473273-6333-3-git-send-email-kbingham@kernel.org>
+References: <1518473273-6333-1-git-send-email-kbingham@kernel.org> <1518473273-6333-3-git-send-email-kbingham@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello, this series adds support for Rensas R-Car M3-N (r8a77965) Soc and
-M3-N based Salvator-x development board.
+Hi Kieran,
 
-The series introduces a cpg-mssr clock/power gating module, a power/reset
-controller for the SoC and initial PFC support.
+Thank you for the patch.
 
-Clock and power areas for M3-N are identical to M3-W, with the exception of
-a missing PLL line used to power M3-W Cortex-A53 little cores, not present in
-M3-N.
+On Tuesday, 13 February 2018 00:07:50 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>=20
+> The ADV7511 has four 256-byte maps that can be accessed via the main I=B2C
+> ports. Each map has it own I=B2C address and acts as a standard slave
+> device on the I=B2C bus.
+>=20
+> Extend the device tree node bindings to be able to override the default
+> addresses so that address conflicts with other devices on the same bus
+> may be resolved at the board description level.
+>=20
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Few functionalities have currently been enabled in DTS and tested: serial
-boot console, EtherAVB and gpios (tested as ethernet interface reset).
+Same comment as for 1/5 about the subject line.
 
-Thanks
-   j
+> ---
+> v2:
+>  - Fixed up reg: property description to account for multiple optional
+>    addresses.
+>  - Minor reword to commit message to account for DT only change
+>  - Collected Robs RB tag
+>=20
+> v3:
+>  - Split map register addresses into individual declarations.
+>=20
+>  .../devicetree/bindings/display/bridge/adi,adv7511.txt | 18 ++++++++++++=
++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+>=20
+> diff --git
+> a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+> b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt index
+> 0047b1394c70..3f85c351dd39 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+> @@ -14,7 +14,13 @@ Required properties:
+>  		"adi,adv7513"
+>  		"adi,adv7533"
+>=20
+> -- reg: I2C slave address
+> +- reg: I2C slave addresses
+> +  The ADV7511 internal registers are split into four pages exposed throu=
+gh
+> +  different I2C addresses, creating four register maps. Each map has it =
+own
+> +  I2C address and acts as a standard slave device on the I=B2C bus. The =
+main
+> +  address is mandatory, others are optional and revert to defaults if not
+> +  specified.
 
-Jacopo Mondi (15):
-  Documentation: devicetree: R-Car M3-N SoC DT bindings
-  clk: renesas: cpg-msr: Add support for R-Car M3-N
-  soc: renesas: Add R-Car M3-N support
-  pinctrl: sh-pfc: Initial R-Car M3-N support
-  ARM64: dts: Add R-Car Salvator-x M3-N support
-  Documentation: devicetree: dma: Add r8a77965 dmac
-  ARM64: dts: r8a77965: Add dmac device nods
-  Documentation: devicetree: renesas,sci: Add r8a77965
-  pinctrl: sh-pfc: r8a77965: Add SCIFs groups/functions
-  ARM64: dts: r8a77965: Add SCIF device nodes
-  gpio: rcar: Add R-Car M3-N compatible string
-  ARM64: dts: r8a77965: Add GPIO nodes
-  Documentation: devicetree: ravb: Add r8a77965
-  pinctrl: sh-pfc: r8a77965: Add EtherAVB groups/functions
-  ARM64: dts: r8a77965: Add EtherAVB device node
+Nitpicking again, you're mixing I2C and I=B2C.
 
- Documentation/devicetree/bindings/arm/shmobile.txt |    2 +
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |    1 +
- .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |    1 +
- .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |    1 +
- .../devicetree/bindings/net/renesas,ravb.txt       |    1 +
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
- .../bindings/power/renesas,rcar-sysc.txt           |    1 +
- .../devicetree/bindings/reset/renesas,rst.txt      |    1 +
- .../bindings/serial/renesas,sci-serial.txt         |    2 +
- arch/arm64/Kconfig.platforms                       |    6 +
- arch/arm64/boot/dts/renesas/Makefile               |    1 +
- .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts |   30 +
- arch/arm64/boot/dts/renesas/r8a77965.dtsi          |  787 +++++
- drivers/clk/renesas/Kconfig                        |    5 +
- drivers/clk/renesas/Makefile                       |    1 +
- drivers/clk/renesas/r8a77965-cpg-mssr.c            |  333 +++
- drivers/clk/renesas/renesas-cpg-mssr.c             |    6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |    1 +
- drivers/gpio/gpio-rcar.c                           |    4 +
- drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
- drivers/pinctrl/sh-pfc/Makefile                    |    1 +
- drivers/pinctrl/sh-pfc/core.c                      |    6 +
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c              | 3134 ++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
- drivers/soc/renesas/Kconfig                        |    9 +-
- drivers/soc/renesas/Makefile                       |    1 +
- drivers/soc/renesas/r8a77965-sysc.c                |   37 +
- drivers/soc/renesas/rcar-rst.c                     |    1 +
- drivers/soc/renesas/rcar-sysc.c                    |    3 +
- drivers/soc/renesas/rcar-sysc.h                    |    1 +
- drivers/soc/renesas/renesas-soc.c                  |    8 +
- include/dt-bindings/clock/r8a77965-cpg-mssr.h      |   62 +
- include/dt-bindings/power/r8a77965-sysc.h          |   31 +
- 33 files changed, 4483 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77965.dtsi
- create mode 100644 drivers/clk/renesas/r8a77965-cpg-mssr.c
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77965.c
- create mode 100644 drivers/soc/renesas/r8a77965-sysc.c
- create mode 100644 include/dt-bindings/clock/r8a77965-cpg-mssr.h
- create mode 100644 include/dt-bindings/power/r8a77965-sysc.h
+> +
+>=20
+>  The ADV7511 supports a large number of input data formats that differ by
+> their color depth, color format, clock mode, bit justification and random
+> @@ -70,6 +76,9 @@ Optional properties:
+>    rather than generate its own timings for HDMI output.
+>  - clocks: from common clock binding: reference to the CEC clock.
+>  - clock-names: from common clock binding: must be "cec".
+> +- reg-names : Names of maps with programmable addresses.
+> +	It can contain any map needing a non-default address.
+> +	Possible maps names are : "main", "edid", "cec", "packet"
+>=20
+>  Required nodes:
+>=20
+> @@ -88,7 +97,12 @@ Example
+>=20
+>  	adv7511w: hdmi@39 {
+>  		compatible =3D "adi,adv7511w";
+> -		reg =3D <39>;
+> +		/*
+> +		 * The EDID page will be accessible on address 0x66 on the i2c
 
---
-2.7.4
+And now you're using lowercase :-)
+
+> +		 * bus. All other maps continue to use their default addresses.
+> +		 */
+> +		reg =3D <0x39>, <0x66>;
+> +		reg-names =3D "main", "edid";
+>  		interrupt-parent =3D <&gpio3>;
+>  		interrupts =3D <29 IRQ_TYPE_EDGE_FALLING>;
+>  		clocks =3D <&cec_clock>;
+
+With these fixed (or not, up to you),
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
