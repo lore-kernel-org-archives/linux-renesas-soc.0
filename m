@@ -1,79 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:40218 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751190AbeBGXUt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45137 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933463AbeBMHoa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 18:20:49 -0500
-Date: Thu, 8 Feb 2018 00:20:47 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC v4 24/26] ARM: dts: r8a7794: Add watchdog support to SoC
- dtsi
-Message-ID: <20180207232047.xsn47jioh6fhdc2y@katana>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-25-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 13 Feb 2018 02:44:30 -0500
+Date: Tue, 13 Feb 2018 08:44:26 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 0/4] ARM: dts: r7s72100: add soc node
+Message-ID: <20180213074425.3rsj7fqa3squ6zn3@verge.net.au>
+References: <20180212143930.4763-1-horms+renesas@verge.net.au>
+ <CAMuHMdXbpRGmUCcfND2h4=g0v5Cj9L=VYZGVLntjbBgsN4Q4HA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zugzwndemsnf6qmm"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1517423070-24236-25-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <CAMuHMdXbpRGmUCcfND2h4=g0v5Cj9L=VYZGVLntjbBgsN4Q4HA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---zugzwndemsnf6qmm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jan 31, 2018 at 06:24:28PM +0000, Fabrizio Castro wrote:
-> This commit adds watchdog support to the r8a7794 dtsi.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
+On Mon, Feb 12, 2018 at 04:12:02PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Mon, Feb 12, 2018 at 3:39 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > this patchset adds an soc node, moves all nodes for IP blocks with an
+> > address on the bus to be sub nodes of the soc node, removes the clock node
+> > and sorts subnodes of the root and soc nodes.
+> >
+> > This brings the DTS of the r7s72100 in line with that of R-Car Gen 2 SoCs.
+> >
+> > Simon Horman (4):
+> >   ARM: dts: r7s72100: add soc node
+> >   ARM: dts: r7s72100: sort subnodes of soc node
+> >   ARM: dts: r7s72100: stop grouping clocks under a "clocks" subnode
+> >   ARM: dts: r7s72100: sort subnodes of root node
+> 
+> Thanks!
+> 
+> >  arch/arm/boot/dts/r7s72100.dtsi | 1038 ++++++++++++++++++++-------------------
+> >  1 file changed, 521 insertions(+), 517 deletions(-)
+> 
+> For the whole series, with a bit of help from dtx_diff:
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---zugzwndemsnf6qmm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ic8ACgkQFA3kzBSg
-KbZPbg//Q6sS8M3/6jUFnHYSLIjgsm7lYNLYoz1mCGUHZZj6Kit8KaCcj3pP1RY9
-wfXA0hB8SKs1Jo8dG4jT8VmVtwgwLT2j4LNGjLjZnjCGrtoCFr93RraFClQTchHL
-/KvNRYJn/CPhcAKXjYbVO7y53y917fm5D4LRp+EASzjq3BBX4r3wzCXf5pCge828
-OGdSPEiF8SYGIElEdq1LGDGl6jU6+luFHwQF77ZksRmAoQFk7mgZITFxnGMFN6hX
-9fd6Qw8VWrU4bxPUhbA8Cua3F3SF3w8x4hlV1OUsBJ0u50c7proavRpxMKF96OXv
-1i5jQdaUTs/q/iwWPGqBm4/+6T2tHtb+fkObuKKFm9JpXav4DmGd3upP/M2hChes
-zLOz2gQIFCBwJSbgoPmH5CNuFsOKTQctk8x4P/FewWm9Z2XdV2DYXg26UbFjGxT+
-e6e2/3T7cetlRMeuzKdFu4CAbufRS+xm6Wz84akmZHtCigXCCNXm3scKADJLEW/6
-0Ixnxk59OW1IJ1+ySyG1A3osKcVBHsKnk34IToBGV8EcMHABc+lz2Zjq545nFqrK
-NQA+/0Mo9b+gxTu4wV+fDZzLmkXt0XQU0Y213Q9AQNlNiWXwdjFUVjmWUFKfxK+W
-FwOJGxuAY+xSoq7OGL/UrlvfrL6Wd58VPvzVEkMaSYSRB2tqenI=
-=19gc
------END PGP SIGNATURE-----
-
---zugzwndemsnf6qmm--
+Thanks, applied.
