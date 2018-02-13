@@ -1,115 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53717 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752095AbeBWNld (ORCPT
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34433 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965313AbeBMTp2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:41:33 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/7] arm64: dts: renesas: r8a77965: Add #address-cells and #size-cells
-Date: Fri, 23 Feb 2018 14:40:54 +0100
-Message-Id: <1519393259-26108-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 13 Feb 2018 14:45:28 -0500
+Received: by mail-ot0-f194.google.com with SMTP id l10so18342993oth.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Feb 2018 11:45:27 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <1518540077-14481-1-git-send-email-geert+renesas@glider.be>
+References: <1518540077-14481-1-git-send-email-geert+renesas@glider.be>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Tue, 13 Feb 2018 19:45:07 +0000
+Message-ID: <CAFEAcA-8xMm8+ta_z-g2L9ynrSd+Bn_GUueV=4n6gb2nxpWc-g@mail.gmail.com>
+Subject: Re: [Qemu-devel] [PATCH] device_tree: Increase FDT_MAX_SIZE to 128 KiB
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Peter Crosthwaite <crosthwaite.peter@gmail.com>,
+        Alexander Graf <agraf@suse.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add "#address-cells" and "#size-cells" properties to all place-holder nodes
-that have children nodes defined by salvator-x[s].dtsi device tree.
+On 13 February 2018 at 16:41, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> It is not uncommon for a contemporary FDT to be larger than 64 KiB,
+> leading to failures loading the device tree from sysfs:
+>
+>     qemu-system-aarch64: qemu_fdt_setprop: Couldn't set ...: FDT_ERR_NOSPACE
+>
+> For reference, the largest arm64 DTB created from the Linux sources is
+> 70 KiB large (93 KiB when built with symbols/fixup support).
 
-This silences the following DTC compiler warnings:
-Warning (reg_format): "reg" property in /soc/.. has invalid length (4 bytes)
-(#address-cells == 2, #size-cells == 1)
-Warning (avoid_default_addr_size): Relying on default #address-cells
-value for /soc/...
-Warning (avoid_default_addr_size): Relying on default #size-cells value
-for /soc/...
+I think we should probably give ourselves a bit more headroom,
+then -- at least 256K.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+The ppc boards actually define their own version of this constant:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 4286453..61efb2d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -521,6 +521,9 @@
- 		};
- 
- 		avb: ethernet@e6800000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
- 			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
- 			/* placeholder */
- 		};
-@@ -528,11 +531,21 @@
- 		csi20: csi2@fea80000 {
- 			reg = <0 0xfea80000 0 0x10000>;
- 			/* placeholder */
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
- 		};
- 
- 		csi40: csi2@feaa0000 {
- 			reg = <0 0xfeaa0000 0 0x10000>;
- 			/* placeholder */
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
- 		};
- 
- 		vin0: video@e6ef0000 {
-@@ -611,6 +624,9 @@
- 		};
- 
- 		i2c2: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
- 			reg = <0 0xe6510000 0 0x40>;
- 			/* placeholder */
- 		};
-@@ -621,6 +637,9 @@
- 		};
- 
- 		i2c4: i2c@e66d8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
- 			reg = <0 0xe66d8000 0 0x40>;
- 			/* placeholder */
- 		};
-@@ -636,6 +655,9 @@
- 		};
- 
- 		i2c_dvfs: i2c@e60b0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
- 			reg = <0 0xe60b0000 0 0x425>;
- 			/* placeholder */
- 		};
-@@ -681,6 +703,9 @@
- 			/* placeholder */
- 
- 			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
- 				port@0 {
- 					reg = <0>;
- 					du_out_rgb: endpoint {
--- 
-2.7.4
+#define FDT_MAX_SIZE            0x00100000
+
+so I think we might as well just go with that in device_tree.c for
+consistency.
+
+thanks
+-- PMM
