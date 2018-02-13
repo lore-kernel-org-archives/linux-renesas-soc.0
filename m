@@ -1,136 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38070 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751807AbeBTXKX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:10:23 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 16/16] arm64: dts: renesas: r8a7796: Convert to new LVDS DT bindings
-Date: Wed, 21 Feb 2018 01:10:46 +0200
-Message-Id: <20180220231046.32638-17-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kbingham@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 0/5] Add support for i2c_new_secondary_device
+Date: Tue, 13 Feb 2018 17:48:52 +0000
+Message-Id: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v3:
+Back in 2014, Jean-Michel provided patches [0] to implement a means of
+describing software defined I2C addresses for devices through the DT nodes.
 
-- Added power-domains and resets properties to LVDS nodes
-- Dropped bogus changes from the rcar-du driver
+The patch to implement the function "i2c_new_secondary_device()" was integrated,
+but the corresponding driver update didn't get applied.
 
-Changes since v2:
+This short series re-bases Jean-Michel's patch to mainline for the ADV7604 driver
+in linux-media, and also provides a patch for the ADV7511 DRM Bridge driver taking
+the same approach.
 
-- Fixed LVDS compatible string
+This series allows us to define the I2C address allocations of these devices in
+the device tree for the Renesas D3 platform where these two devices reside on
+the same bus and conflict with each other presently..
 
-Changes since v1:
+[0] https://lkml.org/lkml/2014/10/22/468
+[1] https://lkml.org/lkml/2014/10/22/469
 
-- Remove the DU reg-names property
----
- arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |  3 +-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  3 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 36 ++++++++++++++++++----
- 3 files changed, 32 insertions(+), 10 deletions(-)
+v2:
+ - dt bindings split from driver changes
+ - fixed up dt binding property descriptions
+ - Update missing edid-i2c address setting (adv7511)
+ - Provide update for r8a7792 DTB to account for address conflict
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-index daee1f1a3f68..21bd679062f3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts
-@@ -33,10 +33,9 @@
- 	clocks = <&cpg CPG_MOD 724>,
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock5 1>,
- 		 <&versaclock5 3>,
- 		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2",
- 		      "dclkin.0", "dclkin.1", "dclkin.2";
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 2ba992946c50..9524fcb6bc5c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -32,11 +32,10 @@
- 	clocks = <&cpg CPG_MOD 724>,
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock5 1>,
- 		 <&x21_clk>,
- 		 <&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2",
- 		      "dclkin.0", "dclkin.1", "dclkin.2";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index c5192d513d7d..c1506c5e27b1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1924,17 +1924,14 @@
- 
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7796";
--			reg = <0 0xfeb00000 0 0x70000>,
--			      <0 0xfeb90000 0 0x14>;
--			reg-names = "du", "lvds.0";
-+			reg = <0 0xfeb00000 0 0x70000>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>,
- 				 <&cpg CPG_MOD 723>,
--				 <&cpg CPG_MOD 722>,
--				 <&cpg CPG_MOD 727>;
--			clock-names = "du.0", "du.1", "du.2", "lvds.0";
-+				 <&cpg CPG_MOD 722>;
-+			clock-names = "du.0", "du.1", "du.2";
- 			status = "disabled";
- 
- 			vsps = <&vspd0 &vspd1 &vspd2>;
-@@ -1957,6 +1954,33 @@
- 				port@2 {
- 					reg = <2>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a7796-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
+v3:
+ - Split map register addresses into individual declarations across all uses
+
+v4:
+ - Normalise the usage of the I2C term throughout
+ - Fix registration/cleanup of packet client in adv7511
+ - Rename adv76xx structures
+ - Update commit titles of dt-bindings patches.
+
+
+
+Jean-Michel Hautbois (2):
+  dt-bindings: media: adv7604: Extend bindings to allow specifying slave
+    map addresses
+  media: adv7604: Add support for i2c_new_secondary_device
+
+Kieran Bingham (3):
+  dt-bindings: adv7511: Extend bindings to allow specifying slave map
+    addresses
+  [RFT] ARM: dts: wheat: Fix ADV7513 address usage
+  drm: adv7511: Add support for i2c_new_secondary_device
+
+ .../bindings/display/bridge/adi,adv7511.txt        | 18 ++++++-
+ .../devicetree/bindings/media/i2c/adv7604.txt      | 18 ++++++-
+ arch/arm/boot/dts/r8a7792-wheat.dts                | 12 ++++-
+ drivers/gpu/drm/bridge/adv7511/adv7511.h           |  6 +++
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 42 +++++++++------
+ drivers/media/i2c/adv7604.c                        | 62 ++++++++++++++--------
+ 6 files changed, 115 insertions(+), 43 deletions(-)
+
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
