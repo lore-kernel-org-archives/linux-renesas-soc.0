@@ -1,45 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46888 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030749AbeBNOst (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39381 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934971AbeBMJrS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 09:48:49 -0500
-MIME-Version: 1.0
-In-Reply-To: <1518515162-23663-16-git-send-email-jacopo+renesas@jmondi.org>
-References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org> <1518515162-23663-16-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Feb 2018 15:48:48 +0100
-Message-ID: <CAMuHMdUcBv7MXfTyU=N2P0mpWSK06Z2=HM_QntvsSE4suRA_Cw@mail.gmail.com>
-Subject: Re: [PATCH 15/15] ARM64: dts: r8a77965: Add EtherAVB device node
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Feb 2018 04:47:18 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 15/15] ARM64: dts: r8a77965: Add EtherAVB device node
+Date: Tue, 13 Feb 2018 10:46:02 +0100
+Message-Id: <1518515162-23663-16-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 10:46 AM, Jacopo Mondi
-<jacopo+renesas@jmondi.org> wrote:
-> Populate the ethernet@e6800000 device node to enable Ethernet interface
-> for R-Car M3-N (r8a77965) SoC.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Populate the ethernet@e6800000 device node to enable Ethernet interface
+for R-Car M3-N (r8a77965) SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 43 ++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 71f20c3..08095f8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -525,7 +525,48 @@
+ 		};
+ 
+ 		avb: ethernet@e6800000 {
+-			/* placeholder */
++			compatible = "renesas,etheravb-r8a77965",
++				     "renesas,etheravb-rcar-gen3";
++			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15",
++					  "ch16", "ch17", "ch18", "ch19",
++					  "ch20", "ch21", "ch22", "ch23",
++					  "ch24";
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 812>;
++			phy-mode = "rgmii-txid";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
+ 		};
+ 
+ 		csi20: csi2@fea80000 {
+-- 
+2.7.4
