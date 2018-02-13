@@ -1,45 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55591 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52811 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754597AbeBNIiR (ORCPT
+        with ESMTP id S965891AbeBMWIH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 03:38:17 -0500
-Subject: Re: [PATCH v2 0/4] arm64: dts: renesas: r8a77995: Add VSP support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Tue, 13 Feb 2018 17:08:07 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
 Cc: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: Re: [PATCH v2 0/4] arm64: dts: renesas: r8a77995: Add VSP support
+Date: Wed, 14 Feb 2018 00:08:39 +0200
+Message-ID: <2529460.tBXLBqH5B5@avalon>
+In-Reply-To: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
 References: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
- <2529460.tBXLBqH5B5@avalon>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <c5b387a8-008e-5cae-17e6-975d100e8159@ideasonboard.com>
-Date: Wed, 14 Feb 2018 08:38:12 +0000
 MIME-Version: 1.0
-In-Reply-To: <2529460.tBXLBqH5B5@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Kieran,
 
-On 13/02/18 22:08, Laurent Pinchart wrote:
-> Hi Kieran,
+Thank you for the patches.
+
+On Tuesday, 13 February 2018 21:30:33 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > 
-> Thank you for the patches.
+> The r8a77995-d3 platform supports 3 VSP instances. One VSPBS can be used
+> as a dual-input image blender, while two VSPD instances can be utilised as
+> part of a display (DU) pipeline.
 > 
->> Kieran Bingham (4):
->>   arm64: dts: renesas: r8a77995: add FCPV nodes
->>   arm64: dts: renesas: r8a77995: add VSP instances
->>   arm64: dts: renesas: r8a7795: Fix register mappings on VSPs
+> Add support for these, along with their required FCPV nodes.
 > 
-> Do you plan to also address r8a7795-es1.dtsi ?
+> During review, Laurent noticed that the r8a7795 and r8a7796 were not mapping
+> enough register space to handle RPFs with CLUT modules.
+> 
+> The last two patches fix this issue.
+> 
+> v2:
+>  - Merge FCPV nodes to a single patch
+>  - Merge VSP nodes to a single patch
+>  - Fix VSP register map size
+>  - Add fixes for r8a7795 and r8a7796
+> 
+> Kieran Bingham (4):
+>   arm64: dts: renesas: r8a77995: add FCPV nodes
+>   arm64: dts: renesas: r8a77995: add VSP instances
+>   arm64: dts: renesas: r8a7795: Fix register mappings on VSPs
 
-Yes :-) - That pesky little extra vspd3 ...
+Do you plan to also address r8a7795-es1.dtsi ?
 
+>   arm64: dts: renesas: r8a7796: Fix register mappings on VSPs
+> 
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi  |  6 ++--
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi  |  6 ++--
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 57 ++++++++++++++++++++++++++++
+>  3 files changed, 63 insertions(+), 6 deletions(-)
 
->>   arm64: dts: renesas: r8a7796: Fix register mappings on VSP
---
-Kieran
+-- 
+Regards,
+
+Laurent Pinchart
