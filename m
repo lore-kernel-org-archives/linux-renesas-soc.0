@@ -1,83 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34202 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751587AbeB0ULc (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:41888 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935174AbeBMNcj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 15:11:32 -0500
-Received: by mail-lf0-f65.google.com with SMTP id l191so139372lfe.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Feb 2018 12:11:31 -0800 (PST)
-Subject: [PATCH v2 4/5] arm64: dts: renesas: r8a77970: add LVDS support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
-Message-ID: <04a6d33c-b1fc-c20a-2979-1174e9c3f4b0@cogentembedded.com>
-Date: Tue, 27 Feb 2018 23:11:28 +0300
-MIME-Version: 1.0
-In-Reply-To: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Feb 2018 08:32:39 -0500
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1elahJ-0006hm-Tc
+        for linux-renesas-soc@vger.kernel.org; Tue, 13 Feb 2018 14:32:37 +0100
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1elahJ-0007dT-NK
+        for linux-renesas-soc@vger.kernel.org; Tue, 13 Feb 2018 14:32:37 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-02-13-v4.16-rc1
+Date: Tue, 13 Feb 2018 14:32:37 +0100
+Message-Id: <1518528757-29312-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77970 part of the LVDS device node.
+I have pushed renesas-drivers-2018-02-13-v4.16-rc1 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
----
-Changes in version 2:
-- resolved rejects and updated atop of the DU support patch;
-- changed the LVDS node's label/name;
-- renamed the input/output endpoints' labels;
-- added the "power-domains" and "resets" properties.
+Today's version is based on renesas-devel-20180212-v4.16-rc1.
 
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/rcar-genpd-wakeup-v4
+  - topic/r8a77970-eagle-pfc-v1
+  - topic/r8a77970-eagle-gpio-v1
+  - topic/r8a77970-eagle-i2c-v1
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-cpufreq-little-dts
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://linuxtv.org/pinchartl/media.git#tags/vsp1-discom-v1-20171215
+  - git://linuxtv.org/pinchartl/media.git#tags/drm-next-colorkey-v1-20171215
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#vsp1/vga-performance-fix
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -655,6 +655,34 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds-encoder@feb90000 {
-+			compatible = "renesas,r8a77970-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint =
-+							<&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
+Included fixes:
+  - regulator: Fix resume from suspend to idle
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
