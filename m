@@ -1,49 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:44643 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752866AbeBEGIr (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:9609 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933805AbeBMJmK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:08:47 -0500
-Date: Mon, 5 Feb 2018 00:08:45 -0600
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: add R8A77980 support
-Message-ID: <20180205060845.ksaczxkdil7wuir6@rob-hp-laptop>
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
- <9008a12c-e5c8-9289-c47b-50ea9e049c67@cogentembedded.com>
+        Tue, 13 Feb 2018 04:42:10 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: mathias.nyman@intel.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: host: xhci-plat: revert "usb: host: xhci-plat: enable clk in resume timing"
+Date: Tue, 13 Feb 2018 18:37:23 +0900
+Message-Id: <1518514643-13064-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9008a12c-e5c8-9289-c47b-50ea9e049c67@cogentembedded.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 31, 2018 at 11:31:05PM +0300, Sergei Shtylyov wrote:
-> Add R-Car V3H (R8A77980) Clock Pulse Generator / Module Standby and
-> Software Reset support,  using the CPG/MSSR driver core and the common
-> R-Car Gen3 code.
-> 
-> Based on the original (and large) patch by Vladimir Barinov.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
->  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    5 
+This patch reverts the commit 835e4241e714 ("usb: host: xhci-plat:
+enable clk in resume timing") because this driver also has runtime PM
+and the commit 560869100b99 ("clk: renesas: cpg-mssr: Restore module
+clocks during resume") will restore the clock on R-Car H3 environment.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+If the xhci_plat_suspend() disables the clk, the system cannot enable
+the clk in resume like the following behavior:
 
->  drivers/clk/renesas/Kconfig                                  |    5 
->  drivers/clk/renesas/Makefile                                 |    1 
->  drivers/clk/renesas/r8a77980-cpg-mssr.c                      |  227 +++++++++++
->  drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
->  drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
->  6 files changed, 243 insertions(+), 2 deletions(-)
+< In resume >
+ - genpd_resume_noirq() runs and enable the clk (enable_count = 1)
+ - cpg_mssr_resume_noirq() restores the clk register.
+  -- Since the clk was disabled in suspend, cpg_mssr_resume_noirq()
+     will disable the clk and keep the enable_count.
+ - Even if xhci_plat_resume() calls clk_prepare_enable(), since
+   the enable_count is 1, the clk will be not enabled.
+
+After this patch is applied, the cpg-mssr driver will save the clk
+as enable, so the clk will be enabled in resume.
+
+Fixes: 835e4241e714 ("usb: host: xhci-plat: enable clk in resume timing")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/host/xhci-plat.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 6f03830..6652e2d 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -360,7 +360,6 @@ static int __maybe_unused xhci_plat_suspend(struct device *dev)
+ {
+ 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+-	int ret;
+ 
+ 	/*
+ 	 * xhci_suspend() needs `do_wakeup` to know whether host is allowed
+@@ -370,12 +369,7 @@ static int __maybe_unused xhci_plat_suspend(struct device *dev)
+ 	 * reconsider this when xhci_plat_suspend enlarges its scope, e.g.,
+ 	 * also applies to runtime suspend.
+ 	 */
+-	ret = xhci_suspend(xhci, device_may_wakeup(dev));
+-
+-	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
+-		clk_disable_unprepare(xhci->clk);
+-
+-	return ret;
++	return xhci_suspend(xhci, device_may_wakeup(dev));
+ }
+ 
+ static int __maybe_unused xhci_plat_resume(struct device *dev)
+@@ -384,9 +378,6 @@ static int __maybe_unused xhci_plat_resume(struct device *dev)
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+ 	int ret;
+ 
+-	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
+-		clk_prepare_enable(xhci->clk);
+-
+ 	ret = xhci_priv_resume_quirk(hcd);
+ 	if (ret)
+ 		return ret;
+-- 
+1.9.1
