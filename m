@@ -1,100 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:58064 "EHLO mail.kernel.org"
+Received: from www.zeus03.de ([194.117.254.33]:40090 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755353AbeBOIi7 (ORCPT
+        id S935106AbeBMMzw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 03:38:59 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>, geert@glider.be,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 8/8] [PoC] arm64: dts: renesas: r8a77995-draak: Add ADV7612
-Date: Thu, 15 Feb 2018 08:38:23 +0000
-Message-Id: <1518683903-10681-9-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+        Tue, 13 Feb 2018 07:55:52 -0500
+Date: Tue, 13 Feb 2018 13:55:49 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] mmc: tmio: correct treatment of errors during
+ tuning
+Message-ID: <20180213125549.wkvwuqanvjaqlmab@katana>
+References: <20180119133906.11280-1-horms+renesas@verge.net.au>
+ <20180119133906.11280-2-horms+renesas@verge.net.au>
+ <20180207215252.dirj5x7ky5bdznmk@ninjato>
+ <20180213113157.gr2guro2smyixaiw@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="t24bxcy7ewtylmtj"
+Content-Disposition: inline
+In-Reply-To: <20180213113157.gr2guro2smyixaiw@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Provide a node for the ADV7612. There is no VIN support yet, so this
-node will only instantiate the device on the I2C bus for I2C address
-testing.
+--t24bxcy7ewtylmtj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 43 ++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index df0c7773cb7d..d7dd471c9fde 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -27,6 +27,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-in {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&adv7612_in>;
-+			};
-+		};
-+	};
-+
- 	hdmi-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -168,6 +179,38 @@
- 			};
- 		};
- 	};
-+
-+	hdmi-in@4c {
-+		compatible = "adi,adv7612";
-+		reg = <0x4c>, <0x5a>, <0x5b>, <0x5c>, <0x5d>, <0x5e>, <0x5f>,
-+		      <0x6a>, <0x6b>, <0x6c>, <0x6d>, <0x6e>, <0x6f>;
-+		reg-names = "main", "avlink", "cec", "infoframe", "esdp",
-+			    "dpp", "afe", "rep", "edid", "hdmi", "test",
-+			    "cp", "vdp";
-+
-+		/* ADV7612_INTn connected only to test point CP56. */
-+
-+		default-input = <0>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7612_in: endpoint {
-+					remote-endpoint = <&hdmi_con_in>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				adv7612_out: endpoint {
-+					// remote-endpoint = <&vin0ep2>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &i2c1 {
--- 
-2.7.4
+
+> I think we can drop this patch for now.
+
+Nice! But we should keep it in mind and recall it, if issues pop up
+later.
+
+
+--t24bxcy7ewtylmtj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqC4EgACgkQFA3kzBSg
+KbYk7w/+NjRqHgqu6ByACQqADz0UaVh7iQ5t7GQaboyFf7/yhzPBvfNlg+0z1hbU
+FAMdk+U9WMlO7juoH4ZoKDF6Z7l2xUxbiKeVsJfIyfc9J2j13KrZmcYfQOefcyWH
+w1oY+DGoO5lsgsZYM97tur2J+JG/BJmk2H8KE7hU+KOZDuMrXLdNLL9ik/R/+5qL
+5KUiUeuQ3xqb2nNMatqjO9Jo9EmM4QlgEmpbOELhpJqgU7ZbEWX3JlSdxBreNtzb
+AEmDTQbmCRzkh+/pL0d8hL/FxFs6ebKbWGQnvhmBDQ5elHYqW0aMmIRRdkRFqBoD
+tMxq3WEFrk19hj+zBRm5bflUyk81DaHYLCxnmhxSnimnSbBpPb6D/N3p3VVJVQTx
+RmxcbktwpDU4N16pgY3ZTPsav07N+S27Syxl+LBHVCDmJ8ecw0zj0csey5IBxutN
+9NwRk3YQpmODqgCy7s8WGjiUVGWzKf1yFoLeUpNSZ9U+oCMz1us0NDgHC6htMgfP
+2SYBScTWzjlnw6oetss6JIdlAVxaJxca7eZDxxfDWR5GpTeozMAh7zn9ENwlhSi9
+kt+QDF1mQyuEgfo9YMrhhlfIA14M1iO2MrU/q86Q3bVoPve0juKYeLVvhm2IG4zs
+uKyQz3WAhSTQ+ybLKRTZR+a4w99KyHig6jFMC/fPGdZ47P5FV10=
+=SuUo
+-----END PGP SIGNATURE-----
+
+--t24bxcy7ewtylmtj--
