@@ -1,101 +1,95 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 1/5] dt-bindings: media: adv7604: Extend bindings to allow specifying slave map addresses
-Date: Tue, 13 Feb 2018 17:48:53 +0000
-Message-Id: <1518544137-2742-2-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
-References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36812 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934268AbeBMJqc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 13 Feb 2018 04:46:32 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/15] R-Car M3-N initial support
+Date: Tue, 13 Feb 2018 10:45:47 +0100
+Message-Id: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+Hello, this series adds support for Rensas R-Car M3-N (r8a77965) Soc and
+M3-N based Salvator-x development board.
 
-The ADV7604 has thirteen 256-byte maps that can be accessed via the main
-I2C ports. Each map has it own I2C address and acts as a standard slave
-device on the I2C bus.
+The series introduces a cpg-mssr clock/power gating module, a power/reset
+controller for the SoC and initial PFC support.
 
-Extend the device tree node bindings to be able to override the default
-addresses so that address conflicts with other devices on the same bus
-may be resolved at the board description level.
+Clock and power areas for M3-N are identical to M3-W, with the exception of
+a missing PLL line used to power M3-W Cortex-A53 little cores, not present in
+M3-N.
 
-Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
-[Kieran: Re-adapted for mainline]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Few functionalities have currently been enabled in DTS and tested: serial
+boot console, EtherAVB and gpios (tested as ethernet interface reset).
 
----
-Based upon the original posting :
-  https://lkml.org/lkml/2014/10/22/469
+Thanks
+   j
 
-v2:
- - DT Binding update separated from code change
- - Minor reword to commit message to account for DT only change.
- - Collected Rob's RB tag.
+Jacopo Mondi (15):
+  Documentation: devicetree: R-Car M3-N SoC DT bindings
+  clk: renesas: cpg-msr: Add support for R-Car M3-N
+  soc: renesas: Add R-Car M3-N support
+  pinctrl: sh-pfc: Initial R-Car M3-N support
+  ARM64: dts: Add R-Car Salvator-x M3-N support
+  Documentation: devicetree: dma: Add r8a77965 dmac
+  ARM64: dts: r8a77965: Add dmac device nods
+  Documentation: devicetree: renesas,sci: Add r8a77965
+  pinctrl: sh-pfc: r8a77965: Add SCIFs groups/functions
+  ARM64: dts: r8a77965: Add SCIF device nodes
+  gpio: rcar: Add R-Car M3-N compatible string
+  ARM64: dts: r8a77965: Add GPIO nodes
+  Documentation: devicetree: ravb: Add r8a77965
+  pinctrl: sh-pfc: r8a77965: Add EtherAVB groups/functions
+  ARM64: dts: r8a77965: Add EtherAVB device node
 
-v3:
- - Split map register addresses into individual declarations.
+ Documentation/devicetree/bindings/arm/shmobile.txt |    2 +
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |    1 +
+ .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |    1 +
+ .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |    1 +
+ .../devicetree/bindings/net/renesas,ravb.txt       |    1 +
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+ .../bindings/power/renesas,rcar-sysc.txt           |    1 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |    1 +
+ .../bindings/serial/renesas,sci-serial.txt         |    2 +
+ arch/arm64/Kconfig.platforms                       |    6 +
+ arch/arm64/boot/dts/renesas/Makefile               |    1 +
+ .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts |   30 +
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi          |  787 +++++
+ drivers/clk/renesas/Kconfig                        |    5 +
+ drivers/clk/renesas/Makefile                       |    1 +
+ drivers/clk/renesas/r8a77965-cpg-mssr.c            |  333 +++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |    6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |    1 +
+ drivers/gpio/gpio-rcar.c                           |    4 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c              | 3134 ++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
+ drivers/soc/renesas/Kconfig                        |    9 +-
+ drivers/soc/renesas/Makefile                       |    1 +
+ drivers/soc/renesas/r8a77965-sysc.c                |   37 +
+ drivers/soc/renesas/rcar-rst.c                     |    1 +
+ drivers/soc/renesas/rcar-sysc.c                    |    3 +
+ drivers/soc/renesas/rcar-sysc.h                    |    1 +
+ drivers/soc/renesas/renesas-soc.c                  |    8 +
+ include/dt-bindings/clock/r8a77965-cpg-mssr.h      |   62 +
+ include/dt-bindings/power/r8a77965-sysc.h          |   31 +
+ 33 files changed, 4483 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77965.dtsi
+ create mode 100644 drivers/clk/renesas/r8a77965-cpg-mssr.c
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+ create mode 100644 drivers/soc/renesas/r8a77965-sysc.c
+ create mode 100644 include/dt-bindings/clock/r8a77965-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a77965-sysc.h
 
-v4:
- - Collect Laurents RB tag
- - Adapt commit title
- - Normalise I2C usage (I²C is harder to grep for)
-
- .../devicetree/bindings/media/i2c/adv7604.txt          | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-index 9cbd92eb5d05..dcf57e7c60eb 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-@@ -13,7 +13,11 @@ Required Properties:
-     - "adi,adv7611" for the ADV7611
-     - "adi,adv7612" for the ADV7612
- 
--  - reg: I2C slave address
-+  - reg: I2C slave addresses
-+    The ADV76xx has up to thirteen 256-byte maps that can be accessed via the
-+    main I2C ports. Each map has it own I2C address and acts as a standard
-+    slave device on the I2C bus. The main address is mandatory, others are
-+    optional and revert to defaults if not specified.
- 
-   - hpd-gpios: References to the GPIOs that control the HDMI hot-plug
-     detection pins, one per HDMI input. The active flag indicates the GPIO
-@@ -35,6 +39,11 @@ Optional Properties:
- 
-   - reset-gpios: Reference to the GPIO connected to the device's reset pin.
-   - default-input: Select which input is selected after reset.
-+  - reg-names : Names of maps with programmable addresses.
-+		It can contain any map needing a non-default address.
-+		Possible maps names are :
-+		  "main", "avlink", "cec", "infoframe", "esdp", "dpp", "afe",
-+		  "rep", "edid", "hdmi", "test", "cp", "vdp"
- 
- Optional Endpoint Properties:
- 
-@@ -52,7 +61,12 @@ Example:
- 
- 	hdmi_receiver@4c {
- 		compatible = "adi,adv7611";
--		reg = <0x4c>;
-+		/*
-+		 * The edid page will be accessible @ 0x66 on the I2C bus. All
-+		 * other maps will retain their default addresses.
-+		 */
-+		reg = <0x4c>, <0x66>;
-+		reg-names "main", "edid";
- 
- 		reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
- 		hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
--- 
+--
 2.7.4
