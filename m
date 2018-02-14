@@ -1,50 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:51862 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751424AbeBHKeY (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58102 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032793AbeBNQvc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:34:24 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 04/11] ARM: dts: lager: Enable watchdog support
-Date: Thu,  8 Feb 2018 11:34:10 +0100
-Message-Id: <1518086057-19448-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
-References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
+        Wed, 14 Feb 2018 11:51:32 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm: rcar-du: lvds: fix LVDS startup on R-Car gen3
+Date: Wed, 14 Feb 2018 18:52:05 +0200
+Message-ID: <379662807.WmKFOaE3uo@avalon>
+In-Reply-To: <35260661.mJIny8zrSv@avalon>
+References: <20180112201550.368547609@cogentembedded.com> <27ae5c72-b774-1af5-ae99-65009c2b6416@cogentembedded.com> <35260661.mJIny8zrSv@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the watchdog, so the board can be restarted by a watchdog
-timeout.
+Hi Sergei,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+On Tuesday, 16 January 2018 17:42:41 EET Laurent Pinchart wrote:
+> On Saturday, 13 January 2018 11:25:31 EET Sergei Shtylyov wrote:
+> > On 1/13/2018 1:15 AM, Laurent Pinchart wrote:
+> >>>> According to the latest revisions of the R-Car gen3 manual, the LVDS
+> >>>> mode must be set before the LVDS I/O pins are enabled, not after -- 
+> >>>> fix the gen3 LVDS startup sequence accordingly...
+> >>>> 
+> >>>> While  at it,  also fix the comment  preceding the first LVDCR0 write
+> >>>> in the R-Car gen2 startup code that still talks about hardcoding the
+> >>>> LVDS mode 0...
+> >>> 
+> >>> How about fixing that in patch 2/2 that touches the Gen2 initialization
+> >>> sequence ? I think I'd even go as far as squashing both patches, I
+> >>> don't think there's a need to split them.
+> >>> 
+> >>>> Fixes: e947eccbeba4 ("drm: rcar-du: Add support for LVDS mode
+> >>>> selection")
+> >>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>> 
+> >>> Is this really needed ? Does it fix a problem you've experienced, or is
+> >>> it theoretical only ? The mode shouldn't matter before the LVDS
+> >>> internal logic is turned on. Unless there's a real issue I'm not sure we
+> >>> should make the code more complex.
+> >> 
+> >> Furthermore the datasheet states
+> >> 
+> >> "3. This refers to settings other than those that are concerned with
+> >> LVDS-IF startup. These items may be set while waiting for the conditions
+> >> of step 6 to be met."
+> > 
+> > Ah, I hadn't paid much attention to this note. Howeve, it seems quite
+> > vague to me... and there's no condition in step 6. ;-)
+> 
+> Lots of bits and pieces are lost in translation yes :-)
+> 
+> >> Doesn't this mean that the mode and input selector don't have to be set
+> >> as the very first step, but can be programmed at any point before
+> >> starting the LVDS encoder through the PWD bit (on Gen3) or the PLLON bit
+> >> (on Gen2) ?
+> > 
+> > Frankly speaking, I don't know how to interpret that note...
+> 
+> My understanding is that the parameters can be programmed at any time before
+> step 6. The fact that the current code works seems to confirm that
+> interpretation. We could ask Renesas for a confirmation if you want.
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 7892b113ecaa14c6..4d8fb09fdbb816a5 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -860,6 +860,11 @@
- 	};
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &ssi1 {
- 	shared-pin;
- };
+I've received feedback, and while it wasn't clear what the not really means, 
+Renesas recommends following the documented startup sequence (I'm still not 
+sure it's really needed, but that's a different story). I'll thus rebase this 
+patch and repost it, and take it in my tree if you're fine with the result.
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
