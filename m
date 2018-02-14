@@ -1,110 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:48934 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751809AbeB0CVa (ORCPT
+Received: from mail-it0-f47.google.com ([209.85.214.47]:36840 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967284AbeBNKj1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 21:21:30 -0500
-From: Gaku Inami <gaku.inami.xh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Gaku Inami <gaku.inami.xh@renesas.com>
-Subject: [PATCH 5/5] soc: renesas: rcar-topology: Add support to be aware cpu capacity
-Date: Tue, 27 Feb 2018 11:19:55 +0900
-Message-Id: <1519697995-6061-6-git-send-email-gaku.inami.xh@renesas.com>
-In-Reply-To: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
-References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+        Wed, 14 Feb 2018 05:39:27 -0500
+Received: by mail-it0-f47.google.com with SMTP id n206so14497011itg.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Feb 2018 02:39:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180214102311.w7hfbnpfkecnjlkb@katana>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+ <20180207191152.kvqrugblst2cko3c@ninjato> <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
+ <20180214102311.w7hfbnpfkecnjlkb@katana>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 14 Feb 2018 11:39:26 +0100
+Message-ID: <CAPDyKFox8m4maTHQZi4gzyi=UVh0KO_xnfhjbjeMxsd=a9PB5A@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rich Felker <dalias@libc.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some R-Car SoCs support big LITTLE architecture produced by ARM, that
-have different power/performance characteristics between each CPUs.
-In order to aware such as difference, this patch changes the sched
-domain flags that the tasks can be scheduled with capacity awareness.
-If you use big LITTLE without this patch, the scheduler may make
-unintended behaviors.
+On 14 February 2018 at 11:23, Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+>> You need to check again. :-)
+>
+> Seems like it. Sorry for the noise.
+>
+>> I am eager to apply those patches you already have reviewed (to
+>> patch14), as those mostly seemed rather trivial and should be nice
+>> cleanups.
+>>
+>> Do you mind me going ahead, then you can continue and review/test the rest?
+>
+> Yes, we can work incremently from there. I'll send patches if I discover
+> something unexpected.
+>
 
-Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
----
- drivers/soc/renesas/Kconfig         |  4 ++++
- drivers/soc/renesas/Makefile        |  1 +
- drivers/soc/renesas/rcar-topology.c | 36 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 41 insertions(+)
- create mode 100644 drivers/soc/renesas/rcar-topology.c
+Great! So, applied patches 7->14.
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 6efd7be..296bdee 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -16,6 +16,7 @@ config SOC_RENESAS
- 	select SYSC_R8A7796 if ARCH_R8A7796
- 	select SYSC_R8A77970 if ARCH_R8A77970
- 	select SYSC_R8A77995 if ARCH_R8A77995
-+	select RCAR_CPU_TOPOLOGY if ARCH_R8A7795 || ARCH_R8A7796
- 
- if SOC_RENESAS
- 
-@@ -71,4 +72,7 @@ config RST_RCAR
- config SYSC_RCAR
- 	bool "R-Car System Controller support" if COMPILE_TEST
- 
-+config RCAR_CPU_TOPOLOGY
-+	bool "R-Car CPU Topology" if COMPILE_TEST
-+
- endif # SOC_RENESAS
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 845d62a..244f243 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -18,3 +18,4 @@ obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
- # Family
- obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
- obj-$(CONFIG_SYSC_RCAR)		+= rcar-sysc.o
-+obj-$(CONFIG_RCAR_CPU_TOPOLOGY)	+= rcar-topology.o
-diff --git a/drivers/soc/renesas/rcar-topology.c b/drivers/soc/renesas/rcar-topology.c
-new file mode 100644
-index 0000000..7e941cf
---- /dev/null
-+++ b/drivers/soc/renesas/rcar-topology.c
-@@ -0,0 +1,36 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  R-Car CPU topology for ARM big.LITTLE platforms
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corporation.
-+ *
-+ */
-+
-+#include <linux/cpuset.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/sched/topology.h>
-+#include <linux/topology.h>
-+
-+static int rcar_cpu_cpu_flags(void)
-+{
-+	return SD_ASYM_CPUCAPACITY;
-+}
-+
-+static struct sched_domain_topology_level rcar_topology[] = {
-+#ifdef CONFIG_SCHED_MC
-+	{ cpu_coregroup_mask, cpu_core_flags, SD_INIT_NAME(MC) },
-+#endif
-+	{ cpu_cpu_mask, rcar_cpu_cpu_flags, SD_INIT_NAME(DIE) },
-+	{ NULL, }
-+};
-+
-+static int __init rcar_topology_init(void)
-+{
-+	if (of_machine_is_compatible("renesas,r8a7795") ||
-+	    of_machine_is_compatible("renesas,r8a7796"))
-+		set_sched_topology(rcar_topology);
-+
-+	return 0;
-+}
-+early_initcall(rcar_topology_init);
--- 
-2.7.4
+Thanks and kind regards
+Uffe
