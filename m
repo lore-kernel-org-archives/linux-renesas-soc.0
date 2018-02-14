@@ -1,77 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:53010 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755297AbeBOKDU (ORCPT
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:50991 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967185AbeBNKXd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 05:03:20 -0500
+        Wed, 14 Feb 2018 05:23:33 -0500
 Subject: Re: [PATCH] ARM: dts: stout: Initial r8a7790 Stout board support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
 References: <20180213232948.31521-1-marek.vasut+renesas@gmail.com>
- <CAMuHMdUuuokCjJ-uz1+JMFLF5zytiB6gjhVC1Xtys_rWdFnPhg@mail.gmail.com>
+ <20180214060547.bf6upib2mbgoexas@katana>
 From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <e28ab40d-85c1-8821-1482-09f59740b559@gmail.com>
-Date: Thu, 15 Feb 2018 10:59:27 +0100
+Message-ID: <e7483b9c-4e1e-47ff-d044-fd4853b96e94@gmail.com>
+Date: Wed, 14 Feb 2018 11:21:13 +0100
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUuuokCjJ-uz1+JMFLF5zytiB6gjhVC1Xtys_rWdFnPhg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180214060547.bf6upib2mbgoexas@katana>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 02/14/2018 10:11 AM, Geert Uytterhoeven wrote:
-> Hi Marek,
-
-[...]
-
->> +                       partition@0 {
->> +                               label = "loader";
->> +                               reg = <0x00000000 0x00040000>;
->> +                               read-only;
->> +                       };
->> +                       partition@40000 {
->> +                               label = "user";
->> +                               reg = <0x00040000 0x00400000>;
->> +                               read-only;
->> +                       };
->> +                       partition@440000 {
->> +                               label = "flash";
->> +                               reg = <0x00440000 0x03bc0000>;
->> +                       };
+On 02/14/2018 07:05 AM, Wolfram Sang wrote:
+>> +	chosen {
+>> +		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+>> +		stdout-path = "serial0:38400n8";
 > 
-> I can't verify the partition layout.
+> Hmm, that would be our first board to not have 115200, or? We already
+> have some other boards upstream where UBoot has 38400 and Linux 115200.
+> I'd prefer consistency here a little, but no strong opinion and asking
+> for other opinions.
 
-I adjusted it according to
-https://elinux.org/R-Car/Boards/Stout
+The vendoruboot is wired to 38400 (sigh), I'm planning to set mainline
+uboot to 115200 though.
 
->> +               };
->> +       };
->> +};
-> 
-> 
->> +&iic2  {
->> +       status = "okay";
->> +       pinctrl-0 = <&iic2_pins>;
->> +       pinctrl-names = "default";
+>> +	vcc_sdhi0: regulator-vcc-sdhi0 {
+>> +		compatible = "regulator-fixed";
 >> +
->> +       clock-frequency = <100000>;
+>> +		regulator-name = "SDHI0 Vcc";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
 >> +
->> +       hdmi@39 {
->> +               compatible = "adi,adv7511w";
->> +               reg = <0x39>;
->> +               interrupt-parent = <&gpio1>;
->> +               interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
+>> +		gpio = <&gpio5 24 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +	};
 > 
-> Missing cec clock (OSC4).
-Fixed
+> Just double checking: No 1.8V for SDR50/104?
+
+Nope, the SD card slot is hard-wired to 3V3.
 
 -- 
 Best regards,
