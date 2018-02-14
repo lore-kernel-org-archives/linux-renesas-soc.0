@@ -1,55 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41716 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754556AbeBNI2s (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:38586 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751596AbeBNGFs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 03:28:48 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180214060547.bf6upib2mbgoexas@katana>
-References: <20180213232948.31521-1-marek.vasut+renesas@gmail.com> <20180214060547.bf6upib2mbgoexas@katana>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Feb 2018 09:28:47 +0100
-Message-ID: <CAMuHMdUYDWXF9uSzsYEOeOVysQKRSFhJ+bLbPhwFbMs-qBjbcA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: stout: Initial r8a7790 Stout board support
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Wed, 14 Feb 2018 01:05:48 -0500
+Date: Wed, 14 Feb 2018 07:05:47 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] ARM: dts: stout: Initial r8a7790 Stout board support
+Message-ID: <20180214060547.bf6upib2mbgoexas@katana>
+References: <20180213232948.31521-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tfe42vr6wdjrzf5u"
+Content-Disposition: inline
+In-Reply-To: <20180213232948.31521-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-On Wed, Feb 14, 2018 at 7:05 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> +     chosen {
->> +             bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
->> +             stdout-path = "serial0:38400n8";
->
-> Hmm, that would be our first board to not have 115200, or? We already
-> have some other boards upstream where UBoot has 38400 and Linux 115200.
-> I'd prefer consistency here a little, but no strong opinion and asking
-> for other opinions.
+--tfe42vr6wdjrzf5u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The other R-Car Gen2 boards use 115200 bps for U-Boot and Linux, but some
-other value (38400?) for the SPI loader that loads U-Boot.
+> +	chosen {
+> +		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+> +		stdout-path = "serial0:38400n8";
 
-What about U-Boot commit f40574e2d78c96a3 ("Kconfig: Migrate CONFIG_BAUDRATE"),
-which says all R-Car Gen2 boards use 38400, before and after?
+Hmm, that would be our first board to not have 115200, or? We already
+have some other boards upstream where UBoot has 38400 and Linux 115200.
+I'd prefer consistency here a little, but no strong opinion and asking
+for other opinions.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+> +	vcc_sdhi0: regulator-vcc-sdhi0 {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "SDHI0 Vcc";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +
+> +		gpio = <&gpio5 24 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +	};
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Just double checking: No 1.8V for SDR50/104?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+--tfe42vr6wdjrzf5u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqD0boACgkQFA3kzBSg
+KbY+WhAAnjqAroQBHObE2Jp1a79suXhYcgrESbuJ/Jk3A3iuqOpGBKRxUoL7rECg
+y5TKMAhJ0xE/3GjOe9axAKwhH9dWS/i+9SwBOBKnO0Qn12282mMBXRIGDxzgxN5O
+tAuIpGjMjR1bHuInTbz5GiKfZxDPCktLk/K09E6TlBL0gMDqgXaf9zFJ+amst3Nh
+8kBvuqcXfLIMPxVAP/mYry9zF3srMep0wLk1t5S6xNBAQ/TQhjD0ON6dZJieaKM0
+0qYJM8bOwuGZPu3nQXs67dJy0LGVKTXUoR5CKPcDV9EWirqFNgKJOxTrXnSIWkKP
+mx4/A6nL7FDWkqEVndYPp+ZQwaCTkLREFfz+Tom6YWemFJe1hpAVszc80JVMXYRX
+4c6b/6nHeyxsRO+Hw2g68yMS/pz62WBGo0kKoN+XBhw+c9ivpp0Mhka6gWYgQz0d
+II7zP8/deft+vxdtsnPwarNQLTuAEp8TxTEStR8uy0ioLLE2Q+l4Glz5eHYanKFj
+G4ihL717ZO6C3tJ+imKuom8keWzjWQovv9hWrTT0QNlhfSb7UIbr9DRB7tG7SKQf
+bHWkIU9CGqztaoYL907xuGqBBJUxkDuz8VtZgzDAouRlwTuPTyDKV68MR2WI+o7h
+wxpCNzKozWpw0BLG4CvvhmIvkERMSJbE5Tf8vSkUPW4mOasvGlI=
+=TK5M
+-----END PGP SIGNATURE-----
+
+--tfe42vr6wdjrzf5u--
