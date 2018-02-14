@@ -1,269 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40151 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753578AbeBFWaB (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35626 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967231AbeBNKiV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:30:01 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 3/9] ARM: dts: koelsch: use demuxer for I2C2
-Date: Tue,  6 Feb 2018 23:29:52 +0100
-Message-Id: <20180206222958.18941-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
-References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+        Wed, 14 Feb 2018 05:38:21 -0500
+Received: by mail-io0-f195.google.com with SMTP id m11so24654825iob.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Feb 2018 02:38:21 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20180205132822.14529-1-wsa+renesas@sang-engineering.com>
+References: <20180205132822.14529-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 14 Feb 2018 11:38:20 +0100
+Message-ID: <CAPDyKFo-MzX1NtqQc_78MWywf4hWrLfyLr2RYm2AZo2uFKKt6w@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sh_mmcif: remove some cruft
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C2 and provide fallback to GPIO.
+On 5 February 2018 at 14:28, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> The TODO section from 2010 is obsolete. We have DMA and PM meanwhile and
+> we always want to handle errors better, if possible. Also DRIVER_VERSION
+> is not used anymore these days.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+Thanks, applied for next!
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOs, sorted by SCL
-pins]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 200 +++++++++++++++++++---------------
- 1 file changed, 111 insertions(+), 89 deletions(-)
+Kind regards
+Uffe
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index a50924d12b6f37..4b20db197de629 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -51,7 +51,9 @@
- 		serial0 = &scif0;
- 		serial1 = &scif1;
- 		i2c9 = &gpioi2c1;
-+		i2c10 = &gpioi2c2;
- 		i2c12 = &i2cexio1;
-+		i2c13 = &i2chdmi;
- 	};
- 
- 	chosen {
-@@ -312,8 +314,18 @@
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
- 		status = "disabled";
--		sda-gpios = <&gpio7 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		scl-gpios = <&gpio7 15 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio7 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	gpioi2c2: i2c-10 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio2 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio2 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-@@ -328,6 +340,103 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C2.
-+	 */
-+	i2chdmi: i2c-13 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c2>, <&gpioi2c2>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin1>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin1ep>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio3>;
-+			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&cec_clock>;
-+			clock-names = "cec";
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		hdmi-in@4c {
-+			compatible = "adi,adv7612";
-+			reg = <0x4c>;
-+			interrupt-parent = <&gpio4>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+			default-input = <0>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7612_in: endpoint {
-+						remote-endpoint = <&hdmi_con_in>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					adv7612_out: endpoint {
-+						remote-endpoint = <&vin0ep2>;
-+					};
-+				};
-+			};
-+		};
-+
-+		eeprom@50 {
-+			compatible = "renesas,r1ex24002", "atmel,24c02";
-+			reg = <0x50>;
-+			pagesize = <16>;
-+		};
-+	};
- };
- 
- &du {
-@@ -621,96 +730,9 @@
- 
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <100000>;
--
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin1>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin1ep>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio3>;
--		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&cec_clock>;
--		clock-names = "cec";
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con_out>;
--				};
--			};
--		};
--	};
--
--	hdmi-in@4c {
--		compatible = "adi,adv7612";
--		reg = <0x4c>;
--		interrupt-parent = <&gpio4>;
--		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
--		default-input = <0>;
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7612_in: endpoint {
--					remote-endpoint = <&hdmi_con_in>;
--				};
--			};
--
--			port@2 {
--				reg = <2>;
--				adv7612_out: endpoint {
--					remote-endpoint = <&vin0ep2>;
--				};
--			};
--		};
--	};
--
--	eeprom@50 {
--		compatible = "renesas,r1ex24002", "atmel,24c02";
--		reg = <0x50>;
--		pagesize = <16>;
--	};
- };
- 
- &i2c6 {
--- 
-2.11.0
+> ---
+>  drivers/mmc/host/sh_mmcif.c | 8 --------
+>  1 file changed, 8 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
+> index 7bb00c68a7561a..4c2a1f8ddbf324 100644
+> --- a/drivers/mmc/host/sh_mmcif.c
+> +++ b/drivers/mmc/host/sh_mmcif.c
+> @@ -7,13 +7,6 @@
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License as published by
+>   * the Free Software Foundation; either version 2 of the License.
+> - *
+> - *
+> - * TODO
+> - *  1. DMA
+> - *  2. Power management
+> - *  3. Handle MMC errors better
+> - *
+>   */
+>
+>  /*
+> @@ -67,7 +60,6 @@
+>  #include <linux/module.h>
+>
+>  #define DRIVER_NAME    "sh_mmcif"
+> -#define DRIVER_VERSION "2010-04-28"
+>
+>  /* CE_CMD_SET */
+>  #define CMD_MASK               0x3f000000
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
