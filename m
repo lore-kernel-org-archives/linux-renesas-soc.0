@@ -1,92 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932759AbeBLWIR (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58695 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161765AbeBNSNW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:08:17 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT)
-Subject: [PATCH v3 3/5] [RFT] ARM: dts: wheat: Fix ADV7513 address usage
-Date: Mon, 12 Feb 2018 22:07:51 +0000
-Message-Id: <1518473273-6333-4-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
-References: <1518473273-6333-1-git-send-email-kbingham@kernel.org>
+        Wed, 14 Feb 2018 13:13:22 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 0/3] R-Car DU: Fix and refactor LVDS to prepare for V3M support
+Date: Wed, 14 Feb 2018 20:13:45 +0200
+Message-Id: <20180214181348.16258-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hello, 
 
-The r8a7792 Wheat board has two ADV7513 devices sharing a single i2c
-bus, however in low power mode the ADV7513 will reset it's slave maps to
-use the hardware defined default addresses.
+This patch series fixes the LVDS startup sequence for Gen2 and Gen3
+SoCs, and then proceeds to refactoring the code to merge the Gen2 and
+Gen3 implementations in preparation for V3M support.
 
-The ADV7511 driver was adapted to allow the two devices to be registered
-correctly - but it did not take into account the fault whereby the
-devices reset the addresses.
+The patches have been previously posted as part of the following series.
 
-This results in an address conflict between the device using the default
-addresses, and the other device if it is in low-power-mode.
+[PATCH 0/2] Fix LVDS startup sequences in the R-Car DU driver...
+[PATCH 0/3] Add R-Car V3M (R8A77970) support to the R-Car LVDS driver
 
-Repair this issue by moving both devices away from the default address
-definitions.
+They have since been rebased on top of the latest DU driver and the
+current DRM -next branch.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+For convenience the patches can be found at
 
----
-v2:
- - Addition to series
+	git://linuxtv.org/pinchartl/media.git drm/next/du
 
-v3:
- - Split map register addresses into individual declarations.
+They have been tested on H2 (Lager), H3 ES1.1 (Salvator-X) and H3 ES2.0
+(Salvator-XS) without any issue.
 
- arch/arm/boot/dts/r8a7792-wheat.dts | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+The patches that add V3M support have been left out as they depend on
+the LVDS encoder move to the DRM bridge API that is not ready for
+upstream yet.
 
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index b9471b67b728..42fff8837eab 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -240,9 +240,16 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
- 
-+	/*
-+	 * The adv75xx resets its addresses to defaults during low power power
-+	 * mode. Because we have two ADV7513 devices on the same bus, we must
-+	 * change both of them away from the defaults so that they do not
-+	 * conflict.
-+	 */
- 	hdmi@3d {
- 		compatible = "adi,adv7513";
--		reg = <0x3d>;
-+		reg = <0x3d>, <0x2d>, <0x4d>, <0x5d>;
-+		reg-names = "main", "cec", "edid", "packet";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
-@@ -272,7 +279,8 @@
- 
- 	hdmi@39 {
- 		compatible = "adi,adv7513";
--		reg = <0x39>;
-+		reg = <0x39>, <0x29>, <0x49>, <0x59>;
-+		reg-names = "main", "cec", "edid", "packet";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
+Sergei Shtylyov (3):
+  drm: rcar-du: lvds: Fix LVDS startup on R-Car Gen2
+  drm: rcar-du: lvds: Fix LVDS startup on R-Car Gen3
+  drm: rcar-du: lvds: Refactor LVDS startup
+
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c | 128 ++++++++++++------------------
+ 1 file changed, 51 insertions(+), 77 deletions(-)
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
