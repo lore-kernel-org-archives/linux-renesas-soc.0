@@ -1,60 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:20841 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750962AbeBEIRV (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:53328 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967729AbeBNNN6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Feb 2018 03:17:21 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: renesas_usbhs: missed the "running" flag in usb_dmac with rx path
-Date: Mon,  5 Feb 2018 17:12:35 +0900
-Message-Id: <1517818355-8513-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 14 Feb 2018 08:13:58 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Peter Crosthwaite <crosthwaite.peter@gmail.com>,
+        Alexander Graf <agraf@suse.de>
+Cc: qemu-devel@nongnu.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] device_tree: Increase FDT_MAX_SIZE to 1 MiB
+Date: Wed, 14 Feb 2018 14:13:55 +0100
+Message-Id: <1518614035-9907-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This fixes an issue that a gadget driver (usb_f_fs) is possible to
-stop rx transactions after the usb-dmac is used because the following
-functions missed to set/check the "running" flag.
- - usbhsf_dma_prepare_pop_with_usb_dmac()
- - usbhsf_dma_pop_done_with_usb_dmac()
+It is not uncommon for a contemporary FDT to be larger than 64 KiB,
+leading to failures loading the device tree from sysfs:
 
-So, if next transaction uses pio, the usbhsf_prepare_pop() can not
-start the transaction because the "running" flag is 0.
+    qemu-system-aarch64: qemu_fdt_setprop: Couldn't set ...: FDT_ERR_NOSPACE
 
-Fixes: 8355b2b3082d ("usb: renesas_usbhs: fix the behavior of some usbhs_pkt_handle")
-Cc: <stable@vger.kernel.org> # v3.19+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hence increase the limit to 1 MiB, like on PPC.
+
+For reference, the largest arm64 DTB created from the Linux sources is
+70 KiB large (93 KiB when built with symbols/fixup support).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/usb/renesas_usbhs/fifo.c | 5 +++++
- 1 file changed, 5 insertions(+)
+v2:
+  - Enlarge from 128 KiB to 1 MiB, as suggested by Peter Maydell.
+---
+ device_tree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
-index 2d24ef3..b295e20 100644
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -989,6 +989,10 @@ static int usbhsf_dma_prepare_pop_with_usb_dmac(struct usbhs_pkt *pkt,
- 	if ((uintptr_t)pkt->buf & (USBHS_USB_DMAC_XFER_SIZE - 1))
- 		goto usbhsf_pio_prepare_pop;
+diff --git a/device_tree.c b/device_tree.c
+index a24ddff02bdd857c..9eb5fae7381fe885 100644
+--- a/device_tree.c
++++ b/device_tree.c
+@@ -29,7 +29,7 @@
  
-+	/* return at this time if the pipe is running */
-+	if (usbhs_pipe_is_running(pipe))
-+		return 0;
-+
- 	usbhs_pipe_config_change_bfre(pipe, 1);
+ #include <libfdt.h>
  
- 	ret = usbhsf_fifo_select(pipe, fifo, 0);
-@@ -1179,6 +1183,7 @@ static int usbhsf_dma_pop_done_with_usb_dmac(struct usbhs_pkt *pkt,
- 	usbhsf_fifo_clear(pipe, fifo);
- 	pkt->actual = usbhs_dma_calc_received_size(pkt, chan, rcv_len);
+-#define FDT_MAX_SIZE  0x10000
++#define FDT_MAX_SIZE  0x100000
  
-+	usbhs_pipe_running(pipe, 0);
- 	usbhsf_dma_stop(pipe, fifo);
- 	usbhsf_dma_unmap(pkt);
- 	usbhsf_fifo_unselect(pipe, pipe->fifo);
+ void *create_device_tree(int *sizep)
+ {
 -- 
-1.9.1
+2.7.4
