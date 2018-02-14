@@ -1,8 +1,16 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 14 Feb 2018 11:23:11 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+MIME-Version: 1.0
+In-Reply-To: <CAK7LNAQaEJFH7Y+XsGEWDbrDkXTt35Yqd5DBmk0hpd6bggy+hQ@mail.gmail.com>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+ <20180207191152.kvqrugblst2cko3c@ninjato> <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
+ <CAK7LNAQaEJFH7Y+XsGEWDbrDkXTt35Yqd5DBmk0hpd6bggy+hQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 14 Feb 2018 10:46:39 +0100
+Message-ID: <CAPDyKFrCc-rFs_u_sSd=YN5SKFnE-vmjJabb+Sycynv2Q43ngQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Magnusson <ulfalizer@gmail.com>,
@@ -19,61 +27,54 @@ Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
         Lee Jones <lee.jones@linaro.org>,
         Rich Felker <dalias@libc.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
- cleanups
-Message-ID: <20180214102311.w7hfbnpfkecnjlkb@katana>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
- <20180207191152.kvqrugblst2cko3c@ninjato>
- <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="chnywmmjtoeycwvc"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoxp7p0atQTV=PoQ7Bwt0fOs2aEq1KJHPtrq+zA3eFYgw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 14 February 2018 at 10:43, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Hi Ulf,
+>
+>
+> 2018-02-14 18:36 GMT+09:00 Ulf Hansson <ulf.hansson@linaro.org>:
+>> On 7 February 2018 at 20:11, Wolfram Sang <wsa@the-dreams.de> wrote:
+>>>
+>>>> I picked patch5 and patch6, as those seemed trivial. Unless there is a
+>>>> rc9, let's aim for 4.17 for the rest.
+>>>
+>>> I can't find the branch where you picked these patches? I wanted to use
+>>> it to apply the rest of the patches. They don't seem to fit on v4.15
+>>> or current linus/master. Can you share this branch?
+>>
+>> You need to check again. :-)
+>>
+>> Patches up and to patch6 is already in Linus' tree v.16rc1, those I
+>> carried for quite a while on my next branch before sending them in the
+>> PR to Linus.
+>>
+>>>
+>>> I will do reviewing now "visually". But please wait until I tested them
+>>> before applying.
+>>
+>> I am eager to apply those patches you already have reviewed (to
+>> patch14), as those mostly seemed rather trivial and should be nice
+>> cleanups.
+>>
+>> Do you mind me going ahead, then you can continue and review/test the rest?
+>>
+>
+>
+> If you move forward, please fix-up the commit log of the patch 11.
+> (https://patchwork.kernel.org/patch/10170007/)
+>
+>
+> Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+>
+>   ->
+>
+> Documentation/devicetree/bindings/mmc/mmc.txt
 
---chnywmmjtoeycwvc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the reminder. Yes I can amend the patch, no worries.
 
-
-> You need to check again. :-)
-
-Seems like it. Sorry for the noise.
-
-> I am eager to apply those patches you already have reviewed (to
-> patch14), as those mostly seemed rather trivial and should be nice
-> cleanups.
->=20
-> Do you mind me going ahead, then you can continue and review/test the res=
-t?
-
-Yes, we can work incremently from there. I'll send patches if I discover
-something unexpected.
-
-
---chnywmmjtoeycwvc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqEDgsACgkQFA3kzBSg
-KbaVOxAAnEIyy0lswAOLrIpsQ+2pdHoH9MoOE+lfqFoXg28YvNHF6YfWKA47gWoD
-lmklgXxahFD/Dz07hngX21PF0kujg01iUC78nBNdXeN+pm1NIdipUahohuDQgRGj
-Pac163PpS4CPjPLA7yRLz44pXg4LQsIratlR1O1Nnw8mRRFY7aRr42+r/1kBKdYY
-LRehZe+7FoFgYAws224BNPOzvOX5n8Hg194c5rLRPif3EV21XQlc9tygG8A4bW6g
-m86jriqDUEYeE1RCgqiRlyxDZqyLFqLzsAHXWrDLoDpFMgmnLAX7Uihi37N38mw7
-SGjmZOHQnD5vtblop+rINnt5eZn3oevvgmQogwB0HasjjtwjOxUlARyNPicxrir8
-SVt5A/fA+ix52owdXN+SH+D0T5biGJEO3vd6zWOxOiKLmmRp0vrBsGNHUyh/Mxeo
-q+1kQ2OnsSxkZmyg4cYXYh2cHe3fYQb5DCj4oomraVLSzb+txk0dXc/RGwRArGQB
-0W8sMIVWj1f46mQs/XYJkbyqQEe1CJQU+O6TNsS4We3vXyMQdBUSH6ow35ShcUlF
-84I5u/K/q4ALhaRbVsKfs0jg4M7HOvUnflLJJlzhZAiOD59yXlUWI2Ttmxls/VsS
-BIEIhEZ4bai8g9q4s1lr6AP4xcigtQJXytLhJIG+rrrUckuXrM8=
-=AECR
------END PGP SIGNATURE-----
-
---chnywmmjtoeycwvc--
+Kind regards
+Uffe
