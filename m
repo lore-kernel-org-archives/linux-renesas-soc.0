@@ -1,95 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54328 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbeBZVow (ORCPT
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42166 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S967115AbeBNKhW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 16:44:52 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 09/15] v4l: vsp1: Replace manual DRM pipeline input setup in vsp1_du_setup_lif
-Date: Mon, 26 Feb 2018 23:45:10 +0200
-Message-Id: <20180226214516.11559-10-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 14 Feb 2018 05:37:22 -0500
+Subject: Re: [PATCH/RFC 3/5] hw/arm/virt: Allow dynamic sysbus devices again
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <1518189456-2873-1-git-send-email-geert+renesas@glider.be>
+ <1518189456-2873-4-git-send-email-geert+renesas@glider.be>
+Cc: Xiao Feng Ren <renxiaof@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+        linux-renesas-soc@vger.kernel.org
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <3ee22637-a0a9-306a-4e6d-14295d4bcb27@redhat.com>
+Date: Wed, 14 Feb 2018 11:37:11 +0100
+MIME-Version: 1.0
+In-Reply-To: <1518189456-2873-4-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vsp1_du_setup_lif() function setups the DRM pipeline input manually.
-This duplicates the code from the vsp1_du_pipeline_setup_input()
-function. Replace the manual implementation by a call to the function.
+Hi Geert,
+On 09/02/18 16:17, Geert Uytterhoeven wrote:
+> Allow the instantation of generic dynamic sysbus devices again, without
+> the need to create a new device-specific vfio type.
+> 
+> This is a partial revert of commit  6f2062b9758ebc64 ("hw/arm/virt:
+> Allow only supported dynamic sysbus devices").
+> 
+> Not-Yet-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  hw/arm/virt.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/hw/arm/virt.c b/hw/arm/virt.c
+> index b334c82edae9fb1f..fa83784fc08ed076 100644
+> --- a/hw/arm/virt.c
+> +++ b/hw/arm/virt.c
+> @@ -1596,6 +1596,7 @@ static void virt_machine_class_init(ObjectClass *oc, void *data)
+>      mc->max_cpus = 255;
+>      machine_class_allow_dynamic_sysbus_dev(mc, TYPE_VFIO_CALXEDA_XGMAC);
+>      machine_class_allow_dynamic_sysbus_dev(mc, TYPE_VFIO_AMD_XGBE);
+> +    machine_class_allow_dynamic_sysbus_dev(mc, TYPE_SYS_BUS_DEVICE);
+Couldn't you limit that to TYPE_VFIO_PLATFORM instead?
 
-As the pipeline has no enabled input in vsp1_du_setup_lif(), the
-vsp1_du_pipeline_setup_input() function will not setup any RPF, and will
-thus not setup formats on the BRU sink pads. This isn't a problem as all
-inputs are disabled, and the BRU sink pads will be reconfigured from the
-atomic commit handler when inputs will be enabled.
+Thanks
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drm.c | 40 +++++-----------------------------
- 1 file changed, 6 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 6ad8aa6c8138..00ce99bd1605 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -412,47 +412,19 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u\n",
- 		__func__, pipe_index, cfg->width, cfg->height);
- 
--	/*
--	 * Configure the format at the BRU sinks and propagate it through the
--	 * pipeline.
--	 */
-+	/* Setup formats through the pipeline. */
-+	ret = vsp1_du_pipeline_setup_input(vsp1, pipe);
-+	if (ret < 0)
-+		return ret;
-+
- 	memset(&format, 0, sizeof(format));
- 	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
--
--	for (i = 0; i < pipe->bru->source_pad; ++i) {
--		format.pad = i;
--
--		format.format.width = cfg->width;
--		format.format.height = cfg->height;
--		format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
--		format.format.field = V4L2_FIELD_NONE;
--
--		ret = v4l2_subdev_call(&pipe->bru->subdev, pad,
--				       set_fmt, NULL, &format);
--		if (ret < 0)
--			return ret;
--
--		dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
--			__func__, format.format.width, format.format.height,
--			format.format.code, BRU_NAME(pipe->bru), i);
--	}
--
--	format.pad = pipe->bru->source_pad;
-+	format.pad = RWPF_PAD_SINK;
- 	format.format.width = cfg->width;
- 	format.format.height = cfg->height;
- 	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
- 	format.format.field = V4L2_FIELD_NONE;
- 
--	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
--			       &format);
--	if (ret < 0)
--		return ret;
--
--	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
--		__func__, format.format.width, format.format.height,
--		format.format.code, BRU_NAME(pipe->bru), i);
--
--	format.pad = RWPF_PAD_SINK;
- 	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, NULL,
- 			       &format);
- 	if (ret < 0)
--- 
-Regards,
-
-Laurent Pinchart
+Eric
+>      mc->block_default_type = IF_VIRTIO;
+>      mc->no_cdrom = 1;
+>      mc->pci_allow_0_address = true;
+> 
