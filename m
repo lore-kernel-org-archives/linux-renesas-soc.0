@@ -1,138 +1,140 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:33022 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934652AbeBLNzZ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:55:25 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/3] irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
-Date: Mon, 12 Feb 2018 14:55:12 +0100
-Message-Id: <1518443713-1835-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] arm64: dts: renesas: r8a77995: add VSP instances
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
+ <1518550237-16753-3-git-send-email-kbingham@kernel.org>
+ <1667048.nVWrpUAVXQ@avalon>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <10851181-b3b1-bb07-82e9-487ae51711ba@ideasonboard.com>
+Date: Wed, 14 Feb 2018 08:39:19 +0000
+MIME-Version: 1.0
+In-Reply-To: <1667048.nVWrpUAVXQ@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commit 6f46aedb9c85873b ("irqchip: renesas-irqc: Add wake-up
-support"), when an IRQ is used for wakeup, the INTC
-block's module clock is manually kept running during system suspend, to
-make sure the device stays active.
+Hi Laurent,
 
-However, this explicit clock handling is merely a workaround for a
-failure to properly communicate wakeup information to the device core.
+Thanks for the review,
 
-Instead, set the device's power.wakeup_path field, to indicate this
-device is part of the wakeup path.  Depending on the PM Domain's
-active_wakeup configuration, the genpd core code will keep the device
-enabled (and the clock running) during system suspend when needed.
-This allows for the removal of all explicit clock handling code from the
-driver.
+On 13/02/18 22:03, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Tuesday, 13 February 2018 21:30:35 EET Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> The r8a77995 has a VSPBS to support image processing such as blending of
+>> two input images, and has two VSPDs to handle display pipelines with a
+>> DU.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> ---
+>> v2:
+>>  - Fix VSPD register map size
+>>  - Squash VSPBS and VSPD patches together
+>>
+>>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++
+>>  1 file changed, 30 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index
+>> 196a917afea6..19bd8be9926a 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> @@ -692,6 +692,16 @@
+>>  			status = "disabled";
+>>  		};
+>>
+>> +		vspbs: vsp@fe960000 {
+>> +			compatible = "renesas,vsp2";
+>> +			reg = <0 0xfe960000 0 0x4000>;
+> 
+> The VSPBS also has OSD-CLUT support in its RPFs, so you need to extend the 
+> registers range too.
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Revert to v1, as WAKEUP_PATH didn't make it,
-  - Use an atomic_t instead of a boolean flag, as the boolean tracked
-    only the status of the last configured GPIO, while multiple
-    interrupt pins on the same interrupt controller may be involved with
-    wake-up,
-  - Use new helper device_set_wakeup_path(),
-  - Drop checks for CONFIG_PM_SLEEP, as device_set_wakeup_path() is
-    always available, unlike dev_pm_info.wakeup_path,
-  - Mark irqc_suspend() __maybe_unused,
-  - Drop RFC state, now the dependencies are upstream.
+Wait, but I already changed this ...
 
-v2 (sent by Ulf Hanson):
-  - Convert to use the WAKEUP_PATH driver PM flag (Ulf).
----
- drivers/irqchip/irq-renesas-irqc.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+</me checks tree>
 
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index 52304b139aa46a60..a4f11124024dcf32 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
-@@ -17,7 +17,6 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
- 
--#include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
-@@ -64,7 +63,7 @@ struct irqc_priv {
- 	struct platform_device *pdev;
- 	struct irq_chip_generic *gc;
- 	struct irq_domain *irq_domain;
--	struct clk *clk;
-+	atomic_t wakeup_path;
- };
- 
- static struct irqc_priv *irq_data_to_priv(struct irq_data *data)
-@@ -111,14 +110,10 @@ static int irqc_irq_set_wake(struct irq_data *d, unsigned int on)
- 	int hw_irq = irqd_to_hwirq(d);
- 
- 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
--
--	if (!p->clk)
--		return 0;
--
- 	if (on)
--		clk_enable(p->clk);
-+		atomic_inc(&p->wakeup_path);
- 	else
--		clk_disable(p->clk);
-+		atomic_dec(&p->wakeup_path);
- 
- 	return 0;
- }
-@@ -159,12 +154,6 @@ static int irqc_probe(struct platform_device *pdev)
- 	p->pdev = pdev;
- 	platform_set_drvdata(pdev, p);
- 
--	p->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(p->clk)) {
--		dev_warn(&pdev->dev, "unable to get clock\n");
--		p->clk = NULL;
--	}
--
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_sync(&pdev->dev);
- 
-@@ -276,6 +265,18 @@ static int irqc_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int __maybe_unused irqc_suspend(struct device *dev)
-+{
-+	struct irqc_priv *p = dev_get_drvdata(dev);
-+
-+	if (atomic_read(&p->wakeup_path))
-+		device_set_wakeup_path(dev);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(irqc_pm_ops, irqc_suspend, NULL);
-+
- static const struct of_device_id irqc_dt_ids[] = {
- 	{ .compatible = "renesas,irqc", },
- 	{},
-@@ -288,6 +289,7 @@ static struct platform_driver irqc_device_driver = {
- 	.driver		= {
- 		.name	= "renesas_irqc",
- 		.of_match_table	= irqc_dt_ids,
-+		.pm	= &irqc_pm_ops,
- 	}
- };
- 
--- 
-2.7.4
+Yup - this change is already in my tree ... which means I must have made the
+change *after* calling git format-patch. Not helpful.
+
+Orz
+
+
+
+
+> Apart from that,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+I'll collect the tag and repost, this time with the correctly updated version.
+
+(And I'll add in that missing vspd3 from the es1 tree too)
+
+
+>> +			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 627>;
+>> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 627>;
+>> +			renesas,fcp = <&fcpvb0>;
+>> +		};
+>> +
+>>  		fcpvb0: fcp@fe96f000 {
+>>  			compatible = "renesas,fcpv";
+>>  			reg = <0 0xfe96f000 0 0x200>;
+>> @@ -701,6 +711,16 @@
+>>  			iommus = <&ipmmu_vp0 5>;
+>>  		};
+>>
+>> +		vspd0: vsp@fea20000 {
+>> +			compatible = "renesas,vsp2";
+>> +			reg = <0 0xfea20000 0 0x8000>;
+>> +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 623>;
+>> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 623>;
+>> +			renesas,fcp = <&fcpvd0>;
+>> +		};
+>> +
+>>  		fcpvd0: fcp@fea27000 {
+>>  			compatible = "renesas,fcpv";
+>>  			reg = <0 0xfea27000 0 0x200>;
+>> @@ -710,6 +730,16 @@
+>>  			iommus = <&ipmmu_vi0 8>;
+>>  		};
+>>
+>> +		vspd1: vsp@fea80000 {
+>> +			compatible = "renesas,vsp2";
+>> +			reg = <0 0xfea28000 0 0x8000>;
+>> +			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&cpg CPG_MOD 622>;
+>> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+>> +			resets = <&cpg 622>;
+>> +			renesas,fcp = <&fcpvd1>;
+>> +		};
+>> +
+>>  		fcpvd1: fcp@fea2f000 {
+>>  			compatible = "renesas,fcpv";
+>>  			reg = <0 0xfea2f000 0 0x200>;
+> 
