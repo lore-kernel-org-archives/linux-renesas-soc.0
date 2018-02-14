@@ -1,39 +1,42 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1518589412-7330-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:32260 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754202AbeBNG2b (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 14 Feb 2018 01:28:31 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/4] arm64: defconfig: Enable USB 3.0 PHY for R-Car
+Date: Wed, 14 Feb 2018 15:23:31 +0900
+Message-Id: <1518589412-7330-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1518589412-7330-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1518589412-7330-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1518589412-7330-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Feb 2018 11:05:20 +0100
-Message-ID: <CAMuHMdURdSBkrSC+BFKtu+sgTicwguV0ojB9EHiwGXh7j8T_+g@mail.gmail.com>
-Subject: Re: [PATCH 3/4] arm64: defconfig: Enable USB 3.0 PHY for R-Car
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 14, 2018 at 7:23 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Enable the R-Car's USB 3.0 PHY.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Enable the R-Car's USB 3.0 PHY.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 9f55541..29650e1 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -554,6 +554,7 @@ CONFIG_PWM_ROCKCHIP=y
+ CONFIG_PWM_SAMSUNG=y
+ CONFIG_PWM_TEGRA=m
+ CONFIG_PHY_RCAR_GEN3_USB2=y
++CONFIG_PHY_RCAR_GEN3_USB3=m
+ CONFIG_PHY_HI6220_USB=y
+ CONFIG_PHY_QCOM_USB_HS=y
+ CONFIG_PHY_SUN4I_USB=y
+-- 
+1.9.1
