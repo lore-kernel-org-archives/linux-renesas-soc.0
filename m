@@ -1,30 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52831 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162960AbeBOSdg (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:6986 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754191AbeBNG2Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 13:33:36 -0500
-Date: Thu, 15 Feb 2018 19:33:32 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/4] arm64: defconfig: Enable PWM and USB for R-Car
-Message-ID: <20180215183331.56y6syawbjzdheor@verge.net.au>
-References: <1518589412-7330-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 14 Feb 2018 01:28:24 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/4] arm64: defconfig: Enable PWM and USB for R-Car
+Date: Wed, 14 Feb 2018 15:23:28 +0900
+Message-Id: <1518589412-7330-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518589412-7330-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 14, 2018 at 03:23:28PM +0900, Yoshihiro Shimoda wrote:
-> This patch set is based on the renesas.git / renesas-devel-20180213v2-v4.16-rc1
-> tag.
+This patch set is based on the renesas.git / renesas-devel-20180213v2-v4.16-rc1
+tag.
 
-Hi Shimoda-san,
+Yoshihiro Shimoda (4):
+  arm64: defconfig: Enable PWM for R-Car
+  arm64: defconfig: Enable USB-DMAC for R-Car
+  arm64: defconfig: Enable USB 3.0 PHY for R-Car
+  arm64: defconfig: Enable USB 3.0 peripheral for R-Car
 
-these changes look fine to me but I believe that upstream
-prefers such patches to be consolidated. Could you consider
-reposting with these four patches squashed into one?
+ arch/arm64/configs/defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+-- 
+1.9.1
