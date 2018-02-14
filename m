@@ -1,45 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:46532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752544AbeBARKS (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:38835 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030772AbeBNOmE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Feb 2018 12:10:18 -0500
-Date: Thu, 1 Feb 2018 12:10:15 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/1] of: easier debugging for node life cycle
- issues
-Message-ID: <20180201121015.72fd242c@gandalf.local.home>
-In-Reply-To: <4b373579-7a86-6883-2624-12a5408bb49b@gmail.com>
-References: <20180121143117.19805-1-wsa+renesas@sang-engineering.com>
-        <00fc90ee-de26-f819-9c81-27d06918564d@gmail.com>
-        <20180125060330.781667e9@vmware.local.home>
-        <a30d4cd3-0068-8cca-cc2f-ca207d0d278b@gmail.com>
-        <20180125231443.44yy65ztr6exaam7@ninjato>
-        <4b373579-7a86-6883-2624-12a5408bb49b@gmail.com>
+        Wed, 14 Feb 2018 09:42:04 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1518515162-23663-10-git-send-email-jacopo+renesas@jmondi.org>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org> <1518515162-23663-10-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Feb 2018 15:42:02 +0100
+Message-ID: <CAMuHMdV0ej+77MLt-5tz=0MzYz5rC499hbR5jMS6w9kLX46gWQ@mail.gmail.com>
+Subject: Re: [PATCH 09/15] pinctrl: sh-pfc: r8a77965: Add SCIFs groups/functions
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, 25 Jan 2018 16:46:06 -0800
-Frank Rowand <frowand.list@gmail.com> wrote:
+On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
+> Add SCIF[0-5] groups and pin function definitions for R-Car M3-N.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-> The point is that using ftrace means there are use cases for the
-> debug information where the information will not be available.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Note, this email came out when I was traveling. I'm now looking at the
-code and trace events are enabled right after rcu_init() in init/main.c.
+Minor nit below...
 
-The early_initcall() enables syscall events(), as they are not
-available earlier.
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+> @@ -1577,10 +1577,306 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+>         SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
+>  };
+>
+> +/* - SCIF0 ------------------------------------------------------------------ */
+> +static const unsigned int scif0_data_pins[] = {
+> +       /* RX, TX */
+> +       RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
+> +};
+> +static const unsigned int scif0_data_mux[] = {
+> +       RX0_MARK, TX0_MARK,
+> +};
+> +static const unsigned int scif0_clk_pins[] = {
+> +       /* SCK */
+> +       RCAR_GP_PIN(5, 0),
+> +};
+> +static const unsigned int scif0_clk_mux[] = {
+> +       SCK0_MARK,
+> +};
+> +static const unsigned int scif0_ctrl_pins[] = {
+> +       /* RTS, CTS */
+> +       RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 3),
+> +};
+> +static const unsigned int scif0_ctrl_mux[] = {
+> +       RTS0_N_TANS_MARK, CTS0_N_MARK,
 
--- Steve
+Without TANS please (cfr. recent fixes to pfc-r8a7796.c).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
