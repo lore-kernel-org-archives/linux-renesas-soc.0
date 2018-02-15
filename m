@@ -1,68 +1,179 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:43504 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755145AbeBOJUX (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36372 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032104AbeBOADx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 04:20:23 -0500
-Received: by mail-qk0-f195.google.com with SMTP id i184so18979813qkf.10
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2018 01:20:23 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20180215000415.19077-7-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com> <20180215000415.19077-7-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 15 Feb 2018 10:20:22 +0100
-Message-ID: <CAMuHMdWvFe1oHnTG9fTN46jOEbns_QS1Ff1BTyw1BFwLjVkAQQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/12] ARM: dts: r8a7790: Convert to new LVDS DT bindings
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 14 Feb 2018 19:03:53 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v3 06/12] ARM: dts: r8a7790: Convert to new LVDS DT bindings
+Date: Thu, 15 Feb 2018 02:04:09 +0200
+Message-Id: <20180215000415.19077-7-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 15, 2018 at 1:04 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> The internal LVDS encoder now has DT bindings separate from the DU. Port
-> the device tree over to the new model.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The internal LVDS encoder now has DT bindings separate from the DU. Port
+the device tree over to the new model.
 
-> --- a/arch/arm/boot/dts/r8a7790.dtsi
-> +++ b/arch/arm/boot/dts/r8a7790.dtsi
-> @@ -1067,17 +1067,13 @@
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v2:
 
-> @@ -1092,11 +1088,61 @@
->                         port@1 {
->                                 reg = <1>;
->                                 du_out_lvds0: endpoint {
-> +                                       remote-endpoint = <&lvds0_in>;
->                                 };
->                         };
->                         port@2 {
->                                 reg = <2>;
->                                 du_out_lvds1: endpoint {
-> +                                       remote-endpoint = <&lvds1_in>;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
-> +       lvds0: lvds@feb90000 {
-> +               compatible = "renesas,r8a7790-lvds";
-> +               reg = <0 0xfeb90000 0 0x1c>;
-> +               clocks = <&cpg CPG_MOD 726>;
-> +               status = "disabled";
+- Fixed LVDS compatible string
 
-Missing resets, power-domains (for all lvds nodes in all DTS patches).
+Changes since v1:
 
-Gr{oetje,eeting}s,
+- Remove the DU reg-names property
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 22 ++++++++++----
+ arch/arm/boot/dts/r8a7790.dtsi      | 60 ++++++++++++++++++++++++++++++++-----
+ 2 files changed, 70 insertions(+), 12 deletions(-)
 
-                        Geert
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 7d5cd01069a3..f84963cb6785 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -317,10 +317,8 @@
+ 	status = "okay";
+ 
+ 	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 722>,
+-		 <&cpg CPG_MOD 726>, <&cpg CPG_MOD 725>,
+ 		 <&x13_clk>, <&x2_clk>;
+-	clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1",
+-		      "dclkin.0", "dclkin.1";
++	clock-names = "du.0", "du.1", "du.2", "dclkin.0", "dclkin.1";
+ 
+ 	ports {
+ 		port@0 {
+@@ -328,12 +326,26 @@
+ 				remote-endpoint = <&adv7123_in>;
+ 			};
+ 		};
++	};
++};
++
++&lvds0 {
++	status = "okay";
++
++	ports {
+ 		port@1 {
+ 			endpoint {
+ 				remote-endpoint = <&adv7511_in>;
+ 			};
+ 		};
+-		port@2 {
++	};
++};
++
++&lvds1 {
++	status = "okay";
++
++	ports {
++		port@1 {
+ 			lvds_connector: endpoint {
+ 			};
+ 		};
+@@ -689,7 +701,7 @@
+ 			port@0 {
+ 				reg = <0>;
+ 				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_lvds0>;
++					remote-endpoint = <&lvds0_out>;
+ 				};
+ 			};
+ 
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 62baabd757b6..450951ff25eb 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1067,17 +1067,13 @@
+ 
+ 	du: display@feb00000 {
+ 		compatible = "renesas,du-r8a7790";
+-		reg = <0 0xfeb00000 0 0x70000>,
+-		      <0 0xfeb90000 0 0x1c>,
+-		      <0 0xfeb94000 0 0x1c>;
+-		reg-names = "du", "lvds.0", "lvds.1";
++		reg = <0 0xfeb00000 0 0x70000>;
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
+-			 <&cpg CPG_MOD 722>, <&cpg CPG_MOD 726>,
+-			 <&cpg CPG_MOD 725>;
+-		clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1";
++			 <&cpg CPG_MOD 722>;
++		clock-names = "du.0", "du.1", "du.2";
+ 		status = "disabled";
+ 
+ 		ports {
+@@ -1092,11 +1088,61 @@
+ 			port@1 {
+ 				reg = <1>;
+ 				du_out_lvds0: endpoint {
++					remote-endpoint = <&lvds0_in>;
+ 				};
+ 			};
+ 			port@2 {
+ 				reg = <2>;
+ 				du_out_lvds1: endpoint {
++					remote-endpoint = <&lvds1_in>;
++				};
++			};
++		};
++	};
++
++	lvds0: lvds@feb90000 {
++		compatible = "renesas,r8a7790-lvds";
++		reg = <0 0xfeb90000 0 0x1c>;
++		clocks = <&cpg CPG_MOD 726>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				lvds0_in: endpoint {
++					remote-endpoint = <&du_out_lvds0>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				lvds0_out: endpoint {
++				};
++			};
++		};
++	};
++
++	lvds1: lvds@feb94000 {
++		compatible = "renesas,r8a7790-lvds";
++		reg = <0 0xfeb94000 0 0x1c>;
++		clocks = <&cpg CPG_MOD 725>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				lvds1_in: endpoint {
++					remote-endpoint = <&du_out_lvds1>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				lvds1_out: endpoint {
+ 				};
+ 			};
+ 		};
+-- 
+Regards,
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
