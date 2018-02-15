@@ -1,81 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51077 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51544 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165086AbeBOQS6 (ORCPT
+        with ESMTP id S1424040AbeBOQla (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:18:58 -0500
-Date: Thu, 15 Feb 2018 17:18:54 +0100
+        Thu, 15 Feb 2018 11:41:30 -0500
+Date: Thu, 15 Feb 2018 17:41:26 +0100
 From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 3/9] ARM: dts: kzm9d: Fix "debounce-interval" property
- misspelling
-Message-ID: <20180215161853.m5wqgj6myjla3aab@verge.net.au>
-References: <1518531335-5170-1-git-send-email-geert+renesas@glider.be>
- <1518531335-5170-4-git-send-email-geert+renesas@glider.be>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
+        magnus.damm@gmail.com, linux-mmc@vger.kernel.org,
+        marek.vasut@gmail.com
+Subject: Re: [PATCH v2 2/2] arm64: dts: r8a77995: draak: enable SDHI2
+Message-ID: <20180215164126.2n3cygiv6mm6mls3@verge.net.au>
+References: <1511971606-580-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1511971606-580-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20171204212900.g75ahagudgzcsiyw@ninjato>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1518531335-5170-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20171204212900.g75ahagudgzcsiyw@ninjato>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[Cc linux-renesas-soc]
+On Mon, Dec 04, 2017 at 10:29:00PM +0100, Wolfram Sang wrote:
+> On Wed, Nov 29, 2017 at 05:06:46PM +0100, Ulrich Hecht wrote:
+> > The single SDHI controller is connected to eMMC.
+> > 
+> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> 
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Tue, Feb 13, 2018 at 03:15:29PM +0100, Geert Uytterhoeven wrote:
-> "debounce_interval" was never supported.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Simon Horman <horms@verge.net.au>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> ---
-> Please apply to your tree when appropriate.
-
-Thanks, applied.
-
-> 
->  arch/arm/boot/dts/emev2-kzm9d.dts | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/emev2-kzm9d.dts b/arch/arm/boot/dts/emev2-kzm9d.dts
-> index 60d0a732833aaada..c238407133bfe2d7 100644
-> --- a/arch/arm/boot/dts/emev2-kzm9d.dts
-> +++ b/arch/arm/boot/dts/emev2-kzm9d.dts
-> @@ -38,28 +38,28 @@
->  		#size-cells = <0>;
->  
->  		one {
-> -			debounce_interval = <50>;
-> +			debounce-interval = <50>;
->  			wakeup-source;
->  			label = "DSW2-1";
->  			linux,code = <KEY_1>;
->  			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
->  		};
->  		two {
-> -			debounce_interval = <50>;
-> +			debounce-interval = <50>;
->  			wakeup-source;
->  			label = "DSW2-2";
->  			linux,code = <KEY_2>;
->  			gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
->  		};
->  		three {
-> -			debounce_interval = <50>;
-> +			debounce-interval = <50>;
->  			wakeup-source;
->  			label = "DSW2-3";
->  			linux,code = <KEY_3>;
->  			gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
->  		};
->  		four {
-> -			debounce_interval = <50>;
-> +			debounce-interval = <50>;
->  			wakeup-source;
->  			label = "DSW2-4";
->  			linux,code = <KEY_4>;
-> -- 
-> 2.7.4
-> 
+Thanks, applied now that patch 1/2 is in an rc release.
