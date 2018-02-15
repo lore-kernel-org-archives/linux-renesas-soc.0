@@ -1,47 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:46243 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751811AbeBTMrx (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:40423 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967843AbeBOLyV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 07:47:53 -0500
-MIME-Version: 1.0
-In-Reply-To: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
-References: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Feb 2018 13:47:51 +0100
-Message-ID: <CAMuHMdXR5vrB-qR6uX3KZgKxJyCdUzQ_y_4rDR9n_5pgKZ_PYQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Renesas R8A77980 CPG/MSSR clock support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Thu, 15 Feb 2018 06:54:21 -0500
+Received: by mail-lf0-f46.google.com with SMTP id 37so14791892lfs.7
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2018 03:54:21 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 0/2] Renesas R8A77980 CPG/MSSR clock support
+To: Rob Herring <robh+dt@kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-clk <linux-clk@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Message-ID: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
+Date: Thu, 15 Feb 2018 14:54:18 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 15, 2018 at 12:54 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Here's the set of 2 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
-> 'renesas-drivers.git' repo. We're adding the CPG/MSSR driver support for R8A77980...
->
-> [1/2] dt-bindings: clock: add R8A77980 CPG core clock definitions
-> [2/2] clk: renesas: cpg-mssr: add R8A77980 support
+Hello!
 
-Thanks, queued in clk-renesas-for-v4.17.
+Here's the set of 2 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
+'renesas-drivers.git' repo. We're adding the CPG/MSSR driver support for R8A77980...
 
-Gr{oetje,eeting}s,
+[1/2] dt-bindings: clock: add R8A77980 CPG core clock definitions
+[2/2] clk: renesas: cpg-mssr: add R8A77980 support
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
