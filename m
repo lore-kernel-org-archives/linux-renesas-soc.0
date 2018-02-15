@@ -1,179 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36372 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032104AbeBOADx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:03:53 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3 06/12] ARM: dts: r8a7790: Convert to new LVDS DT bindings
-Date: Thu, 15 Feb 2018 02:04:09 +0200
-Message-Id: <20180215000415.19077-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 15 Feb 2018 17:01:39 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kbingham@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] arm64: dts: renesas: r8a77995: add FCPVB node
+Message-ID: <20180215160138.qwglhwtvzzugbh3o@verge.net.au>
+References: <1518474330-8713-1-git-send-email-kbingham@kernel.org>
+ <1518474330-8713-2-git-send-email-kbingham@kernel.org>
+ <7882079.DMVypBKPF4@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7882079.DMVypBKPF4@avalon>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+On Tue, Feb 13, 2018 at 02:31:48PM +0200, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Tuesday, 13 February 2018 00:25:26 EET Kieran Bingham wrote:
+> > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 
+> > The FCPVB handles the interface between the VSPB and memory.
+> > 
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v2:
-
-- Fixed LVDS compatible string
-
-Changes since v1:
-
-- Remove the DU reg-names property
----
- arch/arm/boot/dts/r8a7790-lager.dts | 22 ++++++++++----
- arch/arm/boot/dts/r8a7790.dtsi      | 60 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 70 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 7d5cd01069a3..f84963cb6785 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -317,10 +317,8 @@
- 	status = "okay";
- 
- 	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 726>, <&cpg CPG_MOD 725>,
- 		 <&x13_clk>, <&x2_clk>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "du.2", "dclkin.0", "dclkin.1";
- 
- 	ports {
- 		port@0 {
-@@ -328,12 +326,26 @@
- 				remote-endpoint = <&adv7123_in>;
- 			};
- 		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
- 		port@1 {
- 			endpoint {
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
--		port@2 {
-+	};
-+};
-+
-+&lvds1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
- 			lvds_connector: endpoint {
- 			};
- 		};
-@@ -689,7 +701,7 @@
- 			port@0 {
- 				reg = <0>;
- 				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_lvds0>;
-+					remote-endpoint = <&lvds0_out>;
- 				};
- 			};
- 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 62baabd757b6..450951ff25eb 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1067,17 +1067,13 @@
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7790";
--		reg = <0 0xfeb00000 0 0x70000>,
--		      <0 0xfeb90000 0 0x1c>,
--		      <0 0xfeb94000 0 0x1c>;
--		reg-names = "du", "lvds.0", "lvds.1";
-+		reg = <0 0xfeb00000 0 0x70000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
--			 <&cpg CPG_MOD 722>, <&cpg CPG_MOD 726>,
--			 <&cpg CPG_MOD 725>;
--		clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1";
-+			 <&cpg CPG_MOD 722>;
-+		clock-names = "du.0", "du.1", "du.2";
- 		status = "disabled";
- 
- 		ports {
-@@ -1092,11 +1088,61 @@
- 			port@1 {
- 				reg = <1>;
- 				du_out_lvds0: endpoint {
-+					remote-endpoint = <&lvds0_in>;
- 				};
- 			};
- 			port@2 {
- 				reg = <2>;
- 				du_out_lvds1: endpoint {
-+					remote-endpoint = <&lvds1_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	lvds0: lvds@feb90000 {
-+		compatible = "renesas,r8a7790-lvds";
-+		reg = <0 0xfeb90000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 726>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds0_in: endpoint {
-+					remote-endpoint = <&du_out_lvds0>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds0_out: endpoint {
-+				};
-+			};
-+		};
-+	};
-+
-+	lvds1: lvds@feb94000 {
-+		compatible = "renesas,r8a7790-lvds";
-+		reg = <0 0xfeb94000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 725>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds1_in: endpoint {
-+					remote-endpoint = <&du_out_lvds1>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds1_out: endpoint {
- 				};
- 			};
- 		};
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, applied.
