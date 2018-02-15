@@ -1,17 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51696 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423796AbeBOQv0 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49042 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033071AbeBOOZD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 11:51:26 -0500
-Date: Thu, 15 Feb 2018 17:51:22 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Kieran Bingham <kbingham@kernel.org>
+        Thu, 15 Feb 2018 09:25:03 -0500
+Subject: Re: [PATCH 5/8] arm64: dts: renesas: r8a77995: Add LVDS support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        geert@glider.be,
+        Simon Horman <horms@verge.net.au>, geert@glider.be,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -19,23 +17,120 @@ Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/8] arm64: dts: renesas: r8a77995: Add LVDS support
-Message-ID: <20180215165122.jhcmfkxc2u33b4i2@verge.net.au>
 References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
  <1518683903-10681-6-git-send-email-kbingham@kernel.org>
+ <1558036.KTdDODi8F6@avalon>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <095ac482-8117-4b39-f770-3941053b3dc0@ideasonboard.com>
+Date: Thu, 15 Feb 2018 14:24:58 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518683903-10681-6-git-send-email-kbingham@kernel.org>
+In-Reply-To: <1558036.KTdDODi8F6@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 15, 2018 at 08:38:20AM +0000, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 15/02/18 14:10, Laurent Pinchart wrote:
+> Hi Kieran,
 > 
-> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+> Thank you for the patch.
 > 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> On Thursday, 15 February 2018 10:38:20 EET Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> ---
+>>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 52 ++++++++++++++++++++++++++++
+>>  1 file changed, 52 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> b/arch/arm64/boot/dts/renesas/r8a77995.dtsi index
+>> a57d5fecf79c..7851e37cfff1 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> @@ -773,18 +773,70 @@
+>>  				port@1 {
+>>  					reg = <1>;
+>>  					du_out_lvds0: endpoint {
+>> +						remote-endpoint = <&du_out_lvds0>;
+>>  					};
+>>  				};
+>>
+>>  				port@2 {
+>>  					reg = <2>;
+>>  					du_out_lvds1: endpoint {
+>> +						remote-endpoint = <&du_out_lvds1>;
+> 
+> It's interesting how the DU ports reference themselves :-)
 
-It looks like there has been some review of this patch that needs
-addressing, I've marked it as "Changes Requested".
+Ah, yes - that's ...  that's a feature...
+
+--
+Kieran
+
+
+
+>>  					};
+>>  				};
+>>  			};
+>>  		};
+>>  	};
+>>
+>> +	lvds0: lvds@feb90000 {
+>> +		compatible = "renesas,lvds-r8a77995";
+>> +		reg = <0 0xfeb90000 0 0x20>;
+>> +		clocks = <&cpg CPG_MOD 727>;
+>> +		status = "disabled";
+>> +
+>> +		ports {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			port@0 {
+>> +				reg = <0>;
+>> +				lvds0_in: endpoint {
+>> +					remote-endpoint = <&du_out_lvds0>;
+>> +				};
+>> +			};
+>> +
+>> +			port@1 {
+>> +				reg = <1>;
+>> +				lvds0_out: endpoint {
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	lvds1: lvds@feb90100 {
+>> +		compatible = "renesas,lvds-r8a77995";
+>> +		reg = <0 0xfeb90100 0 0x20>;
+>> +		clocks = <&cpg CPG_MOD 727>;
+>> +		status = "disabled";
+>> +
+>> +		ports {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			port@0 {
+>> +				reg = <0>;
+>> +				lvds1_in: endpoint {
+>> +					remote-endpoint = <&du_out_lvds1>;
+>> +				};
+>> +			};
+>> +
+>> +			port@1 {
+>> +				reg = <1>;
+>> +				lvds1_out: endpoint {
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +
+>>  	timer {
+>>  		compatible = "arm,armv8-timer";
+>>  		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
+>> IRQ_TYPE_LEVEL_LOW)>,
+> 
