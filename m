@@ -1,158 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36374 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032163AbeBOADx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52658 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163568AbeBOSSc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:03:53 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
+        Thu, 15 Feb 2018 13:18:32 -0500
+Date: Thu, 15 Feb 2018 19:18:28 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3 07/12] ARM: dts: r8a7791: Convert to new LVDS DT bindings
-Date: Thu, 15 Feb 2018 02:04:10 +0200
-Message-Id: <20180215000415.19077-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v3 05/12] ARM: dts: porter: Fix HDMI output routing
+Message-ID: <20180215181825.rp675mizp3s63xi3@verge.net.au>
 References: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180215000415.19077-6-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215000415.19077-6-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+On Thu, Feb 15, 2018 at 02:04:08AM +0200, Laurent Pinchart wrote:
+> The HDMI encoder is connected to the RGB output of the DU, which is
+> port@0, not port@1. Fix the incorrect DT description.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v2:
-
-- Fixed LVDS compatible string
-
-Changes since v1:
-
-- Remove the DU reg-names property
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 10 ++++++++--
- arch/arm/boot/dts/r8a7791-porter.dts  | 16 +++++++++++++---
- arch/arm/boot/dts/r8a7791.dtsi        | 34 ++++++++++++++++++++++++++++------
- 3 files changed, 49 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index e164eda69baf..5a0f87ed7f16 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -332,8 +332,7 @@
- 
- 	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
- 		 <&x13_clk>, <&x2_clk>;
--	clock-names = "du.0", "du.1", "lvds.0",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
- 
- 	ports {
- 		port@0 {
-@@ -341,6 +340,13 @@
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
- 		port@1 {
- 			lvds_connector: endpoint {
- 			};
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 9a02d03b23c2..e6d02839d636 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -419,10 +419,9 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- 
--	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
-+	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 		 <&x3_clk>, <&x16_clk>;
--	clock-names = "du.0", "du.1", "lvds.0",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
- 
- 	ports {
- 		port@0 {
-@@ -433,6 +432,17 @@
- 	};
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds_connector: endpoint {
-+			};
-+		};
-+	};
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&ssi_pins &audio_clk_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 67831d0405f3..aef34c80c584 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1103,15 +1103,12 @@
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7791";
--		reg = <0 0xfeb00000 0 0x40000>,
--		      <0 0xfeb90000 0 0x1c>;
--		reg-names = "du", "lvds.0";
-+		reg = <0 0xfeb00000 0 0x40000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 724>,
--			 <&cpg CPG_MOD 723>,
--			 <&cpg CPG_MOD 726>;
--		clock-names = "du.0", "du.1", "lvds.0";
-+			 <&cpg CPG_MOD 723>;
-+		clock-names = "du.0", "du.1";
- 		status = "disabled";
- 
- 		ports {
-@@ -1126,6 +1123,31 @@
- 			port@1 {
- 				reg = <1>;
- 				du_out_lvds0: endpoint {
-+					remote-endpoint = <&lvds0_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	lvds0: lvds@feb90000 {
-+		compatible = "renesas,r8a7791-lvds";
-+		reg = <0 0xfeb90000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 726>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds0_in: endpoint {
-+					remote-endpoint = <&du_out_lvds0>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds0_out: endpoint {
- 				};
- 			};
- 		};
--- 
-Regards,
-
-Laurent Pinchart
+This patch is already queued up for v4.17.
