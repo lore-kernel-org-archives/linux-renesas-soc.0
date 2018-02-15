@@ -1,172 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:33619 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752279AbeBTPOf (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51195 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424713AbeBOQWj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:14:35 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 18/19] pinctrl: sh-pfc: r8a77965: Add EtherAVB groups/functions
-Date: Tue, 20 Feb 2018 16:12:20 +0100
-Message-Id: <1519139541-18783-19-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 15 Feb 2018 11:22:39 -0500
+Date: Thu, 15 Feb 2018 17:22:36 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: lager: Move cec_clock to root node
+Message-ID: <20180215162235.hid2lj7r67w2taon@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180213140431.GC18618@bigcity.dyn.berto.se>
+ <7974005.brYq9PAmLL@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add EtherAVB groups and functions definitions for R-Car M3-N.
+On Tue, Feb 13, 2018 at 03:54:56PM +0200, Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> Thank you for the patch.
+> 
+> On Tuesday, 13 February 2018 15:40:45 EET Geert Uytterhoeven wrote:
+> > cec-clock is a fixed clock generator that is not controlled by i2c-12
+> > and thus should not be a child of the i2c-12 bus node. Rather, it should
+> > be a child of the root node of the DT.
+> > 
+> > Fixes: c5aa87977626e778 ("ARM: dts: lager: Add CEC clock for HDMI
+> > transmitter")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 110 ++++++++++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+On Tue, Feb 13, 2018 at 03:04:31PM +0100, Niklas Söderlund wrote:
+> Hi Geert,
+> 
+> Thanks for your patch.
+> 
+> On 2018-02-13 14:40:45 +0100, Geert Uytterhoeven wrote:
+> > cec-clock is a fixed clock generator that is not controlled by i2c-12
+> > and thus should not be a child of the i2c-12 bus node. Rather, it should
+> > be a child of the root node of the DT.
+> > 
+> > Fixes: c5aa87977626e778 ("ARM: dts: lager: Add CEC clock for HDMI transmitter")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 43ffd63..7b9fea9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1571,6 +1571,92 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
- };
- 
-+/* - EtherAVB --------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	/* AVB_LINK */
-+	RCAR_GP_PIN(2, 12),
-+};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
-+};
-+static const unsigned int avb_magic_pins[] = {
-+	/* AVB_MAGIC_ */
-+	RCAR_GP_PIN(2, 10),
-+};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+static const unsigned int avb_phy_int_pins[] = {
-+	/* AVB_PHY_INT */
-+	RCAR_GP_PIN(2, 11),
-+};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+static const unsigned int avb_mdc_pins[] = {
-+	/* AVB_MDC, AVB_MDIO */
-+	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
-+};
-+static const unsigned int avb_mdc_mux[] = {
-+	AVB_MDC_MARK, AVB_MDIO_MARK,
-+};
-+static const unsigned int avb_mii_pins[] = {
-+	/*
-+	 * AVB_TX_CTL, AVB_TXC, AVB_TD0,
-+	 * AVB_TD1, AVB_TD2, AVB_TD3,
-+	 * AVB_RX_CTL, AVB_RXC, AVB_RD0,
-+	 * AVB_RD1, AVB_RD2, AVB_RD3,
-+	 * AVB_TXCREFCLK
-+	 */
-+	PIN_NUMBER('A', 8), PIN_NUMBER('A', 19), PIN_NUMBER('A', 18),
-+	PIN_NUMBER('B', 18), PIN_NUMBER('A', 17), PIN_NUMBER('B', 17),
-+	PIN_NUMBER('A', 16), PIN_NUMBER('B', 19), PIN_NUMBER('A', 13),
-+	PIN_NUMBER('B', 13), PIN_NUMBER('A', 14), PIN_NUMBER('B', 14),
-+	PIN_NUMBER('A', 12),
-+
-+};
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_TX_CTL_MARK, AVB_TXC_MARK, AVB_TD0_MARK,
-+	AVB_TD1_MARK, AVB_TD2_MARK, AVB_TD3_MARK,
-+	AVB_RX_CTL_MARK, AVB_RXC_MARK, AVB_RD0_MARK,
-+	AVB_RD1_MARK, AVB_RD2_MARK, AVB_RD3_MARK,
-+	AVB_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb_avtp_pps_pins[] = {
-+	/* AVB_AVTP_PPS */
-+	RCAR_GP_PIN(2, 6),
-+};
-+static const unsigned int avb_avtp_pps_mux[] = {
-+	AVB_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb_avtp_match_a_pins[] = {
-+	/* AVB_AVTP_MATCH_A */
-+	RCAR_GP_PIN(2, 13),
-+};
-+static const unsigned int avb_avtp_match_a_mux[] = {
-+	AVB_AVTP_MATCH_A_MARK,
-+};
-+static const unsigned int avb_avtp_capture_a_pins[] = {
-+	/* AVB_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(2, 14),
-+};
-+static const unsigned int avb_avtp_capture_a_mux[] = {
-+	AVB_AVTP_CAPTURE_A_MARK,
-+};
-+static const unsigned int avb_avtp_match_b_pins[] = {
-+	/*  AVB_AVTP_MATCH_B */
-+	RCAR_GP_PIN(1, 8),
-+};
-+static const unsigned int avb_avtp_match_b_mux[] = {
-+	AVB_AVTP_MATCH_B_MARK,
-+};
-+static const unsigned int avb_avtp_capture_b_pins[] = {
-+	/* AVB_AVTP_CAPTURE_B */
-+	RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int avb_avtp_capture_b_mux[] = {
-+	AVB_AVTP_CAPTURE_B_MARK,
-+};
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
- 	/* RX, TX */
-@@ -1783,6 +1869,16 @@ static const unsigned int scif_clk_b_mux[] = {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdc),
-+	SH_PFC_PIN_GROUP(avb_mii),
-+	SH_PFC_PIN_GROUP(avb_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_b),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -1814,6 +1910,19 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif_clk_b),
- };
- 
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdc",
-+	"avb_mii",
-+	"avb_avtp_pps",
-+	"avb_avtp_match_a",
-+	"avb_avtp_capture_a",
-+	"avb_avtp_match_b",
-+	"avb_avtp_capture_b",
-+};
-+
- static const char * const scif0_groups[] = {
- 	"scif0_data",
- 	"scif0_clk",
-@@ -1864,6 +1973,7 @@ static const char * const scif_clk_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif2),
--- 
-2.7.4
+Thanks, applied.
