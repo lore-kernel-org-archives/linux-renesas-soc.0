@@ -1,1039 +1,375 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 08/11] media: i2c: Copy tw9910 soc_camera sensor driver
-Date: Mon, 19 Feb 2018 17:59:41 +0100
-Message-Id: <1519059584-30844-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:37128 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967843AbeBOL6s (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 15 Feb 2018 06:58:48 -0500
+Received: by mail-lf0-f65.google.com with SMTP id f137so33654236lfe.4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2018 03:58:48 -0800 (PST)
+Subject: [PATCH v2 2/2] clk: renesas: cpg-mssr: add R8A77980 support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+References: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
+Message-ID: <08798dc2-4ba0-9b9f-83eb-dae69b16cfb3@cogentembedded.com>
+Date: Thu, 15 Feb 2018 14:58:45 +0300
+MIME-Version: 1.0
+In-Reply-To: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Copy the soc_camera based driver in v4l2 sensor driver directory.
-This commit just copies the original file without modifying it.
-No modification to KConfig and Makefile as soc_camera framework
-dependencies need to be removed first in next commit.
+Add R-Car V3H (R8A77980) Clock Pulse Generator / Module Standby and
+Software Reset support,  using the CPG/MSSR driver core and the common
+R-Car Gen3 code.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/media/i2c/tw9910.c | 999 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 999 insertions(+)
- create mode 100644 drivers/media/i2c/tw9910.c
+Changes in version 2:
+- fixed the copyright of the driver this one was based upon;
+- removed the useless comments;
+- added Rob's, Simon's, and Geert's tags.
 
-diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
-new file mode 100644
-index 0000000..bdb5e0a
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt |    5 
+ drivers/clk/renesas/Kconfig                                  |    5 
+ drivers/clk/renesas/Makefile                                 |    1 
+ drivers/clk/renesas/r8a77980-cpg-mssr.c                      |  227 +++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c                       |    6 
+ drivers/clk/renesas/renesas-cpg-mssr.h                       |    1 
+ 6 files changed, 243 insertions(+), 2 deletions(-)
+
+Index: renesas-drivers/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+===================================================================
+--- renesas-drivers.orig/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ renesas-drivers/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -23,6 +23,7 @@ Required Properties:
+       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
+       - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
+       - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
++      - "renesas,r8a77980-cpg-mssr" for the r8a77980 SoC (R-Car V3H)
+       - "renesas,r8a77995-cpg-mssr" for the r8a77995 SoC (R-Car D3)
+ 
+   - reg: Base address and length of the memory resource used by the CPG/MSSR
+@@ -32,8 +33,8 @@ Required Properties:
+     clock-names
+   - clock-names: List of external parent clock names. Valid names are:
+       - "extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7792, r8a7793, r8a7794,
+-		 r8a7795, r8a7796, r8a77970, r8a77995)
+-      - "extalr" (r8a7795, r8a7796, r8a77970)
++		 r8a7795, r8a7796, r8a77970, r8a77980, r8a77995)
++      - "extalr" (r8a7795, r8a7796, r8a77970, r8a77980)
+       - "usb_extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7793, r8a7794)
+ 
+   - #clock-cells: Must be 2
+Index: renesas-drivers/drivers/clk/renesas/Kconfig
+===================================================================
+--- renesas-drivers.orig/drivers/clk/renesas/Kconfig
++++ renesas-drivers/drivers/clk/renesas/Kconfig
+@@ -16,6 +16,7 @@ config CLK_RENESAS
+ 	select CLK_R8A7795 if ARCH_R8A7795
+ 	select CLK_R8A7796 if ARCH_R8A7796
+ 	select CLK_R8A77970 if ARCH_R8A77970
++	select CLK_R8A77980 if ARCH_R8A77980
+ 	select CLK_R8A77995 if ARCH_R8A77995
+ 	select CLK_SH73A0 if ARCH_SH73A0
+ 
+@@ -101,6 +102,10 @@ config CLK_R8A77970
+ 	bool "R-Car V3M clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
+ 
++config CLK_R8A77980
++	bool "R-Car V3H clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN3_CPG
++
+ config CLK_R8A77995
+ 	bool "R-Car D3 clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
+Index: renesas-drivers/drivers/clk/renesas/Makefile
+===================================================================
+--- renesas-drivers.orig/drivers/clk/renesas/Makefile
++++ renesas-drivers/drivers/clk/renesas/Makefile
+@@ -15,6 +15,7 @@ obj-$(CONFIG_CLK_R8A7794)		+= r8a7794-cp
+ obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A77970)		+= r8a77970-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A77980)		+= r8a77980-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A77995)		+= r8a77995-cpg-mssr.o
+ obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
+ 
+Index: renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
+===================================================================
 --- /dev/null
-+++ b/drivers/media/i2c/tw9910.c
-@@ -0,0 +1,999 @@
++++ renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
+@@ -0,0 +1,227 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * tw9910 Video Driver
++ * r8a77980 Clock Pulse Generator / Module Standby and Software Reset
 + *
-+ * Copyright (C) 2008 Renesas Solutions Corp.
-+ * Kuninori Morimoto <morimoto.kuninori@renesas.com>
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
 + *
-+ * Based on ov772x driver,
++ * Based on r8a7795-cpg-mssr.c
 + *
-+ * Copyright (C) 2008 Kuninori Morimoto <morimoto.kuninori@renesas.com>
-+ * Copyright 2006-7 Jonathan Corbet <corbet@lwn.net>
-+ * Copyright (C) 2008 Magnus Damm
-+ * Copyright (C) 2008, Guennadi Liakhovetski <kernel@pengutronix.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * Copyright (C) 2015 Glider bvba
 + */
 +
++#include <linux/device.h>
 +#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/slab.h>
 +#include <linux/kernel.h>
-+#include <linux/delay.h>
-+#include <linux/v4l2-mediabus.h>
-+#include <linux/videodev2.h>
++#include <linux/soc/renesas/rcar-rst.h>
++#include <linux/sys_soc.h>
 +
-+#include <media/soc_camera.h>
-+#include <media/i2c/tw9910.h>
-+#include <media/v4l2-clk.h>
-+#include <media/v4l2-subdev.h>
++#include <dt-bindings/clock/r8a77980-cpg-mssr.h>
 +
-+#define GET_ID(val)  ((val & 0xF8) >> 3)
-+#define GET_REV(val) (val & 0x07)
++#include "renesas-cpg-mssr.h"
++#include "rcar-gen3-cpg.h"
 +
-+/*
-+ * register offset
-+ */
-+#define ID		0x00 /* Product ID Code Register */
-+#define STATUS1		0x01 /* Chip Status Register I */
-+#define INFORM		0x02 /* Input Format */
-+#define OPFORM		0x03 /* Output Format Control Register */
-+#define DLYCTR		0x04 /* Hysteresis and HSYNC Delay Control */
-+#define OUTCTR1		0x05 /* Output Control I */
-+#define ACNTL1		0x06 /* Analog Control Register 1 */
-+#define CROP_HI		0x07 /* Cropping Register, High */
-+#define VDELAY_LO	0x08 /* Vertical Delay Register, Low */
-+#define VACTIVE_LO	0x09 /* Vertical Active Register, Low */
-+#define HDELAY_LO	0x0A /* Horizontal Delay Register, Low */
-+#define HACTIVE_LO	0x0B /* Horizontal Active Register, Low */
-+#define CNTRL1		0x0C /* Control Register I */
-+#define VSCALE_LO	0x0D /* Vertical Scaling Register, Low */
-+#define SCALE_HI	0x0E /* Scaling Register, High */
-+#define HSCALE_LO	0x0F /* Horizontal Scaling Register, Low */
-+#define BRIGHT		0x10 /* BRIGHTNESS Control Register */
-+#define CONTRAST	0x11 /* CONTRAST Control Register */
-+#define SHARPNESS	0x12 /* SHARPNESS Control Register I */
-+#define SAT_U		0x13 /* Chroma (U) Gain Register */
-+#define SAT_V		0x14 /* Chroma (V) Gain Register */
-+#define HUE		0x15 /* Hue Control Register */
-+#define CORING1		0x17
-+#define CORING2		0x18 /* Coring and IF compensation */
-+#define VBICNTL		0x19 /* VBI Control Register */
-+#define ACNTL2		0x1A /* Analog Control 2 */
-+#define OUTCTR2		0x1B /* Output Control 2 */
-+#define SDT		0x1C /* Standard Selection */
-+#define SDTR		0x1D /* Standard Recognition */
-+#define TEST		0x1F /* Test Control Register */
-+#define CLMPG		0x20 /* Clamping Gain */
-+#define IAGC		0x21 /* Individual AGC Gain */
-+#define AGCGAIN		0x22 /* AGC Gain */
-+#define PEAKWT		0x23 /* White Peak Threshold */
-+#define CLMPL		0x24 /* Clamp level */
-+#define SYNCT		0x25 /* Sync Amplitude */
-+#define MISSCNT		0x26 /* Sync Miss Count Register */
-+#define PCLAMP		0x27 /* Clamp Position Register */
-+#define VCNTL1		0x28 /* Vertical Control I */
-+#define VCNTL2		0x29 /* Vertical Control II */
-+#define CKILL		0x2A /* Color Killer Level Control */
-+#define COMB		0x2B /* Comb Filter Control */
-+#define LDLY		0x2C /* Luma Delay and H Filter Control */
-+#define MISC1		0x2D /* Miscellaneous Control I */
-+#define LOOP		0x2E /* LOOP Control Register */
-+#define MISC2		0x2F /* Miscellaneous Control II */
-+#define MVSN		0x30 /* Macrovision Detection */
-+#define STATUS2		0x31 /* Chip STATUS II */
-+#define HFREF		0x32 /* H monitor */
-+#define CLMD		0x33 /* CLAMP MODE */
-+#define IDCNTL		0x34 /* ID Detection Control */
-+#define CLCNTL1		0x35 /* Clamp Control I */
-+#define ANAPLLCTL	0x4C
-+#define VBIMIN		0x4D
-+#define HSLOWCTL	0x4E
-+#define WSS3		0x4F
-+#define FILLDATA	0x50
-+#define SDID		0x51
-+#define DID		0x52
-+#define WSS1		0x53
-+#define WSS2		0x54
-+#define VVBI		0x55
-+#define LCTL6		0x56
-+#define LCTL7		0x57
-+#define LCTL8		0x58
-+#define LCTL9		0x59
-+#define LCTL10		0x5A
-+#define LCTL11		0x5B
-+#define LCTL12		0x5C
-+#define LCTL13		0x5D
-+#define LCTL14		0x5E
-+#define LCTL15		0x5F
-+#define LCTL16		0x60
-+#define LCTL17		0x61
-+#define LCTL18		0x62
-+#define LCTL19		0x63
-+#define LCTL20		0x64
-+#define LCTL21		0x65
-+#define LCTL22		0x66
-+#define LCTL23		0x67
-+#define LCTL24		0x68
-+#define LCTL25		0x69
-+#define LCTL26		0x6A
-+#define HSBEGIN		0x6B
-+#define HSEND		0x6C
-+#define OVSDLY		0x6D
-+#define OVSEND		0x6E
-+#define VBIDELAY	0x6F
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK = R8A77980_CLK_OSC,
 +
-+/*
-+ * register detail
-+ */
++	/* External Input Clocks */
++	CLK_EXTAL,
++	CLK_EXTALR,
 +
-+/* INFORM */
-+#define FC27_ON     0x40 /* 1 : Input crystal clock frequency is 27MHz */
-+#define FC27_FF     0x00 /* 0 : Square pixel mode. */
-+			 /*     Must use 24.54MHz for 60Hz field rate */
-+			 /*     source or 29.5MHz for 50Hz field rate */
-+#define IFSEL_S     0x10 /* 01 : S-video decoding */
-+#define IFSEL_C     0x00 /* 00 : Composite video decoding */
-+			 /* Y input video selection */
-+#define YSEL_M0     0x00 /*  00 : Mux0 selected */
-+#define YSEL_M1     0x04 /*  01 : Mux1 selected */
-+#define YSEL_M2     0x08 /*  10 : Mux2 selected */
-+#define YSEL_M3     0x10 /*  11 : Mux3 selected */
++	/* Internal Core Clocks */
++	CLK_MAIN,
++	CLK_PLL1,
++	CLK_PLL2,
++	CLK_PLL3,
++	CLK_PLL1_DIV2,
++	CLK_PLL1_DIV4,
++	CLK_S0,
++	CLK_S1,
++	CLK_S2,
++	CLK_S3,
++	CLK_SDSRC,
 +
-+/* OPFORM */
-+#define MODE        0x80 /* 0 : CCIR601 compatible YCrCb 4:2:2 format */
-+			 /* 1 : ITU-R-656 compatible data sequence format */
-+#define LEN         0x40 /* 0 : 8-bit YCrCb 4:2:2 output format */
-+			 /* 1 : 16-bit YCrCb 4:2:2 output format.*/
-+#define LLCMODE     0x20 /* 1 : LLC output mode. */
-+			 /* 0 : free-run output mode */
-+#define AINC        0x10 /* Serial interface auto-indexing control */
-+			 /* 0 : auto-increment */
-+			 /* 1 : non-auto */
-+#define VSCTL       0x08 /* 1 : Vertical out ctrl by DVALID */
-+			 /* 0 : Vertical out ctrl by HACTIVE and DVALID */
-+#define OEN_TRI_SEL_MASK	0x07
-+#define OEN_TRI_SEL_ALL_ON	0x00 /* Enable output for Rev0/Rev1 */
-+#define OEN_TRI_SEL_ALL_OFF_r0	0x06 /* All tri-stated for Rev0 */
-+#define OEN_TRI_SEL_ALL_OFF_r1	0x07 /* All tri-stated for Rev1 */
-+
-+/* OUTCTR1 */
-+#define VSP_LO      0x00 /* 0 : VS pin output polarity is active low */
-+#define VSP_HI      0x80 /* 1 : VS pin output polarity is active high. */
-+			 /* VS pin output control */
-+#define VSSL_VSYNC  0x00 /*   0 : VSYNC  */
-+#define VSSL_VACT   0x10 /*   1 : VACT   */
-+#define VSSL_FIELD  0x20 /*   2 : FIELD  */
-+#define VSSL_VVALID 0x30 /*   3 : VVALID */
-+#define VSSL_ZERO   0x70 /*   7 : 0      */
-+#define HSP_LOW     0x00 /* 0 : HS pin output polarity is active low */
-+#define HSP_HI      0x08 /* 1 : HS pin output polarity is active high.*/
-+			 /* HS pin output control */
-+#define HSSL_HACT   0x00 /*   0 : HACT   */
-+#define HSSL_HSYNC  0x01 /*   1 : HSYNC  */
-+#define HSSL_DVALID 0x02 /*   2 : DVALID */
-+#define HSSL_HLOCK  0x03 /*   3 : HLOCK  */
-+#define HSSL_ASYNCW 0x04 /*   4 : ASYNCW */
-+#define HSSL_ZERO   0x07 /*   7 : 0      */
-+
-+/* ACNTL1 */
-+#define SRESET      0x80 /* resets the device to its default state
-+			  * but all register content remain unchanged.
-+			  * This bit is self-resetting.
-+			  */
-+#define ACNTL1_PDN_MASK	0x0e
-+#define CLK_PDN		0x08 /* system clock power down */
-+#define Y_PDN		0x04 /* Luma ADC power down */
-+#define C_PDN		0x02 /* Chroma ADC power down */
-+
-+/* ACNTL2 */
-+#define ACNTL2_PDN_MASK	0x40
-+#define PLL_PDN		0x40 /* PLL power down */
-+
-+/* VBICNTL */
-+
-+/* RTSEL : control the real time signal output from the MPOUT pin */
-+#define RTSEL_MASK  0x07
-+#define RTSEL_VLOSS 0x00 /* 0000 = Video loss */
-+#define RTSEL_HLOCK 0x01 /* 0001 = H-lock */
-+#define RTSEL_SLOCK 0x02 /* 0010 = S-lock */
-+#define RTSEL_VLOCK 0x03 /* 0011 = V-lock */
-+#define RTSEL_MONO  0x04 /* 0100 = MONO */
-+#define RTSEL_DET50 0x05 /* 0101 = DET50 */
-+#define RTSEL_FIELD 0x06 /* 0110 = FIELD */
-+#define RTSEL_RTCO  0x07 /* 0111 = RTCO ( Real Time Control ) */
-+
-+/* HSYNC start and end are constant for now */
-+#define HSYNC_START	0x0260
-+#define HSYNC_END	0x0300
-+
-+/*
-+ * structure
-+ */
-+
-+struct regval_list {
-+	unsigned char reg_num;
-+	unsigned char value;
++	/* Module Clocks */
++	MOD_CLK_BASE
 +};
 +
-+struct tw9910_scale_ctrl {
-+	char           *name;
-+	unsigned short  width;
-+	unsigned short  height;
-+	u16             hscale;
-+	u16             vscale;
++static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
++	/* External Clock Inputs */
++	DEF_INPUT("extal",  CLK_EXTAL),
++	DEF_INPUT("extalr", CLK_EXTALR),
++
++	/* Internal Core Clocks */
++	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN3_MAIN, CLK_EXTAL),
++	DEF_BASE(".pll1",       CLK_PLL1, CLK_TYPE_GEN3_PLL1, CLK_MAIN),
++	DEF_BASE(".pll2",       CLK_PLL2, CLK_TYPE_GEN3_PLL2, CLK_MAIN),
++	DEF_BASE(".pll3",       CLK_PLL3, CLK_TYPE_GEN3_PLL3, CLK_MAIN),
++
++	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2,	   CLK_PLL1,       2, 1),
++	DEF_FIXED(".pll1_div4", CLK_PLL1_DIV4,	   CLK_PLL1_DIV2,  2, 1),
++	DEF_FIXED(".s0",	CLK_S0,		   CLK_PLL1_DIV2,  2, 1),
++	DEF_FIXED(".s1",	CLK_S1,		   CLK_PLL1_DIV2,  3, 1),
++	DEF_FIXED(".s2",	CLK_S2,		   CLK_PLL1_DIV2,  4, 1),
++	DEF_FIXED(".s3",	CLK_S3,		   CLK_PLL1_DIV2,  6, 1),
++	DEF_FIXED(".sdsrc",	CLK_SDSRC,	   CLK_PLL1_DIV2,  2, 1),
++
++	/* Core Clock Outputs */
++	DEF_FIXED("ztr",	R8A77980_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
++	DEF_FIXED("ztrd2",	R8A77980_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
++	DEF_FIXED("zt",		R8A77980_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
++	DEF_FIXED("zx",		R8A77980_CLK_ZX,    CLK_PLL1_DIV2,  2, 1),
++	DEF_FIXED("s0d1",	R8A77980_CLK_S0D1,  CLK_S0,         1, 1),
++	DEF_FIXED("s0d2",	R8A77980_CLK_S0D2,  CLK_S0,         2, 1),
++	DEF_FIXED("s0d3",	R8A77980_CLK_S0D3,  CLK_S0,         3, 1),
++	DEF_FIXED("s0d4",	R8A77980_CLK_S0D4,  CLK_S0,         4, 1),
++	DEF_FIXED("s0d6",	R8A77980_CLK_S0D6,  CLK_S0,         6, 1),
++	DEF_FIXED("s0d12",	R8A77980_CLK_S0D12, CLK_S0,        12, 1),
++	DEF_FIXED("s0d24",	R8A77980_CLK_S0D24, CLK_S0,        24, 1),
++	DEF_FIXED("s1d1",	R8A77980_CLK_S1D1,  CLK_S1,         1, 1),
++	DEF_FIXED("s1d2",	R8A77980_CLK_S1D2,  CLK_S1,         2, 1),
++	DEF_FIXED("s1d4",	R8A77980_CLK_S1D4,  CLK_S1,         4, 1),
++	DEF_FIXED("s2d1",	R8A77980_CLK_S2D1,  CLK_S2,         1, 1),
++	DEF_FIXED("s2d2",	R8A77980_CLK_S2D2,  CLK_S2,         2, 1),
++	DEF_FIXED("s2d4",	R8A77980_CLK_S2D4,  CLK_S2,         4, 1),
++	DEF_FIXED("s3d1",	R8A77980_CLK_S3D1,  CLK_S3,         1, 1),
++	DEF_FIXED("s3d2",	R8A77980_CLK_S3D2,  CLK_S3,         2, 1),
++	DEF_FIXED("s3d4",	R8A77980_CLK_S3D4,  CLK_S3,         4, 1),
++
++	DEF_GEN3_SD("sd0",	R8A77980_CLK_SD0,   CLK_SDSRC,	  0x0074),
++
++	DEF_FIXED("cl",		R8A77980_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
++	DEF_FIXED("cp",		R8A77980_CLK_CP,    CLK_EXTAL,	    2, 1),
++	DEF_FIXED("cpex",	R8A77980_CLK_CPEX,  CLK_EXTAL,	    2, 1),
++
++	DEF_DIV6P1("canfd",	R8A77980_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
++	DEF_DIV6P1("csi0",	R8A77980_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
++	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
 +};
 +
-+struct tw9910_priv {
-+	struct v4l2_subdev		subdev;
-+	struct v4l2_clk			*clk;
-+	struct tw9910_video_info	*info;
-+	const struct tw9910_scale_ctrl	*scale;
-+	v4l2_std_id			norm;
-+	u32				revision;
++static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
++	DEF_MOD("tmu4",			 121,	R8A77980_CLK_S0D6),
++	DEF_MOD("tmu3",			 122,	R8A77980_CLK_S0D6),
++	DEF_MOD("tmu2",			 123,	R8A77980_CLK_S0D6),
++	DEF_MOD("tmu1",			 124,	R8A77980_CLK_S0D6),
++	DEF_MOD("tmu0",			 125,	R8A77980_CLK_CP),
++	DEF_MOD("scif4",		 203,	R8A77980_CLK_S3D4),
++	DEF_MOD("scif3",		 204,	R8A77980_CLK_S3D4),
++	DEF_MOD("scif1",		 206,	R8A77980_CLK_S3D4),
++	DEF_MOD("scif0",		 207,	R8A77980_CLK_S3D4),
++	DEF_MOD("msiof3",		 208,	R8A77980_CLK_MSO),
++	DEF_MOD("msiof2",		 209,	R8A77980_CLK_MSO),
++	DEF_MOD("msiof1",		 210,	R8A77980_CLK_MSO),
++	DEF_MOD("msiof0",		 211,	R8A77980_CLK_MSO),
++	DEF_MOD("sys-dmac2",		 217,	R8A77980_CLK_S0D3),
++	DEF_MOD("sys-dmac1",		 218,	R8A77980_CLK_S0D3),
++	DEF_MOD("tpu0",			 304,	R8A77980_CLK_S3D4),
++	DEF_MOD("sdif",			 314,	R8A77980_CLK_SD0),
++	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S3D1),
++	DEF_MOD("intc-ex",		 407,	R8A77980_CLK_CP),
++	DEF_MOD("intc-ap",		 408,	R8A77980_CLK_S0D3),
++	DEF_MOD("hscif3",		 517,	R8A77980_CLK_S3D1),
++	DEF_MOD("hscif2",		 518,	R8A77980_CLK_S3D1),
++	DEF_MOD("hscif1",		 519,	R8A77980_CLK_S3D1),
++	DEF_MOD("hscif0",		 520,	R8A77980_CLK_S3D1),
++	DEF_MOD("imp4",			 521,	R8A77980_CLK_S1D1),
++	DEF_MOD("thermal",		 522,	R8A77980_CLK_CP),
++	DEF_MOD("pwm",			 523,	R8A77980_CLK_S0D12),
++	DEF_MOD("impdma1",		 526,	R8A77980_CLK_S1D1),
++	DEF_MOD("impdma0",		 527,	R8A77980_CLK_S1D1),
++	DEF_MOD("imp-ocv4",		 528,	R8A77980_CLK_S1D1),
++	DEF_MOD("imp-ocv3",		 529,	R8A77980_CLK_S1D1),
++	DEF_MOD("imp-ocv2",		 531,	R8A77980_CLK_S1D1),
++	DEF_MOD("fcpvd0",		 603,	R8A77980_CLK_S3D1),
++	DEF_MOD("vspd0",		 623,	R8A77980_CLK_S3D1),
++	DEF_MOD("csi41",		 715,	R8A77980_CLK_CSI0),
++	DEF_MOD("csi40",		 716,	R8A77980_CLK_CSI0),
++	DEF_MOD("du0",			 724,	R8A77980_CLK_S2D1),
++	DEF_MOD("lvds",			 727,	R8A77980_CLK_S2D1),
++	DEF_MOD("etheravb",		 812,	R8A77980_CLK_S3D2),
++	DEF_MOD("gether",		 813,	R8A77980_CLK_S3D2),
++	DEF_MOD("imp3",			 824,	R8A77980_CLK_S1D1),
++	DEF_MOD("imp2",			 825,	R8A77980_CLK_S1D1),
++	DEF_MOD("imp1",			 826,	R8A77980_CLK_S1D1),
++	DEF_MOD("imp0",			 827,	R8A77980_CLK_S1D1),
++	DEF_MOD("imp-ocv1",		 828,	R8A77980_CLK_S1D1),
++	DEF_MOD("imp-ocv0",		 829,	R8A77980_CLK_S1D1),
++	DEF_MOD("impram",		 830,	R8A77980_CLK_S1D1),
++	DEF_MOD("impcnn",		 831,	R8A77980_CLK_S1D1),
++	DEF_MOD("gpio5",		 907,	R8A77980_CLK_CP),
++	DEF_MOD("gpio4",		 908,	R8A77980_CLK_CP),
++	DEF_MOD("gpio3",		 909,	R8A77980_CLK_CP),
++	DEF_MOD("gpio2",		 910,	R8A77980_CLK_CP),
++	DEF_MOD("gpio1",		 911,	R8A77980_CLK_CP),
++	DEF_MOD("gpio0",		 912,	R8A77980_CLK_CP),
++	DEF_MOD("can-fd",		 914,	R8A77980_CLK_S3D2),
++	DEF_MOD("i2c4",			 927,	R8A77980_CLK_S0D6),
++	DEF_MOD("i2c3",			 928,	R8A77980_CLK_S0D6),
++	DEF_MOD("i2c2",			 929,	R8A77980_CLK_S3D2),
++	DEF_MOD("i2c1",			 930,	R8A77980_CLK_S3D2),
++	DEF_MOD("i2c0",			 931,	R8A77980_CLK_S3D2),
 +};
 +
-+static const struct tw9910_scale_ctrl tw9910_ntsc_scales[] = {
-+	{
-+		.name   = "NTSC SQ",
-+		.width  = 640,
-+		.height = 480,
-+		.hscale = 0x0100,
-+		.vscale = 0x0100,
-+	},
-+	{
-+		.name   = "NTSC CCIR601",
-+		.width  = 720,
-+		.height = 480,
-+		.hscale = 0x0100,
-+		.vscale = 0x0100,
-+	},
-+	{
-+		.name   = "NTSC SQ (CIF)",
-+		.width  = 320,
-+		.height = 240,
-+		.hscale = 0x0200,
-+		.vscale = 0x0200,
-+	},
-+	{
-+		.name   = "NTSC CCIR601 (CIF)",
-+		.width  = 360,
-+		.height = 240,
-+		.hscale = 0x0200,
-+		.vscale = 0x0200,
-+	},
-+	{
-+		.name   = "NTSC SQ (QCIF)",
-+		.width  = 160,
-+		.height = 120,
-+		.hscale = 0x0400,
-+		.vscale = 0x0400,
-+	},
-+	{
-+		.name   = "NTSC CCIR601 (QCIF)",
-+		.width  = 180,
-+		.height = 120,
-+		.hscale = 0x0400,
-+		.vscale = 0x0400,
-+	},
++static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
 +};
 +
-+static const struct tw9910_scale_ctrl tw9910_pal_scales[] = {
-+	{
-+		.name   = "PAL SQ",
-+		.width  = 768,
-+		.height = 576,
-+		.hscale = 0x0100,
-+		.vscale = 0x0100,
-+	},
-+	{
-+		.name   = "PAL CCIR601",
-+		.width  = 720,
-+		.height = 576,
-+		.hscale = 0x0100,
-+		.vscale = 0x0100,
-+	},
-+	{
-+		.name   = "PAL SQ (CIF)",
-+		.width  = 384,
-+		.height = 288,
-+		.hscale = 0x0200,
-+		.vscale = 0x0200,
-+	},
-+	{
-+		.name   = "PAL CCIR601 (CIF)",
-+		.width  = 360,
-+		.height = 288,
-+		.hscale = 0x0200,
-+		.vscale = 0x0200,
-+	},
-+	{
-+		.name   = "PAL SQ (QCIF)",
-+		.width  = 192,
-+		.height = 144,
-+		.hscale = 0x0400,
-+		.vscale = 0x0400,
-+	},
-+	{
-+		.name   = "PAL CCIR601 (QCIF)",
-+		.width  = 180,
-+		.height = 144,
-+		.hscale = 0x0400,
-+		.vscale = 0x0400,
-+	},
-+};
 +
 +/*
-+ * general function
++ * CPG Clock Data
 + */
-+static struct tw9910_priv *to_tw9910(const struct i2c_client *client)
-+{
-+	return container_of(i2c_get_clientdata(client), struct tw9910_priv,
-+			    subdev);
-+}
-+
-+static int tw9910_mask_set(struct i2c_client *client, u8 command,
-+			   u8 mask, u8 set)
-+{
-+	s32 val = i2c_smbus_read_byte_data(client, command);
-+	if (val < 0)
-+		return val;
-+
-+	val &= ~mask;
-+	val |= set & mask;
-+
-+	return i2c_smbus_write_byte_data(client, command, val);
-+}
-+
-+static int tw9910_set_scale(struct i2c_client *client,
-+			    const struct tw9910_scale_ctrl *scale)
-+{
-+	int ret;
-+
-+	ret = i2c_smbus_write_byte_data(client, SCALE_HI,
-+					(scale->vscale & 0x0F00) >> 4 |
-+					(scale->hscale & 0x0F00) >> 8);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = i2c_smbus_write_byte_data(client, HSCALE_LO,
-+					scale->hscale & 0x00FF);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = i2c_smbus_write_byte_data(client, VSCALE_LO,
-+					scale->vscale & 0x00FF);
-+
-+	return ret;
-+}
-+
-+static int tw9910_set_hsync(struct i2c_client *client)
-+{
-+	struct tw9910_priv *priv = to_tw9910(client);
-+	int ret;
-+
-+	/* bit 10 - 3 */
-+	ret = i2c_smbus_write_byte_data(client, HSBEGIN,
-+					(HSYNC_START & 0x07F8) >> 3);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* bit 10 - 3 */
-+	ret = i2c_smbus_write_byte_data(client, HSEND,
-+					(HSYNC_END & 0x07F8) >> 3);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* So far only revisions 0 and 1 have been seen */
-+	/* bit 2 - 0 */
-+	if (1 == priv->revision)
-+		ret = tw9910_mask_set(client, HSLOWCTL, 0x77,
-+				      (HSYNC_START & 0x0007) << 4 |
-+				      (HSYNC_END   & 0x0007));
-+
-+	return ret;
-+}
-+
-+static void tw9910_reset(struct i2c_client *client)
-+{
-+	tw9910_mask_set(client, ACNTL1, SRESET, SRESET);
-+	msleep(1);
-+}
-+
-+static int tw9910_power(struct i2c_client *client, int enable)
-+{
-+	int ret;
-+	u8 acntl1;
-+	u8 acntl2;
-+
-+	if (enable) {
-+		acntl1 = 0;
-+		acntl2 = 0;
-+	} else {
-+		acntl1 = CLK_PDN | Y_PDN | C_PDN;
-+		acntl2 = PLL_PDN;
-+	}
-+
-+	ret = tw9910_mask_set(client, ACNTL1, ACNTL1_PDN_MASK, acntl1);
-+	if (ret < 0)
-+		return ret;
-+
-+	return tw9910_mask_set(client, ACNTL2, ACNTL2_PDN_MASK, acntl2);
-+}
-+
-+static const struct tw9910_scale_ctrl *tw9910_select_norm(v4l2_std_id norm,
-+							  u32 width, u32 height)
-+{
-+	const struct tw9910_scale_ctrl *scale;
-+	const struct tw9910_scale_ctrl *ret = NULL;
-+	__u32 diff = 0xffffffff, tmp;
-+	int size, i;
-+
-+	if (norm & V4L2_STD_NTSC) {
-+		scale = tw9910_ntsc_scales;
-+		size = ARRAY_SIZE(tw9910_ntsc_scales);
-+	} else if (norm & V4L2_STD_PAL) {
-+		scale = tw9910_pal_scales;
-+		size = ARRAY_SIZE(tw9910_pal_scales);
-+	} else {
-+		return NULL;
-+	}
-+
-+	for (i = 0; i < size; i++) {
-+		tmp = abs(width - scale[i].width) +
-+			abs(height - scale[i].height);
-+		if (tmp < diff) {
-+			diff = tmp;
-+			ret = scale + i;
-+		}
-+	}
-+
-+	return ret;
-+}
 +
 +/*
-+ * subdevice operations
++ *   MD		EXTAL		PLL2	PLL1	PLL3
++ * 14 13	(MHz)
++ * --------------------------------------------------
++ * 0  0		16.66 x 1	x240	x192	x192
++ * 0  1		20    x 1	x200	x160	x160
++ * 1  0		27    x 1	x148	x118	x118
++ * 1  1		33.33 / 2	x240	x192	x192
 + */
-+static int tw9910_s_stream(struct v4l2_subdev *sd, int enable)
++#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
++					 (((md) & BIT(13)) >> 13))
++
++static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[4] __initconst = {
++	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
++	{ 1,		192,	1,	192,	1,	},
++	{ 1,		160,	1,	160,	1,	},
++	{ 1,		118,	1,	118,	1,	},
++	{ 2,		192,	1,	192,	1,	},
++};
++
++static int __init r8a77980_cpg_mssr_init(struct device *dev)
 +{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct tw9910_priv *priv = to_tw9910(client);
-+	u8 val;
-+	int ret;
++	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
++	u32 cpg_mode;
++	int error;
 +
-+	if (!enable) {
-+		switch (priv->revision) {
-+		case 0:
-+			val = OEN_TRI_SEL_ALL_OFF_r0;
-+			break;
-+		case 1:
-+			val = OEN_TRI_SEL_ALL_OFF_r1;
-+			break;
-+		default:
-+			dev_err(&client->dev, "un-supported revision\n");
-+			return -EINVAL;
-+		}
-+	} else {
-+		val = OEN_TRI_SEL_ALL_ON;
++	error = rcar_rst_read_mode_pins(&cpg_mode);
++	if (error)
++		return error;
 +
-+		if (!priv->scale) {
-+			dev_err(&client->dev, "norm select error\n");
-+			return -EPERM;
-+		}
++	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
 +
-+		dev_dbg(&client->dev, "%s %dx%d\n",
-+			priv->scale->name,
-+			priv->scale->width,
-+			priv->scale->height);
-+	}
-+
-+	ret = tw9910_mask_set(client, OPFORM, OEN_TRI_SEL_MASK, val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return tw9910_power(client, enable);
++	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
 +}
 +
-+static int tw9910_g_std(struct v4l2_subdev *sd, v4l2_std_id *norm)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct tw9910_priv *priv = to_tw9910(client);
++const struct cpg_mssr_info r8a77980_cpg_mssr_info __initconst = {
++	/* Core Clocks */
++	.core_clks = r8a77980_core_clks,
++	.num_core_clks = ARRAY_SIZE(r8a77980_core_clks),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
 +
-+	*norm = priv->norm;
++	/* Module Clocks */
++	.mod_clks = r8a77980_mod_clks,
++	.num_mod_clks = ARRAY_SIZE(r8a77980_mod_clks),
++	.num_hw_mod_clks = 12 * 32,
 +
-+	return 0;
-+}
++	/* Critical Module Clocks */
++	.crit_mod_clks = r8a77980_crit_mod_clks,
++	.num_crit_mod_clks = ARRAY_SIZE(r8a77980_crit_mod_clks),
 +
-+static int tw9910_s_std(struct v4l2_subdev *sd, v4l2_std_id norm)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct tw9910_priv *priv = to_tw9910(client);
-+	const unsigned hact = 720;
-+	const unsigned hdelay = 15;
-+	unsigned vact;
-+	unsigned vdelay;
-+	int ret;
-+
-+	if (!(norm & (V4L2_STD_NTSC | V4L2_STD_PAL)))
-+		return -EINVAL;
-+
-+	priv->norm = norm;
-+	if (norm & V4L2_STD_525_60) {
-+		vact = 240;
-+		vdelay = 18;
-+		ret = tw9910_mask_set(client, VVBI, 0x10, 0x10);
-+	} else {
-+		vact = 288;
-+		vdelay = 24;
-+		ret = tw9910_mask_set(client, VVBI, 0x10, 0x00);
-+	}
-+	if (!ret)
-+		ret = i2c_smbus_write_byte_data(client, CROP_HI,
-+			((vdelay >> 2) & 0xc0) |
-+			((vact >> 4) & 0x30) |
-+			((hdelay >> 6) & 0x0c) |
-+			((hact >> 8) & 0x03));
-+	if (!ret)
-+		ret = i2c_smbus_write_byte_data(client, VDELAY_LO,
-+			vdelay & 0xff);
-+	if (!ret)
-+		ret = i2c_smbus_write_byte_data(client, VACTIVE_LO,
-+			vact & 0xff);
-+
-+	return ret;
-+}
-+
-+#ifdef CONFIG_VIDEO_ADV_DEBUG
-+static int tw9910_g_register(struct v4l2_subdev *sd,
-+			     struct v4l2_dbg_register *reg)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	int ret;
-+
-+	if (reg->reg > 0xff)
-+		return -EINVAL;
-+
-+	reg->size = 1;
-+	ret = i2c_smbus_read_byte_data(client, reg->reg);
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * ret      = int
-+	 * reg->val = __u64
-+	 */
-+	reg->val = (__u64)ret;
-+
-+	return 0;
-+}
-+
-+static int tw9910_s_register(struct v4l2_subdev *sd,
-+			     const struct v4l2_dbg_register *reg)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+
-+	if (reg->reg > 0xff ||
-+	    reg->val > 0xff)
-+		return -EINVAL;
-+
-+	return i2c_smbus_write_byte_data(client, reg->reg, reg->val);
-+}
++	/* Callbacks */
++	.init = r8a77980_cpg_mssr_init,
++	.cpg_clk_register = rcar_gen3_cpg_clk_register,
++};
+Index: renesas-drivers/drivers/clk/renesas/renesas-cpg-mssr.c
+===================================================================
+--- renesas-drivers.orig/drivers/clk/renesas/renesas-cpg-mssr.c
++++ renesas-drivers/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -699,6 +699,12 @@ static const struct of_device_id cpg_mss
+ 		.data = &r8a77970_cpg_mssr_info,
+ 	},
+ #endif
++#ifdef CONFIG_ARCH_R8A77980
++	{
++		.compatible = "renesas,r8a77980-cpg-mssr",
++		.data = &r8a77980_cpg_mssr_info,
++	},
 +#endif
-+
-+static int tw9910_s_power(struct v4l2_subdev *sd, int on)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
-+	struct tw9910_priv *priv = to_tw9910(client);
-+
-+	return soc_camera_set_power(&client->dev, ssdd, priv->clk, on);
-+}
-+
-+static int tw9910_set_frame(struct v4l2_subdev *sd, u32 *width, u32 *height)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct tw9910_priv *priv = to_tw9910(client);
-+	int ret = -EINVAL;
-+	u8 val;
-+
-+	/*
-+	 * select suitable norm
-+	 */
-+	priv->scale = tw9910_select_norm(priv->norm, *width, *height);
-+	if (!priv->scale)
-+		goto tw9910_set_fmt_error;
-+
-+	/*
-+	 * reset hardware
-+	 */
-+	tw9910_reset(client);
-+
-+	/*
-+	 * set bus width
-+	 */
-+	val = 0x00;
-+	if (SOCAM_DATAWIDTH_16 == priv->info->buswidth)
-+		val = LEN;
-+
-+	ret = tw9910_mask_set(client, OPFORM, LEN, val);
-+	if (ret < 0)
-+		goto tw9910_set_fmt_error;
-+
-+	/*
-+	 * select MPOUT behavior
-+	 */
-+	switch (priv->info->mpout) {
-+	case TW9910_MPO_VLOSS:
-+		val = RTSEL_VLOSS; break;
-+	case TW9910_MPO_HLOCK:
-+		val = RTSEL_HLOCK; break;
-+	case TW9910_MPO_SLOCK:
-+		val = RTSEL_SLOCK; break;
-+	case TW9910_MPO_VLOCK:
-+		val = RTSEL_VLOCK; break;
-+	case TW9910_MPO_MONO:
-+		val = RTSEL_MONO;  break;
-+	case TW9910_MPO_DET50:
-+		val = RTSEL_DET50; break;
-+	case TW9910_MPO_FIELD:
-+		val = RTSEL_FIELD; break;
-+	case TW9910_MPO_RTCO:
-+		val = RTSEL_RTCO;  break;
-+	default:
-+		val = 0;
-+	}
-+
-+	ret = tw9910_mask_set(client, VBICNTL, RTSEL_MASK, val);
-+	if (ret < 0)
-+		goto tw9910_set_fmt_error;
-+
-+	/*
-+	 * set scale
-+	 */
-+	ret = tw9910_set_scale(client, priv->scale);
-+	if (ret < 0)
-+		goto tw9910_set_fmt_error;
-+
-+	/*
-+	 * set hsync
-+	 */
-+	ret = tw9910_set_hsync(client);
-+	if (ret < 0)
-+		goto tw9910_set_fmt_error;
-+
-+	*width = priv->scale->width;
-+	*height = priv->scale->height;
-+
-+	return ret;
-+
-+tw9910_set_fmt_error:
-+
-+	tw9910_reset(client);
-+	priv->scale = NULL;
-+
-+	return ret;
-+}
-+
-+static int tw9910_get_selection(struct v4l2_subdev *sd,
-+		struct v4l2_subdev_pad_config *cfg,
-+		struct v4l2_subdev_selection *sel)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct tw9910_priv *priv = to_tw9910(client);
-+
-+	if (sel->which != V4L2_SUBDEV_FORMAT_ACTIVE)
-+		return -EINVAL;
-+	/* Only CROP, CROP_DEFAULT and CROP_BOUNDS are supported */
-+	if (sel->target > V4L2_SEL_TGT_CROP_BOUNDS)
-+		return -EINVAL;
-+
-+	sel->r.left	= 0;
-+	sel->r.top	= 0;
-+	if (priv->norm & V4L2_STD_NTSC) {
-+		sel->r.width	= 640;
-+		sel->r.height	= 480;
-+	} else {
-+		sel->r.width	= 768;
-+		sel->r.height	= 576;
-+	}
-+	return 0;
-+}
-+
-+static int tw9910_get_fmt(struct v4l2_subdev *sd,
-+		struct v4l2_subdev_pad_config *cfg,
-+		struct v4l2_subdev_format *format)
-+{
-+	struct v4l2_mbus_framefmt *mf = &format->format;
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct tw9910_priv *priv = to_tw9910(client);
-+
-+	if (format->pad)
-+		return -EINVAL;
-+
-+	if (!priv->scale) {
-+		priv->scale = tw9910_select_norm(priv->norm, 640, 480);
-+		if (!priv->scale)
-+			return -EINVAL;
-+	}
-+
-+	mf->width	= priv->scale->width;
-+	mf->height	= priv->scale->height;
-+	mf->code	= MEDIA_BUS_FMT_UYVY8_2X8;
-+	mf->colorspace	= V4L2_COLORSPACE_SMPTE170M;
-+	mf->field	= V4L2_FIELD_INTERLACED_BT;
-+
-+	return 0;
-+}
-+
-+static int tw9910_s_fmt(struct v4l2_subdev *sd,
-+			struct v4l2_mbus_framefmt *mf)
-+{
-+	u32 width = mf->width, height = mf->height;
-+	int ret;
-+
-+	WARN_ON(mf->field != V4L2_FIELD_ANY &&
-+		mf->field != V4L2_FIELD_INTERLACED_BT);
-+
-+	/*
-+	 * check color format
-+	 */
-+	if (mf->code != MEDIA_BUS_FMT_UYVY8_2X8)
-+		return -EINVAL;
-+
-+	mf->colorspace = V4L2_COLORSPACE_SMPTE170M;
-+
-+	ret = tw9910_set_frame(sd, &width, &height);
-+	if (!ret) {
-+		mf->width	= width;
-+		mf->height	= height;
-+	}
-+	return ret;
-+}
-+
-+static int tw9910_set_fmt(struct v4l2_subdev *sd,
-+		struct v4l2_subdev_pad_config *cfg,
-+		struct v4l2_subdev_format *format)
-+{
-+	struct v4l2_mbus_framefmt *mf = &format->format;
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct tw9910_priv *priv = to_tw9910(client);
-+	const struct tw9910_scale_ctrl *scale;
-+
-+	if (format->pad)
-+		return -EINVAL;
-+
-+	if (V4L2_FIELD_ANY == mf->field) {
-+		mf->field = V4L2_FIELD_INTERLACED_BT;
-+	} else if (V4L2_FIELD_INTERLACED_BT != mf->field) {
-+		dev_err(&client->dev, "Field type %d invalid.\n", mf->field);
-+		return -EINVAL;
-+	}
-+
-+	mf->code = MEDIA_BUS_FMT_UYVY8_2X8;
-+	mf->colorspace = V4L2_COLORSPACE_SMPTE170M;
-+
-+	/*
-+	 * select suitable norm
-+	 */
-+	scale = tw9910_select_norm(priv->norm, mf->width, mf->height);
-+	if (!scale)
-+		return -EINVAL;
-+
-+	mf->width	= scale->width;
-+	mf->height	= scale->height;
-+
-+	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)
-+		return tw9910_s_fmt(sd, mf);
-+	cfg->try_fmt = *mf;
-+	return 0;
-+}
-+
-+static int tw9910_video_probe(struct i2c_client *client)
-+{
-+	struct tw9910_priv *priv = to_tw9910(client);
-+	s32 id;
-+	int ret;
-+
-+	/*
-+	 * tw9910 only use 8 or 16 bit bus width
-+	 */
-+	if (SOCAM_DATAWIDTH_16 != priv->info->buswidth &&
-+	    SOCAM_DATAWIDTH_8  != priv->info->buswidth) {
-+		dev_err(&client->dev, "bus width error\n");
-+		return -ENODEV;
-+	}
-+
-+	ret = tw9910_s_power(&priv->subdev, 1);
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * check and show Product ID
-+	 * So far only revisions 0 and 1 have been seen
-+	 */
-+	id = i2c_smbus_read_byte_data(client, ID);
-+	priv->revision = GET_REV(id);
-+	id = GET_ID(id);
-+
-+	if (0x0B != id ||
-+	    0x01 < priv->revision) {
-+		dev_err(&client->dev,
-+			"Product ID error %x:%x\n",
-+			id, priv->revision);
-+		ret = -ENODEV;
-+		goto done;
-+	}
-+
-+	dev_info(&client->dev,
-+		 "tw9910 Product ID %0x:%0x\n", id, priv->revision);
-+
-+	priv->norm = V4L2_STD_NTSC;
-+	priv->scale = &tw9910_ntsc_scales[0];
-+
-+done:
-+	tw9910_s_power(&priv->subdev, 0);
-+	return ret;
-+}
-+
-+static const struct v4l2_subdev_core_ops tw9910_subdev_core_ops = {
-+#ifdef CONFIG_VIDEO_ADV_DEBUG
-+	.g_register	= tw9910_g_register,
-+	.s_register	= tw9910_s_register,
-+#endif
-+	.s_power	= tw9910_s_power,
-+};
-+
-+static int tw9910_enum_mbus_code(struct v4l2_subdev *sd,
-+		struct v4l2_subdev_pad_config *cfg,
-+		struct v4l2_subdev_mbus_code_enum *code)
-+{
-+	if (code->pad || code->index)
-+		return -EINVAL;
-+
-+	code->code = MEDIA_BUS_FMT_UYVY8_2X8;
-+	return 0;
-+}
-+
-+static int tw9910_g_mbus_config(struct v4l2_subdev *sd,
-+				struct v4l2_mbus_config *cfg)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
-+
-+	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
-+		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_VSYNC_ACTIVE_LOW |
-+		V4L2_MBUS_HSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_LOW |
-+		V4L2_MBUS_DATA_ACTIVE_HIGH;
-+	cfg->type = V4L2_MBUS_PARALLEL;
-+	cfg->flags = soc_camera_apply_board_flags(ssdd, cfg);
-+
-+	return 0;
-+}
-+
-+static int tw9910_s_mbus_config(struct v4l2_subdev *sd,
-+				const struct v4l2_mbus_config *cfg)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct soc_camera_subdev_desc *ssdd = soc_camera_i2c_to_desc(client);
-+	u8 val = VSSL_VVALID | HSSL_DVALID;
-+	unsigned long flags = soc_camera_apply_board_flags(ssdd, cfg);
-+
-+	/*
-+	 * set OUTCTR1
-+	 *
-+	 * We use VVALID and DVALID signals to control VSYNC and HSYNC
-+	 * outputs, in this mode their polarity is inverted.
-+	 */
-+	if (flags & V4L2_MBUS_HSYNC_ACTIVE_LOW)
-+		val |= HSP_HI;
-+
-+	if (flags & V4L2_MBUS_VSYNC_ACTIVE_LOW)
-+		val |= VSP_HI;
-+
-+	return i2c_smbus_write_byte_data(client, OUTCTR1, val);
-+}
-+
-+static int tw9910_g_tvnorms(struct v4l2_subdev *sd, v4l2_std_id *norm)
-+{
-+	*norm = V4L2_STD_NTSC | V4L2_STD_PAL;
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_video_ops tw9910_subdev_video_ops = {
-+	.s_std		= tw9910_s_std,
-+	.g_std		= tw9910_g_std,
-+	.s_stream	= tw9910_s_stream,
-+	.g_mbus_config	= tw9910_g_mbus_config,
-+	.s_mbus_config	= tw9910_s_mbus_config,
-+	.g_tvnorms	= tw9910_g_tvnorms,
-+};
-+
-+static const struct v4l2_subdev_pad_ops tw9910_subdev_pad_ops = {
-+	.enum_mbus_code = tw9910_enum_mbus_code,
-+	.get_selection	= tw9910_get_selection,
-+	.get_fmt	= tw9910_get_fmt,
-+	.set_fmt	= tw9910_set_fmt,
-+};
-+
-+static const struct v4l2_subdev_ops tw9910_subdev_ops = {
-+	.core	= &tw9910_subdev_core_ops,
-+	.video	= &tw9910_subdev_video_ops,
-+	.pad	= &tw9910_subdev_pad_ops,
-+};
-+
-+/*
-+ * i2c_driver function
-+ */
-+
-+static int tw9910_probe(struct i2c_client *client,
-+			const struct i2c_device_id *did)
-+
-+{
-+	struct tw9910_priv		*priv;
-+	struct tw9910_video_info	*info;
-+	struct i2c_adapter		*adapter =
-+		to_i2c_adapter(client->dev.parent);
-+	struct soc_camera_subdev_desc	*ssdd = soc_camera_i2c_to_desc(client);
-+	int ret;
-+
-+	if (!ssdd || !ssdd->drv_priv) {
-+		dev_err(&client->dev, "TW9910: missing platform data!\n");
-+		return -EINVAL;
-+	}
-+
-+	info = ssdd->drv_priv;
-+
-+	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
-+		dev_err(&client->dev,
-+			"I2C-Adapter doesn't support I2C_FUNC_SMBUS_BYTE_DATA\n");
-+		return -EIO;
-+	}
-+
-+	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->info   = info;
-+
-+	v4l2_i2c_subdev_init(&priv->subdev, client, &tw9910_subdev_ops);
-+
-+	priv->clk = v4l2_clk_get(&client->dev, "mclk");
-+	if (IS_ERR(priv->clk))
-+		return PTR_ERR(priv->clk);
-+
-+	ret = tw9910_video_probe(client);
-+	if (ret < 0)
-+		v4l2_clk_put(priv->clk);
-+
-+	return ret;
-+}
-+
-+static int tw9910_remove(struct i2c_client *client)
-+{
-+	struct tw9910_priv *priv = to_tw9910(client);
-+	v4l2_clk_put(priv->clk);
-+	return 0;
-+}
-+
-+static const struct i2c_device_id tw9910_id[] = {
-+	{ "tw9910", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, tw9910_id);
-+
-+static struct i2c_driver tw9910_i2c_driver = {
-+	.driver = {
-+		.name = "tw9910",
-+	},
-+	.probe    = tw9910_probe,
-+	.remove   = tw9910_remove,
-+	.id_table = tw9910_id,
-+};
-+
-+module_i2c_driver(tw9910_i2c_driver);
-+
-+MODULE_DESCRIPTION("SoC Camera driver for tw9910");
-+MODULE_AUTHOR("Kuninori Morimoto");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
-
+ #ifdef CONFIG_CLK_R8A77995
+ 	{
+ 		.compatible = "renesas,r8a77995-cpg-mssr",
+Index: renesas-drivers/drivers/clk/renesas/renesas-cpg-mssr.h
+===================================================================
+--- renesas-drivers.orig/drivers/clk/renesas/renesas-cpg-mssr.h
++++ renesas-drivers/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -140,6 +140,7 @@ extern const struct cpg_mssr_info r8a779
+ extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77970_cpg_mssr_info;
++extern const struct cpg_mssr_info r8a77980_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77995_cpg_mssr_info;
+ 
+ 
