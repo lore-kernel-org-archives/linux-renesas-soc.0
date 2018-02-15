@@ -1,55 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:49902 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032746AbeBONMk (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33188 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967843AbeBOMCd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 08:12:40 -0500
-Date: Thu, 15 Feb 2018 14:12:37 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        geert@linux-m68k.org, yoshihiro.shimoda.uh@renesas.com
-Subject: Re: [PATCH] serial: sh-sci: prevent lockup on full TTY buffers
-Message-ID: <20180215131237.4yi42wq4duic7uaq@katana>
-References: <1518696147-23790-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2yddoec54ffcayat"
-Content-Disposition: inline
-In-Reply-To: <1518696147-23790-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 15 Feb 2018 07:02:33 -0500
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: wsa@the-dreams.de, geert@linux-m68k.org,
+        yoshihiro.shimoda.uh@renesas.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH] serial: sh-sci: prevent lockup on full TTY buffers
+Date: Thu, 15 Feb 2018 13:02:27 +0100
+Message-Id: <1518696147-23790-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+When the TTY buffers fill up to the configured maximum, a system lockup
+occurs:
 
---2yddoec54ffcayat
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[  598.820128] INFO: rcu_preempt detected stalls on CPUs/tasks:
+[  598.825796]  0-...!: (1 GPs behind) idle=5a6/2/0 softirq=1974/1974 fqs=1
+[  598.832577]  (detected by 3, t=62517 jiffies, g=296, c=295, q=126)
+[  598.838755] Task dump for CPU 0:
+[  598.841977] swapper/0       R  running task        0     0      0 0x00000022
+[  598.849023] Call trace:
+[  598.851476]  __switch_to+0x98/0xb0
+[  598.854870]            (null)
 
+This can be prevented by doing a dummy read of the RX data register.
 
-> This can be prevented by doing a dummy read of the RX data register.
+This issue affects both HSCIF and SCIF ports. Reported for R-Car H3 ES2.0;
+reproduced and fixed on H3 ES1.1. Probably affects other R-Car platforms
+as well.
 
-Just so I understand the issue correctly: We are reading the register to
-throw the content away to prevent it being used in the TTY buffers?
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/tty/serial/sh-sci.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
---2yddoec54ffcayat
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqFh0QACgkQFA3kzBSg
-KbbKBQ/9FxFI+YMHsIhQbAo2Iqn0Yt+GMl4husICOOQwMRzRTSVaQmkAIZZLNHo1
-2A6Gk3HwBSNAZbOQ7GWqjJnkB9/3xbpealYhTeSjlQTZb4O5r3MhAN7KECHeO7Pi
-tzy3TPBnc/qOkVfDIvyi7Y0godRuV+93KMPpH9khvCZ6BYtXOFoafSpTkxOL00zC
-W7uwFfQnOqCoekAq/L3ZwyR57wA+LbMD963dIhtWSPoDhHJ5x1646vOuDWwb+vqF
-eRSrQEUYI/vJgsdKeaqVMeyaKWWg1E3cUmkm1Tx+BF0eYAjv9h/OKP5XN+xq8Jvq
-9Xo4ODeSHvjRkItoz+/ovVNRhVSdQMccc0hX6vxrJBf11Hy70I5sS8xQxuZ5LeLU
-s1C94aALp71D/XSRrq1gIc4lxJ/aQan3dM/G6Q3ldg85k772d4GMXBQc8vqwPXwe
-qTQ1W1BC3QlGOp9LZ4REBvEOtosU8vuT2IuFBg3TzB1+/8MHbdpqoddLcQaITXmm
-Vy815MPUCLZQiYDt0r76eSDM4b0ryp73RUowHSdC0pVmtpC14PVJSZKmaSfQb8pY
-l76e0dp9WKVpE8CN7ayVPx54yveLjMNHwa0VVpVFZHu3iRglzwaCN0KH5PRcdlgp
-r8ZSv2p8kY5F2HODInz3s+57N96yUdnVms4qTV2VmLNywf9QpWw=
-=Cv23
------END PGP SIGNATURE-----
-
---2yddoec54ffcayat--
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index d9f399c..db2ebec 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -885,6 +885,8 @@ static void sci_receive_chars(struct uart_port *port)
+ 		/* Tell the rest of the system the news. New characters! */
+ 		tty_flip_buffer_push(tport);
+ 	} else {
++		/* TTY buffers full; read from RX reg to prevent lockup */
++		serial_port_in(port, SCxRDR);
+ 		serial_port_in(port, SCxSR); /* dummy read */
+ 		sci_clear_SCxSR(port, SCxSR_RDxF_CLEAR(port));
+ 	}
+-- 
+2.7.4
