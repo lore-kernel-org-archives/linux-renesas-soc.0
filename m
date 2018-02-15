@@ -1,101 +1,158 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752331AbeBLSMI (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36374 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032163AbeBOADx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 13:12:08 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH v2 1/5] dt-bindings: media: adv7604: Add support for i2c_new_secondary_device
-Date: Mon, 12 Feb 2018 18:11:53 +0000
-Message-Id: <1518459117-16733-2-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
-References: <1518459117-16733-1-git-send-email-kbingham@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 14 Feb 2018 19:03:53 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v3 07/12] ARM: dts: r8a7791: Convert to new LVDS DT bindings
+Date: Thu, 15 Feb 2018 02:04:10 +0200
+Message-Id: <20180215000415.19077-8-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+The internal LVDS encoder now has DT bindings separate from the DU. Port
+the device tree over to the new model.
 
-The ADV7604 has thirteen 256-byte maps that can be accessed via the main
-I²C ports. Each map has it own I²C address and acts as a standard slave
-device on the I²C bus.
-
-Extend the device tree node bindings to be able to override the default
-addresses so that address conflicts with other devices on the same bus
-may be resolved at the board description level.
-
-Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
-[Kieran: Re-adapted for mainline]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-Based upon the original posting :
-  https://lkml.org/lkml/2014/10/22/469
+Changes since v2:
 
-v2:
- - DT Binding update separated from code change
- - Minor reword to commit message to account for DT only change.
- - Collected Rob's RB tag.
+- Fixed LVDS compatible string
 
- .../devicetree/bindings/media/i2c/adv7604.txt          | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+Changes since v1:
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-index 9cbd92eb5d05..b64e313dcc66 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-@@ -13,7 +13,11 @@ Required Properties:
-     - "adi,adv7611" for the ADV7611
-     - "adi,adv7612" for the ADV7612
+- Remove the DU reg-names property
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 10 ++++++++--
+ arch/arm/boot/dts/r8a7791-porter.dts  | 16 +++++++++++++---
+ arch/arm/boot/dts/r8a7791.dtsi        | 34 ++++++++++++++++++++++++++++------
+ 3 files changed, 49 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index e164eda69baf..5a0f87ed7f16 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -332,8 +332,7 @@
  
--  - reg: I2C slave address
-+  - reg: I2C slave addresses
-+    The ADV76xx has up to thirteen 256-byte maps that can be accessed via the
-+    main I²C ports. Each map has it own I²C address and acts as a standard
-+    slave device on the I²C bus. The main address is mandatory, others are
-+    optional and revert to defaults if not specified.
+ 	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
+ 		 <&x13_clk>, <&x2_clk>;
+-	clock-names = "du.0", "du.1", "lvds.0",
+-		      "dclkin.0", "dclkin.1";
++	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
  
-   - hpd-gpios: References to the GPIOs that control the HDMI hot-plug
-     detection pins, one per HDMI input. The active flag indicates the GPIO
-@@ -35,6 +39,11 @@ Optional Properties:
+ 	ports {
+ 		port@0 {
+@@ -341,6 +340,13 @@
+ 				remote-endpoint = <&adv7511_in>;
+ 			};
+ 		};
++	};
++};
++
++&lvds0 {
++	status = "okay";
++
++	ports {
+ 		port@1 {
+ 			lvds_connector: endpoint {
+ 			};
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 9a02d03b23c2..e6d02839d636 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -419,10 +419,9 @@
+ 	pinctrl-names = "default";
+ 	status = "okay";
  
-   - reset-gpios: Reference to the GPIO connected to the device's reset pin.
-   - default-input: Select which input is selected after reset.
-+  - reg-names : Names of maps with programmable addresses.
-+		It can contain any map needing a non-default address.
-+		Possible maps names are :
-+		  "main", "avlink", "cec", "infoframe", "esdp", "dpp", "afe",
-+		  "rep", "edid", "hdmi", "test", "cp", "vdp"
+-	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
++	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
+ 		 <&x3_clk>, <&x16_clk>;
+-	clock-names = "du.0", "du.1", "lvds.0",
+-		      "dclkin.0", "dclkin.1";
++	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
  
- Optional Endpoint Properties:
+ 	ports {
+ 		port@0 {
+@@ -433,6 +432,17 @@
+ 	};
+ };
  
-@@ -52,7 +61,12 @@ Example:
++&lvds0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			lvds_connector: endpoint {
++			};
++		};
++	};
++};
++
+ &rcar_sound {
+ 	pinctrl-0 = <&ssi_pins &audio_clk_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 67831d0405f3..aef34c80c584 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1103,15 +1103,12 @@
  
- 	hdmi_receiver@4c {
- 		compatible = "adi,adv7611";
--		reg = <0x4c>;
-+		/*
-+		 * The edid page will be accessible @ 0x66 on the i2c bus. All
-+		 * other maps will retain their default addresses.
-+		 */
-+		reg = <0x4c 0x66>;
-+		reg-names "main", "edid";
+ 	du: display@feb00000 {
+ 		compatible = "renesas,du-r8a7791";
+-		reg = <0 0xfeb00000 0 0x40000>,
+-		      <0 0xfeb90000 0 0x1c>;
+-		reg-names = "du", "lvds.0";
++		reg = <0 0xfeb00000 0 0x40000>;
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 724>,
+-			 <&cpg CPG_MOD 723>,
+-			 <&cpg CPG_MOD 726>;
+-		clock-names = "du.0", "du.1", "lvds.0";
++			 <&cpg CPG_MOD 723>;
++		clock-names = "du.0", "du.1";
+ 		status = "disabled";
  
- 		reset-gpios = <&ioexp 0 GPIO_ACTIVE_LOW>;
- 		hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
+ 		ports {
+@@ -1126,6 +1123,31 @@
+ 			port@1 {
+ 				reg = <1>;
+ 				du_out_lvds0: endpoint {
++					remote-endpoint = <&lvds0_in>;
++				};
++			};
++		};
++	};
++
++	lvds0: lvds@feb90000 {
++		compatible = "renesas,r8a7791-lvds";
++		reg = <0 0xfeb90000 0 0x1c>;
++		clocks = <&cpg CPG_MOD 726>;
++		status = "disabled";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				lvds0_in: endpoint {
++					remote-endpoint = <&du_out_lvds0>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				lvds0_out: endpoint {
+ 				};
+ 			};
+ 		};
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
