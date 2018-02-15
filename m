@@ -1,39 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:45239 "EHLO
-        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034273AbeBPO1X (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:49902 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032746AbeBONMk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:27:23 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180215131237.4yi42wq4duic7uaq@katana>
-References: <1518696147-23790-1-git-send-email-ulrich.hecht+renesas@gmail.com> <20180215131237.4yi42wq4duic7uaq@katana>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Date: Fri, 16 Feb 2018 15:27:22 +0100
-Message-ID: <CAO3366xcbP5hdLC_fgFfDtNJcqE5vfkVZBjAqk6VN8mAk2wYCA@mail.gmail.com>
+        Thu, 15 Feb 2018 08:12:40 -0500
+Date: Thu, 15 Feb 2018 14:12:37 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        geert@linux-m68k.org, yoshihiro.shimoda.uh@renesas.com
 Subject: Re: [PATCH] serial: sh-sci: prevent lockup on full TTY buffers
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20180215131237.4yi42wq4duic7uaq@katana>
+References: <1518696147-23790-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2yddoec54ffcayat"
+Content-Disposition: inline
+In-Reply-To: <1518696147-23790-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 15, 2018 at 2:12 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->
->> This can be prevented by doing a dummy read of the RX data register.
->
-> Just so I understand the issue correctly: We are reading the register to
-> throw the content away to prevent it being used in the TTY buffers?
 
-Not quite. The problem was that if the buffers are full,
-sci_receive_chars() returned immediately without reading anything from
-the data register, and that led to a lockup. I am not fully sure why
-that is so (I arrived at the fix by examining how the different code
-paths look from the serial controller's perspective), but dropping
-data here fixes it. At this point buffers are full, so any data
-received will have to be discarded anyway.
+--2yddoec54ffcayat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-CU
-Uli
+
+> This can be prevented by doing a dummy read of the RX data register.
+
+Just so I understand the issue correctly: We are reading the register to
+throw the content away to prevent it being used in the TTY buffers?
+
+
+--2yddoec54ffcayat
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqFh0QACgkQFA3kzBSg
+KbbKBQ/9FxFI+YMHsIhQbAo2Iqn0Yt+GMl4husICOOQwMRzRTSVaQmkAIZZLNHo1
+2A6Gk3HwBSNAZbOQ7GWqjJnkB9/3xbpealYhTeSjlQTZb4O5r3MhAN7KECHeO7Pi
+tzy3TPBnc/qOkVfDIvyi7Y0godRuV+93KMPpH9khvCZ6BYtXOFoafSpTkxOL00zC
+W7uwFfQnOqCoekAq/L3ZwyR57wA+LbMD963dIhtWSPoDhHJ5x1646vOuDWwb+vqF
+eRSrQEUYI/vJgsdKeaqVMeyaKWWg1E3cUmkm1Tx+BF0eYAjv9h/OKP5XN+xq8Jvq
+9Xo4ODeSHvjRkItoz+/ovVNRhVSdQMccc0hX6vxrJBf11Hy70I5sS8xQxuZ5LeLU
+s1C94aALp71D/XSRrq1gIc4lxJ/aQan3dM/G6Q3ldg85k772d4GMXBQc8vqwPXwe
+qTQ1W1BC3QlGOp9LZ4REBvEOtosU8vuT2IuFBg3TzB1+/8MHbdpqoddLcQaITXmm
+Vy815MPUCLZQiYDt0r76eSDM4b0ryp73RUowHSdC0pVmtpC14PVJSZKmaSfQb8pY
+l76e0dp9WKVpE8CN7ayVPx54yveLjMNHwa0VVpVFZHu3iRglzwaCN0KH5PRcdlgp
+r8ZSv2p8kY5F2HODInz3s+57N96yUdnVms4qTV2VmLNywf9QpWw=
+=Cv23
+-----END PGP SIGNATURE-----
+
+--2yddoec54ffcayat--
