@@ -1,49 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:41952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754531AbeBGVLk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:11:40 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] media: i2c: adv748x: Fix cleanup jump on chip identification
-Date: Wed,  7 Feb 2018 21:11:35 +0000
-Message-Id: <1518037895-10921-1-git-send-email-kbingham@kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>, geert@glider.be,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/8] dt-bindings: display: renesas,du: Document r8a77995 bindings
+Date: Thu, 15 Feb 2018 15:59:25 +0200
+Message-ID: <4647820.7KnCr1m3Y8@avalon>
+In-Reply-To: <1518683903-10681-3-git-send-email-kbingham@kernel.org>
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org> <1518683903-10681-3-git-send-email-kbingham@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Kieran,
 
-The error handling for the adv748x_identify_chip() call erroneously
-jumps to the err_cleanup_clients label before the clients have been
-established.
+Thank you for the patch.
 
-Correct this by jumping to the next (and correct) label in the cleanup
-code: err_cleanup_dt.
+On Thursday, 15 February 2018 10:38:17 EET Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> Document the D3 (r8a77995) SoC in the R-Car DU bindings.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Fixes: 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/i2c/adv748x/adv748x-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+and applied to my tree.
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 6d62b817ed00..6ccaad7e9eca 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -651,7 +651,7 @@ static int adv748x_probe(struct i2c_client *client,
- 	ret = adv748x_identify_chip(state);
- 	if (ret) {
- 		adv_err(state, "Failed to identify chip");
--		goto err_cleanup_clients;
-+		goto err_cleanup_dt;
- 	}
- 
- 	/* Configure remaining pages as I2C clients with regmap access */
+> ---
+>  Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt
+> b/Documentation/devicetree/bindings/display/renesas,du.txt index
+> 8f6e0e118e3e..56f67453b9aa 100644
+> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+> @@ -13,6 +13,7 @@ Required Properties:
+>      - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
+>      - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
+>      - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
+> +    - "renesas,du-r8a77995" for R8A77995 (R-Car D3) compatible DU
+> 
+>    - reg: A list of base address and length of each memory resource, one for
+> each entry in the reg-names property.
+> @@ -60,6 +61,7 @@ corresponding to each DU output.
+>   R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
+>   R8A7795 (R-Car H3)   DPAD 0         HDMI 0         HDMI 1         LVDS 0
+>   R8A7796 (R-Car M3-W) DPAD 0         HDMI 0         LVDS 0         -
+> + R8A77995 (R-Car D3)  DPAD 0         LVDS 0         LVDS 1         -
+> 
+> 
+>  Example: R8A7795 (R-Car H3) ES2.0 DU
+
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
+
