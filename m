@@ -1,182 +1,181 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:40264 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932156AbeBSW2I (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48298 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030843AbeBONGL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Feb 2018 17:28:08 -0500
-Received: by mail-lf0-f52.google.com with SMTP id 37so1532105lfs.7
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Feb 2018 14:28:07 -0800 (PST)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Mon, 19 Feb 2018 23:28:04 +0100
+        Thu, 15 Feb 2018 08:06:11 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Cc: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Sakari Ailus <sakari.ailus@iki.fi>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v2] videodev2.h: add helper to validate colorspace
-Message-ID: <20180219222804.GD8442@bigcity.dyn.berto.se>
-References: <20180214103643.8245-1-niklas.soderlund+renesas@ragnatech.se>
- <37073075.RbtH2Do48G@avalon>
- <258fbbf3-9f2b-79e8-8a28-b177ea3d05ad@xs4all.nl>
- <379706702.poEXdVxToB@avalon>
+Date: Thu, 15 Feb 2018 15:06:45 +0200
+Message-ID: <379706702.poEXdVxToB@avalon>
+In-Reply-To: <258fbbf3-9f2b-79e8-8a28-b177ea3d05ad@xs4all.nl>
+References: <20180214103643.8245-1-niklas.soderlund+renesas@ragnatech.se> <37073075.RbtH2Do48G@avalon> <258fbbf3-9f2b-79e8-8a28-b177ea3d05ad@xs4all.nl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <379706702.poEXdVxToB@avalon>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Hans,
 
-Thanks for your feedback.
+On Thursday, 15 February 2018 14:32:55 EET Hans Verkuil wrote:
+> On 15/02/18 13:06, Laurent Pinchart wrote:
+> > On Thursday, 15 February 2018 13:56:44 EET Hans Verkuil wrote:
+> >> On 15/02/18 12:08, Laurent Pinchart wrote:
+> >>> On Thursday, 15 February 2018 12:57:44 EET Hans Verkuil wrote:
+> >>>> On 14/02/18 16:16, Laurent Pinchart wrote:
+> >>>>> On Wednesday, 14 February 2018 12:36:43 EET Niklas S=F6derlund wrot=
+e:
+> >>>>>> There is no way for drivers to validate a colorspace value, which
+> >>>>>> could be provided by user-space by VIDIOC_S_FMT for example. Add a
+> >>>>>> helper to validate that the colorspace value is part of enum
+> >>>>>> v4l2_colorspace.
+> >>>>>>=20
+> >>>>>> Signed-off-by: Niklas S=F6derlund
+> >>>>>> <niklas.soderlund+renesas@ragnatech.se>
+> >>>>>> ---
+> >>>>>>=20
+> >>>>>>  include/uapi/linux/videodev2.h | 4 ++++
+> >>>>>>  1 file changed, 4 insertions(+)
+> >>>>>>=20
+> >>>>>> Hi,
+> >>>>>>=20
+> >>>>>> I hope this is the correct header to add this helper to. I think i=
+t's
+> >>>>>> since if it's in uapi not only can v4l2 drivers use it but tools l=
+ike
+> >>>>>> v4l-compliance gets access to it and can be updated to use this
+> >>>>>> instead of the hard-coded check of just < 0xff as it was last time=
+ I
+> >>>>>> checked.
+> >>>>>>=20
+> >>>>>> * Changes since v1
+> >>>>>> - Cast colorspace to u32 as suggested by Sakari and only check the
+> >>>>>>   upper boundary to address a potential issue brought up by Laurent
+> >>>>>>   if the data type tested is u32 which is not uncommon:
+> >>>>>>     enum.c:30:16: warning: comparison of unsigned expression >=3D =
+0 is
+> >>>>>>     always true [-Wtype-limits]
+> >>>>>>    =20
+> >>>>>>       return V4L2_COLORSPACE_IS_VALID(colorspace);
+> >>>>>>=20
+> >>>>>> diff --git a/include/uapi/linux/videodev2.h
+> >>>>>> b/include/uapi/linux/videodev2.h index
+> >>>>>> 9827189651801e12..1f27c0f4187cbded 100644
+> >>>>>> --- a/include/uapi/linux/videodev2.h
+> >>>>>> +++ b/include/uapi/linux/videodev2.h
+> >>>>>> @@ -238,6 +238,10 @@ enum v4l2_colorspace {
+> >>>>>>  	V4L2_COLORSPACE_DCI_P3        =3D 12,
+> >>>>>>  };
+> >>>>>>=20
+> >>>>>> +/* Determine if a colorspace is defined in enum v4l2_colorspace */
+> >>>>>> +#define V4L2_COLORSPACE_IS_VALID(colorspace)		\
+> >>>>>> +	((u32)(colorspace) <=3D V4L2_COLORSPACE_DCI_P3)
+> >>>>=20
+> >>>> Sorry, this won't work. Use __u32. u32 is only available in the kern=
+el,
+> >>>> not in userspace and this is a public header.
+> >>>=20
+> >>> Indeed, that I should have caught.
+> >>>=20
+> >>>> I am not convinced about the usefulness of this check either. Drivers
+> >>>> will typically only support a subset of the available colorspaces, so
+> >>>> they need a switch to test for that.
+> >>>=20
+> >>> Most MC drivers won't, as they don't care about colorspaces in most
+> >>> subdevs. It's important for the colorspace to be propagated within
+> >>> subdevs, and validated across the pipeline, but in most case, apart f=
+rom
+> >>> the image source subdev, other subdevs won't care. They should accept
+> >>> any valid colorspace given to them and propagate it to their source p=
+ads
+> >>> unchanged (except of course for subdevs that can change the colorspac=
+e,
+> >>> but that's the exception, not the rule).
+> >>=20
+> >> Right. So 'passthrough' subdevs should just copy this information from
+> >> source to sink, and only pure source or pure sink subdevs should valid=
+ate
+> >> these fields. That makes sense.
+> >>=20
+> >>>> There is nothing wrong with userspace giving them an unknown
+> >>>> colorspace: either they will map anything they don't support to
+> >>>> something that they DO support, or they will return -EINVAL.
+> >>>=20
+> >>> The former, not the latter. S_FMT should not return -EINVAL for
+> >>> unsupported colorspace, the same way it doesn't return -EINVAL for
+> >>> unsupported pixel formats.
+> >>>=20
+> >>>> If memory serves the spec requires the first option, so anything
+> >>>> unknown will just be replaced.
+> >>>>=20
+> >>>> And anyway, this raises the question of why you do this for the
+> >>>> colorspace but not for all the other enums in the V4L2 API.
+> >>>=20
+> >>> Because v4l2-compliance tries to set a colorspace > 0xff and expects
+> >>> that to be replaced by a colorspace <=3D 0xff. That seems like a bogus
+> >>> check to me, 0xff is as random as it can get.
+> >>=20
+> >> v4l2-compliance fills all fields with 0xff, then it checks after calli=
+ng
+> >> the ioctl if all fields have been set to valid values.
+> >>=20
+> >> But in this case it should ignore the colorspace-related fields for
+> >> passthrough subdevs. The only passthrough devices that should set
+> >> colorspace are colorspace converter devices. I'm not sure if we can
+> >> reliably detect that.
+> >>=20
+> >>>> It all seems rather pointless to me.
+> >>>>=20
+> >>>> I won't accept this unless I see it being used in a driver in a usefu
+> >>>> way.
+> >>>>=20
+> >>>> So for now:
+> >>>>=20
+> >>>> Nacked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> >>>=20
+> >>> Can you then fix v4l2-compliance to stop testing colorspace against 0=
+xff
+> >>> ?
+> >>=20
+> >> For now I can simply relax this test for subdevs with sources and sink=
+s.
+> >=20
+> > You also need to relax it for video nodes with MC drivers, as the DMA
+> > engines don't care about colorspaces.
+>=20
+> Yes, they do. Many DMA engines can at least do RGB <-> YUV conversions, so
+> they should get the colorspace info from their source and pass it on to
+> userspace (after correcting for any conversions done by the DMA engine).
 
-[snip]
+Not in the MC case. Video nodes there only model the DMA engine, and are th=
+us=20
+not aware of colorspaces. What MC drivers do is check at stream on time whe=
+n=20
+validating the pipeline that the colorspace set by userspace on the video n=
+ode=20
+corresponds to the colorspace on the source pad of the connected subdev, bu=
+t=20
+that's only to ensure that userspace gets a coherent view of colorspace acr=
+oss=20
+the pipeline, not to program the hardware. There could be exceptions, but i=
+n=20
+the general case, the video node implementation of an MC driver will accept=
+=20
+any colorspace and only validate it at stream on time, similarly to how it=
+=20
+does for the frame size format instance (and in the frame size case it will=
+=20
+usually enforce min/max limits when the DMA engine limits the frame size).
 
-> > >>> Can you then fix v4l2-compliance to stop testing colorspace 
-> > >>> against 0xff
-> > >>> ?
-> > >> 
-> > >> For now I can simply relax this test for subdevs with sources and sinks.
-> > > 
-> > > You also need to relax it for video nodes with MC drivers, as the DMA
-> > > engines don't care about colorspaces.
-> > 
-> > Yes, they do. Many DMA engines can at least do RGB <-> YUV conversions, so
-> > they should get the colorspace info from their source and pass it on to
-> > userspace (after correcting for any conversions done by the DMA engine).
-> 
-> Not in the MC case. Video nodes there only model the DMA engine, and are thus 
-> not aware of colorspaces. What MC drivers do is check at stream on time when 
-> validating the pipeline that the colorspace set by userspace on the video node 
-> corresponds to the colorspace on the source pad of the connected subdev, but 
-> that's only to ensure that userspace gets a coherent view of colorspace across 
-> the pipeline, not to program the hardware. There could be exceptions, but in 
-> the general case, the video node implementation of an MC driver will accept 
-> any colorspace and only validate it at stream on time, similarly to how it 
-> does for the frame size format instance (and in the frame size case it will 
-> usually enforce min/max limits when the DMA engine limits the frame size).
-
-I'm afraid the issue described above by Laurent is what sparked me to 
-write this commit to begin with. In my never ending VIN Gen3 patch-set I 
-currency need to carry a patch [1] to implement a hack to make sure 
-v4l2-compliance do not fail for the VIN Gen3 MC-centric use-case. This 
-patch was an attempt to be able to validate the colorspace using the 
-magic value 0xff.
-
-I don't feel strongly for this patch in particular and I'm happy to drop 
-it.  But I would like to receive some guidance on how to then properly 
-be able to handle this problem for the MC-centric VIN driver use-case.  
-One option is as you suggested to relax the test in v4l-compliance to 
-not check colorspace, but commit [2] is not enough to resolve the issue 
-for my MC use-case.
-
-As Laurent stated above, the use-case is that the video device shall 
-accept any colorspace set from user-space. This colorspace is then only 
-used as stream on time to validate the MC pipeline. The VIN driver do 
-not care about colorspace, but I care about not breaking v4l2-compliance 
-as I find it's a very useful tool :-)
-
-I'm basing the following on the latest v4l-utils master 
-(4665ab1fbab1ddaa)  which contains commit [2]. The core issue is that if 
-I do not have a patch like [1] the v4l2-compliance run fails for format 
-ioctls:
-
-Format ioctls (Input 0):
-	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-	test VIDIOC_G/S_PARM: OK (Not Supported)
-	test VIDIOC_G_FBUF: OK (Not Supported)
-		fail: v4l2-test-formats.cpp(330): !colorspace
-		fail: v4l2-test-formats.cpp(439): testColorspace(pix.pixelformat, pix.colorspace, pix.ycbcr_enc, pix.quantization)
-	test VIDIOC_G_FMT: FAIL
-	test VIDIOC_TRY_FMT: OK (Not Supported)
-	test VIDIOC_S_FMT: OK (Not Supported)
-	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-	test Cropping: OK (Not Supported)
-	test Composing: OK (Not Supported)
-	test Scaling: OK
-
-Well that is OK as that fails when colorspace is V4L2_COLORSPACE_DEFAULT 
-and that is not valid. If I instead of reverting [1] only test for 
-V4L2_COLORSPACE_DEFAULT which would not require this patch to implement:
-
--       if (!pix->colorspace || pix->colorspace >= 0xff)
-+       if (pix->colorspace == V4L2_COLORSPACE_DEFAULT)
-
-I still fail for the format ioctls:
-
-Format ioctls (Input 0):
-	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-	test VIDIOC_G/S_PARM: OK (Not Supported)
-	test VIDIOC_G_FBUF: OK (Not Supported)
-	test VIDIOC_G_FMT: OK
-		fail: v4l2-test-formats.cpp(336): colorspace >= 0xff
-		fail: v4l2-test-formats.cpp(439): testColorspace(pix.pixelformat, pix.colorspace, pix.ycbcr_enc, pix.quantization)
-		fail: v4l2-test-formats.cpp(753): Video Capture is valid, but TRY_FMT failed to return a format
-	test VIDIOC_TRY_FMT: FAIL
-		fail: v4l2-test-formats.cpp(336): colorspace >= 0xff
-		fail: v4l2-test-formats.cpp(439): testColorspace(pix.pixelformat, pix.colorspace, pix.ycbcr_enc, pix.quantization)
-		fail: v4l2-test-formats.cpp(1018): Video Capture is valid, but no S_FMT was implemented
-	test VIDIOC_S_FMT: FAIL
-	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-	test Cropping: OK (Not Supported)
-	test Composing: OK (Not Supported)
-	test Scaling: OK
-
-But now I fail on that colorspace >= 0xff which was what the patch in my 
-VIN Gen3 series tries to address but as Laurent points out and I agree 
-is not a good idea as the 0xff is a magic number and this patch tried to 
-add a remedy too. The root of this in v4l2-compliance is 
-createInvalidFmt() which quiet effectively creates an invalid format 
-with the colorspace set to 0xff but there are no way for drivers to 
-verify that a colorspace value from user-space is valid :-(
-
-If this patch is to be dropped, and I'm fine with that I would like your 
-opinion on how I can still keep the VIN driver compatible with the 
-compliance tool. The option's I see are:
-
-1. Keep the patch [1] and accept that there is a need for a 0xff magic 
-   value. This 'works' but I don't think it's the correct solution.
-
-2. Move the check this patch tries to add a helper for directly to the 
-   VIN driver. This works but will require the driver to be updated if a 
-   new colorspace is added.
-
-3. Update createInvalidFmt() v4l2-compliance to not set the colorspace 
-   to 0xff but instead set it to V4L2_COLORSPACE_DEFAULT. A similar 
-   thing is already done for the filed in this function.
-
-	memset(&fmt, 0xff, sizeof(fmt));
-	fmt.type = type;
-	fmt.fmt.pix.field = V4L2_FIELD_ANY;
-	...
-
-   I'm not sure if this is the best solution as it would not test 
-   drivers for what happens if they are presented with an invalid 
-   colorspace. But with such a change the driver can be written to still 
-   pass the test.
-
-4. Always forcing a specific colorspace (V4L2_COLORSPACE_SRGB) in the 
-   VIN format functions and ignoring what was requested by the user.
-
-   I don't think this is good at all as it would be possible that 
-   pipeline validation fails due to a colorspace mismatch. This can be 
-   worked around by dropping the colorspace check from the VIN stream on 
-   function.
-
-
-I'm sure there are other options open which I can't think of, in fact I 
-hope there are. I'm not over excited about any of the options above as 
-they all in one way or another just works around the problem of being 
-able to validate input from user-space. But I'm even less excited about 
-breaking v4l2-compliance compatibility so any path I can take here to 
-keep the user being able to specify the colorspace and v4l2-compliance 
-being happy would be a better solution for me :-)
-
-1. https://patchwork.linuxtv.org/patch/46717/
-2. 432d9ebfcea65337 ("v4l2-compliance: ignore colorspace tests for passthu subdevs")
-
--- 
+=2D-=20
 Regards,
-Niklas S�derlund
+
+Laurent Pinchart
