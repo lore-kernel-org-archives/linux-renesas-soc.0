@@ -1,43 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:52200 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934507AbeBMJqf (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52014 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967889AbeBOMBk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:46:35 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/15] Documentation: devicetree: R-Car M3-N SoC DT bindings
-Date: Tue, 13 Feb 2018 10:45:48 +0100
-Message-Id: <1518515162-23663-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 15 Feb 2018 07:01:40 -0500
+Received: by mail-wm0-f65.google.com with SMTP id r71so366941wmd.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2018 04:01:39 -0800 (PST)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: laurent.pinchart@ideasonboard.com, kbingham@kernel.org,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/4] r8a779{5,6,95} VIN and DU pin control tables
+Date: Thu, 15 Feb 2018 13:01:27 +0100
+Message-Id: <1518696091-23561-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device tree bindings documentation for Renesas R-Car M3-N (r8a77965)
-SoC.
+Hi!
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+This series adds pin control tables for VIN4 (H3, M3-W, D3), VIN5 (H3, M3-W)
+and DU (D3).
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 5c3af7e..7eb4830 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -39,6 +39,8 @@ SoCs:
-     compatible = "renesas,r8a7795"
-   - R-Car M3-W (R8A77960)
-     compatible = "renesas,r8a7796"
-+  - R-Car M3-N (R8A77965)
-+    compatible = "renesas,r8a77965"
-   - R-Car V3M (R8A77970)
-     compatible = "renesas,r8a77970"
-   - R-Car D3 (R8A77995)
+The patches for M3-W and H3 are identical, so there is no need to review
+both of them in detail.
+
+[The last patch overlaps with a concurrently developed PFC patch for DU on
+D3 ("[PATCH 1/8] pinctrl: sh-pfc: r8a77995: Add DU support") posted earlier
+today by kbingham in his "[PATCH 0/8] r8a77995 D3 DU and LVDS support"
+series.]
+
+CU
+Uli
+
+
+Ulrich Hecht (4):
+  pinctrl: sh-pfc: r8a7796: Add VIN4, VIN5 pins, groups and functions
+  pinctrl: sh-pfc: r8a7795: Add VIN4, VIN5 pins, groups and functions
+  pinctrl: sh-pfc: r8a77995: Add VIN4 pins, groups and function
+  pinctrl: sh-pfc: r8a77995: Add DU pins, groups and function
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c  | 454 ++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c  | 454 ++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 293 ++++++++++++++++++++++
+ 3 files changed, 1201 insertions(+)
+
 -- 
 2.7.4
