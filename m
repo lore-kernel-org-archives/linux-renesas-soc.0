@@ -1,22 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33646 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030245AbeBOMqd (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48227 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967920AbeBOMlJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 07:46:33 -0500
-MIME-Version: 1.0
-In-Reply-To: <b8cc84ad-0a64-38f0-d8ac-ad9ae88c5912@ideasonboard.com>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
- <1518683903-10681-6-git-send-email-kbingham@kernel.org> <CAMuHMdVKczZpoXgSDOSEJZb59LAZtbWsopRaa8PtHDoZcFEMTQ@mail.gmail.com>
- <b8cc84ad-0a64-38f0-d8ac-ad9ae88c5912@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 15 Feb 2018 13:46:32 +0100
-Message-ID: <CAMuHMdVUQ5c3rEG7-eYCQRPK=si8OSz-o+7z8qPsSOd5y7URww@mail.gmail.com>
+        Thu, 15 Feb 2018 07:41:09 -0500
 Subject: Re: [PATCH 5/8] arm64: dts: renesas: r8a77995: Add LVDS support
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Simon Horman <horms@verge.net.au>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -26,91 +19,96 @@ Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+ <1518683903-10681-6-git-send-email-kbingham@kernel.org>
+ <CAMuHMdVKczZpoXgSDOSEJZb59LAZtbWsopRaa8PtHDoZcFEMTQ@mail.gmail.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <b8cc84ad-0a64-38f0-d8ac-ad9ae88c5912@ideasonboard.com>
+Date: Thu, 15 Feb 2018 12:41:05 +0000
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVKczZpoXgSDOSEJZb59LAZtbWsopRaa8PtHDoZcFEMTQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Hi Geert,
 
-On Thu, Feb 15, 2018 at 1:41 PM, Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
-> On 15/02/18 09:07, Geert Uytterhoeven wrote:
->> On Thu, Feb 15, 2018 at 9:38 AM, Kieran Bingham <kbingham@kernel.org> wrote:
->>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>>
->>> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
->>>
->>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 15/02/18 09:07, Geert Uytterhoeven wrote:
+> Hi Kieran,
+> 
+> On Thu, Feb 15, 2018 at 9:38 AM, Kieran Bingham <kbingham@kernel.org> wrote:
+>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 >>
->> I love your patch!
->> Yet something to improve...
+>> The r8a77995 D3 platform has 2 LVDS channels connected to the DU.
 >>
->>> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->>> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->>> @@ -773,18 +773,70 @@
->>>                                 port@1 {
->>>                                         reg = <1>;
->>>                                         du_out_lvds0: endpoint {
->>> +                                               remote-endpoint = <&du_out_lvds0>;
->>>                                         };
->>>                                 };
->>>
->>>                                 port@2 {
->>>                                         reg = <2>;
->>>                                         du_out_lvds1: endpoint {
->>> +                                               remote-endpoint = <&du_out_lvds1>;
->>>                                         };
->>>                                 };
->>>                         };
->>>                 };
->>>         };
->>>
->>> +       lvds0: lvds@feb90000 {
->>> +               compatible = "renesas,lvds-r8a77995";
->>> +               reg = <0 0xfeb90000 0 0x20>;
->>> +               clocks = <&cpg CPG_MOD 727>;
->>> +               status = "disabled";
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> I love your patch!
+> Yet something to improve...
+> 
+>> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+>> @@ -773,18 +773,70 @@
+>>                                 port@1 {
+>>                                         reg = <1>;
+>>                                         du_out_lvds0: endpoint {
+>> +                                               remote-endpoint = <&du_out_lvds0>;
+>>                                         };
+>>                                 };
 >>
->> Missing resets, power-domains
->
-> Both lvds0, and lvds1 are actually the same 'module' (just different mappings
-> within the same IP block).
->
-> That means they will share clock, reset etc.
->
-> Will specifying the resets cause one to affect the other unduly?
->
-> like if one becomes un-used, will it power down? or is it refcounted, and will
-> gracefully handle both device nodes from the same device?
->
-> I'm already fairly sure clocks is fine for this - but it's just the reset's that
-> worry me. If the reset module tries to reset lvds0 for some reason - would lvds1
-> get reset as a side effect ...
+>>                                 port@2 {
+>>                                         reg = <2>;
+>>                                         du_out_lvds1: endpoint {
+>> +                                               remote-endpoint = <&du_out_lvds1>;
+>>                                         };
+>>                                 };
+>>                         };
+>>                 };
+>>         };
+>>
+>> +       lvds0: lvds@feb90000 {
+>> +               compatible = "renesas,lvds-r8a77995";
+>> +               reg = <0 0xfeb90000 0 0x20>;
+>> +               clocks = <&cpg CPG_MOD 727>;
+>> +               status = "disabled";
+> 
+> Missing resets, power-domains
 
-Clocks handle sharing fine, they do refcounting.
+Both lvds0, and lvds1 are actually the same 'module' (just different mappings
+within the same IP block).
 
-For resets, there is some sharing/exclusive support, but we don't have that
-much experience with resets as we don't use it that much yet (USB uses it).
-So for now it's mostly about "describing the hardware".
+That means they will share clock, reset etc.
 
-Triggering a reset will indeed reset all modules using the same reset.
-The same is true for e.g. PWM.
+Will specifying the resets cause one to affect the other unduly?
 
-> Or perhaps that won't ever happen with an :
->
->                 power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
->                 resets = <&cpg 727>;
+like if one becomes un-used, will it power down? or is it refcounted, and will
+gracefully handle both device nodes from the same device?
 
-The power-domains property is related to power management (in this case
-clock domain only, as it's the "always-on" domain), not reset.
+I'm already fairly sure clocks is fine for this - but it's just the reset's that
+worry me. If the reset module tries to reset lvds0 for some reason - would lvds1
+get reset as a side effect ...
 
-Gr{oetje,eeting}s,
+Or perhaps that won't ever happen with an :
 
-                        Geert
+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+		resets = <&cpg 727>;
 
+Regards
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Kieran
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
