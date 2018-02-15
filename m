@@ -1,82 +1,68 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Gaku Inami <gaku.inami.xh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:53475 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161053AbeBOTRN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 15 Feb 2018 14:17:13 -0500
+Date: Thu, 15 Feb 2018 20:17:09 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Gaku Inami <gaku.inami.xh@renesas.com>
-Subject: [PATCH 4/5] arm64: dts: renesas: r8a7796: Add cpu capacity-dmips-mhz
-Date: Tue, 27 Feb 2018 11:19:54 +0900
-Message-Id: <1519697995-6061-5-git-send-email-gaku.inami.xh@renesas.com>
-In-Reply-To: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
-References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: Re: [PATCH v2 1/5] arm64: dts: renesass: r8a77970: add FCPVD support
+Message-ID: <20180215191708.6hbgw3senigbzkzy@verge.net.au>
+References: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180208154720.5766-2-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180208154720.5766-2-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the capacity-dmips-mhz for r8a7796, that is based on dhrystone.
+On Thu, Feb 08, 2018 at 04:47:16PM +0100, Niklas Söderlund wrote:
+> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Describe FCPVD0 in the R8A77970 device tree; it will be used by VSPD0 in
+> the next patch...
+> 
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> index 13c88414cb432b1a..2567e68fe0c6cf7b 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> @@ -612,6 +612,14 @@
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+>  		};
+> +
+> +		fcpvd0: fcp@fea27000 {
+> +			compatible = "renesas,fcpv";
+> +			reg = <0 0xfea27000 0 0x200>;
+> +			clocks = <&cpg CPG_MOD 603>;
+> +			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+> +			resets = <&cpg 603>;
 
-Expected cpu capacity:
-Cortex-A57@1.5Ghz: 1024, Cortex-A53@1.2GHz: 411
+Any reason the following is omitted?
 
-Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+			iommus = <&ipmmu_vi0 8>;
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 154df9b..a776d29 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -99,6 +99,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -111,6 +112,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -123,6 +125,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <411>;
- 		};
- 
- 		a53_1: cpu@101 {
-@@ -134,6 +137,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <411>;
- 		};
- 
- 		a53_2: cpu@102 {
-@@ -145,6 +149,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <411>;
- 		};
- 
- 		a53_3: cpu@103 {
-@@ -156,6 +161,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <411>;
- 		};
- 
- 		L2_CA57: cache-controller-0 {
--- 
-2.7.4
-
+> +		};
+>  	};
+>  
+>  	timer {
+> -- 
+> 2.16.1
+> 
