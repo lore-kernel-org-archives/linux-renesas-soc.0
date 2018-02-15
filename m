@@ -1,46 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60705 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750830AbeBIKBO (ORCPT
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:38260 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033524AbeBOTsY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 05:01:14 -0500
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: i2c_new_{secondary_device,dummy,device}() return type.
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Message-ID: <6f03d1e1-b542-99cb-7cfe-8eae9addd8d9@ideasonboard.com>
-Date: Fri, 9 Feb 2018 10:01:09 +0000
+        Thu, 15 Feb 2018 14:48:24 -0500
+Subject: Re: [PATCH V2] ARM: dts: stout: Initial r8a7790 Stout board support
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20180215100301.24744-1-marek.vasut+renesas@gmail.com>
+ <20180215100936.dz62mm3h2zbsuf2j@katana>
+ <4dfaaccb-c384-c640-d801-116e01410c22@gmail.com>
+ <20180215182514.jaixuo5wrmlylucj@verge.net.au>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <e09921e8-0809-6ad7-1f4c-b1aeccac95e3@gmail.com>
+Date: Thu, 15 Feb 2018 20:48:21 +0100
 MIME-Version: 1.0
+In-Reply-To: <20180215182514.jaixuo5wrmlylucj@verge.net.au>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+On 02/15/2018 07:25 PM, Simon Horman wrote:
+> On Thu, Feb 15, 2018 at 11:11:51AM +0100, Marek Vasut wrote:
+>> On 02/15/2018 11:09 AM, Wolfram Sang wrote:
+>>>
+>>>> +		stdout-path = "serial0:38400n8";
+>>>
+>>> Didn't you want to change U-Boot to 115200?
+>>
+>> I did, do we care about compatibility with whatever the board comes with
+>> though or not ?
+> 
+> The practice adopted for upstream DTS for Reneas SoCs
+> is to use 115200 if it can be used by the board,
+> regardless of what the default setting of the board is
+> out-of-the-box.
+> 
+> So please change this to 115200.
+> 
+V3 is out
 
-As part of my work looking at using i2c_new_secondary_device() to move address
-mappings into the device tree, it has become evident that the return code of the
-i2c_new_secondary_device() is obfuscated, and is simply a valid client - or NULL.
-
-This means that we must 'guess' as to whether the device failed due to a memory
-allocation, or if the device address was already in use (perhaps a more common
-failure).
-
-Because of this - I would like to see the return codes of
-i2c_new_secondary_device(), ic2_new_dummy(), and therefore i2c_new_device()
-support returning ERR_PTR()s rather than a client or NULL.
-
-These functions are used fairly extensively - thus it will be a fair bit of work
-(or a good coccinelle script) - So I'd like to ask your opinion on the validity
-of this task before I commence anything down that rabbit hole!
-
-Any comments? Pre-ack/nack? (from anyone?)
-
---
-Regards
-
-Kieran Bingham
+-- 
+Best regards,
+Marek Vasut
