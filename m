@@ -1,52 +1,44 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 7/9] serial: sh-sci: Fix out-of-bounds access through DT alias
-Date: Tue, 20 Feb 2018 10:40:22 +0100
-Message-Id: <1519119624-1268-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
-References: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51301 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424201AbeBOQ27 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 15 Feb 2018 11:28:59 -0500
+Date: Thu, 15 Feb 2018 17:28:55 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] arm64: dts: renesas: r8a77995: add FCPV nodes
+Message-ID: <20180215162855.5z7afu2ohbkx7vu4@verge.net.au>
+References: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
+ <1518602108-1724-2-git-send-email-kbingham@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518602108-1724-2-git-send-email-kbingham@kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The sci_ports[] array is indexed using a value derived from the
-"serialN" alias in DT, which may lead to an out-of-bounds access.
+On Wed, Feb 14, 2018 at 09:55:04AM +0000, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The FCPVB handles the interface between the VSPB and memory, while the
+> FCPVD handles the interface between the VSPD and memory.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Fix this by adding a range check.
-
-Note that the array size is defined by a Kconfig symbol
-(CONFIG_SERIAL_SH_SCI_NR_UARTS), so this can even be triggered using a
-legitimate DTB.
-
-Fixes: f650cdf1c115498e ("serial: sh-sci: Fix out-of-bounds access through DT alias")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 4d14f321cbec95e0..0fb4784860da6188 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3620,6 +3620,10 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
- 		dev_err(&pdev->dev, "failed to get alias id (%d)\n", id);
- 		return NULL;
- 	}
-+	if (id >= SCI_NPORTS) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", id);
-+		return NULL;
-+	}
- 
- 	sp = &sci_ports[id];
- 	*dev_id = id;
--- 
-2.7.4
-
+Thanks, applied.
