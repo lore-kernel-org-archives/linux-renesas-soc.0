@@ -1,70 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:55147 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753350AbeBLRqM (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36461 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032091AbeBOAJi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 12:46:12 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 15/26] clk: renesas: r8a7743: Add rwdt clock
-Date: Mon, 12 Feb 2018 17:44:24 +0000
-Message-Id: <1518457475-4480-16-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 14 Feb 2018 19:09:38 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] drm: rcar-du: lvds: Refactor LVDS startup
+Date: Thu, 15 Feb 2018 02:10:11 +0200
+Message-ID: <3774396.180UE1lcPs@avalon>
+In-Reply-To: <559de74c-867e-a8f5-f23d-03b564da1f6e@cogentembedded.com>
+References: <20180214181348.16258-1-laurent.pinchart+renesas@ideasonboard.com> <20180214181348.16258-4-laurent.pinchart+renesas@ideasonboard.com> <559de74c-867e-a8f5-f23d-03b564da1f6e@cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add "rwdt" clock to r8a7743_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+Hi Sergei,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v4->v5:
-* no change
+On Wednesday, 14 February 2018 20:39:59 EET Sergei Shtylyov wrote:
+> On 02/14/2018 09:13 PM, Laurent Pinchart wrote:
+> > From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > After the recent corrections to the R-Car gen2/3 LVDS startup code,
+> > already similar enough at their ends rcar_lvds_enable_gen{2|3}() started
+> > asking for a merge and it's becoming actually necessary with the addition
+> > of the R-Car V3M (R8A77970) support -- this gen3 SoC has gen2-like
+> > LVDPLLCR layout.
+> > 
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Tested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Well, your role wasn't limited to reviewning/testing, you'd clearly did
+> some editing too... thus I was expecting to see some changelog.
 
- drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+My bad, it was an oversight. I'll add the following.
 
-diff --git a/drivers/clk/renesas/r8a7743-cpg-mssr.c b/drivers/clk/renesas/r8a7743-cpg-mssr.c
-index 6dc0b30..d3c8b1e 100644
---- a/drivers/clk/renesas/r8a7743-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7743-cpg-mssr.c
-@@ -117,6 +117,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7743_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7743_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7743_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7743_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7743_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7743_CLK_ZS),
- 	DEF_MOD("audio-dmac1",		 501,	R8A7743_CLK_HP),
-@@ -195,6 +196,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a7743_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
- 
+[Set the LVDS mode and input before turning channels on]
+[Rebased, coding style changes]
+
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Your variant of my patch looks good otherwise. :-)
+
+Thank you :-) I've queued it in my tree.
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
