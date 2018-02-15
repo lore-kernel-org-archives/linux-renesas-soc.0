@@ -1,64 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:54944 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755267AbeBOKTq (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:38918 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751002AbeBOKOe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 05:19:46 -0500
-Date: Thu, 15 Feb 2018 11:19:44 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thu, 15 Feb 2018 05:14:34 -0500
+Received: by mail-qt0-f193.google.com with SMTP id f4so11199141qtj.6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2018 02:14:34 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <20180215100208.24646-1-marek.vasut+renesas@gmail.com>
+References: <20180215100208.24646-1-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Feb 2018 11:14:33 +0100
+Message-ID: <CAMuHMdVO7sxRjj7h=ar+bA8B3Art=Yyyr66cRqC30pw3Zz+Vag@mail.gmail.com>
+Subject: Re: [PATCH V2] ARM: shmobile: stout: enable R-Car Gen2 regulator quirk
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH V2] ARM: shmobile: stout: enable R-Car Gen2 regulator
- quirk
-Message-ID: <20180215101944.qtiquqqhgmg3gbrt@katana>
-References: <20180215100208.24646-1-marek.vasut+renesas@gmail.com>
- <CAMuHMdVO7sxRjj7h=ar+bA8B3Art=Yyyr66cRqC30pw3Zz+Vag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="okvon2ifontjmuij"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVO7sxRjj7h=ar+bA8B3Art=Yyyr66cRqC30pw3Zz+Vag@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Marek,
 
---okvon2ifontjmuij
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, Feb 15, 2018 at 11:02 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Regulator setup is suboptimal on H2 Stout too. The Stout newly has
+> two DA9210 regulators, so the quirk is extended to handle another
+> DA9210 at i2c address 0x70.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> V2: - Handle another DA9210 at 0x70
+>     - Drop explicit board list from the leading comment in the file
 
+Thanks for the update!
 
-> As the code now always sends 3 i2c msgs to all 3 possible regulators, we
-> may accidentally talk to another device at 0x70 on other boards than Stout.
+> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> @@ -1,9 +1,9 @@
+>  /*
+>   * R-Car Generation 2 da9063/da9210 regulator quirk
+>   *
+> - * The r8a7790/lager and r8a7791/koelsch development boards have da9063 and
+> - * da9210 regulators.  Both regulators have their interrupt request lines tied
+> - * to the same interrupt pin (IRQ2) on the SoC.
+> + * Certain Gen2 development boards have an da9063 and one or more da9210
+> + * regulators. All of these regulators have their interrupt request lines
+> + * tied to the same interrupt pin (IRQ2) on the SoC.
+>   *
+>   * After cold boot or da9063-induced restart, both the da9063 and da9210 seem
+>   * to assert their interrupt request lines.  Hence as soon as one driver
+> @@ -59,6 +59,10 @@ static struct i2c_msg da9xxx_msgs[2] = {
+                                                      ^^^
 
-It sends per device, so unless there is a device named "da9210" at
-addr 0x70, nothing will happen? Am I missing something?
+>                 .addr = 0x68,
+>                 .len = ARRAY_SIZE(da9210_irq_clr),
+>                 .buf = da9210_irq_clr,
+> +       }, {
+> +               .addr = 0x70,
+> +               .len = ARRAY_SIZE(da9210_irq_clr),
+> +               .buf = da9210_irq_clr,
 
+Does this really work, without increasing the array size from [2] to [3]?
 
---okvon2ifontjmuij
-Content-Type: application/pgp-signature; name="signature.asc"
+> @@ -85,7 +89,8 @@ static int regulator_quirk_notify(struct notifier_block *nb,
+>         dev_dbg(dev, "Detected %s\n", client->name);
+>
+>         if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
+> -           (client->addr == 0x68 && !strcmp(client->name, "da9210"))) {
+> +           (client->addr == 0x68 && !strcmp(client->name, "da9210")) ||
+> +           (client->addr == 0x70 && !strcmp(client->name, "da9210"))) {
+>                 int ret;
+>
+>                 dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
 
------BEGIN PGP SIGNATURE-----
+As the code now always sends 3 i2c msgs to all 3 possible regulators, we
+may accidentally talk to another device at 0x70 on other boards than Stout.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqFXsAACgkQFA3kzBSg
-Kba6vhAAhwOgqPhIItoD96rFZr9dkVgkd5hRL6aT17GW/Mn0O4SAynAOVygZeTJm
-Kix4//If9mS9KeYcdMJaeYPmmAlg11oQGZR8JDxjAJ75J5zUcshdiTUgbAvnj+js
-vS0naDKUJvETRDJJwhhYpPGvGXQPdZ9ZeeG0wuogZ62wjALYEf05hIgAv4b2hubJ
-+SBYb7dmyod9nSHvaxlBFRLLzaVd2b9nS+65bwFDX+2dNmY4Qb0nlcaSGMpEvwlx
-j/KXAtoobaijWKMpMqT+oJRxKY2B3uWmwy5O+EvZGed9P3vFcMEGvlgXpnnqrP6h
-n5M1W6n7r0YF0K0BLe4sZWThmhz3iUojKaUPfex0FcBGhI+Ep/b3rdbHRvkpDEgB
-GagAOKqhogNfkArh4eAXCPT5UP8nsAi14Xmm/utGex45r/JbwPJ+Tg+Kj8h1ADk5
-TBczKL0DwhaGyTnF/ngNN8RBpXFFOpI3ifAzo1AwXxRRUDbMUDdtXyZqBAu6hI6Q
-5UHD4mEn+s879YFaTCiz7L8i4eYr3RHq0rN/eh3IwTUbOFobF6VnaQmmbRxP8ar+
-i7+qfxbHg8pho1cQ/KY9zEd33jIuKVESL/oOYGO4kngvS+1MZ+YQHvlGPuY780JK
-GGShb7xDNPbQ7JOO8nFTPQ94uJb0rd/d3UgQaaz7tT0fXkuiL3Y=
-=rPgk
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---okvon2ifontjmuij--
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
