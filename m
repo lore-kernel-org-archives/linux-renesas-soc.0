@@ -1,153 +1,189 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 4/5] media: adv7604: Add support for i2c_new_secondary_device
-Date: Tue, 13 Feb 2018 17:48:56 +0000
-Message-Id: <1518544137-2742-5-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
-References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 15 Feb 2018 17:56:02 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/5] arm64: dts: renesas: r8a77995: add VSP instances
+Message-ID: <20180215165602.hkmwhwzt365ntton@verge.net.au>
+References: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
+ <1518602108-1724-3-git-send-email-kbingham@kernel.org>
+ <20180215163342.4evihm3uts3lfu5c@verge.net.au>
+ <7db13491-f4f6-4c7c-e9e3-c1e91b0054b6@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7db13491-f4f6-4c7c-e9e3-c1e91b0054b6@ideasonboard.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
+On Thu, Feb 15, 2018 at 04:41:58PM +0000, Kieran Bingham wrote:
+> Hi Simon,
+> 
+> On 15/02/18 16:33, Simon Horman wrote:
+> > On Wed, Feb 14, 2018 at 09:55:05AM +0000, Kieran Bingham wrote:
+> >> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >>
+> >> The r8a77995 has a VSPBS to support image processing such as blending of
+> >> two input images, and has two VSPDs to handle display pipelines with a
+> >> DU.
+> >>
+> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >>
+> >> ---
+> >> v2:
+> >>  - Fix VSPD register map size
+> >>  - Squash VSPBS and VSPD patches together
+> >>
+> >> v3:
+> >>  - Fix VSPBS register map size too :-)
+> >>
+> >>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++++
+> >>  1 file changed, 30 insertions(+)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> >> index 196a917afea6..0db242114bc5 100644
+> >> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> >> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> >> @@ -692,6 +692,16 @@
+> >>  			status = "disabled";
+> >>  		};
+> >>  
+> >> +		vspbs: vsp@fe960000 {
+> >> +			compatible = "renesas,vsp2";
+> >> +			reg = <0 0xfe960000 0 0x8000>;
+> >> +			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
+> >> +			clocks = <&cpg CPG_MOD 627>;
+> >> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> >> +			resets = <&cpg 627>;
+> >> +			renesas,fcp = <&fcpvb0>;
+> >> +		};
+> >> +
+> >>  		fcpvb0: fcp@fe96f000 {
+> >>  			compatible = "renesas,fcpv";
+> >>  			reg = <0 0xfe96f000 0 0x200>;
+> >> @@ -701,6 +711,16 @@
+> >>  			iommus = <&ipmmu_vp0 5>;
+> >>  		};
+> >>  
+> >> +		vspd0: vsp@fea20000 {
+> >> +			compatible = "renesas,vsp2";
+> >> +			reg = <0 0xfea20000 0 0x8000>;
+> >> +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+> >> +			clocks = <&cpg CPG_MOD 623>;
+> >> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> >> +			resets = <&cpg 623>;
+> >> +			renesas,fcp = <&fcpvd0>;
+> >> +		};
+> >> +
+> >>  		fcpvd0: fcp@fea27000 {
+> >>  			compatible = "renesas,fcpv";
+> >>  			reg = <0 0xfea27000 0 0x200>;
+> >> @@ -710,6 +730,16 @@
+> >>  			iommus = <&ipmmu_vi0 8>;
+> >>  		};
+> >>  
+> >> +		vspd1: vsp@fea80000 {
+> > 
+> > The above should be:
+> > 
+> > 		vspd1: vsp@fea28000 {
+> 
+> Good spot.
+> 
+> </me looks to datasheet> That is correct.
+> 
+> Would you like me to resubmit this patch ? Or will you fix this up locally?
 
-The ADV7604 has thirteen 256-byte maps that can be accessed via the main
-I2C ports. Each map has it own I2C address and acts as a standard slave
-device on the I2C bus.
+Thanks for confirming.
 
-Allow a device tree node to override the default addresses so that
-address conflicts with other devices on the same bus may be resolved at
-the board description level.
+I noticed this using make dtbs W=1
 
-Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
-[Kieran: Re-adapted for mainline]
+I have fixed this up locally and applied your patch. The result is:
+
+
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH] arm64: dts: renesas: r8a77995: add VSP instances
+
+The r8a77995 has a VSPBS to support image processing such as blending of
+two input images, and has two VSPDs to handle display pipelines with a
+DU.
+
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+[simon: updated base address of vsp node to fea28000]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Based upon the original posting :
-  https://lkml.org/lkml/2014/10/22/469
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-v2:
- - Split out DT bindings from driver updates
- - Return -EINVAL on error paths from adv76xx_dummy_client()
-
-v3:
- - No change
-
-v4:
- - s/struct adv76xx_register/struct adv76xx_register_map/
- - s/adv76xx_secondary_names/adv76xx_default_addresses/
- - Normalise I2C usage (s/I²C/I2C/)
-
- drivers/media/i2c/adv7604.c | 62 +++++++++++++++++++++++++++++----------------
- 1 file changed, 40 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index 1544920ec52d..d52c624a2970 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -2734,6 +2734,27 @@ static const struct v4l2_ctrl_config adv76xx_ctrl_free_run_color = {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 196a917afea6..0db242114bc5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -692,6 +692,16 @@
+ 			status = "disabled";
+ 		};
  
- /* ----------------------------------------------------------------------- */
- 
-+struct adv76xx_register_map {
-+	const char *name;
-+	u8 default_addr;
-+};
++		vspbs: vsp@fe960000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe960000 0 0x8000>;
++			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 627>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 627>;
++			renesas,fcp = <&fcpvb0>;
++		};
 +
-+static const struct adv76xx_register_map adv76xx_default_addresses[] = {
-+	[ADV76XX_PAGE_IO] = { "main", 0x4c },
-+	[ADV7604_PAGE_AVLINK] = { "avlink", 0x42 },
-+	[ADV76XX_PAGE_CEC] = { "cec", 0x40 },
-+	[ADV76XX_PAGE_INFOFRAME] = { "infoframe", 0x3e },
-+	[ADV7604_PAGE_ESDP] = { "esdp", 0x38 },
-+	[ADV7604_PAGE_DPP] = { "dpp", 0x3c },
-+	[ADV76XX_PAGE_AFE] = { "afe", 0x26 },
-+	[ADV76XX_PAGE_REP] = { "rep", 0x32 },
-+	[ADV76XX_PAGE_EDID] = { "edid", 0x36 },
-+	[ADV76XX_PAGE_HDMI] = { "hdmi", 0x34 },
-+	[ADV76XX_PAGE_TEST] = { "test", 0x30 },
-+	[ADV76XX_PAGE_CP] = { "cp", 0x22 },
-+	[ADV7604_PAGE_VDP] = { "vdp", 0x24 },
-+};
+ 		fcpvb0: fcp@fe96f000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfe96f000 0 0x200>;
+@@ -701,6 +711,16 @@
+ 			iommus = <&ipmmu_vp0 5>;
+ 		};
+ 
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x8000>;
++			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 623>;
++			renesas,fcp = <&fcpvd0>;
++		};
 +
- static int adv76xx_core_init(struct v4l2_subdev *sd)
- {
- 	struct adv76xx_state *state = to_state(sd);
-@@ -2834,13 +2855,26 @@ static void adv76xx_unregister_clients(struct adv76xx_state *state)
- }
+ 		fcpvd0: fcp@fea27000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea27000 0 0x200>;
+@@ -710,6 +730,16 @@
+ 			iommus = <&ipmmu_vi0 8>;
+ 		};
  
- static struct i2c_client *adv76xx_dummy_client(struct v4l2_subdev *sd,
--							u8 addr, u8 io_reg)
-+					       unsigned int page)
- {
- 	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct adv76xx_state *state = to_state(sd);
-+	struct adv76xx_platform_data *pdata = &state->pdata;
-+	unsigned int io_reg = 0xf2 + page;
-+	struct i2c_client *new_client;
++		vspd1: vsp@fea80000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea28000 0 0x8000>;
++			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 622>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 622>;
++			renesas,fcp = <&fcpvd1>;
++		};
 +
-+	if (pdata && pdata->i2c_addresses[page])
-+		new_client = i2c_new_dummy(client->adapter,
-+					   pdata->i2c_addresses[page]);
-+	else
-+		new_client = i2c_new_secondary_device(client,
-+				adv76xx_default_addresses[page].name,
-+				adv76xx_default_addresses[page].default_addr);
- 
--	if (addr)
--		io_write(sd, io_reg, addr << 1);
--	return i2c_new_dummy(client->adapter, io_read(sd, io_reg) >> 1);
-+	if (new_client)
-+		io_write(sd, io_reg, new_client->addr << 1);
-+
-+	return new_client;
- }
- 
- static const struct adv76xx_reg_seq adv7604_recommended_settings_afe[] = {
-@@ -3115,20 +3149,6 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
- 	/* Disable the interrupt for now as no DT-based board uses it. */
- 	state->pdata.int1_config = ADV76XX_INT1_CONFIG_DISABLED;
- 
--	/* Use the default I2C addresses. */
--	state->pdata.i2c_addresses[ADV7604_PAGE_AVLINK] = 0x42;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_CEC] = 0x40;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_INFOFRAME] = 0x3e;
--	state->pdata.i2c_addresses[ADV7604_PAGE_ESDP] = 0x38;
--	state->pdata.i2c_addresses[ADV7604_PAGE_DPP] = 0x3c;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_AFE] = 0x26;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_REP] = 0x32;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_EDID] = 0x36;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_HDMI] = 0x34;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_TEST] = 0x30;
--	state->pdata.i2c_addresses[ADV76XX_PAGE_CP] = 0x22;
--	state->pdata.i2c_addresses[ADV7604_PAGE_VDP] = 0x24;
--
- 	/* Hardcode the remaining platform data fields. */
- 	state->pdata.disable_pwrdnb = 0;
- 	state->pdata.disable_cable_det_rst = 0;
-@@ -3478,11 +3498,9 @@ static int adv76xx_probe(struct i2c_client *client,
- 		if (!(BIT(i) & state->info->page_mask))
- 			continue;
- 
--		state->i2c_clients[i] =
--			adv76xx_dummy_client(sd, state->pdata.i2c_addresses[i],
--					     0xf2 + i);
-+		state->i2c_clients[i] = adv76xx_dummy_client(sd, i);
- 		if (!state->i2c_clients[i]) {
--			err = -ENOMEM;
-+			err = -EINVAL;
- 			v4l2_err(sd, "failed to create i2c client %u\n", i);
- 			goto err_i2c;
- 		}
+ 		fcpvd1: fcp@fea2f000 {
+ 			compatible = "renesas,fcpv";
+ 			reg = <0 0xfea2f000 0 0x200>;
 -- 
-2.7.4
+2.11.0
+
