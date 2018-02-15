@@ -1,100 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36372 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032127AbeBOADr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52777 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163126AbeBOSaS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 19:03:47 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 02/12] dt-bindings: display: renesas: Deprecate LVDS support in the DU bindings
-Date: Thu, 15 Feb 2018 02:04:05 +0200
-Message-Id: <20180215000415.19077-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 15 Feb 2018 13:30:18 -0500
+Date: Thu, 15 Feb 2018 19:30:13 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH V2] ARM: shmobile: Document Renesas H2-based Stout DT
+ bindings
+Message-ID: <20180215183013.hv2odp73omcn6mhq@verge.net.au>
+References: <20180215100228.24695-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215100228.24695-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoders now have their own DT bindings, representing
-them as part of the DU is deprecated.
+On Thu, Feb 15, 2018 at 11:02:28AM +0100, Marek Vasut wrote:
+> Document the Renesas H2 Stout (ADAS Starterkit) device tree bindings,
+> listing it as a supported board.
+> 
+> This allows to use checkpatch.pl to validate .dts files referring to
+> the Stout board.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> V2: - Keep the list of boards alphabetically sorted
+>     - Rename the board from ADAS Starter Kit to ADAS Starterkit
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes since v1:
-
-- Remove the LVDS reg range from the example
-- Remove the reg-names property
----
- .../devicetree/bindings/display/renesas,du.txt     | 31 ++++++++--------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index cd48aba3bc8c..e79cf9b0ad38 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -14,12 +14,7 @@ Required Properties:
-     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
-     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
- 
--  - reg: A list of base address and length of each memory resource, one for
--    each entry in the reg-names property.
--  - reg-names: Name of the memory resources. The DU requires one memory
--    resource for the DU core (named "du") and one memory resource for each
--    LVDS encoder (named "lvds.x" with "x" being the LVDS controller numerical
--    index).
-+  - reg: the memory-mapped I/O registers base address and length
- 
-   - interrupt-parent: phandle of the parent interrupt controller.
-   - interrupts: Interrupt specifiers for the DU interrupts.
-@@ -29,14 +24,13 @@ Required Properties:
-   - clock-names: Name of the clocks. This property is model-dependent.
-     - R8A7779 uses a single functional clock. The clock doesn't need to be
-       named.
--    - All other DU instances use one functional clock per channel and one
--      clock per LVDS encoder (if available). The functional clocks must be
--      named "du.x" with "x" being the channel numerical index. The LVDS clocks
--      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
--    - In addition to the functional and encoder clocks, all DU versions also
--      support externally supplied pixel clocks. Those clocks are optional.
--      When supplied they must be named "dclkin.x" with "x" being the input
--      clock numerical index.
-+    - All other DU instances use one functional clock per channel The
-+      functional clocks must be named "du.x" with "x" being the channel
-+      numerical index.
-+    - In addition to the functional clocks, all DU versions also support
-+      externally supplied pixel clocks. Those clocks are optional. When
-+      supplied they must be named "dclkin.x" with "x" being the input clock
-+      numerical index.
- 
-   - vsps: A list of phandle and channel index tuples to the VSPs that handle
-     the memory interfaces for the DU channels. The phandle identifies the VSP
-@@ -69,9 +63,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7795";
--		reg = <0 0xfeb00000 0 0x80000>,
--		      <0 0xfeb90000 0 0x14>;
--		reg-names = "du", "lvds.0";
-+		reg = <0 0xfeb00000 0 0x80000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-@@ -79,9 +71,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 		clocks = <&cpg CPG_MOD 724>,
- 			 <&cpg CPG_MOD 723>,
- 			 <&cpg CPG_MOD 722>,
--			 <&cpg CPG_MOD 721>,
--			 <&cpg CPG_MOD 727>;
--		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+			 <&cpg CPG_MOD 721>;
-+		clock-names = "du.0", "du.1", "du.2", "du.3";
- 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
- 
- 		ports {
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, applied with Geert's reviewed-by tag from v1.
