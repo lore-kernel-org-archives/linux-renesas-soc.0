@@ -1,9 +1,15 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kbingham@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44835 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754825AbeBOIpj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 15 Feb 2018 03:45:39 -0500
+Subject: Re: [PATCH 3/8] dt-bindings: display: renesas,lvds: Add LVDS binding
+ for D3
+To: Kieran Bingham <kbingham@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Simon Horman <horms@verge.net.au>, geert@glider.be,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         David Airlie <airlied@linux.ie>,
@@ -12,22 +18,20 @@ Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/8] dt-bindings: display: renesas,lvds: Add LVDS binding for D3
-Date: Thu, 15 Feb 2018 16:02:49 +0200
-Message-ID: <2442341.aT5bf8aohc@avalon>
-In-Reply-To: <1518683903-10681-4-git-send-email-kbingham@kernel.org>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org> <1518683903-10681-4-git-send-email-kbingham@kernel.org>
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+ <1518683903-10681-4-git-send-email-kbingham@kernel.org>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <ad5ea103-b039-7a2e-01c8-2cb16324115d@ideasonboard.com>
+Date: Thu, 15 Feb 2018 08:45:33 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1518683903-10681-4-git-send-email-kbingham@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
-
-Thank you for the patch.
-
-On Thursday, 15 February 2018 10:38:18 EET Kieran Bingham wrote:
+On 15/02/18 08:38, Kieran Bingham wrote:
 > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > 
 > The D3 supports two LVDS channels. Extend the binding to support them.
@@ -37,36 +41,30 @@ On Thursday, 15 February 2018 10:38:18 EET Kieran Bingham wrote:
 >  Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt | 1 +
 >  1 file changed, 1 insertion(+)
 > 
-> diff --git
-> a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt index
-> 79860f58a7ad..0dcf488b70df 100644
+> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> index 79860f58a7ad..0dcf488b70df 100644
 > --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
 > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
 > @@ -14,6 +14,7 @@ Required properties:
 >  - compatible : Shall contain one of
 >    - "renesas,lvds-r8a7795" for R8A7795 (R-Car H3) compatible LVDS encoders
->    - "renesas,lvds-r8a7796" for R8A7796 (R-Car M3-W) compatible LVDS
-> encoders
-> +  - "renesas,lvds-r8a77995" for R8A77995 (R-Car D3) compatible
-> LVDS encoders
+>    - "renesas,lvds-r8a7796" for R8A7796 (R-Car M3-W) compatible LVDS encoders
+> +  - "renesas,lvds-r8a77995" for R8A77995 (R-Car D3) compatible LVDS encoders
 
-This should be "renesas,r8a77995-lvds". I've already fixed the series you've 
-based this patch on.
+Hi Laurent,
 
-Apart from this,
+Are we unable to have a generic lvds-gen3 here?
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+(Although to perhaps answer my own question I see that the D3/E3 have extra
+registers)
 
-and taken in my tree with the compatible string fixed.
+Also "lets pretend" that I intentionally separated out the LVDS updates to the
+rcar_lvds_of_table :)
 
-> 
+--
+Kieran
+
+>  
 >  - reg: Base address and length for the memory-mapped registers
 >  - clocks: A phandle + clock-specifier pair for the functional clock
-
-
--- 
-Regards,
-
-Laurent Pinchart
-
+> 
