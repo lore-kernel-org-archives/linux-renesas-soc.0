@@ -1,70 +1,59 @@
-Subject: Re: [PATCH 1/2] media: adv7604: Add support for
- i2c_new_secondary_device
-To: Rob Herring <robh@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Hans Verkuil <hans.verkuil@cisco.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>
-References: <1516625389-6362-1-git-send-email-kieran.bingham@ideasonboard.com>
- <1516625389-6362-2-git-send-email-kieran.bingham@ideasonboard.com>
- <20180129200813.ifaz2bkkxshiodga@rob-hp-laptop>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <4ff04149-9726-716c-306c-819130897c98@ideasonboard.com>
-Date: Wed, 7 Feb 2018 15:54:20 +0000
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:50325 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033088AbeBOPQt (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 15 Feb 2018 10:16:49 -0500
+Date: Thu, 15 Feb 2018 16:16:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: renesas: eagle: specify EtherAVB PHY
+ IRQ
+Message-ID: <20180215151644.szxwehuu6b7w5uuv@verge.net.au>
+References: <038a791d-aa57-9c3d-eaea-09c5704ecb54@cogentembedded.com>
+ <0ccd631e-691a-2b15-7680-6e0c847a6ca2@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20180129200813.ifaz2bkkxshiodga@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ccd631e-691a-2b15-7680-6e0c847a6ca2@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
-
-On 29/01/18 20:08, Rob Herring wrote:
-> On Mon, Jan 22, 2018 at 12:49:56PM +0000, Kieran Bingham wrote:
->> From: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
->>
->> The ADV7604 has thirteen 256-byte maps that can be accessed via the main
->> I²C ports. Each map has it own I²C address and acts as a standard slave
->> device on the I²C bus.
->>
->> Allow a device tree node to override the default addresses so that
->> address conflicts with other devices on the same bus may be resolved at
->> the board description level.
->>
->> Signed-off-by: Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>
->> [Kieran: Re-adapted for mainline]
->> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
->> ---
->> Based upon the original posting :
->>   https://lkml.org/lkml/2014/10/22/469
->> ---
->>  .../devicetree/bindings/media/i2c/adv7604.txt      | 18 ++++++-
+On Tue, Feb 13, 2018 at 02:24:14PM +0300, Sergei Shtylyov wrote:
+> Specify  EtherAVB PHY IRQ  in the Eagle board's device tree, now that we
+> have the GPIO support (previously phylib had to resort to polling).
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Thank you.
+Thanks, applied with Geert's tag.
 
-> In the future, please split bindings to separate patch.
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> ===================================================================
+> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> @@ -44,6 +44,8 @@
+>  	phy0: ethernet-phy@0 {
+>  		rxc-skew-ps = <1500>;
+>  		reg = <0>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
 
-Yes, of course - sorry - I should probably have known better here.
+Could you consider following-up with a patch to add:
 
-I was clearly being lazy as the original patch had bindings in with the driver.
-Although I don't think I've got an excuse for the second patch in the series :D
+		reset-gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
 
-I've split them out for the v2.
-
---
-Kieran
-
->>  drivers/media/i2c/adv7604.c                        | 60 ++++++++++++++--------
->>  2 files changed, 55 insertions(+), 23 deletions(-)
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  	};
+>  };
+>  
 > 
