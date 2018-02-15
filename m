@@ -1,107 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:32826 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034273AbeBPO0S (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51077 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165086AbeBOQS6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:26:18 -0500
-Received: by mail-wr0-f196.google.com with SMTP id s5so3108911wra.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 06:26:17 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 1/3] pinctrl: sh-pfc: r8a7795: Add TMU pins, groups and functions
-Date: Fri, 16 Feb 2018 15:26:09 +0100
-Message-Id: <1518791171-14162-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1518791171-14162-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1518791171-14162-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 15 Feb 2018 11:18:58 -0500
+Date: Thu, 15 Feb 2018 17:18:54 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 3/9] ARM: dts: kzm9d: Fix "debounce-interval" property
+ misspelling
+Message-ID: <20180215161853.m5wqgj6myjla3aab@verge.net.au>
+References: <1518531335-5170-1-git-send-email-geert+renesas@glider.be>
+ <1518531335-5170-4-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518531335-5170-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[Cc linux-renesas-soc]
 
-This patch adds TMU TCLK{1,2} pins, groups and functions to
-the R8A7795 SoC.
+On Tue, Feb 13, 2018 at 03:15:29PM +0100, Geert Uytterhoeven wrote:
+> "debounce_interval" was never supported.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> ---
+> Please apply to your tree when appropriate.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 42 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Thanks, applied.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 18aeee5..100eda4 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3840,6 +3840,36 @@ static const unsigned int ssi9_ctrl_b_mux[] = {
- 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
- };
- 
-+/* - TMU -------------------------------------------------------------------- */
-+static const unsigned int tmu_tclk1_a_pins[] = {
-+	/* TCLK */
-+	RCAR_GP_PIN(6, 23),
-+};
-+static const unsigned int tmu_tclk1_a_mux[] = {
-+	TCLK1_A_MARK,
-+};
-+static const unsigned int tmu_tclk1_b_pins[] = {
-+	/* TCLK */
-+	RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int tmu_tclk1_b_mux[] = {
-+	TCLK1_B_MARK,
-+};
-+static const unsigned int tmu_tclk2_a_pins[] = {
-+	/* TCLK */
-+	RCAR_GP_PIN(6, 19),
-+};
-+static const unsigned int tmu_tclk2_a_mux[] = {
-+	TCLK2_A_MARK,
-+};
-+static const unsigned int tmu_tclk2_b_pins[] = {
-+	/* TCLK */
-+	RCAR_GP_PIN(6, 28),
-+};
-+static const unsigned int tmu_tclk2_b_mux[] = {
-+	TCLK2_B_MARK,
-+};
-+
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
- 	/* PWEN, OVC */
-@@ -4190,6 +4220,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(ssi9_data_b),
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_a),
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
-+	SH_PFC_PIN_GROUP(tmu_tclk1_a),
-+	SH_PFC_PIN_GROUP(tmu_tclk1_b),
-+	SH_PFC_PIN_GROUP(tmu_tclk2_a),
-+	SH_PFC_PIN_GROUP(tmu_tclk2_b),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
-@@ -4639,6 +4673,13 @@ static const char * const ssi_groups[] = {
- 	"ssi9_ctrl_b",
- };
- 
-+static const char * const tmu_groups[] = {
-+	"tmu_tclk1_a",
-+	"tmu_tclk1_b",
-+	"tmu_tclk2_a",
-+	"tmu_tclk2_b",
-+};
-+
- static const char * const usb0_groups[] = {
- 	"usb0",
- };
-@@ -4705,6 +4746,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi2),
- 	SH_PFC_FUNCTION(sdhi3),
- 	SH_PFC_FUNCTION(ssi),
-+	SH_PFC_FUNCTION(tmu),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
--- 
-2.7.4
+> 
+>  arch/arm/boot/dts/emev2-kzm9d.dts | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/emev2-kzm9d.dts b/arch/arm/boot/dts/emev2-kzm9d.dts
+> index 60d0a732833aaada..c238407133bfe2d7 100644
+> --- a/arch/arm/boot/dts/emev2-kzm9d.dts
+> +++ b/arch/arm/boot/dts/emev2-kzm9d.dts
+> @@ -38,28 +38,28 @@
+>  		#size-cells = <0>;
+>  
+>  		one {
+> -			debounce_interval = <50>;
+> +			debounce-interval = <50>;
+>  			wakeup-source;
+>  			label = "DSW2-1";
+>  			linux,code = <KEY_1>;
+>  			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+>  		};
+>  		two {
+> -			debounce_interval = <50>;
+> +			debounce-interval = <50>;
+>  			wakeup-source;
+>  			label = "DSW2-2";
+>  			linux,code = <KEY_2>;
+>  			gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+>  		};
+>  		three {
+> -			debounce_interval = <50>;
+> +			debounce-interval = <50>;
+>  			wakeup-source;
+>  			label = "DSW2-3";
+>  			linux,code = <KEY_3>;
+>  			gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+>  		};
+>  		four {
+> -			debounce_interval = <50>;
+> +			debounce-interval = <50>;
+>  			wakeup-source;
+>  			label = "DSW2-4";
+>  			linux,code = <KEY_4>;
+> -- 
+> 2.7.4
+> 
