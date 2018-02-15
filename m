@@ -1,62 +1,172 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v11 04/10] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
-Date: Thu, 22 Feb 2018 11:37:20 +0100
-Message-Id: <1519295846-11612-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36374 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032164AbeBOADz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 14 Feb 2018 19:03:55 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v3 11/12] arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
+Date: Thu, 15 Feb 2018 02:04:14 +0200
+Message-Id: <20180215000415.19077-12-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180215000415.19077-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add Capture Engine Unit (CEU) node to device tree.
+The internal LVDS encoder now has DT bindings separate from the DU. Port
+the device tree over to the new model.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r7s72100.dtsi | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Changes since v2:
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index ab9645a..23e05ce 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -135,9 +135,9 @@
- 			#clock-cells = <1>;
- 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0xfcfe042c 4>;
--			clocks = <&p0_clk>;
--			clock-indices = <R7S72100_CLK_RTC>;
--			clock-output-names = "rtc";
-+			clocks = <&b_clk>, <&p0_clk>;
-+			clock-indices = <R7S72100_CLK_CEU R7S72100_CLK_RTC>;
-+			clock-output-names = "ceu", "rtc";
- 		};
- 
- 		mstp7_clks: mstp7_clks@fcfe0430 {
-@@ -667,4 +667,13 @@
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-+
-+	ceu: camera@e8210000 {
-+		reg = <0xe8210000 0x3000>;
-+		compatible = "renesas,r7s72100-ceu";
-+		interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp6_clks R7S72100_CLK_CEU>;
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
+- Fixed LVDS compatible string
+
+Changes since v1:
+
+- Remove the DU reg-names property
+---
+ .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |  3 +-
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |  3 +-
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  3 +-
+ .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |  3 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 34 ++++++++++++++++++----
+ 5 files changed, 32 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+index 9ef9a4e5f376..0dda1c0ed1ce 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+@@ -43,12 +43,11 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock5 1>,
+ 		 <&x21_clk>,
+ 		 <&x22_clk>,
+ 		 <&versaclock5 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
  };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 0afe777973de..f0d6528c05eb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -44,11 +44,10 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock5 1>,
+ 		 <&versaclock5 3>,
+ 		 <&versaclock5 4>,
+ 		 <&versaclock5 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 00ad1ab53a7d..e34b986185d4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -43,12 +43,11 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock5 1>,
+ 		 <&x21_clk>,
+ 		 <&x22_clk>,
+ 		 <&versaclock5 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index 79e8b65622db..31f2abaa90aa 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -43,12 +43,11 @@
+ 		 <&cpg CPG_MOD 723>,
+ 		 <&cpg CPG_MOD 722>,
+ 		 <&cpg CPG_MOD 721>,
+-		 <&cpg CPG_MOD 727>,
+ 		 <&versaclock6 1>,
+ 		 <&x21_clk>,
+ 		 <&x22_clk>,
+ 		 <&versaclock6 2>;
+-	clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0",
++	clock-names = "du.0", "du.1", "du.2", "du.3",
+ 		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 15ef292a8d9f..d67ad6d3d67f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2077,9 +2077,7 @@
+ 
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7795";
+-			reg = <0 0xfeb00000 0 0x80000>,
+-			      <0 0xfeb90000 0 0x14>;
+-			reg-names = "du", "lvds.0";
++			reg = <0 0xfeb00000 0 0x80000>;
+ 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
+@@ -2087,9 +2085,8 @@
+ 			clocks = <&cpg CPG_MOD 724>,
+ 				 <&cpg CPG_MOD 723>,
+ 				 <&cpg CPG_MOD 722>,
+-				 <&cpg CPG_MOD 721>,
+-				 <&cpg CPG_MOD 727>;
+-			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
++				 <&cpg CPG_MOD 721>;
++			clock-names = "du.0", "du.1", "du.2", "du.3";
+ 			vsps = <&vspd0 0 &vspd1 0 &vspd2 0 &vspd0 1>;
+ 			status = "disabled";
+ 
+@@ -2117,6 +2114,31 @@
+ 				port@3 {
+ 					reg = <3>;
+ 					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
++					};
++				};
++			};
++		};
++
++		lvds0: lvds@feb90000 {
++			compatible = "renesas,r8a7795-lvds";
++			reg = <0 0xfeb90000 0 0x14>;
++			clocks = <&cpg CPG_MOD 727>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
+ 					};
+ 				};
+ 			};
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
