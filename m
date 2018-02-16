@@ -1,53 +1,68 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34234 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751236AbeBEUKZ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:10:25 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 2/4] drm/exynos: fix comparison to bitshift when dealing with a mask
-Date: Mon,  5 Feb 2018 21:09:59 +0100
-Message-Id: <20180205201002.23621-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: [PATCH v2 5/5] arm64: dts: renesas: condor: add EtherAVB support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
+Message-ID: <5ca8941c-9273-733e-28bd-e76a82e94908@cogentembedded.com>
+Date: Fri, 16 Feb 2018 21:38:31 +0300
+MIME-Version: 1.0
+In-Reply-To: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Due to a typo, the mask was destroyed by a comparison instead of a bit
-shift.
+Define the Condor board dependent part of the EtherAVB device node.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Based  on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
-Only build tested. To be applied individually per subsystem.
+Changes in version 2:
+- added the "renesas,no-ether-link" property;
+- overrode the "phy-mode" property.
 
- drivers/gpu/drm/exynos/regs-fimc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/regs-fimc.h b/drivers/gpu/drm/exynos/regs-fimc.h
-index 30496134a3d072..d7cbe53c4c01f4 100644
---- a/drivers/gpu/drm/exynos/regs-fimc.h
-+++ b/drivers/gpu/drm/exynos/regs-fimc.h
-@@ -569,7 +569,7 @@
- #define EXYNOS_CIIMGEFF_FIN_EMBOSSING		(4 << 26)
- #define EXYNOS_CIIMGEFF_FIN_SILHOUETTE		(5 << 26)
- #define EXYNOS_CIIMGEFF_FIN_MASK			(7 << 26)
--#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff < 13) | (0xff < 0))
-+#define EXYNOS_CIIMGEFF_PAT_CBCR_MASK		((0xff << 13) | (0xff << 0))
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -15,6 +15,7 @@
  
- /* Real input DMA size register */
- #define EXYNOS_CIREAL_ISIZE_AUTOLOAD_ENABLE	(1 << 31)
--- 
-2.11.0
+ 	aliases {
+ 		serial0 = &scif0;
++		ethernet0 = &avb;
+ 	};
+ 
+ 	chosen {
+@@ -28,6 +29,18 @@
+ 	};
+ };
+ 
++&avb {
++	phy-mode = "rgmii-id";
++	phy-handle = <&phy0>;
++	renesas,no-ether-link;
++	status = "okay";
++
++	phy0: ethernet-phy@0 {
++		rxc-skew-ps = <1500>;
++		reg = <0>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
