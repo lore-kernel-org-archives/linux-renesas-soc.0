@@ -1,46 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:38209 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbeBTSZ4 (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34703 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034273AbeBPO0T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 13:25:56 -0500
-Received: by mail-qk0-f196.google.com with SMTP id s198so17638931qke.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Feb 2018 10:25:56 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1518791171-14162-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1518791171-14162-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1518791171-14162-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Feb 2018 19:25:55 +0100
-Message-ID: <CAMuHMdWT7t3hYx=FsjJEtoVSjLd_R=yzdvNE2L9xzX1uGAe5tw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: sh-pfc: r8a7795-es1: Add TMU pins, groups
- and functions
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 16 Feb 2018 09:26:19 -0500
+Received: by mail-wm0-f65.google.com with SMTP id j21so5753418wmh.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 06:26:19 -0800 (PST)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 2/3] pinctrl: sh-pfc: r8a7795-es1: Add TMU pins, groups and functions
+Date: Fri, 16 Feb 2018 15:26:10 +0100
+Message-Id: <1518791171-14162-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1518791171-14162-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1518791171-14162-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Feb 16, 2018 at 3:26 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds TMU TCLK{1,2} pins, groups and functions to
-> the R8A7795 ES1.x SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-and queueing in sh-pfc-for-v4.17.
+This patch adds TMU TCLK{1,2} pins, groups and functions to
+the R8A7795 ES1.x SoC.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 42 ++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+index 292e35d..0f81802 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+@@ -3750,6 +3750,36 @@ static const unsigned int ssi9_ctrl_b_mux[] = {
+ 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
+ };
+ 
++/* - TMU -------------------------------------------------------------------- */
++static const unsigned int tmu_tclk1_a_pins[] = {
++	/* TCLK */
++	RCAR_GP_PIN(6, 23),
++};
++static const unsigned int tmu_tclk1_a_mux[] = {
++	TCLK1_A_MARK,
++};
++static const unsigned int tmu_tclk1_b_pins[] = {
++	/* TCLK */
++	RCAR_GP_PIN(5, 19),
++};
++static const unsigned int tmu_tclk1_b_mux[] = {
++	TCLK1_B_MARK,
++};
++static const unsigned int tmu_tclk2_a_pins[] = {
++	/* TCLK */
++	RCAR_GP_PIN(6, 19),
++};
++static const unsigned int tmu_tclk2_a_mux[] = {
++	TCLK2_A_MARK,
++};
++static const unsigned int tmu_tclk2_b_pins[] = {
++	/* TCLK */
++	RCAR_GP_PIN(6, 28),
++};
++static const unsigned int tmu_tclk2_b_mux[] = {
++	TCLK2_B_MARK,
++};
++
+ /* - USB0 ------------------------------------------------------------------- */
+ static const unsigned int usb0_pins[] = {
+ 	/* PWEN, OVC */
+@@ -4095,6 +4125,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(ssi9_data_b),
+ 	SH_PFC_PIN_GROUP(ssi9_ctrl_a),
+ 	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
++	SH_PFC_PIN_GROUP(tmu_tclk1_a),
++	SH_PFC_PIN_GROUP(tmu_tclk1_b),
++	SH_PFC_PIN_GROUP(tmu_tclk2_a),
++	SH_PFC_PIN_GROUP(tmu_tclk2_b),
+ 	SH_PFC_PIN_GROUP(usb0),
+ 	SH_PFC_PIN_GROUP(usb1),
+ 	SH_PFC_PIN_GROUP(usb2),
+@@ -4545,6 +4579,13 @@ static const char * const ssi_groups[] = {
+ 	"ssi9_ctrl_b",
+ };
+ 
++static const char * const tmu_groups[] = {
++	"tmu_tclk1_a",
++	"tmu_tclk1_b",
++	"tmu_tclk2_a",
++	"tmu_tclk2_b",
++};
++
+ static const char * const usb0_groups[] = {
+ 	"usb0",
+ };
+@@ -4613,6 +4654,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(sdhi2),
+ 	SH_PFC_FUNCTION(sdhi3),
+ 	SH_PFC_FUNCTION(ssi),
++	SH_PFC_FUNCTION(tmu),
+ 	SH_PFC_FUNCTION(usb0),
+ 	SH_PFC_FUNCTION(usb1),
+ 	SH_PFC_FUNCTION(usb2),
+-- 
+2.7.4
