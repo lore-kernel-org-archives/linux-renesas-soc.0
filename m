@@ -1,171 +1,214 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:56413 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752588AbeBTPO2 (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41314 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbeBPSa1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:14:28 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 16/19] ARM64: dts: r8a77965: Add GPIO nodes
-Date: Tue, 20 Feb 2018 16:12:18 +0100
-Message-Id: <1519139541-18783-17-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 16 Feb 2018 13:30:27 -0500
+Received: by mail-lf0-f66.google.com with SMTP id f136so5251513lff.8
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 10:30:27 -0800 (PST)
+Subject: [PATCH v2 2/5] arm64: dts: renesas: r8a77980: add [H]SCIF support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
+Message-ID: <a2b95bb2-ffd0-650c-dca3-69eb9a316417@cogentembedded.com>
+Date: Fri, 16 Feb 2018 21:30:23 +0300
+MIME-Version: 1.0
+In-Reply-To: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add GPIO nodes to r8a77965 SoC device tree file.
+Describe [H]SCIF ports in the R8A77980 device tree.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 ---
-v1 -> v2:
-- Replace ALWAYS_ON power area define with numeric constant
-- Do not move gpio nodes
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 104 +++++++++++++++++++++++++++---
- 1 file changed, 96 insertions(+), 8 deletions(-)
+Changes in version 2:
+- fixed the internal BRG clock to S3D1 for all ports;
+- added Geert's tag.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 3cb1a33..55f05f7 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -197,35 +197,123 @@
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |  151 ++++++++++++++++++++++++++++++
+ 1 file changed, 151 insertions(+)
+
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -56,6 +56,13 @@
+ 		method = "smc";
+ 	};
+ 
++	/* External SCIF clock - to be overridden by boards that provide it */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+@@ -85,6 +92,150 @@
+ 			#power-domain-cells = <1>;
  		};
  
- 		gpio0: gpio@e6050000 {
--			/* placeholder */
-+			compatible = "renesas,gpio-r8a77965",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 16>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 912>;
++		hscif0: serial@e6540000 {
++			compatible = "renesas,hscif-r8a77980",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6540000 0 0x60>;
++			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 520>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
++			       <&dmac2 0x31>, <&dmac2 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 912>;
- 		};
- 
- 		gpio1: gpio@e6051000 {
--			/* placeholder */
-+			compatible = "renesas,gpio-r8a77965",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 29>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 911>;
++			resets = <&cpg 520>;
++			status = "disabled";
++		};
++
++		hscif1: serial@e6550000 {
++			compatible = "renesas,hscif-r8a77980",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6550000 0 0x60>;
++			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 519>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
++			       <&dmac2 0x33>, <&dmac2 0x32>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 911>;
- 		};
- 
- 		gpio2: gpio@e6052000 {
--			/* placeholder */
-+			compatible = "renesas,gpio-r8a77965",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 15>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 910>;
++			resets = <&cpg 519>;
++			status = "disabled";
++		};
++
++		hscif2: serial@e6560000 {
++			compatible = "renesas,hscif-r8a77980",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe6560000 0 0x60>;
++			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 518>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
++			       <&dmac2 0x35>, <&dmac2 0x34>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 910>;
- 		};
- 
- 		gpio3: gpio@e6053000 {
--			/* placeholder */
-+			compatible = "renesas,gpio-r8a77965",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 96 16>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 909>;
++			resets = <&cpg 518>;
++			status = "disabled";
++		};
++
++		hscif3: serial@e66a0000 {
++			compatible = "renesas,hscif-r8a77980",
++				     "renesas,rcar-gen3-hscif",
++				     "renesas,hscif";
++			reg = <0 0xe66a0000 0 0x60>;
++			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 517>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
++			       <&dmac2 0x37>, <&dmac2 0x36>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 909>;
- 		};
- 
- 		gpio4: gpio@e6054000 {
--			/* placeholder */
-+			compatible = "renesas,gpio-r8a77965",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 18>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 908>;
++			resets = <&cpg 517>;
++			status = "disabled";
++		};
++
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a77980",
++				     "renesas,rcar-gen3-scif",
++				     "renesas,scif";
++			reg = <0 0xe6e60000 0 0x40>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 207>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
++			       <&dmac2 0x51>, <&dmac2 0x50>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 908>;
- 		};
- 
- 		gpio5: gpio@e6055000 {
--			/* placeholder */
-+			compatible = "renesas,gpio-r8a77965",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 26>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 907>;
++			resets = <&cpg 207>;
++			status = "disabled";
++		};
++
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a77980",
++				     "renesas,rcar-gen3-scif",
++				     "renesas,scif";
++			reg = <0 0xe6e68000 0 0x40>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 206>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
++			       <&dmac2 0x53>, <&dmac2 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 907>;
- 		};
- 
- 		gpio6: gpio@e6055400 {
--			/* placeholder */
-+			compatible = "renesas,gpio-r8a77965",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6055400 0 0x50>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 192 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 906>;
++			resets = <&cpg 206>;
++			status = "disabled";
++		};
++
++		scif3: serial@e6c50000 {
++			compatible = "renesas,scif-r8a77980",
++				     "renesas,rcar-gen3-scif",
++				     "renesas,scif";
++			reg = <0 0xe6c50000 0 0x40>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 204>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
++			       <&dmac2 0x57>, <&dmac2 0x56>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 906>;
- 		};
- 
- 		gpio7: gpio@e6055800 {
--			/* placeholder */
-+			compatible = "renesas,gpio-r8a77965",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6055800 0 0x50>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 224 4>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 905>;
++			resets = <&cpg 204>;
++			status = "disabled";
++		};
++
++		scif4: serial@e6c40000 {
++			compatible = "renesas,scif-r8a77980",
++				     "renesas,rcar-gen3-scif",
++				     "renesas,scif";
++			reg = <0 0xe6c40000 0 0x40>;
++			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 203>,
++				 <&cpg CPG_CORE 19>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
++			       <&dmac2 0x59>, <&dmac2 0x58>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 905>;
- 		};
- 
- 		intc_ex: interrupt-controller@e61c0000 {
--- 
-2.7.4
++			resets = <&cpg 203>;
++			status = "disabled";
++		};
++
+ 		dmac1: dma-controller@e7300000 {
+ 			compatible = "renesas,dmac-r8a77980",
+ 				     "renesas,rcar-dmac";
