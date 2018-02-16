@@ -1,50 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:49635 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752515AbeBPStl (ORCPT
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:45239 "EHLO
+        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034273AbeBPO1X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 13:49:41 -0500
-Date: Fri, 16 Feb 2018 19:44:06 +0100
-From: Greg KH <greg@kroah.com>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        wsa@the-dreams.de, geert@linux-m68k.org,
-        yoshihiro.shimoda.uh@renesas.com
-Subject: Re: [PATCH] serial: sh-sci: prevent lockup on full TTY buffers
-Message-ID: <20180216184406.GA9286@kroah.com>
-References: <1518696147-23790-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 16 Feb 2018 09:27:23 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518696147-23790-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <20180215131237.4yi42wq4duic7uaq@katana>
+References: <1518696147-23790-1-git-send-email-ulrich.hecht+renesas@gmail.com> <20180215131237.4yi42wq4duic7uaq@katana>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Date: Fri, 16 Feb 2018 15:27:22 +0100
+Message-ID: <CAO3366xcbP5hdLC_fgFfDtNJcqE5vfkVZBjAqk6VN8mAk2wYCA@mail.gmail.com>
+Subject: Re: [PATCH] serial: sh-sci: prevent lockup on full TTY buffers
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 15, 2018 at 01:02:27PM +0100, Ulrich Hecht wrote:
-> When the TTY buffers fill up to the configured maximum, a system lockup
-> occurs:
-> 
-> [  598.820128] INFO: rcu_preempt detected stalls on CPUs/tasks:
-> [  598.825796]  0-...!: (1 GPs behind) idle=5a6/2/0 softirq=1974/1974 fqs=1
-> [  598.832577]  (detected by 3, t=62517 jiffies, g=296, c=295, q=126)
-> [  598.838755] Task dump for CPU 0:
-> [  598.841977] swapper/0       R  running task        0     0      0 0x00000022
-> [  598.849023] Call trace:
-> [  598.851476]  __switch_to+0x98/0xb0
-> [  598.854870]            (null)
-> 
-> This can be prevented by doing a dummy read of the RX data register.
-> 
-> This issue affects both HSCIF and SCIF ports. Reported for R-Car H3 ES2.0;
-> reproduced and fixed on H3 ES1.1. Probably affects other R-Car platforms
-> as well.
-> 
-> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+On Thu, Feb 15, 2018 at 2:12 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+>> This can be prevented by doing a dummy read of the RX data register.
+>
+> Just so I understand the issue correctly: We are reading the register to
+> throw the content away to prevent it being used in the TTY buffers?
 
-Should this go to older kernel versions as well?
-If so, how far back?
+Not quite. The problem was that if the buffers are full,
+sci_receive_chars() returned immediately without reading anything from
+the data register, and that led to a lockup. I am not fully sure why
+that is so (I arrived at the fix by examining how the different code
+paths look from the serial controller's perspective), but dropping
+data here fixes it. At this point buffers are full, so any data
+received will have to be discarded anyway.
 
-thanks,
-
-greg k-h
+CU
+Uli
