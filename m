@@ -1,28 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56046 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751866AbeBSIzP (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33801 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034273AbeBPO0Q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Feb 2018 03:55:15 -0500
-Date: Mon, 19 Feb 2018 09:54:56 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: add TMU pins
-Message-ID: <20180219085456.nwl7sgs6txmu3l7v@verge.net.au>
-References: <1518791171-14162-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518791171-14162-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 16 Feb 2018 09:26:16 -0500
+Received: by mail-wr0-f194.google.com with SMTP id m5so3107363wrg.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 06:26:15 -0800 (PST)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/3] pinctrl: sh-pfc: add TMU pins
+Date: Fri, 16 Feb 2018 15:26:08 +0100
+Message-Id: <1518791171-14162-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Feb 16, 2018 at 03:26:08PM +0100, Ulrich Hecht wrote:
-> Hi!
-> 
-> Straight from the BSP, TMU pins for r8a7795{,-es1} and r8a7796. Magic
-> numbers verified according to "pinfunction" document revisions 0.54 (M3-W)
-> and 0.553 (H3).
+Hi!
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Straight from the BSP, TMU pins for r8a7795{,-es1} and r8a7796. Magic
+numbers verified according to "pinfunction" document revisions 0.54 (M3-W)
+and 0.553 (H3).
+
+CU
+Uli
+
+
+Takeshi Kihara (3):
+  pinctrl: sh-pfc: r8a7795: Add TMU pins, groups and functions
+  pinctrl: sh-pfc: r8a7795-es1: Add TMU pins, groups and functions
+  pinctrl: sh-pfc: r8a7796: Add TMU pins, groups and functions
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 42 ++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 42 ++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 42 ++++++++++++++++++++++++++++++++
+ 3 files changed, 126 insertions(+)
+
+-- 
+2.7.4
