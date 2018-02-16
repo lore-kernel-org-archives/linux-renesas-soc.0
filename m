@@ -1,168 +1,154 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: [PATCH v2 5/5] arm64: dts: renesas: v3msk: add DU/LVDS/HDMI support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38142 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964875AbeBPLv4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Feb 2018 06:51:56 -0500
+Subject: Re: [PATCH 7/8] arm64: dts: renesas: r8a77995-draak: Add HDMI Out
+ through ADV7511
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>, geert@glider.be,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
-Message-ID: <f8a3d49d-e8e4-a4ed-19a3-2a340a377726@cogentembedded.com>
-Date: Tue, 27 Feb 2018 23:12:16 +0300
+        open list <linux-kernel@vger.kernel.org>
+References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+ <1518683903-10681-8-git-send-email-kbingham@kernel.org>
+ <2517305.jdPBFiRQEk@avalon>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <95b1fa2c-8302-e264-2f00-eba5ac34bcd3@ideasonboard.com>
+Date: Fri, 16 Feb 2018 11:51:51 +0000
 MIME-Version: 1.0
-In-Reply-To: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
+In-Reply-To: <2517305.jdPBFiRQEk@avalon>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the V3M Starter Kit board dependent part of the DU and LVDS device
-nodes. Also add the device nodes for the Analog Devices ADV7511W HDMI
-transmitter -- it's actually connected to the LVDS output via an LVDS
-decoder (deliberately omitted here since there's no driver yet anyway).
+Hi Laurent,
 
-Based on the original (and large) patch by Vladimir Barinov.
+On 15/02/18 14:16, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Thursday, 15 February 2018 10:38:22 EET Kieran Bingham wrote:
+>> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>>
+>> Provide a device node for the ADV7511 as found on the Draak D3 platform.
+>>
+>> The ADV7511 is connected to the DU through a parallel mux chip, and is
+>> configurable in hardware whether it is connected to LVDS0 or LVDS1.
+>>
+>> Connect through to LVDS0 as a default implementation.
+> 
+> You need to model the LVDS decoder in DT too. I know that no driver and no DT 
+> bindings are available at the moment, and I'm aware that this patch enables 
+> the HDMI output on the Draak board, but I don't think it's upstreamable as-is.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Ok, understood. - I'll drop this patch for now until we can schedule time to
+dedicate to looking into this.
 
----
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts |  106 +++++++++++++++++++++++++
- 1 file changed, 106 insertions(+)
+I'm sure the archive's will hold on to this patch for us as a starting point :-)
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-@@ -29,6 +29,41 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	osc5_clk: osc5-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <148500000>;
-+	};
-+
-+	vcc_d1p8v: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_D1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vcc_d3p3v: regulator-1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_D3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
- };
- 
- &avb {
-@@ -42,6 +77,13 @@
- 	};
- };
- 
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&osc5_clk>;
-+	clock-names = "du.0", "dclkin.0";
-+	status = "okay";
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
-@@ -50,6 +92,70 @@
- 	clock-frequency = <32768>;
- };
- 
-+&i2c0 {
-+	pinctrl-0 = <&i2c0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	hdmi@39{
-+		compatible = "adi,adv7511w";
-+		#sound-dai-cells = <0>;
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		avdd-supply = <&vcc_d1p8v>;
-+		dvdd-supply = <&vcc_d1p8v>;
-+		pvdd-supply = <&vcc_d1p8v>;
-+		bgvdd-supply = <&vcc_d1p8v>;
-+		dvdd-3v-supply = <&vcc_d3p3v>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			endpoint {
-+				remote-endpoint = <&adv7511_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&pfc {
-+	i2c0_pins: i2c0 {
-+		groups = "i2c0";
-+		function = "i2c0";
-+	};
-+};
-+
- &scif0 {
- 	status = "okay";
- };
+--
+Regards
+
+Kieran
+
+> 
+>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+>> ---
+>>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 56 +++++++++++++++++++++++
+>>  1 file changed, 56 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+>> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index
+>> 668e246dfc5d..df0c7773cb7d 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+>> @@ -27,6 +27,17 @@
+>>  		stdout-path = "serial0:115200n8";
+>>  	};
+>>
+>> +	hdmi-out {
+>> +		compatible = "hdmi-connector";
+>> +		type = "a";
+>> +
+>> +		port {
+>> +			hdmi_con_out: endpoint {
+>> +				remote-endpoint = <&adv7511_out>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>>  	vga {
+>>  		compatible = "vga-connector";
+>>
+>> @@ -124,6 +135,39 @@
+>>  		reg = <0x50>;
+>>  		pagesize = <8>;
+>>  	};
+>> +
+>> +	hdmi@39 {
+>> +		compatible = "adi,adv7511w";
+>> +		reg = <0x39>, <0x3f>, <0x38>, <0x3c>;
+>> +		reg-names = "main", "edid", "packet", "cec";
+>> +		interrupt-parent = <&gpio1>;
+>> +		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
+>> +
+>> +		adi,input-depth = <8>;
+>> +		adi,input-colorspace = "rgb";
+>> +		adi,input-clock = "1x";
+>> +		adi,input-style = <1>;
+>> +		adi,input-justification = "evenly";
+>> +
+>> +		ports {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			port@0 {
+>> +				reg = <0>;
+>> +				adv7511_in: endpoint {
+>> +					remote-endpoint = <&lvds0_out>;
+>> +				};
+>> +			};
+>> +
+>> +			port@1 {
+>> +				reg = <1>;
+>> +				adv7511_out: endpoint {
+>> +					remote-endpoint = <&hdmi_con_out>;
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>>  };
+>>
+>>  &i2c1 {
+>> @@ -146,6 +190,18 @@
+>>  	};
+>>  };
+>>
+>> +&lvds0 {
+>> +	status = "okay";
+>> +
+>> +	ports {
+>> +		port@1 {
+>> +			endpoint {
+>> +				remote-endpoint = <&adv7511_in>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>>  &ehci0 {
+>>  	status = "okay";
+>>  };
+> 
+> 
