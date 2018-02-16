@@ -1,104 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43238 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967967AbeBOL45 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33835 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031222AbeBPNfe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:56:57 -0500
-Received: by mail-lf0-f68.google.com with SMTP id q69so15836893lfi.10
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2018 03:56:56 -0800 (PST)
-Subject: [PATCH v2 1/2] dt-bindings: clock: add R8A77980 CPG core clock
- definitions
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
-Message-ID: <7691d7f4-364d-bd7b-f9fe-ea49e7c2ab09@cogentembedded.com>
-Date: Thu, 15 Feb 2018 14:56:53 +0300
+        Fri, 16 Feb 2018 08:35:34 -0500
+Date: Fri, 16 Feb 2018 14:35:29 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kbingham@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/5] arm64: dts: renesas: r8a7795-es1: Fix register
+ mappings on VSPs
+Message-ID: <20180216133528.nlf6srnitp66xeey@verge.net.au>
+References: <1518602108-1724-1-git-send-email-kbingham@kernel.org>
+ <1518602108-1724-4-git-send-email-kbingham@kernel.org>
+ <2009459.7Q8ChOu4tJ@avalon>
 MIME-Version: 1.0
-In-Reply-To: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2009459.7Q8ChOu4tJ@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference the R8A77980
-CPG core clocks by index. The data come from the table 8.2e of the R-Car
-Series, 3rd Generation User's Manual: Hardware (Rev. 0.80, Oct, 2017),
-however I had to add the Z2 clock which is somehow present only on the
-figure 8.1e...
+On Wed, Feb 14, 2018 at 12:08:56PM +0200, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Wednesday, 14 February 2018 11:55:06 EET Kieran Bingham wrote:
+> > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 
+> > The VSPD includes a CLUT on RPF2. Ensure that the register space is
+> > mapped correctly to support this.
+> > 
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
----
-Changes in version 2:
-- wrapped the SPDX license ID in its own comment;
-- added Geert's tag.
-
- include/dt-bindings/clock/r8a77980-cpg-mssr.h |   51 ++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
-
-Index: renesas-drivers/include/dt-bindings/clock/r8a77980-cpg-mssr.h
-===================================================================
---- /dev/null
-+++ renesas-drivers/include/dt-bindings/clock/r8a77980-cpg-mssr.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2018 Cogent Embedded, Inc.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A77980_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A77980_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a77980 CPG Core Clocks */
-+#define R8A77980_CLK_Z2			0
-+#define R8A77980_CLK_ZR			1
-+#define R8A77980_CLK_ZTR		2
-+#define R8A77980_CLK_ZTRD2		3
-+#define R8A77980_CLK_ZT			4
-+#define R8A77980_CLK_ZX			5
-+#define R8A77980_CLK_S0D1		6
-+#define R8A77980_CLK_S0D2		7
-+#define R8A77980_CLK_S0D3		8
-+#define R8A77980_CLK_S0D4		9
-+#define R8A77980_CLK_S0D6		10
-+#define R8A77980_CLK_S0D12		11
-+#define R8A77980_CLK_S0D24		12
-+#define R8A77980_CLK_S1D1		13
-+#define R8A77980_CLK_S1D2		14
-+#define R8A77980_CLK_S1D4		15
-+#define R8A77980_CLK_S2D1		16
-+#define R8A77980_CLK_S2D2		17
-+#define R8A77980_CLK_S2D4		18
-+#define R8A77980_CLK_S3D1		19
-+#define R8A77980_CLK_S3D2		20
-+#define R8A77980_CLK_S3D4		21
-+#define R8A77980_CLK_LB			22
-+#define R8A77980_CLK_CL			23
-+#define R8A77980_CLK_ZB3		24
-+#define R8A77980_CLK_ZB3D2		25
-+#define R8A77980_CLK_ZB3D4		26
-+#define R8A77980_CLK_SD0H		27
-+#define R8A77980_CLK_SD0		28
-+#define R8A77980_CLK_RPC		29
-+#define R8A77980_CLK_RPCD2		30
-+#define R8A77980_CLK_MSO		31
-+#define R8A77980_CLK_CANFD		32
-+#define R8A77980_CLK_CSI0		33
-+#define R8A77980_CLK_CP			34
-+#define R8A77980_CLK_CPEX		35
-+#define R8A77980_CLK_R			36
-+#define R8A77980_CLK_OSC		37
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A77980_CPG_MSSR_H__ */
+Thanks, applied.
