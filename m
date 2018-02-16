@@ -1,10 +1,15 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:46950 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757435AbeBPJUV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Feb 2018 04:20:21 -0500
 MIME-Version: 1.0
 In-Reply-To: <1518515162-23663-6-git-send-email-jacopo+renesas@jmondi.org>
 References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org> <1518515162-23663-6-git-send-email-jacopo+renesas@jmondi.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 16 Feb 2018 10:36:23 +0100
-Message-ID: <CAMuHMdXQQqRTir-3wgorh_QX060K_CyQNStA46Ph+hnrikqCaw@mail.gmail.com>
+Date: Fri, 16 Feb 2018 10:20:20 +0100
+Message-ID: <CAMuHMdUSXE2k4QwbpRvFChtfFj6_RYxCwst8yvbkA1GxhvacfQ@mail.gmail.com>
 Subject: Re: [PATCH 05/15] ARM64: dts: Add R-Car Salvator-x M3-N support
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: Simon Horman <horms@verge.net.au>,
@@ -16,56 +21,50 @@ Cc: Simon Horman <horms@verge.net.au>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Jacopo,
 
 On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
 <jacopo+renesas@jmondi.org> wrote:
-> Add initial support for R-Car M3-N Salvator-x and r8a77965 SoC in
-> device tree with cpg-mssr, reset and clock nodes.
->
-> Add place-holder device nodes for all nodes referred by
-> "salvator-common.dtsi"
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
 > --- /dev/null
 > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-
-> +               gic: interrupt-controller@f1010000 {
-> +                       compatible = "arm,gic-400";
-> +                       #interrupt-cells = <3>;
-> +                       #address-cells = <0>;
-> +                       interrupt-controller;
-> +                       reg = <0x0 0xf1010000 0 0x1000>,
-> +                             <0x0 0xf1020000 0 0x20000>,
-> +                             <0x0 0xf1040000 0 0x20000>,
-> +                             <0x0 0xf1060000 0 0x20000>;
-> +                       interrupts = <GIC_PPI 9
-> +                                       (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-
-Given you have 2 CPU cores, it should say GIC_CPU_MASK_SIMPLE(2).
-
-> +                       clocks = <&cpg CPG_MOD 408>;
-> +                       clock-names = "clk";
-> +                       power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-> +                       resets = <&cpg 408>;
-> +               };
+> @@ -0,0 +1,495 @@
+> +// SPDX-License-Identifier: GPL-2.
+> +/*
+> + * Device Tree Source for the r8a77965 SoC
+> + *
+> + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> + *
+> + * Based on r8a7796.dtsi
+> + * Copyright (C) 2016 Renesas Electronics Corp.
+> + */
 > +
-> +               timer {
-> +                       compatible = "arm,armv8-timer";
-> +                       interrupts = <GIC_PPI 13
-> +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +                                    <GIC_PPI 14
-> +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +                                    <GIC_PPI 11
-> +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +                                    <GIC_PPI 10
-> +                                       (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+> +#include <dt-bindings/clock/r8a77965-cpg-mssr.h>
 
-This one is correct.
+For the initial submission, it's better to use hardcoded numbers than the
+R8A77965_CLK_* definitions, as the latter go in through a different tree.
+Hence you should replace above include by
+
+    #include <dt-bindings/clock/renesas-cpg-mssr.h>
+
+and replace R8A77965_CLK_* by hardcoded numbers in all r8a77965.dtsi
+patches.
+
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/power/r8a77965-sysc.h>
+
+For the initial submission, it's better to use hardcoded numbers than the
+R8A77965_PD_* definitions, as the latter go in through a different tree.
+Hence you should drop the above include, and replace R8A77965_PD_*
+by hardcoded numbers in all r8a77965.dtsi patches.
+
+The hardcoded numbers can be replaced by symbolic definitions later,
+when the definitions have hit mainline.
+
+Thanks!
 
 Gr{oetje,eeting}s,
 
