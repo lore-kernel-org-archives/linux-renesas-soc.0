@@ -1,68 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33591 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750948AbeBQCGs (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:34551 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751065AbeBQJIE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 21:06:48 -0500
-Received: by mail-wm0-f65.google.com with SMTP id x4so7724075wmc.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 18:06:47 -0800 (PST)
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/2] ARM: shmobile: Factor out complex condition
-Date: Sat, 17 Feb 2018 03:06:41 +0100
-Message-Id: <20180217020642.21375-1-marek.vasut+renesas@gmail.com>
+        Sat, 17 Feb 2018 04:08:04 -0500
+Received: by mail-lf0-f68.google.com with SMTP id l191so7057688lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 17 Feb 2018 01:08:03 -0800 (PST)
+Subject: Re: [PATCH v2] ravb: add support for changing MTU
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <20180216161008.12882-1-niklas.soderlund+renesas@ragnatech.se>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <2935baf3-ff3b-67dc-743a-a772c38a282c@cogentembedded.com>
+Date: Sat, 17 Feb 2018 12:08:00 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180216161008.12882-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Pull the complex condition in regulator_quirk_notify() into
-regulator_quirk_check(). Moreover, do not hard-code the I2C
-address, but rather use the one in da9xxx_msgs[].
+Hello!
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+On 2/16/2018 7:10 PM, Niklas Söderlund wrote:
 
-diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index 27fb3a5ec73e..862f7757ef5d 100644
---- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-@@ -66,6 +66,13 @@ static struct i2c_msg da9xxx_msgs[3] = {
- 	},
- };
- 
-+static int regulator_quirk_check(struct i2c_client *client, u8 i2c_id,
-+				 char *compat_string)
-+{
-+	return client->addr == da9xxx_msgs[i2c_id].addr &&
-+	       !strcmp(client->name, compat_string);
-+}
-+
- static int regulator_quirk_notify(struct notifier_block *nb,
- 				  unsigned long action, void *data)
- {
-@@ -88,9 +95,9 @@ static int regulator_quirk_notify(struct notifier_block *nb,
- 	client = to_i2c_client(dev);
- 	dev_dbg(dev, "Detected %s\n", client->name);
- 
--	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
--	    (client->addr == 0x68 && !strcmp(client->name, "da9210")) ||
--	    (client->addr == 0x70 && !strcmp(client->name, "da9210"))) {
-+	if (regulator_quirk_check(client, 0, "da9063") ||
-+	    regulator_quirk_check(client, 1, "da9210") ||
-+	    regulator_quirk_check(client, 2, "da9210")) {
- 		int ret, len;
- 
- 		/* There are two DA9210 on Stout, one on the other boards. */
--- 
-2.15.1
+> Allow for changing the MTU within the limit of the maximum size of a
+> descriptor (2048 bytes). Add the callback to change MTU from user-space
+> and take the configurable MTU into account when configuring the
+> hardware.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>   drivers/net/ethernet/renesas/ravb.h      |  1 +
+>   drivers/net/ethernet/renesas/ravb_main.c | 34 +++++++++++++++++++++++++-------
+>   2 files changed, 28 insertions(+), 7 deletions(-)
+> 
+> * Changes since v1
+> - Fix spelling error.
+> - s/le16_to_cpu(rx_desc->ds_cc)/priv->rx_buf_sz/.
+> - Drop ETH_FCS_LEN + 16 from rx_buf_sz calculation as pointed out by
+>    Sergei.
+> 
+> diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+> index 96a27b00c90e212a..b81f4faf7b10114d 100644
+> --- a/drivers/net/ethernet/renesas/ravb.h
+> +++ b/drivers/net/ethernet/renesas/ravb.h
+> @@ -1018,6 +1018,7 @@ struct ravb_private {
+>   	u32 dirty_rx[NUM_RX_QUEUE];	/* Producer ring indices */
+>   	u32 cur_tx[NUM_TX_QUEUE];
+>   	u32 dirty_tx[NUM_TX_QUEUE];
+> +	u32 rx_buf_sz;			/* Based on MTU+slack. */
+>   	struct napi_struct napi[NUM_RX_QUEUE];
+>   	struct work_struct work;
+>   	/* MII transceiver section. */
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index c87f57ca44371586..34e841306e04a3d3 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -238,7 +238,7 @@ static void ravb_ring_free(struct net_device *ndev, int q)
+>   					       le32_to_cpu(desc->dptr)))
+>   				dma_unmap_single(ndev->dev.parent,
+>   						 le32_to_cpu(desc->dptr),
+> -						 PKT_BUF_SZ,
+> +						 priv->rx_buf_sz,
+>   						 DMA_FROM_DEVICE);
+>   		}
+>   		ring_size = sizeof(struct ravb_ex_rx_desc) *
+> @@ -300,9 +300,9 @@ static void ravb_ring_format(struct net_device *ndev, int q)
+>   	for (i = 0; i < priv->num_rx_ring[q]; i++) {
+>   		/* RX descriptor */
+>   		rx_desc = &priv->rx_ring[q][i];
+> -		rx_desc->ds_cc = cpu_to_le16(PKT_BUF_SZ);
+> +		rx_desc->ds_cc = cpu_to_le16(priv->rx_buf_sz);
+>   		dma_addr = dma_map_single(ndev->dev.parent, priv->rx_skb[q][i]->data,
+> -					  PKT_BUF_SZ,
+> +					  priv->rx_buf_sz,
+>   					  DMA_FROM_DEVICE);
+>   		/* We just set the data size to 0 for a failed mapping which
+>   		 * should prevent DMA from happening...
+> @@ -346,6 +346,10 @@ static int ravb_ring_init(struct net_device *ndev, int q)
+>   	int ring_size;
+>   	int i;
+>   
+> +	/* +16 gets room from the status from the card. */
+
+    You removed the addition of 16 but left the comment intact. :-)
+Will have to fix it up in a follow-up patch now...
+
+> +	priv->rx_buf_sz = (ndev->mtu <= 1492 ? PKT_BUF_SZ : ndev->mtu) +
+
+    Not sure why PKT_BUF_SZ is 1538, sigh...
+
+> +		ETH_HLEN + VLAN_HLEN;
+> +
+>   	/* Allocate RX and TX skb rings */
+>   	priv->rx_skb[q] = kcalloc(priv->num_rx_ring[q],
+>   				  sizeof(*priv->rx_skb[q]), GFP_KERNEL);
+[...]
+
+MBR, Sergei
