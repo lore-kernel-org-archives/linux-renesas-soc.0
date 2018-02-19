@@ -1,68 +1,86 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:53848 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753455AbeBSSS0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Feb 2018 13:18:26 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 4/4] arm64: dts: renesas: r8a7796: Fix register mappings on VSPs
-Date: Tue, 13 Feb 2018 19:30:37 +0000
-Message-Id: <1518550237-16753-5-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
-References: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
-Sender: devicetree-owner@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: r8a77965-salvator-xs: Add support for Salvator-XS with R-Car M3-N
+Date: Mon, 19 Feb 2018 19:18:22 +0100
+Message-Id: <1519064302-12003-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-The VSPD includes a CLUT on RPF2. Ensure that the register space is
-mapped correctly to support this.
+Add initial support for the Renesas Salvator-XS (Salvator-X 2nd version)
+development board equipped with an R-Car M3-N SiP.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Most features are enabled through the shared salvator-xs.dtsi board
+description.  The memory configuration is specific to the M3-N SiP.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Switch to SPDX-License-Identifier, update patch description]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Against renesas-devel-20180212-v4.16-rc1 with Jacopo Mondi's "[PATCH
+00/15] R-Car M3-N initial support"
+(https://www.spinics.net/lists/arm-kernel/msg634121.html).
+See branches topic/r8a77965-v1 and topic/r8a77965-v1+ in
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 60755117cba5..3fe5566e0630 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2285,7 +2285,7 @@
- 
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x4000>;
-+			reg = <0 0xfea20000 0 0x8000>;
- 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-@@ -2305,7 +2305,7 @@
- 
- 		vspd1: vsp@fea28000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea28000 0 0x4000>;
-+			reg = <0 0xfea28000 0 0x8000>;
- 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 622>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-@@ -2325,7 +2325,7 @@
- 
- 		vspd2: vsp@fea30000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea30000 0 0x4000>;
-+			reg = <0 0xfea30000 0 0x8000>;
- 			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 621>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ arch/arm64/boot/dts/renesas/Makefile                |  2 +-
+ .../arm64/boot/dts/renesas/r8a77965-salvator-xs.dts | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 3680ecd638c44482..e9b525123a2e5f9a 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -7,6 +7,6 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+-dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
++dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+new file mode 100644
+index 0000000000000000..8a45fc43348d9adc
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the Salvator-X 2nd version board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a77965.dtsi"
++#include "salvator-xs.dtsi"
++
++/ {
++	model = "Renesas Salvator-X 2nd version board based on r8a77965";
++	compatible = "renesas,salvator-xs", "renesas,r8a77965";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++};
 -- 
 2.7.4
-
