@@ -1,126 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42245 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750842AbeBVUvq (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:37034 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751628AbeBSIZO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Feb 2018 15:51:46 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2] v4l: vsp1: Print the correct blending unit name in debug messages
-Date: Thu, 22 Feb 2018 22:52:26 +0200
-Message-Id: <20180222205226.3099-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 19 Feb 2018 03:25:14 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180216152807.1629038-1-arnd@arndb.de>
+References: <20180216152807.1629038-1-arnd@arndb.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Feb 2018 09:25:12 +0100
+Message-ID: <CAMuHMdXgFcDkGAZuMviYAo6K-KOx5bBSRewed9AUWD+osfG2bw@mail.gmail.com>
+Subject: Re: [PATCH] clk: fix false-positive Wmaybe-uninitialized warning
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        stable <stable@vger.kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DRM pipelines can use either the BRU or the BRS for blending. Make
-sure the right name is used in debugging messages to avoid confusion.
+Hi Arnd,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v1:
+On Fri, Feb 16, 2018 at 4:27 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> When we build this driver with on x86-32, gcc produces a false-positive warning:
+>
+> drivers/clk/renesas/clk-sh73a0.c: In function 'sh73a0_cpg_clocks_init':
+> drivers/clk/renesas/clk-sh73a0.c:155:10: error: 'parent_name' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>    return clk_register_fixed_factor(NULL, name, parent_name, 0,
+>
+> We can work around that warning by adding a fake initialization, I tried
+> and failed to come up with any better workaround. This is currently one
+> of few remaining warnings for a 4.14.y randconfig build, so it would be
+> good to also have it backported at least to that version. Older versions
+> have more randconfig warnings, so we might not care.
+>
+> I had not noticed this earlier, because one patch in my randconfig test
+> tree removes the '-ffreestanding' option on x86-32, and that avoids
+> the warning. The -ffreestanding flag was originally global but moved
+> into arch/i386 by Andi Kleen in commit 6edfba1b33c7 ("[PATCH] x86_64:
+> Don't define string functions to builtin") as a 'temporary workaround'.
+>
+> Like many temporary hacks, this turned out to be rather long-lived, from
+> all I can tell we still need a simple fix to asm/string_32.h before it
+> can be removed, but I'm not sure about how to best do that.
+>
+> Cc: stable@vger.kernel.org
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-- Create a macro to get the right entity name instead of duplicating the
-  same code all over the driver
----
- drivers/media/platform/vsp1/vsp1_drm.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+Thanks, this is a known false positive.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index ac85942162c1..b8fee1834253 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -27,6 +27,7 @@
- #include "vsp1_pipe.h"
- #include "vsp1_rwpf.h"
- 
-+#define BRU_NAME(e)	(e)->type == VSP1_ENTITY_BRU ? "BRU" : "BRS"
- 
- /* -----------------------------------------------------------------------------
-  * Interrupt Handling
-@@ -88,7 +89,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 	struct vsp1_entity *next;
- 	struct vsp1_dl_list *dl;
- 	struct v4l2_subdev_format format;
--	const char *bru_name;
- 	unsigned long flags;
- 	unsigned int i;
- 	int ret;
-@@ -99,7 +99,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 	drm_pipe = &vsp1->drm->pipe[pipe_index];
- 	pipe = &drm_pipe->pipe;
- 	bru = to_bru(&pipe->bru->subdev);
--	bru_name = pipe->bru->type == VSP1_ENTITY_BRU ? "BRU" : "BRS";
- 
- 	if (!cfg) {
- 		/*
-@@ -165,7 +164,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 
- 		dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
- 			__func__, format.format.width, format.format.height,
--			format.format.code, bru_name, i);
-+			format.format.code, BRU_NAME(pipe->bru), i);
- 	}
- 
- 	format.pad = pipe->bru->source_pad;
-@@ -181,7 +180,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 
- 	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
- 		__func__, format.format.width, format.format.height,
--		format.format.code, bru_name, i);
-+		format.format.code, BRU_NAME(pipe->bru), i);
- 
- 	format.pad = RWPF_PAD_SINK;
- 	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, NULL,
-@@ -473,9 +472,9 @@ static int vsp1_du_setup_rpf_pipe(struct vsp1_device *vsp1,
- 	if (ret < 0)
- 		return ret;
- 
--	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on BRU pad %u\n",
-+	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
- 		__func__, format.format.width, format.format.height,
--		format.format.code, format.pad);
-+		format.format.code, BRU_NAME(pipe->bru), format.pad);
- 
- 	sel.pad = bru_input;
- 	sel.target = V4L2_SEL_TGT_COMPOSE;
-@@ -486,10 +485,9 @@ static int vsp1_du_setup_rpf_pipe(struct vsp1_device *vsp1,
- 	if (ret < 0)
- 		return ret;
- 
--	dev_dbg(vsp1->dev,
--		"%s: set selection (%u,%u)/%ux%u on BRU pad %u\n",
-+	dev_dbg(vsp1->dev, "%s: set selection (%u,%u)/%ux%u on %s pad %u\n",
- 		__func__, sel.r.left, sel.r.top, sel.r.width, sel.r.height,
--		sel.pad);
-+		BRU_NAME(pipe->bru), sel.pad);
- 
- 	return 0;
- }
-@@ -514,12 +512,9 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
- 	struct vsp1_entity *entity;
- 	struct vsp1_entity *next;
- 	struct vsp1_dl_list *dl;
--	const char *bru_name;
- 	unsigned int i;
- 	int ret;
- 
--	bru_name = pipe->bru->type == VSP1_ENTITY_BRU ? "BRU" : "BRS";
--
- 	/* Prepare the display list. */
- 	dl = vsp1_dl_list_get(pipe->output->dlm);
- 
-@@ -570,7 +565,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
- 		rpf->entity.sink_pad = i;
- 
- 		dev_dbg(vsp1->dev, "%s: connecting RPF.%u to %s:%u\n",
--			__func__, rpf->entity.index, bru_name, i);
-+			__func__, rpf->entity.index, BRU_NAME(pipe->bru), i);
- 
- 		ret = vsp1_du_setup_rpf_pipe(vsp1, pipe, rpf, i);
- 		if (ret < 0)
--- 
-Regards,
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Laurent Pinchart
+> ---
+>  drivers/clk/renesas/clk-sh73a0.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/clk-sh73a0.c b/drivers/clk/renesas/clk-sh73a0.c
+> index eea38f6ea77e..3892346c4fcc 100644
+> --- a/drivers/clk/renesas/clk-sh73a0.c
+> +++ b/drivers/clk/renesas/clk-sh73a0.c
+> @@ -46,7 +46,7 @@ struct div4_clk {
+>         unsigned int shift;
+>  };
+>
+> -static struct div4_clk div4_clks[] = {
+> +static const struct div4_clk div4_clks[] = {
+
+This change is not part of the fix...
+
+>         { "zg", "pll0", CPG_FRQCRA, 16 },
+>         { "m3", "pll1", CPG_FRQCRA, 12 },
+>         { "b",  "pll1", CPG_FRQCRA,  8 },
+> @@ -79,7 +79,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
+>  {
+>         const struct clk_div_table *table = NULL;
+>         unsigned int shift, reg, width;
+> -       const char *parent_name;
+> +       const char *parent_name = NULL;
+>         unsigned int mult = 1;
+>         unsigned int div = 1;
+>
+> @@ -135,7 +135,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
+>                 shift = 24;
+>                 width = 5;
+>         } else {
+> -               struct div4_clk *c;
+> +               const struct div4_clk *c;
+
+... and neither is this one.
+
+>
+>                 for (c = div4_clks; c->name; c++) {
+>                         if (!strcmp(name, c->name)) {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
