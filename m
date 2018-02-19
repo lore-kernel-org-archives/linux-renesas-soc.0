@@ -1,75 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:40112 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751761AbeBALY7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56111 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751866AbeBSJCH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Feb 2018 06:24:59 -0500
-Received: by mail-lf0-f68.google.com with SMTP id h92so25659098lfi.7
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Feb 2018 03:24:58 -0800 (PST)
-Subject: Re: [PATCH 1/3] arm64: dts: renesas: v3msk: Remove renesas,
- no-ether-link property
-To: Simon Horman <horms+renesas@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-References: <20180115084125.8112-1-horms+renesas@verge.net.au>
- <20180115084125.8112-2-horms+renesas@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <8bba1973-3767-719e-373e-fa0e278dce8d@cogentembedded.com>
-Date: Thu, 1 Feb 2018 14:24:54 +0300
+        Mon, 19 Feb 2018 04:02:07 -0500
+Date: Mon, 19 Feb 2018 10:01:48 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH] soc: renesas: r8a77970-sysc: fix power area parents
+Message-ID: <20180219090147.shphjwtox5mywms3@verge.net.au>
+References: <b133e895-8d5e-fbae-d15a-5cf759f09406@cogentembedded.com>
+ <CAMuHMdXZY0cC1oV=_Tu5DFu8FJGhw7mZd=P+_4U4VAX629EqEg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180115084125.8112-2-horms+renesas@verge.net.au>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXZY0cC1oV=_Tu5DFu8FJGhw7mZd=P+_4U4VAX629EqEg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/15/2018 11:41 AM, Simon Horman wrote:
+On Mon, Feb 19, 2018 at 09:38:15AM +0100, Geert Uytterhoeven wrote:
+> On Fri, Feb 16, 2018 at 9:09 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > According to the figure 9.2(b) of the R-Car Series, 3rd Generation User’s
+> > Manual: Hardware Rev. 0.80 the A2IRn and A2SCn power areas in R8A77970 have
+> > the A3IR area as a parent, thus the SYSC driver has those parents wrong...
+> >
+> > Fixes: bab9b2a74fe9 ("soc: renesas: rcar-sysc: add R8A77970 support")
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Sorry for missing this in my original review.
 
-> Regarding Salvator-X and ULCB boards, Bogdan Mirea says:
-> 
->     The present change is a bug fix for AVB link iteratively up/down.
-> 
->     Steps to reproduce:
->     - start AVB TX stream (Using aplay via MSE),
->     - disconnect+reconnect the eth cable,
->     - after a reconnection the eth connection goes iteratively up/down
->       without user interaction,
->     - this may heal after some seconds or even stay for minutes.
-> 
->     As the documentation specifies, the "renesas,no-ether-link" option
->     should be used when a board does not provide a proper AVB_LINK signal.
->     There is no need for this option enabled on RCAR H3/M3 Salvator-X/XS
->     and ULCB starter kits since the AVB_LINK is correctly handled by HW.
-> 
->     Choosing to keep or remove the "renesas,no-ether-link" option will
->     have impact on the code flow in the following ways:
->     - keeping this option enabled may lead to unexpected behavior since
->       the RX & TX are enabled/disabled directly from adjust_link function
->       without any HW interrogation,
->     - removing this option, the RX & TX will only be enabled/disabled after
->       HW interrogation. The HW check is made through the LMON pin in PSR
->       register which specifies AVB_LINK signal value (0 - at low level;
->       1 - at high level).
-> 
->     In conclusion, the present change is also a safety improvement because
->     it removes the "renesas,no-ether-link" option leading to a proper way
->     of detecting the link state based on HW interrogation and not on
->     software heuristic.
-> 
-> On examination of the documentation for the V3M Starter Kit (v3msk) this
-> change seems necessary as AVB0_LINK is documented as being connected.
-> 
-> Fixes: a6b1b7359074 ("arm64: dts: renesas: v3msk: add EtherAVB support")
-> Cc: Bogdan Mirea <Bogdan-Stefan_Mirea@mentor.com>
-> Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-   NAK on this one -- I can't mount NFS root any more.
-
-MBR, Sergei
+Thanks, applied.
