@@ -1,86 +1,87 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:53848 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753455AbeBSSS0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Feb 2018 13:18:26 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: r8a77965-salvator-xs: Add support for Salvator-XS with R-Car M3-N
-Date: Mon, 19 Feb 2018 19:18:22 +0100
-Message-Id: <1519064302-12003-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 19 Feb 2018 13:51:08 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] arm64: dts: renesas: r8a77970: add the LVDS
+ instance
+Message-ID: <20180219125108.7xfagzbif5ukf73h@verge.net.au>
+References: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180208154720.5766-5-niklas.soderlund+renesas@ragnatech.se>
+ <af85dc17-e97d-bd40-6b46-376ae90123d7@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <af85dc17-e97d-bd40-6b46-376ae90123d7@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Thu, Feb 08, 2018 at 07:05:53PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 02/08/2018 06:47 PM, Niklas Söderlund wrote:
+> 
+> > Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
+> > the it to the LVDS output of the DU. While at it align the endpoint name
+> > of the du to du_out_lvds0 which is used in other Renesas DTS files to
+> > describe this link.
+> > 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 29 ++++++++++++++++++++++++++++-
+> >  1 file changed, 28 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> > index c6056635bd372ce3..9c65884cc384952d 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> > @@ -653,7 +653,34 @@
+> >  
+> >  				port@1 {
+> >  					reg = <1>;
+> > -					du_out_lvds: endpoint {
+> > +					du_out_lvds0: endpoint {
+> > +						remote-endpoint = <&lvds0_in>;
+> > +					};
+> > +				};
+> > +			};
+> > +		};
+> > +
+> > +		lvds0: lvds@feb90000 {
+> > +			compatible = "renesas,r8a77970-lvds";
+> > +			reg = <0 0xfeb90000 0 0x14>;
+> > +			clocks = <&cpg CPG_MOD 727>;
+> > +			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+> > +			resets = <&cpg 727>;
+> > +			status = "disabled";
+> > +
+> > +			ports {
+> > +				#address-cells = <1>;
+> > +				#size-cells = <0>;
+> > +
+> > +				port@0 {
+> > +					reg = <0>;
+> > +					lvds0_in: endpoint {
+> > +						remote-endpoint = <&du_out_lvds0>;
+> > +					};
+> > +				};
+> > +				port@1 {
+> > +					reg = <1>;
+> > +					lvds0_out: endpoint {
+> >  					};
+> >  				};
+> >  			};
+> 
+> 
+>    That's basically my patch modulo the added "power-domains" and "resets" props, and the node/endpoint rename (of a dubious value, if you ask me ;-)).
 
-Add initial support for the Renesas Salvator-XS (Salvator-X 2nd version)
-development board equipped with an R-Car M3-N SiP.
+Hi Sergei,
 
-Most features are enabled through the shared salvator-xs.dtsi board
-description.  The memory configuration is specific to the M3-N SiP.
+after speaking with yourself and Niklas - who I think also spoke with you -
+I'd be most grateful if you could repost this series at your convenience,
+with the author and other outstanding review addressed.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Switch to SPDX-License-Identifier, update patch description]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Against renesas-devel-20180212-v4.16-rc1 with Jacopo Mondi's "[PATCH
-00/15] R-Car M3-N initial support"
-(https://www.spinics.net/lists/arm-kernel/msg634121.html).
-See branches topic/r8a77965-v1 and topic/r8a77965-v1+ in
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
- arch/arm64/boot/dts/renesas/Makefile                |  2 +-
- .../arm64/boot/dts/renesas/r8a77965-salvator-xs.dts | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 3680ecd638c44482..e9b525123a2e5f9a 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -7,6 +7,6 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
--dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
-+dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-new file mode 100644
-index 0000000000000000..8a45fc43348d9adc
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the Salvator-X 2nd version board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77965.dtsi"
-+#include "salvator-xs.dtsi"
-+
-+/ {
-+	model = "Renesas Salvator-X 2nd version board based on r8a77965";
-+	compatible = "renesas,salvator-xs", "renesas,r8a77965";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x78000000>;
-+	};
-+};
--- 
-2.7.4
+Thanks.
