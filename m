@@ -1,79 +1,32 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58102 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032793AbeBNQvc (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 11:51:32 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm: rcar-du: lvds: fix LVDS startup on R-Car gen3
-Date: Wed, 14 Feb 2018 18:52:05 +0200
-Message-ID: <379662807.WmKFOaE3uo@avalon>
-In-Reply-To: <35260661.mJIny8zrSv@avalon>
-References: <20180112201550.368547609@cogentembedded.com> <27ae5c72-b774-1af5-ae99-65009c2b6416@cogentembedded.com> <35260661.mJIny8zrSv@avalon>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Sun, 18 Feb 2018 20:59:33 -0600
+From: Rob Herring <robh@kernel.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        magnus.damm@gmail.com, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/15] Documentation: devicetree: renesas,sci: Add
+ r8a77965
+Message-ID: <20180219025933.k5s4zehuwb7gbrvt@rob-hp-laptop>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-9-git-send-email-jacopo+renesas@jmondi.org>
+ <20180215154752.ukm43os7fl7xnlie@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215154752.ukm43os7fl7xnlie@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
-
-On Tuesday, 16 January 2018 17:42:41 EET Laurent Pinchart wrote:
-> On Saturday, 13 January 2018 11:25:31 EET Sergei Shtylyov wrote:
-> > On 1/13/2018 1:15 AM, Laurent Pinchart wrote:
-> >>>> According to the latest revisions of the R-Car gen3 manual, the LVDS
-> >>>> mode must be set before the LVDS I/O pins are enabled, not after -- 
-> >>>> fix the gen3 LVDS startup sequence accordingly...
-> >>>> 
-> >>>> While  at it,  also fix the comment  preceding the first LVDCR0 write
-> >>>> in the R-Car gen2 startup code that still talks about hardcoding the
-> >>>> LVDS mode 0...
-> >>> 
-> >>> How about fixing that in patch 2/2 that touches the Gen2 initialization
-> >>> sequence ? I think I'd even go as far as squashing both patches, I
-> >>> don't think there's a need to split them.
-> >>> 
-> >>>> Fixes: e947eccbeba4 ("drm: rcar-du: Add support for LVDS mode
-> >>>> selection")
-> >>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> >>> 
-> >>> Is this really needed ? Does it fix a problem you've experienced, or is
-> >>> it theoretical only ? The mode shouldn't matter before the LVDS
-> >>> internal logic is turned on. Unless there's a real issue I'm not sure we
-> >>> should make the code more complex.
-> >> 
-> >> Furthermore the datasheet states
-> >> 
-> >> "3. This refers to settings other than those that are concerned with
-> >> LVDS-IF startup. These items may be set while waiting for the conditions
-> >> of step 6 to be met."
-> > 
-> > Ah, I hadn't paid much attention to this note. Howeve, it seems quite
-> > vague to me... and there's no condition in step 6. ;-)
+On Thu, Feb 15, 2018 at 04:47:52PM +0100, Simon Horman wrote:
+> On Tue, Feb 13, 2018 at 10:45:55AM +0100, Jacopo Mondi wrote:
+> > Add documentation for r8a77965 compatible string to reneass sci-serial
+> > device tree bindings documentation.
 > 
-> Lots of bits and pieces are lost in translation yes :-)
+> I think a better subject would be:
 > 
-> >> Doesn't this mean that the mode and input selector don't have to be set
-> >> as the very first step, but can be programmed at any point before
-> >> starting the LVDS encoder through the PWD bit (on Gen3) or the PLLON bit
-> >> (on Gen2) ?
-> > 
-> > Frankly speaking, I don't know how to interpret that note...
-> 
-> My understanding is that the parameters can be programmed at any time before
-> step 6. The fact that the current code works seems to confirm that
-> interpretation. We could ask Renesas for a confirmation if you want.
+> dt-bindings: serial: sh-sci: Add support for r8a77965 (H)SCIF
 
-I've received feedback, and while it wasn't clear what the not really means, 
-Renesas recommends following the documented startup sequence (I'm still not 
-sure it's really needed, but that's a different story). I'll thus rebase this 
-patch and repost it, and take it in my tree if you're fine with the result.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
--- 
-Regards,
-
-Laurent Pinchart
