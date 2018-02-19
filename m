@@ -1,106 +1,36 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42517 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751609AbeBBC6X (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Feb 2018 21:58:23 -0500
-Subject: Re: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <7d53a583-f8fa-b479-cc8a-408febdddc0e@roeck-us.net>
-Date: Thu, 1 Feb 2018 18:58:20 -0800
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Sun, 18 Feb 2018 20:57:27 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/15] pinctrl: sh-pfc: Initial R-Car M3-N support
+Message-ID: <20180219025727.6yexb4iqmvlt2luq@rob-hp-laptop>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-5-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518515162-23663-5-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/31/2018 10:24 AM, Fabrizio Castro wrote:
-> On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-> by means of the watchdog.
-> This patch adds a restart handler to rwdt_ops, and also makes sure we
-> keep its priority to a medium level, in order to not override other more
-> effective handlers.
+On Tue, Feb 13, 2018 at 10:45:51AM +0100, Jacopo Mondi wrote:
+> Add initial PFC support for R-Car M3-N (r8a77965) SoC.
+> No groups or functions defined, just pin and registers enumeration.
 > 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
-> v3->v4:
-> * New patch spawn out from patch 12/16. The restart handler on Gen3 is
->    controversial, hopefully this patch will help finalizing the discussion.
-> 
->   drivers/watchdog/renesas_wdt.c | 20 ++++++++++++++++++++
->   1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-> index 0a1a402..6d1c4b9 100644
-> --- a/drivers/watchdog/renesas_wdt.c
-> +++ b/drivers/watchdog/renesas_wdt.c
-> @@ -107,6 +107,24 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
->   	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
->   }
->   
-> +static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-> +			void *data)
-> +{
-> +	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-> +
-> +	pm_runtime_get_sync(wdev->parent);
-> +
-> +	rwdt_write(priv, 0x00, RWTCSRB);
-> +	rwdt_write(priv, 0x00, RWTCSRA);
-> +	rwdt_write(priv, 0xffff, RWTCNT);
-> +
-> +	while (readb_relaxed(priv->base + RWTCSRA) & RWTCSRA_WRFLG)
-> +		cpu_relax();
-> +
-> +	rwdt_write(priv, 0x80, RWTCSRA);
-> +	return 0;
-> +}
-> +
->   static const struct watchdog_info rwdt_ident = {
->   	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
->   	.identity = "Renesas WDT Watchdog",
-> @@ -118,6 +136,7 @@ static const struct watchdog_ops rwdt_ops = {
->   	.stop = rwdt_stop,
->   	.ping = rwdt_init_timeout,
->   	.get_timeleft = rwdt_get_timeleft,
-> +	.restart = rwdt_restart,
->   };
->   
->   static int rwdt_probe(struct platform_device *pdev)
-> @@ -176,6 +195,7 @@ static int rwdt_probe(struct platform_device *pdev)
->   	platform_set_drvdata(pdev, priv);
->   	watchdog_set_drvdata(&priv->wdev, priv);
->   	watchdog_set_nowayout(&priv->wdev, nowayout);
-> +	watchdog_set_restart_priority(&priv->wdev, 128);
->   
->   	/* This overrides the default timeout only if DT configuration was found */
->   	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
-> 
+>  .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+>  drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+>  drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+>  drivers/pinctrl/sh-pfc/core.c                      |    6 +
+>  drivers/pinctrl/sh-pfc/pfc-r8a77965.c              | 2728 ++++++++++++++++++++
+>  drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
+>  6 files changed, 2742 insertions(+)
+>  create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77965.c
