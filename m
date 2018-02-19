@@ -1,203 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35027 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034154AbeBPOZQ (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33625 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751999AbeBSIvI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 09:25:16 -0500
-Received: by mail-wm0-f65.google.com with SMTP id x21so3452564wmh.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 06:25:15 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 1/3] pinctrl: sh-pfc: r8a7795: Fix MOD_SEL register pin assignment for SSI pins group
-Date: Fri, 16 Feb 2018 15:25:02 +0100
-Message-Id: <1518791104-13928-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1518791104-13928-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1518791104-13928-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 19 Feb 2018 03:51:08 -0500
+Received: by mail-wr0-f193.google.com with SMTP id s5so8771544wra.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Feb 2018 00:51:08 -0800 (PST)
+Subject: Re: [PATCH 2/2] ARM: shmobile: porter: enable R-Car Gen2 regulator
+ quirk
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20180217020642.21375-1-marek.vasut+renesas@gmail.com>
+ <20180217020642.21375-2-marek.vasut+renesas@gmail.com>
+ <CAMuHMdVu2LvxtvUYDOrW3Yhqujk4+=bN0sg-aJhxX_g0Kbpx6g@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <3a527612-59ab-8bc5-1277-7eb41fb5b53e@gmail.com>
+Date: Mon, 19 Feb 2018 09:51:00 +0100
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVu2LvxtvUYDOrW3Yhqujk4+=bN0sg-aJhxX_g0Kbpx6g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On 02/19/2018 09:42 AM, Geert Uytterhoeven wrote:
+> On Sat, Feb 17, 2018 at 3:06 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> Porter needs the regulator quirk, just like the other boards,
+>> the DA9063 and DA9210 IRQ line is connected to CPU IRQ2 . But
+>> unlike the other boards, the DA9063 is at 0x5a on Porter.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> ---
+>>  arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+>> index 862f7757ef5d..7963f0eea9e1 100644
+>> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+>> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+>> @@ -132,11 +132,16 @@ static int __init rcar_gen2_regulator_quirk(void)
+>>         u32 mon;
+>>
+>>         if (!of_machine_is_compatible("renesas,koelsch") &&
+>> +           !of_machine_is_compatible("renesas,porter") &&
+>>             !of_machine_is_compatible("renesas,lager") &&
+>>             !of_machine_is_compatible("renesas,stout") &&
+>>             !of_machine_is_compatible("renesas,gose"))
+>>                 return -ENODEV;
+>>
+>> +       /* DA9063 on M2W Porter is at 0x5a */
+>> +       if (of_machine_is_compatible("renesas,porter"))
+>> +               da9xxx_msgs[0].addr = 0x5a;
+>> +
+>>         irqc = ioremap(IRQC_BASE, PAGE_SIZE);
+>>         if (!irqc)
+>>                 return -ENOMEM;
+> 
+> Doing the same of_machine_is_compatible() check again is an indicator that
+> you should switch to an of_device_id-based match interface...
 
-This patch fixes MOD_SEL1 bit20 and MOD_SEL2 bit20, bit21 pin assignment
-for SSI pins group.
+Indeed. Also cfr my other suggestion in reply to WSA in this thread.
+Thoughts on that welcome.
 
-This is a correction because MOD_SEL register specification for R8A7795
-ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.53E.
-
-Fixes: b205914c8f82 ("pinctrl: sh-pfc: r8a7795: Add support for R-Car H3 ES2.0")
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 40 ++++++++++++++++++------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 18aeee5..edbf136 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1,7 +1,7 @@
- /*
-  * R8A7795 ES2.0+ processor support - PFC hardware block.
-  *
-- * Copyright (C) 2015-2016 Renesas Electronics Corporation
-+ * Copyright (C) 2015-2017 Renesas Electronics Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-@@ -472,7 +472,7 @@ FM(IP16_31_28)	IP16_31_28	FM(IP17_31_28)	IP17_31_28
- #define MOD_SEL1_26		FM(SEL_TIMER_TMU1_0)	FM(SEL_TIMER_TMU1_1)
- #define MOD_SEL1_25_24		FM(SEL_SSP1_1_0)	FM(SEL_SSP1_1_1)	FM(SEL_SSP1_1_2)	FM(SEL_SSP1_1_3)
- #define MOD_SEL1_23_22_21	FM(SEL_SSP1_0_0)	FM(SEL_SSP1_0_1)	FM(SEL_SSP1_0_2)	FM(SEL_SSP1_0_3)	FM(SEL_SSP1_0_4)	F_(0, 0)		F_(0, 0)		F_(0, 0)
--#define MOD_SEL1_20		FM(SEL_SSI_0)		FM(SEL_SSI_1)
-+#define MOD_SEL1_20		FM(SEL_SSI1_0)		FM(SEL_SSI1_1)
- #define MOD_SEL1_19		FM(SEL_SPEED_PULSE_0)	FM(SEL_SPEED_PULSE_1)
- #define MOD_SEL1_18_17		FM(SEL_SIMCARD_0)	FM(SEL_SIMCARD_1)	FM(SEL_SIMCARD_2)	FM(SEL_SIMCARD_3)
- #define MOD_SEL1_16		FM(SEL_SDHI2_0)		FM(SEL_SDHI2_1)
-@@ -1218,7 +1218,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_GPSR(IP13_11_8,	HSCK0),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	MSIOF1_SCK_D,		SEL_MSIOF1_3),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	AUDIO_CLKB_A,		SEL_ADG_B_0),
--	PINMUX_IPSR_MSEL(IP13_11_8,	SSI_SDATA1_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP13_11_8,	SSI_SDATA1_B,		SEL_SSI1_1),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	TS_SCK0_D,		SEL_TSIF0_3),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	STP_ISCLK_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_11_8,	RIF0_CLK_C,		SEL_DRIF0_2),
-@@ -1226,14 +1226,14 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP13_15_12,	HRX0),
- 	PINMUX_IPSR_MSEL(IP13_15_12,	MSIOF1_RXD_D,		SEL_MSIOF1_3),
--	PINMUX_IPSR_MSEL(IP13_15_12,	SSI_SDATA2_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP13_15_12,	SSI_SDATA2_B,		SEL_SSI2_1),
- 	PINMUX_IPSR_MSEL(IP13_15_12,	TS_SDEN0_D,		SEL_TSIF0_3),
- 	PINMUX_IPSR_MSEL(IP13_15_12,	STP_ISEN_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_15_12,	RIF0_D0_C,		SEL_DRIF0_2),
- 
- 	PINMUX_IPSR_GPSR(IP13_19_16,	HTX0),
- 	PINMUX_IPSR_MSEL(IP13_19_16,	MSIOF1_TXD_D,		SEL_MSIOF1_3),
--	PINMUX_IPSR_MSEL(IP13_19_16,	SSI_SDATA9_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP13_19_16,	SSI_SDATA9_B,		SEL_SSI9_1),
- 	PINMUX_IPSR_MSEL(IP13_19_16,	TS_SDAT0_D,		SEL_TSIF0_3),
- 	PINMUX_IPSR_MSEL(IP13_19_16,	STP_ISD_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_19_16,	RIF0_D1_C,		SEL_DRIF0_2),
-@@ -1241,7 +1241,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_GPSR(IP13_23_20,	HCTS0_N),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	RX2_B,			SEL_SCIF2_1),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	MSIOF1_SYNC_D,		SEL_MSIOF1_3),
--	PINMUX_IPSR_MSEL(IP13_23_20,	SSI_SCK9_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP13_23_20,	SSI_SCK9_A,		SEL_SSI9_0),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	TS_SPSYNC0_D,		SEL_TSIF0_3),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	STP_ISSYNC_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_23_20,	RIF0_SYNC_C,		SEL_DRIF0_2),
-@@ -1250,7 +1250,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_GPSR(IP13_27_24,	HRTS0_N),
- 	PINMUX_IPSR_MSEL(IP13_27_24,	TX2_B,			SEL_SCIF2_1),
- 	PINMUX_IPSR_MSEL(IP13_27_24,	MSIOF1_SS1_D,		SEL_MSIOF1_3),
--	PINMUX_IPSR_MSEL(IP13_27_24,	SSI_WS9_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP13_27_24,	SSI_WS9_A,		SEL_SSI9_0),
- 	PINMUX_IPSR_MSEL(IP13_27_24,	STP_IVCXO27_0_D,	SEL_SSP1_0_3),
- 	PINMUX_IPSR_MSEL(IP13_27_24,	BPFCLK_A,		SEL_FM_0),
- 	PINMUX_IPSR_GPSR(IP13_27_24,	AUDIO_CLKOUT2_A),
-@@ -1265,7 +1265,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP14_3_0,	RX5_A,			SEL_SCIF5_0),
- 	PINMUX_IPSR_GPSR(IP14_3_0,	NFWP_N_A),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	AUDIO_CLKA_C,		SEL_ADG_A_2),
--	PINMUX_IPSR_MSEL(IP14_3_0,	SSI_SCK2_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP14_3_0,	SSI_SCK2_A,		SEL_SSI2_0),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	STP_IVCXO27_0_C,	SEL_SSP1_0_2),
- 	PINMUX_IPSR_GPSR(IP14_3_0,	AUDIO_CLKOUT3_A),
- 	PINMUX_IPSR_MSEL(IP14_3_0,	TCLK1_B,		SEL_TIMER_TMU1_1),
-@@ -1274,7 +1274,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP14_7_4,	TX5_A,			SEL_SCIF5_0),
- 	PINMUX_IPSR_MSEL(IP14_7_4,	MSIOF1_SS2_D,		SEL_MSIOF1_3),
- 	PINMUX_IPSR_MSEL(IP14_7_4,	AUDIO_CLKC_A,		SEL_ADG_C_0),
--	PINMUX_IPSR_MSEL(IP14_7_4,	SSI_WS2_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP14_7_4,	SSI_WS2_A,		SEL_SSI2_0),
- 	PINMUX_IPSR_MSEL(IP14_7_4,	STP_OPWM_0_D,		SEL_SSP1_0_3),
- 	PINMUX_IPSR_GPSR(IP14_7_4,	AUDIO_CLKOUT_D),
- 	PINMUX_IPSR_MSEL(IP14_7_4,	SPEEDIN_B,		SEL_SPEED_PULSE_1),
-@@ -1302,10 +1302,10 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP14_31_28,	MSIOF1_SS2_F,		SEL_MSIOF1_5),
- 
- 	/* IPSR15 */
--	PINMUX_IPSR_MSEL(IP15_3_0,	SSI_SDATA1_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP15_3_0,	SSI_SDATA1_A,		SEL_SSI1_0),
- 
--	PINMUX_IPSR_MSEL(IP15_7_4,	SSI_SDATA2_A,		SEL_SSI_0),
--	PINMUX_IPSR_MSEL(IP15_7_4,	SSI_SCK1_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP15_7_4,	SSI_SDATA2_A,		SEL_SSI2_0),
-+	PINMUX_IPSR_MSEL(IP15_7_4,	SSI_SCK1_B,		SEL_SSI1_1),
- 
- 	PINMUX_IPSR_GPSR(IP15_11_8,	SSI_SCK349),
- 	PINMUX_IPSR_MSEL(IP15_11_8,	MSIOF1_SS1_A,		SEL_MSIOF1_0),
-@@ -1394,11 +1394,11 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP16_27_24,	RIF1_D1_A,		SEL_DRIF1_0),
- 	PINMUX_IPSR_MSEL(IP16_27_24,	RIF3_D1_A,		SEL_DRIF3_0),
- 
--	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_SDATA9_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_SDATA9_A,		SEL_SSI9_0),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	HSCK2_B,		SEL_HSCIF2_1),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	MSIOF1_SS1_C,		SEL_MSIOF1_2),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	HSCK1_A,		SEL_HSCIF1_0),
--	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_WS1_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_WS1_B,		SEL_SSI1_1),
- 	PINMUX_IPSR_GPSR(IP16_31_28,	SCK1),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	STP_IVCXO27_1_A,	SEL_SSP1_1_0),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	SCK5_A,			SEL_SCIF5_0),
-@@ -1430,7 +1430,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP17_19_16,	USB1_PWEN),
- 	PINMUX_IPSR_MSEL(IP17_19_16,	SIM0_CLK_C,		SEL_SIMCARD_2),
--	PINMUX_IPSR_MSEL(IP17_19_16,	SSI_SCK1_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP17_19_16,	SSI_SCK1_A,		SEL_SSI1_0),
- 	PINMUX_IPSR_MSEL(IP17_19_16,	TS_SCK0_E,		SEL_TSIF0_4),
- 	PINMUX_IPSR_MSEL(IP17_19_16,	STP_ISCLK_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP17_19_16,	FMCLK_B,		SEL_FM_1),
-@@ -1440,7 +1440,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP17_23_20,	USB1_OVC),
- 	PINMUX_IPSR_MSEL(IP17_23_20,	MSIOF1_SS2_C,		SEL_MSIOF1_2),
--	PINMUX_IPSR_MSEL(IP17_23_20,	SSI_WS1_A,		SEL_SSI_0),
-+	PINMUX_IPSR_MSEL(IP17_23_20,	SSI_WS1_A,		SEL_SSI1_0),
- 	PINMUX_IPSR_MSEL(IP17_23_20,	TS_SDAT0_E,		SEL_TSIF0_4),
- 	PINMUX_IPSR_MSEL(IP17_23_20,	STP_ISD_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP17_23_20,	FMIN_B,			SEL_FM_1),
-@@ -1450,7 +1450,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP17_27_24,	USB30_PWEN),
- 	PINMUX_IPSR_GPSR(IP17_27_24,	AUDIO_CLKOUT_B),
--	PINMUX_IPSR_MSEL(IP17_27_24,	SSI_SCK2_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP17_27_24,	SSI_SCK2_B,		SEL_SSI2_1),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	TS_SDEN1_D,		SEL_TSIF1_3),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_3),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_OPWM_0_E,		SEL_SSP1_0_4),
-@@ -1462,7 +1462,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP17_31_28,	USB30_OVC),
- 	PINMUX_IPSR_GPSR(IP17_31_28,	AUDIO_CLKOUT1_B),
--	PINMUX_IPSR_MSEL(IP17_31_28,	SSI_WS2_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP17_31_28,	SSI_WS2_B,		SEL_SSI2_1),
- 	PINMUX_IPSR_MSEL(IP17_31_28,	TS_SPSYNC1_D,		SEL_TSIF1_3),
- 	PINMUX_IPSR_MSEL(IP17_31_28,	STP_ISSYNC_1_D,		SEL_SSP1_1_3),
- 	PINMUX_IPSR_MSEL(IP17_31_28,	STP_IVCXO27_0_E,	SEL_SSP1_0_4),
-@@ -1473,7 +1473,7 @@ static const u16 pinmux_data[] = {
- 	/* IPSR18 */
- 	PINMUX_IPSR_GPSR(IP18_3_0,	USB2_CH3_PWEN),
- 	PINMUX_IPSR_GPSR(IP18_3_0,	AUDIO_CLKOUT2_B),
--	PINMUX_IPSR_MSEL(IP18_3_0,	SSI_SCK9_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP18_3_0,	SSI_SCK9_B,		SEL_SSI9_1),
- 	PINMUX_IPSR_MSEL(IP18_3_0,	TS_SDEN0_E,		SEL_TSIF0_4),
- 	PINMUX_IPSR_MSEL(IP18_3_0,	STP_ISEN_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP18_3_0,	RIF2_D0_B,		SEL_DRIF2_1),
-@@ -1483,7 +1483,7 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP18_7_4,	USB2_CH3_OVC),
- 	PINMUX_IPSR_GPSR(IP18_7_4,	AUDIO_CLKOUT3_B),
--	PINMUX_IPSR_MSEL(IP18_7_4,	SSI_WS9_B,		SEL_SSI_1),
-+	PINMUX_IPSR_MSEL(IP18_7_4,	SSI_WS9_B,		SEL_SSI9_1),
- 	PINMUX_IPSR_MSEL(IP18_7_4,	TS_SPSYNC0_E,		SEL_TSIF0_4),
- 	PINMUX_IPSR_MSEL(IP18_7_4,	STP_ISSYNC_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP18_7_4,	RIF2_D1_B,		SEL_DRIF2_1),
 -- 
-2.7.4
+Best regards,
+Marek Vasut
