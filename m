@@ -1,121 +1,118 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:34918 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751253AbeBIPRv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:17:51 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Auger Eric <eric.auger@redhat.com>,
-        Xiao Feng Ren <renxiaof@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 1/5] vfio/platform: make the vfio-platform device non abstract
-Date: Fri,  9 Feb 2018 16:17:32 +0100
-Message-Id: <1518189456-2873-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518189456-2873-1-git-send-email-geert+renesas@glider.be>
-References: <1518189456-2873-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 01/11] dt-bindings: media: Add Renesas CEU bindings
+Date: Mon, 19 Feb 2018 17:59:34 +0100
+Message-Id: <1519059584-30844-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Auger Eric <eric.auger@redhat.com>
+Add bindings documentation for Renesas Capture Engine Unit (CEU).
 
-Up to now the vfio-platform device has been abstract and could not be
-instantiated. The integration of a new vfio platform device required
-to create a dummy derived device which only set the compatibility
-string.
-
-Following the few vfio-platform device integration we have seen
-the actual requested adaptation happens on device tree node creation
-(sysbus-fdt).
-
-So this patch removes the abstract setting and defines 2 new options,
-manufacturer and model that are used to build a compatibility string.
-
-This latter will be used to match the device tree node creation
-function
-
-sysbus-fdt does not support the instantiation of the vfio-platform
-device yet.
-
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-[geert: Rebase, Set user_creatable=true]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- hw/vfio/platform.c              | 20 ++++++++++++++++++--
- include/hw/vfio/vfio-platform.h |  2 ++
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/media/renesas,ceu.txt      | 81 ++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
 
-diff --git a/hw/vfio/platform.c b/hw/vfio/platform.c
-index 0d4bc0aae8891435..32bed1974e23c569 100644
---- a/hw/vfio/platform.c
-+++ b/hw/vfio/platform.c
-@@ -637,7 +637,20 @@ static void vfio_platform_realize(DeviceState *dev, Error **errp)
-     VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(dev);
-     SysBusDevice *sbdev = SYS_BUS_DEVICE(dev);
-     VFIODevice *vbasedev = &vdev->vbasedev;
--    int i, ret;
-+    int i, ret = -EINVAL;
+diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+new file mode 100644
+index 0000000..3fc66df
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+@@ -0,0 +1,81 @@
++Renesas Capture Engine Unit (CEU)
++----------------------------------------------
 +
-+    if (!vdev->compat) {
-+        if (!vdev->model) {
-+            error_setg(errp, "no usable compatible string");
-+            goto out;
-+        }
-+        if (!vdev->manufacturer) {
-+            vdev->compat = g_strdup(vdev->model);
-+        } else {
-+            vdev->compat = g_strjoin(",", vdev->manufacturer,
-+                                     vdev->model, NULL);
-+        }
-+    }
- 
-     vbasedev->type = VFIO_DEVICE_TYPE_PLATFORM;
-     vbasedev->dev = dev;
-@@ -681,6 +694,8 @@ static const VMStateDescription vfio_platform_vmstate = {
- static Property vfio_platform_dev_properties[] = {
-     DEFINE_PROP_STRING("host", VFIOPlatformDevice, vbasedev.name),
-     DEFINE_PROP_STRING("sysfsdev", VFIOPlatformDevice, vbasedev.sysfsdev),
-+    DEFINE_PROP_STRING("manufacturer", VFIOPlatformDevice, manufacturer),
-+    DEFINE_PROP_STRING("model", VFIOPlatformDevice, model),
-     DEFINE_PROP_BOOL("x-no-mmap", VFIOPlatformDevice, vbasedev.no_mmap, false),
-     DEFINE_PROP_UINT32("mmap-timeout-ms", VFIOPlatformDevice,
-                        mmap_timeout, 1100),
-@@ -699,6 +714,8 @@ static void vfio_platform_class_init(ObjectClass *klass, void *data)
-     dc->desc = "VFIO-based platform device assignment";
-     sbc->connect_irq_notifier = vfio_start_irqfd_injection;
-     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
-+    /* Supported by TYPE_VIRT_MACHINE */
-+    dc->user_creatable = true;
- }
- 
- static const TypeInfo vfio_platform_dev_info = {
-@@ -707,7 +724,6 @@ static const TypeInfo vfio_platform_dev_info = {
-     .instance_size = sizeof(VFIOPlatformDevice),
-     .class_init = vfio_platform_class_init,
-     .class_size = sizeof(VFIOPlatformDeviceClass),
--    .abstract   = true,
- };
- 
- static void register_vfio_platform_dev_type(void)
-diff --git a/include/hw/vfio/vfio-platform.h b/include/hw/vfio/vfio-platform.h
-index 9baaa2db09b84f3e..31b9a9800f7d9d00 100644
---- a/include/hw/vfio/vfio-platform.h
-+++ b/include/hw/vfio/vfio-platform.h
-@@ -55,6 +55,8 @@ typedef struct VFIOPlatformDevice {
-     /* queue of pending IRQs */
-     QSIMPLEQ_HEAD(pending_intp_queue, VFIOINTp) pending_intp_queue;
-     char *compat; /* compatibility string */
-+    char *manufacturer; /* manufacturer (1st part of the compatible property) */
-+    char *model; /* model (2d part of the compatible property) */
-     uint32_t mmap_timeout; /* delay to re-enable mmaps after interrupt */
-     QEMUTimer *mmap_timer; /* allows fast-path resume after IRQ hit */
-     QemuMutex intp_mutex; /* protect the intp_list IRQ state */
++The Capture Engine Unit is the image capture interface found in the Renesas
++SH Mobile and RZ SoCs.
++
++The interface supports a single parallel input with data bus width of 8 or 16
++bits.
++
++Required properties:
++- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
++  and RZ/A1M SoCs.
++- reg: Registers address base and size.
++- interrupts: The interrupt specifier.
++
++The CEU supports a single parallel input and should contain a single 'port'
++subnode with a single 'endpoint'. Connection to input devices are modeled
++according to the video interfaces OF bindings specified in:
++Documentation/devicetree/bindings/media/video-interfaces.txt
++
++Optional endpoint properties applicable to parallel input bus described in
++the above mentioned "video-interfaces.txt" file are supported.
++
++- hsync-active: Active state of the HSYNC signal, 0/1 for LOW/HIGH respectively.
++  If property is not present, default is active high.
++- vsync-active: Active state of the VSYNC signal, 0/1 for LOW/HIGH respectively.
++  If property is not present, default is active high.
++
++Example:
++
++The example describes the connection between the Capture Engine Unit and an
++OV7670 image sensor connected to i2c1 interface.
++
++ceu: ceu@e8210000 {
++	reg = <0xe8210000 0x209c>;
++	compatible = "renesas,r7s72100-ceu";
++	interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&vio_pins>;
++
++	status = "okay";
++
++	port {
++		ceu_in: endpoint {
++			remote-endpoint = <&ov7670_out>;
++
++			hsync-active = <1>;
++			vsync-active = <0>;
++		};
++	};
++};
++
++i2c1: i2c@fcfee400 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins>;
++
++	status = "okay";
++
++	clock-frequency = <100000>;
++
++	ov7670: camera@21 {
++		compatible = "ovti,ov7670";
++		reg = <0x21>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&vio_pins>;
++
++		reset-gpios = <&port3 11 GPIO_ACTIVE_LOW>;
++		powerdown-gpios = <&port3 12 GPIO_ACTIVE_HIGH>;
++
++		port {
++			ov7670_out: endpoint {
++				remote-endpoint = <&ceu_in>;
++
++				hsync-active = <1>;
++				vsync-active = <0>;
++			};
++		};
++	};
++};
 -- 
 2.7.4
