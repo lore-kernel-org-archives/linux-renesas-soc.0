@@ -1,50 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36976 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965569AbeBMTam (ORCPT
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:37530 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751707AbeBTNkv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 14:30:42 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org,
+        Tue, 20 Feb 2018 08:40:51 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180220133532.GE7203@w540>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-12-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdXW-7+6_iSPk3oUo-fWsMxqvSawuy2QZ3VTYhoeN8kB4w@mail.gmail.com> <20180220133532.GE7203@w540>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 14:40:50 +0100
+Message-ID: <CAMuHMdWRLdXAUCRo_i14zt+aX=UM9_DJNbJgAwbF=q8+=8vkOQ@mail.gmail.com>
+Subject: Re: [PATCH 11/15] gpio: rcar: Add R-Car M3-N compatible string
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 0/4] arm64: dts: renesas: r8a77995: Add VSP support
-Date: Tue, 13 Feb 2018 19:30:33 +0000
-Message-Id: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Jacopo,
 
-The r8a77995-d3 platform supports 3 VSP instances. One VSPBS can be used
-as a dual-input image blender, while two VSPD instances can be utilised as
-part of a display (DU) pipeline.
+On Tue, Feb 20, 2018 at 2:35 PM, jacopo mondi <jacopo@jmondi.org> wrote:
+> On Wed, Feb 14, 2018 at 03:05:05PM +0100, Geert Uytterhoeven wrote:
+>> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+>> <jacopo+renesas@jmondi.org> wrote:
+>> > Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+>> >
+>> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>
+>> > --- a/drivers/gpio/gpio-rcar.c
+>> > +++ b/drivers/gpio/gpio-rcar.c
+>> > @@ -360,6 +360,10 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+>> >                 /* Gen3 GPIO is identical to Gen2. */
+>> >                 .data = &gpio_rcar_info_gen2,
+>> >         }, {
+>> > +               .compatible = "renesas,gpio-r8a77965",
+>> > +               /* Gen3 GPIO is identical to Gen2. */
+>> > +               .data = &gpio_rcar_info_gen2,
+>> > +       }, {
+>>
+>> This part is not needed, as the driver already matches agains the generic
+>> "renesas,rcar-gen3-gpio".
+>
+> Just to point out that the compatible string is there for M3-W and H3.
+> Anyway, if that's not good practice to add per-SoC strings here, I'll
+> drop this bit.
 
-Add support for these, along with their required FCPV nodes.
+That's correct. Initially, we added the H3 string first, and the M3-W later.
+After that we learned about new future Gen3 members, and we started using
+the family-specific one.
 
-During review, Laurent noticed that the r8a7795 and r8a7796 were not mapping
-enough register space to handle RPFs with CLUT modules.
+Note that we cannot drop the strings for H3 and M3-W from the driver, as
+old DTBs do not have the family-specific strings.
 
-The last two patches fix this issue.
+Gr{oetje,eeting}s,
 
-v2:
- - Merge FCPV nodes to a single patch
- - Merge VSP nodes to a single patch
- - Fix VSP register map size
- - Add fixes for r8a7795 and r8a7796
+                        Geert
 
-Kieran Bingham (4):
-  arm64: dts: renesas: r8a77995: add FCPV nodes
-  arm64: dts: renesas: r8a77995: add VSP instances
-  arm64: dts: renesas: r8a7795: Fix register mappings on VSPs
-  arm64: dts: renesas: r8a7796: Fix register mappings on VSPs
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi  |  6 ++--
- arch/arm64/boot/dts/renesas/r8a7796.dtsi  |  6 ++--
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 57 +++++++++++++++++++++++++++++++
- 3 files changed, 63 insertions(+), 6 deletions(-)
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
