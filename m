@@ -1,104 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:41888 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935174AbeBMNcj (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:38219 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751460AbeBTKxG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 08:32:39 -0500
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1elahJ-0006hm-Tc
-        for linux-renesas-soc@vger.kernel.org; Tue, 13 Feb 2018 14:32:37 +0100
-Received: from geert by ramsan with local (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1elahJ-0007dT-NK
-        for linux-renesas-soc@vger.kernel.org; Tue, 13 Feb 2018 14:32:37 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2018-02-13-v4.16-rc1
-Date: Tue, 13 Feb 2018 14:32:37 +0100
-Message-Id: <1518528757-29312-1-git-send-email-geert+renesas@glider.be>
+        Tue, 20 Feb 2018 05:53:06 -0500
+MIME-Version: 1.0
+In-Reply-To: <1519119624-1268-8-git-send-email-geert+renesas@glider.be>
+References: <1519119624-1268-1-git-send-email-geert+renesas@glider.be> <1519119624-1268-8-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 11:53:05 +0100
+Message-ID: <CAMuHMdVqoBC0oD+JXWJU_p5KJy7adZj681rwxYFYj_L5kwD=ew@mail.gmail.com>
+Subject: Re: [PATCH 7/9] serial: sh-sci: Fix out-of-bounds access through DT alias
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Barry Song <baohua@kernel.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-serial@vger.kernel.org,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2018-02-13-v4.16-rc1 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+On Tue, Feb 20, 2018 at 10:40 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> The sci_ports[] array is indexed using a value derived from the
+> "serialN" alias in DT, which may lead to an out-of-bounds access.
+>
+> Fix this by adding a range check.
+>
+> Note that the array size is defined by a Kconfig symbol
+> (CONFIG_SERIAL_SH_SCI_NR_UARTS), so this can even be triggered using a
+> legitimate DTB.
+>
+> Fixes: f650cdf1c115498e ("serial: sh-sci: Fix out-of-bounds access through DT alias")
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
-
-Today's version is based on renesas-devel-20180212-v4.16-rc1.
-
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/rcar-genpd-wakeup-v4
-  - topic/r8a77970-eagle-pfc-v1
-  - topic/r8a77970-eagle-gpio-v1
-  - topic/r8a77970-eagle-i2c-v1
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/rcar-gen3-cpufreq-little-dts
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
-  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
-  - git://linuxtv.org/pinchartl/media.git#tags/vsp1-discom-v1-20171215
-  - git://linuxtv.org/pinchartl/media.git#tags/drm-next-colorkey-v1-20171215
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#vsp1/vga-performance-fix
-
-Included fixes:
-  - regulator: Fix resume from suspend to idle
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+Fixes: 97ed9790c514066b ("serial: sh-sci: Remove unused platform data
+capabilities field")
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
