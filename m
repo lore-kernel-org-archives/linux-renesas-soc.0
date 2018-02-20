@@ -1,80 +1,172 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44484 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934767AbeB1Uwz (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56734 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751119AbeBTKKL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Feb 2018 15:52:55 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v6 2/9] v4l: vsp1: Protect bodies against overflow
-Date: Wed, 28 Feb 2018 20:52:36 +0000
-Message-Id: <c7ad9d7cab7c3f088d27cc7ee1866e163949ff02.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Tue, 20 Feb 2018 05:10:11 -0500
+Date: Tue, 20 Feb 2018 11:10:04 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 03/15] soc: renesas: Add R-Car M3-N support
+Message-ID: <20180220101004.GD7203@w540>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdU-pYNwjrXSR7j2kNkJSYsKd=0Kf0Tzq5LHpwA7p4_9MA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU-pYNwjrXSR7j2kNkJSYsKd=0Kf0Tzq5LHpwA7p4_9MA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The body write function relies on the code never asking it to write more
-than the entries available in the list.
+Hi Geert,
 
-Currently with each list body containing 256 entries, this is fine, but
-we can reduce this number greatly saving memory. In preparation of this
-add a level of protection to catch any buffer overflows.
+On Wed, Feb 14, 2018 at 01:48:27PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> Thanks for your patch!
+>
+> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+> > Add support for R-Car M3-N (r8a77965) power areas and reset.
+> > M3-N power areas are identical to M3-W ones, so just copy and rename
+> > them.
+>
+> They are not identical:
+>   - M3-N does not have the CA53-related areas,
+>   - M3-W does not have A3VP,
+>   - M3-N does not have A2VC0 (M3-W also doesn't, according to latest
+> datasheet?).
+>
+> The datasheet also mentions A3SH, without further info about the register
+> block. I think we need to bring this up with Renesas.
+>
+> >  .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+> >  .../devicetree/bindings/reset/renesas,rst.txt      |  1 +
+> >  drivers/soc/renesas/Kconfig                        |  9 ++++--
+> >  drivers/soc/renesas/Makefile                       |  1 +
+> >  drivers/soc/renesas/r8a77965-sysc.c                | 37 ++++++++++++++++++++++
+> >  drivers/soc/renesas/rcar-rst.c                     |  1 +
+> >  drivers/soc/renesas/rcar-sysc.c                    |  3 ++
+> >  drivers/soc/renesas/rcar-sysc.h                    |  1 +
+> >  drivers/soc/renesas/renesas-soc.c                  |  8 +++++
+> >  include/dt-bindings/power/r8a77965-sysc.h          | 31 ++++++++++++++++++
+> >  10 files changed, 91 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/soc/renesas/r8a77965-sysc.c
+> >  create mode 100644 include/dt-bindings/power/r8a77965-sysc.h
+>
+> The maintainer may ask you to split this patch by functionality...
+>
+> > --- /dev/null
+> > +++ b/drivers/soc/renesas/r8a77965-sysc.c
+> > @@ -0,0 +1,37 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Renesas R-Car M3-N System Controller
+> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + *
+> > + * Based on Renesas R-Car M3-W System Controller
+> > + * Copyright (C) 2016 Glider bvba
+> > + */
+> > +
+> > +#include <linux/bug.h>
+> > +#include <linux/kernel.h>
+> > +
+> > +#include <dt-bindings/power/r8a77965-sysc.h>
+> > +
+> > +#include "rcar-sysc.h"
+> > +
+> > +static const struct rcar_sysc_area r8a77965_areas[] __initconst = {
+> > +       { "always-on",      0, 0, R8A77965_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
+> > +       { "ca57-scu",   0x1c0, 0, R8A77965_PD_CA57_SCU, R8A77965_PD_ALWAYS_ON,
+> > +         PD_SCU },
+> > +       { "ca57-cpu0",   0x80, 0, R8A77965_PD_CA57_CPU0, R8A77965_PD_CA57_SCU,
+> > +         PD_CPU_NOCR },
+> > +       { "ca57-cpu1",   0x80, 1, R8A77965_PD_CA57_CPU1, R8A77965_PD_CA57_SCU,
+> > +         PD_CPU_NOCR },
+> > +       { "cr7",        0x240, 0, R8A77965_PD_CR7,      R8A77965_PD_ALWAYS_ON },
+> > +       { "a3vc",       0x380, 0, R8A77965_PD_A3VC,     R8A77965_PD_ALWAYS_ON },
+> > +       { "a2vc0",      0x3c0, 0, R8A77965_PD_A2VC0,    R8A77965_PD_A3VC },
+>
+> M3-N (and M3-W) does not have A2VC0?
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Why do I still see that power area listed in latest renesas-drivers for
+M3-W? Are there patch pendings for that?
 
----
+I'll remove it anyway for M3-N.
 
-v3:
- - adapt for new 'body' terminology
- - simplify WARN_ON macro usage
+Thanks
+   j
 
- drivers/media/platform/vsp1/vsp1_dl.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 0c1bd17f9281..59fe80bf6e9d 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -50,6 +50,7 @@ struct vsp1_dl_entry {
-  * @dma: DMA address of the entries
-  * @size: size of the DMA memory in bytes
-  * @num_entries: number of stored entries
-+ * @max_entries: number of entries available
-  */
- struct vsp1_dl_body {
- 	struct list_head list;
-@@ -60,6 +61,7 @@ struct vsp1_dl_body {
- 	size_t size;
- 
- 	unsigned int num_entries;
-+	unsigned int max_entries;
- };
- 
- /**
-@@ -139,6 +141,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
- 
- 	dlb->vsp1 = vsp1;
- 	dlb->size = size;
-+	dlb->max_entries = num_entries;
- 
- 	dlb->entries = dma_alloc_wc(vsp1->bus_master, dlb->size, &dlb->dma,
- 				    GFP_KERNEL);
-@@ -220,6 +223,10 @@ void vsp1_dl_body_free(struct vsp1_dl_body *dlb)
-  */
- void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
- {
-+	if (WARN_ONCE(dlb->num_entries >= dlb->max_entries,
-+		      "DLB size exceeded (max %u)", dlb->max_entries))
-+		return;
-+
- 	dlb->entries[dlb->num_entries].addr = reg;
- 	dlb->entries[dlb->num_entries].data = data;
- 	dlb->num_entries++;
--- 
-git-series 0.9.1
+>
+> > +       { "a2vc1",      0x3c0, 1, R8A77965_PD_A2VC1,    R8A77965_PD_A3VC },
+> > +       { "3dg-a",      0x100, 0, R8A77965_PD_3DG_A,    R8A77965_PD_ALWAYS_ON },
+> > +       { "3dg-b",      0x100, 1, R8A77965_PD_3DG_B,    R8A77965_PD_3DG_A },
+> > +       { "a3ir",       0x180, 0, R8A77965_PD_A3IR,     R8A77965_PD_ALWAYS_ON },
+>
+> A3VP is missing?
+>
+> > +};
+> > +
+> > +const struct rcar_sysc_info r8a77965_sysc_info __initconst = {
+> > +       .areas = r8a77965_areas,
+> > +       .num_areas = ARRAY_SIZE(r8a77965_areas),
+> > +};
+>
+> > --- /dev/null
+> > +++ b/include/dt-bindings/power/r8a77965-sysc.h
+> > @@ -0,0 +1,31 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > + * Copyright (C) 2016 Glider bvba
+> > + */
+> > +
+> > +#ifndef __DT_BINDINGS_POWER_R8A77965_SYSC_H__
+> > +#define __DT_BINDINGS_POWER_R8A77965_SYSC_H__
+> > +
+> > +/*
+> > + * These power domain indices match the numbers of the interrupt bits
+> > + * representing the power areas in the various Interrupt Registers
+> > + * (e.g. SYSCISR, Interrupt Status Register)
+> > + */
+> > +
+> > +#define R8A77965_PD_CA57_CPU0           0
+> > +#define R8A77965_PD_CA57_CPU1           1
+> > +#define R8A77965_PD_A3VP                9
+> > +#define R8A77965_PD_CA57_SCU           12
+> > +#define R8A77965_PD_CR7                        13
+> > +#define R8A77965_PD_A3VC               14
+> > +#define R8A77965_PD_3DG_A              17
+> > +#define R8A77965_PD_3DG_B              18
+> > +#define R8A77965_PD_A3IR               24
+> > +#define R8A77965_PD_A2VC0              25
+>
+> M3-N (and M3-W) does not have A2VC0?
+>
+> > +#define R8A77965_PD_A2VC1              26
+> > +
+> > +/* Always-on power area */
+> > +#define R8A77965_PD_ALWAYS_ON          32
+> > +
+> > +#endif /* __DT_BINDINGS_POWER_R8A77965_SYSC_H__ */
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
