@@ -1,31 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:34284 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752069AbeB0IMy (ORCPT
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:38908 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751344AbeBTRwH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:12:54 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add USB[23] host pins, groups and functions
-Date: Tue, 27 Feb 2018 17:08:00 +0900
-Message-Id: <1519718882-27636-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 20 Feb 2018 12:52:07 -0500
+Received: by mail-qt0-f177.google.com with SMTP id k13so17433899qtg.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Feb 2018 09:52:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1518791104-13928-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1518791104-13928-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1518791104-13928-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 18:52:06 +0100
+Message-ID: <CAMuHMdUMd9kiRFCFPvi62KpiL_pgRXeWWE5=9B-5ZF-uW1DAUg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: r8a7795: Fix MOD_SEL register pin
+ assignment for SSI pins group
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch is based on the renesas-drivers.git / sh-pfc-for-v4.17 branch
-(commit id = fbd452aeb49e552e7278c25c63198caa918deb04)
+On Fri, Feb 16, 2018 at 3:25 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes MOD_SEL1 bit20 and MOD_SEL2 bit20, bit21 pin assignment
+> for SSI pins group.
+>
+> This is a correction because MOD_SEL register specification for R8A7795
+> ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.53E.
+>
+> Fixes: b205914c8f82 ("pinctrl: sh-pfc: r8a7795: Add support for R-Car H3 ES2.0")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Takeshi Kihara (2):
-  pinctrl: sh-pfc: r8a77965: Add USB2.0 host pins, groups and functions
-  pinctrl: sh-pfc: r8a77965: Add USB3.0 host pins, groups and functions
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+and queueing in sh-pfc-for-v4.17.
 
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 48 +++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+Gr{oetje,eeting}s,
 
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
