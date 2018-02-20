@@ -1,78 +1,98 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/9] serial: Fix out-of-bounds accesses through DT aliases
-Date: Tue, 20 Feb 2018 10:40:15 +0100
-Message-Id: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38070 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751639AbeBTXKM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 20 Feb 2018 18:10:12 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v4 02/16] dt-bindings: display: renesas: Deprecate LVDS support in the DU bindings
+Date: Wed, 21 Feb 2018 01:10:32 +0200
+Message-Id: <20180220231046.32638-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+The internal LVDS encoders now have their own DT bindings, representing
+them as part of the DU is deprecated.
 
-Serial drivers used on DT platforms use the "serialN" alias in DT to
-obtain the serial port index for a specific port.  Drivers typically use
-a fixed-size array for keeping track of all available serial ports.
-However, several drivers do not perform any validation on the index
-obtained from DT, which may lead to out-of-bounds accesses of these
-fixed-size arrays.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes since v1:
 
-While the DTB passed to the kernel might be considered trusted, some of
-these out-of-bounds accesses can be triggered by a legitimate DTB:
-  - In some drivers the size of the array is defined by a Kconfig
-    symbol, so a user who doesn't need all serial ports may lower this
-    value rightfully,
-  - Tomorrow's new SoC may have more serial ports than the fixed-size
-    array in today's driver can accommodate, which the user may forget
-    to enlarge.
+- Remove the LVDS reg range from the example
+- Remove the reg-names property
+---
+ .../devicetree/bindings/display/renesas,du.txt     | 31 ++++++++--------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
-Hence this series fixes that by adding checks for out-of-range aliases,
-logging an error message when triggered.
-
-Tested on r8a7791/koelsch (sh-sci), all other drivers were
-compile-tested only.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (9):
-  serial: arc_uart: Fix out-of-bounds access through DT alias
-  serial: fsl_lpuart: Fix out-of-bounds access through DT alias
-  serial: imx: Fix out-of-bounds access through DT alias
-  serial: mxs-auart: Fix out-of-bounds access through DT alias
-  serial: pxa: Fix out-of-bounds access through DT alias
-  serial: samsung: Fix out-of-bounds access through DT alias
-  serial: sh-sci: Fix out-of-bounds access through DT alias
-  serial: sirf: Fix out-of-bounds access through DT alias
-  serial: xuartps: Fix out-of-bounds access through DT alias
-
- drivers/tty/serial/arc_uart.c      | 5 +++++
- drivers/tty/serial/fsl_lpuart.c    | 4 ++++
- drivers/tty/serial/imx.c           | 5 +++++
- drivers/tty/serial/mxs-auart.c     | 4 ++++
- drivers/tty/serial/pxa.c           | 4 ++++
- drivers/tty/serial/samsung.c       | 4 ++++
- drivers/tty/serial/sh-sci.c        | 4 ++++
- drivers/tty/serial/sirfsoc_uart.c  | 5 +++++
- drivers/tty/serial/xilinx_uartps.c | 2 +-
- 9 files changed, 36 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index cd48aba3bc8c..e79cf9b0ad38 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -14,12 +14,7 @@ Required Properties:
+     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
+     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
+ 
+-  - reg: A list of base address and length of each memory resource, one for
+-    each entry in the reg-names property.
+-  - reg-names: Name of the memory resources. The DU requires one memory
+-    resource for the DU core (named "du") and one memory resource for each
+-    LVDS encoder (named "lvds.x" with "x" being the LVDS controller numerical
+-    index).
++  - reg: the memory-mapped I/O registers base address and length
+ 
+   - interrupt-parent: phandle of the parent interrupt controller.
+   - interrupts: Interrupt specifiers for the DU interrupts.
+@@ -29,14 +24,13 @@ Required Properties:
+   - clock-names: Name of the clocks. This property is model-dependent.
+     - R8A7779 uses a single functional clock. The clock doesn't need to be
+       named.
+-    - All other DU instances use one functional clock per channel and one
+-      clock per LVDS encoder (if available). The functional clocks must be
+-      named "du.x" with "x" being the channel numerical index. The LVDS clocks
+-      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
+-    - In addition to the functional and encoder clocks, all DU versions also
+-      support externally supplied pixel clocks. Those clocks are optional.
+-      When supplied they must be named "dclkin.x" with "x" being the input
+-      clock numerical index.
++    - All other DU instances use one functional clock per channel The
++      functional clocks must be named "du.x" with "x" being the channel
++      numerical index.
++    - In addition to the functional clocks, all DU versions also support
++      externally supplied pixel clocks. Those clocks are optional. When
++      supplied they must be named "dclkin.x" with "x" being the input clock
++      numerical index.
+ 
+   - vsps: A list of phandle and channel index tuples to the VSPs that handle
+     the memory interfaces for the DU channels. The phandle identifies the VSP
+@@ -69,9 +63,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 
+ 	du: display@feb00000 {
+ 		compatible = "renesas,du-r8a7795";
+-		reg = <0 0xfeb00000 0 0x80000>,
+-		      <0 0xfeb90000 0 0x14>;
+-		reg-names = "du", "lvds.0";
++		reg = <0 0xfeb00000 0 0x80000>;
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
+@@ -79,9 +71,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 		clocks = <&cpg CPG_MOD 724>,
+ 			 <&cpg CPG_MOD 723>,
+ 			 <&cpg CPG_MOD 722>,
+-			 <&cpg CPG_MOD 721>,
+-			 <&cpg CPG_MOD 727>;
+-		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
++			 <&cpg CPG_MOD 721>;
++		clock-names = "du.0", "du.1", "du.2", "du.3";
+ 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 
+ 		ports {
 -- 
-2.7.4
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
