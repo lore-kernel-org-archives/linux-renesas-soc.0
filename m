@@ -1,48 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:45154 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751707AbeB1JNH (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:47625 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752196AbeBTPOc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Feb 2018 04:13:07 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: rcar-gen2: Fix error check in regulator quirk
-Date: Wed, 28 Feb 2018 10:13:00 +0100
-Message-Id: <1519809180-6522-1-git-send-email-geert+renesas@glider.be>
+        Tue, 20 Feb 2018 10:14:32 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org
+Subject: [PATCH v2 17/19] dt-bindings: net: ravb: Add support for r8a77965 SoC
+Date: Tue, 20 Feb 2018 16:12:19 +0100
+Message-Id: <1519139541-18783-18-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On systems with two regulators, a bogus error message is printed on
-success:
+Add documentation for r8a77965 compatible string to renesas ravb device
+tree bindings documentation.
 
-    i2c 6-0058: i2c error 2
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-While adding support for Stout, the number of messages to send was
-made variable, but the corresponding return value check of
-i2c_transfer() wasn't updated.
-
-Fixes: ff938cd14d67a704 ("ARM: shmobile: stout: enable R-Car Gen2 regulator quirk")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org
 ---
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index 27fb3a5ec73e6dda..93f628acfd944fd5 100644
---- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-@@ -98,7 +98,7 @@ static int regulator_quirk_notify(struct notifier_block *nb,
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index c902261..bf071a5 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -17,6 +17,7 @@ Required properties:
  
- 		dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
- 		ret = i2c_transfer(client->adapter, da9xxx_msgs, len);
--		if (ret != ARRAY_SIZE(da9xxx_msgs))
-+		if (ret != len)
- 			dev_err(&client->dev, "i2c error %d\n", ret);
- 	}
- 
+       - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
+       - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
++      - "renesas,etheravb-r8a77965" for the R8A77965 SoC.
+       - "renesas,etheravb-r8a77970" for the R8A77970 SoC.
+       - "renesas,etheravb-r8a77995" for the R8A77995 SoC.
+       - "renesas,etheravb-rcar-gen3" as a fallback for the above
 -- 
 2.7.4
