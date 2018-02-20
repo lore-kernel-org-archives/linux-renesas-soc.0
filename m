@@ -1,60 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35511 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751872AbeBYSNF (ORCPT
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:45300 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750773AbeBTN65 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 25 Feb 2018 13:13:05 -0500
-Received: by mail-lf0-f65.google.com with SMTP id 70so19047412lfw.2
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 25 Feb 2018 10:13:05 -0800 (PST)
-Subject: [PATCH 1/2] pinctrl: sh-pfc: add PORT_GP_CFG_25() helper macro
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <e32c511f-89cd-254b-8a53-face984abe75@cogentembedded.com>
-Message-ID: <26e823ef-759f-16e7-f3da-ac6ce7c01ad3@cogentembedded.com>
-Date: Sun, 25 Feb 2018 21:13:02 +0300
+        Tue, 20 Feb 2018 08:58:57 -0500
+Received: by mail-qt0-f181.google.com with SMTP id v90so13616602qte.12
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Feb 2018 05:58:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <e32c511f-89cd-254b-8a53-face984abe75@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1518696091-23561-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1518696091-23561-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1518696091-23561-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 14:58:56 +0100
+Message-ID: <CAMuHMdVBMasfKKVjqoHBUnufX7O8By491zuhV1RbOx6ROttSmQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: r8a7795: Add VIN4, VIN5 pins, groups
+ and functions
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kbingham@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-They follow the style of the existing PORT_GP_CFG_<n>() macros and
-will be used by a follow-up patch for the R8A77980 SoC.
+On Thu, Feb 15, 2018 at 1:01 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> This patch adds VIN4 and VIN5 pins, groups and functions for the
+> R8A7795 SoC.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Based on the original (and large) patch by Vladimir Barinov.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+But same comments as for r8a7796.
 
----
- drivers/pinctrl/sh-pfc/sh_pfc.h |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-Index: renesas/drivers/pinctrl/sh-pfc/sh_pfc.h
-===================================================================
---- renesas.orig/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ renesas/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -470,9 +470,13 @@ extern const struct sh_pfc_soc_info shx3
- 	PORT_GP_CFG_1(bank, 23, fn, sfx, cfg)
- #define PORT_GP_24(bank, fn, sfx)	PORT_GP_CFG_24(bank, fn, sfx, 0)
- 
--#define PORT_GP_CFG_26(bank, fn, sfx, cfg)				\
-+#define PORT_GP_CFG_25(bank, fn, sfx, cfg)				\
- 	PORT_GP_CFG_24(bank, fn, sfx, cfg),				\
--	PORT_GP_CFG_1(bank, 24, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 24, fn, sfx, cfg)
-+#define PORT_GP_25(bank, fn, sfx)	PORT_GP_CFG_25(bank, fn, sfx, 0)
-+
-+#define PORT_GP_CFG_26(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_25(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 25, fn, sfx, cfg)
- #define PORT_GP_26(bank, fn, sfx)	PORT_GP_CFG_26(bank, fn, sfx, 0)
- 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
