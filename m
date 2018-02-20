@@ -1,109 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36089 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751172AbeBTKip (ORCPT
+Received: from mail-bl2nam02on0048.outbound.protection.outlook.com ([104.47.38.48]:39078
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751338AbeBTKWU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:38:45 -0500
-MIME-Version: 1.0
-In-Reply-To: <c16b025a-a302-8515-2697-f7eca478e939@xilinx.com>
+        Tue, 20 Feb 2018 05:22:20 -0500
+Subject: Re: [PATCH 9/9] serial: xuartps: Fix out-of-bounds access through DT
+ alias
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        <linux-serial@vger.kernel.org>,
+        <linux-snps-arc@lists.infradead.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
- <1519119624-1268-10-git-send-email-geert+renesas@glider.be> <c16b025a-a302-8515-2697-f7eca478e939@xilinx.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Feb 2018 11:38:43 +0100
-Message-ID: <CAMuHMdUOKMM5mSrnnrxCi0gX_TbjYkj7vwn11b2D5p7XigM+Ag@mail.gmail.com>
-Subject: Re: [PATCH 9/9] serial: xuartps: Fix out-of-bounds access through DT alias
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Barry Song <baohua@kernel.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+ <1519119624-1268-10-git-send-email-geert+renesas@glider.be>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <c16b025a-a302-8515-2697-f7eca478e939@xilinx.com>
+Date: Tue, 20 Feb 2018 11:22:05 +0100
+MIME-Version: 1.0
+In-Reply-To: <1519119624-1268-10-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Michal,
+On 20.2.2018 10:40, Geert Uytterhoeven wrote:
+> The cdns_uart_port[] array is indexed using a value derived from the
+> "serialN" alias in DT, which may lead to an out-of-bounds access.
+> 
+> Fix this by adding a range check.
+> 
+> Fixes: 1f118c02a1819856 ("serial: xuartps: Fix out-of-bounds access through DT alias")
 
-On Tue, Feb 20, 2018 at 11:22 AM, Michal Simek <michal.simek@xilinx.com> wrote:
-> On 20.2.2018 10:40, Geert Uytterhoeven wrote:
->> The cdns_uart_port[] array is indexed using a value derived from the
->> "serialN" alias in DT, which may lead to an out-of-bounds access.
->>
->> Fix this by adding a range check.
->>
->> Fixes: 1f118c02a1819856 ("serial: xuartps: Fix out-of-bounds access through DT alias")
->
-> I didn't find this sha1 - patch name is this one.
+I didn't find this sha1 - patch name is this one.
 
-Bummer, I totally screwed up my scripting...
-
-Fixes: 928e9263492069ee ("tty: xuartps: Initialize ports according to aliases")
-
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->>  drivers/tty/serial/xilinx_uartps.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
->> index b9b2bc76bcac606c..abcb4d09a2d866d0 100644
->> --- a/drivers/tty/serial/xilinx_uartps.c
->> +++ b/drivers/tty/serial/xilinx_uartps.c
->> @@ -1110,7 +1110,7 @@ static struct uart_port *cdns_uart_get_port(int id)
->>       struct uart_port *port;
->>
->>       /* Try the given port id if failed use default method */
->> -     if (cdns_uart_port[id].mapbase != 0) {
->> +     if (id < CDNS_UART_NR_PORTS && cdns_uart_port[id].mapbase != 0) {
->>               /* Find the next unused port */
->>               for (id = 0; id < CDNS_UART_NR_PORTS; id++)
->>                       if (cdns_uart_port[id].mapbase == 0)
->>
->
-> Below should be better fix for this driver.
-
-I considered that, too, but...
-
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/tty/serial/xilinx_uartps.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+> index b9b2bc76bcac606c..abcb4d09a2d866d0 100644
 > --- a/drivers/tty/serial/xilinx_uartps.c
 > +++ b/drivers/tty/serial/xilinx_uartps.c
-> @@ -1109,6 +1109,9 @@ static struct uart_port *cdns_uart_get_port(int id)
->  {
->         struct uart_port *port;
->
-> +       if (id >= CDNS_UART_NR_PORTS)
-> +               return NULL;
-> +
->         /* Try the given port id if failed use default method */
->         if (cdns_uart_port[id].mapbase != 0) {
->                 /* Find the next unused port */
-> @@ -1117,9 +1120,6 @@ static struct uart_port *cdns_uart_get_port(int id)
->                                 break;
->         }
->
-> -       if (id >= CDNS_UART_NR_PORTS)
-> -               return NULL;
-> -
+> @@ -1110,7 +1110,7 @@ static struct uart_port *cdns_uart_get_port(int id)
+>  	struct uart_port *port;
+>  
+>  	/* Try the given port id if failed use default method */
+> -	if (cdns_uart_port[id].mapbase != 0) {
+> +	if (id < CDNS_UART_NR_PORTS && cdns_uart_port[id].mapbase != 0) {
+>  		/* Find the next unused port */
+>  		for (id = 0; id < CDNS_UART_NR_PORTS; id++)
+>  			if (cdns_uart_port[id].mapbase == 0)
+> 
 
-... the above check cannot be removed, as it is needed to support the loop
-above to find an unused port.
+Below should be better fix for this driver.
 
->         port = &cdns_uart_port[id];
->
->         /* At this point, we've got an empty uart_port struct,
-> initialize it */
+Thanks,
+Michal
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/tty/serial/xilinx_uartps.c
+b/drivers/tty/serial/xilinx_uartps.c
+index b9b2bc76bcac..b77c6477ed93 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1109,6 +1109,9 @@ static struct uart_port *cdns_uart_get_port(int id)
+ {
+        struct uart_port *port;
 
-                        Geert
++       if (id >= CDNS_UART_NR_PORTS)
++               return NULL;
++
+        /* Try the given port id if failed use default method */
+        if (cdns_uart_port[id].mapbase != 0) {
+                /* Find the next unused port */
+@@ -1117,9 +1120,6 @@ static struct uart_port *cdns_uart_get_port(int id)
+                                break;
+        }
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-       if (id >= CDNS_UART_NR_PORTS)
+-               return NULL;
+-
+        port = &cdns_uart_port[id];
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+        /* At this point, we've got an empty uart_port struct,
+initialize it */
