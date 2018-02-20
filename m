@@ -1,81 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:9609 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933805AbeBMJmK (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:43773 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751381AbeBTSBO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 04:42:10 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: host: xhci-plat: revert "usb: host: xhci-plat: enable clk in resume timing"
-Date: Tue, 13 Feb 2018 18:37:23 +0900
-Message-Id: <1518514643-13064-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 20 Feb 2018 13:01:14 -0500
+Received: by mail-qk0-f195.google.com with SMTP id i184so17524987qkf.10
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Feb 2018 10:01:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1518791104-13928-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1518791104-13928-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1518791104-13928-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 19:01:13 +0100
+Message-ID: <CAMuHMdWwBxRiP4PSvY7cPYPcBt9Jf+ADC-UCsyqOdYRy+q4E_w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] pinctrl: sh-pfc: r8a7796: Fix IPSR and MOD_SEL
+ register pin assignment for NDFC pins group
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch reverts the commit 835e4241e714 ("usb: host: xhci-plat:
-enable clk in resume timing") because this driver also has runtime PM
-and the commit 560869100b99 ("clk: renesas: cpg-mssr: Restore module
-clocks during resume") will restore the clock on R-Car H3 environment.
+On Fri, Feb 16, 2018 at 3:25 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes to set IPSR and MOD_SEL when using NFDATA{14,15}_A and
+> NF{RB,WP}_N_A pin function is selected. And renamess MOD_SEL2 bit22 value
+> definition name to SEL_NDFC.
+>
+> This is a correction to the incorrect implementation of MOD_SEL register
+> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.53E.
+>
+> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-If the xhci_plat_suspend() disables the clk, the system cannot enable
-the clk in resume like the following behavior:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+and queueing in sh-pfc-for-v4.17.
 
-< In resume >
- - genpd_resume_noirq() runs and enable the clk (enable_count = 1)
- - cpg_mssr_resume_noirq() restores the clk register.
-  -- Since the clk was disabled in suspend, cpg_mssr_resume_noirq()
-     will disable the clk and keep the enable_count.
- - Even if xhci_plat_resume() calls clk_prepare_enable(), since
-   the enable_count is 1, the clk will be not enabled.
+I guess this applies to M3-N, too?
 
-After this patch is applied, the cpg-mssr driver will save the clk
-as enable, so the clk will be enabled in resume.
+Gr{oetje,eeting}s,
 
-Fixes: 835e4241e714 ("usb: host: xhci-plat: enable clk in resume timing")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/host/xhci-plat.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+                        Geert
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 6f03830..6652e2d 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -360,7 +360,6 @@ static int __maybe_unused xhci_plat_suspend(struct device *dev)
- {
- 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
- 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
--	int ret;
- 
- 	/*
- 	 * xhci_suspend() needs `do_wakeup` to know whether host is allowed
-@@ -370,12 +369,7 @@ static int __maybe_unused xhci_plat_suspend(struct device *dev)
- 	 * reconsider this when xhci_plat_suspend enlarges its scope, e.g.,
- 	 * also applies to runtime suspend.
- 	 */
--	ret = xhci_suspend(xhci, device_may_wakeup(dev));
--
--	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
--		clk_disable_unprepare(xhci->clk);
--
--	return ret;
-+	return xhci_suspend(xhci, device_may_wakeup(dev));
- }
- 
- static int __maybe_unused xhci_plat_resume(struct device *dev)
-@@ -384,9 +378,6 @@ static int __maybe_unused xhci_plat_resume(struct device *dev)
- 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
- 	int ret;
- 
--	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
--		clk_prepare_enable(xhci->clk);
--
- 	ret = xhci_priv_resume_quirk(hcd);
- 	if (ret)
- 		return ret;
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
