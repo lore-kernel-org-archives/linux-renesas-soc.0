@@ -1,56 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:38219 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751460AbeBTKxG (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 05:53:06 -0500
-MIME-Version: 1.0
-In-Reply-To: <1519119624-1268-8-git-send-email-geert+renesas@glider.be>
-References: <1519119624-1268-1-git-send-email-geert+renesas@glider.be> <1519119624-1268-8-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Feb 2018 11:53:05 +0100
-Message-ID: <CAMuHMdVqoBC0oD+JXWJU_p5KJy7adZj681rwxYFYj_L5kwD=ew@mail.gmail.com>
-Subject: Re: [PATCH 7/9] serial: sh-sci: Fix out-of-bounds access through DT alias
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Barry Song <baohua@kernel.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
         Jiri Slaby <jslaby@suse.com>,
         Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 7/9] serial: sh-sci: Fix out-of-bounds access through DT alias
+Date: Tue, 20 Feb 2018 10:40:22 +0100
+Message-Id: <1519119624-1268-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
+References: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 10:40 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> The sci_ports[] array is indexed using a value derived from the
-> "serialN" alias in DT, which may lead to an out-of-bounds access.
->
-> Fix this by adding a range check.
->
-> Note that the array size is defined by a Kconfig symbol
-> (CONFIG_SERIAL_SH_SCI_NR_UARTS), so this can even be triggered using a
-> legitimate DTB.
->
-> Fixes: f650cdf1c115498e ("serial: sh-sci: Fix out-of-bounds access through DT alias")
+The sci_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-Fixes: 97ed9790c514066b ("serial: sh-sci: Remove unused platform data
-capabilities field")
+Fix this by adding a range check.
 
-Gr{oetje,eeting}s,
+Note that the array size is defined by a Kconfig symbol
+(CONFIG_SERIAL_SH_SCI_NR_UARTS), so this can even be triggered using a
+legitimate DTB.
 
-                        Geert
+Fixes: f650cdf1c115498e ("serial: sh-sci: Fix out-of-bounds access through DT alias")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/tty/serial/sh-sci.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 4d14f321cbec95e0..0fb4784860da6188 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3620,6 +3620,10 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
+ 		dev_err(&pdev->dev, "failed to get alias id (%d)\n", id);
+ 		return NULL;
+ 	}
++	if (id >= SCI_NPORTS) {
++		dev_err(&pdev->dev, "serial%d out of range\n", id);
++		return NULL;
++	}
+ 
+ 	sp = &sci_ports[id];
+ 	*dev_id = id;
+-- 
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
