@@ -1,45 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:49854 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750805AbeBWM3x (ORCPT
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33348 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751800AbeBTSgm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:29:53 -0500
-From: Colin King <colin.king@canonical.com>
-To: Simon Horman <horms@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: rcar-gen2: remove duplicated bit-wise or of RCAR_PCI_INT_SIGRETABORT
-Date: Fri, 23 Feb 2018 12:29:49 +0000
-Message-Id: <20180223122949.24291-1-colin.king@canonical.com>
+        Tue, 20 Feb 2018 13:36:42 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519139541-18783-19-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org> <1519139541-18783-19-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 19:36:40 +0100
+Message-ID: <CAMuHMdWi9Gh=3vz=tgXzS+KDczwiVQUcPVXXf6TDPukw93C62g@mail.gmail.com>
+Subject: Re: [PATCH v2 18/19] pinctrl: sh-pfc: r8a77965: Add EtherAVB groups/functions
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add EtherAVB groups and functions definitions for R-Car M3-N.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Bit pattern RCAR_PCI_INT_SIGRETABORT is being bit-wise or'd twice;
-remove the redundant 2nd RCAR_PCI_INT_SIGRETABORT.
+Queueing in sh-pfc-for-v4.17.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pci/host/pci-rcar-gen2.c | 1 -
- 1 file changed, 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
-index a28370bb2b2a..dd4f1a6b57c5 100644
---- a/drivers/pci/host/pci-rcar-gen2.c
-+++ b/drivers/pci/host/pci-rcar-gen2.c
-@@ -52,7 +52,6 @@
- #define RCAR_PCI_INT_B			(1 << 17)
- #define RCAR_PCI_INT_PME		(1 << 19)
- #define RCAR_PCI_INT_ALLERRORS (RCAR_PCI_INT_SIGTABORT		| \
--				RCAR_PCI_INT_SIGRETABORT	| \
- 				RCAR_PCI_INT_SIGRETABORT	| \
- 				RCAR_PCI_INT_REMABORT		| \
- 				RCAR_PCI_INT_PERR		| \
--- 
-2.15.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
