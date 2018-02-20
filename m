@@ -1,538 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:37146 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752469AbeBTPN7 (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:37014 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751131AbeBTSfu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:13:59 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 08/19] ARM64: dts: Add Renesas R8A77965 SoC support
-Date: Tue, 20 Feb 2018 16:12:10 +0100
-Message-Id: <1519139541-18783-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 20 Feb 2018 13:35:50 -0500
+MIME-Version: 1.0
+In-Reply-To: <1519139541-18783-6-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org> <1519139541-18783-6-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 19:35:49 +0100
+Message-ID: <CAMuHMdUo+q2V-jpvguW75dbSxoGvihR1yxZSb3AUPrQ22L2xBQ@mail.gmail.com>
+Subject: Re: [PATCH v2 05/19] pinctrl: sh-pfc: Initial R-Car M3-N support
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Basic support for the Gen 3 R-Car M3-N SoC.
+Hi Jacopo,
 
-Based on original work from:
-Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Magnus Damm <damm+renesas@opensource.se>
+On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add initial PFC support for R-Car M3-N (r8a77965) SoC.
+> No groups or functions defined, just pin and registers enumeration.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> ---
+> v1 -> v2:
+>
+> Applied the following patches for r8a7796 on r8a77965:
+>
+> commit 0f4713d71f22d3b0ec3de6ae4a126cceecdea82b
+> Author: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Date:   Thu Nov 16 23:59:21 2017 +0900
+> pinctrl: sh-pfc: r8a7796: Rename RTS{0,1,3,4}# pin function definitions
+>
+> commit fbd81e345c9393b96e8ad252eef390f8c6f9cf60
+> Author: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Date:   Thu Nov 16 12:17:18 2017 +0900
+> pinctrl: sh-pfc: r8a7796: Fix to delete A20..A25 pins function definitions
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Thanks for the update!
 
----
-v1 -> v2:
-- Split r8a77965.dtsi from patch v1 [5/15]
-- Replace all PD_ and CLK_ defines with numeric entries
-- Move timer and pmu nodes outside of soc node and replace their
-  "interrupt" property with "interrupt-extended" one
-- Fix license header
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 490 ++++++++++++++++++++++++++++++
- 1 file changed, 490 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77965.dtsi
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+and queueing in sh-pfc-for-v4.17, with the following recent fixes for
+r8a7796 that are also applicable to r8a77965 folded in:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-new file mode 100644
-index 0000000..6b6ec65
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -0,0 +1,490 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the r8a77965 SoC
-+ *
-+ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ *
-+ * Based on r8a7796.dtsi
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+#define CPG_AUDIO_CLK_I		10
-+
-+/ {
-+	compatible = "renesas,r8a77965";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		a57_0: cpu@0 {
-+			compatible = "arm,cortex-a57", "arm,armv8";
-+			reg = <0x0>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 0>;
-+			next-level-cache = <&L2_CA57>;
-+			enable-method = "psci";
-+		};
-+
-+		a57_1: cpu@1 {
-+			compatible = "arm,cortex-a57","arm,armv8";
-+			reg = <0x1>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 1>;
-+			next-level-cache = <&L2_CA57>;
-+			enable-method = "psci";
-+		};
-+
-+		L2_CA57: cache-controller-0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			power-domains = <&sysc 12>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	extalr_clk: extalr {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clocks - can be overridden by the board */
-+	usb3s0_clk: usb3s0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	pmu_a57 {
-+		compatible = "arm,cortex-a57-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a57_0>,
-+				     <&a57_1>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1010000 0 0x1000>,
-+			      <0x0 0xf1020000 0 0x20000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a77965";
-+			reg = <0 0xe6060000 0 0x50c>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77965-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77965-rst";
-+			reg = <0 0xe6160000 0 0x0200>;
-+		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77965-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		gpio0: gpio@e6050000 {
-+			/* placeholder */
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			/* placeholder */
-+		};
-+
-+		gpio2: gpio@e6052000 {
-+			/* placeholder */
-+		};
-+
-+		gpio3: gpio@e6053000 {
-+			/* placeholder */
-+		};
-+
-+		gpio4: gpio@e6054000 {
-+			/* placeholder */
-+		};
-+
-+		gpio5: gpio@e6055000 {
-+			/* placeholder */
-+		};
-+
-+		gpio6: gpio@e6055400 {
-+			/* placeholder */
-+		};
-+
-+		gpio7: gpio@e6055800 {
-+			/* placeholder */
-+		};
-+
-+		intc_ex: interrupt-controller@e61c0000 {
-+			/* placeholder */
-+		};
-+
-+		dmac0: dma-controller@e6700000 {
-+			/* placeholder */
-+		};
-+
-+		dmac1: dma-controller@e7300000 {
-+			/* placeholder */
-+		};
-+
-+		dmac2: dma-controller@e7310000 {
-+			/* placeholder */
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			/* placeholder */
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			/* placeholder */
-+		};
-+
-+		scif2: serial@e6e88000 {
-+			/* placeholder */
-+		};
-+
-+		scif3: serial@e6c50000 {
-+			/* placeholder */
-+		};
-+
-+		scif4: serial@e6c40000 {
-+			/* placeholder */
-+		};
-+
-+		scif5: serial@e6f30000 {
-+			/* placeholder */
-+		};
-+
-+		avb: ethernet@e6800000 {
-+			/* placeholder */
-+		};
-+
-+		csi20: csi2@fea80000 {
-+			/* placeholder */
-+		};
-+
-+		csi40: csi2@feaa0000 {
-+			/* placeholder */
-+		};
-+
-+		vin0: video@e6ef0000 {
-+			/* placeholder */
-+		};
-+
-+		vin1: video@e6ef1000 {
-+			/* placeholder */
-+		};
-+
-+		vin2: video@e6ef2000 {
-+			/* placeholder */
-+		};
-+
-+		vin3: video@e6ef3000 {
-+			/* placeholder */
-+		};
-+
-+		vin4: video@e6ef4000 {
-+			/* placeholder */
-+		};
-+
-+		vin5: video@e6ef5000 {
-+			/* placeholder */
-+		};
-+
-+		vin6: video@e6ef6000 {
-+			/* placeholder */
-+		};
-+
-+		vin7: video@e6ef7000 {
-+			/* placeholder */
-+		};
-+
-+		ohci0: usb@ee080000 {
-+			/* placeholder */
-+		};
-+
-+		ehci0: usb@ee080100 {
-+			/* placeholder */
-+		};
-+
-+		usb2_phy0: usb-phy@ee080200 {
-+			/* placeholder */
-+		};
-+
-+		ohci1: usb@ee0a0000 {
-+			/* placeholder */
-+		};
-+
-+		ehci1: usb@ee0a0100 {
-+			/* placeholder */
-+		};
-+
-+		i2c0: i2c@e6500000 {
-+			/* placeholder */
-+		};
-+
-+		i2c1: i2c@e6508000 {
-+			/* placeholder */
-+		};
-+
-+		i2c2: i2c@e6510000 {
-+			/* placeholder */
-+		};
-+
-+		i2c3: i2c@e66d0000 {
-+			/* placeholder */
-+		};
-+
-+		i2c4: i2c@e66d8000 {
-+			/* placeholder */
-+		};
-+
-+		i2c5: i2c@e66e0000 {
-+			/* placeholder */
-+		};
-+
-+		i2c6: i2c@e66e8000 {
-+			/* placeholder */
-+		};
-+
-+		i2c_dvfs: i2c@e60b0000 {
-+			/* placeholder */
-+		};
-+
-+		pwm0: pwm@e6e30000 {
-+			/* placeholder */
-+		};
-+
-+		pwm1: pwm@e6e31000 {
-+			/* placeholder */
-+		};
-+
-+		pwm2: pwm@e6e32000 {
-+			/* placeholder */
-+		};
-+
-+		pwm3: pwm@e6e33000 {
-+			/* placeholder */
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			/* placeholder */
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			/* placeholder */
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			/* placeholder */
-+		};
-+
-+		du: display@feb00000 {
-+			/* placeholder */
-+
-+			ports {
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_hdmi0: endpoint {
-+					};
-+				};
-+				port@2 {
-+					reg = <2>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
-+		hsusb: usb@e6590000 {
-+			/* placeholder */
-+		};
-+
-+		pciec0: pcie@fe000000 {
-+			/* placeholder */
-+		};
-+
-+		pciec1: pcie@ee800000 {
-+			/* placeholder */
-+		};
-+
-+		rcar_sound: sound@ec500000 {
-+			/* placeholder */
-+
-+			rcar_sound,dvc {
-+				dvc0: dvc-0 {
-+				};
-+				dvc1: dvc-1 {
-+				};
-+			};
-+
-+			rcar_sound,src {
-+				src0: src-0 {
-+				};
-+				src1: src-1 {
-+				};
-+			};
-+
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 {
-+				};
-+				ssi1: ssi-1 {
-+				};
-+			};
-+		};
-+
-+		usb2_phy1: usb-phy@ee0a0200 {
-+			/* placeholder */
-+		};
-+
-+		sdhi0: sd@ee100000 {
-+			/* placeholder */
-+		};
-+
-+		sdhi1: sd@ee120000 {
-+			/* placeholder */
-+		};
-+
-+		sdhi2: sd@ee140000 {
-+			/* placeholder */
-+		};
-+
-+		sdhi3: sd@ee160000 {
-+			/* placeholder */
-+		};
-+
-+		usb3_phy0: usb-phy@e65ee000 {
-+			/* placeholder */
-+		};
-+
-+		usb3_peri0: usb@ee020000 {
-+			/* placeholder */
-+		};
-+
-+		xhci0: usb@ee000000 {
-+			/* placeholder */
-+		};
-+
-+		wdt0: watchdog@e6020000 {
-+			/* placeholder */
-+		};
-+	};
-+};
--- 
-2.7.4
+    pinctrl: sh-pfc: r8a7796: Fix IPSR and MOD_SEL register pin
+assignment for NDFC pins group
+    pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for
+SSI pins group
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
