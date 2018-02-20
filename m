@@ -1,123 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:58016 "EHLO mail.kernel.org"
+Received: from mga04.intel.com ([192.55.52.120]:46990 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755345AbeBOIi4 (ORCPT
+        id S1750703AbeBTFJn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 03:38:56 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>, geert@glider.be,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 7/8] arm64: dts: renesas: r8a77995-draak: Add HDMI Out through ADV7511
-Date: Thu, 15 Feb 2018 08:38:22 +0000
-Message-Id: <1518683903-10681-8-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+        Tue, 20 Feb 2018 00:09:43 -0500
+Date: Tue, 20 Feb 2018 13:22:23 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: kbuild-all@01.org, laurent.pinchart@ideasonboard.com,
+        magnus.damm@gmail.com, geert@glider.be, hverkuil@xs4all.nl,
+        mchehab@kernel.org, festevam@gmail.com, sakari.ailus@iki.fi,
+        robh+dt@kernel.org, mark.rutland@arm.com, pombredanne@nexb.com,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] media: i2c: ov772x: ov772x_frame_intervals[] can be
+ static
+Message-ID: <20180220052223.GA27152@lkp-sb04>
+References: <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Provide a device node for the ADV7511 as found on the Draak D3 platform.
-
-The ADV7511 is connected to the DU through a parallel mux chip, and is
-configurable in hardware whether it is connected to LVDS0 or LVDS1.
-
-Connect through to LVDS0 as a default implementation.
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Fixes: 42b7d5be5f1f ("media: i2c: ov772x: Support frame interval handling")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 56 ++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ ov772x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 668e246dfc5d..df0c7773cb7d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -27,6 +27,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
+index eba71d97..0d8ce2a 100644
+--- a/drivers/media/i2c/ov772x.c
++++ b/drivers/media/i2c/ov772x.c
+@@ -532,7 +532,7 @@ static const struct ov772x_win_size ov772x_win_sizes[] = {
+ /*
+  * frame rate settings lists
+  */
+-unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
++static unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
+ #define OV772X_N_FRAME_INTERVALS ARRAY_SIZE(ov772x_frame_intervals)
  
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
- 	vga {
- 		compatible = "vga-connector";
- 
-@@ -124,6 +135,39 @@
- 		reg = <0x50>;
- 		pagesize = <8>;
- 	};
-+
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>, <0x3f>, <0x38>, <0x3c>;
-+		reg-names = "main", "edid", "packet", "cec";
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &i2c1 {
-@@ -146,6 +190,18 @@
- 	};
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			endpoint {
-+				remote-endpoint = <&adv7511_in>;
-+			};
-+		};
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
--- 
-2.7.4
+ /*
