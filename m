@@ -1,19 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:37530 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751707AbeBTNkv (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52601 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751704AbeBTNfi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 08:40:51 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180220133532.GE7203@w540>
-References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
- <1518515162-23663-12-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdXW-7+6_iSPk3oUo-fWsMxqvSawuy2QZ3VTYhoeN8kB4w@mail.gmail.com> <20180220133532.GE7203@w540>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Feb 2018 14:40:50 +0100
-Message-ID: <CAMuHMdWRLdXAUCRo_i14zt+aX=UM9_DJNbJgAwbF=q8+=8vkOQ@mail.gmail.com>
-Subject: Re: [PATCH 11/15] gpio: rcar: Add R-Car M3-N compatible string
-To: jacopo mondi <jacopo@jmondi.org>
+        Tue, 20 Feb 2018 08:35:38 -0500
+Date: Tue, 20 Feb 2018 14:35:32 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -23,52 +16,63 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 11/15] gpio: rcar: Add R-Car M3-N compatible string
+Message-ID: <20180220133532.GE7203@w540>
+References: <1518515162-23663-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1518515162-23663-12-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdXW-7+6_iSPk3oUo-fWsMxqvSawuy2QZ3VTYhoeN8kB4w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXW-7+6_iSPk3oUo-fWsMxqvSawuy2QZ3VTYhoeN8kB4w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+Hi Geert,
 
-On Tue, Feb 20, 2018 at 2:35 PM, jacopo mondi <jacopo@jmondi.org> wrote:
-> On Wed, Feb 14, 2018 at 03:05:05PM +0100, Geert Uytterhoeven wrote:
->> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
->> <jacopo+renesas@jmondi.org> wrote:
->> > Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
->> >
->> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>
->> > --- a/drivers/gpio/gpio-rcar.c
->> > +++ b/drivers/gpio/gpio-rcar.c
->> > @@ -360,6 +360,10 @@ static const struct of_device_id gpio_rcar_of_table[] = {
->> >                 /* Gen3 GPIO is identical to Gen2. */
->> >                 .data = &gpio_rcar_info_gen2,
->> >         }, {
->> > +               .compatible = "renesas,gpio-r8a77965",
->> > +               /* Gen3 GPIO is identical to Gen2. */
->> > +               .data = &gpio_rcar_info_gen2,
->> > +       }, {
->>
->> This part is not needed, as the driver already matches agains the generic
->> "renesas,rcar-gen3-gpio".
+On Wed, Feb 14, 2018 at 03:05:05PM +0100, Geert Uytterhoeven wrote:
+> On Tue, Feb 13, 2018 at 10:45 AM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+> > Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 >
-> Just to point out that the compatible string is there for M3-W and H3.
-> Anyway, if that's not good practice to add per-SoC strings here, I'll
-> drop this bit.
+> > --- a/drivers/gpio/gpio-rcar.c
+> > +++ b/drivers/gpio/gpio-rcar.c
+> > @@ -360,6 +360,10 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+> >                 /* Gen3 GPIO is identical to Gen2. */
+> >                 .data = &gpio_rcar_info_gen2,
+> >         }, {
+> > +               .compatible = "renesas,gpio-r8a77965",
+> > +               /* Gen3 GPIO is identical to Gen2. */
+> > +               .data = &gpio_rcar_info_gen2,
+> > +       }, {
+>
+> This part is not needed, as the driver already matches agains the generic
+> "renesas,rcar-gen3-gpio".
 
-That's correct. Initially, we added the H3 string first, and the M3-W later.
-After that we learned about new future Gen3 members, and we started using
-the family-specific one.
+Just to point out that the compatible string is there for M3-W and H3.
+Anyway, if that's not good practice to add per-SoC strings here, I'll
+drop this bit.
 
-Note that we cannot drop the strings for H3 and M3-W from the driver, as
-old DTBs do not have the family-specific strings.
+Thanks
+   j
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> >                 .compatible = "renesas,rcar-gen1-gpio",
+> >                 .data = &gpio_rcar_info_gen1,
+> >         }, {
+>
+> With the above fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
