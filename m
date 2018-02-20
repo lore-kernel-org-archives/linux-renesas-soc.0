@@ -1,37 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:40423 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967843AbeBOLyV (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38070 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751765AbeBTXKU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 06:54:21 -0500
-Received: by mail-lf0-f46.google.com with SMTP id 37so14791892lfs.7
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2018 03:54:21 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 0/2] Renesas R8A77980 CPG/MSSR clock support
-To: Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Message-ID: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
-Date: Thu, 15 Feb 2018 14:54:18 +0300
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Tue, 20 Feb 2018 18:10:20 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 12/16] ARM: dts: r8a7792: Convert to new DU DT bindings
+Date: Wed, 21 Feb 2018 01:10:42 +0200
+Message-Id: <20180220231046.32638-13-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+The DU DT bindings have been updated to drop the reg-names property.
+Update the r8a7792 device tree accordingly.
 
-Here's the set of 2 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
-'renesas-drivers.git' repo. We're adding the CPG/MSSR driver support for R8A77980...
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ arch/arm/boot/dts/r8a7792.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-[1/2] dt-bindings: clock: add R8A77980 CPG core clock definitions
-[2/2] clk: renesas: cpg-mssr: add R8A77980 support
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 3be15a158bad..c4a36a18f505 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -691,7 +691,6 @@
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7792";
+ 			reg = <0 0xfeb00000 0 0x40000>;
+-			reg-names = "du";
+ 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 724>,
+-- 
+Regards,
 
-MBR, Sergei
+Laurent Pinchart
