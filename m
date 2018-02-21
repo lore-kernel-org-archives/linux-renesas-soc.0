@@ -1,64 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:34240 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751319AbeBEUK0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55704 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753945AbeBURDY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Feb 2018 15:10:26 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: [PATCH 3/4] v4l: dvb-frontends: stb0899: fix comparison to bitshift when dealing with a mask
-Date: Mon,  5 Feb 2018 21:10:00 +0100
-Message-Id: <20180205201002.23621-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
-References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com>
+        Wed, 21 Feb 2018 12:03:24 -0500
+Date: Wed, 21 Feb 2018 18:03:19 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 07/19] ARM64: Add Renesas R-Car M3-N config symbol
+Message-ID: <20180221170319.3w2ylymp5dtjxxqg@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-8-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519139541-18783-8-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Due to a typo, the mask was destroyed by a comparison instead of a bit
-shift.
+On Tue, Feb 20, 2018 at 04:12:09PM +0100, Jacopo Mondi wrote:
+> Add configuration option for the R-Car M3-N (R8A77965) SoC.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-Only build tested. To be applied individually per subsystem.
+Thanks, I have applied this after updating the subject to:
 
- drivers/media/dvb-frontends/stb0899_reg.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+arm64: add Renesas R8A77965 support
 
-diff --git a/drivers/media/dvb-frontends/stb0899_reg.h b/drivers/media/dvb-frontends/stb0899_reg.h
-index ba1ed56304a0f4..f564269249a682 100644
---- a/drivers/media/dvb-frontends/stb0899_reg.h
-+++ b/drivers/media/dvb-frontends/stb0899_reg.h
-@@ -374,22 +374,22 @@
- 
- #define STB0899_OFF0_IF_AGC_GAIN		0xf30c
- #define STB0899_BASE_IF_AGC_GAIN		0x00000000
--#define STB0899_IF_AGC_GAIN			(0x3fff < 0)
-+#define STB0899_IF_AGC_GAIN			(0x3fff << 0)
- #define STB0899_OFFST_IF_AGC_GAIN		0
- #define STB0899_WIDTH_IF_AGC_GAIN		14
- 
- #define STB0899_OFF0_BB_AGC_GAIN		0xf310
- #define STB0899_BASE_BB_AGC_GAIN		0x00000000
--#define STB0899_BB_AGC_GAIN			(0x3fff < 0)
-+#define STB0899_BB_AGC_GAIN			(0x3fff << 0)
- #define STB0899_OFFST_BB_AGC_GAIN		0
- #define STB0899_WIDTH_BB_AGC_GAIN		14
- 
- #define STB0899_OFF0_DC_OFFSET			0xf314
- #define STB0899_BASE_DC_OFFSET			0x00000000
--#define STB0899_I				(0xff < 8)
-+#define STB0899_I				(0xff << 8)
- #define STB0899_OFFST_I				8
- #define STB0899_WIDTH_I				8
--#define STB0899_Q				(0xff < 0)
-+#define STB0899_Q				(0xff << 0)
- #define STB0899_OFFST_Q				8
- #define STB0899_WIDTH_Q				8
- 
--- 
-2.11.0
+Please use "arm64" rather than ARM64 as a prefix.
+(But "ARM" rather than "arm"!).
