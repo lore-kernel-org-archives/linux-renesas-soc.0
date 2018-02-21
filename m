@@ -1,58 +1,56 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-i2c-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 21 Feb 2018 17:14:51 -0600
-Message-ID: <CAL_JsqKHc=PtLTeihg0wk5o3YxHvLAGA44xCp5jpSXm=Wcit3A@mail.gmail.com>
+In-Reply-To: <CAL_JsqJA=2JLqRfERJ1hN=ErUqw+xT8OhZVMjSVeRH4mgrE36Q@mail.gmail.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdVJfKXWNFaN259JQ1bOVZQSbC-=u4Kmys2PE+HLa=xQKw@mail.gmail.com> <CAL_JsqJA=2JLqRfERJ1hN=ErUqw+xT8OhZVMjSVeRH4mgrE36Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Feb 2018 16:46:56 +0100
+Message-ID: <CAMuHMdVcbgX-Gi7p15JgsF0Ghe2wo4XEkPM2c=uxgqxJ9f2i=Q@mail.gmail.com>
 Subject: Re: [PATCH v4 04/16] of: changesets: Introduce changeset helper methods
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
-        <linux-renesas-soc@vger.kernel.org>,
+To: Rob Herring <robh@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         Frank Rowand <frowand.list@gmail.com>,
         Matt Porter <mporter@konsulko.com>,
         Koen Kooi <koen@dominion.thruhere.net>,
         Guenter Roeck <linux@roeck-us.net>,
         Marek Vasut <marex@denx.de>, Wolfram Sang <wsa@the-dreams.de>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux I2C <linux-i2c@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 5:10 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
->
-> Changesets are very powerful, but the lack of a helper API
-> makes using them cumbersome. Introduce a simple copy based
-> API that makes things considerably easier.
->
-> To wit, adding a property using the raw API.
->
->         struct property *prop;
->         prop = kzalloc(sizeof(*prop)), GFP_KERNEL);
->         prop->name = kstrdup("compatible");
->         prop->value = kstrdup("foo,bar");
->         prop->length = strlen(prop->value) + 1;
->         of_changeset_add_property(ocs, np, prop);
->
-> while using the helper API
->
->         of_changeset_add_property_string(ocs, np, "compatible",
->                         "foo,bar");
->
-> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-> [Fixed memory leak in __of_changeset_add_update_property_copy()]
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  drivers/of/dynamic.c | 222 ++++++++++++++++++++++++++++++++++
->  include/linux/of.h   | 328 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 550 insertions(+)
+Hi Rob,
 
-Other than what Geert pointed out,
+On Wed, Feb 21, 2018 at 4:23 PM, Rob Herring <robh@kernel.org> wrote:
+> On Wed, Feb 21, 2018 at 4:21 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> You missed one fix I have in my topic/overlays branch
+>> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/overlays&id=150f95b9dec77ce371c229f7ac4d6dd8620bef4a
+>
+> Are you planning to try to upstream all this? If not, I'll get Frank
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Not really. But I do need a way to load DT overlays at runtime, for testing
+hardware on expansion connectors.
+
+> to keep changing the overlay API to make carrying it out of tree more
+> painful. :)
+
+He already did a very good job w.r.t. that in v4.15-rc1 ;^)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
