@@ -1,55 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:52643 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753523AbeBSRH1 (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:34068 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750741AbeBUXtc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Feb 2018 12:07:27 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 11/11] media: i2c: ov7670: Fully set mbus frame fmt
-Date: Mon, 19 Feb 2018 17:59:44 +0100
-Message-Id: <1519059584-30844-12-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 21 Feb 2018 18:49:32 -0500
+MIME-Version: 1.0
+In-Reply-To: <4098480.WkPaFBmRlF@avalon>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180220231046.32638-7-laurent.pinchart+renesas@ideasonboard.com>
+ <CAL_Jsq+D4wwPSZbSXrJpwcNvB1Xth=Cn-bTyXL2RkSOb9s+d_A@mail.gmail.com> <4098480.WkPaFBmRlF@avalon>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 21 Feb 2018 17:49:10 -0600
+Message-ID: <CAL_JsqLR06_1=39JUXOyrSPP-p3LssWasZz2m=cgoHKaXh=Mhw@mail.gmail.com>
+Subject: Re: [PATCH v4 06/16] of: unittest: changeset helpers
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Marek Vasut <marex@denx.de>, Wolfram Sang <wsa@the-dreams.de>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The sensor driver sets mbus format colorspace information and sizes,
-but not ycbcr encoding, quantization and xfer function. When supplied
-with an badly initialized mbus frame format structure, those fields
-need to be set explicitly not to leave them uninitialized. This is
-tested by v4l2-compliance, which supplies a mbus format description
-structure and checks for all fields to be properly set.
+On Wed, Feb 21, 2018 at 5:39 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Rob,
+>
+> On Thursday, 22 February 2018 01:10:25 EET Rob Herring wrote:
+>> On Tue, Feb 20, 2018 at 5:10 PM, Laurent Pinchart wrote:
+>> > From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>> >
+>> > Add a unitest specific for the new changeset helpers.
+>> >
+>> > Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>> > Signed-off-by: Laurent Pinchart
+>> > <laurent.pinchart+renesas@ideasonboard.com>
+>> > ---
+>> >
+>> >  drivers/of/unittest.c | 54 ++++++++++++++++++++++++++++++++++++++++++++++
+>> >  1 file changed, 54 insertions(+)
+>> >
+>> > diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+>> > index 7a9abaae874d..1b21d2c549a8 100644
+>> > --- a/drivers/of/unittest.c
+>> > +++ b/drivers/of/unittest.c
+>> > @@ -609,6 +609,59 @@ static void __init of_unittest_changeset(void)
+>> >
+>> >  #endif
+>> >  }
+>> >
+>> > +static void __init of_unittest_changeset_helper(void)
+>> > +{
+>> > +#ifdef CONFIG_OF_DYNAMIC
+>>
+>> I think this can be:
+>>
+>> if (!IS_ENABLED(CONFIG_OF_DYNAMIC))
+>>   return;
+>
+> Not quite, as there are functions used below (such as of_changeset_init())
+> that are not defined if CONFIG_OF_DYNAMIC isn't enabled. We could create stubs
+> in that case but I believe that's out of scope for this patch series.
 
-Without this commit, v4l2-compliance fails when testing formats with:
-fail: v4l2-test-formats.cpp(335): ycbcr_enc >= 0xff
+Okay. I thought we had the necessary stubs, but didn't check too closely.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/ov7670.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-index 25b26d4..61c472e 100644
---- a/drivers/media/i2c/ov7670.c
-+++ b/drivers/media/i2c/ov7670.c
-@@ -996,6 +996,10 @@ static int ov7670_try_fmt_internal(struct v4l2_subdev *sd,
- 	fmt->height = wsize->height;
- 	fmt->colorspace = ov7670_formats[index].colorspace;
- 
-+	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
-+	fmt->quantization = V4L2_QUANTIZATION_DEFAULT;
-+	fmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
-+
- 	info->format = *fmt;
- 
- 	return 0;
--- 
-2.7.4
+>
+>> Otherwise,
+>>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
