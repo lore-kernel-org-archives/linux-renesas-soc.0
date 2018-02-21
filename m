@@ -1,47 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:57820 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752114AbeBWNlg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57510 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752667AbeBUSrK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:41:36 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/7] arm64: dts: renesas: r8a77965: Remove stale reg property
-Date: Fri, 23 Feb 2018 14:40:55 +0100
-Message-Id: <1519393259-26108-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 21 Feb 2018 13:47:10 -0500
+Date: Wed, 21 Feb 2018 19:47:06 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH V3] ARM: shmobile: stout: enable R-Car Gen2 regulator
+ quirk
+Message-ID: <20180221184705.ifkmhynf5e7abgme@verge.net.au>
+References: <20180215113350.9613-1-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180215113350.9613-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove "reg" property from cache-controller-0 device node as it does not
-have any unit address.
+On Thu, Feb 15, 2018 at 12:33:50PM +0100, Marek Vasut wrote:
+> Regulator setup is suboptimal on H2 Stout too. The Stout newly has
+> two DA9210 regulators, so the quirk is extended to handle another
+> DA9210 at i2c address 0x70.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> V2: - Handle another DA9210 at 0x70
+>     - Drop explicit board list from the leading comment in the file
+> V3: - Correct da9xxx_msgs[] array size
+>     - Send messages to all three regulators on Stout only
 
-This silences the following DTC compiler warning:
-Warning (unit_address_vs_reg): Node /cpus/cache-controller-0 has a reg
-or ranges property, but no unit name
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 61efb2d..0536b94 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -47,7 +47,6 @@
- 
- 		L2_CA57: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			power-domains = <&sysc 12>;
- 			cache-unified;
- 			cache-level = <2>;
--- 
-2.7.4
+Thanks, applied.
