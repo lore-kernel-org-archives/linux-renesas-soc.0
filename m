@@ -1,109 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:40370 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752018AbeBPSfZ (ORCPT
+Received: from sauhun.de ([88.99.104.3]:43916 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751461AbeBUIGx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 13:35:25 -0500
-Received: by mail-lf0-f67.google.com with SMTP id 37so5268474lfs.7
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Feb 2018 10:35:24 -0800 (PST)
-Subject: [PATCH v2 4/5] arm64: dts: renesas: initial Condor board device tree
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
-Message-ID: <5cf82cb1-0278-010c-165d-07dbcbe0878d@cogentembedded.com>
-Date: Fri, 16 Feb 2018 21:35:22 +0300
+        Wed, 21 Feb 2018 03:06:53 -0500
+Date: Wed, 21 Feb 2018 09:06:50 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Marek Vasut <marex@denx.de>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 07/16] i2c: demux: Use changeset helpers for clarity
+Message-ID: <20180221080650.t5hshljcnfsxeget@ninjato>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180220231046.32638-8-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="czmofhikde4js2ho"
+Content-Disposition: inline
+In-Reply-To: <20180220231046.32638-8-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device  tree for  the R8A77980 SoC based Condor board.
-The board has 1 debug serial port (SCIF0); include support for it, so
-that the serial console can work.
 
-Based on the original (and large) patch by Vladimir Barinov.
+--czmofhikde4js2ho
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Feb 21, 2018 at 01:10:37AM +0200, Laurent Pinchart wrote:
+> From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>=20
+> The changeset helpers are easier to use, use them instead of
+> using the static property.
+>=20
+> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> Acked-by: Wolfram Sang <wsa@the-dreams.de>
 
----
-Changes in version 2:
-- removed the useless "status" property from the SCIF_CLK node;
-- fixed the memory size;
-- added Geert's tag.
+My ack still holds. Good luck pushing this series!
 
- arch/arm64/boot/dts/renesas/Makefile            |    1 
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   45 ++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
 
-Index: renesas/arch/arm64/boot/dts/renesas/Makefile
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/Makefile
-+++ renesas/arch/arm64/boot/dts/renesas/Makefile
-@@ -8,4 +8,5 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-sa
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
-+dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- /dev/null
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -0,0 +1,45 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the Condor board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2018 Cogent Embedded, Inc.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77980.dtsi"
-+
-+/ {
-+	model = "Renesas Condor board based on r8a77980";
-+	compatible = "renesas,condor", "renesas,r8a77980";
-+
-+	aliases {
-+		serial0 = &scif0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0 0x48000000 0 0xb8000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <16666666>;
-+};
-+
-+&extalr_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
-+
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+};
+--czmofhikde4js2ho
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqNKJYACgkQFA3kzBSg
+KbaY9w/8DjlK+c4m1pGIjK9b+aJ57FGBmxbKpzTuuR1gW5zd0+WH5hFGRXorwWI6
+mAXfPyTmWuTT4D27irtoLSt8y88REkyX55D63CmGqDrKKEMWAIHc0r2U+4F/uuHm
+MRaow8tdfs84Xp/UBLBG0W4okGMfnU6h+9b6gfwMLx3eDk5GlLxqz9lsNEbn6BWE
+GI+ZGPgvBf6T4jY62gDiqGEH2QqLcrV/HgJ/GXgcx0lHt6+rSsZD2f1QbAzYne6G
+6vQVE44y273s0fMdQy5KAoxhXLG4pzQ3JI/ajlmetWXmEE3bm5XrcOVVzBS3zkiI
+NE19TC15j26yKLr+3LkaNLKQDLbzlW2CKjXi6AlL5NDEZBw98y8QYlBXXS4idPC7
+bn5+lfVtjnCQ4eEj/BYl8Vqexv4QyfsqFp86muex/hF70jrhtlIpCIlz1hAtUVVR
+rNRXm8hhMRFOrqSZV6U0XNzpnP0/u8zWE/cB4L5hTFo3xXKAkKHPi74kxmuml1L0
+j1b4ZHdCx9PvbSJQZSoPkQz0uGDywOvp5LejUBnjzq3B7uy025y0qG04nH+jO9AV
+snUm68Du0bb/LpmbbWEgN46E4s8U8SWgvoJnDO5I2xcYLUwcOoG9DD1A0/Mc2WxN
++PfzYueF9s9mEhsTCPFUApuCPDKIdqXJlq2MJdDZHnrnQy9TvRM=
+=Zf7u
+-----END PGP SIGNATURE-----
+
+--czmofhikde4js2ho--
