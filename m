@@ -1,50 +1,58 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:40434 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751963AbeBHKeY (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 05:34:24 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 09/11] ARM: dts: gose: Enable watchdog support
-Date: Thu,  8 Feb 2018 11:34:15 +0100
-Message-Id: <1518086057-19448-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
-References: <1518086057-19448-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-5-laurent.pinchart+renesas@ideasonboard.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 21 Feb 2018 17:14:51 -0600
+Message-ID: <CAL_JsqKHc=PtLTeihg0wk5o3YxHvLAGA44xCp5jpSXm=Wcit3A@mail.gmail.com>
+Subject: Re: [PATCH v4 04/16] of: changesets: Introduce changeset helper methods
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Marek Vasut <marex@denx.de>, Wolfram Sang <wsa@the-dreams.de>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the watchdog, so the board can be restarted by a watchdog
-timeout.
+On Tue, Feb 20, 2018 at 5:10 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>
+> Changesets are very powerful, but the lack of a helper API
+> makes using them cumbersome. Introduce a simple copy based
+> API that makes things considerably easier.
+>
+> To wit, adding a property using the raw API.
+>
+>         struct property *prop;
+>         prop = kzalloc(sizeof(*prop)), GFP_KERNEL);
+>         prop->name = kstrdup("compatible");
+>         prop->value = kstrdup("foo,bar");
+>         prop->length = strlen(prop->value) + 1;
+>         of_changeset_add_property(ocs, np, prop);
+>
+> while using the helper API
+>
+>         of_changeset_add_property_string(ocs, np, "compatible",
+>                         "foo,bar");
+>
+> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> [Fixed memory leak in __of_changeset_add_update_property_copy()]
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/of/dynamic.c | 222 ++++++++++++++++++++++++++++++++++
+>  include/linux/of.h   | 328 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 550 insertions(+)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793-gose.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+Other than what Geert pointed out,
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 51b3ffac8efaad1d..1c8b4f1b5257216c 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -446,6 +446,11 @@
- 	status = "okay";
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+Reviewed-by: Rob Herring <robh@kernel.org>
