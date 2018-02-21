@@ -1,98 +1,57 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34084 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932440AbeBVNM6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:12:58 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v6 2/4] dt-bindings: display: renesas: Deprecate LVDS support in the DU bindings
-Date: Thu, 22 Feb 2018 15:13:34 +0200
-Message-Id: <20180222131336.7712-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180222131336.7712-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180222131336.7712-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v9 07/11] media: i2c: ov772x: Support frame interval
+ handling
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
+        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
+        pombredanne@nexb.com, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1519059584-30844-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
+ <f154f229-6977-4d3e-38b9-6d1669adbf91@xs4all.nl> <20180221151644.GI7203@w540>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9a33f0c2-4bef-5c9f-906e-b1d6d44f6de6@xs4all.nl>
+Date: Wed, 21 Feb 2018 16:23:10 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180221151644.GI7203@w540>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoders now have their own DT bindings, representing
-them as part of the DU is deprecated.
+On 02/21/18 16:16, jacopo mondi wrote:
+>>>  static const struct v4l2_subdev_pad_ops ov772x_subdev_pad_ops = {
+>>> -	.enum_mbus_code = ov772x_enum_mbus_code,
+>>> -	.get_selection	= ov772x_get_selection,
+>>> -	.get_fmt	= ov772x_get_fmt,
+>>> -	.set_fmt	= ov772x_set_fmt,
+>>> +	.enum_frame_interval	= ov772x_enum_frame_interval,
+>>> +	.enum_mbus_code		= ov772x_enum_mbus_code,
+>>> +	.get_selection		= ov772x_get_selection,
+>>> +	.get_fmt		= ov772x_get_fmt,
+>>> +	.set_fmt		= ov772x_set_fmt,
+>>
+>> Shouldn't these last four ops be added in the previous patch?
+>> They don't have anything to do with the frame interval support.
+>>
+> 
+> If you look closely you'll notice I have just re-aligned them, since I
+> was at there to add enum_frame_interval operation
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes since v1:
+Ah, sorry. I missed that. Never mind then :-)
 
-- Remove the LVDS reg range from the example
-- Remove the reg-names property
----
- .../devicetree/bindings/display/renesas,du.txt     | 31 ++++++++--------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
+	Hans
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index cd48aba3bc8c..e79cf9b0ad38 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -14,12 +14,7 @@ Required Properties:
-     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
-     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
- 
--  - reg: A list of base address and length of each memory resource, one for
--    each entry in the reg-names property.
--  - reg-names: Name of the memory resources. The DU requires one memory
--    resource for the DU core (named "du") and one memory resource for each
--    LVDS encoder (named "lvds.x" with "x" being the LVDS controller numerical
--    index).
-+  - reg: the memory-mapped I/O registers base address and length
- 
-   - interrupt-parent: phandle of the parent interrupt controller.
-   - interrupts: Interrupt specifiers for the DU interrupts.
-@@ -29,14 +24,13 @@ Required Properties:
-   - clock-names: Name of the clocks. This property is model-dependent.
-     - R8A7779 uses a single functional clock. The clock doesn't need to be
-       named.
--    - All other DU instances use one functional clock per channel and one
--      clock per LVDS encoder (if available). The functional clocks must be
--      named "du.x" with "x" being the channel numerical index. The LVDS clocks
--      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
--    - In addition to the functional and encoder clocks, all DU versions also
--      support externally supplied pixel clocks. Those clocks are optional.
--      When supplied they must be named "dclkin.x" with "x" being the input
--      clock numerical index.
-+    - All other DU instances use one functional clock per channel The
-+      functional clocks must be named "du.x" with "x" being the channel
-+      numerical index.
-+    - In addition to the functional clocks, all DU versions also support
-+      externally supplied pixel clocks. Those clocks are optional. When
-+      supplied they must be named "dclkin.x" with "x" being the input clock
-+      numerical index.
- 
-   - vsps: A list of phandle and channel index tuples to the VSPs that handle
-     the memory interfaces for the DU channels. The phandle identifies the VSP
-@@ -69,9 +63,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7795";
--		reg = <0 0xfeb00000 0 0x80000>,
--		      <0 0xfeb90000 0 0x14>;
--		reg-names = "du", "lvds.0";
-+		reg = <0 0xfeb00000 0 0x80000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-@@ -79,9 +71,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 		clocks = <&cpg CPG_MOD 724>,
- 			 <&cpg CPG_MOD 723>,
- 			 <&cpg CPG_MOD 722>,
--			 <&cpg CPG_MOD 721>,
--			 <&cpg CPG_MOD 727>;
--		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+			 <&cpg CPG_MOD 721>;
-+		clock-names = "du.0", "du.1", "du.2", "du.3";
- 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
- 
- 		ports {
--- 
-Regards,
-
-Laurent Pinchart
+> 
+>> Anyway, after taking care of the memsets and these four ops you can add
+>> my:
+>>
+>> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> 
+> Thanks
+>    j
+> 
