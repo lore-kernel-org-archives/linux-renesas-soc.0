@@ -1,78 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54324 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751825AbeBZVoz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57307 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751712AbeBUS3Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 16:44:55 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 14/15] v4l: vsp1: Add BRx dynamic assignment debugging messages
-Date: Mon, 26 Feb 2018 23:45:15 +0200
-Message-Id: <20180226214516.11559-15-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 21 Feb 2018 13:29:24 -0500
+Date: Wed, 21 Feb 2018 19:29:18 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
+ (CEU)
+Message-ID: <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
+References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dynamic assignment of the BRU and BRS to pipelines is prone to
-regressions, add messages to make debugging easier. Keep it as a
-separate commit to ease removal of those messages once the code will
-deem to be completely stable.
+On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
+> Add Capture Engine Unit (CEU) node to device tree.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drm.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 87e31ba0ddf5..521bbc227110 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -190,6 +190,10 @@ static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
- 
- 		/* Release our BRU if we have one. */
- 		if (pipe->bru) {
-+			dev_dbg(vsp1->dev, "%s: pipe %u: releasing %s\n",
-+				__func__, pipe->lif->index,
-+				BRU_NAME(pipe->bru));
-+
- 			/*
- 			 * The BRU might be acquired by the other pipeline in
- 			 * the next step. We must thus remove it from the list
-@@ -219,6 +223,9 @@ static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
- 		if (bru->pipe) {
- 			struct vsp1_drm_pipeline *owner_pipe;
- 
-+			dev_dbg(vsp1->dev, "%s: pipe %u: waiting for %s\n",
-+				__func__, pipe->lif->index, BRU_NAME(bru));
-+
- 			owner_pipe = to_vsp1_drm_pipeline(bru->pipe);
- 			owner_pipe->force_bru_release = true;
- 
-@@ -245,6 +252,9 @@ static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
- 				      &pipe->entities);
- 
- 		/* Add the BRU to the pipeline. */
-+		dev_dbg(vsp1->dev, "%s: pipe %u: acquired %s\n",
-+			__func__, pipe->lif->index, BRU_NAME(bru));
-+
- 		pipe->bru = bru;
- 		pipe->bru->pipe = pipe;
- 		pipe->bru->sink = &pipe->output->entity;
-@@ -549,6 +559,10 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 		drm_pipe->du_complete = NULL;
- 		pipe->num_inputs = 0;
- 
-+		dev_dbg(vsp1->dev, "%s: pipe %u: releasing %s\n",
-+			__func__, pipe->lif->index,
-+			BRU_NAME(pipe->bru));
-+
- 		list_del(&pipe->bru->list_pipe);
- 		pipe->bru->pipe = NULL;
- 		pipe->bru = NULL;
--- 
-Regards,
-
-Laurent Pinchart
+This patch depends on the binding for "renesas,r7s72100-ceu".
+Please repost or otherwise ping me once that dependency has been accepted.
