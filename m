@@ -1,66 +1,32 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44180 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754566AbeBGTG2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:06:28 -0500
-Date: Wed, 7 Feb 2018 20:06:25 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 05/16] mmc: slot-gpio: add a helper to check
- capability of GPIO WP detection
-Message-ID: <20180207190625.vaosboluf2jcfop6@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-6-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 21 Feb 2018 17:45:12 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 02/19] soc: renesas: rcar-rst: Add support for R-Car
+ M3-N
+Message-ID: <20180221164511.sb7aifjg6vd3pxai@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVPkbKQf=svj+R_jjt2_+FqHXaCRmW7Wu7c0AfJzZR2Sg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7thxwjmuytw3bn4e"
-Content-Disposition: inline
-In-Reply-To: <1516206496-16612-6-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-List-ID: <linux-renesas-soc.vger.kernel.org>
-
-
---7thxwjmuytw3bn4e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAMuHMdVPkbKQf=svj+R_jjt2_+FqHXaCRmW7Wu7c0AfJzZR2Sg@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
+List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 18, 2018 at 01:28:05AM +0900, Masahiro Yamada wrote:
-> Like mmc_can_gpio_cd(), mmc_can_gpio_ro() will also be useful for host
-> drivers to know whether GPIO write-protect detection is supported.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On Tue, Feb 20, 2018 at 04:29:37PM +0100, Geert Uytterhoeven wrote:
+> On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---7thxwjmuytw3bn4e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7Ti0ACgkQFA3kzBSg
-KbaKTw/9HmgEMusxqOgs1VlPUaSP1ydOlIDZXQc7Ff8M2JAQlu42xqmmu+UY6GLj
-6eiXKSgSpnYONORI3B1VhCrNPwOPPzeV579B8mSL8dGs4iP9AEYAdbhayVzukMnG
-qYiCRRGZMAQkSOhG4euhrrEeqDKiqMuBshWBI90df/fNseQqoLDkTzYKs4k0qpA/
-eoewx0Q3U3P5kN6paT4FX1REMmJZj2yTHNoosWicChrr7pxpQkCsTaR+i5ezzVKN
-Hvl4Gp16PuK1gZYjALNAKBWQRxMxWjMN1DxZ8tqSrNSsvN5bn8R2NlUr/5REYp4c
-IdBxdnZbU5cxXGCrjz3s++ZmW8sMf9BwEk+tZwCutiIgjPu2402dgUy1R/MHN6ZE
-YvcVrhuhxRKgyLrbwW/q2ftsICUVmhB3El2yqkVmDANJWIr+yUdWs1dg1+/X6Cbb
-QPRZIPukKfxHbzMElRQe0eFKHxTv4q7Exn2U+NU721q64NTV+ExJUHItMNyN97n8
-i+T9wfdcvxWGsRkaI+G/UCgOb/7bQEQPSF1wBrgnjUEPYjVHUZj4GT+pPPHLeCbw
-yPH0q4SYgtApXXqGAMTK2vMjzouriVesyrYLOvHlsPdzJEI7y1NM93MhNuQu1KiV
-WJXLy0wfRjI6TDmnbmranN0DY3crWLj3EiI1kYTtd3eHiEWpIho=
-=wfCH
------END PGP SIGNATURE-----
-
---7thxwjmuytw3bn4e--
+Thanks, applied.
