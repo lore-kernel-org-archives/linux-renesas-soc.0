@@ -1,54 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:57724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755254AbeBOIi2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56061 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752648AbeBUR0M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 03:38:28 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Wed, 21 Feb 2018 12:26:12 -0500
+Date: Wed, 21 Feb 2018 18:26:08 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>, geert@glider.be,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 0/8] r8a77995 D3 DU and LVDS support
-Date: Thu, 15 Feb 2018 08:38:15 +0000
-Message-Id: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] ARM64: dts: r8a77965: Add GPIO nodes
+Message-ID: <20180221172608.73lw32zsnqtrnxcn@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-17-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519139541-18783-17-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Tue, Feb 20, 2018 at 04:12:18PM +0100, Jacopo Mondi wrote:
+> Add GPIO nodes to r8a77965 SoC device tree file.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> ---
+> v1 -> v2:
+> - Replace ALWAYS_ON power area define with numeric constant
+> - Do not move gpio nodes
 
-Provide the PFC groups for the DU pin controls, and update the bindings for
-both the DU and LVDS to cover the r8a77995.
+Thanks, applied with prefix updated to:
 
-Add dt nodes for the DU, and LVDS, and enable VGA on the Draak board.
-Provide support for HDMI out through the ADV7511 component, on the LVDS channel.
-
-Finally provide a 'proof-of-concept' patch for the ADV7612 device which shares
-the same bus and demonstrates setting the I2C slave maps such that they do not
-conflict with the ADV7511.
-
-This series is dependant upon the LVDS rework from Laurent which is not yet
-finalised, however the DU only patches are not blocked by this.
-
-
-Kieran Bingham (8):
-  pinctrl: sh-pfc: r8a77995: Add DU support
-  dt-bindings: display: renesas,du: Document r8a77995 bindings
-  dt-bindings: display: renesas,lvds: Add LVDS binding for D3
-  arm64: dts: renesas: r8a77995: add DU support
-  arm64: dts: renesas: r8a77995: Add LVDS support
-  arm64: dts: renesas: r8a77995-draak: Enable DU
-  arm64: dts: renesas: r8a77995-draak: Add HDMI Out through ADV7511
-  [PoC] arm64: dts: renesas: r8a77995-draak: Add ADV7612
-
- .../bindings/display/bridge/renesas,lvds.txt       |   1 +
- .../devicetree/bindings/display/renesas,du.txt     |   2 +
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 150 +++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          |  87 ++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c              | 101 ++++++++++++++
- 5 files changed, 341 insertions(+)
-
--- 
-2.7.4
+arm64: dts: renesas: r8a77965:
