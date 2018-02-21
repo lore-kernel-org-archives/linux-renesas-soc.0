@@ -1,8 +1,18 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:59244 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750741AbeBUXKr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 21 Feb 2018 18:10:47 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180220231046.32638-7-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-7-laurent.pinchart+renesas@ideasonboard.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 21 Feb 2018 17:10:25 -0600
+Message-ID: <CAL_Jsq+D4wwPSZbSXrJpwcNvB1Xth=Cn-bTyXL2RkSOb9s+d_A@mail.gmail.com>
+Subject: Re: [PATCH v4 06/16] of: unittest: changeset helpers
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
         "open list:MEDIA DRIVERS FOR RENESAS - FCP"
         <linux-renesas-soc@vger.kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -14,61 +24,39 @@ Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         devicetree@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linux I2C <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH v4 06/16] of: unittest: changeset helpers
-Date: Thu, 22 Feb 2018 01:39:58 +0200
-Message-ID: <4098480.WkPaFBmRlF@avalon>
-In-Reply-To: <CAL_Jsq+D4wwPSZbSXrJpwcNvB1Xth=Cn-bTyXL2RkSOb9s+d_A@mail.gmail.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-7-laurent.pinchart+renesas@ideasonboard.com> <CAL_Jsq+D4wwPSZbSXrJpwcNvB1Xth=Cn-bTyXL2RkSOb9s+d_A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
+On Tue, Feb 20, 2018 at 5:10 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>
+> Add a unitest specific for the new changeset helpers.
+>
+> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/of/unittest.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+>
+> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> index 7a9abaae874d..1b21d2c549a8 100644
+> --- a/drivers/of/unittest.c
+> +++ b/drivers/of/unittest.c
+> @@ -609,6 +609,59 @@ static void __init of_unittest_changeset(void)
+>  #endif
+>  }
+>
+> +static void __init of_unittest_changeset_helper(void)
+> +{
+> +#ifdef CONFIG_OF_DYNAMIC
 
-On Thursday, 22 February 2018 01:10:25 EET Rob Herring wrote:
-> On Tue, Feb 20, 2018 at 5:10 PM, Laurent Pinchart wrote:
-> > From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-> > 
-> > Add a unitest specific for the new changeset helpers.
-> > 
-> > Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-> > Signed-off-by: Laurent Pinchart
-> > <laurent.pinchart+renesas@ideasonboard.com>
-> > ---
-> > 
-> >  drivers/of/unittest.c | 54 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 54 insertions(+)
-> > 
-> > diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-> > index 7a9abaae874d..1b21d2c549a8 100644
-> > --- a/drivers/of/unittest.c
-> > +++ b/drivers/of/unittest.c
-> > @@ -609,6 +609,59 @@ static void __init of_unittest_changeset(void)
-> > 
-> >  #endif
-> >  }
-> > 
-> > +static void __init of_unittest_changeset_helper(void)
-> > +{
-> > +#ifdef CONFIG_OF_DYNAMIC
-> 
-> I think this can be:
-> 
-> if (!IS_ENABLED(CONFIG_OF_DYNAMIC))
->   return;
+I think this can be:
 
-Not quite, as there are functions used below (such as of_changeset_init()) 
-that are not defined if CONFIG_OF_DYNAMIC isn't enabled. We could create stubs 
-in that case but I believe that's out of scope for this patch series.
+if (!IS_ENABLED(CONFIG_OF_DYNAMIC))
+  return;
 
-> Otherwise,
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Otherwise,
 
--- 
-Regards,
-
-Laurent Pinchart
-
+Reviewed-by: Rob Herring <robh@kernel.org>
