@@ -1,93 +1,123 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:58944 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750943AbeBEGuo (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:35224 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753870AbeBURsW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Feb 2018 01:50:44 -0500
-Date: Mon, 5 Feb 2018 14:50:23 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        CK Hu <ck.hu@mediatek.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH 5/5] drm: Don't pass clip to
- drm_atomic_helper_check_plane_state()
-Message-ID: <20180205065022.GJ31354@dragon>
-References: <20180123170857.13818-1-ville.syrjala@linux.intel.com>
- <20180123170857.13818-5-ville.syrjala@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180123170857.13818-5-ville.syrjala@linux.intel.com>
+        Wed, 21 Feb 2018 12:48:22 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v10 01/10] dt-bindings: media: Add Renesas CEU bindings
+Date: Wed, 21 Feb 2018 18:47:55 +0100
+Message-Id: <1519235284-32286-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jan 23, 2018 at 07:08:57PM +0200, Ville Syrjala wrote:
-> From: Ville Syrj�l� <ville.syrjala@linux.intel.com>
-> 
-> Move the plane clip rectangle handling into
-> drm_atomic_helper_check_plane_state(). Drivers no longer
-> have to worry about such mundane details.
-> 
-> v2: Convert armada, rcar, and sun4i as well
-> 
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
-> Cc: Brian Starkey <brian.starkey@arm.com>
-> Cc: Mali DP Maintainers <malidp@foss.arm.com>
-> Cc: Daniel Vetter <daniel.vetter@intel.com>
-> Cc: Gustavo Padovan <gustavo@padovan.org>
-> Cc: Sean Paul <seanpaul@chromium.org>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: CK Hu <ck.hu@mediatek.com>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Cc: Rob Clark <robdclark@gmail.com>
-> Cc: Ben Skeggs <bskeggs@redhat.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Sandy Huang <hjc@rock-chips.com>
-> Cc: "Heiko St�bner" <heiko@sntech.de>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: VMware Graphics <linux-graphics-maintainer@vmware.com>
-> Cc: Sinclair Yeh <syeh@vmware.com>
-> Cc: Thomas Hellstrom <thellstrom@vmware.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Archit Taneja <architt@codeaurora.org>
-> Cc: linux-amlogic@lists.infradead.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: freedreno@lists.freedesktop.org
-> Cc: nouveau@lists.freedesktop.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: Russell King <rmk+kernel@armlinux.org.uk>
-> Suggested-by: Daniel Vetter <daniel@ffwll.ch>
-> Signed-off-by: Ville Syrj�l� <ville.syrjala@linux.intel.com>
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Archit Taneja <architt@codeaurora.org> #msm
-> ---
-...
->  drivers/gpu/drm/zte/zx_plane.c              | 13 +------------
+Add bindings documentation for Renesas Capture Engine Unit (CEU).
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ .../devicetree/bindings/media/renesas,ceu.txt      | 81 ++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
+
+diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+new file mode 100644
+index 0000000..3fc66df
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+@@ -0,0 +1,81 @@
++Renesas Capture Engine Unit (CEU)
++----------------------------------------------
++
++The Capture Engine Unit is the image capture interface found in the Renesas
++SH Mobile and RZ SoCs.
++
++The interface supports a single parallel input with data bus width of 8 or 16
++bits.
++
++Required properties:
++- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
++  and RZ/A1M SoCs.
++- reg: Registers address base and size.
++- interrupts: The interrupt specifier.
++
++The CEU supports a single parallel input and should contain a single 'port'
++subnode with a single 'endpoint'. Connection to input devices are modeled
++according to the video interfaces OF bindings specified in:
++Documentation/devicetree/bindings/media/video-interfaces.txt
++
++Optional endpoint properties applicable to parallel input bus described in
++the above mentioned "video-interfaces.txt" file are supported.
++
++- hsync-active: Active state of the HSYNC signal, 0/1 for LOW/HIGH respectively.
++  If property is not present, default is active high.
++- vsync-active: Active state of the VSYNC signal, 0/1 for LOW/HIGH respectively.
++  If property is not present, default is active high.
++
++Example:
++
++The example describes the connection between the Capture Engine Unit and an
++OV7670 image sensor connected to i2c1 interface.
++
++ceu: ceu@e8210000 {
++	reg = <0xe8210000 0x209c>;
++	compatible = "renesas,r7s72100-ceu";
++	interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&vio_pins>;
++
++	status = "okay";
++
++	port {
++		ceu_in: endpoint {
++			remote-endpoint = <&ov7670_out>;
++
++			hsync-active = <1>;
++			vsync-active = <0>;
++		};
++	};
++};
++
++i2c1: i2c@fcfee400 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins>;
++
++	status = "okay";
++
++	clock-frequency = <100000>;
++
++	ov7670: camera@21 {
++		compatible = "ovti,ov7670";
++		reg = <0x21>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&vio_pins>;
++
++		reset-gpios = <&port3 11 GPIO_ACTIVE_LOW>;
++		powerdown-gpios = <&port3 12 GPIO_ACTIVE_HIGH>;
++
++		port {
++			ov7670_out: endpoint {
++				remote-endpoint = <&ceu_in>;
++
++				hsync-active = <1>;
++				vsync-active = <0>;
++			};
++		};
++	};
++};
+-- 
+2.7.4
