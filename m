@@ -1,8 +1,10 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Wed, 21 Feb 2018 17:39:25 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
         Matt Porter <mporter@konsulko.com>,
         Koen Kooi <koen@dominion.thruhere.net>,
         Guenter Roeck <linux@roeck-us.net>,
@@ -10,19 +12,17 @@ Cc: linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-i2c@vger.kernel.org,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Subject: Re: [PATCH v4 00/16] R-Car DU: Convert LVDS code to bridge driver
+Message-ID: <20180221163924.cikog34sqr6aggyk@verge.net.au>
 References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <d6b14861-68c9-eacb-469a-219745badb9f@gmail.com>
-Date: Wed, 21 Feb 2018 22:07:14 -0800
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 02/20/18 15:10, Laurent Pinchart wrote:
+On Wed, Feb 21, 2018 at 01:10:30AM +0200, Laurent Pinchart wrote:
 > Hello,
 > 
 > This patch series addresses a design mistake that dates back from the initial
@@ -51,19 +51,6 @@ On 02/20/18 15:10, Laurent Pinchart wrote:
 > properties. In order to do this, I pulled in Pantelis' patch series titled
 > "[PATCH v2 0/5] of: dynamic: Changesets helpers & fixes" at Rob's request, and
 > rebased it while taking two small review comments into account.
-
-Wait a minute!  Why are you putting a patch set to modify core devicetree
-in the middle of a driver series.  Please pull it out to a separate series.
-
-I'll try to look at the patches, as they are in this series, sometime
-tomorrow.  I have a vague memory of unresolved issues from the last
-time they were proposed.
-
-Thanks,
-
-Frank
-
-
 > 
 > Rob, I'd like this series to be merged in v4.17. As the changeset helpers are
 > now a dependency, I'd need you to merge them early (ideally on top of
@@ -100,6 +87,15 @@ Frank
 >   ARM: dts: r8a7794: Convert to new DU DT bindings
 >   arm64: dts: renesas: r8a7795: Convert to new LVDS DT bindings
 >   arm64: dts: renesas: r8a7796: Convert to new LVDS DT bindings
+
+I have marked the dts patches above as deferred as they depend
+on the driver changes not to cause a regression. Please repost them
+or otherwise ping me once the driver dependencies are present in an rc
+release.
+
+I am assuming that the other patches in this series are not targeted
+at the renesas tree.
+
 > 
 > Pantelis Antoniou (5):
 >   of: dynamic: Add __of_node_dupv()
@@ -107,63 +103,5 @@ Frank
 >   of: changeset: Add of_changeset_node_move method
 >   of: unittest: changeset helpers
 >   i2c: demux: Use changeset helpers for clarity
-> 
->  .../bindings/display/bridge/renesas,lvds.txt       |  56 +++
->  .../devicetree/bindings/display/renesas,du.txt     |  31 +-
->  MAINTAINERS                                        |   1 +
->  arch/arm/boot/dts/r8a7790-lager.dts                |  22 +-
->  arch/arm/boot/dts/r8a7790.dtsi                     |  64 ++-
->  arch/arm/boot/dts/r8a7791-koelsch.dts              |  10 +-
->  arch/arm/boot/dts/r8a7791-porter.dts               |  16 +-
->  arch/arm/boot/dts/r8a7791.dtsi                     |  36 +-
->  arch/arm/boot/dts/r8a7792.dtsi                     |   1 -
->  arch/arm/boot/dts/r8a7793-gose.dts                 |  10 +-
->  arch/arm/boot/dts/r8a7793.dtsi                     |  37 +-
->  arch/arm/boot/dts/r8a7794.dtsi                     |   1 -
->  .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   3 +-
->  .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  36 +-
->  arch/arm64/boot/dts/renesas/r8a7796-m3ulcb.dts     |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |   3 +-
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  36 +-
->  drivers/gpu/drm/rcar-du/Kconfig                    |   6 +-
->  drivers/gpu/drm/rcar-du/Makefile                   |  10 +-
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  21 +-
->  drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   5 -
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 175 +------
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |  12 -
->  drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  14 +-
->  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  93 ----
->  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h          |  24 -
->  drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c          | 238 ----------
->  drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h          |  64 ---
->  drivers/gpu/drm/rcar-du/rcar_du_of.c               | 307 ++++++++++++
->  drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 +
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  81 ++++
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  55 +++
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  55 +++
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  55 +++
->  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  55 +++
->  drivers/gpu/drm/rcar-du/rcar_lvds.c                | 524 +++++++++++++++++++++
->  drivers/i2c/muxes/i2c-demux-pinctrl.c              |  12 +-
->  drivers/of/dynamic.c                               | 317 ++++++++++++-
->  drivers/of/unittest.c                              |  54 +++
->  include/linux/of.h                                 | 337 +++++++++++++
->  43 files changed, 2199 insertions(+), 710 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
->  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
->  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
->  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
->  delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
->  create mode 100644 drivers/gpu/drm/rcar-du/rcar_lvds.c
-> 
 
+...
