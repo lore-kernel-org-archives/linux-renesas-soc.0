@@ -1,48 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:46990 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750703AbeBTFJn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55890 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934022AbeBURSr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 00:09:43 -0500
-Date: Tue, 20 Feb 2018 13:22:23 +0800
-From: kbuild test robot <lkp@intel.com>
+        Wed, 21 Feb 2018 12:18:47 -0500
+Date: Wed, 21 Feb 2018 18:18:42 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: kbuild-all@01.org, laurent.pinchart@ideasonboard.com,
-        magnus.damm@gmail.com, geert@glider.be, hverkuil@xs4all.nl,
-        mchehab@kernel.org, festevam@gmail.com, sakari.ailus@iki.fi,
-        robh+dt@kernel.org, mark.rutland@arm.com, pombredanne@nexb.com,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] media: i2c: ov772x: ov772x_frame_intervals[] can be
- static
-Message-ID: <20180220052223.GA27152@lkp-sb04>
-References: <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 12/19] dt-bindings: serial: sh-sci: Add support for
+ r8a77965 (H)SCIF
+Message-ID: <20180221171842.mx3pbqkeuhgi5na3@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-13-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519059584-30844-8-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519139541-18783-13-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Tue, Feb 20, 2018 at 04:12:14PM +0100, Jacopo Mondi wrote:
+> Add documentation for r8a77965 compatible string to Renesas sci-serial
+> device tree bindings documentation.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Fixes: 42b7d5be5f1f ("media: i2c: ov772x: Support frame interval handling")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- ov772x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
-index eba71d97..0d8ce2a 100644
---- a/drivers/media/i2c/ov772x.c
-+++ b/drivers/media/i2c/ov772x.c
-@@ -532,7 +532,7 @@ static const struct ov772x_win_size ov772x_win_sizes[] = {
- /*
-  * frame rate settings lists
-  */
--unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
-+static unsigned int ov772x_frame_intervals[] = { 5, 10, 15, 20, 30, 60 };
- #define OV772X_N_FRAME_INTERVALS ARRAY_SIZE(ov772x_frame_intervals)
- 
- /*
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
