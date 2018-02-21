@@ -1,64 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:36858 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752528AbeBFIyY (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 03:54:24 -0500
-Date: Tue, 6 Feb 2018 09:54:22 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: udc: change comparison to bitshift when
- dealing with a mask
-Message-ID: <20180206085422.qokhonesh6oqtaof@ninjato>
-References: <20180206085040.3018-1-wsa+renesas@sang-engineering.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Marek Vasut <marex@denx.de>, Wolfram Sang <wsa@the-dreams.de>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH v4 05/16] of: changeset: Add of_changeset_node_move method
+Date: Thu, 22 Feb 2018 01:40:37 +0200
+Message-ID: <3673151.DffhUaZ7xV@avalon>
+In-Reply-To: <CAL_JsqKv6YvXbpkGbNezTb=C7_kgd8R8NBOSc15PuDrLuMxK1Q@mail.gmail.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-6-laurent.pinchart+renesas@ideasonboard.com> <CAL_JsqKv6YvXbpkGbNezTb=C7_kgd8R8NBOSc15PuDrLuMxK1Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pouaakhr7brj4bh2"
-Content-Disposition: inline
-In-Reply-To: <20180206085040.3018-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Rob,
 
---pouaakhr7brj4bh2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thursday, 22 February 2018 01:20:36 EET Rob Herring wrote:
+> On Tue, Feb 20, 2018 at 5:10 PM, Laurent Pinchart wrote:
+> > From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> > 
+> > Adds a changeset helper for moving a subtree to a different place
+> > in the running tree. This is useful in advances cases of dynamic
+> > device tree construction.
+> 
+> This one I'm not real clear on when we'd use this and we don't have
+> any user, so lets drop it for now.
 
-On Tue, Feb 06, 2018 at 09:50:40AM +0100, Wolfram Sang wrote:
-> Due to a typo, the mask was destroyed by a comparison instead of a bit
-> shift.
->=20
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> Only build tested.
+OK, no problem.
 
-Add. note: according to 'git grep', this macro is unused currently, so
-no regression.
+-- 
+Regards,
 
+Laurent Pinchart
 
---pouaakhr7brj4bh2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp5bT4ACgkQFA3kzBSg
-KbZ7KA//QLqcAARl4SwJ6us+/7ONAlbxEUypFJIWc/z2VymBZCEqSGV+xk+OSZon
-sRemx6vsRSLrGCQ3++Vx9T/aajE8m5kIqm+2oDYNuYr2CyteLE60yL1g3VvWvQE2
-OtvyWHimxaYDriWv4AH+XGUPBXzvtzwRBa6ih+4e9EoCVNzKsuXdxWf+N7yOEQSs
-mRl9htiOpxASYkdJ9q8fywn48oPjKjy6j0fTN88dsXpk0C/7E5YlsGyrHnVT2EtB
-IYPEIwGNeOqX6zfZUDImH8thGMYVPxw94pXrG53/5i1gH6kEP7K5PtIRt7lqGtjD
-zV8toebfyCwlxvTfNS+EmnNUq9wy7V6O5/n2unNT02IQBj8sPs/7TKATG5QrD5yB
-ODiruPrbu5KCiEL8Us6r9SW573DIAq1ZqoHSPfgnc5XjBnZb7dFpJMwggjle/6rm
-CKysNcxa3L9osq6B+jMz6sUiIMdm687jTTLm/B2DHmiu2fd8ANH2EG254mGNB28H
-Wd/y4z+9iEyP24MtjLQMJascT5bagmyzZ3ZQCjWASWTndptjfEMWEvDQ091mWZyw
-sNcUnJzp5l6GGqmfLwY9lShHJziZBjsV9lvWbhL8EY8n8k9AQ7iP1KsrGEIaqvWa
-m5kt1RPKpJvPiHn5qclnPOprnPOu9Cn115B6bWovUyqI8A3w0mk=
-=Ik6a
------END PGP SIGNATURE-----
-
---pouaakhr7brj4bh2--
