@@ -1,181 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:37358 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932065AbeBVLjs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55853 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752442AbeBURPO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Feb 2018 06:39:48 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180221171504.dac7yikrqfnjiiog@verge.net.au>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519139541-18783-10-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdVDCga8htL+UD3P0Kzt9-OQ6hof+szGOiV9d0gwxGExqQ@mail.gmail.com> <20180221171504.dac7yikrqfnjiiog@verge.net.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 22 Feb 2018 12:39:46 +0100
-Message-ID: <CAK8P3a30pgOXvLLHe3Hb-ubPz6QeUiZKFqMZLm8Qp_7KRr7QuA@mail.gmail.com>
-Subject: Re: [PATCH v2 09/19] ARM64: dts: Add R-Car Salvator-x M3-N support
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Wed, 21 Feb 2018 12:15:14 -0500
+Date: Wed, 21 Feb 2018 18:15:04 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 09/19] ARM64: dts: Add R-Car Salvator-x M3-N support
+Message-ID: <20180221171504.dac7yikrqfnjiiog@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-10-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVDCga8htL+UD3P0Kzt9-OQ6hof+szGOiV9d0gwxGExqQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVDCga8htL+UD3P0Kzt9-OQ6hof+szGOiV9d0gwxGExqQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 6:15 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Tue, Feb 20, 2018 at 04:46:23PM +0100, Geert Uytterhoeven wrote:
->> On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->> > Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
->> >
->> > Based on original work from:
->> > Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> > Magnus Damm <damm+renesas@opensource.se>
->> >
->> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Thanks, applied with prefix updated to
->
-> "arm64: dts: renesas:"
->
-> There was some fuzz applying this patch, the result is as follows.
->
-> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Subject: [PATCH] arm64: dts: renesas: Add R-Car Salvator-x M3-N support
->
-> Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
->
-> Based on original work from:
-> Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Magnus Damm <damm+renesas@opensource.se>
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+On Tue, Feb 20, 2018 at 04:46:23PM +0100, Geert Uytterhoeven wrote:
+> On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
+> >
+> > Based on original work from:
+> > Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > Magnus Damm <damm+renesas@opensource.se>
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> 
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Something went wrong with this patch, I suspect it's missing some prerequisites
-that fill in a few more device nodes to avoid these warnings in linux-next:
+Thanks, applied with prefix updated to
 
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/ethernet@e6800000/ethernet-phy@0
-has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e6510000/codec@10 has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e6510000/clk_multiplier@4f
-has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e66d8000/gpio@20 has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e66d8000/adc@7c has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e66d8000/adc@7f has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e66d8000/clock-generator@6a
-has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/i2c@e60b0000/pmic@30 has invalid
-length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/display@feb00000/ports/port@0 has
-invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/display@feb00000/ports/port@1 has
-invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(reg_format): "reg" property in /soc/display@feb00000/ports/port@2 has
-invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/ethernet@e6800000/ethernet-phy@0
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/ethernet@e6800000/ethernet-phy@0
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e6510000/codec@10
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e6510000/codec@10
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e6510000/clk_multiplier@4f
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e6510000/clk_multiplier@4f
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e66d8000/gpio@20
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e66d8000/gpio@20
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e66d8000/adc@7c
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e66d8000/adc@7c
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e66d8000/adc@7f
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e66d8000/adc@7f
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e66d8000/clock-generator@6a
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e66d8000/clock-generator@6a
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/i2c@e60b0000/pmic@30
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/i2c@e60b0000/pmic@30
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/display@feb00000/ports/port@0
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/display@feb00000/ports/port@0
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/display@feb00000/ports/port@1
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/display@feb00000/ports/port@1
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #address-cells value for
-/soc/display@feb00000/ports/port@2
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(avoid_default_addr_size): Relying on default #size-cells value for
-/soc/display@feb00000/ports/port@2
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(phys_property): Missing property '#phy-cells' in node
-/soc/usb-phy@e65ee000 or bad phandle (referred from
-/soc/usb@ee020000:phys[0])
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(pwms_property): Missing property '#pwm-cells' in node
-/soc/pwm@e6e31000 or bad phandle (referred from /backlight:pwms[0])
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(interrupts_property): Missing interrupt-controller or interrupt-map
-property in /soc/interrupt-controller@e61c0000
-arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning
-(interrupts_property): Missing #interrupt-cells in interrupt-parent
-/soc/interrupt-controller@e61c0000
+"arm64: dts: renesas:"
 
-Maybe just take out the patch adding the .dts file for the time being until
-the important nodes are all in place?
+There was some fuzz applying this patch, the result is as follows.
 
-        Arnd
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH] arm64: dts: renesas: Add R-Car Salvator-x M3-N support
+
+Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
+
+Based on original work from:
+Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Magnus Damm <damm+renesas@opensource.se>
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/Makefile                |  1 +
+ arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index c885eef4e660..9ea5ec0daeba 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
++dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
+ dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+new file mode 100644
+index 000000000000..75d890d91df9
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the Salvator-X board with R-Car M3-N
++ *
++ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ */
++
++/dts-v1/;
++#include "r8a77965.dtsi"
++#include "salvator-x.dtsi"
++
++/ {
++	model = "Renesas Salvator-X board based on r8a77965";
++	compatible = "renesas,salvator-x", "renesas,r8a77965";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++};
+-- 
+2.11.0
