@@ -1,67 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:55722 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933084AbeBLNiz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55140 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932254AbeBUQRl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:38:55 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ravb: Remove obsolete explicit clock handling for WoL
-Date: Mon, 12 Feb 2018 14:38:51 +0100
-Message-Id: <1518442731-31772-1-git-send-email-geert+renesas@glider.be>
+        Wed, 21 Feb 2018 11:17:41 -0500
+Date: Wed, 21 Feb 2018 17:17:36 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: defconfig: Enable PWM and USB for R-Car
+Message-ID: <20180221161735.ayz5s7yvmidpbd6i@verge.net.au>
+References: <1519192636-21139-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519192636-21139-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently, if Wake-on-LAN is enabled, the EtherAVB device's module clock
-is manually kept running during system suspend, to make sure the device
-stays active.
+On Wed, Feb 21, 2018 at 02:57:16PM +0900, Yoshihiro Shimoda wrote:
+> Enables PWM controller, USB-DMAC that is used by HS-USB, USB 3.0
+> peripheral controller and USB 3.0 PHY for R-Car SoCs.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Since commit 91c719f5ec6671f7 ("soc: renesas: rcar-sysc: Keep wakeup
-sources active during system suspend") , this workaround is no longer
-needed.  Hence remove all explicit clock handling to keep the device
-active.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
----
-v2:
-  - Add Reviewed-by,
-  - Rebased,
-  - Drop RFC state, now the dependency is upstream.
----
- drivers/net/ethernet/renesas/ravb_main.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index c87f57ca44371586..a95fbd5510d92e7b 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2255,9 +2255,6 @@ static int ravb_wol_setup(struct net_device *ndev)
- 	/* Enable MagicPacket */
- 	ravb_modify(ndev, ECMR, ECMR_MPDE, ECMR_MPDE);
- 
--	/* Increased clock usage so device won't be suspended */
--	clk_enable(priv->clk);
--
- 	return enable_irq_wake(priv->emac_irq);
- }
- 
-@@ -2276,9 +2273,6 @@ static int ravb_wol_restore(struct net_device *ndev)
- 	if (ret < 0)
- 		return ret;
- 
--	/* Restore clock usage count */
--	clk_disable(priv->clk);
--
- 	return disable_irq_wake(priv->emac_irq);
- }
- 
--- 
-2.7.4
+Thanks, applied.
