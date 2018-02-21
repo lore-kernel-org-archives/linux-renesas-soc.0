@@ -1,29 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55140 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932254AbeBUQRl (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:32271 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751709AbeBUGCE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Feb 2018 11:17:41 -0500
-Date: Wed, 21 Feb 2018 17:17:36 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: defconfig: Enable PWM and USB for R-Car
-Message-ID: <20180221161735.ayz5s7yvmidpbd6i@verge.net.au>
-References: <1519192636-21139-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 21 Feb 2018 01:02:04 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2] arm64: defconfig: Enable PWM and USB for R-Car
+Date: Wed, 21 Feb 2018 14:57:16 +0900
+Message-Id: <1519192636-21139-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519192636-21139-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 02:57:16PM +0900, Yoshihiro Shimoda wrote:
-> Enables PWM controller, USB-DMAC that is used by HS-USB, USB 3.0
-> peripheral controller and USB 3.0 PHY for R-Car SoCs.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Enables PWM controller, USB-DMAC that is used by HS-USB, USB 3.0
+peripheral controller and USB 3.0 PHY for R-Car SoCs.
 
-Thanks, applied.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Changes from v1:
+  - Add Acked-by Geert (thanks!).
+  - Consolidate four patches into one.
+
+ arch/arm64/configs/defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index a850bc5..ceafd26 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -445,6 +445,7 @@ CONFIG_NOP_USB_XCEIV=y
+ CONFIG_USB_ULPI=y
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_RENESAS_USBHS_UDC=m
++CONFIG_USB_RENESAS_USB3=m
+ CONFIG_USB_ULPI_BUS=y
+ CONFIG_MMC=y
+ CONFIG_MMC_BLOCK_MINORS=32
+@@ -501,6 +502,7 @@ CONFIG_QCOM_BAM_DMA=y
+ CONFIG_QCOM_HIDMA_MGMT=y
+ CONFIG_QCOM_HIDMA=y
+ CONFIG_RCAR_DMAC=y
++CONFIG_RENESAS_USB_DMAC=m
+ CONFIG_VFIO=y
+ CONFIG_VFIO_PCI=y
+ CONFIG_VIRTIO_PCI=y
+@@ -548,10 +550,12 @@ CONFIG_PWM=y
+ CONFIG_PWM_BCM2835=m
+ CONFIG_PWM_CROS_EC=m
+ CONFIG_PWM_MESON=m
++CONFIG_PWM_RCAR=m
+ CONFIG_PWM_ROCKCHIP=y
+ CONFIG_PWM_SAMSUNG=y
+ CONFIG_PWM_TEGRA=m
+ CONFIG_PHY_RCAR_GEN3_USB2=y
++CONFIG_PHY_RCAR_GEN3_USB3=m
+ CONFIG_PHY_HI6220_USB=y
+ CONFIG_PHY_QCOM_USB_HS=y
+ CONFIG_PHY_SUN4I_USB=y
+-- 
+1.9.1
