@@ -1,44 +1,146 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au,
-        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/10] arm64: dts: renesas: v3msk: Override EtherAVB phy-mode
-Date: Tue, 27 Feb 2018 11:22:49 +0100
-Message-Id: <1519726974-23160-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54765 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeBUXxl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 21 Feb 2018 18:53:41 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 08/16] drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
+Date: Thu, 22 Feb 2018 01:54:23 +0200
+Message-ID: <31008700.E3yMoWPLls@avalon>
+In-Reply-To: <CAL_JsqKBSeNU2jDX-pLsGAUJtzBVk9=-Hg0Etq_0JTd_8RccVQ@mail.gmail.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-9-laurent.pinchart+renesas@ideasonboard.com> <CAL_JsqKBSeNU2jDX-pLsGAUJtzBVk9=-Hg0Etq_0JTd_8RccVQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As the PHY interface installed on the V3MSK board provides TX and RX
-channels delays, make the "phy-mode" property a board-specific one,
-meant to override the one specified in the SoC DTSI.
+Hi Rob,
 
-Follow up patches will reset the r8a77970 SoC DTSI to use "rgmii"
-mode and let the board file override that.
+On Thursday, 22 February 2018 01:28:48 EET Rob Herring wrote:
+> On Tue, Feb 20, 2018 at 5:10 PM, Laurent Pinchart wrote:
+> > The internal LVDS encoders now have their own DT bindings. Before
+> > switching the driver infrastructure to those new bindings, implement
+> > backward-compatibility through live DT patching.
+> > 
+> > Patching is disabled and will be enabled along with support for the new
+> > DT bindings in the DU driver.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> 
+> [...]
+> 
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+> > b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts new file mode
+> > 100644
+> > index 000000000000..6ebb355b652a
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+> > @@ -0,0 +1,81 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * rcar_du_of_lvds_r8a7790.dts - Legacy LVDS DT bindings conversion for
+> > R8A7790
+> > + *
+> > + * Copyright (C) 2018 Laurent Pinchart
+> > <laurent.pinchart@ideasonboard.com>
+> > + *
+> > + * Based on work from Jyri Sarha <jsarha@ti.com>
+> > + * Copyright (C) 2015 Texas Instruments
+> > + */
+> > +
+> > +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> 
+> Doesn't seem to be used in any of these.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts | 1 +
- 1 file changed, 1 insertion(+)
+It's a leftover from a previous test. I'll remove it in all the .dts files.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-index 8624ca8..bb554ee 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-@@ -34,6 +34,7 @@
- &avb {
- 	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-id";
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
+> Otherwise,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> > +
+> > +/dts-v1/;
+> > +/plugin/;
+> > +/ {
+> > +       fragment@0 {
+> > +               target-path = "/";
+> > +               __overlay__ {
+> > +                       #address-cells = <2>;
+> > +                       #size-cells = <2>;
+> > +
+> > +                       lvds@feb90000 {
+> > +                               compatible = "renesas,r8a7790-lvds";
+> > +                               reg = <0 0xfeb90000 0 0x1c>;
+> > +
+> > +                               ports {
+> > +                                       #address-cells = <1>;
+> > +                                       #size-cells = <0>;
+> > +
+> > +                                       port@0 {
+> > +                                               reg = <0>;
+> > +                                               lvds0_input: endpoint {
+> > +                                               };
+> > +                                       };
+> > +                                       port@1 {
+> > +                                               reg = <1>;
+> > +                                               lvds0_out: endpoint {
+> > +                                               };
+> > +                                       };
+> > +                               };
+> > +                       };
+> > +
+> > +                       lvds@feb94000 {
+> > +                               compatible = "renesas,r8a7790-lvds";
+> > +                               reg = <0 0xfeb94000 0 0x1c>;
+> > +
+> > +                               ports {
+> > +                                       #address-cells = <1>;
+> > +                                       #size-cells = <0>;
+> > +
+> > +                                       port@0 {
+> > +                                               reg = <0>;
+> > +                                               lvds1_input: endpoint {
+> > +                                               };
+> > +                                       };
+> > +                                       port@1 {
+> > +                                               reg = <1>;
+> > +                                               lvds1_out: endpoint {
+> > +                                               };
+> > +                                       };
+> > +                               };
+> > +                       };
+> > +               };
+> > +       };
+> > +
+> > +       fragment@1 {
+> > +               target-path = "/display@feb00000/ports";
+> > +               __overlay__ {
+> > +                       port@1 {
+> > +                               endpoint {
+> > +                                       remote-endpoint = <&lvds0_input>;
+> > +                               };
+> > +                       };
+> > +                       port@2 {
+> > +                               endpoint {
+> > +                                       remote-endpoint = <&lvds1_input>;
+> > +                               };
+> > +                       };
+> > +               };
+> > +       };
+> > +};
+
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
