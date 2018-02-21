@@ -1,177 +1,104 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44806 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934845AbeBMQ4T (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:56:19 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v10 15/30] rcar-vin: break out format alignment and checking
-Date: Tue, 13 Feb 2018 18:56:49 +0200
-Message-ID: <10948341.FPhVVtqtXn@avalon>
-In-Reply-To: <20180129163435.24936-16-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se> <20180129163435.24936-16-niklas.soderlund+renesas@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 01/16] dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
+Date: Wed, 21 Feb 2018 21:50:29 +0200
+Message-ID: <2073262.MX8XBVzz43@avalon>
+In-Reply-To: <3ec6ef0d-1753-cf81-f619-cf43913044de@cogentembedded.com>
+References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com> <20180220231046.32638-2-laurent.pinchart+renesas@ideasonboard.com> <3ec6ef0d-1753-cf81-f619-cf43913044de@cogentembedded.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Hi Sergei,
 
-Thank you for the patch.
+On Wednesday, 21 February 2018 10:35:13 EET Sergei Shtylyov wrote:
+> On 2/21/2018 2:10 AM, Laurent Pinchart wrote:
+> > The Renesas R-Car Gen2 and Gen3 SoCs have internal LVDS encoders. Add
+> > corresponding device tree bindings.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> > Changes since v1:
+> > 
+> > - Move the SoC name before the IP name in compatible strings
+> > - Rename parallel input to parallel RGB input
+> > - Fixed "renesas,r8a7743-lvds" description
+> > - Document the resets property
+> > - Fixed typo
+> > ---
+> > 
+> >   .../bindings/display/bridge/renesas,lvds.txt       | 56 ++++++++++++++++
+> >   MAINTAINERS                                        |  1 +
+> >   2 files changed, 57 insertions(+)
+> >   create mode 100644
+> >   Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt> 
+> > diff --git
+> > a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> > b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt new
+> > file mode 100644
+> > index 000000000000..2b19ce51ec07
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> > @@ -0,0 +1,56 @@
+> > +Renesas R-Car LVDS Encoder
+> > +==========================
+> > +
+> > +These DT bindings describe the LVDS encoder embedded in the Renesas R-Car
+> > +Gen2, R-Car Gen3 and RZ/G SoCs.
+> > +
+> > +Required properties:
+> > +
+> > +- compatible : Shall contain one of
+> > +  - "renesas,r8a7743-lvds" for R8A7743 (RZ/G1M) compatible LVDS encoders
+> > +  - "renesas,r8a7790-lvds" for R8A7790 (R-Car H2) compatible LVDS
+> > encoders
+> > +  - "renesas,r8a7791-lvds" for R8A7791 (R-Car M2-W) compatible LVDS
+> > encoders +  - "renesas,r8a7793-lvds" for R8A7791 (R-Car M2-N) compatible
+> > LVDS encoders +  - "renesas,r8a7795-lvds" for R8A7795 (R-Car H3)
+> > compatible LVDS encoders +  - "renesas,r8a7796-lvds" for R8A7796 (R-Car
+> > M3-W) compatible LVDS encoders +
+> > +- reg: Base address and length for the memory-mapped registers
+> > +- clocks: A phandle + clock-specifier pair for the functional clock
+> > +- resets: A phandle + reset specifier for the module reset
+> > +
+> > +Required nodes:
+> > +
+> > +The LVDS encoder has two video ports. Their connections are modelled
+> > using the +OF graph bindings specified in
+> > Documentation/devicetree/bindings/graph.txt. +
+> > +- Video port 0 corresponds to the parallel RGB input
+> > +- Video port 1 corresponds to the LVDS output
+> > +
+> > +Each port shall have a single endpoint.
+> > +
+> > +
+> > +Example:
+> > +
+> > +	lvds0: lvds@feb90000 {
+> 
+> "lvds-encoder@feb90000" maybe?
 
-On Monday, 29 January 2018 18:34:20 EET Niklas S=F6derlund wrote:
-> Part of the format alignment and checking can be shared with the Gen3
-> format handling. Break that part out to a separate function.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 93 +++++++++++++-----------
->  1 file changed, 50 insertions(+), 43 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
-> c606942e59b5d934..1169e6a279ecfb55 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -86,6 +86,55 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format
-> *pix) return pix->bytesperline * pix->height;
->  }
->=20
-> +static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format
-> *pix)
-> +{
-> +	u32 walign;
-> +
-> +	/* If requested format is not supported fallback to the default */
-> +	if (!rvin_format_from_pixel(pix->pixelformat)) {
-> +		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
-> +			pix->pixelformat, RVIN_DEFAULT_FORMAT);
+Or just "encoder@feb90000" ? Or "display-encoder@feb90000" ? Rob, any 
+preference ?
 
-I think you can drop the message.
+> And do we need a # in the label if the encoder is alone in DT anyway?
 
-> +		pix->pixelformat =3D RVIN_DEFAULT_FORMAT;
-> +	}
-> +
-> +	/* Reject ALTERNATE  until support is added to the driver */
-> +	switch (pix->field) {
-> +	case V4L2_FIELD_TOP:
-> +	case V4L2_FIELD_BOTTOM:
-> +	case V4L2_FIELD_NONE:
-> +	case V4L2_FIELD_INTERLACED_TB:
-> +	case V4L2_FIELD_INTERLACED_BT:
-> +	case V4L2_FIELD_INTERLACED:
-> +		break;
-> +	default:
-> +		pix->field =3D V4L2_FIELD_NONE;
-> +		break;
-> +	}
-> +
-> +	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
-> +	walign =3D vin->format.pixelformat =3D=3D V4L2_PIX_FMT_NV16 ? 5 : 1;
-> +
-> +	/* Limit to VIN capabilities */
-> +	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
-> +			      &pix->height, 4, vin->info->max_height, 2, 0);
-> +
-> +	pix->bytesperline =3D max_t(u32, pix->bytesperline,
-> +				  rvin_format_bytesperline(pix));
-> +	pix->sizeimage =3D max_t(u32, pix->sizeimage,
-> +			       rvin_format_sizeimage(pix));
-> +
-> +	if (vin->info->model =3D=3D RCAR_M1 &&
-> +	    pix->pixelformat =3D=3D V4L2_PIX_FMT_XBGR32) {
-> +		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
-> +		return -EINVAL;
+As a matter of fact r8a7790, on which this example is based, has two LVDS 
+encoders. I've only included one in the example as adding a second one 
+wouldn't have added any value.
 
-This shouldn't print a message nor return an error, but default to a suppor=
-ted=20
-format. You can move the check to the beginning of the function to do so.
+> [...]
 
-> +	}
-> +
-> +	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
-> +		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
-> +
-> +	return 0;
-> +}
-> +
->  /*
-> -------------------------------------------------------------------------=
-=2D-
-> -- * V4L2
->   */
-> @@ -215,19 +264,12 @@ static int __rvin_try_format_source(struct rvin_dev
-> *vin, static int __rvin_try_format(struct rvin_dev *vin,
->  			     u32 which, struct v4l2_pix_format *pix)
->  {
-> -	u32 walign;
->  	int ret;
->=20
->  	/* Keep current field if no specific one is asked for */
->  	if (pix->field =3D=3D V4L2_FIELD_ANY)
->  		pix->field =3D vin->format.field;
->=20
-> -	/* If requested format is not supported fallback to the default */
-> -	if (!rvin_format_from_pixel(pix->pixelformat)) {
-> -		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
-> -			pix->pixelformat, RVIN_DEFAULT_FORMAT);
-> -		pix->pixelformat =3D RVIN_DEFAULT_FORMAT;
-> -	}
->=20
->  	/* Always recalculate */
->  	pix->bytesperline =3D 0;
-> @@ -238,42 +280,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
->  	if (ret)
->  		return ret;
->=20
-> -	/* Reject ALTERNATE  until support is added to the driver */
-> -	switch (pix->field) {
-> -	case V4L2_FIELD_TOP:
-> -	case V4L2_FIELD_BOTTOM:
-> -	case V4L2_FIELD_NONE:
-> -	case V4L2_FIELD_INTERLACED_TB:
-> -	case V4L2_FIELD_INTERLACED_BT:
-> -	case V4L2_FIELD_INTERLACED:
-> -		break;
-> -	default:
-> -		pix->field =3D V4L2_FIELD_NONE;
-> -		break;
-> -	}
-> -
-> -	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
-> -	walign =3D vin->format.pixelformat =3D=3D V4L2_PIX_FMT_NV16 ? 5 : 1;
-> -
-> -	/* Limit to VIN capabilities */
-> -	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
-> -			      &pix->height, 4, vin->info->max_height, 2, 0);
-> -
-> -	pix->bytesperline =3D max_t(u32, pix->bytesperline,
-> -				  rvin_format_bytesperline(pix));
-> -	pix->sizeimage =3D max_t(u32, pix->sizeimage,
-> -			       rvin_format_sizeimage(pix));
-> -
-> -	if (vin->info->model =3D=3D RCAR_M1 &&
-> -	    pix->pixelformat =3D=3D V4L2_PIX_FMT_XBGR32) {
-> -		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
-> -		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
-> -
-> -	return 0;
-> +	return rvin_format_align(vin, pix);
->  }
->=20
->  static int rvin_querycap(struct file *file, void *priv,
-
-=2D-=20
+-- 
 Regards,
 
 Laurent Pinchart
+
