@@ -1,53 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:44926 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750861AbeBWJXP (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:34468 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751357AbeBVTGm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 04:23:15 -0500
-MIME-Version: 1.0
-In-Reply-To: <1519326370-15805-3-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org> <1519326370-15805-3-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Feb 2018 10:23:13 +0100
-Message-ID: <CAMuHMdXW2JZr1=XTqdxc1s9_woH=Sget8m3aM6FMXFF4JYoeeg@mail.gmail.com>
-Subject: Re: [PATCH 2/6] arm64: dts: renesas: r8a77965: Add #address-cells and #size-cells
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 22 Feb 2018 14:06:42 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/6] arm64: dts: renesas: r8a77965: Add #address-cells and #size-cells
+Date: Thu, 22 Feb 2018 20:06:06 +0100
+Message-Id: <1519326370-15805-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 22, 2018 at 8:06 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add "#address-cells" and "#size-cells" properties to all place-holder nodes
-> that have children nodes defined by salvator-x[s].dtsi device tree.
->
-> This silences the following DTC compiler warnings:
-> Warning (reg_format): "reg" property in /soc/.. has invalid length (4 bytes)
-> (#address-cells == 2, #size-cells == 1)
-> Warning (avoid_default_addr_size): Relying on default #address-cells
-> value for /soc/...
-> Warning (avoid_default_addr_size): Relying on default #size-cells value
-> for /soc/...
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Add "#address-cells" and "#size-cells" properties to all place-holder nodes
+that have children nodes defined by salvator-x[s].dtsi device tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This silences the following DTC compiler warnings:
+Warning (reg_format): "reg" property in /soc/.. has invalid length (4 bytes)
+(#address-cells == 2, #size-cells == 1)
+Warning (avoid_default_addr_size): Relying on default #address-cells
+value for /soc/...
+Warning (avoid_default_addr_size): Relying on default #size-cells value
+for /soc/...
 
-Gr{oetje,eeting}s,
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 4d9bba9..ab46cd2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -521,6 +521,9 @@
+ 		};
+ 
+ 		avb: ethernet@e6800000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
+ 			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
+ 			/* placeholder */
+ 		};
+@@ -528,11 +531,21 @@
+ 		csi20: csi2@fea80000 {
+ 			reg = <0 0xfea80000 0 0x10000>;
+ 			/* placeholder */
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
+ 		};
+ 
+ 		csi40: csi2@feaa0000 {
+ 			reg = <0 0xfeaa0000 0 0x10000>;
+ 			/* placeholder */
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
+ 		};
+ 
+ 		vin0: video@e6ef0000 {
+@@ -611,6 +624,9 @@
+ 		};
+ 
+ 		i2c2: i2c@e6510000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
+ 			reg = <0 0xe6510000 0 0x40>;
+ 			/* placeholder */
+ 		};
+@@ -621,6 +637,9 @@
+ 		};
+ 
+ 		i2c4: i2c@e66d8000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
+ 			reg = <0 0xe66d8000 0 0x40>;
+ 			/* placeholder */
+ 		};
+@@ -636,6 +655,9 @@
+ 		};
+ 
+ 		i2c_dvfs: i2c@e60b0000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
+ 			reg = <0 0xe60b0000 0 0x425>;
+ 			/* placeholder */
+ 		};
+@@ -681,6 +703,9 @@
+ 			/* placeholder */
+ 
+ 			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
+ 				port@0 {
+ 					reg = <0>;
+ 					du_out_rgb: endpoint {
+-- 
+2.7.4
