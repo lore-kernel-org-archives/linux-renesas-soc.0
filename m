@@ -1,187 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40161 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753585AbeBFWaC (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:40514 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932564AbeBVOoj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:30:02 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 5/9] ARM: dts: porter: use demuxer for I2C2
-Date: Tue,  6 Feb 2018 23:29:54 +0100
-Message-Id: <20180206222958.18941-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
-References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+        Thu, 22 Feb 2018 09:44:39 -0500
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdZ4oPmc5ithggUVMd6_MStMLs59mi3yV4e+ym4UgF5H5A@mail.gmail.com>
+References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+ <1518443713-1835-4-git-send-email-geert+renesas@glider.be> <CACRpkdZ4oPmc5ithggUVMd6_MStMLs59mi3yV4e+ym4UgF5H5A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Feb 2018 15:44:37 +0100
+Message-ID: <CAMuHMdXXvwREAZwaeb6heN296OJKOugzR9oD9_M4x6dBc7A69g@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C2 and provide fallback to GPIO.
+Hi Linus,
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+On Thu, Feb 22, 2018 at 3:23 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>
+>> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
+>> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
+>> block's module clock (if exists) is manually kept running during system
+>> suspend, to make sure the device stays active.
+>>
+>> However, this explicit clock handling is merely a workaround for a
+>> failure to properly communicate wakeup information to the device core.
+>>
+>> Instead, set the device's power.wakeup_path field, to indicate this
+>> device is part of the wakeup path.  Depending on the PM Domain's
+>> active_wakeup configuration, the genpd core code will keep the device
+>> enabled (and the clock running) during system suspend when needed.
+>> This allows for the removal of all explicit clock handling code from the
+>> driver.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Can I apply this and only this patch to GPIO?
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7791-porter.dts | 128 ++++++++++++++++++++---------------
- 1 file changed, 75 insertions(+), 53 deletions(-)
+Yes please.
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 9a02d03b23c2b7..c14e6fe9e4f69b 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -29,6 +29,8 @@
- 
- 	aliases {
- 		serial0 = &scif0;
-+		i2c9 = &gpioi2c2;
-+		i2c10 = &i2chdmi;
- 	};
- 
- 	chosen {
-@@ -135,6 +137,78 @@
- 			clocks = <&x14_clk>;
- 		};
- 	};
-+
-+	gpioi2c2: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio2 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio2 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C2.
-+	 */
-+	i2chdmi: i2c-10 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c2>, <&gpioi2c2>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4642: codec@12 {
-+			compatible = "asahi-kasei,ak4642";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio3>;
-+			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &extal_clk {
-@@ -296,61 +370,9 @@
- 
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	ak4642: codec@12 {
--		compatible = "asahi-kasei,ak4642";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio3>;
--		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con>;
--				};
--			};
--		};
--	};
- };
- 
- &sata0 {
--- 
-2.11.0
+> Should it be applied for fixes, next?
+
+No, as it depends on infrastructure (device_set_wakeup_path()) and fixes
+(various "Keep wakeup sources active during system suspend") in v4.16-rc1.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
