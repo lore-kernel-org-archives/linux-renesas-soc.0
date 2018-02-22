@@ -1,86 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:50754 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934670AbeBLNzZ (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:43005 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751260AbeBVSmc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:55:25 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/3] renesas: irqchip: Use wakeup_path i.s.o. explicit clock handling
-Date: Mon, 12 Feb 2018 14:55:10 +0100
-Message-Id: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+        Thu, 22 Feb 2018 13:42:32 -0500
+Received: by mail-lf0-f50.google.com with SMTP id t204so8816501lff.9
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Feb 2018 10:42:32 -0800 (PST)
+Subject: Re: [PATCH v3] vsp1: fix video output on R8A77970
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20180118140600.363149670@cogentembedded.com>
+ <11341738.DVmQoThvsb@avalon>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <9b378576-7547-105e-51dd-062c9eac5c05@cogentembedded.com>
+Date: Thu, 22 Feb 2018 21:42:29 +0300
+MIME-Version: 1.0
+In-Reply-To: <11341738.DVmQoThvsb@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+On 02/22/2018 07:26 PM, Laurent Pinchart wrote:
+> Hi Sergei,
+> 
+> Thank you for the patch.
+> 
+> On Thursday, 18 January 2018 16:05:51 EET Sergei Shtylyov wrote:
+>> Commit d455b45f8393 ("v4l: vsp1: Add support for new VSP2-BS, VSP2-DL,
+>> and VSP2-D instances") added support for the VSP2-D found in the R-Car
+>> V3M (R8A77970) but the video output that VSP2-D sends to DU has a greenish
+>> garbage-like line repeated every 8 screen rows. It turns out that R-Car
+>> V3M has the LIF0 buffer attribute register that you need to set to a non-
+>> default value in order to get rid of the output artifacts...
+>>
+>> Based on the original (and large) patch by Daisuke Matsushita
+>> <daisuke.matsushita.ns@hitachi.com>.
+>>
+>> Fixes: d455b45f8393 ("v4l: vsp1: Add support for new VSP2-BS, VSP2-DL and
+>> VSP2-D instances") Signed-off-by: Sergei Shtylyov
+>> <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>> This patch is against the 'media_tree.git' repo's 'fixes' branch.
+>>
+>> Changes in version 3:
+>> - reworded the comment in lif_configure();
+>> - reworded the patch description.
+>>
+>> Changes in version 2:
+>> - added a  comment before the V3M SoC check;
+>> - fixed indetation in that check;
+>> - reformatted  the patch description.
+>>
+>>  drivers/media/platform/vsp1/vsp1_lif.c  |   15 +++++++++++++++
+>>  drivers/media/platform/vsp1/vsp1_regs.h |    5 +++++
+>>  2 files changed, 20 insertions(+)
+>>
+>> Index: media_tree/drivers/media/platform/vsp1/vsp1_lif.c
+>> ===================================================================
+>> --- media_tree.orig/drivers/media/platform/vsp1/vsp1_lif.c
+>> +++ media_tree/drivers/media/platform/vsp1/vsp1_lif.c
+>> @@ -155,6 +155,21 @@ static void lif_configure(struct vsp1_en
+>>  			(obth << VI6_LIF_CTRL_OBTH_SHIFT) |
+>>  			(format->code == 0 ? VI6_LIF_CTRL_CFMT : 0) |
+>>  			VI6_LIF_CTRL_REQSEL | VI6_LIF_CTRL_LIF_EN);
+>> +
+>> +	/*
+>> +	 * On R-Car V3M the LIF0 buffer attribute register has to be set
+>> +	 * to a non-default value to guarantee proper operation (otherwise
+>> +	 * artifacts may appear on the output). The value required by
+>> +	 * the manual is not explained but is likely a buffer size or
+>> +	 * threshold...
+> 
+> One period is enough :-)
 
-If an interrupt controller in a Renesas ARM SoC is part of a Clock
-Domain, and it is part of the wakeup path, it must be kept active during
-system suspend.
+   Naw, I just like ellipsis! :-)
 
-Currently this is handled in all interrupt controller drivers by
-explicitly increasing the use count of the module clock when the device
-is part of the wakeup path.  However, this explicit clock handling is
-merely a workaround for a failure to properly communicate wakeup
-information to the device core.
+>> +	 */
+>> +	if ((entity->vsp1->version &
+>> +	     (VI6_IP_VERSION_MODEL_MASK | VI6_IP_VERSION_SOC_MASK)) ==
+>> +	    (VI6_IP_VERSION_MODEL_VSPD_V3 | VI6_IP_VERSION_SOC_V3M)) {
+>> +		vsp1_lif_write(lif, dl, VI6_LIF_LBA,
+>> +			       VI6_LIF_LBA_LBA0 |
+>> +			       (1536 << VI6_LIF_LBA_LBA1_SHIFT));
+>> +	}
+> 
+> There's no need for braces
 
-Hence this series fixes the affected drivers by setting the devices'
-power.wakeup_path fields instead, to indicate they are part of the
-wakeup path.  Depending on the PM Domain's active_wakeup configuration,
-the genpd core code will keep the device enabled (and the clock running)
-during system suspend when needed.
+   Well, multi-line statement was asking for them...
 
-Target trees:
-  - Patches 1 and 2 are meant for the irqchip tree,
-  - Patch 3 is meant for the GPIO tree.
+> or inner parentheses.
 
-Changes compared to v2 (sent by Ulf Hanson):
-  - Revert to v1, as WAKEUP_PATH didn't make it,
-  - Use an atomic_t instead of a boolean flag, as the boolean tracked
-    only the status of the last configured GPIO, while multiple interrupt
-    sources on the same irqchip may be involved with wake-up,
-  - Use new helper device_set_wakeup_path(),
-  - Drop checks for CONFIG_PM_SLEEP, as device_set_wakeup_path() is
-    always available, unlike dev_pm_info.wakeup_path,
-  - Mark suspend functions __maybe_unused.
+   I thought so too. :-)
 
-Changes compared to v1:
-  - Convert to use the WAKEUP_PATH driver PM flag (Ulf Hanson).
+> To make this easier to read I 
+> propose defining a new macro VI6_IP_VERSION_MASK that combines both the model 
+> and SoC. Otherwise this looks good to me,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> I'll post a v4 with that change in reply to this e-mail, please let me know if 
+> you're fine with it.
 
-This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
-r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7796/salvator-x, and
-sh73a0/kzm9g.
+   Generally fine, yes...
 
-Thanks for applying!
+[...]
 
-Geert Uytterhoeven (3):
-  irqchip/renesas-intc-irqpin: Use wakeup_path i.s.o. explicit clock
-    handling
-  irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
-  gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-
- drivers/gpio/gpio-rcar.c                  | 38 +++++++++++++----------------
- drivers/irqchip/irq-renesas-intc-irqpin.c | 40 +++++++++++++------------------
- drivers/irqchip/irq-renesas-irqc.c        | 30 ++++++++++++-----------
- 3 files changed, 48 insertions(+), 60 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+MBR, Sergei
