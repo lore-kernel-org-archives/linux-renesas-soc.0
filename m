@@ -1,69 +1,91 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:39706 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932830AbeBLWZk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:25:40 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Message-ID: <1519292164.7447.1.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] vfio: platform: Add generic DT reset support
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/4] arm64: dts: renesas: r8a77995: add FCPVD nodes
-Date: Mon, 12 Feb 2018 22:25:27 +0000
-Message-Id: <1518474330-8713-3-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518474330-8713-1-git-send-email-kbingham@kernel.org>
-References: <1518474330-8713-1-git-send-email-kbingham@kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        KVM list <kvm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Thu, 22 Feb 2018 10:36:04 +0100
+In-Reply-To: <CAMuHMdXSwsH82U8P3N6jXef72ZP0iiZgzkgEuKhUsqoYmpW93g@mail.gmail.com>
+References: <1518539815-13774-1-git-send-email-geert+renesas@glider.be>
+         <1518539815-13774-3-git-send-email-geert+renesas@glider.be>
+         <1519231860.3405.11.camel@pengutronix.de>
+         <CAMuHMdXSwsH82U8P3N6jXef72ZP0iiZgzkgEuKhUsqoYmpW93g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hi Geert,
 
-The FCPVD handles the interface between the VSPD and memory.
+On Thu, 2018-02-22 at 09:50 +0100, Geert Uytterhoeven wrote:
+[...]
+> > > @@ -127,8 +134,15 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+> > >               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
+> > >                                                       &vdev->reset_module);
+> > >       }
+> > > +     if (vdev->of_reset)
+> > > +             return 0;
+> > > +
+> > > +     vdev->reset_control = __of_reset_control_get(vdev->device->of_node,
+> > > +                                                  NULL, 0, false, false);
+> > > +     if (!IS_ERR(vdev->reset_control))
+> > > +             return 0;
+> > 
+> > if you assign to a local variable first here:
+> > 
+> >         struct reset_control *rstc;
+> > 
+> >          ...
+> > 
+> >         rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
+> >         if (!IS_ERR(rstc)) {
+> >                 vdev->reset_control = rstc;
+> >                 return 0;
+> >         }
+> > 
+> > Also, please don't use __of_reset_control_get directly.
+> 
+> OK, apparently I didn't read <linux/reset.h> beyond the first #else...
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+I don't blame you, this is missing some documentation.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 6cf935d307d9..196a917afea6 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -700,6 +700,24 @@
- 			resets = <&cpg 607>;
- 			iommus = <&ipmmu_vp0 5>;
- 		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+			iommus = <&ipmmu_vi0 8>;
-+		};
-+
-+		fcpvd1: fcp@fea2f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea2f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 602>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 602>;
-+			iommus = <&ipmmu_vi0 9>;
-+		};
- 	};
- 
- 	timer {
--- 
-2.7.4
+> > > @@ -217,6 +233,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
+> > >       } else if (vdev->of_reset) {
+> > >               dev_info(vdev->device, "reset\n");
+> > >               return vdev->of_reset(vdev);
+> > > +     } else if (!IS_ERR_OR_NULL(vdev->reset_control)) {
+> > > +             dev_info(vdev->device, "reset\n");
+> > > +             return reset_control_reset(vdev->reset_control);
+> > 
+> >         } else {
+> >                 if (vdev->reset_control)
+> >                         dev_info(vdev->device, "reset\n");
+> >                 return reset_control_reset(vdev->reset_control);
+> > 
+> > >       }
+> 
+> I'd like to keep the "else if", as that's the pattern used by the blocks above.
+
+my bad, there's more code after this.
+
+	} else if (vdev->reset_control) {
+		dev_info(vdev->device, "reset\n");
+		return reset_control_reset(vdev->reset_control);
+	}
+
+is better as it doesn't lose the warning if vdev->reset_control == NULL.
+It seems I've focused too much on getting rid of the IS_ERR_OR_NULL
+macro.
+
+regards
+Philipp
