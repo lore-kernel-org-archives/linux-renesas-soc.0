@@ -1,18 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:35284 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751283AbeBVTIu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40819 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933000AbeBVPye (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:08:50 -0500
-Received: by mail-lf0-f43.google.com with SMTP id 70so8930385lfw.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Feb 2018 11:08:49 -0800 (PST)
-Subject: Re: [PATCH v2 19/19] ARM64: dts: r8a77965: Add EtherAVB device node
-To: Simon Horman <horms@verge.net.au>
+        Thu, 22 Feb 2018 10:54:34 -0500
+Date: Thu, 22 Feb 2018 16:54:14 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: jacopo mondi <jacopo@jmondi.org>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
         magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 19/19] ARM64: dts: r8a77965: Add EtherAVB device node
+Message-ID: <20180222155411.gnn42poawtlf3rze@verge.net.au>
 References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
  <1519139541-18783-20-git-send-email-jacopo+renesas@jmondi.org>
  <cf157266-5ea7-6795-1e31-0d1ccf85e7e8@cogentembedded.com>
@@ -23,74 +24,59 @@ References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
  <35959135-cb3b-040a-1944-26845e0c07b0@cogentembedded.com>
  <20180221182340.wvdvgtv5pw7pvd3v@verge.net.au>
  <eaf3c72b-a482-86cf-88e7-4af457f74558@cogentembedded.com>
- <20180222155411.gnn42poawtlf3rze@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <fceb1fd4-b0bd-7061-7cb8-c33f2a05c503@cogentembedded.com>
-Date: Thu, 22 Feb 2018 22:08:46 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180222155411.gnn42poawtlf3rze@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eaf3c72b-a482-86cf-88e7-4af457f74558@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
-
-On 02/22/2018 06:54 PM, Simon Horman wrote:
-
->>> ...
->>>
->>>>>>>>>> +			clocks = <&cpg CPG_MOD 812>;
->>>>>>>>>> +			power-domains = <&sysc 32>;
->>>>>>>>>> +			resets = <&cpg 812>;
->>>>>>>>>> +			phy-mode = "rgmii-txid";
->>>>>>>>>
->>>>>>>>>    Why not just "rgmii"? TX delay is a board specific detail, no?
->>>>>>>>>
->>>>>>>> I admit I took this one straight from r8a7796 dtsi.
->>>>>>>> Would you like to me resend and change this?
->>>>>>>
->>>>>>>    Yes, unless Simon would fix it while merging...
->>>>>>
->>>>>> Can I confirm the desired change is s/rgmii-txid/rgmii/ ?
->>>>>
->>>>>    Yes.
->>>>
->>>>    Apparently that means that this prop should be overridden in the board file
->>>> (which may not be an easy task given the board is Salvator-XS again).
->>>>
->>>> [...]
->>>
->>> Can we override it in r8a77965-salvator-x.dts or r8a77965-salvator-xs.dts?
->>
->>    In salvator-common.dtsi most probably -- it has the PHY data for Ether AVB.
->>
->>> I feel that I'm missing an important point here.
->>
->>    Well, r8a779{5|6}.dtsi also have phy-mode = "rgmii-txid" (which was
->>    unjustified in my current understanding). Thus such board override
->>    wouldn't hurt them. But we lack a patch modifying salvator-common.dtsi
->>    in htis series, so I'm now thinking a respin of this series is needed
->>    anyway... sorry for being unclear. :-)
+On Wed, Feb 21, 2018 at 09:53:58PM +0300, Sergei Shtylyov wrote:
+> On 02/21/2018 09:23 PM, Simon Horman wrote:
 > 
-> While I've applied other patches in this series I have
-> not applied this one - mainly to allow this discussion to conclude.
+> > ...
+> > 
+> >>>>>>>> +			clocks = <&cpg CPG_MOD 812>;
+> >>>>>>>> +			power-domains = <&sysc 32>;
+> >>>>>>>> +			resets = <&cpg 812>;
+> >>>>>>>> +			phy-mode = "rgmii-txid";
+> >>>>>>>
+> >>>>>>>    Why not just "rgmii"? TX delay is a board specific detail, no?
+> >>>>>>>
+> >>>>>> I admit I took this one straight from r8a7796 dtsi.
+> >>>>>> Would you like to me resend and change this?
+> >>>>>
+> >>>>>    Yes, unless Simon would fix it while merging...
+> >>>>
+> >>>> Can I confirm the desired change is s/rgmii-txid/rgmii/ ?
+> >>>
+> >>>    Yes.
+> >>
+> >>    Apparently that means that this prop should be overridden in the board file
+> >> (which may not be an easy task given the board is Salvator-XS again).
+> >>
+> >> [...]
+> > 
+> > Can we override it in r8a77965-salvator-x.dts or r8a77965-salvator-xs.dts?
 > 
-> Is an appropriate solution to do the following?
+>    In salvator-common.dtsi most probably -- it has the PHY data for Ether AVB.
 > 
-> 1) Atomically update
->    a) r8a779{5|6}.dtsi to use "rgmii" and
->    b) salvator-common.dtsi to use "rgmii-txid"
-> 2) Update this patch to use "rgmii"
+> > I feel that I'm missing an important point here.
+> 
+>    Well, r8a779{5|6}.dtsi also have phy-mode = "rgmii-txid" (which was
+>    unjustified in my current understanding). Thus such board override
+>    wouldn't hurt them. But we lack a patch modifying salvator-common.dtsi
+>    in htis series, so I'm now thinking a respin of this series is needed
+>    anyway... sorry for being unclear. :-)
 
-   Yeah, I was thinking about doing exactly this...
+While I've applied other patches in this series I have
+not applied this one - mainly to allow this discussion to conclude.
 
-> Sorry if I'm still missing the point.
+Is an appropriate solution to do the following?
 
-   I was referring to what the 2nd paragraph of [1] said about the internal delays
-(perhaps I just misunderstood it)...
+1) Atomically update
+   a) r8a779{5|6}.dtsi to use "rgmii" and
+   b) salvator-common.dtsi to use "rgmii-txid"
+2) Update this patch to use "rgmii"
 
-[1] https://en.wikipedia.org/wiki/Media-independent_interface#Reduced_gigabit_media-independent_interface
-
-MBR, Sergei
+Sorry if I'm still missing the point.
