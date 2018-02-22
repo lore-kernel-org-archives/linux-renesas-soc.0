@@ -1,49 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40159 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751456AbeBVTGz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Feb 2018 14:06:55 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] arm64: dts: renesas: r8a77965: Add #interrupt-cells property
-Date: Thu, 22 Feb 2018 20:06:10 +0100
-Message-Id: <1519326370-15805-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH 1/4] v4l: vsp1: fix mask creation for MULT_ALPHA_RATIO
+Date: Thu, 22 Feb 2018 18:07:20 +0200
+Message-ID: <2482046.sGQsectxr6@avalon>
+In-Reply-To: <20180205201002.23621-2-wsa+renesas@sang-engineering.com>
+References: <20180205201002.23621-1-wsa+renesas@sang-engineering.com> <20180205201002.23621-2-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add "#interrupt-cells" property and "interrupt-controller" label to
-"interrupt-controller@e61c0000" device node.
+Hi Wolfram,
 
-This silences the following DTC compiler warnings:
-Warning (interrupts_property): Missing interrupt-controller or
-interrupt-map property in /soc/interrupt-controller@e61c0000
-Warning (interrupts_property): Missing #interrupt-cells in
-interrupt-parent /soc/interrupt-controller@e61c000
+Thank you for the patch.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+On Monday, 5 February 2018 22:09:58 EET Wolfram Sang wrote:
+> Due to a typo, the mask was destroyed by a comparison instead of a bit
+> shift. No regression since the mask has not been used yet.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index cdd4868..665e126 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -316,6 +316,8 @@
- 		};
- 
- 		intc_ex: interrupt-controller@e61c0000 {
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
- 			reg = <0 0xe61c0000 0 0x200>;
- 			/* placeholder */
- 		};
+Oops.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and taken in my tree.
+
+> ---
+> Only build tested. To be applied individually per subsystem.
+> 
+>  drivers/media/platform/vsp1/vsp1_regs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_regs.h
+> b/drivers/media/platform/vsp1/vsp1_regs.h index
+> 26c4ffad2f4656..b1912c83a1dae2 100644
+> --- a/drivers/media/platform/vsp1/vsp1_regs.h
+> +++ b/drivers/media/platform/vsp1/vsp1_regs.h
+> @@ -225,7 +225,7 @@
+>  #define VI6_RPF_MULT_ALPHA_P_MMD_RATIO	(1 << 8)
+>  #define VI6_RPF_MULT_ALPHA_P_MMD_IMAGE	(2 << 8)
+>  #define VI6_RPF_MULT_ALPHA_P_MMD_BOTH	(3 << 8)
+> -#define VI6_RPF_MULT_ALPHA_RATIO_MASK	(0xff < 0)
+> +#define VI6_RPF_MULT_ALPHA_RATIO_MASK	(0xff << 0)
+>  #define VI6_RPF_MULT_ALPHA_RATIO_SHIFT	0
+> 
+>  /* ------------------------------------------------------------------------
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
