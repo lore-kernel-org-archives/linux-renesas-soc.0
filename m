@@ -1,33 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f42.google.com ([74.125.83.42]:37462 "EHLO
-        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752389AbeBSLtp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:49:45 -0500
-Received: by mail-pg0-f42.google.com with SMTP id o1so5766323pgn.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Feb 2018 03:49:45 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 19 Feb 2018 20:49:33 +0900
-Message-Id: <151904097369.30541.12132732484797103163.sendpatchset@little-apple>
-Subject: [PATCH 00/02] ARM: dts: silk: Add EEPROM and GPIO keys
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] R-Car M3-N DTS fixes
+Date: Thu, 22 Feb 2018 20:06:04 +0100
+Message-Id: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-ARM: dts: silk: Add EEPROM and GPIO keys
+Hello Simon, Arnd,
 
-[PATCH 01/02] ARM: dts: silk: Add r1ex24002 EEPROM to DT
-[PATCH 02/02] ARM: dts: silk: Add GPIO keys to DT
+    The recently introduced Renesas R-Car M3-N SoC device tree source file is
+included from salvator-x[s]-$SOC.dts, and it thus needs place holders for
+devices not yet enabled but whose nodes are referenced by those common files.
 
-This series updates the DTS for the R-Car E2-based Silk board to support an
-EEPROM connected via I2C and GPIO based tactile switches. Based on the Gose
-board support and adjusted to fit the board schematics.
+When first submitted r8a77965.dtsi I ignored DTC compiler warnings as I
+(wrongly) assumed it was fine to have place-holders with missing properties or
+labels.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+As DTC warnings have to be silenced in order to have M3-N device tree sources
+accepted, this series address all warnings and make DTC happy even with
+place holders.
 
- Developed on top of renesas-devel-20180215-v4.16-rc1
+Simon: up to you if you like to squash this on top of my previous series when
+picking that one up. To ease your job I have based this series on all patches
+I sent in v2 but the still debated ether-avb one. I thus left the avb node
+unpopulated and added just the required properties to silence DTC warnings
+to it in this series.
 
- arch/arm/boot/dts/r8a7794-silk.dts |   61 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+Development branch based on: (renesas-drivers-2018-02-13-v4.16-rc1 +
+M3-N v2 patches - ether-avb) where to apply this series on is available at:
+git://jmondi.org/linux m3-n/renesas-drivers-2018-02-13-v4.16-rc1/v2-simon
+
+Thanks
+  j
+
+Jacopo Mondi (6):
+  arm64: dts: renesas: r8a77965: Add "reg" properties
+  arm64: dts: renesas: r8a77965: Add #address-cells and #size-cells
+  arm64: dts: renesas: r8a77965: Remove stale reg property
+  arm64: dts: renesas: r8a77965: Add #phy-cells property
+  arm64: dts: renesas: r8a77965: Add #pwm-cells property
+  arm64: dts: renesas: r8a77965: Add #interrupt-cells property
+
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 77 ++++++++++++++++++++++++++++++-
+ 1 file changed, 76 insertions(+), 1 deletion(-)
+
+--
+2.7.4
+
