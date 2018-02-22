@@ -1,8 +1,18 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36232 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752993AbeBVJ0p (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 22 Feb 2018 04:26:45 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180222000531.19448-7-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com> <20180222000531.19448-7-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Feb 2018 10:26:44 +0100
+Message-ID: <CAMuHMdVy9=e5eZZTdV6E=apvHxL3n5Qqob2JE+FsON3RG-JWWg@mail.gmail.com>
+Subject: Re: [PATCH v5 6/8] i2c: demux: Use changeset helpers for clarity
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: DRI Development <dri-devel@lists.freedesktop.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
         Rob Herring <robh@kernel.org>,
@@ -15,39 +25,34 @@ Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux I2C <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH v5 6/8] i2c: demux: Use changeset helpers for clarity
-Date: Thu, 22 Feb 2018 12:19:32 +0200
-Message-ID: <2195898.2J8Qfnu3DQ@avalon>
-In-Reply-To: <CAMuHMdVy9=e5eZZTdV6E=apvHxL3n5Qqob2JE+FsON3RG-JWWg@mail.gmail.com>
-References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com> <20180222000531.19448-7-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdVy9=e5eZZTdV6E=apvHxL3n5Qqob2JE+FsON3RG-JWWg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Laurent,
 
-On Thursday, 22 February 2018 11:26:44 EET Geert Uytterhoeven wrote:
-> On Thu, Feb 22, 2018 at 1:05 AM, Laurent Pinchart wrote:
-> > From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-> > 
-> > The changeset helpers are easier to use, use them instead of
-> > using the static property.
-> > 
-> > Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-> > Acked-by: Wolfram Sang <wsa@the-dreams.de>
-> > ["okay" -> "ok"]
-> 
-> Why? ePAPR says "okay", "disabled", "fail", or "fail-sss".
-> 
-> Sorry for missing this in the previous round.
+On Thu, Feb 22, 2018 at 1:05 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>
+> The changeset helpers are easier to use, use them instead of
+> using the static property.
+>
+> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+> ["okay" -> "ok"]
 
-That was per Wolfram's request, and because the existing code uses "ok". I'm 
-personally fine with any.
+Why? ePAPR says "okay", "disabled", "fail", or "fail-sss".
 
--- 
-Regards,
+Sorry for missing this in the previous round.
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
