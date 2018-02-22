@@ -1,103 +1,765 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45064 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750722AbeBGVwy (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54809 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751429AbeBVAFB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 16:52:54 -0500
-Date: Wed, 7 Feb 2018 22:52:52 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] mmc: tmio: correct treatment of errors during
- tuning
-Message-ID: <20180207215252.dirj5x7ky5bdznmk@ninjato>
-References: <20180119133906.11280-1-horms+renesas@verge.net.au>
- <20180119133906.11280-2-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gj7xmhrloyxynxeq"
-Content-Disposition: inline
-In-Reply-To: <20180119133906.11280-2-horms+renesas@verge.net.au>
+        Wed, 21 Feb 2018 19:05:01 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v5 7/8] drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
+Date: Thu, 22 Feb 2018 02:05:30 +0200
+Message-Id: <20180222000531.19448-8-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The internal LVDS encoders now have their own DT bindings. Before
+switching the driver infrastructure to those new bindings, implement
+backward-compatibility through live DT patching.
 
---gj7xmhrloyxynxeq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Patching is disabled and will be enabled along with support for the new
+DT bindings in the DU driver.
 
-On Fri, Jan 19, 2018 at 02:39:04PM +0100, Simon Horman wrote:
-> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
->=20
-> If the return value of mmc_send_tuning() is error other than -EILSEQ, the
-> tuning fails and process goes out of for_loop.  But the correct processing
-> is to judge their TAP as bad.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v3:
 
-Ideally, we would have more specific reasons why this is correct processing.
+- Use the OF changeset API
+- Use of_graph_get_endpoint_by_regs()
+- Replace hardcoded constants by sizeof()
 
-What other codes could happen here?
+Changes since v2:
 
-> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> v2 [Simon Horman]
-> * Added to patchset targeted at upstream
-> * Minor revision of changelog
->=20
-> v0 [Masaharu Hayakawa]
-> ---
->  drivers/mmc/host/tmio_mmc_core.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->=20
-> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc=
-_core.c
-> index 6d8719be75a8..41767d33ef97 100644
-> --- a/drivers/mmc/host/tmio_mmc_core.c
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -800,10 +800,7 @@ static int tmio_mmc_execute_tuning(struct mmc_host *=
-mmc, u32 opcode)
->  		if (host->prepare_tuning)
->  			host->prepare_tuning(host, i % host->tap_num);
-> =20
-> -		ret =3D mmc_send_tuning(mmc, opcode, NULL);
-> -		if (ret && ret !=3D -EILSEQ)
-> -			goto out;
-> -		if (ret =3D=3D 0)
-> +		if (!mmc_send_tuning(mmc, opcode, NULL))
+- Update the SPDX headers to use C-style comments in header files
+- Removed the manually created __local_fixups__ node
+- Perform manual fixups on live DT instead of overlay
 
-I'd prefer (mmc_send_tuning() =3D=3D 0) here instead of '!mmc_send_tuning()=
-'.
-This reads as 'is ok' while the other reads more 'if not ok'.
+Changes since v1:
 
->  			set_bit(i, host->taps);
-> =20
->  		usleep_range(1000, 1200);
-> --=20
-> 2.11.0
->=20
+- Select OF_FLATTREE
+- Compile LVDS DT bindings patch code when DRM_RCAR_LVDS is selected
+- Update the SPDX headers to use GPL-2.0 instead of GPL-2.0-only
+- Turn __dtb_rcar_du_of_lvds_(begin|end) from u8 to char
+- Pass void begin and end pointers to rcar_du_of_get_overlay()
+- Use of_get_parent() instead of accessing the parent pointer directly
+- Find the LVDS endpoints nodes based on the LVDS node instead of the
+  root of the overlay
+- Update to the <soc>-lvds compatible string format
+---
+ drivers/gpu/drm/rcar-du/Kconfig                    |   2 +
+ drivers/gpu/drm/rcar-du/Makefile                   |   7 +-
+ drivers/gpu/drm/rcar-du/rcar_du_of.c               | 307 +++++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 ++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  79 ++++++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  53 ++++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  53 ++++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  53 ++++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  53 ++++
+ 9 files changed, 626 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
 
---gj7xmhrloyxynxeq
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+index 5d0b4b7119af..3f83352a7313 100644
+--- a/drivers/gpu/drm/rcar-du/Kconfig
++++ b/drivers/gpu/drm/rcar-du/Kconfig
+@@ -22,6 +22,8 @@ config DRM_RCAR_LVDS
+ 	bool "R-Car DU LVDS Encoder Support"
+ 	depends on DRM_RCAR_DU
+ 	select DRM_PANEL
++	select OF_FLATTREE
++	select OF_OVERLAY
+ 	help
+ 	  Enable support for the R-Car Display Unit embedded LVDS encoders.
+ 
+diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
+index 0cf5c11030e8..86b337b4be5d 100644
+--- a/drivers/gpu/drm/rcar-du/Makefile
++++ b/drivers/gpu/drm/rcar-du/Makefile
+@@ -8,7 +8,12 @@ rcar-du-drm-y := rcar_du_crtc.o \
+ 		 rcar_du_plane.o
+ 
+ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_lvdsenc.o
+-
++rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_of.o \
++					   rcar_du_of_lvds_r8a7790.dtb.o \
++					   rcar_du_of_lvds_r8a7791.dtb.o \
++					   rcar_du_of_lvds_r8a7793.dtb.o \
++					   rcar_du_of_lvds_r8a7795.dtb.o \
++					   rcar_du_of_lvds_r8a7796.dtb.o
+ rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
+ 
+ obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.c b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+new file mode 100644
+index 000000000000..12fae8814309
+--- /dev/null
++++ b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+@@ -0,0 +1,307 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * rcar_du_of.c - Legacy DT bindings compatibility
++ *
++ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ *
++ * Based on work from Jyri Sarha <jsarha@ti.com>
++ * Copyright (C) 2015 Texas Instruments
++ */
++
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_fdt.h>
++#include <linux/of_graph.h>
++#include <linux/slab.h>
++
++#include "rcar_du_crtc.h"
++#include "rcar_du_drv.h"
++
++/* -----------------------------------------------------------------------------
++ * Generic Overlay Handling
++ */
++
++struct rcar_du_of_overlay {
++	const char *compatible;
++	void *begin;
++	void *end;
++};
++
++#define RCAR_DU_OF_DTB(type, soc)					\
++	extern char __dtb_rcar_du_of_##type##_##soc##_begin[];		\
++	extern char __dtb_rcar_du_of_##type##_##soc##_end[]
++
++#define RCAR_DU_OF_OVERLAY(type, soc)					\
++	{								\
++		.compatible = "renesas,du-" #soc,			\
++		.begin = __dtb_rcar_du_of_##type##_##soc##_begin,	\
++		.end = __dtb_rcar_du_of_##type##_##soc##_end,		\
++	}
++
++static int __init rcar_du_of_apply_overlay(const struct rcar_du_of_overlay *dtbs,
++					   const char *compatible)
++{
++	const struct rcar_du_of_overlay *dtb = NULL;
++	struct device_node *node = NULL;
++	unsigned int i;
++	int ovcs_id;
++	void *data;
++	void *mem;
++	int ret;
++
++	for (i = 0; dtbs[i].compatible; ++i) {
++		if (!strcmp(dtbs[i].compatible, compatible)) {
++			dtb = &dtbs[i];
++			break;
++		}
++	}
++
++	if (!dtb)
++		return -ENODEV;
++
++	data = kmemdup(dtb->begin, dtb->end - dtb->begin, GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	mem = of_fdt_unflatten_tree(data, NULL, &node);
++	if (!mem) {
++		ret = -ENOMEM;
++		goto done;
++	}
++
++	ovcs_id = 0;
++	ret = of_overlay_apply(node, &ovcs_id);
++
++done:
++	of_node_put(node);
++	kfree(data);
++	kfree(mem);
++
++	return ret;
++}
++
++/* -----------------------------------------------------------------------------
++ * LVDS Overlays
++ */
++
++RCAR_DU_OF_DTB(lvds, r8a7790);
++RCAR_DU_OF_DTB(lvds, r8a7791);
++RCAR_DU_OF_DTB(lvds, r8a7793);
++RCAR_DU_OF_DTB(lvds, r8a7795);
++RCAR_DU_OF_DTB(lvds, r8a7796);
++
++static const struct rcar_du_of_overlay rcar_du_lvds_overlays[] __initconst = {
++	RCAR_DU_OF_OVERLAY(lvds, r8a7790),
++	RCAR_DU_OF_OVERLAY(lvds, r8a7791),
++	RCAR_DU_OF_OVERLAY(lvds, r8a7793),
++	RCAR_DU_OF_OVERLAY(lvds, r8a7795),
++	RCAR_DU_OF_OVERLAY(lvds, r8a7796),
++	{ /* Sentinel */ },
++};
++
++static struct of_changeset rcar_du_lvds_changeset;
++
++static void __init rcar_du_of_lvds_patch_one(struct device_node *lvds,
++					     const struct of_phandle_args *clk,
++					     struct device_node *local,
++					     struct device_node *remote)
++{
++	unsigned int psize;
++	unsigned int i;
++	__be32 value[4];
++	int ret;
++
++	/*
++	 * Set the LVDS clocks property. This can't be performed by the overlay
++	 * as the structure of the clock specifier has changed over time, and we
++	 * don't know at compile time which binding version the system we will
++	 * run on uses.
++	 */
++	if (clk->args_count >= ARRAY_SIZE(value) - 1)
++		return;
++
++	of_changeset_init(&rcar_du_lvds_changeset);
++
++	value[0] = cpu_to_be32(clk->np->phandle);
++	for (i = 0; i < clk->args_count; ++i)
++		value[i + 1] = cpu_to_be32(clk->args[i]);
++
++	psize = (clk->args_count + 1) * 4;
++	ret = of_changeset_add_property_copy(&rcar_du_lvds_changeset, lvds,
++					     "clocks", value, psize);
++	if (ret < 0)
++		goto done;
++
++	/*
++	 * Insert the node in the OF graph: patch the LVDS ports remote-endpoint
++	 * properties to point to the endpoints of the sibling nodes in the
++	 * graph. This can't be performed by the overlay: on the input side the
++	 * overlay would contain a phandle for the DU LVDS output port that
++	 * would clash with the system DT, and on the output side the connection
++	 * is board-specific.
++	 */
++	value[0] = cpu_to_be32(local->phandle);
++	value[1] = cpu_to_be32(remote->phandle);
++
++	for (i = 0; i < 2; ++i) {
++		struct device_node *endpoint;
++
++		endpoint = of_graph_get_endpoint_by_regs(lvds, i, 0);
++		if (!endpoint) {
++			ret = -EINVAL;
++			goto done;
++		}
++
++		ret = of_changeset_add_property_copy(&rcar_du_lvds_changeset,
++						endpoint, "remote-endpoint",
++						&value[i], sizeof(value[i]));
++		of_node_put(endpoint);
++		if (ret < 0)
++			goto done;
++	}
++
++	ret = of_changeset_apply(&rcar_du_lvds_changeset);
++
++done:
++	if (ret < 0)
++		of_changeset_destroy(&rcar_du_lvds_changeset);
++}
++
++struct lvds_of_data {
++	struct resource res;
++	struct of_phandle_args clkspec;
++	struct device_node *local;
++	struct device_node *remote;
++};
++
++static void __init rcar_du_of_lvds_patch(const struct of_device_id *of_ids)
++{
++	const struct rcar_du_device_info *info;
++	const struct of_device_id *match;
++	struct lvds_of_data lvds_data[2] = { };
++	struct device_node *lvds_node;
++	struct device_node *soc_node;
++	struct device_node *du_node;
++	char compatible[21];
++	const char *soc_name;
++	unsigned int i;
++	int ret;
++
++	/* Get the DU node and exit if not present or disabled. */
++	du_node = of_find_matching_node_and_match(NULL, of_ids, &match);
++	if (!du_node || !of_device_is_available(du_node)) {
++		of_node_put(du_node);
++		return;
++	}
++
++	info = match->data;
++	soc_node = of_get_parent(du_node);
++
++	if (WARN_ON(info->num_lvds > ARRAY_SIZE(lvds_data)))
++		goto done;
++
++	/*
++	 * Skip if the LVDS nodes already exists.
++	 *
++	 * The nodes are searched based on the compatible string, which we
++	 * construct from the SoC name found in the DU compatible string. As a
++	 * match has been found we know the compatible string matches the
++	 * expected format and can thus skip some of the string manipulation
++	 * normal safety checks.
++	 */
++	soc_name = strchr(match->compatible, '-') + 1;
++	sprintf(compatible, "renesas,%s-lvds", soc_name);
++	lvds_node = of_find_compatible_node(NULL, NULL, compatible);
++	if (lvds_node) {
++		of_node_put(lvds_node);
++		return;
++	}
++
++	/*
++	 * Parse the DU node and store the register specifier, the clock
++	 * specifier and the local and remote endpoint of the LVDS link for
++	 * later use.
++	 */
++	for (i = 0; i < info->num_lvds; ++i) {
++		struct lvds_of_data *lvds = &lvds_data[i];
++		unsigned int port;
++		char name[7];
++		int index;
++
++		sprintf(name, "lvds.%u", i);
++		index = of_property_match_string(du_node, "clock-names", name);
++		if (index < 0)
++			continue;
++
++		ret = of_parse_phandle_with_args(du_node, "clocks",
++						 "#clock-cells", index,
++						 &lvds->clkspec);
++		if (ret < 0)
++			continue;
++
++		port = info->routes[RCAR_DU_OUTPUT_LVDS0 + i].port;
++
++		lvds->local = of_graph_get_endpoint_by_regs(du_node, port, 0);
++		if (!lvds->local)
++			continue;
++
++		lvds->remote = of_graph_get_remote_endpoint(lvds->local);
++		if (!lvds->remote)
++			continue;
++
++		index = of_property_match_string(du_node, "reg-names", name);
++		if (index < 0)
++			continue;
++
++		of_address_to_resource(du_node, index, &lvds->res);
++	}
++
++	/* Parse and apply the overlay. This will resolve phandles. */
++	ret = rcar_du_of_apply_overlay(rcar_du_lvds_overlays,
++				       match->compatible);
++	if (ret < 0)
++		goto done;
++
++	/* Patch the newly created LVDS encoder nodes. */
++	for_each_child_of_node(soc_node, lvds_node) {
++		struct resource res;
++
++		if (!of_device_is_compatible(lvds_node, compatible))
++			continue;
++
++		/* Locate the lvds_data entry based on the resource start. */
++		ret = of_address_to_resource(lvds_node, 0, &res);
++		if (ret < 0)
++			continue;
++
++		for (i = 0; i < ARRAY_SIZE(lvds_data); ++i) {
++			if (lvds_data[i].res.start == res.start)
++				break;
++		}
++
++		if (i == ARRAY_SIZE(lvds_data))
++			continue;
++
++		/* Patch the LVDS encoder. */
++		rcar_du_of_lvds_patch_one(lvds_node, &lvds_data[i].clkspec,
++					  lvds_data[i].local,
++					  lvds_data[i].remote);
++	}
++
++done:
++	for (i = 0; i < info->num_lvds; ++i) {
++		of_node_put(lvds_data[i].clkspec.np);
++		of_node_put(lvds_data[i].local);
++		of_node_put(lvds_data[i].remote);
++	}
++
++	of_node_put(soc_node);
++	of_node_put(du_node);
++}
++
++void __init rcar_du_of_init(const struct of_device_id *of_ids)
++{
++	rcar_du_of_lvds_patch(of_ids);
++}
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.h b/drivers/gpu/drm/rcar-du/rcar_du_of.h
+new file mode 100644
+index 000000000000..c2e65a727e91
+--- /dev/null
++++ b/drivers/gpu/drm/rcar-du/rcar_du_of.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * rcar_du_of.h - Legacy DT bindings compatibility
++ *
++ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ */
++#ifndef __RCAR_DU_OF_H__
++#define __RCAR_DU_OF_H__
++
++#include <linux/init.h>
++
++struct of_device_id;
++
++#ifdef CONFIG_DRM_RCAR_LVDS
++void __init rcar_du_of_init(const struct of_device_id *of_ids);
++#else
++static inline void rcar_du_of_init(const struct of_device_id *of_ids) { }
++#endif /* CONFIG_DRM_RCAR_LVDS */
++
++#endif /* __RCAR_DU_OF_H__ */
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+new file mode 100644
+index 000000000000..f118a6ae7782
+--- /dev/null
++++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * rcar_du_of_lvds_r8a7790.dts - Legacy LVDS DT bindings conversion for R8A7790
++ *
++ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ *
++ * Based on work from Jyri Sarha <jsarha@ti.com>
++ * Copyright (C) 2015 Texas Instruments
++ */
++
++/dts-v1/;
++/plugin/;
++/ {
++	fragment@0 {
++		target-path = "/";
++		__overlay__ {
++			#address-cells = <2>;
++			#size-cells = <2>;
++
++			lvds@feb90000 {
++				compatible = "renesas,r8a7790-lvds";
++				reg = <0 0xfeb90000 0 0x1c>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						lvds0_input: endpoint {
++						};
++					};
++					port@1 {
++						reg = <1>;
++						lvds0_out: endpoint {
++						};
++					};
++				};
++			};
++
++			lvds@feb94000 {
++				compatible = "renesas,r8a7790-lvds";
++				reg = <0 0xfeb94000 0 0x1c>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						lvds1_input: endpoint {
++						};
++					};
++					port@1 {
++						reg = <1>;
++						lvds1_out: endpoint {
++						};
++					};
++				};
++			};
++		};
++	};
++
++	fragment@1 {
++		target-path = "/display@feb00000/ports";
++		__overlay__ {
++			port@1 {
++				endpoint {
++					remote-endpoint = <&lvds0_input>;
++				};
++			};
++			port@2 {
++				endpoint {
++					remote-endpoint = <&lvds1_input>;
++				};
++			};
++		};
++	};
++};
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
+new file mode 100644
+index 000000000000..7d865727928c
+--- /dev/null
++++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * rcar_du_of_lvds_r8a7791.dts - Legacy LVDS DT bindings conversion for R8A7791
++ *
++ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ *
++ * Based on work from Jyri Sarha <jsarha@ti.com>
++ * Copyright (C) 2015 Texas Instruments
++ */
++
++/dts-v1/;
++/plugin/;
++/ {
++	fragment@0 {
++		target-path = "/";
++		__overlay__ {
++			#address-cells = <2>;
++			#size-cells = <2>;
++
++			lvds@feb90000 {
++				compatible = "renesas,r8a7791-lvds";
++				reg = <0 0xfeb90000 0 0x1c>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						lvds0_input: endpoint {
++						};
++					};
++					port@1 {
++						reg = <1>;
++						lvds0_out: endpoint {
++						};
++					};
++				};
++			};
++		};
++	};
++
++	fragment@1 {
++		target-path = "/display@feb00000/ports";
++		__overlay__ {
++			port@1 {
++				endpoint {
++					remote-endpoint = <&lvds0_input>;
++				};
++			};
++		};
++	};
++};
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
+new file mode 100644
+index 000000000000..bb263711834d
+--- /dev/null
++++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * rcar_du_of_lvds_r8a7793.dts - Legacy LVDS DT bindings conversion for R8A7793
++ *
++ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ *
++ * Based on work from Jyri Sarha <jsarha@ti.com>
++ * Copyright (C) 2015 Texas Instruments
++ */
++
++/dts-v1/;
++/plugin/;
++/ {
++	fragment@0 {
++		target-path = "/";
++		__overlay__ {
++			#address-cells = <2>;
++			#size-cells = <2>;
++
++			lvds@feb90000 {
++				compatible = "renesas,r8a7793-lvds";
++				reg = <0 0xfeb90000 0 0x1c>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						lvds0_input: endpoint {
++						};
++					};
++					port@1 {
++						reg = <1>;
++						lvds0_out: endpoint {
++						};
++					};
++				};
++			};
++		};
++	};
++
++	fragment@1 {
++		target-path = "/display@feb00000/ports";
++		__overlay__ {
++			port@1 {
++				endpoint {
++					remote-endpoint = <&lvds0_input>;
++				};
++			};
++		};
++	};
++};
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
+new file mode 100644
+index 000000000000..9bbf7c9e5ce4
+--- /dev/null
++++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * rcar_du_of_lvds_r8a7795.dts - Legacy LVDS DT bindings conversion for R8A7795
++ *
++ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ *
++ * Based on work from Jyri Sarha <jsarha@ti.com>
++ * Copyright (C) 2015 Texas Instruments
++ */
++
++/dts-v1/;
++/plugin/;
++/ {
++	fragment@0 {
++		target-path = "/soc";
++		__overlay__ {
++			#address-cells = <2>;
++			#size-cells = <2>;
++
++			lvds@feb90000 {
++				compatible = "renesas,r8a7795-lvds";
++				reg = <0 0xfeb90000 0 0x14>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						lvds0_input: endpoint {
++						};
++					};
++					port@1 {
++						reg = <1>;
++						lvds0_out: endpoint {
++						};
++					};
++				};
++			};
++		};
++	};
++
++	fragment@1 {
++		target-path = "/soc/display@feb00000/ports";
++		__overlay__ {
++			port@3 {
++				endpoint {
++					remote-endpoint = <&lvds0_input>;
++				};
++			};
++		};
++	};
++};
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
+new file mode 100644
+index 000000000000..d16f3e9e08ab
+--- /dev/null
++++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * rcar_du_of_lvds_r8a7796.dts - Legacy LVDS DT bindings conversion for R8A7796
++ *
++ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ *
++ * Based on work from Jyri Sarha <jsarha@ti.com>
++ * Copyright (C) 2015 Texas Instruments
++ */
++
++/dts-v1/;
++/plugin/;
++/ {
++	fragment@0 {
++		target-path = "/soc";
++		__overlay__ {
++			#address-cells = <2>;
++			#size-cells = <2>;
++
++			lvds@feb90000 {
++				compatible = "renesas,r8a7796-lvds";
++				reg = <0 0xfeb90000 0 0x14>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						lvds0_input: endpoint {
++						};
++					};
++					port@1 {
++						reg = <1>;
++						lvds0_out: endpoint {
++						};
++					};
++				};
++			};
++		};
++	};
++
++	fragment@1 {
++		target-path = "/soc/display@feb00000/ports";
++		__overlay__ {
++			port@3 {
++				endpoint {
++					remote-endpoint = <&lvds0_input>;
++				};
++			};
++		};
++	};
++};
+-- 
+Regards,
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7dTQACgkQFA3kzBSg
-KbYIjg//a1DsxTmVYaw2HMDCncbkHYlkUL9KSeRFiRizv4XU0qoygtlFkM0/n0T9
-Psm/GAm3zcqn8UhuCkQmhmYqHj9X10cBfHWtxMFaAZyE9AmBKksxSqPVyBkAaXx0
-BrTDH1KayIwifyavVk48xR31ZKl5KMZOTYsyWvWK/nNxXAi6MXrTvk+4PmfnEx3Y
-CTFyF10gAg0WTXqXOEy9h2VDxWKCSHOCPYQyoHsN/FX7PRPKGdcvfFD63QFNXQzE
-7sNNLjKiuWr5n3jv2ZdgQ153CgBfn2N4ziigQdigHKa2gFF8cnoXWj4W1dDJRXyx
-WkKE5RCiS2lvmsBQPUKBCuXXpAanpV+YBNLjPtrZiBlbwjPve6qsqpUwKCWX+/Hp
-pdG8eh/l25rPjDlahvvpO3NPAoIcm3gy4fUkHxSO/Qvfxz9d317Xg1UAMwxmFJeU
-AtG009oLCZOiD4Mvh7mGsSflFx8jgHFFoI9goX3PxlG0UJL57cx66m+Fe2XwhcTy
-v6Z8dp8SybiMgksUPAodwfZvZ2hp0XZP2KNzNoMax+JCyMaXSW98l+FlHazW4pqE
-1GnhSRMBXgCD5xrSfk5xwh4JXwfM6WauuyXXb01pH/3Z/A08CIdOCx5EmRB4HwqE
-YdHVUbB9WdBi7eDGJKh0aTCWvagQXf/KTNj5NHROWiovqee5dfY=
-=xZwc
------END PGP SIGNATURE-----
-
---gj7xmhrloyxynxeq--
+Laurent Pinchart
