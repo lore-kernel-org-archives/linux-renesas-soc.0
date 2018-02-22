@@ -1,89 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:60042 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751952AbeBWNiq (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54809 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751426AbeBVAFA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:38:46 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/9] serial: Fix out-of-bounds accesses through DT aliases
-Date: Fri, 23 Feb 2018 14:38:28 +0100
-Message-Id: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+        Wed, 21 Feb 2018 19:05:00 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Marek Vasut <marex@denx.de>, Wolfram Sang <wsa@the-dreams.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: [PATCH v5 5/8] of: unittest: changeset helpers
+Date: Thu, 22 Feb 2018 02:05:28 +0200
+Message-Id: <20180222000531.19448-6-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 
-Serial drivers used on DT platforms use the "serialN" alias in DT to
-obtain the serial port index for a specific port.  Drivers typically use
-a fixed-size array for keeping track of all available serial ports.
-However, several drivers do not perform any validation on the index
-obtained from DT, which may lead to out-of-bounds accesses of these
-fixed-size arrays.
+Add a unitest specific for the new changeset helpers.
 
-While the DTB passed to the kernel might be considered trusted, some of
-these out-of-bounds accesses can be triggered by a legitimate DTB:
-  - In some drivers the size of the array is defined by a Kconfig
-    symbol, so a user who doesn't need all serial ports may lower this
-    value rightfully,
-  - Tomorrow's new SoC may have more serial ports than the fixed-size
-    array in today's driver can accommodate, which the user may forget
-    to enlarge.
+Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+[Use IS_ENABLED instead of #ifdef]
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ drivers/of/unittest.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-Hence this series fixes that by adding checks for out-of-range aliases,
-logging an error message when triggered.
-
-Changes compared to v1:
-  - Fix Fixes references,
-  - Use ARRAY_SIZE(),
-  - Fix off-by-one error in patch [5/9],
-  - Document where the non-DT case is also fixed by a patch.
-
-Tested on r8a7791/koelsch (sh-sci), all other drivers were
-compile-tested only.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (9):
-  serial: arc_uart: Fix out-of-bounds access through DT alias
-  serial: fsl_lpuart: Fix out-of-bounds access through DT alias
-  serial: imx: Fix out-of-bounds access through serial port index
-  serial: mxs-auart: Fix out-of-bounds access through serial port index
-  serial: pxa: Fix out-of-bounds access through serial port index
-  serial: samsung: Fix out-of-bounds access through serial port index
-  serial: sh-sci: Fix out-of-bounds access through DT alias
-  serial: sirf: Fix out-of-bounds access through DT alias
-  serial: xuartps: Fix out-of-bounds access through DT alias
-
- drivers/tty/serial/arc_uart.c      | 5 +++++
- drivers/tty/serial/fsl_lpuart.c    | 4 ++++
- drivers/tty/serial/imx.c           | 6 ++++++
- drivers/tty/serial/mxs-auart.c     | 4 ++++
- drivers/tty/serial/pxa.c           | 4 ++++
- drivers/tty/serial/samsung.c       | 4 ++++
- drivers/tty/serial/sh-sci.c        | 4 ++++
- drivers/tty/serial/sirfsoc_uart.c  | 5 +++++
- drivers/tty/serial/xilinx_uartps.c | 2 +-
- 9 files changed, 37 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 7a9abaae874d..1b21d2c549a8 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -609,6 +609,59 @@ static void __init of_unittest_changeset(void)
+ #endif
+ }
+ 
++static void __init of_unittest_changeset_helper(void)
++{
++#ifdef CONFIG_OF_DYNAMIC
++	struct device_node *n1, *n2, *n21, *parent, *np;
++	struct of_changeset chgset;
++
++	of_changeset_init(&chgset);
++
++	parent = of_find_node_by_path("/testcase-data/changeset");
++
++	unittest(parent, "testcase setup failure\n");
++	n1 = of_changeset_create_device_node(&chgset,
++			parent, "/testcase-data/changeset/n1");
++	unittest(n1, "testcase setup failure\n");
++	n2 = of_changeset_create_device_node(&chgset,
++			parent, "/testcase-data/changeset/n2");
++	unittest(n2, "testcase setup failure\n");
++	n21 = of_changeset_create_device_node(&chgset, n2, "%s/%s",
++			"/testcase-data/changeset/n2", "n21");
++	unittest(n21, "testcase setup failure\n");
++
++	unittest(!of_changeset_add_property_string(&chgset, parent,
++				"prop-add", "foo"), "fail add prop\n");
++
++	unittest(!of_changeset_attach_node(&chgset, n1), "fail n1 attach\n");
++	unittest(!of_changeset_attach_node(&chgset, n2), "fail n2 attach\n");
++	unittest(!of_changeset_attach_node(&chgset, n21), "fail n21 attach\n");
++
++	unittest(!of_changeset_apply(&chgset), "apply failed\n");
++
++	/* Make sure node names are constructed correctly */
++	np = of_find_node_by_path("/testcase-data/changeset/n1");
++	unittest(np, "'%s' not added\n", n1->full_name);
++	of_node_put(np);
++
++	/* Make sure node names are constructed correctly */
++	np = of_find_node_by_path("/testcase-data/changeset/n2");
++	unittest(np, "'%s' not added\n", n2->full_name);
++	of_node_put(np);
++
++	np = of_find_node_by_path("/testcase-data/changeset/n2/n21");
++	unittest(np, "'%s' not added\n", n21->full_name);
++	of_node_put(np);
++
++	unittest(!of_changeset_revert(&chgset), "revert failed\n");
++
++	of_changeset_destroy(&chgset);
++
++	of_node_put(parent);
++#endif
++}
++
++
+ static void __init of_unittest_parse_interrupts(void)
+ {
+ 	struct device_node *np;
+@@ -2363,6 +2416,7 @@ static int __init of_unittest(void)
+ 	of_unittest_property_string();
+ 	of_unittest_property_copy();
+ 	of_unittest_changeset();
++	of_unittest_changeset_helper();
+ 	of_unittest_parse_interrupts();
+ 	of_unittest_parse_interrupts_extended();
+ 	of_unittest_match_node();
 -- 
-2.7.4
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
