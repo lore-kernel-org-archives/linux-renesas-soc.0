@@ -1,49 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:39784 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752046AbeBIPRL (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54809 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751329AbeBVAE6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:17:11 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Graf <agraf@suse.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 4/6] arm64: renesas_defconfig: Enable VFIO_PLATFORM and VFIO_NOIOMMU
-Date: Fri,  9 Feb 2018 16:16:51 +0100
-Message-Id: <1518189413-2761-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
-References: <1518189413-2761-1-git-send-email-geert+renesas@glider.be>
+        Wed, 21 Feb 2018 19:04:58 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Matt Porter <mporter@konsulko.com>,
+        Koen Kooi <koen@dominion.thruhere.net>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Marek Vasut <marex@denx.de>, Wolfram Sang <wsa@the-dreams.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: [PATCH v5 3/8] of: dynamic: Add __of_node_dupv()
+Date: Thu, 22 Feb 2018 02:05:26 +0200
+Message-Id: <20180222000531.19448-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable VFIO_PLATFORM for platform device pass-through.
-Enable VFIO_NOIOMMU for devices not part of an IOMMU group.
+From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 
-Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Not intended for upstream merge.
----
- arch/arm64/configs/renesas_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Add an __of_node_dupv() private method and make __of_node_dup() use it.
+This is required for the subsequent changeset accessors which will
+make use of it.
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 386211464efa4885..959aa9de8792ae2d 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -259,7 +259,9 @@ CONFIG_DMADEVICES=y
- CONFIG_RCAR_DMAC=y
- CONFIG_RENESAS_USB_DMAC=y
- CONFIG_VFIO=y
-+CONFIG_VFIO_NOIOMMU=y
- CONFIG_VFIO_PCI=y
-+CONFIG_VFIO_PLATFORM=y
- CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_MMIO=y
+Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+[Make __of_node_dupv() static]
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ drivers/of/dynamic.c | 29 +++++++++++++++++++++++------
+ 1 file changed, 23 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+index 7bb33d22b4e2..a2f0c45836f9 100644
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -382,8 +382,9 @@ struct property *__of_prop_dup(const struct property *prop, gfp_t allocflags)
+ }
+ 
+ /**
+- * __of_node_dup() - Duplicate or create an empty device node dynamically.
+- * @fmt: Format string (plus vargs) for new full name of the device node
++ * __of_node_dupv() - Duplicate or create an empty device node dynamically.
++ * @fmt: Format string for new full name of the device node
++ * @vargs: va_list containing the arugments for the node full name
+  *
+  * Create an device tree node, either by duplicating an empty node or by allocating
+  * an empty one suitable for further modification.  The node data are
+@@ -391,17 +392,15 @@ struct property *__of_prop_dup(const struct property *prop, gfp_t allocflags)
+  * OF_DETACHED bits set. Returns the newly allocated node or NULL on out of
+  * memory error.
+  */
+-struct device_node *__of_node_dup(const struct device_node *np, const char *fmt, ...)
++static struct device_node *__of_node_dupv(const struct device_node *np,
++		const char *fmt, va_list vargs)
+ {
+-	va_list vargs;
+ 	struct device_node *node;
+ 
+ 	node = kzalloc(sizeof(*node), GFP_KERNEL);
+ 	if (!node)
+ 		return NULL;
+-	va_start(vargs, fmt);
+ 	node->full_name = kvasprintf(GFP_KERNEL, fmt, vargs);
+-	va_end(vargs);
+ 	if (!node->full_name) {
+ 		kfree(node);
+ 		return NULL;
+@@ -433,6 +432,24 @@ struct device_node *__of_node_dup(const struct device_node *np, const char *fmt,
+ 	return NULL;
+ }
+ 
++/**
++ * __of_node_dup() - Duplicate or create an empty device node dynamically.
++ * @fmt: Format string (plus vargs) for new full name of the device node
++ *
++ * See: __of_node_dupv()
++ */
++struct device_node *__of_node_dup(const struct device_node *np,
++		const char *fmt, ...)
++{
++	va_list vargs;
++	struct device_node *node;
++
++	va_start(vargs, fmt);
++	node = __of_node_dupv(np, fmt, vargs);
++	va_end(vargs);
++	return node;
++}
++
+ static void __of_changeset_entry_destroy(struct of_changeset_entry *ce)
+ {
+ 	of_node_put(ce->np);
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
