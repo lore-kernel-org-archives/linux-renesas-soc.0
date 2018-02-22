@@ -1,148 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44486 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934787AbeB1Uw5 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Feb 2018 15:52:57 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v6 5/9] v4l: vsp1: Use reference counting for bodies
-Date: Wed, 28 Feb 2018 20:52:39 +0000
-Message-Id: <8b3cf639ae2df9d1dba4a72e20618f463cf118cb.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v10 03/10] media: platform: Add Renesas CEU driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, mchehab@kernel.org, festevam@gmail.com,
+        sakari.ailus@iki.fi, robh+dt@kernel.org, mark.rutland@arm.com,
+        pombredanne@nexb.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519235284-32286-4-git-send-email-jacopo+renesas@jmondi.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <bb33d217-76a8-71a6-e7fd-6d449d662784@xs4all.nl>
+Date: Thu, 22 Feb 2018 11:05:01 +0100
+MIME-Version: 1.0
+In-Reply-To: <1519235284-32286-4-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Extend the display list body with a reference count, allowing bodies to
-be kept as long as a reference is maintained. This provides the ability
-to keep a cached copy of bodies which will not change, so that they can
-be re-applied to multiple display lists.
+On 02/21/18 18:47, Jacopo Mondi wrote:
+> Add driver for Renesas Capture Engine Unit (CEU).
+> 
+> The CEU interface supports capturing 'data' (YUV422) and 'images'
+> (NV[12|21|16|61]).
+> 
+> This driver aims to replace the soc_camera-based sh_mobile_ceu one.
+> 
+> Tested with ov7670 camera sensor, providing YUYV_2X8 data on Renesas RZ
+> platform GR-Peach.
+> 
+> Tested with ov7725 camera sensor on SH4 platform Migo-R.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+I get these warnings when I try to compile this driver:
 
----
-This could be squashed into the body update code, but it's not a
-straightforward squash as the refcounts will affect both:
-  v4l: vsp1: Provide a body pool
-and
-  v4l: vsp1: Convert display lists to use new body pool
-therefore, I have kept this separate to prevent breaking bisectability
-of the vsp-tests.
 
-v3:
- - 's/fragment/body/'
+  CC [M]  drivers/media/platform/renesas-ceu.o
+drivers/media/platform/renesas-ceu.c: In function ‘ceu_start_streaming’:
+drivers/media/platform/renesas-ceu.c:290:2: warning: ‘cdwdr’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  iowrite32(data, priv->base + reg_offs);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/media/platform/renesas-ceu.c:338:27: note: ‘cdwdr’ was declared here
+  u32 camcr, cdocr, cfzsr, cdwdr, capwr;
+                           ^~~~~
+drivers/media/platform/renesas-ceu.c:290:2: warning: ‘cfzsr’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  iowrite32(data, priv->base + reg_offs);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/media/platform/renesas-ceu.c:338:20: note: ‘cfzsr’ was declared here
+  u32 camcr, cdocr, cfzsr, cdwdr, capwr;
+                    ^~~~~
+drivers/media/platform/renesas-ceu.c:418:8: warning: ‘camcr’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  camcr |= mbus_flags & V4L2_MBUS_HSYNC_ACTIVE_LOW ? 1 << 0 : 0;
+  ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/media/platform/renesas-ceu.c:338:6: note: ‘camcr’ was declared here
+  u32 camcr, cdocr, cfzsr, cdwdr, capwr;
+      ^~~~~
+drivers/media/platform/renesas-ceu.c: In function ‘ceu_probe’:
+drivers/media/platform/renesas-ceu.c:1632:9: warning: ‘ret’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  return ret;
+         ^~~
+cc1: some warnings being treated as errors
 
-v4:
- - Fix up reference handling comments.
+The last warning is indeed correct.
 
- drivers/media/platform/vsp1/vsp1_clu.c |  7 ++++++-
- drivers/media/platform/vsp1/vsp1_dl.c  | 15 ++++++++++++++-
- drivers/media/platform/vsp1/vsp1_lut.c |  7 ++++++-
- 3 files changed, 26 insertions(+), 3 deletions(-)
+The others are only right if pixelformat is illegal, which can't happen.
+I'd add a:
 
-diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
-index 2018144470c5..b2a39a6ef7e4 100644
---- a/drivers/media/platform/vsp1/vsp1_clu.c
-+++ b/drivers/media/platform/vsp1/vsp1_clu.c
-@@ -257,8 +257,13 @@ static void clu_configure(struct vsp1_entity *entity,
- 		clu->clu = NULL;
- 		spin_unlock_irqrestore(&clu->lock, flags);
- 
--		if (dlb)
-+		if (dlb) {
- 			vsp1_dl_list_add_body(dl, dlb);
-+
-+			/* release our local reference */
-+			vsp1_dl_body_put(dlb);
-+		}
-+
- 		break;
- 	}
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index a069c8456666..0f87e0bb21c1 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -14,6 +14,7 @@
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
- #include <linux/gfp.h>
-+#include <linux/refcount.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
- 
-@@ -58,6 +59,8 @@ struct vsp1_dl_body {
- 	struct list_head list;
- 	struct list_head free;
- 
-+	refcount_t refcnt;
-+
- 	struct vsp1_dl_body_pool *pool;
- 	struct vsp1_device *vsp1;
- 
-@@ -259,6 +262,7 @@ struct vsp1_dl_body *vsp1_dl_body_get(struct vsp1_dl_body_pool *pool)
- 	if (!list_empty(&pool->free)) {
- 		dlb = list_first_entry(&pool->free, struct vsp1_dl_body, free);
- 		list_del(&dlb->free);
-+		refcount_set(&dlb->refcnt, 1);
- 	}
- 
- 	spin_unlock_irqrestore(&pool->lock, flags);
-@@ -279,6 +283,9 @@ void vsp1_dl_body_put(struct vsp1_dl_body *dlb)
- 	if (!dlb)
- 		return;
- 
-+	if (!refcount_dec_and_test(&dlb->refcnt))
-+		return;
-+
- 	dlb->num_entries = 0;
- 
- 	spin_lock_irqsave(&dlb->pool->lock, flags);
-@@ -465,7 +472,11 @@ void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data)
-  * in the order in which bodies are added.
-  *
-  * Adding a body to a display list passes ownership of the body to the list. The
-- * caller must not touch the body after this call.
-+ * caller retains its reference to the fragment when adding it to the display
-+ * list, but is not allowed to add new entries to the body.
-+ *
-+ * The reference must be explicitly released by a call to vsp1_dl_body_put()
-+ * when the body isn't needed anymore.
-  *
-  * Additional bodies are only usable for display lists in header mode.
-  * Attempting to add a body to a header-less display list will return an error.
-@@ -477,6 +488,8 @@ int vsp1_dl_list_add_body(struct vsp1_dl_list *dl,
- 	if (dl->dlm->mode != VSP1_DL_MODE_HEADER)
- 		return -EINVAL;
- 
-+	refcount_inc(&dlb->refcnt);
-+
- 	list_add_tail(&dlb->list, &dl->bodies);
- 	return 0;
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
-index 262cb72139d6..77cf7137a0f2 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/vsp1/vsp1_lut.c
-@@ -213,8 +213,13 @@ static void lut_configure(struct vsp1_entity *entity,
- 		lut->lut = NULL;
- 		spin_unlock_irqrestore(&lut->lock, flags);
- 
--		if (dlb)
-+		if (dlb) {
- 			vsp1_dl_list_add_body(dl, dlb);
-+
-+			/* release our local reference */
-+			vsp1_dl_body_put(dlb);
-+		}
-+
- 		break;
- 	}
- }
--- 
-git-series 0.9.1
+	default:
+		return -EINVAL;
+
+to the switch, this shuts up the warnings.
+
+So I need a v11 (just for this patch) after all.
+
+Regards,
+
+	Hans
