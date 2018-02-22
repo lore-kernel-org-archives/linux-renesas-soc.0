@@ -1,54 +1,58 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 5/9] serial: pxa: Fix out-of-bounds access through serial port index
-Date: Fri, 23 Feb 2018 14:38:33 +0100
-Message-Id: <1519393117-31998-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
-References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:45609 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933020AbeBVPqg (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 22 Feb 2018 10:46:36 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180222153823.62bd7xfh7gj75x5j@verge.net.au>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-10-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVDCga8htL+UD3P0Kzt9-OQ6hof+szGOiV9d0gwxGExqQ@mail.gmail.com>
+ <20180221171504.dac7yikrqfnjiiog@verge.net.au> <CAK8P3a30pgOXvLLHe3Hb-ubPz6QeUiZKFqMZLm8Qp_7KRr7QuA@mail.gmail.com>
+ <CAMuHMdXJcHLee3mn56pSpUkFie_rQFZEPf=+6MWHe+W-+bMxgQ@mail.gmail.com> <20180222153823.62bd7xfh7gj75x5j@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 22 Feb 2018 16:46:34 +0100
+Message-ID: <CAK8P3a2tNdsx-Zpq8w+dKW1EMwZ0fT4Q++zb_j_heGwemeO36g@mail.gmail.com>
+Subject: Re: [PATCH v2 09/19] ARM64: dts: Add R-Car Salvator-x M3-N support
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The serial_pxa_ports[] array is indexed using a value derived from the
-"serialN" alias in DT, or from platform data, which may lead to an
-out-of-bounds access.
+On Thu, Feb 22, 2018 at 4:38 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, Feb 22, 2018 at 02:28:46PM +0100, Geert Uytterhoeven wrote:
 
-Fix this by adding a range check.
+>> Removing the .dts file removes the ability to boot the newly added board...
+>>
+>> The issue here is that we are sharing board .dtsi for boards that can be
+>> equipped with different pin-compatible SiPs (Ri-Car H3, M3-W, M3-N), while
+>> not all SoC support has been enabled and/or tested. As the board .dtsi
+>> references on-SoC devices using phandles, the new r8a77965.dtsi declares
+>> placeholders for the devices that are not yet enabled/tested.
+>> This worked fine for r8a7796.dtsi before, but causes dtc warnings due to
+>> recent improvements in DT validation.
+>>
+>> I think the simplest way to fix this is to add reg properties to the
+>> placeholders, as Simon did for the last two placeholders in r8a7796.dtsi in
+>> commit 4316989537a6ed53 ("arm64: dts: renesas: r8a7796: add reg properties to
+>> pciec[01] nodes").
+>
+> I think the best solution is an incremental patch on top of the renesas
+> devel branch to, as Geert suggests, add reg properties to the placeholders.
+>
+> I've asked Jacopo to prepare such a patch.
 
-Fixes: 699c20f3e6310aa2 ("serial: pxa: add OF support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Fix Fixes reference,
-  - Fix off-by-one error (use ">="),
-  - Update patch description for platform data.
----
- drivers/tty/serial/pxa.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Sounds good, thanks a lot for the quick reply!
 
-diff --git a/drivers/tty/serial/pxa.c b/drivers/tty/serial/pxa.c
-index baf552944d5686e8..eda3c7710d6a745f 100644
---- a/drivers/tty/serial/pxa.c
-+++ b/drivers/tty/serial/pxa.c
-@@ -885,6 +885,10 @@ static int serial_pxa_probe(struct platform_device *dev)
- 		sport->port.line = dev->id;
- 	else if (ret < 0)
- 		goto err_clk;
-+	if (sport->port.line >= ARRAY_SIZE(serial_pxa_ports)) {
-+		dev_err(&dev->dev, "serial%d out of range\n", sport->port.line);
-+		return -EINVAL;
-+	}
- 	snprintf(sport->name, PXA_NAME_LEN - 1, "UART%d", sport->port.line + 1);
- 
- 	sport->port.membase = ioremap(mmres->start, resource_size(mmres));
--- 
-2.7.4
-
+     Arnd
