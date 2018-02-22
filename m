@@ -1,118 +1,98 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v11 01/10] dt-bindings: media: Add Renesas CEU bindings
-Date: Thu, 22 Feb 2018 11:37:17 +0100
-Message-Id: <1519295846-11612-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54808 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751366AbeBVAE5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 21 Feb 2018 19:04:57 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v5 2/8] dt-bindings: display: renesas: Deprecate LVDS support in the DU bindings
+Date: Thu, 22 Feb 2018 02:05:25 +0200
+Message-Id: <20180222000531.19448-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add bindings documentation for Renesas Capture Engine Unit (CEU).
+The internal LVDS encoders now have their own DT bindings, representing
+them as part of the DU is deprecated.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- .../devicetree/bindings/media/renesas,ceu.txt      | 81 ++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
+Changes since v1:
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-new file mode 100644
-index 0000000..3fc66df
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-@@ -0,0 +1,81 @@
-+Renesas Capture Engine Unit (CEU)
-+----------------------------------------------
-+
-+The Capture Engine Unit is the image capture interface found in the Renesas
-+SH Mobile and RZ SoCs.
-+
-+The interface supports a single parallel input with data bus width of 8 or 16
-+bits.
-+
-+Required properties:
-+- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
-+  and RZ/A1M SoCs.
-+- reg: Registers address base and size.
-+- interrupts: The interrupt specifier.
-+
-+The CEU supports a single parallel input and should contain a single 'port'
-+subnode with a single 'endpoint'. Connection to input devices are modeled
-+according to the video interfaces OF bindings specified in:
-+Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Optional endpoint properties applicable to parallel input bus described in
-+the above mentioned "video-interfaces.txt" file are supported.
-+
-+- hsync-active: Active state of the HSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+- vsync-active: Active state of the VSYNC signal, 0/1 for LOW/HIGH respectively.
-+  If property is not present, default is active high.
-+
-+Example:
-+
-+The example describes the connection between the Capture Engine Unit and an
-+OV7670 image sensor connected to i2c1 interface.
-+
-+ceu: ceu@e8210000 {
-+	reg = <0xe8210000 0x209c>;
-+	compatible = "renesas,r7s72100-ceu";
-+	interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vio_pins>;
-+
-+	status = "okay";
-+
-+	port {
-+		ceu_in: endpoint {
-+			remote-endpoint = <&ov7670_out>;
-+
-+			hsync-active = <1>;
-+			vsync-active = <0>;
-+		};
-+	};
-+};
-+
-+i2c1: i2c@fcfee400 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
-+
-+	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	ov7670: camera@21 {
-+		compatible = "ovti,ov7670";
-+		reg = <0x21>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vio_pins>;
-+
-+		reset-gpios = <&port3 11 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&port3 12 GPIO_ACTIVE_HIGH>;
-+
-+		port {
-+			ov7670_out: endpoint {
-+				remote-endpoint = <&ceu_in>;
-+
-+				hsync-active = <1>;
-+				vsync-active = <0>;
-+			};
-+		};
-+	};
-+};
+- Remove the LVDS reg range from the example
+- Remove the reg-names property
+---
+ .../devicetree/bindings/display/renesas,du.txt     | 31 ++++++++--------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index cd48aba3bc8c..e79cf9b0ad38 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -14,12 +14,7 @@ Required Properties:
+     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
+     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
+ 
+-  - reg: A list of base address and length of each memory resource, one for
+-    each entry in the reg-names property.
+-  - reg-names: Name of the memory resources. The DU requires one memory
+-    resource for the DU core (named "du") and one memory resource for each
+-    LVDS encoder (named "lvds.x" with "x" being the LVDS controller numerical
+-    index).
++  - reg: the memory-mapped I/O registers base address and length
+ 
+   - interrupt-parent: phandle of the parent interrupt controller.
+   - interrupts: Interrupt specifiers for the DU interrupts.
+@@ -29,14 +24,13 @@ Required Properties:
+   - clock-names: Name of the clocks. This property is model-dependent.
+     - R8A7779 uses a single functional clock. The clock doesn't need to be
+       named.
+-    - All other DU instances use one functional clock per channel and one
+-      clock per LVDS encoder (if available). The functional clocks must be
+-      named "du.x" with "x" being the channel numerical index. The LVDS clocks
+-      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
+-    - In addition to the functional and encoder clocks, all DU versions also
+-      support externally supplied pixel clocks. Those clocks are optional.
+-      When supplied they must be named "dclkin.x" with "x" being the input
+-      clock numerical index.
++    - All other DU instances use one functional clock per channel The
++      functional clocks must be named "du.x" with "x" being the channel
++      numerical index.
++    - In addition to the functional clocks, all DU versions also support
++      externally supplied pixel clocks. Those clocks are optional. When
++      supplied they must be named "dclkin.x" with "x" being the input clock
++      numerical index.
+ 
+   - vsps: A list of phandle and channel index tuples to the VSPs that handle
+     the memory interfaces for the DU channels. The phandle identifies the VSP
+@@ -69,9 +63,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 
+ 	du: display@feb00000 {
+ 		compatible = "renesas,du-r8a7795";
+-		reg = <0 0xfeb00000 0 0x80000>,
+-		      <0 0xfeb90000 0 0x14>;
+-		reg-names = "du", "lvds.0";
++		reg = <0 0xfeb00000 0 0x80000>;
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
+@@ -79,9 +71,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 		clocks = <&cpg CPG_MOD 724>,
+ 			 <&cpg CPG_MOD 723>,
+ 			 <&cpg CPG_MOD 722>,
+-			 <&cpg CPG_MOD 721>,
+-			 <&cpg CPG_MOD 727>;
+-		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
++			 <&cpg CPG_MOD 721>;
++		clock-names = "du.0", "du.1", "du.2", "du.3";
+ 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 
+ 		ports {
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
