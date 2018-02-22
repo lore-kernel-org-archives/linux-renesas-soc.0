@@ -1,156 +1,177 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33985 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33974 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753824AbeBVMmw (ORCPT
+        with ESMTP id S1753719AbeBVMlJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Feb 2018 07:42:52 -0500
+        Thu, 22 Feb 2018 07:41:09 -0500
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+Cc: Sakari Ailus <sakari.ailus@iki.fi>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
         <niklas.soderlund@ragnatech.se>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v2] videodev2.h: add helper to validate colorspace
-Date: Thu, 22 Feb 2018 14:43:35 +0200
-Message-ID: <3243006.srM2NAaUy0@avalon>
-In-Reply-To: <e09a145d-bf1b-6f8e-79aa-80445ce91e25@xs4all.nl>
-References: <20180214103643.8245-1-niklas.soderlund+renesas@ragnatech.se> <2556801.UsItpXbr2P@avalon> <e09a145d-bf1b-6f8e-79aa-80445ce91e25@xs4all.nl>
+Date: Thu, 22 Feb 2018 14:41:52 +0200
+Message-ID: <1557033.P9RvW324FW@avalon>
+In-Reply-To: <247e07b2-6d21-331a-53d5-3bade8beec51@xs4all.nl>
+References: <20180214103643.8245-1-niklas.soderlund+renesas@ragnatech.se> <20180221210140.qf77u5yf6ja6cmdi@valkosipuli.retiisi.org.uk> <247e07b2-6d21-331a-53d5-3bade8beec51@xs4all.nl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Hans,
 
-On Thursday, 22 February 2018 09:38:46 EET Hans Verkuil wrote:
-> On 02/21/2018 09:16 PM, Laurent Pinchart wrote:
-> > On Tuesday, 20 February 2018 10:37:22 EET Hans Verkuil wrote:
-> >> On 02/19/2018 11:28 PM, Niklas S=F6derlund wrote:
-> >>> Hi Hans,
-> >>>=20
-> >>> Thanks for your feedback.
-> >>>=20
-> >>> [snip]
-> >>>=20
-> >>>>>>>> Can you then fix v4l2-compliance to stop testing colorspace
-> >>>>>>>> against 0xff
-> >>>>>>>> ?
-> >>>>>>>=20
-> >>>>>>> For now I can simply relax this test for subdevs with sources and
-> >>>>>>> sinks.
-> >>>>>>=20
-> >>>>>> You also need to relax it for video nodes with MC drivers, as the =
-DMA
-> >>>>>> engines don't care about colorspaces.
-> >>>>>=20
-> >>>>> Yes, they do. Many DMA engines can at least do RGB <-> YUV
-> >>>>> conversions, so they should get the colorspace info from their sour=
-ce
-> >>>>> and pass it on to userspace (after correcting for any conversions d=
-one
-> >>>>> by the DMA engine).
-> >>>>=20
-> >>>> Not in the MC case. Video nodes there only model the DMA engine, and
-> >>>> are thus not aware of colorspaces. What MC drivers do is check at
-> >>>> stream on time when validating the pipeline that the colorspace set =
-by
-> >>>> userspace on the video node corresponds to the colorspace on the sou=
-rce
-> >>>> pad of the connected subdev, but that's only to ensure that userspace
-> >>>> gets a coherent view of colorspace across the pipeline, not to progr=
-am
-> >>>> the hardware. There could be exceptions, but in the general case, the
-> >>>> video node implementation of an MC driver will accept any colorspace
-> >>>> and only validate it at stream on time, similarly to how it does for
-> >>>> the frame size format instance (and in the frame size case it will
-> >>>> usually enforce min/max limits when the DMA engine limits the frame
-> >>>> size).
-> >>>=20
-> >>> I'm afraid the issue described above by Laurent is what sparked me to
-> >>> write this commit to begin with. In my never ending VIN Gen3 patch-se=
-t I
-> >>> currency need to carry a patch [1] to implement a hack to make sure
-> >>> v4l2-compliance do not fail for the VIN Gen3 MC-centric use-case. This
-> >>> patch was an attempt to be able to validate the colorspace using the
-> >>> magic value 0xff.
-> >>=20
-> >> This is NOT a magic value. The test that's done here is to memset the
-> >> format structure with 0xff, then call the ioctl. Afterwards it checks
-> >> if there are any remaining 0xff bytes left in the struct since it expe=
-cts
-> >> the driver to have overwritten it by something else. That's where the
-> >> 0xff comes from.
-> >=20
-> > It's no less or more magic than using 0xdeadbeef or any fixed value :-)=
- I
-> > think we all agree that it isn't a value that is meant to be handled
-> > specifically by drivers, so it's not magic in that sense.
-> >=20
-> >>> I don't feel strongly for this patch in particular and I'm happy to d=
-rop
-> >>> it.  But I would like to receive some guidance on how to then properly
-> >>> be able to handle this problem for the MC-centric VIN driver use-case.
-> >>> One option is as you suggested to relax the test in v4l-compliance to
-> >>> not check colorspace, but commit [2] is not enough to resolve the iss=
-ue
-> >>> for my MC use-case.
-> >>>=20
-> >>> As Laurent stated above, the use-case is that the video device shall
-> >>> accept any colorspace set from user-space. This colorspace is then on=
-ly
-> >>> used as stream on time to validate the MC pipeline. The VIN driver do
-> >>> not care about colorspace, but I care about not breaking v4l2-complia=
-nce
-> >>> as I find it's a very useful tool :-)
-> >>=20
-> >> I think part of my confusion here is that there are two places where y=
-ou
-> >> deal with colorspaces in a DMA engine: first there is a input pad of t=
-he
-> >> DMA engine entity, secondly there is the v4l2_pix_format for the memory
-> >> description.
-> >>=20
-> >> The second is set by the driver based on what userspace specified for =
-the
-> >> input pad, together with any changes due to additional conversions such
-> >> as quantization range and RGB <-> YUV by the DMA engine.
-> >=20
-> > No, I'm sorry, for MC-based drivers this isn't correct. The media entity
-> > that symbolizes the DMA engine indeed has a sink pad, but it's a video
-> > node, not a subdev. It thus has no media bus format configured for its
-> > sink pad. The closest pad in the pipeline that has a media bus format is
-> > the source pad of the subdev connected to the video node.
-> >=20
-> > There's no communication within the kernel at G/S_FMT time between the
-> > video node and its connected subdev. The only time we look at the
-> > pipeline as a whole is when starting the stream to validate that the
-> > pipeline is correctly configured. We thus have to implement G/S_FMT on
-> > the video node without any knowledge about the connected subdev, and th=
-us
-> > accept any colorspace.
-> >=20
-> >> So any colorspace validation is done for the input pad. The question is
-> >> what that validation should be. It's never been defined.
-> >=20
-> > No format is set on the video node's entity sink pad for the reason abo=
-ve,
-> > so no validation occurs when setting the colorspace on the sink pad as
-> > that never happens.
->=20
-> Is this documented anywhere? Certainly VIDIOC_G/S/TRY_FMT doesn't mention
-> it.
->=20
-> It is certainly a surprise to me.
+On Thursday, 22 February 2018 10:01:13 EET Hans Verkuil wrote:
+> On 02/21/2018 10:01 PM, Sakari Ailus wrote:
+> > On Wed, Feb 21, 2018 at 10:16:25PM +0200, Laurent Pinchart wrote:
+> >> No, I'm sorry, for MC-based drivers this isn't correct. The media entity
+> >> that symbolizes the DMA engine indeed has a sink pad, but it's a video
+> >> node, not a subdev. It thus has no media bus format configured for its
+> >> sink pad. The closest pad in the pipeline that has a media bus format is
+> >> the source pad of the subdev connected to the video node.
+> >> 
+> >> There's no communication within the kernel at G/S_FMT time between the
+> >> video node and its connected subdev. The only time we look at the
+> >> pipeline as a whole is when starting the stream to validate that the
+> >> pipeline is correctly configured. We thus have to implement G/S_FMT on
+> >> the video node without any knowledge about the connected subdev, and
+> >> thus accept any colorspace.
+> > 
+> > A few more notes related to this --- there's no propagation of sub-device
+> > format across the entities; there were several reasons for the design
+> > choice. The V4L2 pixel format in the video node must be compatible with
+> > the sub-device format when streaming is started. And... the streaming will
+> > start in the pipeline defined by the enabled links to/from the video node.
+> > In principle nothign prevents having multiple links there, and at the time
+> > S_FMT IOCTL is called on the video node, none of those links could be
+> > enabled. And that's perfectly valid use of the API.
+> > 
+> > A lot of the DMA engine drivers are simply devices that receive data and
+> > write that to system memory, they really don't necessarily know anything
+> > else. For the hardware this data is just pixels (or even bits, especially
+> > in the case of CSI-2!).
+> 
+> Not in my experience. Most DMA engines I've ever worked with can do at
+> least quantization and RGB <-> YUV conversions. Which is pretty much
+> required functionality if you work with video receivers.
 
-We don't document as such that no format is set on the video node's entity=
-=20
-sink pad, no. I've always considered that as implicit given that we don't=20
-expose an API to configure a format there :-)
+That's because you have a coarser view of the hardware in the PC world, where 
+the RGB <-> YUV converter and DMA engine are bundled in a single block in 
+documentation. In the embedded world a DMA engine is just a DMA engine. There 
+is in many cases a RGB <-> YUV converter just before the DMA engine, but it's 
+then usually exposed as a subdevice separate from the video node.
 
-=2D-=20
+> And in order to program that correctly in the DMA engine you have to
+> know what you receive.
+
+Depending on the hardware I'm fine letting driver authors decide whether to 
+expose the RGB <-> YUV conversion as a separate subdev, or as part of the 
+video node. In the latter case the video node implementation will need to 
+program the RGB <-> YUV conversion hardware based on the output pixel format 
+and input media bus format. This can be done without any issue at stream on 
+time: the video node implementation can access the format of the connected 
+source pad in the pipeline when starting the stream, as links are configured 
+and frozen at that time. What the video node implementation can't do is access 
+that information at G/S_FMT time, as G/S_FMT on both subdevs and video nodes 
+must be contained to a single entity when using MC-based drivers.
+
+> Full-fledged colorspace converters that can convert between different
+> colorspaces and transfer functions are likely to be separate subdevs
+> due to the complexity of that.
+> 
+> > So I agree with Laurent here that requiring correct colour space for
+> > [GS]_FMT IOCTLs on video nodes in the general case is not feasible
+> > (especially on MC-centric devices), due to the way the Media controller
+> > pipeline and formats along that pipeline are configured and validated
+> > (i.e. at streamon time).
+> > 
+> > But what to do here then? The colourspace field is not verified even in
+> > link validation so there's no guarantee it's correctly set more or less
+> > anywhere else than in the source of the stream. And if the stream has
+> > multiple sources with different colour spaces, then what do you do? That's
+> > perhaps a theoretical case but the current frameworks and APIs do in
+> > principle support that.
+> 
+> It's not theoretical at all. But anyway, in that case it is up to userspace
+> to decide. A typical example is an sRGB OSD on top of a Rec.709 video.
+> 
+> In practice the differences in color at too small to be a problem, you'd
+> just use Rec. 709 and slight color differences in the sRGB OSD is not
+> something that is noticeable. But with HDR and BT.2020 this becomes much
+> more complicated.
+> 
+> However, that is out of scope of the kernel driver.
+
+What I believe should be in scope for the kernel driver is reporting correct 
+colorspace information. Once a pipeline is correctly configured for streaming, 
+the colorspace reported by G_FMT on a capture video node should correspond to 
+the colorspace of the data that will be written to memory. That's why we 
+validate pipelines at stream on time: even if the device would work exactly 
+the same way with a wrong colorspace set on the video node, an application 
+that calls G_FMT would see a colorspace that doesn't correspond to reality. Of 
+course the application can walk up the pipeline and check the colorspace on 
+the sensor at the input, but I think we need to keep parameters valid across 
+the whole pipeline to avoid confusion in userspace.
+
+To summarize my position, in the VIN case, we need to accept any colorspace at 
+S_FMT time, as the DMA engine is colorspace-agnostic and doesn't know at S_FMT 
+time what it will receive, and validate the configured colorspace at stream on 
+time to ensure that userspace receives consistent information.
+
+> > Perhaps we should specify that the user should always set the same
+> > colourspace on the sink end of a link that was there in the source? The
+> > same should likely apply to the rest of the fields apart from width,
+> > height and code, too. Before the user configures formats this doesn't work
+> > though, and this does not address the matter with v4l2-compliance.
+> > 
+> > Granted that the drivers will themselves handle the colour space
+> > information correctly, it'd still provide a way for the user to gain the
+> > knowledge of the colour space which I believe is what matters.
+> 
+> Urgh. It's really wrong IMHO that the DMA engine's input pad can't be
+> configured. It's inconsistent. I don't think we ever thought this through
+> properly.
+
+The video node is an entity but isn't a subdev, so it has pads, but no media 
+bus format exposed there. And frankly I don't think that's an issue. Today we 
+do the following.
+
+1. In the VIDIOC_S_FMT handler, accept any colorspace, as we can't know what 
+we will be fed (as explained above and a few times before, S_FMT is contained 
+in a single entity, it doesn't follow links inside the kernel).
+
+2. At stream on time, validate the input link to verify that the colorspace on 
+the connected subdev's source pad is identical to the colorspace on the video 
+node.
+
+If we could configure the media bus format on the sink pad of the video node, 
+we would
+
+1. Require userspace to set the format on the sink pad. We would need to 
+accept any colorspace there too (again we can't know what we will be fed).
+
+2. In the VIDIOC_S_FMT handler, validate the passed colorspace to verify it is 
+identical to the colorspace configured on the sink pad.
+
+3. At stream on time, validate the input link to verify that the colorspace on 
+the connected subdev's source pad is identical to the colorspace on the video 
+node's sink pad.
+
+Why would that be better ? In both cases we need to accept any colorspace at 
+S_FMT time (on the video node in the first case, on the video node's sink pad 
+in the second case) and validate it at stream on time.
+
+> Let me first fix all the other compliance issues and then I'll have to get
+> back to this. It's a mess.
+
+How do we move forward with VIN though ? I don't think we should block the 
+driver due to this.
+
+-- 
 Regards,
 
 Laurent Pinchart
