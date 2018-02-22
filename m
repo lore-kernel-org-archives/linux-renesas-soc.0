@@ -1,46 +1,69 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 9/9] serial: xuartps: Fix out-of-bounds access through DT alias
-Date: Tue, 20 Feb 2018 10:40:24 +0100
-Message-Id: <1519119624-1268-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
-References: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:39312 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752857AbeBVJSF (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 22 Feb 2018 04:18:05 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180221232108.10139-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180221232108.10139-1-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Feb 2018 10:18:03 +0100
+Message-ID: <CAMuHMdUny0_mFgNOUd-Gw2G_UxUvpsjm0qOEc3gJ53s04LfuFA@mail.gmail.com>
+Subject: Re: [PATCH] i2c: adv748x: afe: fix sparse warning
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The cdns_uart_port[] array is indexed using a value derived from the
-"serialN" alias in DT, which may lead to an out-of-bounds access.
+Hi Niklas,
 
-Fix this by adding a range check.
+On Thu, Feb 22, 2018 at 12:21 AM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> This fixes the following sparse warning:
+>
+> drivers/media/i2c/adv748x/adv748x-afe.c:294:34:    expected unsigned int =
+[usertype] *signal
+> drivers/media/i2c/adv748x/adv748x-afe.c:294:34:    got int *<noident>
+> drivers/media/i2c/adv748x/adv748x-afe.c:294:34: warning: incorrect type i=
+n argument 2 (different signedness)
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> ---
+>  drivers/media/i2c/adv748x/adv748x-afe.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/=
+adv748x/adv748x-afe.c
+> index 5188178588c9067d..39a9996d0db08c31 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-afe.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-afe.c
+> @@ -275,7 +275,8 @@ static int adv748x_afe_s_stream(struct v4l2_subdev *s=
+d, int enable)
+>  {
+>         struct adv748x_afe *afe =3D adv748x_sd_to_afe(sd);
+>         struct adv748x_state *state =3D adv748x_afe_to_state(afe);
+> -       int ret, signal =3D V4L2_IN_ST_NO_SIGNAL;
+> +       unsigned int signal =3D V4L2_IN_ST_NO_SIGNAL;
 
-Fixes: 1f118c02a1819856 ("serial: xuartps: Fix out-of-bounds access through DT alias")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/xilinx_uartps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+u32, as adv748x_afe_status() takes an u32 signal pointer?
 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index b9b2bc76bcac606c..abcb4d09a2d866d0 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1110,7 +1110,7 @@ static struct uart_port *cdns_uart_get_port(int id)
- 	struct uart_port *port;
- 
- 	/* Try the given port id if failed use default method */
--	if (cdns_uart_port[id].mapbase != 0) {
-+	if (id < CDNS_UART_NR_PORTS && cdns_uart_port[id].mapbase != 0) {
- 		/* Find the next unused port */
- 		for (id = 0; id < CDNS_UART_NR_PORTS; id++)
- 			if (cdns_uart_port[id].mapbase == 0)
--- 
-2.7.4
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
