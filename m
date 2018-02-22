@@ -1,112 +1,68 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38070 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751646AbeBTXKQ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:10:16 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Matt Porter <mporter@konsulko.com>,
-        Koen Kooi <koen@dominion.thruhere.net>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Marek Vasut <marex@denx.de>, Wolfram Sang <wsa@the-dreams.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: [PATCH v4 06/16] of: unittest: changeset helpers
-Date: Wed, 21 Feb 2018 01:10:36 +0200
-Message-Id: <20180220231046.32638-7-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH v4] v4l: vsp1: Fix video output on R8A77970
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <11341738.DVmQoThvsb@avalon>
+ <20180222163200.3900-1-laurent.pinchart+renesas@ideasonboard.com>
+ <1b9689ae-487e-312f-a881-b97f140cb6a2@cogentembedded.com>
+ <3820953.2gBQCZcdRS@avalon>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <091e9a6e-76e6-962d-ab8f-ff0bc9913940@cogentembedded.com>
+Date: Thu, 22 Feb 2018 21:57:38 +0300
+MIME-Version: 1.0
+In-Reply-To: <3820953.2gBQCZcdRS@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+On 02/22/2018 09:46 PM, Laurent Pinchart wrote:
 
-Add a unitest specific for the new changeset helpers.
+>>> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>
+>>> Commit d455b45f8393 ("v4l: vsp1: Add support for new VSP2-BS, VSP2-DL,
+>>> and VSP2-D instances") added support for the VSP2-D found in the R-Car
+>>> V3M (R8A77970) but the video output that VSP2-D sends to DU has a greenish
+>>> garbage-like line repeated every 8 screen rows. It turns out that R-Car
+>>> V3M has the LIF0 buffer attribute register that you need to set to a non-
+>>> default value in order to get rid of the output artifacts.
+>>>
+>>> Based on the original (and large) patch by Daisuke Matsushita
+>>> <daisuke.matsushita.ns@hitachi.com>.
+>>>
+>>> Fixes: d455b45f8393 ("v4l: vsp1: Add support for new VSP2-BS, VSP2-DL and
+>>> VSP2-D instances") Signed-off-by: Sergei Shtylyov
+>>> <sergei.shtylyov@cogentembedded.com> Reviewed-by: Laurent Pinchart
+>>> <laurent.pinchart+renesas@ideasonboard.com> [Removed braces, added
+>>> VI6_IP_VERSION_MASK to improve readabiliy]
+>>> Signed-off-by: Laurent Pinchart
+>>> <laurent.pinchart+renesas@ideasonboard.com>
+>>
+>> [...]
+>>
+>>> diff --git a/drivers/media/platform/vsp1/vsp1_regs.h
+>>> b/drivers/media/platform/vsp1/vsp1_regs.h index
+>>> b1912c83a1da..dae0c1901297 100644
+>>> --- a/drivers/media/platform/vsp1/vsp1_regs.h
+>>> +++ b/drivers/media/platform/vsp1/vsp1_regs.h
+>>
+>> [...]
+>>
+>>> @@ -705,6 +710,7 @@
+>>>   */
+>>>  
+>>>  #define VI6_IP_VERSION			0x3f00
+>>>
+>>> +#define VI6_IP_VERSION_MASK		(0xffff << 0)
+>>
+>> Perhaps (VI6_IP_VERSION_MODEL_MASK | VI6_IP_VERSION_SOC_MASK) would be 
+>> clearer?
+> 
+> I thought about it and the line length went over 80 characters so I went for 
+> an easy solution. I can change it if you want.
 
-Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/of/unittest.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+   OK, let's be leave it as is.
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 7a9abaae874d..1b21d2c549a8 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -609,6 +609,59 @@ static void __init of_unittest_changeset(void)
- #endif
- }
- 
-+static void __init of_unittest_changeset_helper(void)
-+{
-+#ifdef CONFIG_OF_DYNAMIC
-+	struct device_node *n1, *n2, *n21, *parent, *np;
-+	struct of_changeset chgset;
-+
-+	of_changeset_init(&chgset);
-+
-+	parent = of_find_node_by_path("/testcase-data/changeset");
-+
-+	unittest(parent, "testcase setup failure\n");
-+	n1 = of_changeset_create_device_node(&chgset,
-+			parent, "/testcase-data/changeset/n1");
-+	unittest(n1, "testcase setup failure\n");
-+	n2 = of_changeset_create_device_node(&chgset,
-+			parent, "/testcase-data/changeset/n2");
-+	unittest(n2, "testcase setup failure\n");
-+	n21 = of_changeset_create_device_node(&chgset, n2, "%s/%s",
-+			"/testcase-data/changeset/n2", "n21");
-+	unittest(n21, "testcase setup failure\n");
-+
-+	unittest(!of_changeset_add_property_string(&chgset, parent,
-+				"prop-add", "foo"), "fail add prop\n");
-+
-+	unittest(!of_changeset_attach_node(&chgset, n1), "fail n1 attach\n");
-+	unittest(!of_changeset_attach_node(&chgset, n2), "fail n2 attach\n");
-+	unittest(!of_changeset_attach_node(&chgset, n21), "fail n21 attach\n");
-+
-+	unittest(!of_changeset_apply(&chgset), "apply failed\n");
-+
-+	/* Make sure node names are constructed correctly */
-+	np = of_find_node_by_path("/testcase-data/changeset/n1");
-+	unittest(np, "'%s' not added\n", n1->full_name);
-+	of_node_put(np);
-+
-+	/* Make sure node names are constructed correctly */
-+	np = of_find_node_by_path("/testcase-data/changeset/n2");
-+	unittest(np, "'%s' not added\n", n2->full_name);
-+	of_node_put(np);
-+
-+	np = of_find_node_by_path("/testcase-data/changeset/n2/n21");
-+	unittest(np, "'%s' not added\n", n21->full_name);
-+	of_node_put(np);
-+
-+	unittest(!of_changeset_revert(&chgset), "revert failed\n");
-+
-+	of_changeset_destroy(&chgset);
-+
-+	of_node_put(parent);
-+#endif
-+}
-+
-+
- static void __init of_unittest_parse_interrupts(void)
- {
- 	struct device_node *np;
-@@ -2363,6 +2416,7 @@ static int __init of_unittest(void)
- 	of_unittest_property_string();
- 	of_unittest_property_copy();
- 	of_unittest_changeset();
-+	of_unittest_changeset_helper();
- 	of_unittest_parse_interrupts();
- 	of_unittest_parse_interrupts_extended();
- 	of_unittest_match_node();
--- 
-Regards,
-
-Laurent Pinchart
+MBR, Sergei
