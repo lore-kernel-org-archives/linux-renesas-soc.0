@@ -1,45 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f174.google.com ([209.85.192.174]:38298 "EHLO
-        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752389AbeBSLtx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Feb 2018 06:49:53 -0500
-Received: by mail-pf0-f174.google.com with SMTP id i3so2048235pfe.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Feb 2018 03:49:53 -0800 (PST)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 19 Feb 2018 20:49:42 +0900
-Message-Id: <151904098248.30541.17415579752890048779.sendpatchset@little-apple>
-In-Reply-To: <151904097369.30541.12132732484797103163.sendpatchset@little-apple>
-References: <151904097369.30541.12132732484797103163.sendpatchset@little-apple>
-Subject: [PATCH 01/02] ARM: dts: silk: Add r1ex24002 EEPROM to DT
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/9] serial: mxs-auart: Fix out-of-bounds access through serial port index
+Date: Fri, 23 Feb 2018 14:38:32 +0100
+Message-Id: <1519393117-31998-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+The auart_port[] array is indexed using a value derived from the
+"serialN" alias in DT, or from platform data, which may lead to an
+out-of-bounds access.
 
-Extend the Silk board support to include U14 which is an I2C based EEPROM
-hooked up to the I2C1 bus.
+Fix this by adding a range check.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Fixes: 1ea6607d4cdc9179 ("serial: mxs-auart: Allow device tree probing")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+v2:
+  - Fix Fixes reference,
+  - Use ARRAY_SIZE(),
+  - Update patch description for platform data.
+---
+ drivers/tty/serial/mxs-auart.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- arch/arm/boot/dts/r8a7794-silk.dts |    6 ++++++
- 1 file changed, 6 insertions(+)
-
---- 0001/arch/arm/boot/dts/r8a7794-silk.dts
-+++ work/arch/arm/boot/dts/r8a7794-silk.dts	2018-02-19 20:03:54.730607110 +0900
-@@ -226,6 +226,12 @@
- 				};
- 			};
- 		};
-+
-+		eeprom@50 {
-+			compatible = "renesas,r1ex24002", "atmel,24c02";
-+			reg = <0x50>;
-+			pagesize = <16>;
-+		};
- 	};
- };
+diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
+index 079dc47aa142d8e1..caa8a41b6e71df9e 100644
+--- a/drivers/tty/serial/mxs-auart.c
++++ b/drivers/tty/serial/mxs-auart.c
+@@ -1663,6 +1663,10 @@ static int mxs_auart_probe(struct platform_device *pdev)
+ 		s->port.line = pdev->id < 0 ? 0 : pdev->id;
+ 	else if (ret < 0)
+ 		return ret;
++	if (s->port.line >= ARRAY_SIZE(auart_port)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", s->port.line);
++		return -EINVAL;
++	}
  
+ 	if (of_id) {
+ 		pdev->id_entry = of_id->data;
+-- 
+2.7.4
+
