@@ -1,91 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51786 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751707AbeBZP2U (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:54598 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbeBWNim (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:28:20 -0500
-Date: Mon, 26 Feb 2018 15:22:53 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCHv2 6/8] arm_pmu: explicitly enable/disable SPIs at hotplug
-Message-ID: <20180226152253.GA19446@arm.com>
-References: <20180205164202.26502-1-mark.rutland@arm.com>
- <20180205164202.26502-7-mark.rutland@arm.com>
- <CAMuHMdU9UPhKdNGknZDkrzWDE75sKDdbMNu4RFfU25eVEswLkg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU9UPhKdNGknZDkrzWDE75sKDdbMNu4RFfU25eVEswLkg@mail.gmail.com>
+        Fri, 23 Feb 2018 08:38:42 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 7/9] serial: sh-sci: Fix out-of-bounds access through DT alias
+Date: Fri, 23 Feb 2018 14:38:35 +0100
+Message-Id: <1519393117-31998-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 04:16:19PM +0100, Geert Uytterhoeven wrote:
-> On Mon, Feb 5, 2018 at 5:42 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > To support ACPI systems, we need to request IRQs before CPUs are
-> > hotplugged, and thus we need to request IRQs before we know their
-> > associated PMU.
-> >
-> > This is problematic if a PMU IRQ is pending out of reset, as it may be
-> > taken before we know the PMU, and thus the IRQ handler won't be able to
-> > handle it, leaving it screaming.
-> >
-> > To avoid such problems, lets request all IRQs in a disabled state, and
-> > explicitly enable/disable them at hotplug time, when we're sure the PMU
-> > has been probed.
-> >
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> This is now commit 6de3f79112cc26bf in v4.16-rc3, and causes a BUG during
-> CPU offlining (e.g. during system suspend, or during boot with
-> CONFIG_ARM_PSCI_CHECKER=y).
-> 
-> With CONFIG_ARM_PSCI_CHECKER=y:
-> 
-> psci_checker: PSCI checker started using 6 CPUs
-> psci_checker: Starting hotplug tests
-> psci_checker: Trying to turn off and on again all CPUs
-> BUG: sleeping function called from invalid context at kernel/irq/manage.c:112
-> in_atomic(): 1, irqs_disabled(): 128, pid: 15, name: migration/1
-> no locks held by migration/1/15.
-> irq event stamp: 192
-> hardirqs last  enabled at (191): [<00000000803c2507>]
-> _raw_spin_unlock_irq+0x2c/0x4c
-> hardirqs last disabled at (192): [<000000007f57ad28>] multi_cpu_stop+0x9c/0x140
-> softirqs last  enabled at (0): [<0000000004ee1b58>]
-> copy_process.isra.77.part.78+0x43c/0x1504
-> softirqs last disabled at (0): [<          (null)>]           (null)
-> CPU: 1 PID: 15 Comm: migration/1 Not tainted 4.16.0-rc3-salvator-x #1651
-> Hardware name: Renesas Salvator-X board based on r8a7796 (DT)
-> Call trace:
->  dump_backtrace+0x0/0x140
->  show_stack+0x14/0x1c
->  dump_stack+0xb4/0xf0
->  ___might_sleep+0x1fc/0x218
->  __might_sleep+0x70/0x80
->  synchronize_irq+0x40/0xa8
->  disable_irq+0x20/0x2c
+The sci_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-Given that these things are CPU-affine, I reckon this should be
-disable_irq_nosync. Mark?
+Fix this by adding a range check.
 
-Will
+Note that the array size is defined by a Kconfig symbol
+(CONFIG_SERIAL_SH_SCI_NR_UARTS), so this can even be triggered using a
+legitimate DTB.
 
---->8
+Fixes: 97ed9790c514066b ("serial: sh-sci: Remove unused platform data capabilities field")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Fix Fixes reference,
+  - Use ARRAY_SIZE().
+---
+ drivers/tty/serial/sh-sci.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-index 0c2ed11c0603..f63db346c219 100644
---- a/drivers/perf/arm_pmu.c
-+++ b/drivers/perf/arm_pmu.c
-@@ -638,7 +638,7 @@ static int arm_perf_teardown_cpu(unsigned int cpu, struct hlist_node *node)
- 		if (irq_is_percpu_devid(irq))
- 			disable_percpu_irq(irq);
- 		else
--			disable_irq(irq);
-+			disable_irq_nosync(irq);
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 4d14f321cbec95e0..f6a6610d434efc33 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3096,6 +3096,10 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
+ 		dev_err(&pdev->dev, "failed to get alias id (%d)\n", id);
+ 		return NULL;
  	}
++	if (id >= ARRAY_SIZE(sci_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", id);
++		return NULL;
++	}
  
- 	per_cpu(cpu_armpmu, cpu) = NULL;
+ 	sp = &sci_ports[id];
+ 	*dev_id = id;
+-- 
+2.7.4
