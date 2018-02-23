@@ -1,82 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.135]:38491 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030266AbeBPP2R (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:60010 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751888AbeBWNiq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Feb 2018 10:28:17 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: fix false-positive Wmaybe-uninitialized warning
-Date: Fri, 16 Feb 2018 16:27:47 +0100
-Message-Id: <20180216152807.1629038-1-arnd@arndb.de>
+        Fri, 23 Feb 2018 08:38:46 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 8/9] serial: sirf: Fix out-of-bounds access through DT alias
+Date: Fri, 23 Feb 2018 14:38:36 +0100
+Message-Id: <1519393117-31998-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When we build this driver with on x86-32, gcc produces a false-positive warning:
+The sirf_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-drivers/clk/renesas/clk-sh73a0.c: In function 'sh73a0_cpg_clocks_init':
-drivers/clk/renesas/clk-sh73a0.c:155:10: error: 'parent_name' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-   return clk_register_fixed_factor(NULL, name, parent_name, 0,
+Fix this by adding a range check.
 
-We can work around that warning by adding a fake initialization, I tried
-and failed to come up with any better workaround. This is currently one
-of few remaining warnings for a 4.14.y randconfig build, so it would be
-good to also have it backported at least to that version. Older versions
-have more randconfig warnings, so we might not care.
-
-I had not noticed this earlier, because one patch in my randconfig test
-tree removes the '-ffreestanding' option on x86-32, and that avoids
-the warning. The -ffreestanding flag was originally global but moved
-into arch/i386 by Andi Kleen in commit 6edfba1b33c7 ("[PATCH] x86_64:
-Don't define string functions to builtin") as a 'temporary workaround'.
-
-Like many temporary hacks, this turned out to be rather long-lived, from
-all I can tell we still need a simple fix to asm/string_32.h before it
-can be removed, but I'm not sure about how to best do that.
-
-Cc: stable@vger.kernel.org
-Cc: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: a6ffe8966acbb66b ("serial: sirf: use dynamic method allocate uart structure")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/clk-sh73a0.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+v2:
+  - Fix Fixes reference,
+  - Use ARRAY_SIZE().
+---
+ drivers/tty/serial/sirfsoc_uart.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/renesas/clk-sh73a0.c b/drivers/clk/renesas/clk-sh73a0.c
-index eea38f6ea77e..3892346c4fcc 100644
---- a/drivers/clk/renesas/clk-sh73a0.c
-+++ b/drivers/clk/renesas/clk-sh73a0.c
-@@ -46,7 +46,7 @@ struct div4_clk {
- 	unsigned int shift;
- };
- 
--static struct div4_clk div4_clks[] = {
-+static const struct div4_clk div4_clks[] = {
- 	{ "zg", "pll0", CPG_FRQCRA, 16 },
- 	{ "m3", "pll1", CPG_FRQCRA, 12 },
- 	{ "b",  "pll1", CPG_FRQCRA,  8 },
-@@ -79,7 +79,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
- {
- 	const struct clk_div_table *table = NULL;
- 	unsigned int shift, reg, width;
--	const char *parent_name;
-+	const char *parent_name = NULL;
- 	unsigned int mult = 1;
- 	unsigned int div = 1;
- 
-@@ -135,7 +135,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
- 		shift = 24;
- 		width = 5;
- 	} else {
--		struct div4_clk *c;
-+		const struct div4_clk *c;
- 
- 		for (c = div4_clks; c->name; c++) {
- 			if (!strcmp(name, c->name)) {
+diff --git a/drivers/tty/serial/sirfsoc_uart.c b/drivers/tty/serial/sirfsoc_uart.c
+index 9925b00a97772a1b..38622f2a30a92e7d 100644
+--- a/drivers/tty/serial/sirfsoc_uart.c
++++ b/drivers/tty/serial/sirfsoc_uart.c
+@@ -1283,6 +1283,11 @@ static int sirfsoc_uart_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 	sirfport->port.line = of_alias_get_id(np, "serial");
++	if (sirfport->port.line >= ARRAY_SIZE(sirf_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n",
++			sirfport->port.line);
++		return -EINVAL;
++	}
+ 	sirf_ports[sirfport->port.line] = sirfport;
+ 	sirfport->port.iotype = UPIO_MEM;
+ 	sirfport->port.flags = UPF_BOOT_AUTOCONF;
 -- 
-2.9.0
+2.7.4
