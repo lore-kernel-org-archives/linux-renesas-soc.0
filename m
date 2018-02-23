@@ -1,114 +1,49 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54809 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751426AbeBVAFA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Feb 2018 19:05:00 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Matt Porter <mporter@konsulko.com>,
-        Koen Kooi <koen@dominion.thruhere.net>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Marek Vasut <marex@denx.de>, Wolfram Sang <wsa@the-dreams.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: [PATCH v5 5/8] of: unittest: changeset helpers
-Date: Thu, 22 Feb 2018 02:05:28 +0200
-Message-Id: <20180222000531.19448-6-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180222000531.19448-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 9/9] serial: xuartps: Fix out-of-bounds access through DT alias
+Date: Fri, 23 Feb 2018 14:38:37 +0100
+Message-Id: <1519393117-31998-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+The cdns_uart_port[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-Add a unitest specific for the new changeset helpers.
+Fix this by adding a range check.
 
-Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-[Use IS_ENABLED instead of #ifdef]
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Fixes: 928e9263492069ee ("tty: xuartps: Initialize ports according to aliases")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/of/unittest.c | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+v2:
+  - Fix Fixes reference.
+---
+ drivers/tty/serial/xilinx_uartps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 7a9abaae874d..1b21d2c549a8 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -609,6 +609,59 @@ static void __init of_unittest_changeset(void)
- #endif
- }
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index b9b2bc76bcac606c..abcb4d09a2d866d0 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1110,7 +1110,7 @@ static struct uart_port *cdns_uart_get_port(int id)
+ 	struct uart_port *port;
  
-+static void __init of_unittest_changeset_helper(void)
-+{
-+#ifdef CONFIG_OF_DYNAMIC
-+	struct device_node *n1, *n2, *n21, *parent, *np;
-+	struct of_changeset chgset;
-+
-+	of_changeset_init(&chgset);
-+
-+	parent = of_find_node_by_path("/testcase-data/changeset");
-+
-+	unittest(parent, "testcase setup failure\n");
-+	n1 = of_changeset_create_device_node(&chgset,
-+			parent, "/testcase-data/changeset/n1");
-+	unittest(n1, "testcase setup failure\n");
-+	n2 = of_changeset_create_device_node(&chgset,
-+			parent, "/testcase-data/changeset/n2");
-+	unittest(n2, "testcase setup failure\n");
-+	n21 = of_changeset_create_device_node(&chgset, n2, "%s/%s",
-+			"/testcase-data/changeset/n2", "n21");
-+	unittest(n21, "testcase setup failure\n");
-+
-+	unittest(!of_changeset_add_property_string(&chgset, parent,
-+				"prop-add", "foo"), "fail add prop\n");
-+
-+	unittest(!of_changeset_attach_node(&chgset, n1), "fail n1 attach\n");
-+	unittest(!of_changeset_attach_node(&chgset, n2), "fail n2 attach\n");
-+	unittest(!of_changeset_attach_node(&chgset, n21), "fail n21 attach\n");
-+
-+	unittest(!of_changeset_apply(&chgset), "apply failed\n");
-+
-+	/* Make sure node names are constructed correctly */
-+	np = of_find_node_by_path("/testcase-data/changeset/n1");
-+	unittest(np, "'%s' not added\n", n1->full_name);
-+	of_node_put(np);
-+
-+	/* Make sure node names are constructed correctly */
-+	np = of_find_node_by_path("/testcase-data/changeset/n2");
-+	unittest(np, "'%s' not added\n", n2->full_name);
-+	of_node_put(np);
-+
-+	np = of_find_node_by_path("/testcase-data/changeset/n2/n21");
-+	unittest(np, "'%s' not added\n", n21->full_name);
-+	of_node_put(np);
-+
-+	unittest(!of_changeset_revert(&chgset), "revert failed\n");
-+
-+	of_changeset_destroy(&chgset);
-+
-+	of_node_put(parent);
-+#endif
-+}
-+
-+
- static void __init of_unittest_parse_interrupts(void)
- {
- 	struct device_node *np;
-@@ -2363,6 +2416,7 @@ static int __init of_unittest(void)
- 	of_unittest_property_string();
- 	of_unittest_property_copy();
- 	of_unittest_changeset();
-+	of_unittest_changeset_helper();
- 	of_unittest_parse_interrupts();
- 	of_unittest_parse_interrupts_extended();
- 	of_unittest_match_node();
+ 	/* Try the given port id if failed use default method */
+-	if (cdns_uart_port[id].mapbase != 0) {
++	if (id < CDNS_UART_NR_PORTS && cdns_uart_port[id].mapbase != 0) {
+ 		/* Find the next unused port */
+ 		for (id = 0; id < CDNS_UART_NR_PORTS; id++)
+ 			if (cdns_uart_port[id].mapbase == 0)
 -- 
-Regards,
+2.7.4
 
-Laurent Pinchart
