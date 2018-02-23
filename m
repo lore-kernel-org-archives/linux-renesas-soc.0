@@ -1,62 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:60024 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751949AbeBWNiq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:38:46 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 6/9] serial: samsung: Fix out-of-bounds access through serial port index
-Date: Fri, 23 Feb 2018 14:38:34 +0100
-Message-Id: <1519393117-31998-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
-References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Fri, 23 Feb 2018 09:20:17 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
+ (CEU)
+Message-ID: <20180223082017.mwdcw7gj4qegbvar@verge.net.au>
+References: <1519295846-11612-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519295846-11612-5-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519295846-11612-5-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The s3c24xx_serial_ports[] array is indexed using a value derived from
-the "serialN" alias in DT, or from an incrementing probe index, which
-may lead to an out-of-bounds access.
+On Thu, Feb 22, 2018 at 11:37:20AM +0100, Jacopo Mondi wrote:
+> Add Capture Engine Unit (CEU) node to device tree.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Fix this by adding a range check.
-
-Note that the array size is defined by a Kconfig symbol
-(CONFIG_SERIAL_SAMSUNG_UARTS), so this can even be triggered using
-a legitimate DTB or legitimate board code.
-
-Fixes: 13a9f6c64fdc55eb ("serial: samsung: Consider DT alias when probing ports")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Fix Fixes reference,
-  - Use ARRAY_SIZE(),
-  - Update patch description for non-DT case.
----
- drivers/tty/serial/samsung.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index f9fecc5ed0cee826..3f2f8c118ce09d56 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1818,6 +1818,10 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
- 
- 	dbg("s3c24xx_serial_probe(%p) %d\n", pdev, index);
- 
-+	if (index >= ARRAY_SIZE(s3c24xx_serial_ports)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", index);
-+		return -EINVAL;
-+	}
- 	ourport = &s3c24xx_serial_ports[index];
- 
- 	ourport->drv_data = s3c24xx_get_driver_data(pdev);
--- 
-2.7.4
+I have marked this patch as deferred as it depends on the binding for
+"renesas,r7s72100-ceu".  Please repost or otherwise ping me once that
+dependency has been accepted.
