@@ -1,42 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:58084 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeBZP0q (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:42000 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeBWJZ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:26:46 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: i2c: sh_mobile: Document R-Car M3-N support
-Date: Mon, 26 Feb 2018 16:26:43 +0100
-Message-Id: <1519658803-23177-1-git-send-email-geert+renesas@glider.be>
+        Fri, 23 Feb 2018 04:25:58 -0500
+MIME-Version: 1.0
+In-Reply-To: <1519326370-15805-6-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org> <1519326370-15805-6-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Feb 2018 10:25:57 +0100
+Message-ID: <CAMuHMdUtb7kHbZ-z7JMKfAQZ-cyQaPPeOitwV=WSns+Y7hZkSg@mail.gmail.com>
+Subject: Re: [PATCH 5/6] arm64: dts: renesas: r8a77965: Add #pwm-cells property
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for the IIC Bus Interface for DVFS (IIC for DVFS) in
-the Renesas M3-N (r8a77965) SoC.
+On Thu, Feb 22, 2018 at 8:06 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add "#pwm-cells" property to "pwm@e6e31000" device node.
+>
+> This silences the following DTC compiler warning:
+> Warning (pwms_property): Missing property '#pwm-cells' in node
+> /soc/pwm@e6e31000 or bad phandle (referred from /backlight:pwms[0])
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-No driver update is needed.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-index 224390999e817f33..fc7e178027467bcd 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-@@ -13,6 +13,7 @@ Required properties:
- 			- "renesas,iic-r8a7794" (R-Car E2)
- 			- "renesas,iic-r8a7795" (R-Car H3)
- 			- "renesas,iic-r8a7796" (R-Car M3-W)
-+			- "renesas,iic-r8a77965" (R-Car M3-N)
- 			- "renesas,iic-sh73a0" (SH-Mobile AG5)
- 			- "renesas,rcar-gen2-iic" (generic R-Car Gen2 or RZ/G1
- 							compatible device)
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
