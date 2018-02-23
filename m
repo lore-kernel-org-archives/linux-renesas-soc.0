@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:60042 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751952AbeBWNiq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Feb 2018 08:38:46 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
@@ -9,46 +14,76 @@ Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/9] serial: mxs-auart: Fix out-of-bounds access through serial port index
-Date: Fri, 23 Feb 2018 14:38:32 +0100
-Message-Id: <1519393117-31998-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
-References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v2 0/9] serial: Fix out-of-bounds accesses through DT aliases
+Date: Fri, 23 Feb 2018 14:38:28 +0100
+Message-Id: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The auart_port[] array is indexed using a value derived from the
-"serialN" alias in DT, or from platform data, which may lead to an
-out-of-bounds access.
+	Hi all,
 
-Fix this by adding a range check.
+Serial drivers used on DT platforms use the "serialN" alias in DT to
+obtain the serial port index for a specific port.  Drivers typically use
+a fixed-size array for keeping track of all available serial ports.
+However, several drivers do not perform any validation on the index
+obtained from DT, which may lead to out-of-bounds accesses of these
+fixed-size arrays.
 
-Fixes: 1ea6607d4cdc9179 ("serial: mxs-auart: Allow device tree probing")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Fix Fixes reference,
+While the DTB passed to the kernel might be considered trusted, some of
+these out-of-bounds accesses can be triggered by a legitimate DTB:
+  - In some drivers the size of the array is defined by a Kconfig
+    symbol, so a user who doesn't need all serial ports may lower this
+    value rightfully,
+  - Tomorrow's new SoC may have more serial ports than the fixed-size
+    array in today's driver can accommodate, which the user may forget
+    to enlarge.
+
+Hence this series fixes that by adding checks for out-of-range aliases,
+logging an error message when triggered.
+
+Changes compared to v1:
+  - Fix Fixes references,
   - Use ARRAY_SIZE(),
-  - Update patch description for platform data.
----
- drivers/tty/serial/mxs-auart.c | 4 ++++
- 1 file changed, 4 insertions(+)
+  - Fix off-by-one error in patch [5/9],
+  - Document where the non-DT case is also fixed by a patch.
 
-diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
-index 079dc47aa142d8e1..caa8a41b6e71df9e 100644
---- a/drivers/tty/serial/mxs-auart.c
-+++ b/drivers/tty/serial/mxs-auart.c
-@@ -1663,6 +1663,10 @@ static int mxs_auart_probe(struct platform_device *pdev)
- 		s->port.line = pdev->id < 0 ? 0 : pdev->id;
- 	else if (ret < 0)
- 		return ret;
-+	if (s->port.line >= ARRAY_SIZE(auart_port)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", s->port.line);
-+		return -EINVAL;
-+	}
- 
- 	if (of_id) {
- 		pdev->id_entry = of_id->data;
+Tested on r8a7791/koelsch (sh-sci), all other drivers were
+compile-tested only.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (9):
+  serial: arc_uart: Fix out-of-bounds access through DT alias
+  serial: fsl_lpuart: Fix out-of-bounds access through DT alias
+  serial: imx: Fix out-of-bounds access through serial port index
+  serial: mxs-auart: Fix out-of-bounds access through serial port index
+  serial: pxa: Fix out-of-bounds access through serial port index
+  serial: samsung: Fix out-of-bounds access through serial port index
+  serial: sh-sci: Fix out-of-bounds access through DT alias
+  serial: sirf: Fix out-of-bounds access through DT alias
+  serial: xuartps: Fix out-of-bounds access through DT alias
+
+ drivers/tty/serial/arc_uart.c      | 5 +++++
+ drivers/tty/serial/fsl_lpuart.c    | 4 ++++
+ drivers/tty/serial/imx.c           | 6 ++++++
+ drivers/tty/serial/mxs-auart.c     | 4 ++++
+ drivers/tty/serial/pxa.c           | 4 ++++
+ drivers/tty/serial/samsung.c       | 4 ++++
+ drivers/tty/serial/sh-sci.c        | 4 ++++
+ drivers/tty/serial/sirfsoc_uart.c  | 5 +++++
+ drivers/tty/serial/xilinx_uartps.c | 2 +-
+ 9 files changed, 37 insertions(+), 1 deletion(-)
+
 -- 
 2.7.4
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
