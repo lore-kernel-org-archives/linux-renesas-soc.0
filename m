@@ -1,66 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:32220 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S966971AbeBNKg5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50947 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeBWMCt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Feb 2018 05:36:57 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] videodev2.h: add helper to validate colorspace
-Date: Wed, 14 Feb 2018 11:36:43 +0100
-Message-Id: <20180214103643.8245-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 23 Feb 2018 07:02:49 -0500
+Date: Fri, 23 Feb 2018 13:02:44 +0100
+From: Simon Horman <horms@verge.net.au>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] arm64: dts: renesas: r8a77965: Add #interrupt-cells
+ property
+Message-ID: <20180223120244.ftzw72a3a6w45pi3@verge.net.au>
+References: <1519326370-15805-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519326370-15805-7-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUSS_kFU+Zg40UHvtJ=PteftQW_tvViAr-d4r+jmVNfNQ@mail.gmail.com>
+ <20180223100607.GO7203@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180223100607.GO7203@w540>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There is no way for drivers to validate a colorspace value, which could
-be provided by user-space by VIDIOC_S_FMT for example. Add a helper to
-validate that the colorspace value is part of enum v4l2_colorspace.
+On Fri, Feb 23, 2018 at 11:06:07AM +0100, jacopo mondi wrote:
+> Hi Geert,
+> 
+> On Fri, Feb 23, 2018 at 10:27:16AM +0100, Geert Uytterhoeven wrote:
+> > On Thu, Feb 22, 2018 at 8:06 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > > Add "#interrupt-cells" property and "interrupt-controller" label to
+> > > "interrupt-controller@e61c0000" device node.
+> > >
+> > > This silences the following DTC compiler warnings:
+> > > Warning (interrupts_property): Missing interrupt-controller or
+> > > interrupt-map property in /soc/interrupt-controller@e61c0000
+> > > Warning (interrupts_property): Missing #interrupt-cells in
+> > > interrupt-parent /soc/interrupt-controller@e61c000
+> > >
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > > --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> > > @@ -316,6 +316,8 @@
+> > >                 };
+> > >
+> > >                 intc_ex: interrupt-controller@e61c0000 {
+> > > +                       #interrupt-cells = <2>;
+> > > +                       interrupt-controller;
+> > >                         reg = <0 0xe61c0000 0 0x200>;
+> > >                         /* placeholder */
+> >
+> > (bikeshedding) Should the placeholder be at the top of the node?
+> 
+> I would like it more too, but in M3-W dtsi:
+> 
+> 		pciec0: pcie@fe000000 {
+> 			reg = <0 0xfe000000 0 0x80000>;
+> 			/* placeholder */
+> 		};
+> 
+> So I kept using the same style everywhere here.
+> 
+> I can change it everywhere in this series to have placeholder at the
+> beginning of the node definition if you agree with that!
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/uapi/linux/videodev2.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-Hi,
-
-I hope this is the correct header to add this helper to. I think it's
-since if it's in uapi not only can v4l2 drivers use it but tools like
-v4l-compliance gets access to it and can be updated to use this instead
-of the hard-coded check of just < 0xff as it was last time I checked.
-
-* Changes since v1
-- Cast colorspace to u32 as suggested by Sakari and only check the upper 
-  boundary to address a potential issue brought up by Laurent if the 
-  data type tested is u32 which is not uncommon:
-
-    enum.c:30:16: warning: comparison of unsigned expression >= 0 is always true
-    [-Wtype-limits]
-      return V4L2_COLORSPACE_IS_VALID(colorspace);
-
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 9827189651801e12..1f27c0f4187cbded 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -238,6 +238,10 @@ enum v4l2_colorspace {
- 	V4L2_COLORSPACE_DCI_P3        = 12,
- };
- 
-+/* Determine if a colorspace is defined in enum v4l2_colorspace */
-+#define V4L2_COLORSPACE_IS_VALID(colorspace)		\
-+	((u32)(colorspace) <= V4L2_COLORSPACE_DCI_P3)
-+
- /*
-  * Determine how COLORSPACE_DEFAULT should map to a proper colorspace.
-  * This depends on whether this is a SDTV image (use SMPTE 170M), an
--- 
-2.16.1
+Either way is fine by me. But if we do change it lets change it everywhere.
