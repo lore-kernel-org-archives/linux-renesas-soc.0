@@ -1,43 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:52369 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752534AbeBTPOO (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:60024 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751949AbeBWNiq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:14:14 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/19] dt-bindings: serial: sh-sci: Add support for r8a77965 (H)SCIF
-Date: Tue, 20 Feb 2018 16:12:14 +0100
-Message-Id: <1519139541-18783-13-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 23 Feb 2018 08:38:46 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 6/9] serial: samsung: Fix out-of-bounds access through serial port index
+Date: Fri, 23 Feb 2018 14:38:34 +0100
+Message-Id: <1519393117-31998-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add documentation for r8a77965 compatible string to Renesas sci-serial
-device tree bindings documentation.
+The s3c24xx_serial_ports[] array is indexed using a value derived from
+the "serialN" alias in DT, or from an incrementing probe index, which
+may lead to an out-of-bounds access.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Fix this by adding a range check.
+
+Note that the array size is defined by a Kconfig symbol
+(CONFIG_SERIAL_SAMSUNG_UARTS), so this can even be triggered using
+a legitimate DTB or legitimate board code.
+
+Fixes: 13a9f6c64fdc55eb ("serial: samsung: Consider DT alias when probing ports")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
- 1 file changed, 2 insertions(+)
+v2:
+  - Fix Fixes reference,
+  - Use ARRAY_SIZE(),
+  - Update patch description for non-DT case.
+---
+ drivers/tty/serial/samsung.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index cf504d0..88f947c 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -41,6 +41,8 @@ Required properties:
-     - "renesas,hscif-r8a7795" for R8A7795 (R-Car H3) HSCIF compatible UART.
-     - "renesas,scif-r8a7796" for R8A7796 (R-Car M3-W) SCIF compatible UART.
-     - "renesas,hscif-r8a7796" for R8A7796 (R-Car M3-W) HSCIF compatible UART.
-+    - "renesas,scif-r8a77965" for R8A77965 (R-Car M3-N) SCIF compatible UART.
-+    - "renesas,hscif-r8a77965" for R8A77965 (R-Car M3-N) HSCIF compatible UART.
-     - "renesas,scif-r8a77970" for R8A77970 (R-Car V3M) SCIF compatible UART.
-     - "renesas,hscif-r8a77970" for R8A77970 (R-Car V3M) HSCIF compatible UART.
-     - "renesas,scif-r8a77995" for R8A77995 (R-Car D3) SCIF compatible UART.
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index f9fecc5ed0cee826..3f2f8c118ce09d56 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1818,6 +1818,10 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+ 
+ 	dbg("s3c24xx_serial_probe(%p) %d\n", pdev, index);
+ 
++	if (index >= ARRAY_SIZE(s3c24xx_serial_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", index);
++		return -EINVAL;
++	}
+ 	ourport = &s3c24xx_serial_ports[index];
+ 
+ 	ourport->drv_data = s3c24xx_get_driver_data(pdev);
 -- 
 2.7.4
