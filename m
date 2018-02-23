@@ -1,114 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:57962 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755222AbeBOIiw (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:57820 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752114AbeBWNlg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 03:38:52 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>, geert@glider.be,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 6/8] arm64: dts: renesas: r8a77995-draak: Enable DU
-Date: Thu, 15 Feb 2018 08:38:21 +0000
-Message-Id: <1518683903-10681-7-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
+        Fri, 23 Feb 2018 08:41:36 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/7] arm64: dts: renesas: r8a77965: Remove stale reg property
+Date: Fri, 23 Feb 2018 14:40:55 +0100
+Message-Id: <1519393259-26108-4-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Remove "reg" property from cache-controller-0 device node as it does not
+have any unit address.
 
-Enable the DU, providing only the VGA output for now.
+This silences the following DTC compiler warning:
+Warning (unit_address_vs_reg): Node /cpus/cache-controller-0 has a reg
+or ranges property, but no unit name
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 51 ++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index af07da240be0..668e246dfc5d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -27,6 +27,38 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 61efb2d..0536b94 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -47,7 +47,6 @@
  
-+	vga {
-+		compatible = "vga-connector";
-+
-+		port {
-+			vga_in: endpoint {
-+				remote-endpoint = <&adv7123_out>;
-+			};
-+		};
-+	};
-+
-+	vga-encoder {
-+		compatible = "adi,adv7123";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7123_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				adv7123_out: endpoint {
-+					remote-endpoint = <&vga_in>;
-+				};
-+			};
-+		};
-+	};
-+
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
-@@ -46,6 +78,11 @@
- 		};
- 	};
- 
-+	du_pins: du {
-+		groups = "du_rgb888", "du_sync", "du_disp", "du_dotclkout0";
-+		function = "du";
-+	};
-+
- 	i2c0_pins: i2c0 {
- 		groups = "i2c0";
- 		function = "i2c0";
-@@ -95,6 +132,20 @@
- 	status = "okay";
- };
- 
-+&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7123_in>;
-+			};
-+		};
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
+ 		L2_CA57: cache-controller-0 {
+ 			compatible = "cache";
+-			reg = <0>;
+ 			power-domains = <&sysc 12>;
+ 			cache-unified;
+ 			cache-level = <2>;
 -- 
 2.7.4
