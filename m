@@ -1,60 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34307 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966007AbeBMX2V (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53717 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752095AbeBWNld (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 18:28:21 -0500
-Received: by mail-wm0-f66.google.com with SMTP id j21so15301175wmh.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Feb 2018 15:28:21 -0800 (PST)
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] ARM: shmobile: stout: enable R-Car Gen2 regulator quirk
-Date: Wed, 14 Feb 2018 00:28:12 +0100
-Message-Id: <20180213232812.31408-1-marek.vasut+renesas@gmail.com>
+        Fri, 23 Feb 2018 08:41:33 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/7] arm64: dts: renesas: r8a77965: Add #address-cells and #size-cells
+Date: Fri, 23 Feb 2018 14:40:54 +0100
+Message-Id: <1519393259-26108-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Regulator setup is suboptimal on H2 Stout too.
+Add "#address-cells" and "#size-cells" properties to all place-holder nodes
+that have children nodes defined by salvator-x[s].dtsi device tree.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This silences the following DTC compiler warnings:
+Warning (reg_format): "reg" property in /soc/.. has invalid length (4 bytes)
+(#address-cells == 2, #size-cells == 1)
+Warning (avoid_default_addr_size): Relying on default #address-cells
+value for /soc/...
+Warning (avoid_default_addr_size): Relying on default #size-cells value
+for /soc/...
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index 44438f344dc8..b749450d361f 100644
---- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-@@ -1,9 +1,9 @@
- /*
-  * R-Car Generation 2 da9063/da9210 regulator quirk
-  *
-- * The r8a7790/lager and r8a7791/koelsch development boards have da9063 and
-- * da9210 regulators.  Both regulators have their interrupt request lines tied
-- * to the same interrupt pin (IRQ2) on the SoC.
-+ * The r8a7790/lager,stout and r8a7791/koelsch development boards have da9063
-+ * and da9210 regulators.  Both regulators have their interrupt request lines
-+ * tied to the same interrupt pin (IRQ2) on the SoC.
-  *
-  * After cold boot or da9063-induced restart, both the da9063 and da9210 seem
-  * to assert their interrupt request lines.  Hence as soon as one driver
-@@ -118,6 +118,7 @@ static int __init rcar_gen2_regulator_quirk(void)
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 4286453..61efb2d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -521,6 +521,9 @@
+ 		};
  
- 	if (!of_machine_is_compatible("renesas,koelsch") &&
- 	    !of_machine_is_compatible("renesas,lager") &&
-+	    !of_machine_is_compatible("renesas,stout") &&
- 	    !of_machine_is_compatible("renesas,gose"))
- 		return -ENODEV;
+ 		avb: ethernet@e6800000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
+ 			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
+ 			/* placeholder */
+ 		};
+@@ -528,11 +531,21 @@
+ 		csi20: csi2@fea80000 {
+ 			reg = <0 0xfea80000 0 0x10000>;
+ 			/* placeholder */
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
+ 		};
  
+ 		csi40: csi2@feaa0000 {
+ 			reg = <0 0xfeaa0000 0 0x10000>;
+ 			/* placeholder */
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
+ 		};
+ 
+ 		vin0: video@e6ef0000 {
+@@ -611,6 +624,9 @@
+ 		};
+ 
+ 		i2c2: i2c@e6510000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
+ 			reg = <0 0xe6510000 0 0x40>;
+ 			/* placeholder */
+ 		};
+@@ -621,6 +637,9 @@
+ 		};
+ 
+ 		i2c4: i2c@e66d8000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
+ 			reg = <0 0xe66d8000 0 0x40>;
+ 			/* placeholder */
+ 		};
+@@ -636,6 +655,9 @@
+ 		};
+ 
+ 		i2c_dvfs: i2c@e60b0000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
+ 			reg = <0 0xe60b0000 0 0x425>;
+ 			/* placeholder */
+ 		};
+@@ -681,6 +703,9 @@
+ 			/* placeholder */
+ 
+ 			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
+ 				port@0 {
+ 					reg = <0>;
+ 					du_out_rgb: endpoint {
 -- 
-2.15.1
+2.7.4
