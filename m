@@ -1,36 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48262 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbeBWMPI (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:35714 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751809AbeBWIZ7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:15:08 -0500
+        Fri, 23 Feb 2018 03:25:59 -0500
+Received: by mail-lf0-f68.google.com with SMTP id 70so11215502lfw.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Feb 2018 00:25:59 -0800 (PST)
+Date: Fri, 23 Feb 2018 09:25:56 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
 Subject: Re: [PATCH v2] v4l: vsp1: Print the correct blending unit name in
  debug messages
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
+Message-ID: <20180223082556.GE6373@bigcity.dyn.berto.se>
 References: <20180222205226.3099-1-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <da94f2fc-f95a-592d-a968-3f979c973b94@ideasonboard.com>
-Date: Fri, 23 Feb 2018 12:15:03 +0000
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <20180222205226.3099-1-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
 
-Thankyou for the patch (update).
+Thanks for your patch.
 
-On 22/02/18 20:52, Laurent Pinchart wrote:
+On 2018-02-22 22:52:26 +0200, Laurent Pinchart wrote:
 > The DRM pipelines can use either the BRU or the BRS for blending. Make
 > sure the right name is used in debugging messages to avoid confusion.
 > 
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
 > ---
 > Changes since v1:
@@ -134,4 +138,12 @@ Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 >  
 >  		ret = vsp1_du_setup_rpf_pipe(vsp1, pipe, rpf, i);
 >  		if (ret < 0)
+> -- 
+> Regards,
 > 
+> Laurent Pinchart
+> 
+
+-- 
+Regards,
+Niklas S�derlund
