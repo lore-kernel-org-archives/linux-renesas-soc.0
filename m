@@ -1,48 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:36828 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754703AbeBAUCs (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55002 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750827AbeBWOGu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Feb 2018 15:02:48 -0500
-Received: by mail-qk0-f195.google.com with SMTP id d21so21032768qkj.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Feb 2018 12:02:47 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <4bf1d0e3-7389-cd24-ff6a-c750d8ea42d6@cogentembedded.com>
-References: <fbdd08a3-1ab3-8e70-20f1-d9c41493b11c@cogentembedded.com> <4bf1d0e3-7389-cd24-ff6a-c750d8ea42d6@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Feb 2018 21:02:47 +0100
-Message-ID: <CAMuHMdXDDe3Ss0hz8Ve=AM3RB7fReGpvLqx-yuJj2c3YVFcp5A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: add Renesas R8A77980 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+        Fri, 23 Feb 2018 09:06:50 -0500
+Date: Fri, 23 Feb 2018 14:06:43 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Colin King <colin.king@canonical.com>
 Cc: Simon Horman <horms@verge.net.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar-gen2: remove duplicated bit-wise or of
+ RCAR_PCI_INT_SIGRETABORT
+Message-ID: <20180223140643.GA24211@e107981-ln.cambridge.arm.com>
+References: <20180223122949.24291-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180223122949.24291-1-colin.king@canonical.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jan 31, 2018 at 8:59 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add a configuration option for the R-Car V3H (R8A77980) SoC.
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Feb 23, 2018 at 12:29:49PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Bit pattern RCAR_PCI_INT_SIGRETABORT is being bit-wise or'd twice;
+> remove the redundant 2nd RCAR_PCI_INT_SIGRETABORT.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/pci/host/pci-rcar-gen2.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Applied to pci/rcar for v4.17, thanks !
 
-Gr{oetje,eeting}s,
+Lorenzo
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> index a28370bb2b2a..dd4f1a6b57c5 100644
+> --- a/drivers/pci/host/pci-rcar-gen2.c
+> +++ b/drivers/pci/host/pci-rcar-gen2.c
+> @@ -52,7 +52,6 @@
+>  #define RCAR_PCI_INT_B			(1 << 17)
+>  #define RCAR_PCI_INT_PME		(1 << 19)
+>  #define RCAR_PCI_INT_ALLERRORS (RCAR_PCI_INT_SIGTABORT		| \
+> -				RCAR_PCI_INT_SIGRETABORT	| \
+>  				RCAR_PCI_INT_SIGRETABORT	| \
+>  				RCAR_PCI_INT_REMABORT		| \
+>  				RCAR_PCI_INT_PERR		| \
+> -- 
+> 2.15.1
+> 
