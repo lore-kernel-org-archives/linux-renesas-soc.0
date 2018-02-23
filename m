@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52698 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52681 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751551AbeBWPA1 (ORCPT
+        with ESMTP id S1751317AbeBWPAD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 10:00:27 -0500
-Date: Fri, 23 Feb 2018 16:00:23 +0100
+        Fri, 23 Feb 2018 10:00:03 -0500
+Date: Fri, 23 Feb 2018 15:59:59 +0100
 From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Magnus Damm <magnus.damm@gmail.com>
 Subject: Re: [PATCH] arm64: defconfig: enable R8A77965 SoC
-Message-ID: <20180223150023.f2pf3afpcckbskme@verge.net.au>
+Message-ID: <20180223145958.cdl6ldvzoajxh6on@verge.net.au>
 References: <20180223085115.13782-1-horms+renesas@verge.net.au>
  <CAMuHMdVsOzXz+pU_7bDaQgs371zozy6Za8eDDiauV8qu03ckmw@mail.gmail.com>
 MIME-Version: 1.0
@@ -30,7 +30,4 @@ On Fri, Feb 23, 2018 at 10:19:45AM +0100, Geert Uytterhoeven wrote:
 > 
 > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I have applied this to the topic/renesas-defconfig branch which is included
-in the devel branch and tags of the Renesas tree as a convenience to
-developers.  The branch is not, however, included in the next branch or
-tags nor is it targeted at upstream.
+Thanks, applied.
