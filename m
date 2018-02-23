@@ -1,98 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38070 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751639AbeBTXKM (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41456 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750861AbeBWKQT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 18:10:12 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v4 02/16] dt-bindings: display: renesas: Deprecate LVDS support in the DU bindings
-Date: Wed, 21 Feb 2018 01:10:32 +0200
-Message-Id: <20180220231046.32638-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180220231046.32638-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 23 Feb 2018 05:16:19 -0500
+Received: by mail-lf0-f68.google.com with SMTP id m69so11621315lfe.8
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Feb 2018 02:16:18 -0800 (PST)
+Subject: Re: [PATCH 4/4] arm64: dts: r8a7795: Add PWM device nodes
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc: ryo.kodama.vz@renesas.com, takeshi.kihara.df@renesas.com,
+        harunobu.kurokawa.dn@renesas.com, magnus.damm@gmail.com
+References: <1453205888-8985-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1453205888-8985-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <3f5a9ea5-3c80-3355-0399-fdf44ac950ed@cogentembedded.com>
+Message-ID: <106caf62-2930-7f55-a62a-2076a64ca4d1@cogentembedded.com>
+Date: Fri, 23 Feb 2018 13:16:16 +0300
+MIME-Version: 1.0
+In-Reply-To: <3f5a9ea5-3c80-3355-0399-fdf44ac950ed@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoders now have their own DT bindings, representing
-them as part of the DU is deprecated.
+On 2/23/2018 1:09 PM, Sergei Shtylyov wrote:
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes since v1:
+>> From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+>>
+>> Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
+>> Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+>> [uli: adapted to new MSTP clock scheme]
+>> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-- Remove the LVDS reg range from the example
-- Remove the reg-names property
----
- .../devicetree/bindings/display/renesas,du.txt     | 31 ++++++++--------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
+    Sorry, I didn't realize I was replying to a month-old patch (with the A/B 
+issue already commented on).
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index cd48aba3bc8c..e79cf9b0ad38 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -14,12 +14,7 @@ Required Properties:
-     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
-     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
- 
--  - reg: A list of base address and length of each memory resource, one for
--    each entry in the reg-names property.
--  - reg-names: Name of the memory resources. The DU requires one memory
--    resource for the DU core (named "du") and one memory resource for each
--    LVDS encoder (named "lvds.x" with "x" being the LVDS controller numerical
--    index).
-+  - reg: the memory-mapped I/O registers base address and length
- 
-   - interrupt-parent: phandle of the parent interrupt controller.
-   - interrupts: Interrupt specifiers for the DU interrupts.
-@@ -29,14 +24,13 @@ Required Properties:
-   - clock-names: Name of the clocks. This property is model-dependent.
-     - R8A7779 uses a single functional clock. The clock doesn't need to be
-       named.
--    - All other DU instances use one functional clock per channel and one
--      clock per LVDS encoder (if available). The functional clocks must be
--      named "du.x" with "x" being the channel numerical index. The LVDS clocks
--      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
--    - In addition to the functional and encoder clocks, all DU versions also
--      support externally supplied pixel clocks. Those clocks are optional.
--      When supplied they must be named "dclkin.x" with "x" being the input
--      clock numerical index.
-+    - All other DU instances use one functional clock per channel The
-+      functional clocks must be named "du.x" with "x" being the channel
-+      numerical index.
-+    - In addition to the functional clocks, all DU versions also support
-+      externally supplied pixel clocks. Those clocks are optional. When
-+      supplied they must be named "dclkin.x" with "x" being the input clock
-+      numerical index.
- 
-   - vsps: A list of phandle and channel index tuples to the VSPs that handle
-     the memory interfaces for the DU channels. The phandle identifies the VSP
-@@ -69,9 +63,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7795";
--		reg = <0 0xfeb00000 0 0x80000>,
--		      <0 0xfeb90000 0 0x14>;
--		reg-names = "du", "lvds.0";
-+		reg = <0 0xfeb00000 0 0x80000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-@@ -79,9 +71,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 		clocks = <&cpg CPG_MOD 724>,
- 			 <&cpg CPG_MOD 723>,
- 			 <&cpg CPG_MOD 722>,
--			 <&cpg CPG_MOD 721>,
--			 <&cpg CPG_MOD 727>;
--		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+			 <&cpg CPG_MOD 721>;
-+		clock-names = "du.0", "du.1", "du.2", "du.3";
- 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
- 
- 		ports {
--- 
-Regards,
-
-Laurent Pinchart
+MBR, Sergei
