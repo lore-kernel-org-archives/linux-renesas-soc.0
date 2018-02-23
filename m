@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:45414 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751921AbeBWNin (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Feb 2018 08:38:43 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
@@ -9,44 +14,43 @@ Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 6/9] serial: samsung: Fix out-of-bounds access through DT alias
-Date: Tue, 20 Feb 2018 10:40:21 +0100
-Message-Id: <1519119624-1268-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
-References: <1519119624-1268-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v2 2/9] serial: fsl_lpuart: Fix out-of-bounds access through DT alias
+Date: Fri, 23 Feb 2018 14:38:30 +0100
+Message-Id: <1519393117-31998-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The s3c24xx_serial_ports[] array is indexed using a value derived from
-the "serialN" alias in DT, which may lead to an out-of-bounds access.
+The lpuart_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, which may lead to an out-of-bounds access.
 
 Fix this by adding a range check.
 
-Note that the array size is defined by a Kconfig symbol
-(CONFIG_SERIAL_SAMSUNG_UARTS), so this can even be triggered using a
-legitimate DTB.
-
-Fixes: 3ac337e76a1c637b ("serial: samsung: Fix out-of-bounds access through DT alias")
+Fixes: c9e2e946fb0ba5d2 ("tty: serial: add Freescale lpuart driver support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/tty/serial/samsung.c | 4 ++++
+v2:
+  - Fix Fixes reference,
+  - Use ARRAY_SIZE().
+---
+ drivers/tty/serial/fsl_lpuart.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index f9fecc5ed0cee826..9ea42197ceefabba 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1818,6 +1818,10 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
- 
- 	dbg("s3c24xx_serial_probe(%p) %d\n", pdev, index);
- 
-+	if (index >= CONFIG_SERIAL_SAMSUNG_UARTS) {
-+		dev_err(&pdev->dev, "serial%d out of range\n", index);
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 8cf112f2efc30707..51e47a63d61accef 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -2145,6 +2145,10 @@ static int lpuart_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
+ 		return ret;
+ 	}
++	if (ret >= ARRAY_SIZE(lpuart_ports)) {
++		dev_err(&pdev->dev, "serial%d out of range\n", ret);
 +		return -EINVAL;
 +	}
- 	ourport = &s3c24xx_serial_ports[index];
- 
- 	ourport->drv_data = s3c24xx_get_driver_data(pdev);
+ 	sport->port.line = ret;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	sport->port.membase = devm_ioremap_resource(&pdev->dev, res);
 -- 
 2.7.4
-
