@@ -1,50 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52691 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752170AbeBWNlp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:41:45 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: arnd@arndb.de, geert@linux-m68k.org, horms@verge.net.au,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/7] arm64: dts: renesas: r8a77965: Add #interrupt-cells property
-Date: Fri, 23 Feb 2018 14:40:58 +0100
-Message-Id: <1519393259-26108-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519393259-26108-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 5/9] serial: pxa: Fix out-of-bounds access through serial port index
+Date: Fri, 23 Feb 2018 14:38:33 +0100
+Message-Id: <1519393117-31998-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add "#interrupt-cells" property and "interrupt-controller" label to
-"interrupt-controller@e61c0000" device node.
+The serial_pxa_ports[] array is indexed using a value derived from the
+"serialN" alias in DT, or from platform data, which may lead to an
+out-of-bounds access.
 
-This silences the following DTC compiler warnings:
-Warning (interrupts_property): Missing interrupt-controller or
-interrupt-map property in /soc/interrupt-controller@e61c0000
-Warning (interrupts_property): Missing #interrupt-cells in
-interrupt-parent /soc/interrupt-controller@e61c000
+Fix this by adding a range check.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 699c20f3e6310aa2 ("serial: pxa: add OF support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+v2:
+  - Fix Fixes reference,
+  - Fix off-by-one error (use ">="),
+  - Update patch description for platform data.
+---
+ drivers/tty/serial/pxa.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 5dff176..0118956 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -316,6 +316,8 @@
- 		};
+diff --git a/drivers/tty/serial/pxa.c b/drivers/tty/serial/pxa.c
+index baf552944d5686e8..eda3c7710d6a745f 100644
+--- a/drivers/tty/serial/pxa.c
++++ b/drivers/tty/serial/pxa.c
+@@ -885,6 +885,10 @@ static int serial_pxa_probe(struct platform_device *dev)
+ 		sport->port.line = dev->id;
+ 	else if (ret < 0)
+ 		goto err_clk;
++	if (sport->port.line >= ARRAY_SIZE(serial_pxa_ports)) {
++		dev_err(&dev->dev, "serial%d out of range\n", sport->port.line);
++		return -EINVAL;
++	}
+ 	snprintf(sport->name, PXA_NAME_LEN - 1, "UART%d", sport->port.line + 1);
  
- 		intc_ex: interrupt-controller@e61c0000 {
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
- 			reg = <0 0xe61c0000 0 0x200>;
- 			/* placeholder */
- 		};
+ 	sport->port.membase = ioremap(mmres->start, resource_size(mmres));
 -- 
 2.7.4
+
