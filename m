@@ -1,6 +1,13 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH 0/2] Add Renesas R8A77970 PFC driver
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:39646 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751923AbeBYSLZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 25 Feb 2018 13:11:25 -0500
+Received: by mail-lf0-f52.google.com with SMTP id f75so14015468lfg.6
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 25 Feb 2018 10:11:24 -0800 (PST)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/2] Add Renesas R8A77970 PFC driver
 To: Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -8,15 +15,22 @@ To: Linus Walleij <linus.walleij@linaro.org>,
         linux-renesas-soc@vger.kernel.org
 Cc: Mark Rutland <mark.rutland@arm.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <e32c511f-89cd-254b-8a53-face984abe75@cogentembedded.com>
-Message-ID: <72f958d3-fb98-b7c2-96b1-d90bbc2e97f7@cogentembedded.com>
-Date: Mon, 26 Feb 2018 14:45:31 +0300
+Message-ID: <e32c511f-89cd-254b-8a53-face984abe75@cogentembedded.com>
+Date: Sun, 25 Feb 2018 21:11:21 +0300
 MIME-Version: 1.0
-In-Reply-To: <e32c511f-89cd-254b-8a53-face984abe75@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sorry, should read R8A77980 in the subject...
+Hello!
+
+Here's a set of 2 patches against the 'sh-pfc' branch of Geert Uytterhoeven's
+'renesas-drivers.git' repo. These patches add the basic support for the R8A77980
+PFC.
+
+[1/2] pinctrl: sh-pfc: add PORT_GP_CFG_25() helper macros
+[2/2] pinctrl: sh-pfc: add R8A77980 PFC support
+
+MBR, Sergei
