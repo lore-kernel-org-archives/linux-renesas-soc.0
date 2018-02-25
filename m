@@ -1,89 +1,202 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:48048 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752196AbeBTPOi (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:43934 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbeBYLcP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:14:38 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 19/19] ARM64: dts: r8a77965: Add EtherAVB device node
-Date: Tue, 20 Feb 2018 16:12:21 +0100
-Message-Id: <1519139541-18783-20-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+        Sun, 25 Feb 2018 06:32:15 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 3/4] drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
+Date: Sun, 25 Feb 2018 13:33:01 +0200
+Message-ID: <2193011.n7ipjnO3AS@avalon>
+In-Reply-To: <f31fad7e-112a-4ac3-4e60-f57534c0cf91@gmail.com>
+References: <20180222131336.7712-1-laurent.pinchart+renesas@ideasonboard.com> <06d3fb91-961d-a053-df22-cddf3419b159@gmail.com> <f31fad7e-112a-4ac3-4e60-f57534c0cf91@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Populate the ethernet@e6800000 device node to enable Ethernet interface
-for R-Car M3-N (r8a77965) SoC.
+Hi Frank,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Sunday, 25 February 2018 00:42:47 EET Frank Rowand wrote:
+> On 02/22/18 14:10, Frank Rowand wrote:
+> > Hi Laurent, Rob,
+> > 
+> > Thanks for the prompt spin to address my concerns.  There are some small
+> > technical issues.
+> > 
+> > I did not read the v3 patch until today.  v3 through v6 are still using
+> > the old overlay apply method which uses an expanded device tree as input.
+> > 
+> > Rob, I don't see my overlay patches in you for-next branch, and I have
+> > not seen an "Applied" message from you.  What is the status of the
+> > overlay patches?
+> > 
+> > Comments in the patch below.
+> > 
+> > On 02/22/18 05:13, Laurent Pinchart wrote:
+> >> The internal LVDS encoders now have their own DT bindings. Before
+> >> switching the driver infrastructure to those new bindings, implement
+> >> backward-compatibility through live DT patching.
+> >> 
+> >> Patching is disabled and will be enabled along with support for the new
+> >> DT bindings in the DU driver.
+> >> 
+> >> Signed-off-by: Laurent Pinchart
+> >> <laurent.pinchart+renesas@ideasonboard.com>
+> >> ---
+> >> Changes since v5:
+> >> 
+> >> - Use a private copy of rcar_du_of_changeset_add_property()
+> >> 
+> >> Changes since v3:
+> >> 
+> >> - Use the OF changeset API
+> >> - Use of_graph_get_endpoint_by_regs()
+> >> - Replace hardcoded constants by sizeof()
+> >> 
+> >> Changes since v2:
+> >> 
+> >> - Update the SPDX headers to use C-style comments in header files
+> >> - Removed the manually created __local_fixups__ node
+> >> - Perform manual fixups on live DT instead of overlay
+> >> 
+> >> Changes since v1:
+> >> 
+> >> - Select OF_FLATTREE
+> >> - Compile LVDS DT bindings patch code when DRM_RCAR_LVDS is selected
+> >> - Update the SPDX headers to use GPL-2.0 instead of GPL-2.0-only
+> >> - Turn __dtb_rcar_du_of_lvds_(begin|end) from u8 to char
+> >> - Pass void begin and end pointers to rcar_du_of_get_overlay()
+> >> - Use of_get_parent() instead of accessing the parent pointer directly
+> >> - Find the LVDS endpoints nodes based on the LVDS node instead of the
+> >> 
+> >>   root of the overlay
+> >> 
+> >> - Update to the <soc>-lvds compatible string format
+> >> ---
+> >> 
+> >>  drivers/gpu/drm/rcar-du/Kconfig                    |   2 +
+> >>  drivers/gpu/drm/rcar-du/Makefile                   |   7 +-
+> >>  drivers/gpu/drm/rcar-du/rcar_du_of.c               | 342 +++++++++++++++
+> >>  drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 ++
+> >>  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  79 +++++
+> >>  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  53 ++++
+> >>  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  53 ++++
+> >>  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  53 ++++
+> >>  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  53 ++++
+> >>  9 files changed, 661 insertions(+), 1 deletion(-)
+> >>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
+> >>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
+> >>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+> >>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
+> >>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
+> >>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
+> >>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
 
----
-v1 -> v2:
-- Replace ALWAYS_ON power area identifier with numeric constant
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 43 ++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+[snip]
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 55f05f7..c249895 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -520,7 +520,48 @@
- 		};
- 
- 		avb: ethernet@e6800000 {
--			/* placeholder */
-+			compatible = "renesas,etheravb-r8a77965",
-+				     "renesas,etheravb-rcar-gen3";
-+			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15",
-+					  "ch16", "ch17", "ch18", "ch19",
-+					  "ch20", "ch21", "ch22", "ch23",
-+					  "ch24";
-+			clocks = <&cpg CPG_MOD 812>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 812>;
-+			phy-mode = "rgmii-txid";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
- 		csi20: csi2@fea80000 {
+> >> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.c
+> >> b/drivers/gpu/drm/rcar-du/rcar_du_of.c new file mode 100644
+> >> index 000000000000..ac442ddfed16
+> >> --- /dev/null
+> >> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+
+[snip]
+
+> >> +static int __init rcar_du_of_apply_overlay(const struct
+> >> rcar_du_of_overlay *dtbs,
+> >> +					   const char *compatible)
+> >> +{
+> >> +	const struct rcar_du_of_overlay *dtb = NULL;
+> >> +	struct device_node *node = NULL;
+> >> +	unsigned int i;
+> >> +	int ovcs_id;
+> >> +	void *data;
+> >> +	void *mem;
+> >> +	int ret;
+> >> +
+> >> +	for (i = 0; dtbs[i].compatible; ++i) {
+> >> +		if (!strcmp(dtbs[i].compatible, compatible)) {
+> >> +			dtb = &dtbs[i];
+> >> +			break;
+> >> +		}
+> >> +	}
+> >> +
+> >> +	if (!dtb)
+> >> +		return -ENODEV;
+> 
+> I was trying to avoid reviewing this little block of code, because it
+> meant spending the time to do the research to verify my memory.  I did
+> the research, so here are the comments...
+
+Thank you.
+
+> > __If__ my overlay patches are accepted, this block:
+> >> +
+> >> +	data = kmemdup(dtb->begin, dtb->end - dtb->begin, GFP_KERNEL);
+> >> +	if (!data)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	mem = of_fdt_unflatten_tree(data, NULL, &node);
+> >> +	if (!mem) {
+> >> 
+> >> +		ret = -ENOMEM;
+> 
+>                 kfree(data);
+> 
+> This could be done at the tail of the function if you prefer, but
+> it is easier for me to put it here to show which case it is ok
+> to kfree().  And if doing the kfree() here, may as well just
+> return -ENOMEM here instead of going to done.
+> 
+> >> +		goto done;
+> >> +	}
+> >> +
+> >> +	ovcs_id = 0;
+> >> +	ret = of_overlay_apply(node, &ovcs_id);
+> >> +
+> 
+> >> +done:
+> Do not do the of_node_put() or the kfree()s here.  The live
+> devicetree and the overlay changeset have pointers into them.
+> 
+> Some error values from of_overlay_apply() do allow you to do some
+> freeing, but since this is at most a temporary piece of code, it
+> isn't worth all the complexity of trying to figure that out.  The
+> implications of the various return values from of_overlay_apply()
+> are a bit of a hairball.
+> 
+> >> +	of_node_put(node);
+> >> +	kfree(data);
+> >> +	kfree(mem);
+
+OK, I'll remove the error handling code here and add a kfree(data) if 
+of_fdt_unflatten_tree() fails. Thank you.
+
+> > becomes:
+> > 	ret = of_overlay_fdt_apply(dtb->begin, &ovcs_id);
+> > 
+> > If my overlay patches do not exist, there are other small errors
+> > in the code block above.  I'll ignore them for the moment.
+> > 
+> > A quick scan of the rest of the code looks OK.  I'll read through it
+> > more carefully, but wanted to get this reply out without further
+> > delay.
+> > 
+> > -Frank
+> > 
+> >> +
+> >> +	return ret;
+> >> +}
+
+[snip]
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
