@@ -1,119 +1,404 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33718 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752436AbeBBSgT (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54328 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751803AbeBZVov (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Feb 2018 13:36:19 -0500
-Received: by mail-lf0-f68.google.com with SMTP id t139so32881425lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Feb 2018 10:36:19 -0800 (PST)
-Subject: [PATCH 06/11] arm64: dts: renesas: r8a77980: add SYS-DMAC support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Message-ID: <70132f3d-0f37-ae7e-a44b-d65920620936@cogentembedded.com>
-Date: Fri, 2 Feb 2018 21:36:16 +0300
-MIME-Version: 1.0
-In-Reply-To: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Mon, 26 Feb 2018 16:44:51 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 07/15] v4l: vsp1: Move DRM atomic commit pipeline setup to separate function
+Date: Mon, 26 Feb 2018 23:45:08 +0200
+Message-Id: <20180226214516.11559-8-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe SYS-DMAC1/2 in the R8A77980 device tree.
+The DRM pipeline setup code used at atomic commit time is similar to the
+setup code used when enabling the pipeline. Move it to a separate
+function in order to share it.
 
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   68 ++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+ drivers/media/platform/vsp1/vsp1_drm.c | 347 +++++++++++++++++----------------
+ 1 file changed, 180 insertions(+), 167 deletions(-)
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -85,6 +85,74 @@
- 			#power-domain-cells = <1>;
- 		};
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 9a043a915c0b..7bf697ba7969 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -46,6 +46,185 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
+  * Pipeline Configuration
+  */
  
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a77980",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
++/* Setup one RPF and the connected BRU sink pad. */
++static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
++				      struct vsp1_pipeline *pipe,
++				      struct vsp1_rwpf *rpf,
++				      unsigned int bru_input)
++{
++	struct v4l2_subdev_selection sel;
++	struct v4l2_subdev_format format;
++	const struct v4l2_rect *crop;
++	int ret;
 +
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a77980",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 362 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 363 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 364 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 365 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 366 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 367 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 217>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
++	/*
++	 * Configure the format on the RPF sink pad and propagate it up to the
++	 * BRU sink pad.
++	 */
++	crop = &vsp1->drm->inputs[rpf->entity.index].crop;
 +
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
++	memset(&format, 0, sizeof(format));
++	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
++	format.pad = RWPF_PAD_SINK;
++	format.format.width = crop->width + crop->left;
++	format.format.height = crop->height + crop->top;
++	format.format.code = rpf->fmtinfo->mbus;
++	format.format.field = V4L2_FIELD_NONE;
++
++	ret = v4l2_subdev_call(&rpf->entity.subdev, pad, set_fmt, NULL,
++			       &format);
++	if (ret < 0)
++		return ret;
++
++	dev_dbg(vsp1->dev,
++		"%s: set format %ux%u (%x) on RPF%u sink\n",
++		__func__, format.format.width, format.format.height,
++		format.format.code, rpf->entity.index);
++
++	memset(&sel, 0, sizeof(sel));
++	sel.which = V4L2_SUBDEV_FORMAT_ACTIVE;
++	sel.pad = RWPF_PAD_SINK;
++	sel.target = V4L2_SEL_TGT_CROP;
++	sel.r = *crop;
++
++	ret = v4l2_subdev_call(&rpf->entity.subdev, pad, set_selection, NULL,
++			       &sel);
++	if (ret < 0)
++		return ret;
++
++	dev_dbg(vsp1->dev,
++		"%s: set selection (%u,%u)/%ux%u on RPF%u sink\n",
++		__func__, sel.r.left, sel.r.top, sel.r.width, sel.r.height,
++		rpf->entity.index);
++
++	/*
++	 * RPF source, hardcode the format to ARGB8888 to turn on format
++	 * conversion if needed.
++	 */
++	format.pad = RWPF_PAD_SOURCE;
++
++	ret = v4l2_subdev_call(&rpf->entity.subdev, pad, get_fmt, NULL,
++			       &format);
++	if (ret < 0)
++		return ret;
++
++	dev_dbg(vsp1->dev,
++		"%s: got format %ux%u (%x) on RPF%u source\n",
++		__func__, format.format.width, format.format.height,
++		format.format.code, rpf->entity.index);
++
++	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
++
++	ret = v4l2_subdev_call(&rpf->entity.subdev, pad, set_fmt, NULL,
++			       &format);
++	if (ret < 0)
++		return ret;
++
++	/* BRU sink, propagate the format from the RPF source. */
++	format.pad = bru_input;
++
++	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
++			       &format);
++	if (ret < 0)
++		return ret;
++
++	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
++		__func__, format.format.width, format.format.height,
++		format.format.code, BRU_NAME(pipe->bru), format.pad);
++
++	sel.pad = bru_input;
++	sel.target = V4L2_SEL_TGT_COMPOSE;
++	sel.r = vsp1->drm->inputs[rpf->entity.index].compose;
++
++	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_selection, NULL,
++			       &sel);
++	if (ret < 0)
++		return ret;
++
++	dev_dbg(vsp1->dev, "%s: set selection (%u,%u)/%ux%u on %s pad %u\n",
++		__func__, sel.r.left, sel.r.top, sel.r.width, sel.r.height,
++		BRU_NAME(pipe->bru), sel.pad);
++
++	return 0;
++}
++
++static unsigned int rpf_zpos(struct vsp1_device *vsp1, struct vsp1_rwpf *rpf)
++{
++	return vsp1->drm->inputs[rpf->entity.index].zpos;
++}
++
++/* Setup the input side of the pipeline (RPFs and BRU sink pads). */
++static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
++					struct vsp1_pipeline *pipe)
++{
++	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
++	struct vsp1_bru *bru = to_bru(&pipe->bru->subdev);
++	unsigned int i;
++	int ret;
++
++	/* Count the number of enabled inputs and sort them by Z-order. */
++	pipe->num_inputs = 0;
++
++	for (i = 0; i < vsp1->info->rpf_count; ++i) {
++		struct vsp1_rwpf *rpf = vsp1->rpf[i];
++		unsigned int j;
++
++		/*
++		 * Make sure we don't accept more inputs than the hardware can
++		 * handle. This is a temporary fix to avoid display stall, we
++		 * need to instead allocate the BRU or BRS to display pipelines
++		 * dynamically based on the number of planes they each use.
++		 */
++		if (pipe->num_inputs >= pipe->bru->source_pad)
++			pipe->inputs[i] = NULL;
++
++		if (!pipe->inputs[i])
++			continue;
++
++		/* Insert the RPF in the sorted RPFs array. */
++		for (j = pipe->num_inputs++; j > 0; --j) {
++			if (rpf_zpos(vsp1, inputs[j-1]) <= rpf_zpos(vsp1, rpf))
++				break;
++			inputs[j] = inputs[j-1];
++		}
++
++		inputs[j] = rpf;
++	}
++
++	/* Setup the RPF input pipeline for every enabled input. */
++	for (i = 0; i < pipe->bru->source_pad; ++i) {
++		struct vsp1_rwpf *rpf = inputs[i];
++
++		if (!rpf) {
++			bru->inputs[i].rpf = NULL;
++			continue;
++		}
++
++		if (!rpf->entity.pipe) {
++			rpf->entity.pipe = pipe;
++			list_add_tail(&rpf->entity.list_pipe, &pipe->entities);
++		}
++
++		bru->inputs[i].rpf = rpf;
++		rpf->bru_input = i;
++		rpf->entity.sink = pipe->bru;
++		rpf->entity.sink_pad = i;
++
++		dev_dbg(vsp1->dev, "%s: connecting RPF.%u to %s:%u\n",
++			__func__, rpf->entity.index, BRU_NAME(pipe->bru), i);
++
++		ret = vsp1_du_pipeline_setup_rpf(vsp1, pipe, rpf, i);
++		if (ret < 0) {
++			dev_err(vsp1->dev,
++				"%s: failed to setup RPF.%u\n",
++				__func__, rpf->entity.index);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
+ /* Configure all entities in the pipeline. */
+ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
+ {
+@@ -396,111 +575,6 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ }
+ EXPORT_SYMBOL_GPL(vsp1_du_atomic_update);
+ 
+-static int vsp1_du_setup_rpf_pipe(struct vsp1_device *vsp1,
+-				  struct vsp1_pipeline *pipe,
+-				  struct vsp1_rwpf *rpf, unsigned int bru_input)
+-{
+-	struct v4l2_subdev_selection sel;
+-	struct v4l2_subdev_format format;
+-	const struct v4l2_rect *crop;
+-	int ret;
+-
+-	/*
+-	 * Configure the format on the RPF sink pad and propagate it up to the
+-	 * BRU sink pad.
+-	 */
+-	crop = &vsp1->drm->inputs[rpf->entity.index].crop;
+-
+-	memset(&format, 0, sizeof(format));
+-	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+-	format.pad = RWPF_PAD_SINK;
+-	format.format.width = crop->width + crop->left;
+-	format.format.height = crop->height + crop->top;
+-	format.format.code = rpf->fmtinfo->mbus;
+-	format.format.field = V4L2_FIELD_NONE;
+-
+-	ret = v4l2_subdev_call(&rpf->entity.subdev, pad, set_fmt, NULL,
+-			       &format);
+-	if (ret < 0)
+-		return ret;
+-
+-	dev_dbg(vsp1->dev,
+-		"%s: set format %ux%u (%x) on RPF%u sink\n",
+-		__func__, format.format.width, format.format.height,
+-		format.format.code, rpf->entity.index);
+-
+-	memset(&sel, 0, sizeof(sel));
+-	sel.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+-	sel.pad = RWPF_PAD_SINK;
+-	sel.target = V4L2_SEL_TGT_CROP;
+-	sel.r = *crop;
+-
+-	ret = v4l2_subdev_call(&rpf->entity.subdev, pad, set_selection, NULL,
+-			       &sel);
+-	if (ret < 0)
+-		return ret;
+-
+-	dev_dbg(vsp1->dev,
+-		"%s: set selection (%u,%u)/%ux%u on RPF%u sink\n",
+-		__func__, sel.r.left, sel.r.top, sel.r.width, sel.r.height,
+-		rpf->entity.index);
+-
+-	/*
+-	 * RPF source, hardcode the format to ARGB8888 to turn on format
+-	 * conversion if needed.
+-	 */
+-	format.pad = RWPF_PAD_SOURCE;
+-
+-	ret = v4l2_subdev_call(&rpf->entity.subdev, pad, get_fmt, NULL,
+-			       &format);
+-	if (ret < 0)
+-		return ret;
+-
+-	dev_dbg(vsp1->dev,
+-		"%s: got format %ux%u (%x) on RPF%u source\n",
+-		__func__, format.format.width, format.format.height,
+-		format.format.code, rpf->entity.index);
+-
+-	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
+-
+-	ret = v4l2_subdev_call(&rpf->entity.subdev, pad, set_fmt, NULL,
+-			       &format);
+-	if (ret < 0)
+-		return ret;
+-
+-	/* BRU sink, propagate the format from the RPF source. */
+-	format.pad = bru_input;
+-
+-	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
+-			       &format);
+-	if (ret < 0)
+-		return ret;
+-
+-	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
+-		__func__, format.format.width, format.format.height,
+-		format.format.code, BRU_NAME(pipe->bru), format.pad);
+-
+-	sel.pad = bru_input;
+-	sel.target = V4L2_SEL_TGT_COMPOSE;
+-	sel.r = vsp1->drm->inputs[rpf->entity.index].compose;
+-
+-	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_selection, NULL,
+-			       &sel);
+-	if (ret < 0)
+-		return ret;
+-
+-	dev_dbg(vsp1->dev, "%s: set selection (%u,%u)/%ux%u on %s pad %u\n",
+-		__func__, sel.r.left, sel.r.top, sel.r.width, sel.r.height,
+-		BRU_NAME(pipe->bru), sel.pad);
+-
+-	return 0;
+-}
+-
+-static unsigned int rpf_zpos(struct vsp1_device *vsp1, struct vsp1_rwpf *rpf)
+-{
+-	return vsp1->drm->inputs[rpf->entity.index].zpos;
+-}
+-
+ /**
+  * vsp1_du_atomic_flush - Commit an atomic update
+  * @dev: the VSP device
+@@ -511,69 +585,8 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
+ 	struct vsp1_pipeline *pipe = &drm_pipe->pipe;
+-	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
+-	struct vsp1_bru *bru = to_bru(&pipe->bru->subdev);
+-	unsigned int i;
+-	int ret;
+-
+-	/* Count the number of enabled inputs and sort them by Z-order. */
+-	pipe->num_inputs = 0;
+-
+-	for (i = 0; i < vsp1->info->rpf_count; ++i) {
+-		struct vsp1_rwpf *rpf = vsp1->rpf[i];
+-		unsigned int j;
+-
+-		/*
+-		 * Make sure we don't accept more inputs than the hardware can
+-		 * handle. This is a temporary fix to avoid display stall, we
+-		 * need to instead allocate the BRU or BRS to display pipelines
+-		 * dynamically based on the number of planes they each use.
+-		 */
+-		if (pipe->num_inputs >= pipe->bru->source_pad)
+-			pipe->inputs[i] = NULL;
+-
+-		if (!pipe->inputs[i])
+-			continue;
+-
+-		/* Insert the RPF in the sorted RPFs array. */
+-		for (j = pipe->num_inputs++; j > 0; --j) {
+-			if (rpf_zpos(vsp1, inputs[j-1]) <= rpf_zpos(vsp1, rpf))
+-				break;
+-			inputs[j] = inputs[j-1];
+-		}
+-
+-		inputs[j] = rpf;
+-	}
+-
+-	/* Setup the RPF input pipeline for every enabled input. */
+-	for (i = 0; i < pipe->bru->source_pad; ++i) {
+-		struct vsp1_rwpf *rpf = inputs[i];
+-
+-		if (!rpf) {
+-			bru->inputs[i].rpf = NULL;
+-			continue;
+-		}
+-
+-		if (!rpf->entity.pipe) {
+-			rpf->entity.pipe = pipe;
+-			list_add_tail(&rpf->entity.list_pipe, &pipe->entities);
+-		}
+-
+-		bru->inputs[i].rpf = rpf;
+-		rpf->bru_input = i;
+-		rpf->entity.sink = pipe->bru;
+-		rpf->entity.sink_pad = i;
+-
+-		dev_dbg(vsp1->dev, "%s: connecting RPF.%u to %s:%u\n",
+-			__func__, rpf->entity.index, BRU_NAME(pipe->bru), i);
+-
+-		ret = vsp1_du_setup_rpf_pipe(vsp1, pipe, rpf, i);
+-		if (ret < 0)
+-			dev_err(vsp1->dev,
+-				"%s: failed to setup RPF.%u\n",
+-				__func__, rpf->entity.index);
+-	}
+ 
++	vsp1_du_pipeline_setup_input(vsp1, pipe);
+ 	vsp1_du_pipeline_configure(pipe);
+ }
+ EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
+-- 
+Regards,
+
+Laurent Pinchart
