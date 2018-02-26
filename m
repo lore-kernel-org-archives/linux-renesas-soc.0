@@ -1,99 +1,42 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: niklas.soderlund@ragnatech.se,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/3] media: i2c: adv748x: Add missing CBUS page
-Date: Tue, 27 Feb 2018 15:05:49 +0000
-Message-Id: <1519743950-28346-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <1519743950-28346-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-References: <1519743950-28346-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:34062 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753103AbeBZNwy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 26 Feb 2018 08:52:54 -0500
+Received: by mail-qt0-f195.google.com with SMTP id l25so8929247qtj.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Feb 2018 05:52:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <151904099108.30541.17932604596131550090.sendpatchset@little-apple>
+References: <151904097369.30541.12132732484797103163.sendpatchset@little-apple>
+ <151904099108.30541.17932604596131550090.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Feb 2018 14:52:52 +0100
+Message-ID: <CAMuHMdWvTMtUmXx4TuTxORfjz7pCLYU+CDVM-AZ0MG9yjLk8UA@mail.gmail.com>
+Subject: Re: [PATCH 02/02] ARM: dts: silk: Add GPIO keys to DT
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+On Mon, Feb 19, 2018 at 12:49 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Extend the Silk board support to include SW3, SW4, SW6 and SW12. They
+> are all connected via GPIO lines and handled by the gpio-keys driver.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-The ADV748x has 12 pages mapped onto I2C addresses.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-In the existing implementation only 11 are mapped correctly in the page
-enumerations, which causes an off-by-one fault on pages above the
-infoframe definition due to a missing 'CBUS' page.
+Gr{oetje,eeting}s,
 
-This causes the address for the CEC, SDP, TXA, and TXB to be incorrectly
-programmed during the iterations in adv748x_initialise_clients().
+                        Geert
 
-Until now this has gone un-noticed due to the fact that following the
-creation of the clients - the device is reset and the addresses are
-reprogrammed in manually by the call to "adv748x_write_regs(state,
-adv748x_set_slave_address);"
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-As part of moving to dynamic i2c address allocations repair this by
-providing the missing CBUS page definition.
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-v2
- - Remove period from commit title.
- - Collect Niklas' RB tag.
-
-
- drivers/media/i2c/adv748x/adv748x-core.c | 3 +++
- drivers/media/i2c/adv748x/adv748x.h      | 2 ++
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index faf73949962b..9dcaadaca217 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -52,6 +52,7 @@ static const struct regmap_config adv748x_regmap_cnf[] = {
- 	ADV748X_REGMAP_CONF("edid"),
- 	ADV748X_REGMAP_CONF("repeater"),
- 	ADV748X_REGMAP_CONF("infoframe"),
-+	ADV748X_REGMAP_CONF("cbus"),
- 	ADV748X_REGMAP_CONF("cec"),
- 	ADV748X_REGMAP_CONF("sdp"),
- 	ADV748X_REGMAP_CONF("txa"),
-@@ -89,6 +90,7 @@ static int adv748x_i2c_addresses[ADV748X_PAGE_MAX] = {
- 	ADV748X_I2C_EDID,
- 	ADV748X_I2C_REPEATER,
- 	ADV748X_I2C_INFOFRAME,
-+	ADV748X_I2C_CBUS,
- 	ADV748X_I2C_CEC,
- 	ADV748X_I2C_SDP,
- 	ADV748X_I2C_TXB,
-@@ -352,6 +354,7 @@ static const struct adv748x_reg_value adv748x_set_slave_address[] = {
- 	{ADV748X_PAGE_IO, 0xf6, ADV748X_I2C_EDID << 1},
- 	{ADV748X_PAGE_IO, 0xf7, ADV748X_I2C_REPEATER << 1},
- 	{ADV748X_PAGE_IO, 0xf8, ADV748X_I2C_INFOFRAME << 1},
-+	{ADV748X_PAGE_IO, 0xf9, ADV748X_I2C_CBUS << 1},
- 	{ADV748X_PAGE_IO, 0xfa, ADV748X_I2C_CEC << 1},
- 	{ADV748X_PAGE_IO, 0xfb, ADV748X_I2C_SDP << 1},
- 	{ADV748X_PAGE_IO, 0xfc, ADV748X_I2C_TXB << 1},
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 6789e2f3bc8c..725662edc4b8 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -35,6 +35,7 @@
- #define ADV748X_I2C_EDID		0x36	/* EDID Map */
- #define ADV748X_I2C_REPEATER		0x32	/* HDMI RX Repeater Map */
- #define ADV748X_I2C_INFOFRAME		0x31	/* HDMI RX InfoFrame Map */
-+#define ADV748X_I2C_CBUS		0x30	/* CBUS MHL Map */
- #define ADV748X_I2C_CEC			0x41	/* CEC Map */
- #define ADV748X_I2C_SDP			0x79	/* SDP Map */
- #define ADV748X_I2C_TXB			0x48	/* CSI-TXB Map */
-@@ -48,6 +49,7 @@ enum adv748x_page {
- 	ADV748X_PAGE_EDID,
- 	ADV748X_PAGE_REPEATER,
- 	ADV748X_PAGE_INFOFRAME,
-+	ADV748X_PAGE_CBUS,
- 	ADV748X_PAGE_CEC,
- 	ADV748X_PAGE_SDP,
- 	ADV748X_PAGE_TXB,
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
