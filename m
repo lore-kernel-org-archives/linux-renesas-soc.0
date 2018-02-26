@@ -1,68 +1,50 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: [PATCH v2 5/5] arm64: dts: renesas: condor: add EtherAVB support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
-Message-ID: <5ca8941c-9273-733e-28bd-e76a82e94908@cogentembedded.com>
-Date: Fri, 16 Feb 2018 21:38:31 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35511 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752630AbeBZJ5c (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 26 Feb 2018 04:57:32 -0500
 MIME-Version: 1.0
-In-Reply-To: <ae31804b-969b-9b20-16d0-50f5dea42f08@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <26e823ef-759f-16e7-f3da-ac6ce7c01ad3@cogentembedded.com>
+References: <e32c511f-89cd-254b-8a53-face984abe75@cogentembedded.com> <26e823ef-759f-16e7-f3da-ac6ce7c01ad3@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Feb 2018 10:57:30 +0100
+Message-ID: <CAMuHMdVhq++MCq9NSE_LjJZAAinZYGyhOGv4VOzVFkihwQGu2w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: add PORT_GP_CFG_25() helper macro
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-gpio@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Condor board dependent part of the EtherAVB device node.
+On Sun, Feb 25, 2018 at 7:13 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> They follow the style of the existing PORT_GP_CFG_<n>() macros and
+> will be used by a follow-up patch for the R8A77980 SoC.
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Based  on the original (and large) patch by Vladimir Barinov.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. queuing in sh-pfc-for-v4.17.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Gr{oetje,eeting}s,
 
----
-Changes in version 2:
-- added the "renesas,no-ether-link" property;
-- overrode the "phy-mode" property.
+                        Geert
 
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -15,6 +15,7 @@
- 
- 	aliases {
- 		serial0 = &scif0;
-+		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -28,6 +29,18 @@
- 	};
- };
- 
-+&avb {
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&phy0>;
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
