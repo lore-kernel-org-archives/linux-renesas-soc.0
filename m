@@ -1,47 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1519667836-31330-2-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org> <1519667836-31330-2-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2018 19:16:38 +0100
-Message-ID: <CAMuHMdWM4-pisr+Yg4FABf0RnY_=2hnCvsmKYdUVe+FwM0T+rQ@mail.gmail.com>
-Subject: Re: [PATCH 1/8] arm64: dts: renesas: salvator-common: Override
- EtherAVB phy-mode
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org, netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:55922 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751661AbeBZR5l (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 26 Feb 2018 12:57:41 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au,
+        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/8] arm64: dts: renesas: salvator-common: Override EtherAVB phy-mode
+Date: Mon, 26 Feb 2018 18:57:09 +0100
+Message-Id: <1519667836-31330-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 6:57 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> As the PHY interface installed on the Salvator-X[S] board, provides TX
-> channel delay, make the "phy-mode" property a board-specific one, meant
-> to override the one specified in the SoC DTSI.
->
-> Follow up patches will reset the SoC DTSI to use "rgmii" mode and let
-> the board file override that.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+As the PHY interface installed on the Salvator-X[S] board, provides TX
+channel delay, make the "phy-mode" property a board-specific one, meant
+to override the one specified in the SoC DTSI.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Follow up patches will reset the SoC DTSI to use "rgmii" mode and let
+the board file override that.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 8e8ec30..c725f9b 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -279,6 +279,7 @@
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
+ 	phy-handle = <&phy0>;
++	phy-mode = "rgmii-txid";
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+-- 
+2.7.4
