@@ -1,269 +1,394 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48490 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934971AbeBMMeI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 07:34:08 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 2/2] mmc: renesas_sdhi: add eMMC HS400 mode support
-Date: Tue, 13 Feb 2018 13:33:58 +0100
-Message-Id: <20180213123358.13212-3-horms+renesas@verge.net.au>
-In-Reply-To: <20180213123358.13212-1-horms+renesas@verge.net.au>
-References: <20180213123358.13212-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 13/15] v4l: vsp1: Assign BRU and BRS to pipelines dynamically
+Date: Mon, 26 Feb 2018 23:45:14 +0200
+Message-Id: <20180226214516.11559-14-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+The VSPDL variant drives two DU channels through two LIF and two
+blenders, BRU and BRS. The DU channels thus share the five available
+VSPDL inputs and expose them as five KMS planes.
 
-This patch adds processing for selecting HS400 mode.
+The current implementation assigns the BRS to the second LIF and thus
+artificially limits the number of planes for the second display channel
+to two at most.
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Lift this artificial limitation by assigning the BRU and BRS to the
+display pipelines on demand based on the number of planes used by each
+pipeline. When a display pipeline needs more than two inputs and the BRU
+is already in use by the other pipeline, this requires reconfiguring the
+other pipeline to free the BRU before processing, which can result in
+frame drop on both pipelines.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-v3 [Simon Horman]
-* Consolidate disable_scc and reset_hs400_mode into reset_hs400_tuning
-  callback
-* Reuse renesas_sdhi_reset_hs400_mode() in renesas_sdhi_hw_reset()
-* Factor out renesas_sdhi_reset_scc()
+ drivers/media/platform/vsp1/vsp1_drm.c | 160 +++++++++++++++++++++++++++------
+ drivers/media/platform/vsp1/vsp1_drm.h |   9 ++
+ 2 files changed, 144 insertions(+), 25 deletions(-)
 
-v2 [Simon Horman]
-* Updated to new version from BSP v3.6.0
-* Dropped 4 and 8 tap differentiation as all SoCs currently supported
-  by the driver in upstream use 4 taps for HS400.
-
-v1 [Simon Horman]
-* Combined patched by Ai Kyuse and Masaharu Hayakawa
-* Rebase
-
-v0 [Masaharu Hayakawa]
----
- drivers/mmc/host/renesas_sdhi_core.c | 133 +++++++++++++++++++++++++++++------
- 1 file changed, 111 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 80943fa07db6..f4c202019cd0 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -211,6 +211,7 @@ static int renesas_sdhi_start_signal_voltage_switch(struct mmc_host *mmc,
- #define SH_MOBILE_SDHI_SCC_CKSEL	0x006
- #define SH_MOBILE_SDHI_SCC_RVSCNTL	0x008
- #define SH_MOBILE_SDHI_SCC_RVSREQ	0x00A
-+#define SH_MOBILE_SDHI_SCC_TMPPORT2	0x00E
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 6c60b72b6f50..87e31ba0ddf5 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -39,7 +39,13 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
+ 	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
  
- /* Definitions for values the SH_MOBILE_SDHI_SCC_DTCNTL register */
- #define SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN		BIT(0)
-@@ -223,6 +224,9 @@ static int renesas_sdhi_start_signal_voltage_switch(struct mmc_host *mmc,
- #define SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN	BIT(0)
- /* Definitions for values the SH_MOBILE_SDHI_SCC_RVSREQ register */
- #define SH_MOBILE_SDHI_SCC_RVSREQ_RVSERR	BIT(2)
-+/* Definitions for values the SH_MOBILE_SDHI_SCC_TMPPORT2 register */
-+#define SH_MOBILE_SDHI_SCC_TMPPORT2_HS400OSEL	BIT(4)
-+#define SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN	BIT(31)
- 
- static inline u32 sd_scc_read32(struct tmio_mmc_host *host,
- 				struct renesas_sdhi *priv, int addr)
-@@ -243,33 +247,30 @@ static unsigned int renesas_sdhi_init_tuning(struct tmio_mmc_host *host)
- 
- 	priv = host_to_priv(host);
- 
--	/* set sampling clock selection range */
--	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL,
--		       0x8 << SH_MOBILE_SDHI_SCC_DTCNTL_TAPNUM_SHIFT);
--
- 	/* Initialize SCC */
- 	sd_ctrl_write32_as_16_and_16(host, CTL_STATUS, 0x0);
- 
--	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL,
--		       SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN |
--		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL));
--
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
- 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
- 
-+	/* set sampling clock selection range */
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL,
-+		       SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN |
-+		       0x8 << SH_MOBILE_SDHI_SCC_DTCNTL_TAPNUM_SHIFT);
+ 	if (drm_pipe->du_complete)
+-		drm_pipe->du_complete(drm_pipe->du_private, completed);
++		drm_pipe->du_complete(drm_pipe->du_private,
++				      completed && !notify);
 +
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL,
- 		       SH_MOBILE_SDHI_SCC_CKSEL_DTSEL |
- 		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL));
- 
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
--			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
- 		       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
- 		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
- 
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF, priv->scc_tappos);
- 
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-+			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
- 	/* Read TAPNUM */
- 	return (sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL) >>
- 		SH_MOBILE_SDHI_SCC_DTCNTL_TAPNUM_SHIFT) &
-@@ -285,13 +286,103 @@ static void renesas_sdhi_prepare_tuning(struct tmio_mmc_host *host,
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET, tap);
++	if (notify) {
++		drm_pipe->force_bru_release = false;
++		wake_up(&drm_pipe->wait_queue);
++	}
  }
  
-+static void renesas_sdhi_prepare_hs400_tuning(struct mmc_host *mmc,
-+					      struct mmc_ios *ios)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	struct renesas_sdhi *priv = host_to_priv(host);
-+
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-+		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+	/* Set HS400 mode */
-+	sd_ctrl_write16(host, CTL_SDIF_MODE, 0x0001 |
-+			sd_ctrl_read16(host, CTL_SDIF_MODE));
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2,
-+		       (SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN |
-+			SH_MOBILE_SDHI_SCC_TMPPORT2_HS400OSEL) |
-+			sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2));
-+
-+	/* Set the sampling clock selection range of HS400 mode */
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL,
-+		       SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN |
-+		       0x4 << SH_MOBILE_SDHI_SCC_DTCNTL_TAPNUM_SHIFT);
-+
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET,
-+		       host->tap_set / 2);
-+
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL,
-+		       SH_MOBILE_SDHI_SCC_CKSEL_DTSEL |
-+		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL));
-+
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-+			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+}
-+
-+static void renesas_sdhi_reset_scc(struct tmio_mmc_host *host,
-+				   struct renesas_sdhi *priv)
-+{
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-+			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL,
-+		       ~SH_MOBILE_SDHI_SCC_CKSEL_DTSEL &
-+		       sd_scc_read32(host, priv,
-+				     SH_MOBILE_SDHI_SCC_CKSEL));
-+}
-+
-+static void renesas_sdhi_disable_scc(struct tmio_mmc_host *host,
-+				     struct renesas_sdhi *priv)
-+{
-+
-+	renesas_sdhi_reset_scc(host, priv);
-+
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DTCNTL,
-+		       ~SH_MOBILE_SDHI_SCC_DTCNTL_TAPEN &
-+		       sd_scc_read32(host, priv,
-+				     SH_MOBILE_SDHI_SCC_DTCNTL));
-+
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-+			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+}
-+
-+static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
-+					  struct renesas_sdhi *priv)
-+{
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-+			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+
-+	/* Reset HS400 mode */
-+	sd_ctrl_write16(host, CTL_SDIF_MODE, ~0x0001 &
-+			sd_ctrl_read16(host, CTL_SDIF_MODE));
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2,
-+		       ~(SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN |
-+			 SH_MOBILE_SDHI_SCC_TMPPORT2_HS400OSEL) &
-+			sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2));
-+
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-+			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+}
-+
-+static void renesas_sdhi_reset_hs400_tuning(struct mmc_host *mmc)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	struct renesas_sdhi *priv = host_to_priv(host);
-+
-+	if (host->mmc->ios.timing != MMC_TIMING_UHS_SDR104 &&
-+	    host->mmc->ios.timing != MMC_TIMING_MMC_HS200 &&
-+	    host->mmc->ios.timing != MMC_TIMING_MMC_HS400)
-+		renesas_sdhi_disable_scc(host, priv);
-+	if (host->mmc->ios.timing == MMC_TIMING_MMC_HS400 || !priv->scc_ctl)
-+		renesas_sdhi_reset_hs400_mode(host, priv);
-+}
-+
- #define SH_MOBILE_SDHI_MAX_TAP 3
+ /* -----------------------------------------------------------------------------
+@@ -149,6 +155,10 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
+ }
  
- static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
+ /* Setup the BRU source pad. */
++static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
++					struct vsp1_pipeline *pipe);
++static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe);
++
+ static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
+ 				      struct vsp1_pipeline *pipe)
  {
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 	unsigned long tap_cnt;  /* counter of tuning success */
--	unsigned long tap_set;  /* tap position */
- 	unsigned long tap_start;/* start position of tuning success */
- 	unsigned long tap_end;  /* end position of tuning success */
- 	unsigned long ntap;     /* temporary counter of tuning success */
-@@ -329,12 +420,12 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- 	}
+@@ -156,8 +166,93 @@ static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
+ 	struct v4l2_subdev_format format = {
+ 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+ 	};
++	struct vsp1_entity *bru;
+ 	int ret;
  
- 	if (tap_cnt >= SH_MOBILE_SDHI_MAX_TAP)
--		tap_set = (tap_start + tap_end) / 2 % host->tap_num;
-+		host->tap_set = (tap_start + tap_end) / 2 % host->tap_num;
- 	else
- 		return -EIO;
++	/*
++	 * Pick a BRU:
++	 * - If we need more than two inputs, use the main BRU.
++	 * - Otherwise, if we are not forced to release our BRU, keep it.
++	 * - Else, use any free BRU (randomly starting with the main BRU).
++	 */
++	if (pipe->num_inputs > 2)
++		bru = &vsp1->bru->entity;
++	else if (pipe->bru && !drm_pipe->force_bru_release)
++		bru = pipe->bru;
++	else if (!vsp1->bru->entity.pipe)
++		bru = &vsp1->bru->entity;
++	else
++		bru = &vsp1->brs->entity;
++
++	/* Switch BRU if needed. */
++	if (bru != pipe->bru) {
++		struct vsp1_entity *released_bru = NULL;
++
++		/* Release our BRU if we have one. */
++		if (pipe->bru) {
++			/*
++			 * The BRU might be acquired by the other pipeline in
++			 * the next step. We must thus remove it from the list
++			 * of entities for this pipeline. The other pipeline's
++			 * hardware configuration will reconfigure the BRU
++			 * routing.
++			 *
++			 * However, if the other pipeline doesn't acquire our
++			 * BRU, we need to keep it in the list, otherwise the
++			 * hardware configuration step won't disconnect it from
++			 * the pipeline. To solve this, store the released BRU
++			 * pointer to add it back to the list of entities later
++			 * if it isn't acquired by the other pipeline.
++			 */
++			released_bru = pipe->bru;
++
++			list_del(&pipe->bru->list_pipe);
++			pipe->bru->sink = NULL;
++			pipe->bru->pipe = NULL;
++			pipe->bru = NULL;
++		}
++
++		/*
++		 * If the BRU we need is in use, force the owner pipeline to
++		 * switch to the other BRU and wait until the switch completes.
++		 */
++		if (bru->pipe) {
++			struct vsp1_drm_pipeline *owner_pipe;
++
++			owner_pipe = to_vsp1_drm_pipeline(bru->pipe);
++			owner_pipe->force_bru_release = true;
++
++			vsp1_du_pipeline_setup_input(vsp1, &owner_pipe->pipe);
++			vsp1_du_pipeline_configure(&owner_pipe->pipe);
++
++			ret = wait_event_timeout(owner_pipe->wait_queue,
++						 !owner_pipe->force_bru_release,
++						 msecs_to_jiffies(500));
++			if (ret == 0)
++				dev_warn(vsp1->dev,
++					 "DRM pipeline %u reconfiguration timeout\n",
++					 owner_pipe->pipe.lif->index);
++		}
++
++		/*
++		 * If the BRU we have released previously hasn't been acquired
++		 * by the other pipeline, add it back to the entities list (with
++		 * the pipe pointer NULL) to let vsp1_du_pipeline_configure()
++		 * disconnect it from the hardware pipeline.
++		 */
++		if (released_bru && !released_bru->pipe)
++			list_add_tail(&released_bru->list_pipe,
++				      &pipe->entities);
++
++		/* Add the BRU to the pipeline. */
++		pipe->bru = bru;
++		pipe->bru->pipe = pipe;
++		pipe->bru->sink = &pipe->output->entity;
++		pipe->bru->sink_pad = 0;
++
++		list_add_tail(&pipe->bru->list_pipe, &pipe->entities);
++	}
++
+ 	/*
+ 	 * Configure the format on the BRU source and verify that it matches the
+ 	 * requested format. We don't set the media bus code as it is configured
+@@ -197,7 +292,7 @@ static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
+ 					struct vsp1_pipeline *pipe)
+ {
+ 	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
+-	struct vsp1_bru *bru = to_bru(&pipe->bru->subdev);
++	struct vsp1_bru *bru;
+ 	unsigned int i;
+ 	int ret;
  
- 	/* Set SCC */
--	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET, tap_set);
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET, host->tap_set);
+@@ -208,15 +303,6 @@ static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
+ 		struct vsp1_rwpf *rpf = vsp1->rpf[i];
+ 		unsigned int j;
  
- 	/* Enable auto re-tuning */
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
-@@ -367,13 +458,8 @@ static void renesas_sdhi_hw_reset(struct tmio_mmc_host *host)
- 
- 	priv = host_to_priv(host);
- 
--	/* Reset SCC */
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
--			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-		/*
+-		 * Make sure we don't accept more inputs than the hardware can
+-		 * handle. This is a temporary fix to avoid display stall, we
+-		 * need to instead allocate the BRU or BRS to display pipelines
+-		 * dynamically based on the number of planes they each use.
+-		 */
+-		if (pipe->num_inputs >= pipe->bru->source_pad)
+-			pipe->inputs[i] = NULL;
 -
--	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL,
--		       ~SH_MOBILE_SDHI_SCC_CKSEL_DTSEL &
--		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL));
-+	renesas_sdhi_reset_scc(host, priv);
-+	renesas_sdhi_reset_hs400_mode(host, priv);
+ 		if (!pipe->inputs[i])
+ 			continue;
  
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
- 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-@@ -587,7 +673,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	/* Enable tuning iff we have an SCC and a supported mode */
- 	if (of_data && of_data->scc_offset &&
- 	    (host->mmc->caps & MMC_CAP_UHS_SDR104 ||
--	     host->mmc->caps2 & MMC_CAP2_HS200_1_8V_SDR)) {
-+	     host->mmc->caps2 & (MMC_CAP2_HS200_1_8V_SDR |
-+				 MMC_CAP2_HS400_1_8V))) {
- 		const struct renesas_sdhi_scc *taps = of_data->taps;
- 		bool hit = false;
- 
-@@ -611,6 +698,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		host->select_tuning = renesas_sdhi_select_tuning;
- 		host->check_scc_error = renesas_sdhi_check_scc_error;
- 		host->hw_reset = renesas_sdhi_hw_reset;
-+		host->prepare_hs400_tuning = renesas_sdhi_prepare_hs400_tuning;
-+		host->reset_hs400_tuning = renesas_sdhi_reset_hs400_tuning;
+@@ -242,6 +328,8 @@ static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
+ 		return ret;
  	}
  
- 	i = 0;
++	bru = to_bru(&pipe->bru->subdev);
++
+ 	/* Setup the RPF input pipeline for every enabled input. */
+ 	for (i = 0; i < pipe->bru->source_pad; ++i) {
+ 		struct vsp1_rwpf *rpf = inputs[i];
+@@ -339,6 +427,7 @@ static int vsp1_du_pipeline_setup_output(struct vsp1_device *vsp1,
+ /* Configure all entities in the pipeline. */
+ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
+ {
++	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
+ 	struct vsp1_entity *entity;
+ 	struct vsp1_entity *next;
+ 	struct vsp1_dl_list *dl;
+@@ -369,7 +458,7 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
+ 		}
+ 	}
+ 
+-	vsp1_dl_list_commit(dl, false);
++	vsp1_dl_list_commit(dl, drm_pipe->force_bru_release);
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -414,7 +503,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 	struct vsp1_drm_pipeline *drm_pipe;
+ 	struct vsp1_pipeline *pipe;
+-	struct vsp1_bru *bru;
+ 	unsigned long flags;
+ 	unsigned int i;
+ 	int ret;
+@@ -424,9 +512,14 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 
+ 	drm_pipe = &vsp1->drm->pipe[pipe_index];
+ 	pipe = &drm_pipe->pipe;
+-	bru = to_bru(&pipe->bru->subdev);
+ 
+ 	if (!cfg) {
++		struct vsp1_bru *bru;
++
++		mutex_lock(&vsp1->drm->lock);
++
++		bru = to_bru(&pipe->bru->subdev);
++
+ 		/*
+ 		 * NULL configuration means the CRTC is being disabled, stop
+ 		 * the pipeline and turn the light off.
+@@ -456,6 +549,12 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 		drm_pipe->du_complete = NULL;
+ 		pipe->num_inputs = 0;
+ 
++		list_del(&pipe->bru->list_pipe);
++		pipe->bru->pipe = NULL;
++		pipe->bru = NULL;
++
++		mutex_unlock(&vsp1->drm->lock);
++
+ 		vsp1_dlm_reset(pipe->output->dlm);
+ 		vsp1_device_put(vsp1);
+ 
+@@ -470,19 +569,21 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u\n",
+ 		__func__, pipe_index, cfg->width, cfg->height);
+ 
++	mutex_lock(&vsp1->drm->lock);
++
+ 	/* Setup formats through the pipeline. */
+ 	ret = vsp1_du_pipeline_setup_input(vsp1, pipe);
+ 	if (ret < 0)
+-		return ret;
++		goto unlock;
+ 
+ 	ret = vsp1_du_pipeline_setup_output(vsp1, pipe);
+ 	if (ret < 0)
+-		return ret;
++		goto unlock;
+ 
+ 	/* Enable the VSP1. */
+ 	ret = vsp1_device_get(vsp1);
+ 	if (ret < 0)
+-		return ret;
++		goto unlock;
+ 
+ 	/*
+ 	 * Register a callback to allow us to notify the DRM driver of frame
+@@ -498,6 +599,12 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	/* Configure all entities in the pipeline. */
+ 	vsp1_du_pipeline_configure(pipe);
+ 
++unlock:
++	mutex_unlock(&vsp1->drm->lock);
++
++	if (ret < 0)
++		return ret;
++
+ 	/* Start the pipeline. */
+ 	spin_lock_irqsave(&pipe->irqlock, flags);
+ 	vsp1_pipeline_run(pipe);
+@@ -516,6 +623,9 @@ EXPORT_SYMBOL_GPL(vsp1_du_setup_lif);
+  */
+ void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index)
+ {
++	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
++
++	mutex_lock(&vsp1->drm->lock);
+ }
+ EXPORT_SYMBOL_GPL(vsp1_du_atomic_begin);
+ 
+@@ -629,6 +739,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 
+ 	vsp1_du_pipeline_setup_input(vsp1, pipe);
+ 	vsp1_du_pipeline_configure(pipe);
++	mutex_unlock(&vsp1->drm->lock);
+ }
+ EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
+ 
+@@ -667,28 +778,26 @@ int vsp1_drm_init(struct vsp1_device *vsp1)
+ 	if (!vsp1->drm)
+ 		return -ENOMEM;
+ 
++	mutex_init(&vsp1->drm->lock);
++
+ 	/* Create one DRM pipeline per LIF. */
+ 	for (i = 0; i < vsp1->info->lif_count; ++i) {
+ 		struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[i];
+ 		struct vsp1_pipeline *pipe = &drm_pipe->pipe;
+ 
++		init_waitqueue_head(&drm_pipe->wait_queue);
++
+ 		vsp1_pipeline_init(pipe);
+ 
+ 		pipe->frame_end = vsp1_du_pipeline_frame_end;
+ 
+ 		/*
+-		 * The DRM pipeline is static, add entities manually. The first
+-		 * pipeline uses the BRU and the second pipeline the BRS.
++		 * The output side of the DRM pipeline is static, add the
++		 * corresponding entities manually.
+ 		 */
+-		pipe->bru = i == 0 ? &vsp1->bru->entity : &vsp1->brs->entity;
+ 		pipe->output = vsp1->wpf[i];
+ 		pipe->lif = &vsp1->lif[i]->entity;
+ 
+-		pipe->bru->pipe = pipe;
+-		pipe->bru->sink = &pipe->output->entity;
+-		pipe->bru->sink_pad = 0;
+-		list_add_tail(&pipe->bru->list_pipe, &pipe->entities);
+-
+ 		pipe->output->entity.pipe = pipe;
+ 		pipe->output->entity.sink = pipe->lif;
+ 		pipe->output->entity.sink_pad = 0;
+@@ -710,4 +819,5 @@ int vsp1_drm_init(struct vsp1_device *vsp1)
+ 
+ void vsp1_drm_cleanup(struct vsp1_device *vsp1)
+ {
++	mutex_destroy(&vsp1->drm->lock);
+ }
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
+index c8dd75ba01f6..c84bc1c456c0 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.h
++++ b/drivers/media/platform/vsp1/vsp1_drm.h
+@@ -13,7 +13,9 @@
+ #ifndef __VSP1_DRM_H__
+ #define __VSP1_DRM_H__
+ 
++#include <linux/mutex.h>
+ #include <linux/videodev2.h>
++#include <linux/wait.h>
+ 
+ #include "vsp1_pipe.h"
+ 
+@@ -22,6 +24,8 @@
+  * @pipe: the VSP1 pipeline used for display
+  * @width: output display width
+  * @height: output display height
++ * @force_bru_release: when set, release the BRU during the next reconfiguration
++ * @wait_queue: wait queue to wait for BRU release completion
+  * @du_complete: frame completion callback for the DU driver (optional)
+  * @du_private: data to be passed to the du_complete callback
+  */
+@@ -31,6 +35,9 @@ struct vsp1_drm_pipeline {
+ 	unsigned int width;
+ 	unsigned int height;
+ 
++	bool force_bru_release;
++	wait_queue_head_t wait_queue;
++
+ 	/* Frame synchronisation */
+ 	void (*du_complete)(void *, bool);
+ 	void *du_private;
+@@ -39,11 +46,13 @@ struct vsp1_drm_pipeline {
+ /**
+  * vsp1_drm - State for the API exposed to the DRM driver
+  * @pipe: the VSP1 DRM pipeline used for display
++ * @lock: protects the BRU and BRS allocation
+  * @inputs: source crop rectangle, destination compose rectangle and z-order
+  *	position for every input (indexed by RPF index)
+  */
+ struct vsp1_drm {
+ 	struct vsp1_drm_pipeline pipe[VSP1_MAX_LIF];
++	struct mutex lock;
+ 
+ 	struct {
+ 		struct v4l2_rect crop;
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
