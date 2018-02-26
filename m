@@ -1,147 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36345 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752027AbeBDTPk (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34023 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752771AbeBZNwh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 4 Feb 2018 14:15:40 -0500
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFT v4] gpio: gpio-rcar: Support S2RAM
-Date: Mon,  5 Feb 2018 04:15:02 +0900
-Message-Id: <1517771702-16984-1-git-send-email-ykaneko0929@gmail.com>
+        Mon, 26 Feb 2018 08:52:37 -0500
+Received: by mail-qt0-f196.google.com with SMTP id l25so8928184qtj.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Feb 2018 05:52:37 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <151904098248.30541.17415579752890048779.sendpatchset@little-apple>
+References: <151904097369.30541.12132732484797103163.sendpatchset@little-apple>
+ <151904098248.30541.17415579752890048779.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Feb 2018 14:52:36 +0100
+Message-ID: <CAMuHMdXw8akNYJTt1ZmUnHhwR7Q-M-GTizqUbU2z9q=hTrbo-Q@mail.gmail.com>
+Subject: Re: [PATCH 01/02] ARM: dts: silk: Add r1ex24002 EEPROM to DT
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hien Dang <hien.dang.eb@renesas.com>
+On Mon, Feb 19, 2018 at 12:49 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Extend the Silk board support to include U14 which is an I2C based EEPROM
+> hooked up to the I2C1 bus.
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-This patch adds an implementation that saves and restores the state of
-GPIO configuration on suspend and resume.
+late
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Modify structure of the bank info to simplify a saving registers]
-[Remove DEV_PM_OPS macro]
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
+Gr{oetje,eeting}s,
 
-This patch is based on the for-next branch of linux-gpio tree.
+                        Geert
 
-v2 [Yoshihiro Kaneko]
-* Modify structure of the bank info as suggested by Geert Uytterhoeven
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-v3 [Yoshihiro Kaneko]
-* Remove DEV_PM_OPS macro as suggested by Vladimir Zapolskiy
-
-v4 [Yoshihiro Kaneko]
-* As suggested by Geert Uytterhoeven
-  - make the name of all members of gpio_rcar_bank_info accord with the
-    name of the registers
-  - fix type of the 'offset' variable in unsigned int
-  - fix the inverted logic in gpio_rcar_resume()
-
- drivers/gpio/gpio-rcar.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
-
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index e76de57..e5b0dbe 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -31,6 +31,16 @@
- #include <linux/spinlock.h>
- #include <linux/slab.h>
- 
-+struct gpio_rcar_bank_info {
-+	u32 iointsel;
-+	u32 inoutsel;
-+	u32 outdt;
-+	u32 posneg;
-+	u32 edglevel;
-+	u32 bothedge;
-+	u32 intmsk;
-+};
-+
- struct gpio_rcar_priv {
- 	void __iomem *base;
- 	spinlock_t lock;
-@@ -41,6 +51,7 @@ struct gpio_rcar_priv {
- 	unsigned int irq_parent;
- 	bool has_both_edge_trigger;
- 	bool needs_clk;
-+	struct gpio_rcar_bank_info bank_info;
- };
- 
- #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-@@ -531,11 +542,66 @@ static int gpio_rcar_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int gpio_rcar_suspend(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+
-+	p->bank_info.iointsel = gpio_rcar_read(p, IOINTSEL);
-+	p->bank_info.inoutsel = gpio_rcar_read(p, INOUTSEL);
-+	p->bank_info.outdt = gpio_rcar_read(p, OUTDT);
-+	p->bank_info.intmsk = gpio_rcar_read(p, INTMSK);
-+	p->bank_info.posneg = gpio_rcar_read(p, POSNEG);
-+	p->bank_info.edglevel = gpio_rcar_read(p, EDGLEVEL);
-+	if (p->has_both_edge_trigger)
-+		p->bank_info.bothedge = gpio_rcar_read(p, BOTHEDGE);
-+
-+	return 0;
-+}
-+
-+static int gpio_rcar_resume(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+	unsigned int offset;
-+	u32 mask;
-+
-+	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
-+		mask = BIT(offset);
-+		/* I/O pin */
-+		if (!(p->bank_info.iointsel & mask)) {
-+			if (p->bank_info.inoutsel & mask)
-+				gpio_rcar_direction_output(
-+					&p->gpio_chip, offset,
-+					!!(p->bank_info.outdt & mask));
-+			else
-+				gpio_rcar_direction_input(&p->gpio_chip,
-+							  offset);
-+		} else {
-+			/* Interrupt pin */
-+			gpio_rcar_config_interrupt_input_mode(
-+				p,
-+				offset,
-+				!(p->bank_info.posneg & mask),
-+				!(p->bank_info.edglevel & mask),
-+				!!(p->bank_info.bothedge & mask));
-+
-+			if (p->bank_info.intmsk & mask)
-+				gpio_rcar_write(p, MSKCLR, mask);
-+		}
-+	}
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM_SLEEP*/
-+
-+static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops, gpio_rcar_suspend, gpio_rcar_resume);
-+
- static struct platform_driver gpio_rcar_device_driver = {
- 	.probe		= gpio_rcar_probe,
- 	.remove		= gpio_rcar_remove,
- 	.driver		= {
- 		.name	= "gpio_rcar",
-+		.pm     = &gpio_rcar_pm_ops,
- 		.of_match_table = of_match_ptr(gpio_rcar_of_table),
- 	}
- };
--- 
-1.9.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
