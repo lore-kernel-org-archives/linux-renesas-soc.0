@@ -1,46 +1,57 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:46253 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751844AbeBZSUj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 13:20:39 -0500
-MIME-Version: 1.0
-In-Reply-To: <1519667836-31330-7-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org> <1519667836-31330-7-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2018 19:20:37 +0100
-Message-ID: <CAMuHMdVRCWeCYcxL-iiaQ0oKCh9cAaQSieBU2KMR-F5NHrq1TA@mail.gmail.com>
-Subject: Re: [PATCH 6/8] iommu/ipmmu-vmsa: Hook up R8A77965 DT matching code
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org, netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au,
+        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/8] iommu/ipmmu-vmsa: Hook up R8A77965 DT matching code
+Date: Mon, 26 Feb 2018 18:57:14 +0100
+Message-Id: <1519667836-31330-7-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 6:57 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add support for R-Car M3-N (R8A77965) SoC IPMMUs.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Add support for R-Car M3-N (R8A77965) SoC IPMMUs.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/iommu/ipmmu-vmsa.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 933a3da..6a0e714 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -763,6 +763,7 @@ static bool ipmmu_slave_whitelist(struct device *dev)
+ static const struct soc_device_attribute soc_rcar_gen3[] = {
+ 	{ .soc_id = "r8a7795", },
+ 	{ .soc_id = "r8a7796", },
++	{ .soc_id = "r8a77965", },
+ 	{ .soc_id = "r8a77970", },
+ 	{ .soc_id = "r8a77995", },
+ 	{ /* sentinel */ }
+@@ -945,6 +946,9 @@ static const struct of_device_id ipmmu_of_ids[] = {
+ 		.compatible = "renesas,ipmmu-r8a7796",
+ 		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
++		.compatible = "renesas,ipmmu-r8a77965",
++		.data = &ipmmu_features_rcar_gen3,
++	}, {
+ 		.compatible = "renesas,ipmmu-r8a77970",
+ 		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
+@@ -1127,6 +1131,7 @@ module_exit(ipmmu_exit);
+ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa");
+ IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795");
+ IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796");
++IOMMU_OF_DECLARE(ipmmu_r8a77965_iommu_of, "renesas,ipmmu-r8a77965");
+ IOMMU_OF_DECLARE(ipmmu_r8a77970_iommu_of, "renesas,ipmmu-r8a77970");
+ IOMMU_OF_DECLARE(ipmmu_r8a77995_iommu_of, "renesas,ipmmu-r8a77995");
+ 
+-- 
+2.7.4
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
