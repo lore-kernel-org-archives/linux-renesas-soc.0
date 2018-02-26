@@ -1,78 +1,167 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44362 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754320AbeBGTc3 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54324 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751797AbeBZVou (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Feb 2018 14:32:29 -0500
-Date: Wed, 7 Feb 2018 20:32:27 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 11/16] mmc: tmio: deprecate
- "toshiba,mmc-wrprotect-disable" DT property
-Message-ID: <20180207193227.hu6cyh2e27dmrqwt@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-12-git-send-email-yamada.masahiro@socionext.com>
- <CAK7LNAQUJw-fjuJO68Kvskn8BRYW3rZj4YMtbo-Oxfv7c=6Ggg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="n64esxgg2ls3up2p"
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQUJw-fjuJO68Kvskn8BRYW3rZj4YMtbo-Oxfv7c=6Ggg@mail.gmail.com>
+        Mon, 26 Feb 2018 16:44:50 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 06/15] v4l: vsp1: Share duplicated DRM pipeline configuration code
+Date: Mon, 26 Feb 2018 23:45:07 +0200
+Message-Id: <20180226214516.11559-7-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Move the duplicated DRM pipeline configuration code to a function and
+call it from vsp1_du_setup_lif() and vsp1_du_atomic_flush().
 
---n64esxgg2ls3up2p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_drm.c | 95 +++++++++++++++-------------------
+ 1 file changed, 43 insertions(+), 52 deletions(-)
 
-On Thu, Jan 18, 2018 at 10:58:36AM +0900, Masahiro Yamada wrote:
-> 2018-01-18 1:28 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> > This property is equivalent to "disable-wp" defined in
-> > Documentation/devicetree/bindings/mmc/tmio_mmc.txt
->=20
-> This is mistake.
->=20
-> "disable-wp" is defined in
->=20
-> Documentation/devicetree/bindings/mmc/mmc.txt
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index e210917fdc3f..9a043a915c0b 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -42,6 +42,47 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
+ 		drm_pipe->du_complete(drm_pipe->du_private, completed);
+ }
+ 
++/* -----------------------------------------------------------------------------
++ * Pipeline Configuration
++ */
++
++/* Configure all entities in the pipeline. */
++static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
++{
++	struct vsp1_entity *entity;
++	struct vsp1_entity *next;
++	struct vsp1_dl_list *dl;
++
++	dl = vsp1_dl_list_get(pipe->output->dlm);
++
++	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
++		/* Disconnect unused RPFs from the pipeline. */
++		if (entity->type == VSP1_ENTITY_RPF &&
++		    !pipe->inputs[entity->index]) {
++			vsp1_dl_list_write(dl, entity->route->reg,
++					   VI6_DPR_NODE_UNUSED);
++
++			entity->pipe = NULL;
++			list_del(&entity->list_pipe);
++
++			continue;
++		}
++
++		vsp1_entity_route_setup(entity, pipe, dl);
++
++		if (entity->ops->configure) {
++			entity->ops->configure(entity, pipe, dl,
++					       VSP1_ENTITY_PARAMS_INIT);
++			entity->ops->configure(entity, pipe, dl,
++					       VSP1_ENTITY_PARAMS_RUNTIME);
++			entity->ops->configure(entity, pipe, dl,
++					       VSP1_ENTITY_PARAMS_PARTITION);
++		}
++	}
++
++	vsp1_dl_list_commit(dl);
++}
++
+ /* -----------------------------------------------------------------------------
+  * DU Driver API
+  */
+@@ -85,9 +126,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	struct vsp1_drm_pipeline *drm_pipe;
+ 	struct vsp1_pipeline *pipe;
+ 	struct vsp1_bru *bru;
+-	struct vsp1_entity *entity;
+-	struct vsp1_entity *next;
+-	struct vsp1_dl_list *dl;
+ 	struct v4l2_subdev_format format;
+ 	unsigned long flags;
+ 	unsigned int i;
+@@ -239,22 +277,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	vsp1_write(vsp1, VI6_DISP_IRQ_ENB, 0);
+ 
+ 	/* Configure all entities in the pipeline. */
+-	dl = vsp1_dl_list_get(pipe->output->dlm);
+-
+-	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
+-		vsp1_entity_route_setup(entity, pipe, dl);
+-
+-		if (entity->ops->configure) {
+-			entity->ops->configure(entity, pipe, dl,
+-					       VSP1_ENTITY_PARAMS_INIT);
+-			entity->ops->configure(entity, pipe, dl,
+-					       VSP1_ENTITY_PARAMS_RUNTIME);
+-			entity->ops->configure(entity, pipe, dl,
+-					       VSP1_ENTITY_PARAMS_PARTITION);
+-		}
+-	}
+-
+-	vsp1_dl_list_commit(dl);
++	vsp1_du_pipeline_configure(pipe);
+ 
+ 	/* Start the pipeline. */
+ 	spin_lock_irqsave(&pipe->irqlock, flags);
+@@ -490,15 +513,9 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 	struct vsp1_pipeline *pipe = &drm_pipe->pipe;
+ 	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
+ 	struct vsp1_bru *bru = to_bru(&pipe->bru->subdev);
+-	struct vsp1_entity *entity;
+-	struct vsp1_entity *next;
+-	struct vsp1_dl_list *dl;
+ 	unsigned int i;
+ 	int ret;
+ 
+-	/* Prepare the display list. */
+-	dl = vsp1_dl_list_get(pipe->output->dlm);
+-
+ 	/* Count the number of enabled inputs and sort them by Z-order. */
+ 	pipe->num_inputs = 0;
+ 
+@@ -557,33 +574,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 				__func__, rpf->entity.index);
+ 	}
+ 
+-	/* Configure all entities in the pipeline. */
+-	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
+-		/* Disconnect unused RPFs from the pipeline. */
+-		if (entity->type == VSP1_ENTITY_RPF &&
+-		    !pipe->inputs[entity->index]) {
+-			vsp1_dl_list_write(dl, entity->route->reg,
+-					   VI6_DPR_NODE_UNUSED);
+-
+-			entity->pipe = NULL;
+-			list_del(&entity->list_pipe);
+-
+-			continue;
+-		}
+-
+-		vsp1_entity_route_setup(entity, pipe, dl);
+-
+-		if (entity->ops->configure) {
+-			entity->ops->configure(entity, pipe, dl,
+-					       VSP1_ENTITY_PARAMS_INIT);
+-			entity->ops->configure(entity, pipe, dl,
+-					       VSP1_ENTITY_PARAMS_RUNTIME);
+-			entity->ops->configure(entity, pipe, dl,
+-					       VSP1_ENTITY_PARAMS_PARTITION);
+-		}
+-	}
+-
+-	vsp1_dl_list_commit(dl);
++	vsp1_du_pipeline_configure(pipe);
+ }
+ EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
+ 
+-- 
+Regards,
 
-With that fixed:
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---n64esxgg2ls3up2p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7VEoACgkQFA3kzBSg
-KbZ2MQ//cTK2L1RNvVTODkTz7P/XIz7dtmszlYSZXMagmYtqh1rW19FRPo40yo89
-XL0DNLiXTgN0yEWv6178HBPe4QGASdxxpjIJBH5CT5/uQT2nX8C2VG0d+w82WESO
-zwTshuqKfRDYWWFIII6FPu4YZZQT+Nk9pSBvAUR0l9MPrI7uSkrVdOCK/DpK60Jf
-bkuXqvo3QmCI76Cz6cBAiF9lAM9d0mIFst247fH3Cvf0IE/elXkWej3elZiOgZVt
-orqcdGZDBbCmGFx0OCUItl5o+Zb2wIefAG/lfk3ULPoajNAiHHgvjTKfoxWD7s3d
-b1P/WT3Yx3VttVTOvIaUWOV6NXoOehFIVxiuufrzyUIuiM11s2VTHTa1PeyJf/L/
-QTrnG67yvOhyKLtrQ4egaxF+NMKySbd3Wl7apAB3yMvz72t2gnrFm86W+WUHy5kY
-2VuBxP4iDToRaQ+dqVLq+csnbOG83jf7O2jk3h6M0eIuULhRp+XcyqBfsMkhmaP1
-OddjI5LBdU2oIMkVzXxo36JaNKgyWjJgHq1ztJ/nZGfL4KNckHTj0VRJgvftmiwa
-vbr4FJ2/jy9H3pva0qLEcTuynk11jA0onZ+4uK2YBIvs3zJbai2YQyBUvVBDfCOJ
-gKA5cI3mmZ/Is3zx8pL1L4egtK39eGmGo57oJ/KJpsK3FrgKavI=
-=mKCt
------END PGP SIGNATURE-----
-
---n64esxgg2ls3up2p--
+Laurent Pinchart
