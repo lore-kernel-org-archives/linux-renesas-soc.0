@@ -1,42 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54337 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751759AbeB0IJa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:09:30 -0500
-Date: Tue, 27 Feb 2018 09:09:10 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/2] arm64: dts: r8a77965: salvator-x(s): Enable s2ram
- and PMIC
-Message-ID: <20180227080910.oevdck7upggudxks@verge.net.au>
-References: <1519659743-27027-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519659743-27027-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] arm64: dts: r8a77965: salvator-x(s): Enable s2ram and PMIC
+Date: Mon, 26 Feb 2018 16:42:21 +0100
+Message-Id: <1519659743-27027-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 04:42:21PM +0100, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch populates the placeholders in the R-Car M3-N DTS file for the
-> IIC Bus Interface for DVFS (IIC for DVFS) and Interrupt Controller for
-> External Devices (INTC-EX) device nodes.
-> 
-> After applying the first patch, you can start using s2ram (PSCI
-> suspend), like on other Salvator-X(S) boards
-> (https://elinux.org/R-Car/Boards/Salvator-XS#PSCI_System_Suspend).
-> 
-> The second patch enables dependencies for the BD9571MWV PMIC device,
-> which is described in salvator-common.dtsi. Note that operation still
-> depends on "[PATCH] pinctrl: sh-pfc: r8a77965: Add support for INTC-EX
-> IRQ pins".
-> 
-> Thanks!
+	Hi Simon, Magnus,
 
-Thanks, applied.
+This patch populates the placeholders in the R-Car M3-N DTS file for the
+IIC Bus Interface for DVFS (IIC for DVFS) and Interrupt Controller for
+External Devices (INTC-EX) device nodes.
+
+After applying the first patch, you can start using s2ram (PSCI
+suspend), like on other Salvator-X(S) boards
+(https://elinux.org/R-Car/Boards/Salvator-XS#PSCI_System_Suspend).
+
+The second patch enables dependencies for the BD9571MWV PMIC device,
+which is described in salvator-common.dtsi. Note that operation still
+depends on "[PATCH] pinctrl: sh-pfc: r8a77965: Add support for INTC-EX
+IRQ pins".
+
+Thanks!
+
+Geert Uytterhoeven (2):
+  arm64: dts: r8a77965: Add IIC-DVFS device node
+  arm64: dts: r8a77965: Add INTC-EX device node
+
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
