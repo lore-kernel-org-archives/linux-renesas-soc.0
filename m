@@ -1,166 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from galahad.ideasonboard.com ([185.26.127.97]:54324 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751797AbeBZVou (ORCPT
+        with ESMTP id S1751839AbeBZVoy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 16:44:50 -0500
+        Mon, 26 Feb 2018 16:44:54 -0500
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-media@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 06/15] v4l: vsp1: Share duplicated DRM pipeline configuration code
-Date: Mon, 26 Feb 2018 23:45:07 +0200
-Message-Id: <20180226214516.11559-7-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 12/15] v4l: vsp1: Generalize detection of entity removal from DRM pipeline
+Date: Mon, 26 Feb 2018 23:45:13 +0200
+Message-Id: <20180226214516.11559-13-laurent.pinchart+renesas@ideasonboard.com>
 In-Reply-To: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the duplicated DRM pipeline configuration code to a function and
-call it from vsp1_du_setup_lif() and vsp1_du_atomic_flush().
+When disabling a DRM plane, the corresponding RPF is only marked as
+removed from the pipeline in the atomic update handler, with the actual
+removal happening when configuring the pipeline at atomic commit time.
+This is required as the RPF has to be disabled in the hardware, which
+can't be done from the atomic update handler.
+
+The current implementation is RPF-specific. Make it independent of the
+entity type by using the entity's pipe pointer to mark removal from the
+pipeline. This will allow using the mechanism to remove BRU instances.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_drm.c | 95 +++++++++++++++-------------------
- 1 file changed, 43 insertions(+), 52 deletions(-)
+ drivers/media/platform/vsp1/vsp1_drm.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index e210917fdc3f..9a043a915c0b 100644
+index d705a6e9fa1d..6c60b72b6f50 100644
 --- a/drivers/media/platform/vsp1/vsp1_drm.c
 +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -42,6 +42,47 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
- 		drm_pipe->du_complete(drm_pipe->du_private, completed);
- }
+@@ -346,13 +346,12 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
+ 	dl = vsp1_dl_list_get(pipe->output->dlm);
  
-+/* -----------------------------------------------------------------------------
-+ * Pipeline Configuration
-+ */
-+
-+/* Configure all entities in the pipeline. */
-+static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
-+{
-+	struct vsp1_entity *entity;
-+	struct vsp1_entity *next;
-+	struct vsp1_dl_list *dl;
-+
-+	dl = vsp1_dl_list_get(pipe->output->dlm);
-+
-+	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
-+		/* Disconnect unused RPFs from the pipeline. */
-+		if (entity->type == VSP1_ENTITY_RPF &&
-+		    !pipe->inputs[entity->index]) {
-+			vsp1_dl_list_write(dl, entity->route->reg,
-+					   VI6_DPR_NODE_UNUSED);
-+
-+			entity->pipe = NULL;
-+			list_del(&entity->list_pipe);
-+
-+			continue;
-+		}
-+
-+		vsp1_entity_route_setup(entity, pipe, dl);
-+
-+		if (entity->ops->configure) {
-+			entity->ops->configure(entity, pipe, dl,
-+					       VSP1_ENTITY_PARAMS_INIT);
-+			entity->ops->configure(entity, pipe, dl,
-+					       VSP1_ENTITY_PARAMS_RUNTIME);
-+			entity->ops->configure(entity, pipe, dl,
-+					       VSP1_ENTITY_PARAMS_PARTITION);
-+		}
-+	}
-+
-+	vsp1_dl_list_commit(dl);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * DU Driver API
-  */
-@@ -85,9 +126,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 	struct vsp1_drm_pipeline *drm_pipe;
- 	struct vsp1_pipeline *pipe;
- 	struct vsp1_bru *bru;
--	struct vsp1_entity *entity;
--	struct vsp1_entity *next;
--	struct vsp1_dl_list *dl;
- 	struct v4l2_subdev_format format;
- 	unsigned long flags;
- 	unsigned int i;
-@@ -239,22 +277,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 	vsp1_write(vsp1, VI6_DISP_IRQ_ENB, 0);
- 
- 	/* Configure all entities in the pipeline. */
--	dl = vsp1_dl_list_get(pipe->output->dlm);
--
--	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
--		vsp1_entity_route_setup(entity, pipe, dl);
--
--		if (entity->ops->configure) {
--			entity->ops->configure(entity, pipe, dl,
--					       VSP1_ENTITY_PARAMS_INIT);
--			entity->ops->configure(entity, pipe, dl,
--					       VSP1_ENTITY_PARAMS_RUNTIME);
--			entity->ops->configure(entity, pipe, dl,
--					       VSP1_ENTITY_PARAMS_PARTITION);
--		}
--	}
--
--	vsp1_dl_list_commit(dl);
-+	vsp1_du_pipeline_configure(pipe);
- 
- 	/* Start the pipeline. */
- 	spin_lock_irqsave(&pipe->irqlock, flags);
-@@ -490,15 +513,9 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
- 	struct vsp1_pipeline *pipe = &drm_pipe->pipe;
- 	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
- 	struct vsp1_bru *bru = to_bru(&pipe->bru->subdev);
--	struct vsp1_entity *entity;
--	struct vsp1_entity *next;
--	struct vsp1_dl_list *dl;
- 	unsigned int i;
- 	int ret;
- 
--	/* Prepare the display list. */
--	dl = vsp1_dl_list_get(pipe->output->dlm);
--
- 	/* Count the number of enabled inputs and sort them by Z-order. */
- 	pipe->num_inputs = 0;
- 
-@@ -557,33 +574,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
- 				__func__, rpf->entity.index);
- 	}
- 
--	/* Configure all entities in the pipeline. */
--	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
+ 	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
 -		/* Disconnect unused RPFs from the pipeline. */
 -		if (entity->type == VSP1_ENTITY_RPF &&
 -		    !pipe->inputs[entity->index]) {
--			vsp1_dl_list_write(dl, entity->route->reg,
--					   VI6_DPR_NODE_UNUSED);
--
--			entity->pipe = NULL;
--			list_del(&entity->list_pipe);
--
--			continue;
--		}
--
--		vsp1_entity_route_setup(entity, pipe, dl);
--
--		if (entity->ops->configure) {
--			entity->ops->configure(entity, pipe, dl,
--					       VSP1_ENTITY_PARAMS_INIT);
--			entity->ops->configure(entity, pipe, dl,
--					       VSP1_ENTITY_PARAMS_RUNTIME);
--			entity->ops->configure(entity, pipe, dl,
--					       VSP1_ENTITY_PARAMS_PARTITION);
--		}
--	}
--
--	vsp1_dl_list_commit(dl);
-+	vsp1_du_pipeline_configure(pipe);
- }
- EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
++		/* Disconnect unused entities from the pipeline. */
++		if (!entity->pipe) {
+ 			vsp1_dl_list_write(dl, entity->route->reg,
+ 					   VI6_DPR_NODE_UNUSED);
  
+-			entity->pipe = NULL;
++			entity->sink = NULL;
+ 			list_del(&entity->list_pipe);
+ 
+ 			continue;
+@@ -569,10 +568,11 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 			rpf_index);
+ 
+ 		/*
+-		 * Remove the RPF from the pipe's inputs. The atomic flush
+-		 * handler will disable the input and remove the entity from the
+-		 * pipe's entities list.
++		 * Remove the RPF from the pipeline's inputs. Keep it in the
++		 * pipeline's entity list to let vsp1_du_pipeline_configure()
++		 * remove it from the hardware pipeline.
+ 		 */
++		rpf->entity.pipe = NULL;
+ 		drm_pipe->pipe.inputs[rpf_index] = NULL;
+ 		return 0;
+ 	}
 -- 
 Regards,
 
