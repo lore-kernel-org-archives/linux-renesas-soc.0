@@ -1,150 +1,166 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40146 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753575AbeBFWaB (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54324 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751803AbeBZVox (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Feb 2018 17:30:01 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 2/9] ARM: dts: lager: use demuxer for IIC3/I2C3
-Date: Tue,  6 Feb 2018 23:29:51 +0100
-Message-Id: <20180206222958.18941-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
-References: <20180206222958.18941-1-wsa+renesas@sang-engineering.com>
+        Mon, 26 Feb 2018 16:44:53 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 10/15] v4l: vsp1: Move DRM pipeline output setup code to a function
+Date: Mon, 26 Feb 2018 23:45:11 +0200
+Message-Id: <20180226214516.11559-11-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for da9063 PMIC and da9210 regulator
-related I2C slaves.
+In order to make the vsp1_du_setup_lif() easier to read, and for
+symmetry with the DRM pipeline input setup, move the pipeline output
+setup code to a separate function.
 
-Based on similar work for HDMI by Wolfram Sang.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, corrected chip name in commit msg, updated aliases]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 84 +++++++++++++++++++++++--------------
- 1 file changed, 53 insertions(+), 31 deletions(-)
+ drivers/media/platform/vsp1/vsp1_drm.c | 107 +++++++++++++++++++--------------
+ 1 file changed, 61 insertions(+), 46 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 9f511d4fac109f..20c1b4f224b8b0 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -55,6 +55,7 @@
- 		i2c10 = &i2cexio0;
- 		i2c11 = &i2cexio1;
- 		i2c12 = &i2chdmi;
-+		i2c13 = &i2cpwr;
- 	};
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 00ce99bd1605..1c8adda47440 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -276,6 +276,66 @@ static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
+ 	return 0;
+ }
  
- 	chosen {
-@@ -418,6 +419,46 @@
- 			};
- 		};
- 	};
++/* Setup the output side of the pipeline (WPF and LIF). */
++static int vsp1_du_pipeline_setup_output(struct vsp1_device *vsp1,
++					 struct vsp1_pipeline *pipe)
++{
++	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
++	struct v4l2_subdev_format format = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
++	int ret;
++
++	format.pad = RWPF_PAD_SINK;
++	format.format.width = drm_pipe->width;
++	format.format.height = drm_pipe->height;
++	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
++	format.format.field = V4L2_FIELD_NONE;
++
++	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, NULL,
++			       &format);
++	if (ret < 0)
++		return ret;
++
++	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on WPF%u sink\n",
++		__func__, format.format.width, format.format.height,
++		format.format.code, pipe->output->entity.index);
++
++	format.pad = RWPF_PAD_SOURCE;
++	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, get_fmt, NULL,
++			       &format);
++	if (ret < 0)
++		return ret;
++
++	dev_dbg(vsp1->dev, "%s: got format %ux%u (%x) on WPF%u source\n",
++		__func__, format.format.width, format.format.height,
++		format.format.code, pipe->output->entity.index);
++
++	format.pad = LIF_PAD_SINK;
++	ret = v4l2_subdev_call(&pipe->lif->subdev, pad, set_fmt, NULL,
++			       &format);
++	if (ret < 0)
++		return ret;
++
++	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on LIF%u sink\n",
++		__func__, format.format.width, format.format.height,
++		format.format.code, pipe->lif->index);
 +
 +	/*
-+	 * IIC3 and I2C3 may be switched using pinmux.
-+	 * IIC3/I2C3 does not appear to support fallback to GPIO.
++	 * Verify that the format at the output of the pipeline matches the
++	 * requested frame size and media bus code.
 +	 */
-+	i2cpwr: i2c-13 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&iic3>, <&i2c3>;
-+		i2c-bus-name = "i2c-pwr";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	if (format.format.width != drm_pipe->width ||
++	    format.format.height != drm_pipe->height ||
++	    format.format.code != MEDIA_BUS_FMT_ARGB8888_1X32) {
++		dev_dbg(vsp1->dev, "%s: format mismatch on LIF%u\n", __func__,
++			pipe->lif->index);
++		return -EPIPE;
++	}
 +
-+		pmic@58 {
-+			compatible = "dlg,da9063";
-+			reg = <0x58>;
-+			interrupt-parent = <&irqc0>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-controller;
++	return 0;
++}
 +
-+			rtc {
-+				compatible = "dlg,da9063-rtc";
-+			};
-+
-+			wdt {
-+				compatible = "dlg,da9063-watchdog";
-+			};
-+		};
-+
-+		vdd_dvfs: regulator@68 {
-+			compatible = "dlg,da9210";
-+			reg = <0x68>;
-+			interrupt-parent = <&irqc0>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1000000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
-+	};
- };
+ /* Configure all entities in the pipeline. */
+ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
+ {
+@@ -356,7 +416,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	struct vsp1_drm_pipeline *drm_pipe;
+ 	struct vsp1_pipeline *pipe;
+ 	struct vsp1_bru *bru;
+-	struct v4l2_subdev_format format;
+ 	unsigned long flags;
+ 	unsigned int i;
+ 	int ret;
+@@ -417,54 +476,10 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	if (ret < 0)
+ 		return ret;
  
- &du {
-@@ -557,6 +598,11 @@
- 		function = "iic2";
- 	};
- 
-+	i2c3_pins: i2c3 {
-+		groups = "i2c3";
-+		function = "i2c3";
-+	};
-+
- 	iic3_pins: iic3 {
- 		groups = "iic3";
- 		function = "iic3";
-@@ -772,38 +818,14 @@
- 	clock-frequency = <100000>;
- };
- 
--&iic3 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&iic3_pins>;
--	status = "okay";
+-	memset(&format, 0, sizeof(format));
+-	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+-	format.pad = RWPF_PAD_SINK;
+-	format.format.width = cfg->width;
+-	format.format.height = cfg->height;
+-	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
+-	format.format.field = V4L2_FIELD_NONE;
 -
--	pmic@58 {
--		compatible = "dlg,da9063";
--		reg = <0x58>;
--		interrupt-parent = <&irqc0>;
--		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
--		interrupt-controller;
--
--		rtc {
--			compatible = "dlg,da9063-rtc";
--		};
--
--		wdt {
--			compatible = "dlg,da9063-watchdog";
--		};
--	};
--
--	vdd_dvfs: regulator@68 {
--		compatible = "dlg,da9210";
--		reg = <0x68>;
--		interrupt-parent = <&irqc0>;
--		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+&i2c3	{
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-names = "i2c-pwr";
-+};
+-	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, NULL,
+-			       &format);
++	ret = vsp1_du_pipeline_setup_output(vsp1, pipe);
+ 	if (ret < 0)
+ 		return ret;
  
--		regulator-min-microvolt = <1000000>;
--		regulator-max-microvolt = <1000000>;
--		regulator-boot-on;
--		regulator-always-on;
--	};
-+&iic3	{
-+	pinctrl-0 = <&iic3_pins>;
-+	pinctrl-names = "i2c-pwr";
- };
- 
- &pci0 {
+-	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on WPF%u sink\n",
+-		__func__, format.format.width, format.format.height,
+-		format.format.code, pipe->output->entity.index);
+-
+-	format.pad = RWPF_PAD_SOURCE;
+-	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, get_fmt, NULL,
+-			       &format);
+-	if (ret < 0)
+-		return ret;
+-
+-	dev_dbg(vsp1->dev, "%s: got format %ux%u (%x) on WPF%u source\n",
+-		__func__, format.format.width, format.format.height,
+-		format.format.code, pipe->output->entity.index);
+-
+-	format.pad = LIF_PAD_SINK;
+-	ret = v4l2_subdev_call(&pipe->lif->subdev, pad, set_fmt, NULL,
+-			       &format);
+-	if (ret < 0)
+-		return ret;
+-
+-	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on LIF%u sink\n",
+-		__func__, format.format.width, format.format.height,
+-		format.format.code, pipe_index);
+-
+-	/*
+-	 * Verify that the format at the output of the pipeline matches the
+-	 * requested frame size and media bus code.
+-	 */
+-	if (format.format.width != cfg->width ||
+-	    format.format.height != cfg->height ||
+-	    format.format.code != MEDIA_BUS_FMT_ARGB8888_1X32) {
+-		dev_dbg(vsp1->dev, "%s: format mismatch\n", __func__);
+-		return -EPIPE;
+-	}
+-
+ 	/* Enable the VSP1. */
+ 	ret = vsp1_device_get(vsp1);
+ 	if (ret < 0)
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
