@@ -1,134 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33060 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751175AbeBZPaW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:30:22 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Magnus Damm <damm+renesas@opensource.se>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a77965: Add support for INTC-EX IRQ pins
-Date: Mon, 26 Feb 2018 16:30:11 +0100
-Message-Id: <1519659011-24265-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1519139541-18783-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org> <1519139541-18783-2-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Feb 2018 09:14:36 +0100
+Message-ID: <CAMuHMdWcLd6BnwW2fwOPhpsRZ=qfuYE6YoehFj8WXkUmGZMW_A@mail.gmail.com>
+Subject: Re: [PATCH v2 01/19] clk: renesas: cpg-mssr: Add support for R-Car M3-N
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Jacopo,
 
-Most pins on the R8A77965 SoC can be configured in GPIO mode for
-interrupt and GPIO functionality, while a couple of them can also
-be routed to the INTC-EX hardware block (formerly known as IRQC).
+On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Initial support for R-Car M3-N (r8a77965), including core and module
+> clocks.
+>
+> Based on Table 8.2d of "R-Car Series, 3rd Generation User's Manual:
+> Hardware (Rev. 0.80, Oct 31, 2017)".
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On R8A77965 the INTC-EX hardware handles pins IRQ0 -> IRQ5 and
-this patch adds support for them to the PFC driver as "intc_ex_irqN".
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> @@ -22,6 +22,7 @@ Required Properties:
+>        - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
+>        - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
+>        - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
+> +      - "renesas,r8a77965-cpg-mssr" for the r8a77965 SoC (R-Car M3-N)
+>        - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
+>        - "renesas,r8a77995-cpg-mssr" for the r8a77995 SoC (R-Car D3)
 
-Based on a similar patch for the R8A7795 PFC driver by Magnus Damm
-<damm+renesas@opensource.se>.
+You forgot to update the list of external parent clock names.
+No need to fix and resend, I've squashed in the following:
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in sh-pfc-for-v4.17.
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -34,8 +34,8 @@ Required Properties:
+     clock-names
+   - clock-names: List of external parent clock names. Valid names are:
+       - "extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7792, r8a7793, r8a7794,
+-                r8a7795, r8a7796, r8a77970, r8a77980, r8a77995)
+-      - "extalr" (r8a7795, r8a7796, r8a77970, r8a77980)
++                r8a7795, r8a7796, r8a77965, r8a77970, r8a77980, r8a77995)
++      - "extalr" (r8a7795, r8a7796, r8a77965, r8a77970, r8a77980)
+       - "usb_extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7793, r8a7794)
 
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 61 +++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+   - #clock-cells: Must be 2
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index acd57d5b2fb18b25..363ccc3b1bdc7a88 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1661,6 +1661,51 @@ static const unsigned int avb_avtp_capture_b_pins[] = {
- static const unsigned int avb_avtp_capture_b_mux[] = {
- 	AVB_AVTP_CAPTURE_B_MARK,
- };
-+
-+/* - INTC-EX ---------------------------------------------------------------- */
-+static const unsigned int intc_ex_irq0_pins[] = {
-+	/* IRQ0 */
-+	RCAR_GP_PIN(2, 0),
-+};
-+static const unsigned int intc_ex_irq0_mux[] = {
-+	IRQ0_MARK,
-+};
-+static const unsigned int intc_ex_irq1_pins[] = {
-+	/* IRQ1 */
-+	RCAR_GP_PIN(2, 1),
-+};
-+static const unsigned int intc_ex_irq1_mux[] = {
-+	IRQ1_MARK,
-+};
-+static const unsigned int intc_ex_irq2_pins[] = {
-+	/* IRQ2 */
-+	RCAR_GP_PIN(2, 2),
-+};
-+static const unsigned int intc_ex_irq2_mux[] = {
-+	IRQ2_MARK,
-+};
-+static const unsigned int intc_ex_irq3_pins[] = {
-+	/* IRQ3 */
-+	RCAR_GP_PIN(2, 3),
-+};
-+static const unsigned int intc_ex_irq3_mux[] = {
-+	IRQ3_MARK,
-+};
-+static const unsigned int intc_ex_irq4_pins[] = {
-+	/* IRQ4 */
-+	RCAR_GP_PIN(2, 4),
-+};
-+static const unsigned int intc_ex_irq4_mux[] = {
-+	IRQ4_MARK,
-+};
-+static const unsigned int intc_ex_irq5_pins[] = {
-+	/* IRQ5 */
-+	RCAR_GP_PIN(2, 5),
-+};
-+static const unsigned int intc_ex_irq5_mux[] = {
-+	IRQ5_MARK,
-+};
-+
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
- 	/* RX, TX */
-@@ -1883,6 +1928,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
- 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
-+	SH_PFC_PIN_GROUP(intc_ex_irq0),
-+	SH_PFC_PIN_GROUP(intc_ex_irq1),
-+	SH_PFC_PIN_GROUP(intc_ex_irq2),
-+	SH_PFC_PIN_GROUP(intc_ex_irq3),
-+	SH_PFC_PIN_GROUP(intc_ex_irq4),
-+	SH_PFC_PIN_GROUP(intc_ex_irq5),
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -1927,6 +1978,15 @@ static const char * const avb_groups[] = {
- 	"avb_avtp_capture_b",
- };
- 
-+static const char * const intc_ex_groups[] = {
-+	"intc_ex_irq0",
-+	"intc_ex_irq1",
-+	"intc_ex_irq2",
-+	"intc_ex_irq3",
-+	"intc_ex_irq4",
-+	"intc_ex_irq5",
-+};
-+
- static const char * const scif0_groups[] = {
- 	"scif0_data",
- 	"scif0_clk",
-@@ -1978,6 +2038,7 @@ static const char * const scif_clk_groups[] = {
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(intc_ex),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif2),
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
