@@ -1,86 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40300 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755240AbeBOKCU (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:39241 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753233AbeBZUsv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Feb 2018 05:02:20 -0500
-Received: by mail-wr0-f193.google.com with SMTP id o76so2713382wrb.7
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Feb 2018 02:02:19 -0800 (PST)
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH V2] ARM: shmobile: stout: enable R-Car Gen2 regulator quirk
-Date: Thu, 15 Feb 2018 11:02:08 +0100
-Message-Id: <20180215100208.24646-1-marek.vasut+renesas@gmail.com>
+        Mon, 26 Feb 2018 15:48:51 -0500
+Received: by mail-lf0-f51.google.com with SMTP id f75so19233309lfg.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Feb 2018 12:48:50 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 0/2] Add R8A77970/Eagle I2C support
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Message-ID: <3aaa4464-fc85-3fb4-2026-5d9df357bdff@cogentembedded.com>
+Date: Mon, 26 Feb 2018 23:48:47 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Regulator setup is suboptimal on H2 Stout too. The Stout newly has
-two DA9210 regulators, so the quirk is extended to handle another
-DA9210 at i2c address 0x70.
+Hello!
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-V2: - Handle another DA9210 at 0x70
-    - Drop explicit board list from the leading comment in the file
----
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20180226-v4.16-rc3' tag. We're adding the R8A77970 I2C nodes
+and then describing the PCA9654 I/O expander connected to the I2C0 bus.
 
-diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index 44438f344dc8..8324f9820fde 100644
---- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-@@ -1,9 +1,9 @@
- /*
-  * R-Car Generation 2 da9063/da9210 regulator quirk
-  *
-- * The r8a7790/lager and r8a7791/koelsch development boards have da9063 and
-- * da9210 regulators.  Both regulators have their interrupt request lines tied
-- * to the same interrupt pin (IRQ2) on the SoC.
-+ * Certain Gen2 development boards have an da9063 and one or more da9210
-+ * regulators. All of these regulators have their interrupt request lines
-+ * tied to the same interrupt pin (IRQ2) on the SoC.
-  *
-  * After cold boot or da9063-induced restart, both the da9063 and da9210 seem
-  * to assert their interrupt request lines.  Hence as soon as one driver
-@@ -59,6 +59,10 @@ static struct i2c_msg da9xxx_msgs[2] = {
- 		.addr = 0x68,
- 		.len = ARRAY_SIZE(da9210_irq_clr),
- 		.buf = da9210_irq_clr,
-+	}, {
-+		.addr = 0x70,
-+		.len = ARRAY_SIZE(da9210_irq_clr),
-+		.buf = da9210_irq_clr,
- 	},
- };
- 
-@@ -85,7 +89,8 @@ static int regulator_quirk_notify(struct notifier_block *nb,
- 	dev_dbg(dev, "Detected %s\n", client->name);
- 
- 	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
--	    (client->addr == 0x68 && !strcmp(client->name, "da9210"))) {
-+	    (client->addr == 0x68 && !strcmp(client->name, "da9210")) ||
-+	    (client->addr == 0x70 && !strcmp(client->name, "da9210"))) {
- 		int ret;
- 
- 		dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
-@@ -118,6 +123,7 @@ static int __init rcar_gen2_regulator_quirk(void)
- 
- 	if (!of_machine_is_compatible("renesas,koelsch") &&
- 	    !of_machine_is_compatible("renesas,lager") &&
-+	    !of_machine_is_compatible("renesas,stout") &&
- 	    !of_machine_is_compatible("renesas,gose"))
- 		return -ENODEV;
- 
--- 
-2.15.1
+[1/2] arm64: dts: renesas: r8a77970: add I2C support
+[2/2] arm64: dts: renesas: eagle: add I2C0 support
+
+WBR, Sergei
