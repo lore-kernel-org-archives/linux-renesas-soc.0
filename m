@@ -1,71 +1,77 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:43914 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750776AbeBWIFZ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 03:05:25 -0500
-MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Feb 2018 09:05:24 +0100
-Message-ID: <CAMuHMdUqvZEKu5v4E29ofjj09sv+Yxk41W4K+FnfqKQ=88AWRA@mail.gmail.com>
-Subject: Overlay sugar syntax (was: Re: [PATCH v6 3/4] drm: rcar-du: Fix
- legacy DT to create LVDS encoder nodes)
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Devicetree Compiler <devicetree-compiler@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/2] arm: rzn1: Add basic support for RZN1D-DB Board
+Date: Mon, 26 Feb 2018 12:18:20 +0000
+Message-Id: <1519647518-15579-3-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1519647518-15579-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1519647518-15579-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Frank,
+Only enables the uart0 for now, and also relies on the bootloader
+for setting up the clocks and pinctrl.
 
-On Fri, Feb 23, 2018 at 3:38 AM, Frank Rowand <frowand.list@gmail.com> wrote:
-> I was hoping to be able to convert the .dts files to use sugar syntax
-> instead of hand coding the fragment nodes, but for this specific set
-> of files I failed, since the labels that would have been required do
-> not already exist in the base .dts files that that overlays would be
-> applied against.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt |  2 ++
+ arch/arm/boot/dts/rzn1d400-db.dts                  | 25 ++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 arch/arm/boot/dts/rzn1d400-db.dts
 
-Indeed, hence the fixup overlays use "target-path".
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 153f69bb..498871b 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -105,6 +105,8 @@ Boards:
+     compatible = "renesas,porter", "renesas,r8a7791"
+   - RSKRZA1 (YR0K77210C000BE)
+     compatible = "renesas,rskrza1", "renesas,r7s72100"
++  - RZN1D-DB (RZ/N1D Demo Board)
++    compatible = "renesas,rzn1d-db", "renesas,r9a06g032"
+   - Salvator-X (RTP0RC7795SIPB0010S)
+     compatible = "renesas,salvator-x", "renesas,r8a7795"
+   - Salvator-X (RTP0RC7796SIPB0011S)
+diff --git a/arch/arm/boot/dts/rzn1d400-db.dts b/arch/arm/boot/dts/rzn1d400-db.dts
+new file mode 100644
+index 0000000..1b686f0
+--- /dev/null
++++ b/arch/arm/boot/dts/rzn1d400-db.dts
+@@ -0,0 +1,25 @@
++/*
++ * Device Tree Source for the RZN1D-DB Board
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++/dts-v1/;
++
++#include "rzn1.dtsi"
++
++/ {
++	model = "RZN1D-DB Board";
++	compatible = "renesas,rzn1d-db", "renesas,r9a06g032";
++
++	chosen {
++		bootargs = "console=ttyS0,115200";
++		stdout-path = &uart0;
++		linux,stdout-path = &uart0;
++	};
++};
++&uart0 {
++	status = "okay";
++};
+-- 
+2.7.4
 
-BTW, is there any specific reason there is no sugar syntax support in dtc
-for absolute target paths? I guess to prevent adding stuff to a random
-existing node, and to encourage people to use a "connector" API defined in
-term of labels?
-
-I'm also in the process of converting my collection of DT overlays to sugar
-syntax, and lack of support for "target-path" is the sole thing that holds
-me back from completing this. So for now I use a mix of sugar and
-traditional overlay syntax.
-
-In particular, I need "target-path" for two things:
-  1. To refer to the root node, for adding devices that should live at
-     (a board subnode of) the root node, like:
-       - devices connected to GPIO controllers provided by other base or
-         overlay devices (e.g. LEDs, displays, buttons, ...),
-       - clock providers for other overlays devices (e.g. fixed-clock).
-  2. To refer to the aliases node, for adding mandatory serialX aliases.
-
-The former is the real blocker for me.
-
-The latter doesn't work with plain upstream (hacky patches available), so
-I'm working on getting rid of the serialX requirement in the serial driver.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
