@@ -1,68 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54556 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752114AbeB0IW7 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:40686 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750757AbeBZSDs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:22:59 -0500
-Date: Tue, 27 Feb 2018 09:22:39 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 26 Feb 2018 13:03:48 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/4] dt-bindings: arm: Document Renesas R-Car M3-N-based
- Salvator-X board
-Message-ID: <20180227082238.e2kk6s4wogwwltvb@verge.net.au>
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] dt-bindings: arm: Document Renesas R-Car M3-N-based Salvator-X board
+Date: Mon, 26 Feb 2018 19:03:44 +0100
+Message-Id: <1519668225-12548-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
 References: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
- <1519668225-12548-4-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519668225-12548-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 07:03:44PM +0100, Geert Uytterhoeven wrote:
-> The Renesas Salvator-X development board can be equipped with an R-Car
-> H3, M3-W, or M3-N SiP, which are pin-compatible.
-> 
-> Document board part number and compatible values for the version with
-> R-Car M3-N.
-> 
-> The board part number was extracted from a big patch by Takeshi Kihara
-> in the BSP.
+The Renesas Salvator-X development board can be equipped with an R-Car
+H3, M3-W, or M3-N SiP, which are pin-compatible.
 
-That I have verified.
+Document board part number and compatible values for the version with
+R-Car M3-N.
 
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-> index 82908a9447e4b051..51e4428856be4557 100644
-> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> @@ -108,6 +108,8 @@ Boards:
->      compatible = "renesas,salvator-x", "renesas,r8a7795"
->    - Salvator-X (RTP0RC7796SIPB0011S)
+The board part number was extracted from a big patch by Takeshi Kihara
+in the BSP.
 
-Here we have: Name (Part No)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
->      compatible = "renesas,salvator-x", "renesas,r8a7796"
-> +  - Salvator-X (RTP0RC7796SIPB0011S (M3N))
-
-Here we have: Name (Part No (SoC))
-
-> +    compatible = "renesas,salvator-x", "renesas,r8a77965"
->    - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
-
-And here we have: Name (Version, Part No)
-
->      compatible = "renesas,salvator-xs", "renesas,r8a7795"
->    - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
-
-Can we think about making this more consistent?
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 82908a9447e4b051..51e4428856be4557 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -108,6 +108,8 @@ Boards:
+     compatible = "renesas,salvator-x", "renesas,r8a7795"
+   - Salvator-X (RTP0RC7796SIPB0011S)
+     compatible = "renesas,salvator-x", "renesas,r8a7796"
++  - Salvator-X (RTP0RC7796SIPB0011S (M3N))
++    compatible = "renesas,salvator-x", "renesas,r8a77965"
+   - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
+     compatible = "renesas,salvator-xs", "renesas,r8a7795"
+   - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
+-- 
+2.7.4
