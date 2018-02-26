@@ -1,93 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:45684 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752097AbeBZPmJ (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51786 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751707AbeBZP2U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 10:42:09 -0500
-Received: by mail-qk0-f196.google.com with SMTP id g2so19529271qkd.12
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Feb 2018 07:42:09 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20180205164202.26502-7-mark.rutland@arm.com>
-References: <20180205164202.26502-1-mark.rutland@arm.com> <20180205164202.26502-7-mark.rutland@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Feb 2018 16:16:19 +0100
-Message-ID: <CAMuHMdU9UPhKdNGknZDkrzWDE75sKDdbMNu4RFfU25eVEswLkg@mail.gmail.com>
-Subject: Re: [PATCHv2 6/8] arm_pmu: explicitly enable/disable SPIs at hotplug
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mon, 26 Feb 2018 10:28:20 -0500
+Date: Mon, 26 Feb 2018 15:22:53 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCHv2 6/8] arm_pmu: explicitly enable/disable SPIs at hotplug
+Message-ID: <20180226152253.GA19446@arm.com>
+References: <20180205164202.26502-1-mark.rutland@arm.com>
+ <20180205164202.26502-7-mark.rutland@arm.com>
+ <CAMuHMdU9UPhKdNGknZDkrzWDE75sKDdbMNu4RFfU25eVEswLkg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU9UPhKdNGknZDkrzWDE75sKDdbMNu4RFfU25eVEswLkg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mark,
+On Mon, Feb 26, 2018 at 04:16:19PM +0100, Geert Uytterhoeven wrote:
+> On Mon, Feb 5, 2018 at 5:42 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> > To support ACPI systems, we need to request IRQs before CPUs are
+> > hotplugged, and thus we need to request IRQs before we know their
+> > associated PMU.
+> >
+> > This is problematic if a PMU IRQ is pending out of reset, as it may be
+> > taken before we know the PMU, and thus the IRQ handler won't be able to
+> > handle it, leaving it screaming.
+> >
+> > To avoid such problems, lets request all IRQs in a disabled state, and
+> > explicitly enable/disable them at hotplug time, when we're sure the PMU
+> > has been probed.
+> >
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> 
+> This is now commit 6de3f79112cc26bf in v4.16-rc3, and causes a BUG during
+> CPU offlining (e.g. during system suspend, or during boot with
+> CONFIG_ARM_PSCI_CHECKER=y).
+> 
+> With CONFIG_ARM_PSCI_CHECKER=y:
+> 
+> psci_checker: PSCI checker started using 6 CPUs
+> psci_checker: Starting hotplug tests
+> psci_checker: Trying to turn off and on again all CPUs
+> BUG: sleeping function called from invalid context at kernel/irq/manage.c:112
+> in_atomic(): 1, irqs_disabled(): 128, pid: 15, name: migration/1
+> no locks held by migration/1/15.
+> irq event stamp: 192
+> hardirqs last  enabled at (191): [<00000000803c2507>]
+> _raw_spin_unlock_irq+0x2c/0x4c
+> hardirqs last disabled at (192): [<000000007f57ad28>] multi_cpu_stop+0x9c/0x140
+> softirqs last  enabled at (0): [<0000000004ee1b58>]
+> copy_process.isra.77.part.78+0x43c/0x1504
+> softirqs last disabled at (0): [<          (null)>]           (null)
+> CPU: 1 PID: 15 Comm: migration/1 Not tainted 4.16.0-rc3-salvator-x #1651
+> Hardware name: Renesas Salvator-X board based on r8a7796 (DT)
+> Call trace:
+>  dump_backtrace+0x0/0x140
+>  show_stack+0x14/0x1c
+>  dump_stack+0xb4/0xf0
+>  ___might_sleep+0x1fc/0x218
+>  __might_sleep+0x70/0x80
+>  synchronize_irq+0x40/0xa8
+>  disable_irq+0x20/0x2c
 
-On Mon, Feb 5, 2018 at 5:42 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> To support ACPI systems, we need to request IRQs before CPUs are
-> hotplugged, and thus we need to request IRQs before we know their
-> associated PMU.
->
-> This is problematic if a PMU IRQ is pending out of reset, as it may be
-> taken before we know the PMU, and thus the IRQ handler won't be able to
-> handle it, leaving it screaming.
->
-> To avoid such problems, lets request all IRQs in a disabled state, and
-> explicitly enable/disable them at hotplug time, when we're sure the PMU
-> has been probed.
->
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Given that these things are CPU-affine, I reckon this should be
+disable_irq_nosync. Mark?
 
-This is now commit 6de3f79112cc26bf in v4.16-rc3, and causes a BUG during
-CPU offlining (e.g. during system suspend, or during boot with
-CONFIG_ARM_PSCI_CHECKER=y).
+Will
 
-With CONFIG_ARM_PSCI_CHECKER=y:
+--->8
 
-psci_checker: PSCI checker started using 6 CPUs
-psci_checker: Starting hotplug tests
-psci_checker: Trying to turn off and on again all CPUs
-BUG: sleeping function called from invalid context at kernel/irq/manage.c:112
-in_atomic(): 1, irqs_disabled(): 128, pid: 15, name: migration/1
-no locks held by migration/1/15.
-irq event stamp: 192
-hardirqs last  enabled at (191): [<00000000803c2507>]
-_raw_spin_unlock_irq+0x2c/0x4c
-hardirqs last disabled at (192): [<000000007f57ad28>] multi_cpu_stop+0x9c/0x140
-softirqs last  enabled at (0): [<0000000004ee1b58>]
-copy_process.isra.77.part.78+0x43c/0x1504
-softirqs last disabled at (0): [<          (null)>]           (null)
-CPU: 1 PID: 15 Comm: migration/1 Not tainted 4.16.0-rc3-salvator-x #1651
-Hardware name: Renesas Salvator-X board based on r8a7796 (DT)
-Call trace:
- dump_backtrace+0x0/0x140
- show_stack+0x14/0x1c
- dump_stack+0xb4/0xf0
- ___might_sleep+0x1fc/0x218
- __might_sleep+0x70/0x80
- synchronize_irq+0x40/0xa8
- disable_irq+0x20/0x2c
- arm_perf_teardown_cpu+0x80/0xac
- cpuhp_invoke_callback+0x5a0/0xd18
- take_cpu_down+0x84/0xc4
- multi_cpu_stop+0xb0/0x140
- cpu_stopper_thread+0xbc/0x128
- smpboot_thread_fn+0x218/0x234
- kthread+0x11c/0x124
- ret_from_fork+0x10/0x18
-CPU1: shutdown
-psci: CPU1 killed.
-
-Reverting that commit on v4.16-rc3 fixes the issue.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+index 0c2ed11c0603..f63db346c219 100644
+--- a/drivers/perf/arm_pmu.c
++++ b/drivers/perf/arm_pmu.c
+@@ -638,7 +638,7 @@ static int arm_perf_teardown_cpu(unsigned int cpu, struct hlist_node *node)
+ 		if (irq_is_percpu_devid(irq))
+ 			disable_percpu_irq(irq);
+ 		else
+-			disable_irq(irq);
++			disable_irq_nosync(irq);
+ 	}
+ 
+ 	per_cpu(cpu_armpmu, cpu) = NULL;
