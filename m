@@ -1,147 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60779 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932629AbeBLOjp (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:34284 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752069AbeB0IMy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Feb 2018 09:39:45 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/4] ARM: dts: r7s72100: stop grouping clocks under a "clocks" subnode
-Date: Mon, 12 Feb 2018 15:39:29 +0100
-Message-Id: <20180212143930.4763-4-horms+renesas@verge.net.au>
-In-Reply-To: <20180212143930.4763-1-horms+renesas@verge.net.au>
-References: <20180212143930.4763-1-horms+renesas@verge.net.au>
+        Tue, 27 Feb 2018 03:12:54 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add USB[23] host pins, groups and functions
+Date: Tue, 27 Feb 2018 17:08:00 +0900
+Message-Id: <1519718882-27636-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+This patch is based on the renesas-drivers.git / sh-pfc-for-v4.17 branch
+(commit id = fbd452aeb49e552e7278c25c63198caa918deb04)
 
-As per updates for R-Car Gen2 SoCs by Geert Uytterhoeven.
+Takeshi Kihara (2):
+  pinctrl: sh-pfc: r8a77965: Add USB2.0 host pins, groups and functions
+  pinctrl: sh-pfc: r8a77965: Add USB3.0 host pins, groups and functions
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100.dtsi | 104 +++++++++++++++++++---------------------
- 1 file changed, 49 insertions(+), 55 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 48 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 0d63dbe11e0d..d69d4810e597 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -30,62 +30,56 @@
- 		spi4 = &spi4;
- 	};
- 
--	clocks {
--		ranges;
--		#address-cells = <1>;
--		#size-cells = <1>;
-+	/* External clocks */
-+	extal_clk: extal {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		/* If clk present, value must be set by board */
-+		clock-frequency = <0>;
-+	};
- 
--		/* External clocks */
--		extal_clk: extal {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			/* If clk present, value must be set by board */
--			clock-frequency = <0>;
--		};
--
--		usb_x1_clk: usb_x1 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			/* If clk present, value must be set by board */
--			clock-frequency = <0>;
--		};
--
--		rtc_x1_clk: rtc_x1 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			/* If clk present, value must be set by board to 32678 */
--			clock-frequency = <0>;
--		};
--
--		rtc_x3_clk: rtc_x3 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			/* If clk present, value must be set by board to 4000000 */
--			clock-frequency = <0>;
--		};
--
--		/* Fixed factor clocks */
--		b_clk: b {
--			#clock-cells = <0>;
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R7S72100_CLK_PLL>;
--			clock-mult = <1>;
--			clock-div = <3>;
--		};
--		p1_clk: p1 {
--			#clock-cells = <0>;
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R7S72100_CLK_PLL>;
--			clock-mult = <1>;
--			clock-div = <6>;
--		};
--		p0_clk: p0 {
--			#clock-cells = <0>;
--			compatible = "fixed-factor-clock";
--			clocks = <&cpg_clocks R7S72100_CLK_PLL>;
--			clock-mult = <1>;
--			clock-div = <12>;
--		};
-+	usb_x1_clk: usb_x1 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		/* If clk present, value must be set by board */
-+		clock-frequency = <0>;
-+	};
-+
-+	rtc_x1_clk: rtc_x1 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		/* If clk present, value must be set by board to 32678 */
-+		clock-frequency = <0>;
-+	};
-+
-+	rtc_x3_clk: rtc_x3 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		/* If clk present, value must be set by board to 4000000 */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* Fixed factor clocks */
-+	b_clk: b {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
-+		clock-mult = <1>;
-+		clock-div = <3>;
-+	};
-+	p1_clk: p1 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
-+		clock-mult = <1>;
-+		clock-div = <6>;
-+	};
-+	p0_clk: p0 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-factor-clock";
-+		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
-+		clock-mult = <1>;
-+		clock-div = <12>;
- 	};
- 
- 	cpus {
 -- 
-2.11.0
+1.9.1
