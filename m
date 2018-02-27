@@ -1,57 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:60010 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751888AbeBWNiq (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:43406 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751550AbeB0Ugh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Feb 2018 08:38:46 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Barry Song <baohua@kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 8/9] serial: sirf: Fix out-of-bounds access through DT alias
-Date: Fri, 23 Feb 2018 14:38:36 +0100
-Message-Id: <1519393117-31998-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
-References: <1519393117-31998-1-git-send-email-geert+renesas@glider.be>
+        Tue, 27 Feb 2018 15:36:37 -0500
+Date: Tue, 27 Feb 2018 21:36:35 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] watchdog: renesas_wdt: adapt timer setup to recommended
+ procedure
+Message-ID: <20180227203635.vascbeuka3hnpx5q@katana>
+References: <20180226214905.24516-1-wsa+renesas@sang-engineering.com>
+ <20180226223853.GC5924@roeck-us.net>
+ <20180227130058.pmgo33zjvbxwmlad@ninjato>
+ <86da4e12-0d0c-c07a-eecd-76466f713da1@roeck-us.net>
+ <20180227162256.fgyd3oikydrq3e7i@katana>
+ <20180227171915.GC1212@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d3hosqavipf7p7cj"
+Content-Disposition: inline
+In-Reply-To: <20180227171915.GC1212@roeck-us.net>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The sirf_ports[] array is indexed using a value derived from the
-"serialN" alias in DT, which may lead to an out-of-bounds access.
 
-Fix this by adding a range check.
+--d3hosqavipf7p7cj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes: a6ffe8966acbb66b ("serial: sirf: use dynamic method allocate uart structure")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Fix Fixes reference,
-  - Use ARRAY_SIZE().
----
- drivers/tty/serial/sirfsoc_uart.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/tty/serial/sirfsoc_uart.c b/drivers/tty/serial/sirfsoc_uart.c
-index 9925b00a97772a1b..38622f2a30a92e7d 100644
---- a/drivers/tty/serial/sirfsoc_uart.c
-+++ b/drivers/tty/serial/sirfsoc_uart.c
-@@ -1283,6 +1283,11 @@ static int sirfsoc_uart_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 	sirfport->port.line = of_alias_get_id(np, "serial");
-+	if (sirfport->port.line >= ARRAY_SIZE(sirf_ports)) {
-+		dev_err(&pdev->dev, "serial%d out of range\n",
-+			sirfport->port.line);
-+		return -EINVAL;
-+	}
- 	sirf_ports[sirfport->port.line] = sirfport;
- 	sirfport->port.iotype = UPIO_MEM;
- 	sirfport->port.flags = UPF_BOOT_AUTOCONF;
--- 
-2.7.4
+> AFAICS this only applies if the watchdog is already running at boot,
+> which is not currently supported to start with.
+
+Hmm, probably this is a good occasion to add support for it. I'll check.
+
+Thanks!
+
+
+--d3hosqavipf7p7cj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqVwU8ACgkQFA3kzBSg
+KbZuqxAApo9dnRtQ9NVGkuchbWu6zljloGW8Zthvk67i5lHLDfJKxaSMjj3890fD
+j24H4Vz8r/nFrDPu+K7du69l87jBb2lMPyo5tGp2kZugiBB53rHILwi+aSryFsqD
+p23/mBYFDdJnotVNXlBC1NlvdNCdnukI1JH4fU2nXBrlcWBsy78NQ9/JlX9vs03n
+NKGgH5x4AcBamDBV1T221OU+pJquxAgeePPC4GJOfBjUMN8C5zvpJ2Y5hkvXy4FG
+TDCgnQBimp5Xi9XUufDG4F49uEhVB5PdBt2nPtH2IKIZzLEZGmducvpHbx5VB4oH
++nixcTNBmQMY5lHP2jZp+n6RArnaP1ZtyuuWoKJ9i3v3yya7KeILw9UGoVssgwAn
++GYip753q3D3J1CJ725/41lRUrYuCSY/kMhH2aGDtcfO6zgXSxLVBCkeMa4gbUib
+P60R5yinsQVn78NB9hhPv9BaUGGetpsTzJ83MMFDTUprdSMPsiOFfzbX7zenDLyt
+PJwROKjrIWuwmL+XNWuIwAU3cCBIU+QPaiOosBBSRGJgSNVJ+11F+2txPAaPlD+g
+8w5NUPRR3KFlNojHJtIoNrDaM/2FvC96YzYPKnQE8dg5j2rY8MtVLccEPJS1zO5O
+eeiOJrtOQ8dF/Osd3IAPUdN7rTAY9rGkEKuun13n8e3Q+YiCiP0=
+=VXqF
+-----END PGP SIGNATURE-----
+
+--d3hosqavipf7p7cj--
