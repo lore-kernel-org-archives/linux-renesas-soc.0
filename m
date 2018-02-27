@@ -1,80 +1,75 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: [PATCH 03/11] dt-bindings: power: add R8A77980 SYSC power domain
- definitions
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>
-References: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Message-ID: <5177bec1-422f-688d-ea67-f15951505b1e@cogentembedded.com>
-Date: Fri, 2 Feb 2018 21:29:16 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:48934 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751728AbeB0CV1 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 26 Feb 2018 21:21:27 -0500
+From: Gaku Inami <gaku.inami.xh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Gaku Inami <gaku.inami.xh@renesas.com>
+Subject: [PATCH 1/5] arm64: dts: renesas: r8a7795: Add multi-cluster definition
+Date: Tue, 27 Feb 2018 11:19:51 +0900
+Message-Id: <1519697995-6061-2-git-send-email-gaku.inami.xh@renesas.com>
+In-Reply-To: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <46fca582-220d-e5a7-62cd-2fc77a29846b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference R8A77980 SYSC
-power domains by index.
+This patch adds the "cpu-map" for multi-cluster into r8a7795
+device-tree. This definition is used to parse the cpu topology.
 
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
 ---
- include/dt-bindings/power/r8a77980-sysc.h |   43 ++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Index: renesas/include/dt-bindings/power/r8a77980-sysc.h
-===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/power/r8a77980-sysc.h
-@@ -0,0 +1,43 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2018 Cogent Embedded, Inc.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A77980_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A77980_SYSC_H__
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index ce85704..ffcc91e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -34,6 +34,38 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&a57_0>;
++				};
++				core1 {
++					cpu = <&a57_1>;
++				};
++				core2 {
++					cpu = <&a57_2>;
++				};
++				core3 {
++					cpu = <&a57_3>;
++				};
++			};
 +
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
++			cluster1 {
++				core0 {
++					cpu = <&a53_0>;
++				};
++				core1 {
++					cpu = <&a53_1>;
++				};
++				core2 {
++					cpu = <&a53_2>;
++				};
++				core3 {
++					cpu = <&a53_3>;
++				};
++			};
++		};
 +
-+#define R8A77980_PD_A2SC2		0
-+#define R8A77980_PD_A2SC3		1
-+#define R8A77980_PD_A2SC4		2
-+#define R8A77980_PD_A2PD0		3
-+#define R8A77980_PD_A2PD1		4
-+#define R8A77980_PD_CA53_CPU0		5
-+#define R8A77980_PD_CA53_CPU1		6
-+#define R8A77980_PD_CA53_CPU2		7
-+#define R8A77980_PD_CA53_CPU3		8
-+#define R8A77980_PD_A2CN		10
-+#define R8A77980_PD_A3VIP		11
-+#define R8A77980_PD_A2IR5		12
-+#define R8A77980_PD_CR7			13
-+#define R8A77980_PD_A2IR4		15
-+#define R8A77980_PD_CA53_SCU		21
-+#define R8A77980_PD_A2IR0		23
-+#define R8A77980_PD_A3IR		24
-+#define R8A77980_PD_A3VIP1		25
-+#define R8A77980_PD_A3VIP2		26
-+#define R8A77980_PD_A2IR1		27
-+#define R8A77980_PD_A2IR2		28
-+#define R8A77980_PD_A2IR3		29
-+#define R8A77980_PD_A2SC0		30
-+#define R8A77980_PD_A2SC1		31
-+
-+/* Always-on power area */
-+#define R8A77980_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A77980_SYSC_H__ */
+ 		a57_0: cpu@0 {
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x0>;
+-- 
+2.7.4
