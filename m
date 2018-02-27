@@ -1,42 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:10561 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752293AbeB0IVK (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:56558 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752390AbeB0KX2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:21:10 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] usb: gadget: udc: renesas_usb3: add binging for r8a77965
-Date: Tue, 27 Feb 2018 17:16:03 +0900
-Message-Id: <1519719363-27850-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1519719363-27850-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1519719363-27850-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 27 Feb 2018 05:23:28 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au,
+        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 02/10] arm64: dts: renesas: ulcb: Override EtherAVB phy-mode
+Date: Tue, 27 Feb 2018 11:22:46 +0100
+Message-Id: <1519726974-23160-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds binding for r8a77965 (R-Car M3-N).
+As the PHY interface installed on the ULCB board provides TX
+channel delay, make the "phy-mode" property a board-specific one, meant
+to override the one specified in the SoC DTSI.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Follow up patches will reset the r8a7795/96 SoC DTSI to use "rgmii" mode\
+and let the board files override that.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- Documentation/devicetree/bindings/usb/renesas_usb3.txt | 1 +
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-index 87a45e2..2c071bb 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-@@ -4,6 +4,7 @@ Required properties:
-   - compatible: Must contain one of the following:
- 	- "renesas,r8a7795-usb3-peri"
- 	- "renesas,r8a7796-usb3-peri"
-+	- "renesas,r8a77965-usb3-peri"
- 	- "renesas,rcar-gen3-usb3-peri" for a generic R-Car Gen3 compatible
- 	  device
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 3e7a6b9..6f81484 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -146,6 +146,7 @@
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
+ 	phy-handle = <&phy0>;
++	phy-mode = "rgmii-txid";
+ 	status = "okay";
  
+ 	phy0: ethernet-phy@0 {
 -- 
-1.9.1
+2.7.4
