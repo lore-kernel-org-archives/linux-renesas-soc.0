@@ -1,54 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:50593 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752107AbeB0M5T (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:48940 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751844AbeB0CV2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 07:57:19 -0500
-From: Ville Syrjala <ville.syrjala@linux.intel.com>
-To: dri-devel@lists.freedesktop.org
-Cc: intel-gfx@lists.freedesktop.org, Keith Packard <keithp@keithp.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [RFC][PATCH 03/11] drm/shmobile: Don't fill display_info.{width,height}_mm at init time
-Date: Tue, 27 Feb 2018 14:56:52 +0200
-Message-Id: <20180227125700.6527-4-ville.syrjala@linux.intel.com>
-In-Reply-To: <20180227125700.6527-1-ville.syrjala@linux.intel.com>
-References: <20180227125700.6527-1-ville.syrjala@linux.intel.com>
+        Mon, 26 Feb 2018 21:21:28 -0500
+From: Gaku Inami <gaku.inami.xh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Gaku Inami <gaku.inami.xh@renesas.com>
+Subject: [PATCH 2/5] arm64: dts: renesas: r8a7796: Add multi-cluster definition
+Date: Tue, 27 Feb 2018 11:19:52 +0900
+Message-Id: <1519697995-6061-3-git-send-email-gaku.inami.xh@renesas.com>
+In-Reply-To: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+This patch adds the "cpu-map" for multi-cluster into r8a7796
+device-tree. This definition is used to parse the cpu topology.
 
-shmobile is already populating display_info.width_mm and
-display_info.height_mm from the .get_modes() hook which is what
-we want. No need to populate it from the init path as well.
-
-Cc: Keith Packard <keithp@keithp.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
 ---
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index e7738939a86d..327b7965679a 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -703,9 +703,6 @@ int shmob_drm_connector_create(struct shmob_drm_device *sdev,
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index f8e9313..154df9b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -64,6 +64,32 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- 	sdev->connector.encoder = encoder;
- 
--	connector->display_info.width_mm = sdev->pdata->panel.width_mm;
--	connector->display_info.height_mm = sdev->pdata->panel.height_mm;
--
- 	ret = drm_connector_init(sdev->ddev, connector, &connector_funcs,
- 				 DRM_MODE_CONNECTOR_LVDS);
- 	if (ret < 0)
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&a57_0>;
++				};
++				core1 {
++					cpu = <&a57_1>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&a53_0>;
++				};
++				core1 {
++					cpu = <&a53_1>;
++				};
++				core2 {
++					cpu = <&a53_2>;
++				};
++				core3 {
++					cpu = <&a53_3>;
++				};
++			};
++		};
++
+ 		a57_0: cpu@0 {
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x0>;
 -- 
-2.13.6
+2.7.4
