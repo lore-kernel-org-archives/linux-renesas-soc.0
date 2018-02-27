@@ -1,61 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:39743 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750762AbeBZR5h (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 12:57:37 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au,
-        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/8] R-Car M3-N: Enable EtherAVB device node
-Date: Mon, 26 Feb 2018 18:57:08 +0100
-Message-Id: <1519667836-31330-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: [PATCH v2 2/5] arm64: dts: renesas: r8a77970: add VSPD support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
+Message-ID: <3bbe8d48-dbe1-975e-20c9-4a7cc07d144c@cogentembedded.com>
+Date: Tue, 27 Feb 2018 23:09:16 +0300
+MIME-Version: 1.0
+In-Reply-To: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
-  as discussed with you Sergei and Geert, in order to enable EtherAVB for
-R8A77965 we first wanted to make the phy-mode "rgmii-txid" a board specific
-property for all other SoCs.
+Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
+the next patch...
 
-This series adds  the phy-mode property to salvator-common.dtsi and reset the
-one for R8A77965/R8A7796/R8A77995 to "rgmii".
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
 
-Then, in order to enable EtherAVB for R-Car M3-N, iommu nodes had to be added
-as they are referenced by the "avb" device node (CC the iommu list for the
-series for that reason).
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Series based on what you already applied to your development tree (M3-N initial
-support - EtherAVB + DTS fixes). A branch for testing is available at
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-git://jmondi.org/linux m3-n/renesas-drivers-2018-02-13-v4.16-rc1/v2-simon
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -620,6 +620,16 @@
+ 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+ 			resets = <&cpg 603>;
+ 		};
++
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x4000>;
++			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 623>;
++			renesas,fcp = <&fcpvd0>;
++		};
+ 	};
+ 
+ 	timer {
 
-Thanks
-   j
 
-Jacopo Mondi (8):
-  arm64: dts: renesas: salvator-common: Override EtherAVB phy-mode
-  arm64: dts: renesas: r8a7796: Set EtherAVB phy mode to "rgmii"
-  arm64: dts: renesas: r8a7795: Set EtherAVB phy mode to "rgmii"
-  arm64: dts: renesas: r8a77995: Set EtherAVB phy mode to "rgmii"
-  dt-bindings: iommu/ipmmu-vmsa: Add R-Car M3-N (R8A77965)
-  iommu/ipmmu-vmsa: Hook up R8A77965 DT matching code
-  arm64: dts: renesas: r8a77965: Add IPMMU mm and ds0 blocks
-  arm64: dts: renesas: r8a77965: Add EtherAVB device node
-
- .../bindings/iommu/renesas,ipmmu-vmsa.txt          |  1 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  2 +-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  2 +-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi          | 61 ++++++++++++++++++++--
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          |  2 +-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi   |  1 +
- drivers/iommu/ipmmu-vmsa.c                         |  5 ++
- 7 files changed, 68 insertions(+), 6 deletions(-)
-
---
-2.7.4
