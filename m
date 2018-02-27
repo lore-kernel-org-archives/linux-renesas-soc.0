@@ -1,46 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:41612 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752940AbeB0KX4 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:61673 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750891AbeB0F5a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:23:56 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au,
-        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 09/10] arm64: dts: renesas: r8a77970: Set EtherAVB phy mode to "rgmii"
-Date: Tue, 27 Feb 2018 11:22:53 +0100
-Message-Id: <1519726974-23160-10-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 27 Feb 2018 00:57:30 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] phy: rcar-gen3-usb3: Add binding for r8a77965
+Date: Tue, 27 Feb 2018 14:52:27 +0900
+Message-Id: <1519710747-26435-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the "phy-mode" property of EtherAVB device to "rgmii" and let board
-files override it if the installed PHY layer provides delays for the
-RX/TX channels.
+This patch adds binding for r8a77965 (R-Car M3-N).
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index de84df3..955fded 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -607,7 +607,7 @@
- 			clocks = <&cpg CPG_MOD 812>;
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
--			phy-mode = "rgmii-id";
-+			phy-mode = "rgmii";
- 			iommus = <&ipmmu_rt 3>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+index f94cea4..47dd296 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+@@ -11,6 +11,8 @@ Required properties:
+ 	      SoC.
+ 	      "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
+ 	      SoC.
++	      "renesas,r8a77965-usb3-phy" if the device is a part of an
++	      R8A77965 SoC.
+ 	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 compatible
+ 	      device.
+ 
 -- 
-2.7.4
+1.9.1
