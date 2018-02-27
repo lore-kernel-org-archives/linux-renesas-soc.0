@@ -1,42 +1,168 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33182 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752573AbeB0PF5 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 10:05:57 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: niklas.soderlund@ragnatech.se,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 0/3] media: i2c: adv748x: Fix CBUS page issue
-Date: Tue, 27 Feb 2018 15:05:47 +0000
-Message-Id: <1519743950-28346-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: [PATCH v2 5/5] arm64: dts: renesas: v3msk: add DU/LVDS/HDMI support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
+Message-ID: <f8a3d49d-e8e4-a4ed-19a3-2a340a377726@cogentembedded.com>
+Date: Tue, 27 Feb 2018 23:12:16 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ADV748x has 12 pages mapped on to I2C addresses.
+Define the V3M Starter Kit board dependent part of the DU and LVDS device
+nodes. Also add the device nodes for the Analog Devices ADV7511W HDMI
+transmitter -- it's actually connected to the LVDS output via an LVDS
+decoder (deliberately omitted here since there's no driver yet anyway).
 
-The existing implementation only has 11 of these in the map enumeration, and
-this can cause an off-by-one error when programming the map addresses.
+Based on the original (and large) patch by Vladimir Barinov.
 
-This short series simplifies the regmap configuration tables, and adds the
-missing CBUS page to better model the device, and remove the off by one error.
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Once the tables are corrected, we add support for overriding the default map
-addresses through the device tree using i2c_new_secondary_device().
+---
+ arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts |  106 +++++++++++++++++++++++++
+ 1 file changed, 106 insertions(+)
 
-Kieran Bingham (3):
-  media: i2c: adv748x: Simplify regmap configuration
-  media: i2c: adv748x: Add missing CBUS page
-  media: i2c: adv748x: Add support for i2c_new_secondary_device
-
- drivers/media/i2c/adv748x/adv748x-core.c | 185 ++++++++++---------------------
- drivers/media/i2c/adv748x/adv748x.h      |  14 +--
- 2 files changed, 58 insertions(+), 141 deletions(-)
-
--- 
-2.7.4
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+@@ -29,6 +29,41 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
++
++	osc5_clk: osc5-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <148500000>;
++	};
++
++	vcc_d1p8v: regulator-0 {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC_D1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	vcc_d3p3v: regulator-1 {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC_D3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
+ };
+ 
+ &avb {
+@@ -42,6 +77,13 @@
+ 	};
+ };
+ 
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&osc5_clk>;
++	clock-names = "du.0", "dclkin.0";
++	status = "okay";
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
+@@ -50,6 +92,70 @@
+ 	clock-frequency = <32768>;
+ };
+ 
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	hdmi@39{
++		compatible = "adi,adv7511w";
++		#sound-dai-cells = <0>;
++		reg = <0x39>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++		avdd-supply = <&vcc_d1p8v>;
++		dvdd-supply = <&vcc_d1p8v>;
++		pvdd-supply = <&vcc_d1p8v>;
++		bgvdd-supply = <&vcc_d1p8v>;
++		dvdd-3v-supply = <&vcc_d3p3v>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con>;
++				};
++			};
++		};
++	};
++};
++
++&lvds0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			endpoint {
++				remote-endpoint = <&adv7511_in>;
++			};
++		};
++	};
++};
++
++&pfc {
++	i2c0_pins: i2c0 {
++		groups = "i2c0";
++		function = "i2c0";
++	};
++};
++
+ &scif0 {
+ 	status = "okay";
+ };
