@@ -1,86 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:39024 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751663AbeB0UKb (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:39831 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752674AbeB0KXc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 15:10:31 -0500
-Received: by mail-lf0-f66.google.com with SMTP id f75so110671lfg.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Feb 2018 12:10:31 -0800 (PST)
-Subject: [PATCH v2 3/5] arm64: dts: renesas: r8a77970: add DU support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
-Message-ID: <def07929-5fb9-f852-38a0-c46daa671288@cogentembedded.com>
-Date: Tue, 27 Feb 2018 23:10:27 +0300
-MIME-Version: 1.0
-In-Reply-To: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Tue, 27 Feb 2018 05:23:32 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au,
+        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 03/10] arm64: dts: renesas: draak: Override EtherAVB phy-mode
+Date: Tue, 27 Feb 2018 11:22:47 +0100
+Message-Id: <1519726974-23160-4-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77970 part of the DU device node.
+As the PHY interface installed on the Draak board, provides TX
+channel delay, make the "phy-mode" property a board-specific one, meant
+to override the one specified in the SoC DTSI.
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Follow up patches will reset the r8a77995 SoC DTSI to use "rgmii" mode
+and let the board file override that.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
-Changes in version 2:
-- added the "resets" property;
-- renamed the output endpoint's label.
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |   29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -630,6 +630,35 @@
- 			resets = <&cpg 623>;
- 			renesas,fcp = <&fcpvd0>;
- 		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77970";
-+			reg = <0 0xfeb00000 0 0x80000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>;
-+			clock-names = "du.0";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 724>;
-+			vsps = <&vspd0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index af07da2..af18a09 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -108,6 +108,7 @@
+ 	pinctrl-names = "default";
+ 	renesas,no-ether-link;
+ 	phy-handle = <&phy0>;
++	phy-mode = "rgmii-txid";
+ 	status = "okay";
  
- 	timer {
+ 	phy0: ethernet-phy@0 {
+-- 
+2.7.4
