@@ -1,102 +1,82 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965537AbeBMTat (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 14:30:49 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/4] arm64: dts: renesas: r8a77995: add VSP instances
-Date: Tue, 13 Feb 2018 19:30:35 +0000
-Message-Id: <1518550237-16753-3-git-send-email-kbingham@kernel.org>
-In-Reply-To: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
-References: <1518550237-16753-1-git-send-email-kbingham@kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Gaku Inami <gaku.inami.xh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Gaku Inami <gaku.inami.xh@renesas.com>
+Subject: [PATCH 4/5] arm64: dts: renesas: r8a7796: Add cpu capacity-dmips-mhz
+Date: Tue, 27 Feb 2018 11:19:54 +0900
+Message-Id: <1519697995-6061-5-git-send-email-gaku.inami.xh@renesas.com>
+In-Reply-To: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Set the capacity-dmips-mhz for r8a7796, that is based on dhrystone.
 
-The r8a77995 has a VSPBS to support image processing such as blending of
-two input images, and has two VSPDs to handle display pipelines with a
-DU.
+Expected cpu capacity:
+Cortex-A57@1.5Ghz: 1024, Cortex-A53@1.2GHz: 411
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
+Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
 ---
-v2:
- - Fix VSPD register map size
- - Squash VSPBS and VSPD patches together
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 196a917afea6..19bd8be9926a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -692,6 +692,16 @@
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 154df9b..a776d29 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -99,6 +99,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			capacity-dmips-mhz = <1024>;
+ 			#cooling-cells = <2>;
  		};
  
-+		vspbs: vsp@fe960000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe960000 0 0x4000>;
-+			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 627>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 627>;
-+			renesas,fcp = <&fcpvb0>;
-+		};
-+
- 		fcpvb0: fcp@fe96f000 {
- 			compatible = "renesas,fcpv";
- 			reg = <0 0xfe96f000 0 0x200>;
-@@ -701,6 +711,16 @@
- 			iommus = <&ipmmu_vp0 5>;
+@@ -111,6 +112,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			capacity-dmips-mhz = <1024>;
+ 			#cooling-cells = <2>;
  		};
  
-+		vspd0: vsp@fea20000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea20000 0 0x8000>;
-+			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 623>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 623>;
-+			renesas,fcp = <&fcpvd0>;
-+		};
-+
- 		fcpvd0: fcp@fea27000 {
- 			compatible = "renesas,fcpv";
- 			reg = <0 0xfea27000 0 0x200>;
-@@ -710,6 +730,16 @@
- 			iommus = <&ipmmu_vi0 8>;
+@@ -123,6 +125,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <411>;
  		};
  
-+		vspd1: vsp@fea80000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea28000 0 0x8000>;
-+			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 622>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 622>;
-+			renesas,fcp = <&fcpvd1>;
-+		};
-+
- 		fcpvd1: fcp@fea2f000 {
- 			compatible = "renesas,fcpv";
- 			reg = <0 0xfea2f000 0 0x200>;
+ 		a53_1: cpu@101 {
+@@ -134,6 +137,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <411>;
+ 		};
+ 
+ 		a53_2: cpu@102 {
+@@ -145,6 +149,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <411>;
+ 		};
+ 
+ 		a53_3: cpu@103 {
+@@ -156,6 +161,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <411>;
+ 		};
+ 
+ 		L2_CA57: cache-controller-0 {
 -- 
 2.7.4
+
