@@ -1,57 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58070 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752300AbeB0J3V (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54810 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeB0InJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 04:29:21 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Tue, 27 Feb 2018 03:43:09 -0500
+Date: Tue, 27 Feb 2018 09:42:50 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH] media: platform: Drop OF dependency of VIDEO_RENESAS_VSP1
-Date: Tue, 27 Feb 2018 11:30:09 +0200
-Message-ID: <2302791.QsluJuEtpd@avalon>
-In-Reply-To: <1519668550-26082-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <20180227084249.ogc7x5bdoc63gmt7@verge.net.au>
 References: <1519668550-26082-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519668550-26082-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-Thank you for the patch.
-
-On Monday, 26 February 2018 20:09:10 EET Geert Uytterhoeven wrote:
+On Mon, Feb 26, 2018 at 07:09:10PM +0100, Geert Uytterhoeven wrote:
 > VIDEO_RENESAS_VSP1 depends on ARCH_RENESAS && OF.
 > As ARCH_RENESAS implies OF, the latter can be dropped.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+My reasoning is that ARCH_RENESAS depends on ARCH_MULTI_V7,
+which in turn depends on ARCH_MULTIPLATFORM which selects OF via USE_OF
 
-and taken in my tree.
-
-> ---
->  drivers/media/platform/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index 614fbef08ddcabb0..2b8b1ad0edd9eb31 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -448,7 +448,7 @@ config VIDEO_RENESAS_FCP
->  config VIDEO_RENESAS_VSP1
->  	tristate "Renesas VSP1 Video Processing Engine"
->  	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-> -	depends on (ARCH_RENESAS && OF) || COMPILE_TEST
-> +	depends on ARCH_RENESAS || COMPILE_TEST
->  	depends on (!ARM64 && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
->  	select VIDEOBUF2_DMA_CONTIG
->  	select VIDEOBUF2_VMALLOC
-
--- 
-Regards,
-
-Laurent Pinchart
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
