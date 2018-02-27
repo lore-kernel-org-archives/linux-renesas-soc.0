@@ -1,45 +1,29 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f178.google.com ([209.85.220.178]:38030 "EHLO
-        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751189AbeBIPyC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 10:54:02 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] phy rcar-gen3-usb[23]: Add support for r8a77965
+Date: Tue, 27 Feb 2018 14:52:25 +0900
+Message-Id: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20180129180154.29626-3-horms+renesas@verge.net.au>
-References: <20180129180154.29626-1-horms+renesas@verge.net.au> <20180129180154.29626-3-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Feb 2018 16:54:01 +0100
-Message-ID: <CAMuHMdVoQO-M4+SSD5Z2wSnGh8G0m4D7N82NbuSxsA2Ogz01-w@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] clk: renesas: rcar-gen3: Add Z2 clock divider support
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jan 29, 2018 at 7:01 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds Z2 clock divider support for R-Car Gen3 SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+This patch set adds R-Car Gen3 USB 2.0 and 3.0 support for R8A77965.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I.e. will queue in clk-renesas-for-v4.17.
+Yoshihiro Shimoda (2):
+  phy: rcar-gen3-usb2: Add support for r8a77965
+  phy: rcar-gen3-usb3: Add binding for r8a77965
 
-Gr{oetje,eeting}s,
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 2 ++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c                     | 4 ++++
+ 3 files changed, 8 insertions(+)
 
-                        Geert
+-- 
+1.9.1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
