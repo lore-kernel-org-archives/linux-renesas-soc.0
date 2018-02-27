@@ -1,35 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:34053 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751550AbeB0VOd (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:35747 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752674AbeB0KrO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:14:33 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180227081711.nnd2r35mu3h7rjz5@verge.net.au>
-References: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
- <1519668225-12548-3-git-send-email-geert+renesas@glider.be> <20180227081711.nnd2r35mu3h7rjz5@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Feb 2018 22:14:32 +0100
-Message-ID: <CAMuHMdWqdFKH7AoFNAX5tHrCSn+cT5KTW38d8_CxYWJ76xGBMg@mail.gmail.com>
+        Tue, 27 Feb 2018 05:47:14 -0500
+Received: by mail-lf0-f65.google.com with SMTP id 70so26826645lfw.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Feb 2018 02:47:13 -0800 (PST)
 Subject: Re: [PATCH 2/4] dt-bindings: arm: Document Renesas V3MSK and Wheat
  board part numbers
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+To: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
+ <1519668225-12548-3-git-send-email-geert+renesas@glider.be>
+ <20180227081711.nnd2r35mu3h7rjz5@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <36c4cab2-3e41-d5ed-27a4-5a297887cf10@cogentembedded.com>
+Date: Tue, 27 Feb 2018 13:47:09 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180227081711.nnd2r35mu3h7rjz5@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Hello!
 
-On Tue, Feb 27, 2018 at 9:17 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Mon, Feb 26, 2018 at 07:03:43PM +0100, Geert Uytterhoeven wrote:
+On 02/27/2018 11:17 AM, Simon Horman wrote:
+
 >> The DT binding documentation for the Renesas V3MSK and Wheat boards
 >> lacked board part numbers.
 >>
@@ -48,29 +51,22 @@ On Tue, Feb 27, 2018 at 9:17 AM, Simon Horman <horms@verge.net.au> wrote:
 >>      compatible = "renesas,stout", "renesas,r8a7790"
 >> -  - V3MSK
 >> +  - V3MSK (Y-ASK-RCAR-V3M-WS10)
+
+   ACK.
+
 >>      compatible = "renesas,v3msk", "renesas,r8a77970"
->
+> 
 > Google also tells me there is WS20, but I guess WS10 what is
 > currently supported upstream.
->
+
+   At least that's what I have on my desk. :-)
+
 >> -  - Wheat
 >> +  - Wheat (RTP0RC7792ASKB0010JE)
 >>      compatible = "renesas,wheat", "renesas,r8a7792"
->
+> 
 > I'm unable to confirm the above. Can anyone help?
 
-https://elinux.org/R-Car/Boards/Wheat
+   Not me -- my documents don't mention this. :-(
 
-Looks like I misinterpreted the pictures, and
-RTP0RC7792ASKB0000JE is the correct part number for Wheat.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
