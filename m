@@ -1,18 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:11058 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752296AbeB0IUR (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:53126 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752056AbeB0IQ0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:20:17 -0500
+        Tue, 27 Feb 2018 03:16:26 -0500
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+To: mathias.nyman@intel.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Subject: [PATCH] usb: host: xhci-rcar: add support for r8a77965
-Date: Tue, 27 Feb 2018 17:15:20 +0900
-Message-Id: <1519719320-27792-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Tue, 27 Feb 2018 17:11:32 +0900
+Message-Id: <1519719092-27729-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
