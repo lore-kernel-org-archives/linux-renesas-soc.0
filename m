@@ -1,91 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:41572 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751062AbeB0VZn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54556 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752114AbeB0IW7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 16:25:43 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180227082238.e2kk6s4wogwwltvb@verge.net.au>
-References: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
- <1519668225-12548-4-git-send-email-geert+renesas@glider.be> <20180227082238.e2kk6s4wogwwltvb@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Feb 2018 22:25:42 +0100
-Message-ID: <CAMuHMdXkpEoKxT-z0FunnfdjUpUZZP8GvbC5wAuj-qseQCVkzQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] dt-bindings: arm: Document Renesas R-Car M3-N-based
- Salvator-X board
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Tue, 27 Feb 2018 03:22:59 -0500
+Date: Tue, 27 Feb 2018 09:22:39 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/4] dt-bindings: arm: Document Renesas R-Car M3-N-based
+ Salvator-X board
+Message-ID: <20180227082238.e2kk6s4wogwwltvb@verge.net.au>
+References: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
+ <1519668225-12548-4-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519668225-12548-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Mon, Feb 26, 2018 at 07:03:44PM +0100, Geert Uytterhoeven wrote:
+> The Renesas Salvator-X development board can be equipped with an R-Car
+> H3, M3-W, or M3-N SiP, which are pin-compatible.
+> 
+> Document board part number and compatible values for the version with
+> R-Car M3-N.
+> 
+> The board part number was extracted from a big patch by Takeshi Kihara
+> in the BSP.
 
-On Tue, Feb 27, 2018 at 9:22 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Mon, Feb 26, 2018 at 07:03:44PM +0100, Geert Uytterhoeven wrote:
->> The Renesas Salvator-X development board can be equipped with an R-Car
->> H3, M3-W, or M3-N SiP, which are pin-compatible.
->>
->> Document board part number and compatible values for the version with
->> R-Car M3-N.
->>
->> The board part number was extracted from a big patch by Takeshi Kihara
->> in the BSP.
+That I have verified.
 
->> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
->> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
->> @@ -108,6 +108,8 @@ Boards:
->>      compatible = "renesas,salvator-x", "renesas,r8a7795"
->>    - Salvator-X (RTP0RC7796SIPB0011S)
->
-> Here we have: Name (Part No)
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+> index 82908a9447e4b051..51e4428856be4557 100644
+> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> @@ -108,6 +108,8 @@ Boards:
+>      compatible = "renesas,salvator-x", "renesas,r8a7795"
+>    - Salvator-X (RTP0RC7796SIPB0011S)
 
-That's the standard (highest number of occurrences) way.
+Here we have: Name (Part No)
 
->>      compatible = "renesas,salvator-x", "renesas,r8a7796"
->> +  - Salvator-X (RTP0RC7796SIPB0011S (M3N))
->
-> Here we have: Name (Part No (SoC))
+>      compatible = "renesas,salvator-x", "renesas,r8a7796"
+> +  - Salvator-X (RTP0RC7796SIPB0011S (M3N))
 
-This one is special: it's basically an M3-N prototype board made by taking
-a Salvator-X/M3-W board, and replacing the M3-W SiP by an M3-N SiP.
-Hence the board part number is the same.
+Here we have: Name (Part No (SoC))
 
->> +    compatible = "renesas,salvator-x", "renesas,r8a77965"
->>    - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
->
-> And here we have: Name (Version, Part No)
+> +    compatible = "renesas,salvator-x", "renesas,r8a77965"
+>    - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
 
-AFAIU, "Salvator-XS" really means "Salvator-X 2nd version".
-So it's not "Version", but "Alternative Board Name".
-There's a similar thing with the ULCB boards:
+And here we have: Name (Version, Part No)
 
-  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
-    H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
-  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
+>      compatible = "renesas,salvator-xs", "renesas,r8a7795"
+>    - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
 
->>      compatible = "renesas,salvator-xs", "renesas,r8a7795"
->>    - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
->
-> Can we think about making this more consistent?
-
-I'm afraid not. Naming seems to become only more complex over time...
-Unless you have great hands and great ideas ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Can we think about making this more consistent?
