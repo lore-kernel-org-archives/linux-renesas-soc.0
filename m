@@ -1,47 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:53991 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752600AbeBTPOY (ORCPT
+Received: from sauhun.de ([88.99.104.3]:41663 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752056AbeB0NCY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Feb 2018 10:14:24 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 15/19] dt-bindings: gpio: Add support for r8a77965
-Date: Tue, 20 Feb 2018 16:12:17 +0100
-Message-Id: <1519139541-18783-16-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 27 Feb 2018 08:02:24 -0500
+Date: Tue, 27 Feb 2018 14:02:23 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 0/2] mmc: renesas_sdhi: add eMMC HS400 mode support
+Message-ID: <20180227130222.zsz73d3upi3s7vjv@ninjato>
+References: <20180213123358.13212-1-horms+renesas@verge.net.au>
+ <CAPDyKFryhg=5G9G3ss3hFSAuri1-_y0uu7ZK=PNGJ0TF=-__DA@mail.gmail.com>
+ <20180227090757.wvm6j4sy5nmeecf3@katana>
+ <CAPDyKFqMacY1THjO+cTb6Aws3mCnbLogui9T6PjiVcoR89FiLg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="egbdmspa5t6ow45z"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqMacY1THjO+cTb6Aws3mCnbLogui9T6PjiVcoR89FiLg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--egbdmspa5t6ow45z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
----
-v1 -> v2:
-- Drop SoC-specific compatible string from drivers/gpio/gpio-rcar.c
-- Change patch subject to reflect it only changes dt bindings
----
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 9474138..f2af897 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -14,6 +14,7 @@ Required Properties:
-     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
-     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
-     - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
-+    - "renesas,gpio-r8a77965": for R8A77965 (R-Car M3-N) compatible GPIO controller.
-     - "renesas,gpio-r8a77970": for R8A77970 (R-Car V3M) compatible GPIO controller.
-     - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
-     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
--- 
-2.7.4
+> Perhaps someone need to explain in more detail what the HW controller
+> needs to manage tuning for HS400? I don't like that we may end up
+> getting it magically to work, then it's we better understand the
+> details and if the current sequence provided by the mmc core can't
+> fulfill the need for this case, we may instead consider adding an
+> additional pre/post host ops.
+
+Thanks. Exactly this thinking prevented me from saying "It works, let's
+ship it" ;)
+
+
+--egbdmspa5t6ow45z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqVVt4ACgkQFA3kzBSg
+Kbaz+w//R8ZxwuWO7FK1dlKgl8m3BMkWiY9GJ0z+SMlBuDS7XwXosRRUgvcf2taF
+Pu17iCgLaMbLlQp/lWnpyPBJncjcg036FW+klc82Hbqwl7wU8RPHaHf4xP+QpIiS
+FO/GwSshDkt4fKXoRv6rIneUl5VClKl/+zFbvBk0lQslnAfsyBluwwRuNPkYXJYR
+cg89kJmeBOFsBkqVjeqBcPkYntg5TfUufW2tWrXvrb0LK44/waMG5N8dborW6V/u
+aCUl1EHVWE33pPY6X1kUgEKcvMrX/q/TAj7gOrVaZV1dudV4TP4FcCpBWJKCnVUM
+IXHke8pFmG+U5h4Na7jTrn1o8Jh6z+wEorp3xtjhLUfz0F+xC4Wk3nxHNx73aXfJ
+v07vYiH2l+YLgBu0TG12C9LC03cp2XUnpPQDiCazb0oX+tLwQTIDwiW4JvxafrWJ
+GazUodm0un0wDXjpJzVo+q0654d0Bvl507ODlx9L8MupeuUnXCvKZkVEhZoFqLlU
+X3VEuW/Yv2AUUBUvwpCvkx9OKoT9LMEEU2PER05OyOWAYCwa7J6t3+WDTxVu1QNV
+YDQ3T+SBc3+Z8/eO2kSLpxVmnCvAavAk3gtXUlEAK9znpkJYREDZECyK2eObiR1i
+//o57272XCbm2ZZi3OvV7QMoNMuQKwVG7Jvi9AfX8SS7knNBay8=
+=BsTl
+-----END PGP SIGNATURE-----
+
+--egbdmspa5t6ow45z--
