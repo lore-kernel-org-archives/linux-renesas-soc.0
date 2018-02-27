@@ -1,222 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:43952 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753207AbeB1Qlf (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42043 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751788AbeB0UIZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Feb 2018 11:41:35 -0500
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v2 5/8] v4l: vsp1: Refactor display list configure
- operations
-Reply-To: kieran.bingham@ideasonboard.com
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-References: <cover.4457988ad8b64b5c7636e35039ef61d507af3648.1502723341.git-series.kieran.bingham+renesas@ideasonboard.com>
- <9223590.WNj3Hrfh0H@avalon>
- <70512969-8fca-3056-1a0e-d294549b827d@ideasonboard.com>
- <3974720.2jhbfEKCZX@avalon>
- <adf83d35-3ccf-d0cc-747e-20b29f8aa629@ideasonboard.com>
-Message-ID: <fd7f961c-e1a5-0c07-e6e4-f710f5c86745@ideasonboard.com>
-Date: Wed, 28 Feb 2018 16:41:31 +0000
+        Tue, 27 Feb 2018 15:08:25 -0500
+Received: by mail-lf0-f68.google.com with SMTP id t204so90563lff.9
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Feb 2018 12:08:24 -0800 (PST)
+Subject: [PATCH v2 1/5] arm64: dts: renesas: r8a77970: add FCPVD support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
+Message-ID: <b28f97f3-cd84-07df-2645-1ff3a97c990f@cogentembedded.com>
+Date: Tue, 27 Feb 2018 23:08:22 +0300
 MIME-Version: 1.0
-In-Reply-To: <adf83d35-3ccf-d0cc-747e-20b29f8aa629@ideasonboard.com>
+In-Reply-To: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Describe FCPVD0 in the R8A77970 device tree; it will be used by VSPD0 in
+the next patch...
 
-This series has a pending question below:
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
 
-On 17/11/17 15:07, Kieran Bingham wrote:
-> Hi Laurent,
-> 
-> Just a query on your bikeshedding here.
-> 
-> Choose your colours wisely :)
-> 
-> --
-> Kieran
-> 
-> On 12/09/17 20:19, Laurent Pinchart wrote:
->> Hi Kieran,
->>
->> On Tuesday, 12 September 2017 00:16:50 EEST Kieran Bingham wrote:
->>> On 17/08/17 19:13, Laurent Pinchart wrote:
->>>> On Monday 14 Aug 2017 16:13:28 Kieran Bingham wrote:
->>>>> The entities provide a single .configure operation which configures the
->>>>> object into the target display list, based on the vsp1_entity_params
->>>>> selection.
->>>>>
->>>>> This restricts us to a single function prototype for both static
->>>>> configuration (the pre-stream INIT stage) and the dynamic runtime stages
->>>>> for both each frame - and each partition therein.
->>>>>
->>>>> Split the configure function into two parts, '.prepare()' and
->>>>> '.configure()', merging both the VSP1_ENTITY_PARAMS_RUNTIME and
->>>>> VSP1_ENTITY_PARAMS_PARTITION stages into a single call through the
->>>>> .configure(). The configuration for individual partitions is handled by
->>>>> passing the partition number to the configure call, and processing any
->>>>> runtime stage actions on the first partition only.
->>>>>
->>>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>>>> ---
->>>>>
->>>>>  drivers/media/platform/vsp1/vsp1_bru.c    |  12 +-
->>>>>  drivers/media/platform/vsp1/vsp1_clu.c    |  43 +--
->>>>>  drivers/media/platform/vsp1/vsp1_drm.c    |  11 +-
->>>>>  drivers/media/platform/vsp1/vsp1_entity.c |  15 +-
->>>>>  drivers/media/platform/vsp1/vsp1_entity.h |  27 +--
->>>>>  drivers/media/platform/vsp1/vsp1_hgo.c    |  12 +-
->>>>>  drivers/media/platform/vsp1/vsp1_hgt.c    |  12 +-
->>>>>  drivers/media/platform/vsp1/vsp1_hsit.c   |  12 +-
->>>>>  drivers/media/platform/vsp1/vsp1_lif.c    |  12 +-
->>>>>  drivers/media/platform/vsp1/vsp1_lut.c    |  24 +-
->>>>>  drivers/media/platform/vsp1/vsp1_rpf.c    | 162 ++++++-------
->>>>>  drivers/media/platform/vsp1/vsp1_sru.c    |  12 +-
->>>>>  drivers/media/platform/vsp1/vsp1_uds.c    |  55 ++--
->>>>>  drivers/media/platform/vsp1/vsp1_video.c  |  24 +--
->>>>>  drivers/media/platform/vsp1/vsp1_wpf.c    | 297 ++++++++++++-----------
->>>>>  15 files changed, 359 insertions(+), 371 deletions(-)
->>>>
->>>> [snip]
->>>>
->>>>> diff --git a/drivers/media/platform/vsp1/vsp1_clu.c
->>>>> b/drivers/media/platform/vsp1/vsp1_clu.c index 175717018e11..5f65ce3ad97f
->>>>> 100644
->>>>> --- a/drivers/media/platform/vsp1/vsp1_clu.c
->>>>> +++ b/drivers/media/platform/vsp1/vsp1_clu.c
->>>>> @@ -213,37 +213,37 @@ static const struct v4l2_subdev_ops clu_ops = {
->>>>>
->>>>>  /*
->>>>>  -----------------------------------------------------------------------
->>>>>  -
->>>>>  
->>>>>   * VSP1 Entity Operations
->>>>>   */
->>>>>
->>>>> +static void clu_prepare(struct vsp1_entity *entity,
->>>>> +			struct vsp1_pipeline *pipe,
->>>>> +			struct vsp1_dl_list *dl)
->>>>> +{
->>>>> +	struct vsp1_clu *clu = to_clu(&entity->subdev);
->>>>> +
->>>>> +	/*
->>>>> +	 * The format can't be changed during streaming, only verify it
->>>>> +	 * at setup time and store the information internally for future
->>>>> +	 * runtime configuration calls.
->>>>> +	 */
->>>>
->>>> I know you're just moving the comment around, but let's fix it at the same
->>>> time. There's no verification here (and no "setup time" either). I'd write
->>>> it as
->>>>
->>>> 	/*
->>>> 	
->>>> 	 * The format can't be changed during streaming. Cache it internally
->>>> 	 * for future runtime configuration calls.
->>>> 	 */
->>>
->>> I think I'm ok with that and I've updated the patch - but I'm not sure we
->>> are really caching the 'format' here, as much as the yuv_mode ...
->>
->> Yes, it's the YUV mode we're caching, feel free to update the comment.
-> 
-> Done.
-> 
->>
->>> I'll ponder ...
->>>
->>>>> +	struct v4l2_mbus_framefmt *format;
->>>>> +
->>>>> +	format = vsp1_entity_get_pad_format(&clu->entity,
->>>>> +					    clu->entity.config,
->>>>> +					    CLU_PAD_SINK);
->>>>> +	clu->yuv_mode = format->code == MEDIA_BUS_FMT_AYUV8_1X32;
->>>>> +}
->>>>
->>>> [snip]
->>>>
->>>>> diff --git a/drivers/media/platform/vsp1/vsp1_entity.h
->>>>> b/drivers/media/platform/vsp1/vsp1_entity.h index
->>>>> 408602ebeb97..2f33e343ccc6 100644
->>>>> --- a/drivers/media/platform/vsp1/vsp1_entity.h
->>>>> +++ b/drivers/media/platform/vsp1/vsp1_entity.h
->>>>
->>>> [snip]
->>>>
->>>>> @@ -80,8 +68,10 @@ struct vsp1_route {
->>>>>
->>>>>  /**
->>>>>  
->>>>>   * struct vsp1_entity_operations - Entity operations
->>>>>   * @destroy:	Destroy the entity.
->>>>>
->>>>> - * @configure:	Setup the hardware based on the entity state
->>>>> (pipeline, formats,
->>>>> - *		selection rectangles, ...)
->>>>> + * @prepare:	Setup the initial hardware parameters for the stream
->>>>> (pipeline,
->>>>> + *		formats)
->>>>> + * @configure:	Configure the runtime parameters for each partition
->>>>> (rectangles,
->>>>> + *		buffer addresses, ...)
->>>>
->>>> Now moving to the bikeshedding territory, I'm not sure if prepare and
->>>> configure are the best names for those operations.
-> 
-> 
-> Would init() and configure() be more suitable for you ?
-> 
-> Or 'setup()' and 'configure() or perhaps 'runtime()' ?
-> 
-> I'm not convinced on either init() or setup() yet, as they might refer to
-> 'initialising' the object, rather than portraying the configuration of the
-> object into a body...
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Any preference or alternative for the namings on the above topic?
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-
-
->>>> I'd like to also point
->>>> out that we could go one step further by caching the partition-related
->>>> parameters too, in which case we would need a third operation (or
->>>> possibly passing the partition number to the prepare operation). While I
->>>> won't mind if you implement this now, the issue could also be addressed
->>>> later, but I'd like the operations to already support that use case to
->>>> avoid yet another painful rename patch.
-
-Or based on the above - would you prefer a different approach to handling this?
-
-I think the reason for the split was to prevent passing a display list when not
-available or required. This could be passed as NULL on operations where it is
-not used.
-
-And in fact, with this series - it looks like the only use for passing the
-display list now, is to handle the LUT and CLU body swaps.
-
-Any ideas how we could improve this so that we didn't need to pass a display
-list ?
-
---
-Kieran
-
-
-
->>>
->>> Ok, understood - but I think I'll have to defer to a v4 for now ... I'm
->>> running out of time.>>>
->>>>>   * @max_width:	Return the max supported width of data that the entity
->>>>>
->>>>> can
->>>>>
->>>>>   *		process in a single operation.
->>>>>   * @partition:	Process the partition construction based on this
->>>>>
->>>>> entity's
->>>>
->>>> [snip]
->>>>
->>>> The rest of the patch looks good to me.
->>
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -612,6 +612,14 @@
+ 			#size-cells = <0>;
+ 			status = "disabled";
+ 		};
++
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++		};
+ 	};
+ 
+ 	timer {
