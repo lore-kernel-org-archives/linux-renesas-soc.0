@@ -1,94 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:45047 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965277AbeBMRuy (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:50:54 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v10 19/30] rcar-vin: set a default field to fallback on
-Date: Tue, 13 Feb 2018 19:51:25 +0200
-Message-ID: <2513002.daXBhrgmYI@avalon>
-In-Reply-To: <20180129163435.24936-20-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se> <20180129163435.24936-20-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 27 Feb 2018 13:52:53 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: i2c: sh_mobile: Document R-Car M3-N support
+Message-ID: <20180227125253.idmgj4jva2d7x33v@ninjato>
+References: <1519658803-23177-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="swacypvj7kcwodsi"
+Content-Disposition: inline
+In-Reply-To: <1519658803-23177-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
 
-Thank you for the patch.
+--swacypvj7kcwodsi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Monday, 29 January 2018 18:34:24 EET Niklas S=F6derlund wrote:
-> If the field is not supported by the driver it should not try to keep
-> the current field. Instead it should set it to a default fallback. Since
-> trying a format should always result in the same state regardless of the
-> current state of the device.
+On Mon, Feb 26, 2018 at 04:26:43PM +0100, Geert Uytterhoeven wrote:
+> Document support for the IIC Bus Interface for DVFS (IIC for DVFS) in
+> the Renesas M3-N (r8a77965) SoC.
 >=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> No driver update is needed.
 >=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
-> 6403650aff22a2ed..f69ae76b3fda50c7 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -23,6 +23,7 @@
->  #include "rcar-vin.h"
->=20
->  #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
-> +#define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
->  #define RVIN_DEFAULT_COLORSPACE	V4L2_COLORSPACE_SRGB
->=20
->  /* ---------------------------------------------------------------------=
-=2D--
-> @@ -171,7 +172,7 @@ static int rvin_get_source_format(struct rvin_dev
-> *vin, fmt.format.height *=3D 2;
->  		break;
->  	default:
-> -		vin->format.field =3D V4L2_FIELD_NONE;
-> +		vin->format.field =3D RVIN_DEFAULT_FIELD;
->  		break;
->  	}
->=20
-> @@ -267,9 +268,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
->  {
->  	int ret;
->=20
-> -	/* Keep current field if no specific one is asked for */
->  	if (pix->field =3D=3D V4L2_FIELD_ANY)
-> -		pix->field =3D vin->format.field;
-> +		pix->field =3D RVIN_DEFAULT_FIELD;
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Won't this also be caught by the field check in the above function, called=
-=20
-from __rvin_try_format_source() ? You could just remove this check complete=
-ly.
+Applied to for-next, thanks!
 
-However as mentioned in a comment for a previous patch I don't think the fi=
-eld=20
-handling belongs in rvin_get_source_format(), so you could merge both here.=
-=20
-Or, if you repurpose and rename rvin_get_source_format(), then the check ca=
-n=20
-probably be removed completely. I haven't checked the consolidated code aft=
-er=20
-applying all patches from this series, but some refactoring might be useful=
-=2E=20
-We'll see.
 
->  	/* Limit to source capabilities */
->  	ret =3D __rvin_try_format_source(vin, which, pix);
+--swacypvj7kcwodsi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-=2D-=20
-Regards,
+-----BEGIN PGP SIGNATURE-----
 
-Laurent Pinchart
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqVVKUACgkQFA3kzBSg
+KbYlBRAAlVnsh3Wi7KmOzSND67u1g9ZY+o5ZJlaej2A05QVM4yBD3zIE6Mc3LR83
+eMTAsQvIJ5Q1hMO+zW7kwtNrrq5zmdJuLrbK5UjDq5FyFVRvfsxCakL2SG5FiCbJ
+5jXZX8LkWhfqOyivfbfw4h8+S/KO7yVjkyG7w+/tG8XqV4v3cyKU1n3ejVy60i5P
+ri4rET+WsQ0FeMXlGU/rNK3b6dujXhKmM6H1AAHFXrD/OtFn/tYXHoHN033LNK/0
+mVlm1fd6DjGC9Cl2+803ULFKGaMbmUHbsf/LTvu4kQK7ag/lpE/Aj+Zj+qOQv+Uw
+MdYpfLEfaF9cSTn4hAcTft9xWaMSc316yT6Zs9de+ZZJiAaRDQpEgBYZVamaa618
+w2YY5PPjR/HBnWCm0hJEQlg6ymSfHAGamGxr0GBCF3TNqY5IV8WTMap/1OXABPOz
+GM6D9w2ucS4Hc9u+wrtibRFbxm3yjFGqTtsaHzPHOAnz3LxU467Rr47oqfiJB0zd
+tfOfLwjMG9/dNt7gVbkGa654eR6tCe7+qeFG1ocWrSMABgWu83J4s5xmDMNm574z
+zzOco+hwQcUVE1BFtA+qlrwnpagfZQKtPUXGPkm3FW121/D5oEbkasLDzlJ69Wed
+SoOdMvfmFovrl9DAA7GYKKrMRL/chsZTZvoqj6+4wH9WPpuQUzM=
+=dYrS
+-----END PGP SIGNATURE-----
+
+--swacypvj7kcwodsi--
