@@ -1,43 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:50084 "EHLO mail.kernel.org"
+Received: from mga06.intel.com ([134.134.136.31]:55356 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752478AbeBIQXm (ORCPT
+        id S1752573AbeB0PAA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Feb 2018 11:23:42 -0500
-From: Kieran Bingham <kbingham@kernel.org>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [GIT PULL FOR renesas-drivers] vsp1/vga-performance-fix
-Date: Fri,  9 Feb 2018 16:23:38 +0000
-Message-Id: <1518193418-26969-1-git-send-email-kbingham@kernel.org>
+        Tue, 27 Feb 2018 10:00:00 -0500
+Date: Tue, 27 Feb 2018 20:33:47 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: rcar-dmac: fix max_chunk_size for R-Car Gen3
+Message-ID: <20180227150347.GB15443@localhost>
+References: <1518601212-25250-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1518601212-25250-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Wed, Feb 14, 2018 at 06:40:12PM +0900, Yoshihiro Shimoda wrote:
+> According to R-Car Gen3 Rev.0.80 manual, the DMATCR can be set to
+> 16,777,215 as maximum. So, this patch fixes the max_chunk_size for
+> safety on all of SoCs. Otherwise, a system may hang if the DMATCR
+> is set to 0 on R-Car Gen3.
 
-Please consider including this fix for the VSP1 in renesas-drivers.
+Applied, thanks
 
---
-Regards
-
-Kieran
-
-The following changes since commit d8a5b80568a9cb66810e75b182018e9edb68e8ff:
-
-  Linux 4.15 (2018-01-28 13:20:33 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git vsp1/vga-performance-fix
-
-for you to fetch changes up to e0c81de98739197b6fda7ba65fe4f17c7a03c384:
-
-  v4l: vsp1: Fix header display list status check in continuous mode (2018-02-09 15:57:49 +0000)
-
-----------------------------------------------------------------
-Kieran Bingham (1):
-      v4l: vsp1: Fix header display list status check in continuous mode
-
- drivers/media/platform/vsp1/vsp1_dl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+-- 
+~Vinod
