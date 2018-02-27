@@ -1,76 +1,56 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 7 Feb 2018 20:11:52 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rich Felker <dalias@libc.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
- cleanups
-Message-ID: <20180207191152.kvqrugblst2cko3c@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/2] phy: rcar-gen3-usb2: Add support for r8a77965
+Date: Tue, 27 Feb 2018 14:52:26 +0900
+Message-Id: <1519710747-26435-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hmv3ictfz5w3jtha"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFp3dPjsEeyrKAbW_duErCS+xYD0K8zhcRPCY65eRNtMqg@mail.gmail.com>
+Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+This patch adds support for r8a77965 (R-Car M3-N). This SoC has
+dedicated pins.
 
---hmv3ictfz5w3jtha
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c                     | 4 ++++
+ 2 files changed, 6 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+index 99b651b..dbd137c 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+@@ -8,6 +8,8 @@ Required properties:
+ 	      SoC.
+ 	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
+ 	      SoC.
++	      "renesas,usb2-phy-r8a77965" if the device is a part of an
++	      R8A77965 SoC.
+ 	      "renesas,usb2-phy-r8a77995" if the device is a part of an
+ 	      R8A77995 SoC.
+ 	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 9c90e7d..fb8f05e 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -397,6 +397,10 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ 		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
+ 	},
+ 	{
++		.compatible = "renesas,usb2-phy-r8a77965",
++		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
++	},
++	{
+ 		.compatible = "renesas,rcar-gen3-usb2-phy",
+ 	},
+ 	{ }
+-- 
+1.9.1
 
-> I picked patch5 and patch6, as those seemed trivial. Unless there is a
-> rc9, let's aim for 4.17 for the rest.
-
-I can't find the branch where you picked these patches? I wanted to use
-it to apply the rest of the patches. They don't seem to fit on v4.15
-or current linus/master. Can you share this branch?
-
-I will do reviewing now "visually". But please wait until I tested them
-before applying.
-
-Thanks,
-
-   Wolfram
-
-
---hmv3ictfz5w3jtha
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7T3gACgkQFA3kzBSg
-KbYcLRAAi0hE9uVMzeGBlvgjQGw54Uj+EbBvYeUyO4pa7I38zge+HfGCGjF0mhBB
-y7ABAjSittWqEubxBhY1PRgkx3SduAyMV2muz4mUSYbn6fpllR9ov89t273b02FE
-d17wq52rLPUpQxw3TlBGmR9yKIxPW0fKVM91Pg+NfpbtMChwri+HMY4z5iT+qdSE
-757D3k1xwxr33yBQrlj83DA1ipusuGkYNzcKneDwT1qIheQUAZ/aSR5Q3m4AHKJ0
-dVTBpeepl7ei1enze8EhM/zi3fH5l4icGmnqT9WJbyYN48StYa7dEYpvECpqaG23
-cSo4ce3verU12aI/+BXkoGIQUc5xT8bQwVWqTdkX6fqp/hI5tV4kVMfd8H080Yv8
-mbqc/CjU2AV94EIgHrzaIlAm+DBeCzbdRlmFg/Pa2tINfQjzhxfBaSu02nfIqEsa
-uJ/G2BUPjanzVWebP2/mQtvMAVm67ZAiRMjg91aE2BXWK+LqSqaQ+L22MgBJiVf0
-b0QaCGMUmS12P+shRSqUn56Pxs33YGEEw3agIGYRhhsrns67lDiKrt63tK6rkINQ
-HM5TSfHviIVBtj75Lq9XoyPpqBj1askTtRsQxXUkTGqVrJI50UyJC3ANVzteOm/Y
-IKAmVgx+wn4eKr3A29PXQmpTlxuLqt0v5KKn+1x1rEW+b5e9hkU=
-=bDb4
------END PGP SIGNATURE-----
-
---hmv3ictfz5w3jtha--
