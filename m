@@ -1,108 +1,99 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35029 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751544AbeBBC4U (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Feb 2018 21:56:20 -0500
-Subject: Re: [RFC v4 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@iguana.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-13-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <2dd9f76d-b3e9-31f2-11eb-272d327f3b01@roeck-us.net>
-Date: Thu, 1 Feb 2018 18:56:16 -0800
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: niklas.soderlund@ragnatech.se,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 2/3] media: i2c: adv748x: Add missing CBUS page
+Date: Tue, 27 Feb 2018 15:05:49 +0000
+Message-Id: <1519743950-28346-3-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <1519743950-28346-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1519743950-28346-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <1517423070-24236-13-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 01/31/2018 10:24 AM, Fabrizio Castro wrote:
-> Due to commits:
-> * "ARM: shmobile: Add watchdog support",
-> * "ARM: shmobile: rcar-gen2: Add watchdog support", and
-> * "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
-> we now have everything we needed for the watchdog to work on Gen2 and
-> RZ/G1.
-> 
-> This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
-> Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
-> always ON, when suspending to RAM we need to explicitly disable the
-> counting by clearing TME from RWTCSRA.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> ---
-> v3->4:
-> * in this new version the changes to the driver have been splitted into
->    two commits, this patch takes care of the basic Gen2 support, patch 13/26
->    takes care of the restart handler.
-> 
->   drivers/watchdog/renesas_wdt.c | 42 +++++++++++++++++++++++++++++++++++++-----
->   1 file changed, 37 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-> index 831ef83..0a1a402 100644
-> --- a/drivers/watchdog/renesas_wdt.c
-> +++ b/drivers/watchdog/renesas_wdt.c
-> @@ -203,13 +203,42 @@ static int rwdt_remove(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> -/*
-> - * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
-> - * to work there, one also needs a RESET (RST) driver which does not exist yet
-> - * due to HW issues. This needs to be solved before adding compatibles here.
-> - */
-> +#ifdef CONFIG_PM
-> +static int rwdt_suspend(struct device *dev)
-> +{
-> +	struct platform_device *pdev;
-> +	struct rwdt_priv *priv;
-> +
-> +	pdev = to_platform_device(dev);
-> +	priv = platform_get_drvdata(pdev);
-> +	if (watchdog_active(&priv->wdev)) {
-> +		rwdt_write(priv, priv->cks, RWTCSRA);
-> +	}
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Unnecessary { }
+The ADV748x has 12 pages mapped onto I2C addresses.
 
-> +	return 0;
-> +}
-> +
-> +static int rwdt_resume(struct device *dev)
-> +{
-> +	struct platform_device *pdev;
-> +	struct rwdt_priv *priv;
-> +
-> +	pdev = to_platform_device(dev);
-> +	priv = platform_get_drvdata(pdev);
-> +	if (watchdog_active(&priv->wdev)) {
-> +		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
-> +	}
+In the existing implementation only 11 are mapped correctly in the page
+enumerations, which causes an off-by-one fault on pages above the
+infoframe definition due to a missing 'CBUS' page.
 
-Same here. FWIW, checkpatch does complain about that.
+This causes the address for the CEC, SDP, TXA, and TXB to be incorrectly
+programmed during the iterations in adv748x_initialise_clients().
 
-Guenter
+Until now this has gone un-noticed due to the fact that following the
+creation of the clients - the device is reset and the addresses are
+reprogrammed in manually by the call to "adv748x_write_regs(state,
+adv748x_set_slave_address);"
+
+As part of moving to dynamic i2c address allocations repair this by
+providing the missing CBUS page definition.
+
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+v2
+ - Remove period from commit title.
+ - Collect Niklas' RB tag.
+
+
+ drivers/media/i2c/adv748x/adv748x-core.c | 3 +++
+ drivers/media/i2c/adv748x/adv748x.h      | 2 ++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+index faf73949962b..9dcaadaca217 100644
+--- a/drivers/media/i2c/adv748x/adv748x-core.c
++++ b/drivers/media/i2c/adv748x/adv748x-core.c
+@@ -52,6 +52,7 @@ static const struct regmap_config adv748x_regmap_cnf[] = {
+ 	ADV748X_REGMAP_CONF("edid"),
+ 	ADV748X_REGMAP_CONF("repeater"),
+ 	ADV748X_REGMAP_CONF("infoframe"),
++	ADV748X_REGMAP_CONF("cbus"),
+ 	ADV748X_REGMAP_CONF("cec"),
+ 	ADV748X_REGMAP_CONF("sdp"),
+ 	ADV748X_REGMAP_CONF("txa"),
+@@ -89,6 +90,7 @@ static int adv748x_i2c_addresses[ADV748X_PAGE_MAX] = {
+ 	ADV748X_I2C_EDID,
+ 	ADV748X_I2C_REPEATER,
+ 	ADV748X_I2C_INFOFRAME,
++	ADV748X_I2C_CBUS,
+ 	ADV748X_I2C_CEC,
+ 	ADV748X_I2C_SDP,
+ 	ADV748X_I2C_TXB,
+@@ -352,6 +354,7 @@ static const struct adv748x_reg_value adv748x_set_slave_address[] = {
+ 	{ADV748X_PAGE_IO, 0xf6, ADV748X_I2C_EDID << 1},
+ 	{ADV748X_PAGE_IO, 0xf7, ADV748X_I2C_REPEATER << 1},
+ 	{ADV748X_PAGE_IO, 0xf8, ADV748X_I2C_INFOFRAME << 1},
++	{ADV748X_PAGE_IO, 0xf9, ADV748X_I2C_CBUS << 1},
+ 	{ADV748X_PAGE_IO, 0xfa, ADV748X_I2C_CEC << 1},
+ 	{ADV748X_PAGE_IO, 0xfb, ADV748X_I2C_SDP << 1},
+ 	{ADV748X_PAGE_IO, 0xfc, ADV748X_I2C_TXB << 1},
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 6789e2f3bc8c..725662edc4b8 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -35,6 +35,7 @@
+ #define ADV748X_I2C_EDID		0x36	/* EDID Map */
+ #define ADV748X_I2C_REPEATER		0x32	/* HDMI RX Repeater Map */
+ #define ADV748X_I2C_INFOFRAME		0x31	/* HDMI RX InfoFrame Map */
++#define ADV748X_I2C_CBUS		0x30	/* CBUS MHL Map */
+ #define ADV748X_I2C_CEC			0x41	/* CEC Map */
+ #define ADV748X_I2C_SDP			0x79	/* SDP Map */
+ #define ADV748X_I2C_TXB			0x48	/* CSI-TXB Map */
+@@ -48,6 +49,7 @@ enum adv748x_page {
+ 	ADV748X_PAGE_EDID,
+ 	ADV748X_PAGE_REPEATER,
+ 	ADV748X_PAGE_INFOFRAME,
++	ADV748X_PAGE_CBUS,
+ 	ADV748X_PAGE_CEC,
+ 	ADV748X_PAGE_SDP,
+ 	ADV748X_PAGE_TXB,
+-- 
+2.7.4
