@@ -1,114 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34081 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44484 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932434AbeBVNM4 (ORCPT
+        with ESMTP id S934767AbeB1Uwz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Feb 2018 08:12:56 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v6 1/4] dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
-Date: Thu, 22 Feb 2018 15:13:33 +0200
-Message-Id: <20180222131336.7712-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180222131336.7712-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180222131336.7712-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 28 Feb 2018 15:52:55 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v6 2/9] v4l: vsp1: Protect bodies against overflow
+Date: Wed, 28 Feb 2018 20:52:36 +0000
+Message-Id: <c7ad9d7cab7c3f088d27cc7ee1866e163949ff02.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R-Car Gen2 and Gen3 SoCs have internal LVDS encoders. Add
-corresponding device tree bindings.
+The body write function relies on the code never asking it to write more
+than the entries available in the list.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Currently with each list body containing 256 entries, this is fine, but
+we can reduce this number greatly saving memory. In preparation of this
+add a level of protection to catch any buffer overflows.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 ---
-Changes since v1:
 
-- Move the SoC name before the IP name in compatible strings
-- Rename parallel input to parallel RGB input
-- Fixed "renesas,r8a7743-lvds" description
-- Document the resets property
-- Fixed typo
----
- .../bindings/display/bridge/renesas,lvds.txt       | 56 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+v3:
+ - adapt for new 'body' terminology
+ - simplify WARN_ON macro usage
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-new file mode 100644
-index 000000000000..2b19ce51ec07
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-@@ -0,0 +1,56 @@
-+Renesas R-Car LVDS Encoder
-+==========================
-+
-+These DT bindings describe the LVDS encoder embedded in the Renesas R-Car
-+Gen2, R-Car Gen3 and RZ/G SoCs.
-+
-+Required properties:
-+
-+- compatible : Shall contain one of
-+  - "renesas,r8a7743-lvds" for R8A7743 (RZ/G1M) compatible LVDS encoders
-+  - "renesas,r8a7790-lvds" for R8A7790 (R-Car H2) compatible LVDS encoders
-+  - "renesas,r8a7791-lvds" for R8A7791 (R-Car M2-W) compatible LVDS encoders
-+  - "renesas,r8a7793-lvds" for R8A7791 (R-Car M2-N) compatible LVDS encoders
-+  - "renesas,r8a7795-lvds" for R8A7795 (R-Car H3) compatible LVDS encoders
-+  - "renesas,r8a7796-lvds" for R8A7796 (R-Car M3-W) compatible LVDS encoders
-+
-+- reg: Base address and length for the memory-mapped registers
-+- clocks: A phandle + clock-specifier pair for the functional clock
-+- resets: A phandle + reset specifier for the module reset
-+
-+Required nodes:
-+
-+The LVDS encoder has two video ports. Their connections are modelled using the
-+OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-+
-+- Video port 0 corresponds to the parallel RGB input
-+- Video port 1 corresponds to the LVDS output
-+
-+Each port shall have a single endpoint.
-+
-+
-+Example:
-+
-+	lvds0: lvds@feb90000 {
-+		compatible = "renesas,r8a7790-lvds";
-+		reg = <0 0xfeb90000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 726>;
-+		resets = <&cpg 726>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds0_in: endpoint {
-+					remote-endpoint = <&du_out_lvds0>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds0_out: endpoint {
-+				};
-+			};
-+		};
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2afba909724c..13c8ec11135a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4744,6 +4744,7 @@ F:	drivers/gpu/drm/rcar-du/
- F:	drivers/gpu/drm/shmobile/
- F:	include/linux/platform_data/shmob_drm.h
- F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-+F:	Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
- F:	Documentation/devicetree/bindings/display/renesas,du.txt
+ drivers/media/platform/vsp1/vsp1_dl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 0c1bd17f9281..59fe80bf6e9d 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -50,6 +50,7 @@ struct vsp1_dl_entry {
+  * @dma: DMA address of the entries
+  * @size: size of the DMA memory in bytes
+  * @num_entries: number of stored entries
++ * @max_entries: number of entries available
+  */
+ struct vsp1_dl_body {
+ 	struct list_head list;
+@@ -60,6 +61,7 @@ struct vsp1_dl_body {
+ 	size_t size;
  
- DRM DRIVERS FOR ROCKCHIP
+ 	unsigned int num_entries;
++	unsigned int max_entries;
+ };
+ 
+ /**
+@@ -139,6 +141,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
+ 
+ 	dlb->vsp1 = vsp1;
+ 	dlb->size = size;
++	dlb->max_entries = num_entries;
+ 
+ 	dlb->entries = dma_alloc_wc(vsp1->bus_master, dlb->size, &dlb->dma,
+ 				    GFP_KERNEL);
+@@ -220,6 +223,10 @@ void vsp1_dl_body_free(struct vsp1_dl_body *dlb)
+  */
+ void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
+ {
++	if (WARN_ONCE(dlb->num_entries >= dlb->max_entries,
++		      "DLB size exceeded (max %u)", dlb->max_entries))
++		return;
++
+ 	dlb->entries[dlb->num_entries].addr = reg;
+ 	dlb->entries[dlb->num_entries].data = data;
+ 	dlb->num_entries++;
 -- 
-Regards,
-
-Laurent Pinchart
+git-series 0.9.1
