@@ -1,79 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44858 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965285AbeBMRDP (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:53847 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934222AbeB1Rkl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Feb 2018 12:03:15 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v10 17/30] rcar-vin: update pixelformat check for M1
-Date: Tue, 13 Feb 2018 19:03:46 +0200
-Message-ID: <1940936.O8uNz50EkU@avalon>
-In-Reply-To: <20180129163435.24936-18-niklas.soderlund+renesas@ragnatech.se>
-References: <20180129163435.24936-1-niklas.soderlund+renesas@ragnatech.se> <20180129163435.24936-18-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+        Wed, 28 Feb 2018 12:40:41 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v6 01/26] ARM: shmobile: Add watchdog support
+Date: Wed, 28 Feb 2018 17:40:22 +0000
+Message-Id: <1519839622-6109-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
+References: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
+boot CPUs run a routine designed to bring up SMP and deal with hot plug.
+The value contained in the SBAR registers is not initialized by a WDT
+triggered reset, which means that after a WDT triggered reset we jump
+to the SMP bring up routine, preventing the system from executing the
+bootrom code.
 
-Thank you for the patch.
+The purpose of this patch is to jump to the bootrom code in case of a
+WDT triggered reset, and keep the SMP functionality untouched.
+In order to tell if the code had been called due to the WDT overflowing
+we are testing WOVF from register RWTCSRA.
 
-On Monday, 29 January 2018 18:34:22 EET Niklas S=F6derlund wrote:
-> If the pixelformat is not supported it should not fail but be set to
-> something that works. While we are at it move the check together with
-> other pixelformat checks of this function.
+The new function shmobile_boot_vector_gen2 isn't replacing
+shmobile_boot_vector for backward compatibility reasons. The kernel
+will install the best option (either shmobile_boot_vector or
+shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree,
+according to the amount of memory available.
 
-Please ignore my related comment to patch 16/30 :-) However, could you move=
-=20
-this patch before 16/30 ?
+Since shmobile_boot_vector has become bigger, "reg" property of nodes
+compatible with "renesas,smp-sram" now need to be set to a value
+greater or equal to "<0 0x60>".
 
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v5->v6:
+* taken ifdefs out as per Geert's suggestion.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+ arch/arm/mach-shmobile/common.h  |  4 +++
+ arch/arm/mach-shmobile/headsmp.S | 53 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
-> bca6e204a574772f..841d62ca27e026d7 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -97,6 +97,10 @@ static int rvin_format_align(struct rvin_dev *vin, str=
-uct
-> v4l2_pix_format *pix) pix->pixelformat =3D RVIN_DEFAULT_FORMAT;
->  	}
->=20
-> +	if (vin->info->model =3D=3D RCAR_M1 &&
-> +	    pix->pixelformat =3D=3D V4L2_PIX_FMT_XBGR32)
-> +		pix->pixelformat =3D RVIN_DEFAULT_FORMAT;
-> +
->  	/* Reject ALTERNATE  until support is added to the driver */
->  	switch (pix->field) {
->  	case V4L2_FIELD_TOP:
-> @@ -121,12 +125,6 @@ static int rvin_format_align(struct rvin_dev *vin,
-> struct v4l2_pix_format *pix) pix->bytesperline =3D
-> rvin_format_bytesperline(pix);
->  	pix->sizeimage =3D rvin_format_sizeimage(pix);
->=20
-> -	if (vin->info->model =3D=3D RCAR_M1 &&
-> -	    pix->pixelformat =3D=3D V4L2_PIX_FMT_XBGR32) {
-> -		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
-> -		return -EINVAL;
-> -	}
-> -
->  	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
->  		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index a8fa4f7..43c1ac69 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -7,6 +7,10 @@ extern void shmobile_init_delay(void);
+ extern void shmobile_boot_vector(void);
+ extern unsigned long shmobile_boot_fn;
+ extern unsigned long shmobile_boot_size;
++extern void shmobile_boot_vector_gen2(void);
++extern unsigned long shmobile_boot_fn_gen2;
++extern unsigned long shmobile_boot_cpu_gen2;
++extern unsigned long shmobile_boot_size_gen2;
+ extern void shmobile_smp_boot(void);
+ extern void shmobile_smp_sleep(void);
+ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
+index 32e0bf6..2ece67c 100644
+--- a/arch/arm/mach-shmobile/headsmp.S
++++ b/arch/arm/mach-shmobile/headsmp.S
+@@ -16,6 +16,11 @@
+ #include <asm/assembler.h>
+ #include <asm/memory.h>
+ 
++#define SCTLR_MMU	0x01
++#define BOOTROM_ADDRESS	0xE6340000
++#define RWTCSRA_ADDRESS 0xE6020004
++#define RWTCSRA_WOVF	0x10
++
+ /*
+  * Reset vector for secondary CPUs.
+  * This will be mapped at address 0 by SBAR register.
+@@ -38,6 +43,54 @@ shmobile_boot_size:
+ 	.long	. - shmobile_boot_vector
+ 
+ /*
++ * Reset vector for R-Car Gen2 and RZ/G1 secondary CPUs.
++ * This will be mapped at address 0 by SBAR register.
++ */
++ENTRY(shmobile_boot_vector_gen2)
++	mrc	p15, 0, r0, c0, c0, 5		@ r0 = MPIDR
++	ldr	r1, shmobile_boot_cpu_gen2
++	cmp	r0, r1
++	bne	shmobile_smp_continue_gen2
++
++	mrc	p15, 0, r1, c1, c0, 0		@ r1 = SCTLR
++	and	r0, r1, #SCTLR_MMU
++	cmp	r0, #SCTLR_MMU
++	beq	shmobile_smp_continue_gen2
++
++	ldr	r0, rwtcsra
++	mov	r1, #0
++	ldrb	r1, [r0]
++	and	r0, r1, #RWTCSRA_WOVF
++	cmp	r0, #RWTCSRA_WOVF
++	bne	shmobile_smp_continue_gen2
++
++	ldr	r0, bootrom
++	bx	r0
++
++shmobile_smp_continue_gen2:
++	ldr     r1, shmobile_boot_fn_gen2
++	bx	r1
++
++ENDPROC(shmobile_boot_vector_gen2)
++
++	.align	4
++rwtcsra:
++	.word	RWTCSRA_ADDRESS
++bootrom:
++	.word	BOOTROM_ADDRESS
++	.globl	shmobile_boot_cpu_gen2
++shmobile_boot_cpu_gen2:
++	.word	0x00000000
++
++	.align	2
++	.globl	shmobile_boot_fn_gen2
++shmobile_boot_fn_gen2:
++	.space	4
++	.globl	shmobile_boot_size_gen2
++shmobile_boot_size_gen2:
++	.long	. - shmobile_boot_vector_gen2
++
++/*
+  * Per-CPU SMP boot function/argument selection code based on MPIDR
+  */
+ 
+-- 
+2.7.4
