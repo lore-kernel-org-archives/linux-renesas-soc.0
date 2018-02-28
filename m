@@ -1,51 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:40686 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbeBZSDs (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:43566 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932745AbeB1TY3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Feb 2018 13:03:48 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Wed, 28 Feb 2018 14:24:29 -0500
+MIME-Version: 1.0
+In-Reply-To: <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com> <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Feb 2018 20:24:27 +0100
+Message-ID: <CAMuHMdXKHzpi9evmTOt58DaZzA3dHmMJsAqPNi0+j9Bv1QBbdQ@mail.gmail.com>
+Subject: Re: [PATCH v5 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] dt-bindings: arm: Document Renesas R-Car M3-N-based Salvator-X board
-Date: Mon, 26 Feb 2018 19:03:44 +0100
-Message-Id: <1519668225-12548-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
-References: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas Salvator-X development board can be equipped with an R-Car
-H3, M3-W, or M3-N SiP, which are pin-compatible.
+Hi Fabrizio,
 
-Document board part number and compatible values for the version with
-R-Car M3-N.
+On Mon, Feb 12, 2018 at 6:44 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Due to commits:
+> * "ARM: shmobile: Add watchdog support",
+> * "ARM: shmobile: rcar-gen2: Add watchdog support", and
+> * "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
+> we now have everything we needed for the watchdog to work on Gen2 and
+> RZ/G1.
+>
+> This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
+> Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
+> always ON, when suspending to RAM we need to explicitly disable the
+> counting by clearing TME from RWTCSRA.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-The board part number was extracted from a big patch by Takeshi Kihara
-in the BSP.
+Thanks for your patch!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+I verified this works on R-Car Gen2, so
+Reviewed-and-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 82908a9447e4b051..51e4428856be4557 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -108,6 +108,8 @@ Boards:
-     compatible = "renesas,salvator-x", "renesas,r8a7795"
-   - Salvator-X (RTP0RC7796SIPB0011S)
-     compatible = "renesas,salvator-x", "renesas,r8a7796"
-+  - Salvator-X (RTP0RC7796SIPB0011S (M3N))
-+    compatible = "renesas,salvator-x", "renesas,r8a77965"
-   - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
-     compatible = "renesas,salvator-xs", "renesas,r8a7795"
-   - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
--- 
-2.7.4
+Still, more comments below...
+
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -203,13 +203,29 @@ static int rwdt_remove(struct platform_device *pdev)
+>         return 0;
+>  }
+>
+> -/*
+> - * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
+> - * to work there, one also needs a RESET (RST) driver which does not exist yet
+> - * due to HW issues. This needs to be solved before adding compatibles here.
+> - */
+> +static int __maybe_unused rwdt_suspend(struct device *dev)
+> +{
+> +       struct rwdt_priv *priv = dev_get_drvdata(dev);
+> +
+> +       if (watchdog_active(&priv->wdev))
+> +               rwdt_write(priv, priv->cks, RWTCSRA);
+> +       return 0;
+> +}
+> +
+> +static int __maybe_unused rwdt_resume(struct device *dev)
+> +{
+> +       struct rwdt_priv *priv = dev_get_drvdata(dev);
+> +
+> +       if (watchdog_active(&priv->wdev))
+> +               rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
+
+Writing to this register is not sufficient on R-Car Gen3, where PSCI
+suspend powers down the whole SoC.  Hence all WDT register content is lost,
+causing the watchdog timeout never to trigger.
+Note that this issue is pre-existing, and not caused by your patch.
+
+This can be fixed by replacing the RWTCSRA register writes in the
+suspend/resume handlers by calls to rwdt_stop() resp. rwdt_start(), like is
+done in the BSP in commit e406980763f18f38 ("watchdog: renesas-wdt: Support
+the suspend/resume"). Note that this would cause a small change in behavior
+on R-Car Gen2, where the timeout would be reset on resume, instead of
+continuing where stopped before. I don't think that hurts, though.
+
+Since I was always a bit uncomfortable with this patch doing two things at
+once (1. suspend/resume, 2. "renesas,rcar-gen2-wdt" matching), I think it
+would be better to take the patch from the BSP first, and add support for
+"renesas,rcar-gen2-wdt" in a subsequent patch.
+
+Does the above make sense?
+Do you agree?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
