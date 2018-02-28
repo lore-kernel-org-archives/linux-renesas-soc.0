@@ -1,43 +1,88 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au,
-        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/10] arm64: dts: renesas: r8a7795: Set EtherAVB phy mode to "rgmii"
-Date: Tue, 27 Feb 2018 11:22:51 +0100
-Message-Id: <1519726974-23160-8-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:41935 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751717AbeB1Gvz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 28 Feb 2018 01:51:55 -0500
+Date: Wed, 28 Feb 2018 07:51:50 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/4] dt-bindings: arm: Document Renesas R-Car M3-N-based
+ Salvator-X board
+Message-ID: <20180228065150.zmutu3svbsztfilx@verge.net.au>
+References: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
+ <1519668225-12548-4-git-send-email-geert+renesas@glider.be>
+ <20180227082238.e2kk6s4wogwwltvb@verge.net.au>
+ <CAMuHMdXkpEoKxT-z0FunnfdjUpUZZP8GvbC5wAuj-qseQCVkzQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXkpEoKxT-z0FunnfdjUpUZZP8GvbC5wAuj-qseQCVkzQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the "phy-mode" property of EtherAVB device to "rgmii" and let board
-files override it if the installed PHY layer provides delays for the
-RX/TX channels.
+On Tue, Feb 27, 2018 at 10:25:42PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Tue, Feb 27, 2018 at 9:22 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Feb 26, 2018 at 07:03:44PM +0100, Geert Uytterhoeven wrote:
+> >> The Renesas Salvator-X development board can be equipped with an R-Car
+> >> H3, M3-W, or M3-N SiP, which are pin-compatible.
+> >>
+> >> Document board part number and compatible values for the version with
+> >> R-Car M3-N.
+> >>
+> >> The board part number was extracted from a big patch by Takeshi Kihara
+> >> in the BSP.
+> 
+> >> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> >> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> >> @@ -108,6 +108,8 @@ Boards:
+> >>      compatible = "renesas,salvator-x", "renesas,r8a7795"
+> >>    - Salvator-X (RTP0RC7796SIPB0011S)
+> >
+> > Here we have: Name (Part No)
+> 
+> That's the standard (highest number of occurrences) way.
+> 
+> >>      compatible = "renesas,salvator-x", "renesas,r8a7796"
+> >> +  - Salvator-X (RTP0RC7796SIPB0011S (M3N))
+> >
+> > Here we have: Name (Part No (SoC))
+> 
+> This one is special: it's basically an M3-N prototype board made by taking
+> a Salvator-X/M3-W board, and replacing the M3-W SiP by an M3-N SiP.
+> Hence the board part number is the same.
+> 
+> >> +    compatible = "renesas,salvator-x", "renesas,r8a77965"
+> >>    - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
+> >
+> > And here we have: Name (Version, Part No)
+> 
+> AFAIU, "Salvator-XS" really means "Salvator-X 2nd version".
+> So it's not "Version", but "Alternative Board Name".
+> There's a similar thing with the ULCB boards:
+> 
+>   - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
+>     H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
+>   - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
+> 
+> >>      compatible = "renesas,salvator-xs", "renesas,r8a7795"
+> >>    - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
+> >
+> > Can we think about making this more consistent?
+> 
+> I'm afraid not. Naming seems to become only more complex over time...
+> Unless you have great hands and great ideas ;-)
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Not so many good ideas this morning.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 1f32340..87327eb 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -873,7 +873,7 @@
- 			clocks = <&cpg CPG_MOD 812>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
--			phy-mode = "rgmii-txid";
-+			phy-mode = "rgmii";
- 			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.7.4
-
+I've applied this as is. We can revisit if the need arises.
