@@ -1,47 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:49963 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752909AbeB0KXx (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:37882 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934475AbeB1QTw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 05:23:53 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au,
-        sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 08/10] arm64: dts: renesas: r8a77995: Set EtherAVB phy mode to "rgmii"
-Date: Tue, 27 Feb 2018 11:22:52 +0100
-Message-Id: <1519726974-23160-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 28 Feb 2018 11:19:52 -0500
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1er4SN-0005h0-Je
+        for linux-renesas-soc@vger.kernel.org; Wed, 28 Feb 2018 17:19:51 +0100
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1er4SN-0005xh-Id
+        for linux-renesas-soc@vger.kernel.org; Wed, 28 Feb 2018 17:19:51 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-02-28-v4.16-rc3
+Date: Wed, 28 Feb 2018 17:19:51 +0100
+Message-Id: <1519834791-22878-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Set the "phy-mode" property of EtherAVB device to "rgmii" and let board
-files override it if the installed PHY layer provides delays for the
-RX/TX channels.
+I have pushed renesas-drivers-2018-02-28-v4.16-rc3 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index cd3c6a3..fc48677 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -512,7 +512,7 @@
- 			clocks = <&cpg CPG_MOD 812>;
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
--			phy-mode = "rgmii-txid";
-+			phy-mode = "rgmii";
- 			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.7.4
+Today's version is based on renesas-devel-20180227-v4.16-rc3.
+
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/rcar-genpd-wakeup-v4
+  - topic/r8a77970-eagle-i2c-v1
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://linuxtv.org/pinchartl/media.git#tags/vsp1-discom-v1-20171215
+  - git://linuxtv.org/pinchartl/media.git#tags/drm-next-colorkey-v1-20171215
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - topic/vsp1/tlb-optimise/v5-rebased1
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#vsp1/vga-performance-fix
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#d3/i2c-conflict/drm
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#d3/i2c-conflict/media
+  - topic/rcar-gen2-wdt-v5+
+
+Included fixes:
+  - ARM: shmobile: rcar-gen2: Fix error check in regulator quirk
+  - arm_pmu: Use disable_irq_nosync when disabling SPI in CPU teardown hook
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
