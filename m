@@ -1,42 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42443 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752275AbeB0IVJ (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45202 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751707AbeB1Icy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:21:09 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] usb: renesas_usbhs: add binding for r8a77965
-Date: Tue, 27 Feb 2018 17:16:02 +0900
-Message-Id: <1519719363-27850-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1519719363-27850-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1519719363-27850-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 28 Feb 2018 03:32:54 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <4a2ae4c8-4a4b-1ea3-3416-2dfdffee6499@cogentembedded.com>
+References: <20180228064911.vnax4vyqnq6lry52@verge.net.au> <4a2ae4c8-4a4b-1ea3-3416-2dfdffee6499@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Feb 2018 09:32:53 +0100
+Message-ID: <CAMuHMdXisBvUDdsb=C7eoLQzpgC7cw5ncD4g2vJOjXM6YFecuw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: arm: Document Renesas V3MSK and Wheat
+ board part numbers
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds binding for r8a77965 (R-Car M3-N).
+Hi Sergei,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Feb 28, 2018 at 8:38 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 2/28/2018 9:49 AM, Simon Horman wrote:
+>> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+>> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+>> @@ -120,9 +120,9 @@ Boards:
+>>       compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
+>>     - Stout (ADAS Starterkit, Y-R-CAR-ADAS-SKH2-BOARD)
+>>       compatible = "renesas,stout", "renesas,r8a7790"
+>> -  - V3MSK
+>> +  - V3MSK (Y-ASK-RCAR-V3M-WS10)
+>
+>    https://elinux.org/R-Car/Boards/V3MSK (now that I'm reminded of this
+> site) says the V3MSK's model # is RTP0RC77970SEB0010S.
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-index d060172..43960fa 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-@@ -12,6 +12,7 @@ Required properties:
- 	- "renesas,usbhs-r8a7794" for r8a7794 (R-Car E2) compatible device
- 	- "renesas,usbhs-r8a7795" for r8a7795 (R-Car H3) compatible device
- 	- "renesas,usbhs-r8a7796" for r8a7796 (R-Car M3-W) compatible device
-+	- "renesas,usbhs-r8a77965" for r8a77965 (R-Car M3-N) compatible device
- 	- "renesas,usbhs-r8a77995" for r8a77995 (R-Car D3) compatible device
- 	- "renesas,usbhs-r7s72100" for r7s72100 (RZ/A1) compatible device
- 	- "renesas,rcar-gen2-usbhs" for R-Car Gen2 or RZ/G1 compatible devices
--- 
-1.9.1
+Nope, that's Eagle :-(
+Check the picture on https://elinux.org/R-Car/Boards/Eagle
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
