@@ -1,99 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:19183 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752072AbeB0IM4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41945 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751717AbeB1GwU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Feb 2018 03:12:56 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a77965: Add USB2.0 host pins, groups and functions
-Date: Tue, 27 Feb 2018 17:08:01 +0900
-Message-Id: <1519718882-27636-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1519718882-27636-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1519718882-27636-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 28 Feb 2018 01:52:20 -0500
+Date: Wed, 28 Feb 2018 07:52:16 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 4/4] dt-bindings: arm: Document Renesas R-Car M3-N-based
+ Salvator-XS board
+Message-ID: <20180228065215.a3gzcwjsgvdcblu4@verge.net.au>
+References: <1519668225-12548-1-git-send-email-geert+renesas@glider.be>
+ <1519668225-12548-5-git-send-email-geert+renesas@glider.be>
+ <20180227082514.h2pfc7a5qpceb2mb@verge.net.au>
+ <TY1PR06MB0702A5B4087711A3EF947893B7C00@TY1PR06MB0702.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR06MB0702A5B4087711A3EF947893B7C00@TY1PR06MB0702.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Tue, Feb 27, 2018 at 08:41:13AM +0000, Chris Paterson wrote:
+> Hello Simon,
+> 
+> > From: devicetree-owner@vger.kernel.org [mailto:devicetree-
+> > owner@vger.kernel.org] On Behalf Of Simon Horman
+> > Sent: 27 February 2018 08:25
+> > 
+> > On Mon, Feb 26, 2018 at 07:03:45PM +0100, Geert Uytterhoeven wrote:
+> > > The Renesas Salvator-XS development board can be equipped with an
+> > > R-Car H3, M3-W, or M3-N SiP, which are pin-compatible.
+> > >
+> > > Document board part number and compatible values for the version with
+> > > R-Car M3-N.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > >  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt
+> > > b/Documentation/devicetree/bindings/arm/shmobile.txt
+> > > index 51e4428856be4557..303f04e639431837 100644
+> > > --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> > > +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> > > @@ -114,6 +114,8 @@ Boards:
+> > >      compatible = "renesas,salvator-xs", "renesas,r8a7795"
+> > >    - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
+> > >      compatible = "renesas,salvator-xs", "renesas,r8a7796"
+> > > +  - Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
+> > > +    compatible = "renesas,salvator-xs", "renesas,r8a77965"
+> > 
+> > I am unsure how to verify this part number, can anyone help?
+> 
+> This matches the label on the board.
 
-This patch adds USB{0,1} (USB2.0 host) pins, groups and functions to
-the R8A77965 SoC.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index acd57d5..270dfc2 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1872,6 +1872,26 @@ enum {
- 	SCIF_CLK_B_MARK,
- };
- 
-+/* - USB0 ------------------------------------------------------------------- */
-+static const unsigned int usb0_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
-+};
-+
-+static const unsigned int usb0_mux[] = {
-+	USB0_PWEN_MARK, USB0_OVC_MARK,
-+};
-+
-+/* - USB1 ------------------------------------------------------------------- */
-+static const unsigned int usb1_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
-+};
-+
-+static const unsigned int usb1_mux[] = {
-+	USB1_PWEN_MARK, USB1_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_link),
- 	SH_PFC_PIN_GROUP(avb_magic),
-@@ -1912,6 +1932,8 @@ enum {
- 	SH_PFC_PIN_GROUP(scif5_clk_b),
- 	SH_PFC_PIN_GROUP(scif_clk_a),
- 	SH_PFC_PIN_GROUP(scif_clk_b),
-+	SH_PFC_PIN_GROUP(usb0),
-+	SH_PFC_PIN_GROUP(usb1),
- };
- 
- static const char * const avb_groups[] = {
-@@ -1976,6 +1998,14 @@ enum {
- 	"scif_clk_b",
- };
- 
-+static const char * const usb0_groups[] = {
-+	"usb0",
-+};
-+
-+static const char * const usb1_groups[] = {
-+	"usb1",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(scif0),
-@@ -1985,6 +2015,8 @@ enum {
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
- 	SH_PFC_FUNCTION(scif_clk),
-+	SH_PFC_FUNCTION(usb0),
-+	SH_PFC_FUNCTION(usb1),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
+Thanks, applied.
