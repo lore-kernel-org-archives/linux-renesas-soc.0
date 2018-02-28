@@ -1,283 +1,414 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44479 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934745AbeB1Uwy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 28 Feb 2018 15:52:54 -0500
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v6 0/9] vsp1: TLB optimisation and DL caching
-Date: Wed, 28 Feb 2018 20:52:34 +0000
-Message-Id: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Subject: [PATCH v6 1/9] v4l: vsp1: Reword uses of 'fragment' as 'body'
+Date: Wed, 28 Feb 2018 20:52:35 +0000
+Message-Id: <afac07e242bcc15ce5e9bc8f7899b3240d2732a2.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.d841c9354585c652c97473ace29c877b9395e83b.1519850924.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each display list currently allocates an area of DMA memory to store register
-settings for the VSP1 to process. Each of these allocations adds pressure to
-the IPMMU TLB entries.
+Throughout the codebase, the term 'fragment' is used to represent a
+display list body. This term duplicates the 'body' which is already in
+use.
 
-We can reduce the pressure by pre-allocating larger areas and dividing the area
-across multiple bodies represented as a pool.
+The datasheet references these objects as a body, therefore replace all
+mentions of a fragment with a body, along with the corresponding
+pluralised terms.
 
-With this reconfiguration of bodies, we can adapt the configuration code to
-separate out constant hardware configuration and cache it for re-use.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_clu.c |  10 +-
+ drivers/media/platform/vsp1/vsp1_dl.c  | 107 ++++++++++++--------------
+ drivers/media/platform/vsp1/vsp1_dl.h  |  14 +--
+ drivers/media/platform/vsp1/vsp1_lut.c |   8 +-
+ 4 files changed, 69 insertions(+), 70 deletions(-)
 
-The patches provided in this series can be found at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git  tags/vsp1/tlb-optimise/v6
-
-Changelog:
-----------
-
-v6:
- - Rebased on to linux-media/master (v4.16-rc1)
- - Removed DRM/UIF (DISCOM/ColorKey) updates
-
-v5:
- - Rebased on to renesas-drivers-2018-01-09-v4.15-rc7 to fix conflicts
-   with DRM and UIF updates on VSP1 driver
-
-v4:
- - Rebased to v4.14
- * v4l: vsp1: Use reference counting for bodies
-   - Fix up reference handling comments
-
- * v4l: vsp1: Provide a body pool
-   - Provide comment explaining extra allocation on body pool
-     highlighting area for optimisation later.
-
- * v4l: vsp1: Refactor display list configure operations
-   - Fix up comment to describe yuv_mode caching rather than format
-
- * vsp1: Adapt entities to configure into a body
-   - Rename vsp1_dl_list_get_body() to vsp1_dl_list_get_body0()
-
- * v4l: vsp1: Move video configuration to a cached dlb
-   - Adjust pipe configured flag to be reset on resume rather than suspend
-   - rename dl_child, dl_next
-
-Testing:
---------
-The VSP unit tests have been run on this patch set with the following results:
-
---- Test loop 1 ---
-- vsp-unit-test-0000.sh
-Test Conditions:
-  Platform          Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+
-  Kernel release    4.16.0-rc1-arm64-renesas-00166-ge0ad4e839fff
-  convert           /usr/bin/convert
-  compare           /usr/bin/compare
-  killall           /usr/bin/killall
-  raw2rgbpnm        /usr/bin/raw2rgbpnm
-  stress            /usr/bin/stress
-  yavta             /usr/bin/yavta
-- vsp-unit-test-0001.sh
-Testing WPF packing in RGB332: pass
-Testing WPF packing in ARGB555: pass
-Testing WPF packing in XRGB555: pass
-Testing WPF packing in RGB565: pass
-Testing WPF packing in BGR24: pass
-Testing WPF packing in RGB24: pass
-Testing WPF packing in ABGR32: pass
-Testing WPF packing in ARGB32: pass
-Testing WPF packing in XBGR32: pass
-Testing WPF packing in XRGB32: pass
-- vsp-unit-test-0002.sh
-Testing WPF packing in NV12M: pass
-Testing WPF packing in NV16M: pass
-Testing WPF packing in NV21M: pass
-Testing WPF packing in NV61M: pass
-Testing WPF packing in UYVY: pass
-Testing WPF packing in VYUY: skip
-Testing WPF packing in YUV420M: pass
-Testing WPF packing in YUV422M: pass
-Testing WPF packing in YUV444M: pass
-Testing WPF packing in YVU420M: pass
-Testing WPF packing in YVU422M: pass
-Testing WPF packing in YVU444M: pass
-Testing WPF packing in YUYV: pass
-Testing WPF packing in YVYU: pass
-- vsp-unit-test-0003.sh
-Testing scaling from 640x640 to 640x480 in RGB24: pass
-Testing scaling from 1024x768 to 640x480 in RGB24: pass
-Testing scaling from 640x480 to 1024x768 in RGB24: pass
-Testing scaling from 640x640 to 640x480 in YUV444M: pass
-Testing scaling from 1024x768 to 640x480 in YUV444M: pass
-Testing scaling from 640x480 to 1024x768 in YUV444M: pass
-- vsp-unit-test-0004.sh
-Testing histogram in RGB24: pass
-Testing histogram in YUV444M: pass
-- vsp-unit-test-0005.sh
-Testing RPF.0: pass
-Testing RPF.1: pass
-Testing RPF.2: pass
-Testing RPF.3: pass
-Testing RPF.4: pass
-- vsp-unit-test-0006.sh
-Testing invalid pipeline with no RPF: pass
-Testing invalid pipeline with no WPF: pass
-- vsp-unit-test-0007.sh
-Testing BRU in RGB24 with 1 inputs: pass
-Testing BRU in RGB24 with 2 inputs: pass
-Testing BRU in RGB24 with 3 inputs: pass
-Testing BRU in RGB24 with 4 inputs: pass
-Testing BRU in RGB24 with 5 inputs: pass
-Testing BRU in YUV444M with 1 inputs: pass
-Testing BRU in YUV444M with 2 inputs: pass
-Testing BRU in YUV444M with 3 inputs: pass
-Testing BRU in YUV444M with 4 inputs: pass
-Testing BRU in YUV444M with 5 inputs: pass
-- vsp-unit-test-0008.sh
-Test requires unavailable feature set `bru rpf.0 uds wpf.0': skipped
-- vsp-unit-test-0009.sh
-Test requires unavailable feature set `rpf.0 wpf.0 wpf.1': skipped
-- vsp-unit-test-0010.sh
-Testing CLU in RGB24 with zero configuration: pass
-Testing CLU in RGB24 with identity configuration: pass
-Testing CLU in RGB24 with wave configuration: pass
-Testing CLU in YUV444M with zero configuration: pass
-Testing CLU in YUV444M with identity configuration: pass
-Testing CLU in YUV444M with wave configuration: pass
-Testing LUT in RGB24 with zero configuration: pass
-Testing LUT in RGB24 with identity configuration: pass
-Testing LUT in RGB24 with gamma configuration: pass
-Testing LUT in YUV444M with zero configuration: pass
-Testing LUT in YUV444M with identity configuration: pass
-Testing LUT in YUV444M with gamma configuration: pass
-- vsp-unit-test-0011.sh
-Testing  hflip=0 vflip=0 rotate=0: pass
-Testing  hflip=1 vflip=0 rotate=0: pass
-Testing  hflip=0 vflip=1 rotate=0: pass
-Testing  hflip=1 vflip=1 rotate=0: pass
-Testing  hflip=0 vflip=0 rotate=90: pass
-Testing  hflip=1 vflip=0 rotate=90: pass
-Testing  hflip=0 vflip=1 rotate=90: pass
-Testing  hflip=1 vflip=1 rotate=90: pass
-- vsp-unit-test-0012.sh
-Testing hflip: pass
-Testing vflip: pass
-- vsp-unit-test-0013.sh
-Testing RPF unpacking in RGB332: pass
-Testing RPF unpacking in ARGB555: pass
-Testing RPF unpacking in XRGB555: pass
-Testing RPF unpacking in RGB565: pass
-Testing RPF unpacking in BGR24: pass
-Testing RPF unpacking in RGB24: pass
-Testing RPF unpacking in ABGR32: pass
-Testing RPF unpacking in ARGB32: pass
-Testing RPF unpacking in XBGR32: pass
-Testing RPF unpacking in XRGB32: pass
-- vsp-unit-test-0014.sh
-Testing RPF unpacking in NV12M: pass
-Testing RPF unpacking in NV16M: pass
-Testing RPF unpacking in NV21M: pass
-Testing RPF unpacking in NV61M: pass
-Testing RPF unpacking in UYVY: pass
-Testing RPF unpacking in VYUY: skip
-Testing RPF unpacking in YUV420M: pass
-Testing RPF unpacking in YUV422M: pass
-Testing RPF unpacking in YUV444M: pass
-Testing RPF unpacking in YVU420M: pass
-Testing RPF unpacking in YVU422M: pass
-Testing RPF unpacking in YVU444M: pass
-Testing RPF unpacking in YUYV: pass
-Testing RPF unpacking in YVYU: pass
-- vsp-unit-test-0015.sh
-Testing SRU scaling from 1024x768 to 1024x768 in RGB24: pass
-Testing SRU scaling from 1024x768 to 2048x1536 in RGB24: pass
-Testing SRU scaling from 1024x768 to 1024x768 in YUV444M: pass
-Testing SRU scaling from 1024x768 to 2048x1536 in YUV444M: pass
-- vsp-unit-test-0016.sh
-Testing  hflip=0 vflip=0 rotate=0 640x480 -> 640x480: pass
-Testing  hflip=0 vflip=0 rotate=0 640x480 -> 1024x768: pass
-Testing  hflip=0 vflip=0 rotate=0 1024x768 -> 640x480: pass
-Testing  hflip=1 vflip=0 rotate=0 640x480 -> 640x480: pass
-Testing  hflip=1 vflip=0 rotate=0 640x480 -> 1024x768: pass
-Testing  hflip=1 vflip=0 rotate=0 1024x768 -> 640x480: pass
-Testing  hflip=0 vflip=1 rotate=0 640x480 -> 640x480: pass
-Testing  hflip=0 vflip=1 rotate=0 640x480 -> 1024x768: pass
-Testing  hflip=0 vflip=1 rotate=0 1024x768 -> 640x480: pass
-Testing  hflip=1 vflip=1 rotate=0 640x480 -> 640x480: pass
-Testing  hflip=1 vflip=1 rotate=0 640x480 -> 1024x768: pass
-Testing  hflip=1 vflip=1 rotate=0 1024x768 -> 640x480: pass
-Testing  hflip=0 vflip=0 rotate=90 640x480 -> 640x480: pass
-Testing  hflip=0 vflip=0 rotate=90 640x480 -> 1024x768: pass
-Testing  hflip=0 vflip=0 rotate=90 1024x768 -> 640x480: pass
-Testing  hflip=1 vflip=0 rotate=90 640x480 -> 640x480: pass
-Testing  hflip=1 vflip=0 rotate=90 640x480 -> 1024x768: pass
-Testing  hflip=1 vflip=0 rotate=90 1024x768 -> 640x480: pass
-Testing  hflip=0 vflip=1 rotate=90 640x480 -> 640x480: pass
-Testing  hflip=0 vflip=1 rotate=90 640x480 -> 1024x768: pass
-Testing  hflip=0 vflip=1 rotate=90 1024x768 -> 640x480: pass
-Testing  hflip=1 vflip=1 rotate=90 640x480 -> 640x480: pass
-Testing  hflip=1 vflip=1 rotate=90 640x480 -> 1024x768: pass
-Testing  hflip=1 vflip=1 rotate=90 1024x768 -> 640x480: pass
-- vsp-unit-test-0017.sh
-- vsp-unit-test-0018.sh
-Testing RPF crop from (0,0)/512x384: pass
-Testing RPF crop from (32,32)/512x384: pass
-Testing RPF crop from (32,64)/512x384: pass
-Testing RPF crop from (64,32)/512x384: pass
-- vsp-unit-test-0019.sh
-- vsp-unit-test-0020.sh
-- vsp-unit-test-0021.sh
-Testing WPF packing in RGB332 during stress testing: pass
-Testing WPF packing in ARGB555 during stress testing: pass
-Testing WPF packing in XRGB555 during stress testing: pass
-Testing WPF packing in RGB565 during stress testing: pass
-Testing WPF packing in BGR24 during stress testing: pass
-Testing WPF packing in RGB24 during stress testing: pass
-Testing WPF packing in ABGR32 during stress testing: pass
-Testing WPF packing in ARGB32 during stress testing: pass
-Testing WPF packing in XBGR32 during stress testing: pass
-Testing WPF packing in XRGB32 during stress testing: pass
-./vsp-unit-test-0021.sh: line 34: 13658 Killed                  stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M
-- vsp-unit-test-0022.sh
-Testing long duration pipelines under stress: pass
-./vsp-unit-test-0022.sh: line 38: 15624 Killed                  stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M
-- vsp-unit-test-0023.sh
-Testing histogram HGT with hue areas 0,255,255,255,255,255,255,255,255,255,255,255: pass
-Testing histogram HGT with hue areas 0,40,40,80,80,120,120,160,160,200,200,255: pass
-Testing histogram HGT with hue areas 220,40,40,80,80,120,120,160,160,200,200,220: pass
-Testing histogram HGT with hue areas 0,10,50,60,100,110,150,160,200,210,250,255: pass
-Testing histogram HGT with hue areas 10,20,50,60,100,110,150,160,200,210,230,240: pass
-Testing histogram HGT with hue areas 240,20,60,80,100,120,140,160,180,200,210,220: pass
-- vsp-unit-test-0024.sh
-Test requires unavailable feature set `rpf.0 rpf.1 brs wpf.0': skipped
-158 tests: 142 passed, 0 failed, 3 skipped
-
-Kieran Bingham (9):
-  v4l: vsp1: Reword uses of 'fragment' as 'body'
-  v4l: vsp1: Protect bodies against overflow
-  v4l: vsp1: Provide a body pool
-  v4l: vsp1: Convert display lists to use new body pool
-  v4l: vsp1: Use reference counting for bodies
-  v4l: vsp1: Refactor display list configure operations
-  v4l: vsp1: Adapt entities to configure into a body
-  v4l: vsp1: Move video configuration to a cached dlb
-  v4l: vsp1: Reduce display list body size
-
- drivers/media/platform/vsp1/vsp1_bru.c    |  32 +--
- drivers/media/platform/vsp1/vsp1_clu.c    |  94 +++---
- drivers/media/platform/vsp1/vsp1_clu.h    |   1 +-
- drivers/media/platform/vsp1/vsp1_dl.c     | 393 +++++++++++++----------
- drivers/media/platform/vsp1/vsp1_dl.h     |  20 +-
- drivers/media/platform/vsp1/vsp1_drm.c    |  37 +--
- drivers/media/platform/vsp1/vsp1_entity.c |  23 +-
- drivers/media/platform/vsp1/vsp1_entity.h |  31 +--
- drivers/media/platform/vsp1/vsp1_hgo.c    |  26 +--
- drivers/media/platform/vsp1/vsp1_hgt.c    |  28 +--
- drivers/media/platform/vsp1/vsp1_hsit.c   |  20 +-
- drivers/media/platform/vsp1/vsp1_lif.c    |  25 +-
- drivers/media/platform/vsp1/vsp1_lut.c    |  71 ++--
- drivers/media/platform/vsp1/vsp1_lut.h    |   1 +-
- drivers/media/platform/vsp1/vsp1_pipe.c   |  11 +-
- drivers/media/platform/vsp1/vsp1_pipe.h   |   7 +-
- drivers/media/platform/vsp1/vsp1_rpf.c    | 179 +++++-----
- drivers/media/platform/vsp1/vsp1_sru.c    |  24 +-
- drivers/media/platform/vsp1/vsp1_uds.c    |  73 ++--
- drivers/media/platform/vsp1/vsp1_uds.h    |   2 +-
- drivers/media/platform/vsp1/vsp1_video.c  |  82 ++---
- drivers/media/platform/vsp1/vsp1_video.h  |   2 +-
- drivers/media/platform/vsp1/vsp1_wpf.c    | 325 +++++++++----------
- 23 files changed, 826 insertions(+), 681 deletions(-)
-
-base-commit: e3e389f931a14ddf43089c7db92fc5d74edf93a4
+diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
+index f2fb26e5ab4e..9621afa3658c 100644
+--- a/drivers/media/platform/vsp1/vsp1_clu.c
++++ b/drivers/media/platform/vsp1/vsp1_clu.c
+@@ -47,19 +47,19 @@ static int clu_set_table(struct vsp1_clu *clu, struct v4l2_ctrl *ctrl)
+ 	struct vsp1_dl_body *dlb;
+ 	unsigned int i;
+ 
+-	dlb = vsp1_dl_fragment_alloc(clu->entity.vsp1, 1 + 17 * 17 * 17);
++	dlb = vsp1_dl_body_alloc(clu->entity.vsp1, 1 + 17 * 17 * 17);
+ 	if (!dlb)
+ 		return -ENOMEM;
+ 
+-	vsp1_dl_fragment_write(dlb, VI6_CLU_ADDR, 0);
++	vsp1_dl_body_write(dlb, VI6_CLU_ADDR, 0);
+ 	for (i = 0; i < 17 * 17 * 17; ++i)
+-		vsp1_dl_fragment_write(dlb, VI6_CLU_DATA, ctrl->p_new.p_u32[i]);
++		vsp1_dl_body_write(dlb, VI6_CLU_DATA, ctrl->p_new.p_u32[i]);
+ 
+ 	spin_lock_irq(&clu->lock);
+ 	swap(clu->clu, dlb);
+ 	spin_unlock_irq(&clu->lock);
+ 
+-	vsp1_dl_fragment_free(dlb);
++	vsp1_dl_body_free(dlb);
+ 	return 0;
+ }
+ 
+@@ -256,7 +256,7 @@ static void clu_configure(struct vsp1_entity *entity,
+ 		spin_unlock_irqrestore(&clu->lock, flags);
+ 
+ 		if (dlb)
+-			vsp1_dl_list_add_fragment(dl, dlb);
++			vsp1_dl_list_add_body(dl, dlb);
+ 		break;
+ 	}
+ }
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 0b86ed01e85d..0c1bd17f9281 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -69,7 +69,7 @@ struct vsp1_dl_body {
+  * @header: display list header, NULL for headerless lists
+  * @dma: DMA address for the header
+  * @body0: first display list body
+- * @fragments: list of extra display list bodies
++ * @bodies: list of extra display list bodies
+  * @has_chain: if true, indicates that there's a partition chain
+  * @chain: entry in the display list partition chain
+  */
+@@ -81,7 +81,7 @@ struct vsp1_dl_list {
+ 	dma_addr_t dma;
+ 
+ 	struct vsp1_dl_body body0;
+-	struct list_head fragments;
++	struct list_head bodies;
+ 
+ 	bool has_chain;
+ 	struct list_head chain;
+@@ -98,13 +98,13 @@ enum vsp1_dl_mode {
+  * @mode: display list operation mode (header or headerless)
+  * @singleshot: execute the display list in single-shot mode
+  * @vsp1: the VSP1 device
+- * @lock: protects the free, active, queued, pending and gc_fragments lists
++ * @lock: protects the free, active, queued, pending and gc_bodies lists
+  * @free: array of all free display lists
+  * @active: list currently being processed (loaded) by hardware
+  * @queued: list queued to the hardware (written to the DL registers)
+  * @pending: list waiting to be queued to the hardware
+- * @gc_work: fragments garbage collector work struct
+- * @gc_fragments: array of display list fragments waiting to be freed
++ * @gc_work: bodies garbage collector work struct
++ * @gc_bodies: array of display list bodies waiting to be freed
+  */
+ struct vsp1_dl_manager {
+ 	unsigned int index;
+@@ -119,7 +119,7 @@ struct vsp1_dl_manager {
+ 	struct vsp1_dl_list *pending;
+ 
+ 	struct work_struct gc_work;
+-	struct list_head gc_fragments;
++	struct list_head gc_bodies;
+ };
+ 
+ /* -----------------------------------------------------------------------------
+@@ -157,17 +157,16 @@ static void vsp1_dl_body_cleanup(struct vsp1_dl_body *dlb)
+ }
+ 
+ /**
+- * vsp1_dl_fragment_alloc - Allocate a display list fragment
++ * vsp1_dl_body_alloc - Allocate a display list body
+  * @vsp1: The VSP1 device
+- * @num_entries: The maximum number of entries that the fragment can contain
++ * @num_entries: The maximum number of entries that the body can contain
+  *
+- * Allocate a display list fragment with enough memory to contain the requested
++ * Allocate a display list body with enough memory to contain the requested
+  * number of entries.
+  *
+- * Return a pointer to a fragment on success or NULL if memory can't be
+- * allocated.
++ * Return a pointer to a body on success or NULL if memory can't be allocated.
+  */
+-struct vsp1_dl_body *vsp1_dl_fragment_alloc(struct vsp1_device *vsp1,
++struct vsp1_dl_body *vsp1_dl_body_alloc(struct vsp1_device *vsp1,
+ 					    unsigned int num_entries)
+ {
+ 	struct vsp1_dl_body *dlb;
+@@ -187,20 +186,20 @@ struct vsp1_dl_body *vsp1_dl_fragment_alloc(struct vsp1_device *vsp1,
+ }
+ 
+ /**
+- * vsp1_dl_fragment_free - Free a display list fragment
+- * @dlb: The fragment
++ * vsp1_dl_body_free - Free a display list body
++ * @dlb: The body
+  *
+- * Free the given display list fragment and the associated DMA memory.
++ * Free the given display list body and the associated DMA memory.
+  *
+- * Fragments must only be freed explicitly if they are not added to a display
++ * Bodies must only be freed explicitly if they are not added to a display
+  * list, as the display list will take ownership of them and free them
+- * otherwise. Manual free typically happens at cleanup time for fragments that
++ * otherwise. Manual free typically happens at cleanup time for bodies that
+  * have been allocated but not used.
+  *
+  * Passing a NULL pointer to this function is safe, in that case no operation
+  * will be performed.
+  */
+-void vsp1_dl_fragment_free(struct vsp1_dl_body *dlb)
++void vsp1_dl_body_free(struct vsp1_dl_body *dlb)
+ {
+ 	if (!dlb)
+ 		return;
+@@ -210,16 +209,16 @@ void vsp1_dl_fragment_free(struct vsp1_dl_body *dlb)
+ }
+ 
+ /**
+- * vsp1_dl_fragment_write - Write a register to a display list fragment
+- * @dlb: The fragment
++ * vsp1_dl_body_write - Write a register to a display list body
++ * @dlb: The body
+  * @reg: The register address
+  * @data: The register value
+  *
+- * Write the given register and value to the display list fragment. The maximum
+- * number of entries that can be written in a fragment is specified when the
+- * fragment is allocated by vsp1_dl_fragment_alloc().
++ * Write the given register and value to the display list body. The maximum
++ * number of entries that can be written in a body is specified when the body is
++ * allocated by vsp1_dl_body_alloc().
+  */
+-void vsp1_dl_fragment_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
++void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
+ {
+ 	dlb->entries[dlb->num_entries].addr = reg;
+ 	dlb->entries[dlb->num_entries].data = data;
+@@ -240,7 +239,7 @@ static struct vsp1_dl_list *vsp1_dl_list_alloc(struct vsp1_dl_manager *dlm)
+ 	if (!dl)
+ 		return NULL;
+ 
+-	INIT_LIST_HEAD(&dl->fragments);
++	INIT_LIST_HEAD(&dl->bodies);
+ 	dl->dlm = dlm;
+ 
+ 	/*
+@@ -277,7 +276,7 @@ static struct vsp1_dl_list *vsp1_dl_list_alloc(struct vsp1_dl_manager *dlm)
+ static void vsp1_dl_list_free(struct vsp1_dl_list *dl)
+ {
+ 	vsp1_dl_body_cleanup(&dl->body0);
+-	list_splice_init(&dl->fragments, &dl->dlm->gc_fragments);
++	list_splice_init(&dl->bodies, &dl->dlm->gc_bodies);
+ 	kfree(dl);
+ }
+ 
+@@ -332,13 +331,13 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
+ 	dl->has_chain = false;
+ 
+ 	/*
+-	 * We can't free fragments here as DMA memory can only be freed in
+-	 * interruptible context. Move all fragments to the display list
+-	 * manager's list of fragments to be freed, they will be
+-	 * garbage-collected by the work queue.
++	 * We can't free bodies here as DMA memory can only be freed in
++	 * interruptible context. Move all bodies to the display list manager's
++	 * list of bodies to be freed, they will be garbage-collected by the
++	 * work queue.
+ 	 */
+-	if (!list_empty(&dl->fragments)) {
+-		list_splice_init(&dl->fragments, &dl->dlm->gc_fragments);
++	if (!list_empty(&dl->bodies)) {
++		list_splice_init(&dl->bodies, &dl->dlm->gc_bodies);
+ 		schedule_work(&dl->dlm->gc_work);
+ 	}
+ 
+@@ -379,33 +378,33 @@ void vsp1_dl_list_put(struct vsp1_dl_list *dl)
+  */
+ void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data)
+ {
+-	vsp1_dl_fragment_write(&dl->body0, reg, data);
++	vsp1_dl_body_write(&dl->body0, reg, data);
+ }
+ 
+ /**
+- * vsp1_dl_list_add_fragment - Add a fragment to the display list
++ * vsp1_dl_list_add_body - Add a body to the display list
+  * @dl: The display list
+- * @dlb: The fragment
++ * @dlb: The body
+  *
+- * Add a display list body as a fragment to a display list. Registers contained
+- * in fragments are processed after registers contained in the main display
+- * list, in the order in which fragments are added.
++ * Add a display list body as a body to a display list. Registers contained
++ * in bodies are processed after registers contained in the main display list,
++ * in the order in which bodies are added.
+  *
+- * Adding a fragment to a display list passes ownership of the fragment to the
+- * list. The caller must not touch the fragment after this call, and must not
+- * free it explicitly with vsp1_dl_fragment_free().
++ * Adding a body to a display list passes ownership of the body to the list. The
++ * caller must not touch the body after this call, and must not free it
++ * explicitly with vsp1_dl_body_free().
+  *
+- * Fragments are only usable for display lists in header mode. Attempt to
+- * add a fragment to a header-less display list will return an error.
++ * Additional bodies are only usable for display lists in header mode.
++ * Attempting to add a body to a header-less display list will return an error.
+  */
+-int vsp1_dl_list_add_fragment(struct vsp1_dl_list *dl,
++int vsp1_dl_list_add_body(struct vsp1_dl_list *dl,
+ 			      struct vsp1_dl_body *dlb)
+ {
+ 	/* Multi-body lists are only available in header mode. */
+ 	if (dl->dlm->mode != VSP1_DL_MODE_HEADER)
+ 		return -EINVAL;
+ 
+-	list_add_tail(&dlb->list, &dl->fragments);
++	list_add_tail(&dlb->list, &dl->bodies);
+ 	return 0;
+ }
+ 
+@@ -454,7 +453,7 @@ static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
+ 	hdr->num_bytes = dl->body0.num_entries
+ 		       * sizeof(*dl->header->lists);
+ 
+-	list_for_each_entry(dlb, &dl->fragments, list) {
++	list_for_each_entry(dlb, &dl->bodies, list) {
+ 		num_lists++;
+ 		hdr++;
+ 
+@@ -711,25 +710,25 @@ void vsp1_dlm_reset(struct vsp1_dl_manager *dlm)
+ }
+ 
+ /*
+- * Free all fragments awaiting to be garbage-collected.
++ * Free all bodies awaiting to be garbage-collected.
+  *
+  * This function must be called without the display list manager lock held.
+  */
+-static void vsp1_dlm_fragments_free(struct vsp1_dl_manager *dlm)
++static void vsp1_dlm_bodies_free(struct vsp1_dl_manager *dlm)
+ {
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&dlm->lock, flags);
+ 
+-	while (!list_empty(&dlm->gc_fragments)) {
++	while (!list_empty(&dlm->gc_bodies)) {
+ 		struct vsp1_dl_body *dlb;
+ 
+-		dlb = list_first_entry(&dlm->gc_fragments, struct vsp1_dl_body,
++		dlb = list_first_entry(&dlm->gc_bodies, struct vsp1_dl_body,
+ 				       list);
+ 		list_del(&dlb->list);
+ 
+ 		spin_unlock_irqrestore(&dlm->lock, flags);
+-		vsp1_dl_fragment_free(dlb);
++		vsp1_dl_body_free(dlb);
+ 		spin_lock_irqsave(&dlm->lock, flags);
+ 	}
+ 
+@@ -741,7 +740,7 @@ static void vsp1_dlm_garbage_collect(struct work_struct *work)
+ 	struct vsp1_dl_manager *dlm =
+ 		container_of(work, struct vsp1_dl_manager, gc_work);
+ 
+-	vsp1_dlm_fragments_free(dlm);
++	vsp1_dlm_bodies_free(dlm);
+ }
+ 
+ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
+@@ -763,7 +762,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
+ 
+ 	spin_lock_init(&dlm->lock);
+ 	INIT_LIST_HEAD(&dlm->free);
+-	INIT_LIST_HEAD(&dlm->gc_fragments);
++	INIT_LIST_HEAD(&dlm->gc_bodies);
+ 	INIT_WORK(&dlm->gc_work, vsp1_dlm_garbage_collect);
+ 
+ 	for (i = 0; i < prealloc; ++i) {
+@@ -793,5 +792,5 @@ void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm)
+ 		vsp1_dl_list_free(dl);
+ 	}
+ 
+-	vsp1_dlm_fragments_free(dlm);
++	vsp1_dlm_bodies_free(dlm);
+ }
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
+index ee3508172f0a..d4f7695c4ed3 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.h
++++ b/drivers/media/platform/vsp1/vsp1_dl.h
+@@ -16,7 +16,7 @@
+ #include <linux/types.h>
+ 
+ struct vsp1_device;
+-struct vsp1_dl_fragment;
++struct vsp1_dl_body;
+ struct vsp1_dl_list;
+ struct vsp1_dl_manager;
+ 
+@@ -34,12 +34,12 @@ void vsp1_dl_list_put(struct vsp1_dl_list *dl);
+ void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data);
+ void vsp1_dl_list_commit(struct vsp1_dl_list *dl);
+ 
+-struct vsp1_dl_body *vsp1_dl_fragment_alloc(struct vsp1_device *vsp1,
+-					    unsigned int num_entries);
+-void vsp1_dl_fragment_free(struct vsp1_dl_body *dlb);
+-void vsp1_dl_fragment_write(struct vsp1_dl_body *dlb, u32 reg, u32 data);
+-int vsp1_dl_list_add_fragment(struct vsp1_dl_list *dl,
+-			      struct vsp1_dl_body *dlb);
++struct vsp1_dl_body *vsp1_dl_body_alloc(struct vsp1_device *vsp1,
++					unsigned int num_entries);
++void vsp1_dl_body_free(struct vsp1_dl_body *dlb);
++void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data);
++int vsp1_dl_list_add_body(struct vsp1_dl_list *dl,
++			  struct vsp1_dl_body *dlb);
+ int vsp1_dl_list_add_chain(struct vsp1_dl_list *head, struct vsp1_dl_list *dl);
+ 
+ #endif /* __VSP1_DL_H__ */
+diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
+index c67cc60db0db..aa2b40327529 100644
+--- a/drivers/media/platform/vsp1/vsp1_lut.c
++++ b/drivers/media/platform/vsp1/vsp1_lut.c
+@@ -44,19 +44,19 @@ static int lut_set_table(struct vsp1_lut *lut, struct v4l2_ctrl *ctrl)
+ 	struct vsp1_dl_body *dlb;
+ 	unsigned int i;
+ 
+-	dlb = vsp1_dl_fragment_alloc(lut->entity.vsp1, 256);
++	dlb = vsp1_dl_body_alloc(lut->entity.vsp1, 256);
+ 	if (!dlb)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < 256; ++i)
+-		vsp1_dl_fragment_write(dlb, VI6_LUT_TABLE + 4 * i,
++		vsp1_dl_body_write(dlb, VI6_LUT_TABLE + 4 * i,
+ 				       ctrl->p_new.p_u32[i]);
+ 
+ 	spin_lock_irq(&lut->lock);
+ 	swap(lut->lut, dlb);
+ 	spin_unlock_irq(&lut->lock);
+ 
+-	vsp1_dl_fragment_free(dlb);
++	vsp1_dl_body_free(dlb);
+ 	return 0;
+ }
+ 
+@@ -212,7 +212,7 @@ static void lut_configure(struct vsp1_entity *entity,
+ 		spin_unlock_irqrestore(&lut->lock, flags);
+ 
+ 		if (dlb)
+-			vsp1_dl_list_add_fragment(dl, dlb);
++			vsp1_dl_list_add_body(dl, dlb);
+ 		break;
+ 	}
+ }
 -- 
 git-series 0.9.1
