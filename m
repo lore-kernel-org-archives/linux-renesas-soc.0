@@ -1,61 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:28022 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751788AbeBHPsF (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:43347 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751863AbeB1IR0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Feb 2018 10:48:05 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/5] arm64: dts: renesass: r8a77970: add FCPVD support
-Date: Thu,  8 Feb 2018 16:47:16 +0100
-Message-Id: <20180208154720.5766-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180208154720.5766-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 28 Feb 2018 03:17:26 -0500
+Received: by mail-qt0-f194.google.com with SMTP id d26so1895156qtk.10
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Feb 2018 00:17:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1518719709-28940-2-git-send-email-kbingham@kernel.org>
+References: <1518719709-28940-1-git-send-email-kbingham@kernel.org> <1518719709-28940-2-git-send-email-kbingham@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Feb 2018 09:17:25 +0100
+Message-ID: <CAMuHMdXvymy7Yhhar=3gSEv58G3MSSq2CSFCd09v-YPASpbuYQ@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] d3/i2c-conflict/media
+To: Kieran Bingham <kbingham@kernel.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Kieran,
 
-Describe FCPVD0 in the R8A77970 device tree; it will be used by VSPD0 in
-the next patch...
+On Thu, Feb 15, 2018 at 7:35 PM, Kieran Bingham <kbingham@kernel.org> wrote:
+> Please consider including this branch in renesas-drivers.
+>
+> --
+> Regards
+>
+> Kieran
+>
+> The following changes since commit 29422737017b866d4a51014cc7522fa3a99e8852:
+>
+>   media: rc: get start time just before calling driver tx (2018-02-14 14:17:21 -0500)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git d3/i2c-conflict/media
+>
+> for you to fetch changes up to a22cefa41188bdda128b76d6a067e55b40ce5c22:
+>
+>   media: adv7604: Add support for i2c_new_secondary_device (2018-02-15 17:31:26 +0000)
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Thank you, merges cleanly into today's linux-next.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 13c88414cb432b1a..2567e68fe0c6cf7b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -612,6 +612,14 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+		};
- 	};
- 
- 	timer {
--- 
-2.16.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
