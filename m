@@ -1,96 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:45564 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1033321AbeCASRq (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:62601 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1033627AbeCASFd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:17:46 -0500
+        Thu, 1 Mar 2018 13:05:33 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
-        Wim Van Sebroeck <wim@iguana.be>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "Chris Paterson" <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v7 1/3] watchdog: renesas_wdt: Add suspend/resume support
-Date: Thu,  1 Mar 2018 18:17:21 +0000
-Message-Id: <1519928243-28596-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1519928243-28596-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1519928243-28596-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v6 1/3] watchdog: renesas_wdt: Add suspend/resume support
+Date: Thu, 1 Mar 2018 18:05:27 +0000
+Message-ID: <TY1PR06MB08951F30415653988F8543C8C0C60@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1519919048-21884-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1519919048-21884-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20180301171828.fuvexmnid25jz374@katana>
+In-Reply-To: <20180301171828.fuvexmnid25jz374@katana>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car Gen2 and RZ/G1 the watchdog IP clock needs to be always ON,
-on R-Car Gen3 we power the IP down during suspend.
+Hi Wolfram,
 
-This commit adds suspend/resume support, so that the watchdog counting
-"pauses" during suspend on all of the SoCs compatible with this driver
-and on those we are now adding support for (R-Car Gen2 and RZ/G1).
+thank you for your feedback!
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v6->v7:
-* backup and restore register RWTCNT instead of using rwdt_get_timeleft and
-  rwdt_set_timeleft
+> Subject: Re: [PATCH v6 1/3] watchdog: renesas_wdt: Add suspend/resume sup=
+port
+>
+>
+> > +unsigned int timeleft;
+>
+> What about using
+> u16 time_left;
+>
+> ...
+>
+> > +static void rwdt_set_timeleft(struct rwdt_priv *priv, unsigned int tim=
+eleft)
+> > +{
+> > +rwdt_write(priv, 65536 - MUL_BY_CLKS_PER_SEC(priv, timeleft), RWTCNT);
+> > +}
+> > +
+>
+> ... skipping this ...
+>
+> >  static int rwdt_init_timeout(struct watchdog_device *wdev)
+> >  {
+> >  struct rwdt_priv *priv =3D watchdog_get_drvdata(wdev);
+> >
+> > -rwdt_write(priv, 65536 - MUL_BY_CLKS_PER_SEC(priv, wdev->timeout), RWT=
+CNT);
+> > -
+> > +rwdt_set_timeleft(priv, wdev->timeout);
+>
+> ... and this ...
+>
+> >  return 0;
+> >  }
+> >
+> > @@ -203,6 +208,30 @@ static int rwdt_remove(struct platform_device *pde=
+v)
+> >  return 0;
+> >  }
+> >
+> > +static int __maybe_unused rwdt_suspend(struct device *dev)
+> > +{
+> > +struct rwdt_priv *priv =3D dev_get_drvdata(dev);
+> > +
+> > +if (watchdog_active(&priv->wdev)) {
+> > +priv->timeleft =3D rwdt_get_timeleft(&priv->wdev);
+>
+> ...and read the register value directly here...
+>
+> > +rwdt_stop(&priv->wdev);
+> > +}
+> > +return 0;
+> > +}
+> > +
+> > +static int __maybe_unused rwdt_resume(struct device *dev)
+> > +{
+> > +struct rwdt_priv *priv =3D dev_get_drvdata(dev);
+> > +
+> > +if (watchdog_active(&priv->wdev)) {
+> > +rwdt_start(&priv->wdev);
+> > +rwdt_set_timeleft(priv, priv->timeleft);
+>
+> ... and put it back here?
 
- drivers/watchdog/renesas_wdt.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+It works for me, I'll send a new version with your comments applied.
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 831ef83..024d54e 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -49,6 +49,7 @@ struct rwdt_priv {
- 	void __iomem *base;
- 	struct watchdog_device wdev;
- 	unsigned long clk_rate;
-+	u16 time_left;
- 	u8 cks;
- };
- 
-@@ -203,6 +204,30 @@ static int rwdt_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int __maybe_unused rwdt_suspend(struct device *dev)
-+{
-+	struct rwdt_priv *priv = dev_get_drvdata(dev);
-+
-+	if (watchdog_active(&priv->wdev)) {
-+		priv->time_left = readw(priv->base + RWTCNT);
-+		rwdt_stop(&priv->wdev);
-+	}
-+	return 0;
-+}
-+
-+static int __maybe_unused rwdt_resume(struct device *dev)
-+{
-+	struct rwdt_priv *priv = dev_get_drvdata(dev);
-+
-+	if (watchdog_active(&priv->wdev)) {
-+		rwdt_start(&priv->wdev);
-+		rwdt_write(priv, priv->time_left, RWTCNT);
-+	}
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rwdt_pm_ops, rwdt_suspend, rwdt_resume);
-+
- /*
-  * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
-  * to work there, one also needs a RESET (RST) driver which does not exist yet
-@@ -218,6 +243,7 @@ static struct platform_driver rwdt_driver = {
- 	.driver = {
- 		.name = "renesas_wdt",
- 		.of_match_table = rwdt_ids,
-+		.pm = &rwdt_pm_ops,
- 	},
- 	.probe = rwdt_probe,
- 	.remove = rwdt_remove,
--- 
-2.7.4
+Thanks,
+Fab
+
+>
+> That would save calling the conversion macros which may introduce
+> rounding errors. It is also a tad faster and smaller. And less lines of
+> code.
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
