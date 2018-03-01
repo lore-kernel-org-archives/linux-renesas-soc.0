@@ -1,50 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:5049 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1164165AbeCBB7X (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:54840 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032742AbeCARNI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:59:23 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 25/32] rcar-vin: change name of video device
-Date: Fri,  2 Mar 2018 02:57:44 +0100
-Message-Id: <20180302015751.25596-26-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 1 Mar 2018 12:13:08 -0500
+Date: Thu, 1 Mar 2018 18:13:05 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-watchdog@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] watchdog: renesas_wdt: Add restart handler
+Message-ID: <20180301171305.56oconc7kcn2ill6@katana>
+References: <1519919048-21884-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1519919048-21884-4-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rvfmfrrt3oz7yhqn"
+Content-Disposition: inline
+In-Reply-To: <1519919048-21884-4-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar-vin driver needs to be part of a media controller to support
-Gen3. Give each VIN instance a unique name so it can be referenced from
-userspace.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--rvfmfrrt3oz7yhqn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 02f3100ed30db63c..7ca60e8289675b88 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -999,7 +999,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	/* video node */
- 	vdev->v4l2_dev = &vin->v4l2_dev;
- 	vdev->queue = &vin->queue;
--	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
-+	snprintf(vdev->name, sizeof(vdev->name), "VIN%u output", vin->id);
- 	vdev->release = video_device_release_empty;
- 	vdev->lock = &vin->lock;
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
--- 
-2.16.2
+On Thu, Mar 01, 2018 at 03:44:08PM +0000, Fabrizio Castro wrote:
+> On iWave's boards iwg20d and iwg22d the only way to reboot the system is
+> by means of the watchdog.
+> This patch adds a restart handler to rwdt_ops, and also makes sure we
+> keep its priority to a medium level, in order to not override other more
+
+the lowest level
+
+> effective handlers.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+With that fixed:
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--rvfmfrrt3oz7yhqn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqYNJwACgkQFA3kzBSg
+KbaiGRAAtaCNB669k3oM4tM0MIZX27QHl++7Sl8GGGx/wTpd+guc5o4sC7ubsA6L
+gOvXNcSIjxCPteGRQfid2y4cMfBb+Utkwz/rgASHIKbdaESZaKPPUgGINuRTjnHl
+C2mHFoS+IG310wAEquALfOnpfyFGjJyPeItZVRBE1aGuIBonqM1sTjIcP8g++ciJ
+daCZGGN1/d9X1cEvVh5kgnC02JE4sNxsVjzuCNHqTWS5kQ77j6UziJ2wyWsa0Jwv
+q16lGFjB8Qo/VXmca8MxEoHygb6nKGPBwUrfT5FbjpQ+Pu99xPE7U95cn1MoemVC
+bnCv+TYmDDtjiyC0U/Y93tJog6wrcqpO697uYkcYttUq050d5Xe5FlZ81ydm2JNN
+88Luan2CHEaJ1JxWuEwt2GM57wMW6S8UN/2Wgb1i0U4GH6dEbSiCl3XlBvOd5ymx
+B/wUFeqJCmaya2eWM+NT96ennyw541IeDjqIvQ7o9hXDr6mIchhVhKsrj5x4otel
+nvhccNX0FOcOcfp5LeBANbn0I4BCIvU0d2b1tVTYN5REeMkQ3oCKaCdGSKxbxex9
+T5b8Cjxv0jEEb+Gzx+DJdpKnbbWViupxErslPDJLsIBCt6N5tCHKEN2jjieiEcFz
+RK5WGT6VgcSkEPsnLZfS6P1ixwoI4SKYboGVxYkS90mOfpS5/3o=
+=B4Dn
+-----END PGP SIGNATURE-----
+
+--rvfmfrrt3oz7yhqn--
