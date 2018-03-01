@@ -1,64 +1,55 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v9 19/28] rcar-vin: use different v4l2 operations in media controller mode
-Date: Fri, 02 Mar 2018 13:33:43 +0200
-Message-ID: <2344398.o1kP0vunrN@avalon>
-In-Reply-To: <20180119004603.GD10270@bigcity.dyn.berto.se>
-References: <20171208010842.20047-1-niklas.soderlund+renesas@ragnatech.se> <4037381.ip89KhYXee@avalon> <20180119004603.GD10270@bigcity.dyn.berto.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:41294 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031777AbeCAQMe (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 1 Mar 2018 11:12:34 -0500
+Subject: Re: [PATCH v3 0/3] renesas: irqchip: Use wakeup_path i.s.o. explicit
+ clock handling
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <70c3eaa7-f103-33b0-26a0-c0c1b1b9608a@arm.com>
+Date: Thu, 1 Mar 2018 16:12:31 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+On 12/02/18 13:55, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> If an interrupt controller in a Renesas ARM SoC is part of a Clock
+> Domain, and it is part of the wakeup path, it must be kept active during
+> system suspend.
+> 
+> Currently this is handled in all interrupt controller drivers by
+> explicitly increasing the use count of the module clock when the device
+> is part of the wakeup path.  However, this explicit clock handling is
+> merely a workaround for a failure to properly communicate wakeup
+> information to the device core.
+> 
+> Hence this series fixes the affected drivers by setting the devices'
+> power.wakeup_path fields instead, to indicate they are part of the
+> wakeup path.  Depending on the PM Domain's active_wakeup configuration,
+> the genpd core code will keep the device enabled (and the clock running)
+> during system suspend when needed.
+> 
+> Target trees:
+>   - Patches 1 and 2 are meant for the irqchip tree,
+Patches queued for 4.17.
 
-On Friday, 19 January 2018 02:46:03 EET Niklas S=F6derlund wrote:
-> Hi Laurent,
->=20
-> Thanks for your comments.
->=20
-> Apart from the issue with the input API Hans pointed which indicates I
-> need to keep that around until it's fixed in the framework I agree with
-> all your comments but one.
->=20
-> <snip>
->=20
-> On 2017-12-08 12:14:05 +0200, Laurent Pinchart wrote:
-> >> @@ -628,7 +628,8 @@ static int rvin_setup(struct rvin_dev *vin)
-> >>  		/* Default to TB */
-> >>  		vnmc =3D VNMC_IM_FULL;
-> >>  		/* Use BT if video standard can be read and is 60 Hz format */
-> >> -		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
-> >> +		if (!vin->info->use_mc &&
-> >> +		    !v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
-> >>  			if (std & V4L2_STD_525_60)
-> >>  				vnmc =3D VNMC_IM_FULL | VNMC_FOC;
-> >>  		}
-> >=20
-> > I think the subdev should be queried in rcar-v4l2.c and the information
-> > cached in the rvin_dev structure instead of queried here. Interactions
-> > with the subdev should be minimized in rvin-dma.c. You can fix this in a
-> > separate patch if you prefer.
->=20
-> This can't be a cached value it needs to be read at stream on time. The
-> input source could have changed format, e.g. the user may have
-> disconnected a NTSC source and plugged in a PAL.
+Thanks,
 
-Please note that in that case the source subdev will not have changed its=20
-format yet, it only does so when the s_std operation is called.
-
-> This is a shame as I otherwise agree with you that interactions with the
-> subdevice should be kept at a minimum.
->=20
-> <snip>
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
+	M.
+-- 
+Jazz is not dead. It just smells funny...
