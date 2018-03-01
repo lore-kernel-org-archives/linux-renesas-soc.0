@@ -1,322 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:17950 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1164160AbeCBB7V (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50133 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162478AbeCAWEy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:59:21 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 24/32] rcar-vin: add group allocator functions
-Date: Fri,  2 Mar 2018 02:57:43 +0100
-Message-Id: <20180302015751.25596-25-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 1 Mar 2018 17:04:54 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v7 0/4] R-Car DU: Convert LVDS code to bridge driver
+Date: Fri,  2 Mar 2018 00:05:35 +0200
+Message-Id: <20180301220540.11959-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In media controller mode all VIN instances needs to be part of the same
-media graph. There is also a need for each VIN instance to know about
-and in some cases be able to communicate with other VIN instances.
+Hello,
 
-Add an allocator framework where the first VIN instance to be probed
-creates a shared data structure and registers a media device.
-Consecutive VINs insert themself into the global group.
+This patch series addresses a design mistake that dates back from the initial
+DU support. Support for the LVDS encoders, which are IP cores separate from
+the DU, was bundled in the DU driver. Worse, both the DU and LVDS were
+described through a single DT node.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 174 +++++++++++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  31 +++++
- 2 files changed, 203 insertions(+), 2 deletions(-)
+To fix the, patches 1/4 and 2/4 define new DT bindings for the LVDS
+encoders, and deprecate their description inside the DU bindings. To retain
+backward compatibility with existing DT, patch 3/4 then patch the device tree
+at runtime to convert the legacy bindings to the new ones.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index eb67ad5e2633064b..01132b9966509c1f 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -20,12 +20,174 @@
- #include <linux/of_graph.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/slab.h>
- 
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
- 
- #include "rcar-vin.h"
- 
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CSI2 Group Allocator
-+ */
-+
-+/* FIXME:  This should if we find a system that supports more
-+ * than one group for the whole system be replaced with a linked
-+ * list of groups. And eventually all of this should be replaced
-+ * with a global device allocator API.
-+ *
-+ * But for now this works as on all supported systems there will
-+ * be only one group for all instances.
-+ */
-+
-+static DEFINE_MUTEX(rvin_group_lock);
-+static struct rvin_group *rvin_group_data;
-+
-+static void rvin_group_cleanup(struct rvin_group *group)
-+{
-+	media_device_unregister(&group->mdev);
-+	media_device_cleanup(&group->mdev);
-+	mutex_destroy(&group->lock);
-+}
-+
-+static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
-+{
-+	struct media_device *mdev = &group->mdev;
-+	const struct of_device_id *match;
-+	struct device_node *np;
-+	int ret;
-+
-+	mutex_init(&group->lock);
-+
-+	/* Count number of VINs in the system */
-+	group->count = 0;
-+	for_each_matching_node(np, vin->dev->driver->of_match_table)
-+		if (of_device_is_available(np))
-+			group->count++;
-+
-+	vin_dbg(vin, "found %u enabled VIN's in DT", group->count);
-+
-+	mdev->dev = vin->dev;
-+
-+	match = of_match_node(vin->dev->driver->of_match_table,
-+			      vin->dev->of_node);
-+
-+	strlcpy(mdev->driver_name, KBUILD_MODNAME, sizeof(mdev->driver_name));
-+	strlcpy(mdev->model, match->compatible, sizeof(mdev->model));
-+	snprintf(mdev->bus_info, sizeof(mdev->bus_info), "platform:%s",
-+		 dev_name(mdev->dev));
-+
-+	media_device_init(mdev);
-+
-+	ret = media_device_register(&group->mdev);
-+	if (ret)
-+		rvin_group_cleanup(group);
-+
-+	return ret;
-+}
-+
-+static void rvin_group_release(struct kref *kref)
-+{
-+	struct rvin_group *group =
-+		container_of(kref, struct rvin_group, refcount);
-+
-+	mutex_lock(&rvin_group_lock);
-+
-+	rvin_group_data = NULL;
-+
-+	rvin_group_cleanup(group);
-+
-+	kfree(group);
-+
-+	mutex_unlock(&rvin_group_lock);
-+}
-+
-+static int rvin_group_get(struct rvin_dev *vin)
-+{
-+	struct rvin_group *group;
-+	u32 id;
-+	int ret;
-+
-+	/* Make sure VIN id is present and sane */
-+	ret = of_property_read_u32(vin->dev->of_node, "renesas,id", &id);
-+	if (ret) {
-+		vin_err(vin, "%pOF: No renesas,id property found\n",
-+			vin->dev->of_node);
-+		return -EINVAL;
-+	}
-+
-+	if (id >= RCAR_VIN_NUM) {
-+		vin_err(vin, "%pOF: Invalid renesas,id '%u'\n",
-+			vin->dev->of_node, id);
-+		return -EINVAL;
-+	}
-+
-+	/* Join or create a VIN group */
-+	mutex_lock(&rvin_group_lock);
-+	if (rvin_group_data) {
-+		group = rvin_group_data;
-+		kref_get(&group->refcount);
-+	} else {
-+		group = kzalloc(sizeof(*group), GFP_KERNEL);
-+		if (!group) {
-+			ret = -ENOMEM;
-+			goto err_group;
-+		}
-+
-+		ret = rvin_group_init(group, vin);
-+		if (ret) {
-+			kfree(group);
-+			vin_err(vin, "Failed to initialize group\n");
-+			goto err_group;
-+		}
-+
-+		kref_init(&group->refcount);
-+
-+		rvin_group_data = group;
-+	}
-+	mutex_unlock(&rvin_group_lock);
-+
-+	/* Add VIN to group */
-+	mutex_lock(&group->lock);
-+
-+	if (group->vin[id]) {
-+		vin_err(vin, "Duplicate renesas,id property value %u\n", id);
-+		mutex_unlock(&group->lock);
-+		kref_put(&group->refcount, rvin_group_release);
-+		return -EINVAL;
-+	}
-+
-+	group->vin[id] = vin;
-+
-+	vin->id = id;
-+	vin->group = group;
-+	vin->v4l2_dev.mdev = &group->mdev;
-+
-+	mutex_unlock(&group->lock);
-+
-+	return 0;
-+err_group:
-+	mutex_unlock(&rvin_group_lock);
-+	return ret;
-+}
-+
-+static void rvin_group_put(struct rvin_dev *vin)
-+{
-+	mutex_lock(&vin->group->lock);
-+
-+	vin->group = NULL;
-+	vin->v4l2_dev.mdev = NULL;
-+
-+	if (WARN_ON(vin->group->vin[vin->id] != vin))
-+		goto out;
-+
-+	vin->group->vin[vin->id] = NULL;
-+out:
-+	mutex_unlock(&vin->group->lock);
-+
-+	kref_put(&vin->group->refcount, rvin_group_release);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Async notifier
-  */
-@@ -243,12 +405,18 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static int rvin_mc_init(struct rvin_dev *vin)
- {
-+	int ret;
-+
- 	/* All our sources are CSI-2 */
- 	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
- 	vin->mbus_cfg.flags = 0;
- 
- 	vin->pad.flags = MEDIA_PAD_FL_SINK;
--	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+	ret = media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+	if (ret)
-+		return ret;
-+
-+	return rvin_group_get(vin);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -368,7 +536,9 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
--	if (!vin->info->use_mc)
-+	if (vin->info->use_mc)
-+		rvin_group_put(vin);
-+	else
- 		v4l2_ctrl_handler_free(&vin->ctrl_handler);
- 
- 	rvin_dma_unregister(vin);
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 849f428871af113f..07cde9e1ab01ca51 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -17,6 +17,8 @@
- #ifndef __RCAR_VIN__
- #define __RCAR_VIN__
- 
-+#include <linux/kref.h>
-+
- #include <media/v4l2-async.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-dev.h>
-@@ -29,6 +31,11 @@
- /* Address alignment mask for HW buffers */
- #define HW_BUFFER_MASK 0x7f
- 
-+/* Max number on VIN instances that can be in a system */
-+#define RCAR_VIN_NUM 8
-+
-+struct rvin_group;
-+
- enum model_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -101,6 +108,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @group:		Gen3 CSI group
-+ * @id:			Gen3 group id for this VIN
-  * @pad:		media pad for the video device entity
-  *
-  * @lock:		protects @queue
-@@ -132,6 +141,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct rvin_group *group;
-+	unsigned int id;
- 	struct media_pad pad;
- 
- 	struct mutex lock;
-@@ -160,6 +171,26 @@ struct rvin_dev {
- #define vin_warn(d, fmt, arg...)	dev_warn(d->dev, fmt, ##arg)
- #define vin_err(d, fmt, arg...)		dev_err(d->dev, fmt, ##arg)
- 
-+/**
-+ * struct rvin_group - VIN CSI2 group information
-+ * @refcount:		number of VIN instances using the group
-+ *
-+ * @mdev:		media device which represents the group
-+ *
-+ * @lock:		protects the count and vin members
-+ * @count:		number of enabled VIN instances found in DT
-+ * @vin:		VIN instances which are part of the group
-+ */
-+struct rvin_group {
-+	struct kref refcount;
-+
-+	struct media_device mdev;
-+
-+	struct mutex lock;
-+	unsigned int count;
-+	struct rvin_dev *vin[RCAR_VIN_NUM];
-+};
-+
- int rvin_dma_register(struct rvin_dev *vin, int irq);
- void rvin_dma_unregister(struct rvin_dev *vin);
- 
+With the DT side addressed, patch 4/4 converts the LVDS support code to a
+separate bridge driver.
+
+I decided to go for live DT patching in patch 3/4 because implementing
+support for both the legacy and new bindings in the driver would have been
+very intrusive, and prevented further cleanups. This version relies more
+heavily on overlays to avoid touching the internals of the OF core compared to
+v2, even if manual fixes to the device tree are still needed.
+
+I plan to send a pull request by the end of the week if no new issue is
+discovered.
+
+Compared to v6, patch 3/4 now exists in two variants, to accommodate Frank's
+"[PATCH v4 0/4] of: change overlay apply input data from unflattened" patch
+series. If that series can't make it to v4.17, patch 3/4 variant 1 will be
+used. Otherwise I will go with variant 2.
+
+Compared to v5, I've dropped the OF changeset halpers series as Frank raised
+concerns about hidding it in the middle of a driver patch series. I've thus
+copied the implementation of of_changeset_add_property_copy() in the driver to
+avoid blocking this series. The function arguments are identical, so when the
+OF changeset helpers will land it will be very easy to drop the private copy
+and use the of_changeset_add_property_copy() helper.
+
+Compared to v4, the patch "of: changeset: Add of_changeset_node_move method"
+has been dropped as it's not needed. The patches that update the DT sources to
+the new DU and LVDS bindings have been dropped as well to avoid spamming the
+lists as they depend on the driver changes going in first to avoid
+regressions and haven't been changed.
+
+Compared to v3, this series uses the OF changeset API to update properties
+instead of accessing the internals of the property structure. This removes the
+local implementation of functions to look up nodes by path and update
+properties. In order to do this, I pulled in Pantelis' patch series titled
+"[PATCH v2 0/5] of: dynamic: Changesets helpers & fixes" at Rob's request, and
+rebased it while taking two small review comments into account.
+
+Rob, I'd like this series to be merged in v4.17. As the changeset helpers are
+now a dependency, I'd need you to merge them early (ideally on top of
+v4.16-rc1) and provide a stable branch, or get your ack to merge them through
+Dave's tree if they don't conflict with what you have and will queue for
+v4.17.
+
+This version also drops the small fix to the Porter board device tree that has
+been queued for v4.17 already.
+
+Compared to v2, the biggest change is in patch 3/4. Following Rob's and
+Frank's reviews it was clear that modifying the unflattened DT structure of
+the overlay before applying it wasn't popular. I have thus decided to use one
+overlay source per SoC to move as much of the DT changes to the overlay as
+possible, and only perform manual modifications (that are still needed as some
+of the information is board-specific) on the system DT after applying the
+overlay. As a result the overlay is parsed and applied without being modified.
+
+Compared to v1, this series update the r8a7792 and r8a7794 device tree sources
+and incorporate review feedback as described by the changelogs of individual
+patches.
+
+Laurent Pinchart (4):
+  dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
+  dt-bindings: display: renesas: Deprecate LVDS support in the DU
+    bindings
+  drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
+  drm: rcar-du: Convert LVDS encoder code to bridge driver
+
+ .../bindings/display/bridge/renesas,lvds.txt       |  56 +++
+ .../devicetree/bindings/display/renesas,du.txt     |  31 +-
+ MAINTAINERS                                        |   1 +
+ drivers/gpu/drm/rcar-du/Kconfig                    |   6 +-
+ drivers/gpu/drm/rcar-du/Makefile                   |  10 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  21 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   5 -
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 175 +------
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |  12 -
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  14 +-
+ drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  93 ----
+ drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h          |  24 -
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c          | 238 ----------
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h          |  64 ---
+ drivers/gpu/drm/rcar-du/rcar_du_of.c               | 334 +++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 +
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  79 ++++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  53 +++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  53 +++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  53 +++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  53 +++
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                | 524 +++++++++++++++++++++
+ 22 files changed, 1282 insertions(+), 637 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_lvds.c
+
 -- 
-2.16.2
+Regards,
+
+Laurent Pinchart
