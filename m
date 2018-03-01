@@ -1,69 +1,86 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:31512 "EHLO
-        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754621AbeCGWF0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:05:26 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v12 02/33] dt-bindings: media: rcar_vin: add device tree support for r8a774[35]
-Date: Wed,  7 Mar 2018 23:04:40 +0100
-Message-Id: <20180307220511.9826-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 1 Mar 2018 10:54:13 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/2] arm64: dts: renesas: r8a77970: add I2C support
+Message-ID: <20180301095412.obgrryduesbjinbv@verge.net.au>
+References: <3aaa4464-fc85-3fb4-2026-5d9df357bdff@cogentembedded.com>
+ <e309d9cd-69c6-7db2-96a4-73bc788b7cfc@cogentembedded.com>
+ <CAMuHMdWcwx8=KKf0RajtSXnJY9duaupFmUUKEka=uAmJjTdvoQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWcwx8=KKf0RajtSXnJY9duaupFmUUKEka=uAmJjTdvoQ@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Wed, Feb 28, 2018 at 11:56:27AM +0100, Geert Uytterhoeven wrote:
+> On Mon, Feb 26, 2018 at 9:54 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Define the generic R8A77970 parts of the I2C[0-4] device node.
+> >
+> > Based on the original (and large) patch by Daisuke Matsushita
+> > <daisuke.matsushita.ns@hitachi.com>.
+> >
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >
+> > ---
+> > Changes in version 2:
+> > - made  use of  the SYSC power domain #define's;
+> > - moved the I2C nodes before HSCIF nodes.
+> 
+> auto-repeat below...
+> 
+> >  arch/arm64/boot/dts/renesas/r8a77970.dtsi |   88 ++++++++++++++++++++++++++++++
+> >  1 file changed, 88 insertions(+)
+> >
+> > Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> > ===================================================================
+> > --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> > +++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> > @@ -19,6 +19,14 @@
+> >         #address-cells = <2>;
+> >         #size-cells = <2>;
+> >
+> > +       aliases {
+> > +               i2c0 = &i2c0;
+> > +               i2c1 = &i2c1;
+> > +               i2c2 = &i2c2;
+> > +               i2c3 = &i2c3;
+> > +               i2c4 = &i2c4;
+> > +       };
+> > +
+> >         psci {
+> >                 compatible = "arm,psci-1.0", "arm,psci-0.2";
+> >                 method = "smc";
+> > @@ -338,6 +346,86 @@
+> >                                <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
+> >                 };
+> >
+> > +               i2c0: i2c@e6500000 {
+> > +                       compatible = "renesas,i2c-r8a77970",
+> > +                                    "renesas,rcar-gen3-i2c";
+> > +                       reg = <0 0xe6500000 0 0x40>;
+> > +                       interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       clocks = <&cpg CPG_MOD 931>;
+> > +                       power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+> > +                       resets = <&cpg 931>;
+> > +                       dmas = <&dmac1 0x91>, <&dmac1 0x90>;
+> 
+> Can't all five i2c interfaces be used with both dmac1 and dmac2?
+> 
+> With that fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add compatible strings for r8a7743 and r8a7745. No driver change
-is needed as "renesas,rcar-gen2-vin" will activate the right code.
-However, it is good practice to document compatible strings for the
-specific SoC as this allows SoC specific changes to the driver if
-needed, in addition to document SoC support and therefore allow
-checkpatch.pl to validate compatible string values.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- Documentation/devicetree/bindings/media/rcar_vin.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 0ac715a5c331bc26..c60e6b0a89b67a8c 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -6,6 +6,8 @@ family of devices. The current blocks are always slaves and suppot one input
- channel which can be either RGB, YUYV or BT656.
- 
-  - compatible: Must be one or more of the following
-+   - "renesas,vin-r8a7743" for the R8A7743 device
-+   - "renesas,vin-r8a7745" for the R8A7745 device
-    - "renesas,vin-r8a7778" for the R8A7778 device
-    - "renesas,vin-r8a7779" for the R8A7779 device
-    - "renesas,vin-r8a7790" for the R8A7790 device
-@@ -14,7 +16,8 @@ channel which can be either RGB, YUYV or BT656.
-    - "renesas,vin-r8a7793" for the R8A7793 device
-    - "renesas,vin-r8a7794" for the R8A7794 device
-    - "renesas,vin-r8a7795" for the R8A7795 device
--   - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 compatible device.
-+   - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
-+     device.
-    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
- 
-    When compatible with the generic version nodes must list the
--- 
-2.16.2
+Sergei, please address this review and repost as appropriate.
