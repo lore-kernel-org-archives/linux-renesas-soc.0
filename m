@@ -1,77 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:21623 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1031910AbeCAPox (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:37042 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1032403AbeCAPeK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:44:53 -0500
+        Thu, 1 Mar 2018 10:34:10 -0500
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
-        Wim Van Sebroeck <wim@iguana.be>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 2/3] watchdog: renesas_wdt: Add R-Car Gen2 support
-Date: Thu,  1 Mar 2018 15:44:07 +0000
-Message-Id: <1519919048-21884-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1519919048-21884-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1519919048-21884-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: RE: [PATCH v5 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
+Date: Thu, 1 Mar 2018 15:34:02 +0000
+Message-ID: <TY1PR06MB08957154C56A39C1B2449109C0C60@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1518457475-4480-13-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdXKHzpi9evmTOt58DaZzA3dHmMJsAqPNi0+j9Bv1QBbdQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXKHzpi9evmTOt58DaZzA3dHmMJsAqPNi0+j9Bv1QBbdQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Due to commits:
-* "ARM: shmobile: Add watchdog support",
-* "ARM: shmobile: rcar-gen2: Add watchdog support", and
-* "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
-we now have everything we needed for the watchdog to work on Gen2 and
-RZ/G1.
-
-This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
-Gen2 and RZ/G1.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-v5->v6:
-* stripped suspend/resume functionality
-* now gen2 compatible string comes before gen3
-
-Geert,
-
-you marked v5 as:
-Reviewed-and-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-but since I have flipped the order, I am not including it as you may
-disagree with the change.
-
-Thanks,
-Fab
-
- drivers/watchdog/renesas_wdt.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index cbf8e4d..609056f 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -232,12 +232,8 @@ static int __maybe_unused rwdt_resume(struct device *dev)
- 
- static SIMPLE_DEV_PM_OPS(rwdt_pm_ops, rwdt_suspend, rwdt_resume);
- 
--/*
-- * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
-- * to work there, one also needs a RESET (RST) driver which does not exist yet
-- * due to HW issues. This needs to be solved before adding compatibles here.
-- */
- static const struct of_device_id rwdt_ids[] = {
-+	{ .compatible = "renesas,rcar-gen2-wdt", },
- 	{ .compatible = "renesas,rcar-gen3-wdt", },
- 	{ /* sentinel */ }
- };
--- 
-2.7.4
+SGkgR2VlcnQsDQoNCnRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBTdWJqZWN0OiBS
+ZTogW1BBVENIIHY1IDEyLzI2XSB3YXRjaGRvZzogcmVuZXNhc193ZHQ6IEFkZCBSLUNhciBHZW4y
+IHN1cHBvcnQNCj4NCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIE1vbiwgRmViIDEyLCAyMDE4IGF0
+IDY6NDQgUE0sIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMu
+Y29tPiB3cm90ZToNCj4gPiBEdWUgdG8gY29tbWl0czoNCj4gPiAqICJBUk06IHNobW9iaWxlOiBB
+ZGQgd2F0Y2hkb2cgc3VwcG9ydCIsDQo+ID4gKiAiQVJNOiBzaG1vYmlsZTogcmNhci1nZW4yOiBB
+ZGQgd2F0Y2hkb2cgc3VwcG9ydCIsIGFuZA0KPiA+ICogInNvYzogcmVuZXNhczogcmNhci1yc3Q6
+IEVuYWJsZSB3YXRjaGRvZyBhcyByZXNldCB0cmlnZ2VyIGZvciBHZW4yIiwNCj4gPiB3ZSBub3cg
+aGF2ZSBldmVyeXRoaW5nIHdlIG5lZWRlZCBmb3IgdGhlIHdhdGNoZG9nIHRvIHdvcmsgb24gR2Vu
+MiBhbmQNCj4gPiBSWi9HMS4NCj4gPg0KPiA+IFRoaXMgY29tbWl0IGFkZHMgInJlbmVzYXMscmNh
+ci1nZW4yLXdkdCIgYXMgY29tcGF0aWJsZSBzdHJpbmcgZm9yIFItQ2FyDQo+ID4gR2VuMiBhbmQg
+UlovRzEsIGFuZCBzaW5jZSBvbiB0aG9zZSBwbGF0Zm9ybXMgdGhlIHJ3ZHQgY2xvY2sgbmVlZHMg
+dG8gYmUNCj4gPiBhbHdheXMgT04sIHdoZW4gc3VzcGVuZGluZyB0byBSQU0gd2UgbmVlZCB0byBl
+eHBsaWNpdGx5IGRpc2FibGUgdGhlDQo+ID4gY291bnRpbmcgYnkgY2xlYXJpbmcgVE1FIGZyb20g
+UldUQ1NSQS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6
+aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFJhbWVzaCBTaGFu
+bXVnYXN1bmRhcmFtIDxyYW1lc2guc2hhbm11Z2FzdW5kYXJhbUBicC5yZW5lc2FzLmNvbT4NCj4N
+Cj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPg0KPiBJIHZlcmlmaWVkIHRoaXMgd29ya3Mgb24g
+Ui1DYXIgR2VuMiwgc28NCj4gUmV2aWV3ZWQtYW5kLVRlc3RlZC1ieTogR2VlcnQgVXl0dGVyaG9l
+dmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCj4NCj4gU3RpbGwsIG1vcmUgY29tbWVudHMg
+YmVsb3cuLi4NCj4NCj4gPiAtLS0gYS9kcml2ZXJzL3dhdGNoZG9nL3JlbmVzYXNfd2R0LmMNCj4g
+PiArKysgYi9kcml2ZXJzL3dhdGNoZG9nL3JlbmVzYXNfd2R0LmMNCj4gPiBAQCAtMjAzLDEzICsy
+MDMsMjkgQEAgc3RhdGljIGludCByd2R0X3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
+ZGV2KQ0KPiA+ICAgICAgICAgcmV0dXJuIDA7DQo+ID4gIH0NCj4gPg0KPiA+IC0vKg0KPiA+IC0g
+KiBUaGlzIGRyaXZlciBkb2VzIGFsc28gZml0IGZvciBSLUNhciBHZW4yIChyOGE3NzlbMC00XSkg
+V0RULiBIb3dldmVyLCBmb3IgU01QDQo+ID4gLSAqIHRvIHdvcmsgdGhlcmUsIG9uZSBhbHNvIG5l
+ZWRzIGEgUkVTRVQgKFJTVCkgZHJpdmVyIHdoaWNoIGRvZXMgbm90IGV4aXN0IHlldA0KPiA+IC0g
+KiBkdWUgdG8gSFcgaXNzdWVzLiBUaGlzIG5lZWRzIHRvIGJlIHNvbHZlZCBiZWZvcmUgYWRkaW5n
+IGNvbXBhdGlibGVzIGhlcmUuDQo+ID4gLSAqLw0KPiA+ICtzdGF0aWMgaW50IF9fbWF5YmVfdW51
+c2VkIHJ3ZHRfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ID4gK3sNCj4gPiArICAgICAg
+IHN0cnVjdCByd2R0X3ByaXYgKnByaXYgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsNCj4gPiArDQo+
+ID4gKyAgICAgICBpZiAod2F0Y2hkb2dfYWN0aXZlKCZwcml2LT53ZGV2KSkNCj4gPiArICAgICAg
+ICAgICAgICAgcndkdF93cml0ZShwcml2LCBwcml2LT5ja3MsIFJXVENTUkEpOw0KPiA+ICsgICAg
+ICAgcmV0dXJuIDA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgX19tYXliZV91bnVz
+ZWQgcndkdF9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQ0KPiA+ICt7DQo+ID4gKyAgICAgICBz
+dHJ1Y3QgcndkdF9wcml2ICpwcml2ID0gZGV2X2dldF9kcnZkYXRhKGRldik7DQo+ID4gKw0KPiA+
+ICsgICAgICAgaWYgKHdhdGNoZG9nX2FjdGl2ZSgmcHJpdi0+d2RldikpDQo+ID4gKyAgICAgICAg
+ICAgICAgIHJ3ZHRfd3JpdGUocHJpdiwgcHJpdi0+Y2tzIHwgUldUQ1NSQV9UTUUsIFJXVENTUkEp
+Ow0KPg0KPiBXcml0aW5nIHRvIHRoaXMgcmVnaXN0ZXIgaXMgbm90IHN1ZmZpY2llbnQgb24gUi1D
+YXIgR2VuMywgd2hlcmUgUFNDSQ0KPiBzdXNwZW5kIHBvd2VycyBkb3duIHRoZSB3aG9sZSBTb0Mu
+ICBIZW5jZSBhbGwgV0RUIHJlZ2lzdGVyIGNvbnRlbnQgaXMgbG9zdCwNCj4gY2F1c2luZyB0aGUg
+d2F0Y2hkb2cgdGltZW91dCBuZXZlciB0byB0cmlnZ2VyLg0KPiBOb3RlIHRoYXQgdGhpcyBpc3N1
+ZSBpcyBwcmUtZXhpc3RpbmcsIGFuZCBub3QgY2F1c2VkIGJ5IHlvdXIgcGF0Y2guDQo+DQo+IFRo
+aXMgY2FuIGJlIGZpeGVkIGJ5IHJlcGxhY2luZyB0aGUgUldUQ1NSQSByZWdpc3RlciB3cml0ZXMg
+aW4gdGhlDQo+IHN1c3BlbmQvcmVzdW1lIGhhbmRsZXJzIGJ5IGNhbGxzIHRvIHJ3ZHRfc3RvcCgp
+IHJlc3AuIHJ3ZHRfc3RhcnQoKSwgbGlrZSBpcw0KPiBkb25lIGluIHRoZSBCU1AgaW4gY29tbWl0
+IGU0MDY5ODA3NjNmMThmMzggKCJ3YXRjaGRvZzogcmVuZXNhcy13ZHQ6IFN1cHBvcnQNCj4gdGhl
+IHN1c3BlbmQvcmVzdW1lIikuIE5vdGUgdGhhdCB0aGlzIHdvdWxkIGNhdXNlIGEgc21hbGwgY2hh
+bmdlIGluIGJlaGF2aW9yDQo+IG9uIFItQ2FyIEdlbjIsIHdoZXJlIHRoZSB0aW1lb3V0IHdvdWxk
+IGJlIHJlc2V0IG9uIHJlc3VtZSwgaW5zdGVhZCBvZg0KPiBjb250aW51aW5nIHdoZXJlIHN0b3Bw
+ZWQgYmVmb3JlLiBJIGRvbid0IHRoaW5rIHRoYXQgaHVydHMsIHRob3VnaC4NCg0KSSBzZWUsIHdl
+bGwgSSBiZWxpZXZlIHdlIGNhbiBtYWtlIGJvdGggb2YgdXMgaGFwcHkgYnkgYWRkcmVzc2luZyBH
+ZW4zDQpwcm9ibGVtcyBhbmQgcHJlc2VydmluZyB0aGUgb3JpZ2luYWwgYmVoYXZpb3VyICBmcm9t
+IEdlbjIuDQoNCkkgYW0gZ29pbmcgdG8gc2VuZCBhIG5ldyBzZXJpZXMgdG8gYWRkcmVzcyB0aGlz
+IHNob3J0bHkuDQoNCj4NCj4gU2luY2UgSSB3YXMgYWx3YXlzIGEgYml0IHVuY29tZm9ydGFibGUg
+d2l0aCB0aGlzIHBhdGNoIGRvaW5nIHR3byB0aGluZ3MgYXQNCj4gb25jZSAoMS4gc3VzcGVuZC9y
+ZXN1bWUsIDIuICJyZW5lc2FzLHJjYXItZ2VuMi13ZHQiIG1hdGNoaW5nKSwgSSB0aGluayBpdA0K
+PiB3b3VsZCBiZSBiZXR0ZXIgdG8gdGFrZSB0aGUgcGF0Y2ggZnJvbSB0aGUgQlNQIGZpcnN0LCBh
+bmQgYWRkIHN1cHBvcnQgZm9yDQo+ICJyZW5lc2FzLHJjYXItZ2VuMi13ZHQiIGluIGEgc3Vic2Vx
+dWVudCBwYXRjaC4NCg0KSSBhZ3JlZSwgSSdsbCBzcGxpdCB0aGUgcGF0Y2ggYW5kIHN1Ym1pdCBz
+dXNwZW5kL3Jlc3VtZSBmaXJzdCwgR2VuMiBjb21wYXRpYmlsaXR5DQpuZXh0Lg0KDQpUaGFua3Ms
+DQpGYWINCg0KPg0KPiBEb2VzIHRoZSBhYm92ZSBtYWtlIHNlbnNlPw0KPiBEbyB5b3UgYWdyZWU/
+DQo+DQo+IFRoYW5rcyENCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAg
+ICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVy
+ZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4N
+Cj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2Fs
+bCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3Rz
+IEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVz
+YXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwg
+Qm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBF
+bmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
