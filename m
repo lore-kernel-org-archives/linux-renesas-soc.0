@@ -1,73 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:46622 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164862AbeCBIUq (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:37692 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032488AbeCAQGt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Mar 2018 03:20:46 -0500
+        Thu, 1 Mar 2018 11:06:49 -0500
+Received: by mail-io0-f195.google.com with SMTP id d71so7631891iog.4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Mar 2018 08:06:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
- <1518443713-1835-4-git-send-email-geert+renesas@glider.be> <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 2 Mar 2018 09:20:45 +0100
-Message-ID: <CAMuHMdUGga9j6FKwKt+jO=kGvJ2+_znkFmfgmYx-_h5oTTs3pw@mail.gmail.com>
+In-Reply-To: <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
+References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be> <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 1 Mar 2018 17:06:47 +0100
+Message-ID: <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
 Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-pm@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus,
+On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-On Thu, Mar 1, 2018 at 5:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
+> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
+> block's module clock (if exists) is manually kept running during system
+> suspend, to make sure the device stays active.
 >
->> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
->> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
->> block's module clock (if exists) is manually kept running during system
->> suspend, to make sure the device stays active.
->>
->> However, this explicit clock handling is merely a workaround for a
->> failure to properly communicate wakeup information to the device core.
->>
->> Instead, set the device's power.wakeup_path field, to indicate this
->> device is part of the wakeup path.  Depending on the PM Domain's
->> active_wakeup configuration, the genpd core code will keep the device
->> enabled (and the clock running) during system suspend when needed.
->> This allows for the removal of all explicit clock handling code from the
->> driver.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> v3:
+> However, this explicit clock handling is merely a workaround for a
+> failure to properly communicate wakeup information to the device core.
 >
-> Patch applied for v4.16 fixes.
+> Instead, set the device's power.wakeup_path field, to indicate this
+> device is part of the wakeup path.  Depending on the PM Domain's
+> active_wakeup configuration, the genpd core code will keep the device
+> enabled (and the clock running) during system suspend when needed.
+> This allows for the removal of all explicit clock handling code from the
+> driver.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
 
-Are you aware this conflicts with commit 51750fb167a05468 ("gpio: gpio-rcar:
-Support S2RAM") in gpio/for-next?
+Patch applied for v4.16 fixes.
 
-You can find the resolution in
-https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/tree/drivers/gpio/gpio-rcar.c?h=renesas-drivers-2018-02-28-v4.16-rc3
-
-If there's anything else I can do, just ask!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
