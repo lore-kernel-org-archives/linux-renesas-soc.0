@@ -1,38 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:46245 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752129AbeCCTCp (ORCPT
+Received: from mail-io0-f171.google.com ([209.85.223.171]:39314 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032725AbeCAQCZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 3 Mar 2018 14:02:45 -0500
-Received: by mail-lf0-f45.google.com with SMTP id r80so17744909lfe.13
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Mar 2018 11:02:44 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3 0/2] Add R8A77970/Eagle I2C support
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Message-ID: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
-Date: Sat, 3 Mar 2018 22:02:41 +0300
+        Thu, 1 Mar 2018 11:02:25 -0500
+Received: by mail-io0-f171.google.com with SMTP id b34so7613089ioj.6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Mar 2018 08:02:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAMuHMdUys2DQ9vOGdmXEuyueS40Fn2yHnmwasO0=v8xAdRAnKQ@mail.gmail.com>
+References: <20180221233250.14529-1-niklas.soderlund+renesas@ragnatech.se> <CAMuHMdUys2DQ9vOGdmXEuyueS40Fn2yHnmwasO0=v8xAdRAnKQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 1 Mar 2018 17:02:23 +0100
+Message-ID: <CACRpkdY1yHzdrrNTzBwzmEwTkDYMy696xq=r5F6_4DK61n8=wQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin
+ in pinmux_pins[]
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Thu, Feb 22, 2018 at 10:10 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20180301-v4.16-rc3' tag. We're adding the R8A77970 I2C nodes
-and then describing the PCA9654 I/O expander connected to the I2C0 bus.
+>> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
+>
+> Reviewed-and-tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Linus: As the offending patch is only in v4.16-rc1 and later, can you ple=
+ase
+> take it directly as a fix for v4.16?
+>
+> https://patchwork.kernel.org/patch/10234351/
 
-[1/2] arm64: dts: renesas: r8a77970: add I2C support
-[2/2] arm64: dts: renesas: eagle: add I2C0 support
+OK I pulled this out of patchwork and applied for fixes.
 
-WBR, Sergei
+Yours,
+Linus Walleij
