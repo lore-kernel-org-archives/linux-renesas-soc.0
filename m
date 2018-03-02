@@ -1,49 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:62251 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755034AbeCSM2j (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:37823 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423039AbeCBIor (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Mar 2018 08:28:39 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 6/7] arm64: dts: renesas: r8a77965: add USB 3.0 host node
-Date: Mon, 19 Mar 2018 21:28:26 +0900
-Message-Id: <1521462507-23287-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 2 Mar 2018 03:44:47 -0500
+Received: by mail-io0-f195.google.com with SMTP id d71so9979435iog.4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Mar 2018 00:44:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAMuHMdUGga9j6FKwKt+jO=kGvJ2+_znkFmfgmYx-_h5oTTs3pw@mail.gmail.com>
+References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+ <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
+ <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com> <CAMuHMdUGga9j6FKwKt+jO=kGvJ2+_znkFmfgmYx-_h5oTTs3pw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 2 Mar 2018 09:44:46 +0100
+Message-ID: <CACRpkdapq0i1uJwXknHKWsWoobXev885R2JeMZRoXi7ucoTMjA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds USB 3.0 host node for r8a77965.
+On Fri, Mar 2, 2018 at 9:20 AM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> On Thu, Mar 1, 2018 at 5:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
+>> <geert+renesas@glider.be> wrote:
+>>
+>>> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
+>>> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
+>>> block's module clock (if exists) is manually kept running during system
+>>> suspend, to make sure the device stays active.
+>>>
+>>> However, this explicit clock handling is merely a workaround for a
+>>> failure to properly communicate wakeup information to the device core.
+>>>
+>>> Instead, set the device's power.wakeup_path field, to indicate this
+>>> device is part of the wakeup path.  Depending on the PM Domain's
+>>> active_wakeup configuration, the genpd core code will keep the device
+>>> enabled (and the clock running) during system suspend when needed.
+>>> This allows for the removal of all explicit clock handling code from the
+>>> driver.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> ---
+>>> v3:
+>>
+>> Patch applied for v4.16 fixes.
+>
+> Are you aware this conflicts with commit 51750fb167a05468 ("gpio: gpio-rcar:
+> Support S2RAM") in gpio/for-next?
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+No but I guess I will become aware.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index ac74413..a34b80a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -956,8 +956,14 @@
- 		};
- 
- 		xhci0: usb@ee000000 {
-+			compatible = "renesas,xhci-r8a77965",
-+				     "renesas,rcar-gen3-xhci";
- 			reg = <0 0xee000000 0 0xc00>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
- 		};
- 
- 		wdt0: watchdog@e6020000 {
--- 
-1.9.1
+I have not yet mixed the fixes and devel branches for next.
+
+> You can find the resolution in
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/tree/drivers/gpio/gpio-rcar.c?h=renesas-drivers-2018-02-28-v4.16-rc3
+
+Thanks!
+
+Yours,
+Linus Walleij
