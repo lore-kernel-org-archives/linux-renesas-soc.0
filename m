@@ -1,71 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753643AbeCPOyI (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:24463 "EHLO
+        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1163924AbeCBB7J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:54:08 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 31/52] ARM: dts: r8a7743: Add VSP support
-Date: Fri, 16 Mar 2018 15:52:50 +0100
-Message-Id: <0565605aa9887a3d6423fb08c0cbb0de3a22f838.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
+        Thu, 1 Mar 2018 20:59:09 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v11 14/32] rcar-vin: align pixelformat check
+Date: Fri,  2 Mar 2018 02:57:33 +0100
+Message-Id: <20180302015751.25596-15-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+If the pixelformat is not supported it should not fail but be set to
+something that works. While we are at it move the two different
+checks of the pixelformat to the same statement.
 
-Add VSP support to SoC DT.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 11a1263211eb..1d9073ba0ce0 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1630,6 +1630,33 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 652b85300b4ef9db..b94ca9ffb1d3b323 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -187,12 +187,10 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	u32 walign;
+ 	int ret;
  
-+		vsp@fe928000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe928000 0 0x8000>;
-+			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 131>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 131>;
-+		};
-+
-+		vsp@fe930000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe930000 0 0x8000>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 128>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 128>;
-+		};
-+
-+		vsp@fe938000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe938000 0 0x8000>;
-+			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 127>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 127>;
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7743";
- 			reg = <0 0xfeb00000 0 0x40000>,
+-	/* If requested format is not supported fallback to the default */
+-	if (!rvin_format_from_pixel(pix->pixelformat)) {
+-		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
+-			pix->pixelformat, RVIN_DEFAULT_FORMAT);
++	if (!rvin_format_from_pixel(pix->pixelformat) ||
++	    (vin->info->model == RCAR_M1 &&
++	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
+ 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
+-	}
+ 
+ 	/* Limit to source capabilities */
+ 	ret = __rvin_try_format_source(vin, which, pix, source);
+@@ -231,12 +229,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	pix->bytesperline = rvin_format_bytesperline(pix);
+ 	pix->sizeimage = rvin_format_sizeimage(pix);
+ 
+-	if (vin->info->model == RCAR_M1 &&
+-	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+-		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+-		return -EINVAL;
+-	}
+-
+ 	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
+ 		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+ 
 -- 
-2.11.0
+2.16.2
