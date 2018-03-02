@@ -1,165 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:44429 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424959AbeCBOXZ (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:29414 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1423978AbeCBKpw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Mar 2018 09:23:25 -0500
-Subject: Re: [PATCH v7 1/3] watchdog: renesas_wdt: Add suspend/resume support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fri, 2 Mar 2018 05:45:52 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
         Wim Van Sebroeck <wim@iguana.be>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Linux Watchdog Mailing List" <linux-watchdog@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        "Ramesh Shanmugasundaram" <ramesh.shanmugasundaram@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v7 1/3] watchdog: renesas_wdt: Add suspend/resume support
+Date: Fri, 2 Mar 2018 10:45:46 +0000
+Message-ID: <TY1PR06MB08951A6D879D77BD5A854388C0C50@TY1PR06MB0895.apcprd06.prod.outlook.com>
 References: <1519928243-28596-1-git-send-email-fabrizio.castro@bp.renesas.com>
  <1519928243-28596-2-git-send-email-fabrizio.castro@bp.renesas.com>
  <CAMuHMdW-_MgFSh5aKGiMVyvc2-nvJXCPGCgQOCGfg9yqA708qw@mail.gmail.com>
- <TY1PR06MB08951A6D879D77BD5A854388C0C50@TY1PR06MB0895.apcprd06.prod.outlook.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <84fa5868-67ac-75d3-9e97-3614b4d18dc9@roeck-us.net>
-Date: Fri, 2 Mar 2018 06:23:21 -0800
-MIME-Version: 1.0
-In-Reply-To: <TY1PR06MB08951A6D879D77BD5A854388C0C50@TY1PR06MB0895.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAMuHMdW-_MgFSh5aKGiMVyvc2-nvJXCPGCgQOCGfg9yqA708qw@mail.gmail.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 03/02/2018 02:45 AM, Fabrizio Castro wrote:
-> Dear All,
-> 
-> perhaps someone from this email thread could explain to me what's the actual
-> (general) expectation from a system perspective (at resume) from the watchdog,
-> because I can see pitfalls whether 1) we simply start the watchdog at resume or
-> 2) we pick up from where we left.
-> 
-> If we have a system that goes to sleep quite a bit, option 1) may cause the watchdog
-> to never fire, even though user space is not explicitly pinging the watchdog. As Geert
-> has pointed out, going to sleep and waking up adds a delay, therefore with option 2)
-> you may miss the opportunity to ping the watchdog and therefore the system may
-> restart even when it shouldn't. However, with option 2) user space can make
-> arrangements to compensate for the delay, and when user space compensates for
-> that it means the system is probably sane. With option 1) instead we are basically
-> pinging the watchdog without explicitly doing so from user space, which I don't think
-> is what we want here, but I may be wrong.
-> 
-> Could someone please shed some light here?
-> 
-If the system goes to sleep so often that the watchdog never triggers just because of
-that, it must either be in pretty good shape, in which case the watchdog doesn't need
-to fire, or it is in bad shape, and the repeated stopping/restarting of the watchdog
-would ultimately cause the system to die with the watchdog stopped anyway.
-
-Overall, just the fact that the watchdog has to be stopped during suspend is a weak spot.
-Bad luck if the system hangs after the watchdog was stopped. Since suspend is a critical
-operation )in the sense that if anything goes wrong, that is the time for it), that is
-a _real_ weak spot. If anything, we should be concerned about that, not about the exact
-timing of watchdog pings.
-
-Sure, you can leave it to user space to adjust for the resume time. Let's hope that the
-watchdog daemon does that, and that it gets to run fast enough to actually do it.
-I do wonder though how it would know. Are processes informed about a resume event ?
-
-Personally I rather play it safe, meaning I rather give the watchdog a bit of additional
-slack during resume. Having said that, as mentioned before, I am willing to accept
-the patch as is, in the assumption that the authors know what they are doing.
-
-Guenter
-
-> Thanks,
-> Fab
-> 
-> 
->> Subject: Re: [PATCH v7 1/3] watchdog: renesas_wdt: Add suspend/resume support
->>
->> Hi Fabrizio,
->>
->> On Thu, Mar 1, 2018 at 7:17 PM, Fabrizio Castro
->> <fabrizio.castro@bp.renesas.com> wrote:
->>> On R-Car Gen2 and RZ/G1 the watchdog IP clock needs to be always ON,
->>> on R-Car Gen3 we power the IP down during suspend.
->>>
->>> This commit adds suspend/resume support, so that the watchdog counting
->>> "pauses" during suspend on all of the SoCs compatible with this driver
->>> and on those we are now adding support for (R-Car Gen2 and RZ/G1).
->>>
->>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->>> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
->>> ---
->>> v6->v7:
->>> * backup and restore register RWTCNT instead of using rwdt_get_timeleft and
->>>    rwdt_set_timeleft
->>
->> Thanks for the update (v6 and v7)!
->>
->>>
->>>   drivers/watchdog/renesas_wdt.c | 26 ++++++++++++++++++++++++++
->>>   1 file changed, 26 insertions(+)
->>>
->>> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
->>> index 831ef83..024d54e 100644
->>> --- a/drivers/watchdog/renesas_wdt.c
->>> +++ b/drivers/watchdog/renesas_wdt.c
->>> @@ -49,6 +49,7 @@ struct rwdt_priv {
->>>          void __iomem *base;
->>>          struct watchdog_device wdev;
->>>          unsigned long clk_rate;
->>> +       u16 time_left;
->>>          u8 cks;
->>>   };
->>>
->>> @@ -203,6 +204,30 @@ static int rwdt_remove(struct platform_device *pdev)
->>>          return 0;
->>>   }
->>>
->>> +static int __maybe_unused rwdt_suspend(struct device *dev)
->>> +{
->>> +       struct rwdt_priv *priv = dev_get_drvdata(dev);
->>> +
->>> +       if (watchdog_active(&priv->wdev)) {
->>> +               priv->time_left = readw(priv->base + RWTCNT);
->>> +               rwdt_stop(&priv->wdev);
->>> +       }
->>> +       return 0;
->>> +}
->>> +
->>> +static int __maybe_unused rwdt_resume(struct device *dev)
->>> +{
->>> +       struct rwdt_priv *priv = dev_get_drvdata(dev);
->>> +
->>> +       if (watchdog_active(&priv->wdev)) {
->>> +               rwdt_start(&priv->wdev);
->>> +               rwdt_write(priv, priv->time_left, RWTCNT);
->>
->> Upon given it more thought, I'm a bit worried about restoring the
->> original time left.
->> In my experiments, it may take a few seconds before userspace fully resumes.
->> If time_left was a small value, the system may reboot before userspace has
->> a chance to send its next ping.
->> This was with NFS root, so heavily impacted by the delays introduced by the
->> PHY link getting up again.
->>
->> So just using rwdt_stop()/rwdt_start() may be the safest option.
->>
->> Gr{oetje,eeting}s,
->>
->>                          Geert
->>
->> --
->> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->>
->> In personal conversations with technical people, I call myself a hacker. But
->> when I'm talking to journalists I just say "programmer" or something like that.
->>                                  -- Linus Torvalds
-> 
-> 
-> 
-> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
-> N�����r��y���b�X��ǧv�^�)޺{.n�+����{���\�� �{ay�ʇڙ�,j��f���h���z��w������j:+v���w�j�m��������zZ+�����ݢj"��!tml=
-> 
+RGVhciBBbGwsDQoNCnBlcmhhcHMgc29tZW9uZSBmcm9tIHRoaXMgZW1haWwgdGhyZWFkIGNvdWxk
+IGV4cGxhaW4gdG8gbWUgd2hhdCdzIHRoZSBhY3R1YWwNCihnZW5lcmFsKSBleHBlY3RhdGlvbiBm
+cm9tIGEgc3lzdGVtIHBlcnNwZWN0aXZlIChhdCByZXN1bWUpIGZyb20gdGhlIHdhdGNoZG9nLA0K
+YmVjYXVzZSBJIGNhbiBzZWUgcGl0ZmFsbHMgd2hldGhlciAxKSB3ZSBzaW1wbHkgc3RhcnQgdGhl
+IHdhdGNoZG9nIGF0IHJlc3VtZSBvcg0KMikgd2UgcGljayB1cCBmcm9tIHdoZXJlIHdlIGxlZnQu
+DQoNCklmIHdlIGhhdmUgYSBzeXN0ZW0gdGhhdCBnb2VzIHRvIHNsZWVwIHF1aXRlIGEgYml0LCBv
+cHRpb24gMSkgbWF5IGNhdXNlIHRoZSB3YXRjaGRvZw0KdG8gbmV2ZXIgZmlyZSwgZXZlbiB0aG91
+Z2ggdXNlciBzcGFjZSBpcyBub3QgZXhwbGljaXRseSBwaW5naW5nIHRoZSB3YXRjaGRvZy4gQXMg
+R2VlcnQNCmhhcyBwb2ludGVkIG91dCwgZ29pbmcgdG8gc2xlZXAgYW5kIHdha2luZyB1cCBhZGRz
+IGEgZGVsYXksIHRoZXJlZm9yZSB3aXRoIG9wdGlvbiAyKQ0KeW91IG1heSBtaXNzIHRoZSBvcHBv
+cnR1bml0eSB0byBwaW5nIHRoZSB3YXRjaGRvZyBhbmQgdGhlcmVmb3JlIHRoZSBzeXN0ZW0gbWF5
+DQpyZXN0YXJ0IGV2ZW4gd2hlbiBpdCBzaG91bGRuJ3QuIEhvd2V2ZXIsIHdpdGggb3B0aW9uIDIp
+IHVzZXIgc3BhY2UgY2FuIG1ha2UNCmFycmFuZ2VtZW50cyB0byBjb21wZW5zYXRlIGZvciB0aGUg
+ZGVsYXksIGFuZCB3aGVuIHVzZXIgc3BhY2UgY29tcGVuc2F0ZXMgZm9yDQp0aGF0IGl0IG1lYW5z
+IHRoZSBzeXN0ZW0gaXMgcHJvYmFibHkgc2FuZS4gV2l0aCBvcHRpb24gMSkgaW5zdGVhZCB3ZSBh
+cmUgYmFzaWNhbGx5DQpwaW5naW5nIHRoZSB3YXRjaGRvZyB3aXRob3V0IGV4cGxpY2l0bHkgZG9p
+bmcgc28gZnJvbSB1c2VyIHNwYWNlLCB3aGljaCBJIGRvbid0IHRoaW5rDQppcyB3aGF0IHdlIHdh
+bnQgaGVyZSwgYnV0IEkgbWF5IGJlIHdyb25nLg0KDQpDb3VsZCBzb21lb25lIHBsZWFzZSBzaGVk
+IHNvbWUgbGlnaHQgaGVyZT8NCg0KVGhhbmtzLA0KRmFiDQoNCg0KPiBTdWJqZWN0OiBSZTogW1BB
+VENIIHY3IDEvM10gd2F0Y2hkb2c6IHJlbmVzYXNfd2R0OiBBZGQgc3VzcGVuZC9yZXN1bWUgc3Vw
+cG9ydA0KPg0KPiBIaSBGYWJyaXppbywNCj4NCj4gT24gVGh1LCBNYXIgMSwgMjAxOCBhdCA3OjE3
+IFBNLCBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4g
+d3JvdGU6DQo+ID4gT24gUi1DYXIgR2VuMiBhbmQgUlovRzEgdGhlIHdhdGNoZG9nIElQIGNsb2Nr
+IG5lZWRzIHRvIGJlIGFsd2F5cyBPTiwNCj4gPiBvbiBSLUNhciBHZW4zIHdlIHBvd2VyIHRoZSBJ
+UCBkb3duIGR1cmluZyBzdXNwZW5kLg0KPiA+DQo+ID4gVGhpcyBjb21taXQgYWRkcyBzdXNwZW5k
+L3Jlc3VtZSBzdXBwb3J0LCBzbyB0aGF0IHRoZSB3YXRjaGRvZyBjb3VudGluZw0KPiA+ICJwYXVz
+ZXMiIGR1cmluZyBzdXNwZW5kIG9uIGFsbCBvZiB0aGUgU29DcyBjb21wYXRpYmxlIHdpdGggdGhp
+cyBkcml2ZXINCj4gPiBhbmQgb24gdGhvc2Ugd2UgYXJlIG5vdyBhZGRpbmcgc3VwcG9ydCBmb3Ig
+KFItQ2FyIEdlbjIgYW5kIFJaL0cxKS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlv
+IENhc3RybyA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPiA+IFNpZ25lZC1vZmYt
+Ynk6IFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtIDxyYW1lc2guc2hhbm11Z2FzdW5kYXJhbUBicC5y
+ZW5lc2FzLmNvbT4NCj4gPiAtLS0NCj4gPiB2Ni0+djc6DQo+ID4gKiBiYWNrdXAgYW5kIHJlc3Rv
+cmUgcmVnaXN0ZXIgUldUQ05UIGluc3RlYWQgb2YgdXNpbmcgcndkdF9nZXRfdGltZWxlZnQgYW5k
+DQo+ID4gICByd2R0X3NldF90aW1lbGVmdA0KPg0KPiBUaGFua3MgZm9yIHRoZSB1cGRhdGUgKHY2
+IGFuZCB2NykhDQo+DQo+ID4NCj4gPiAgZHJpdmVycy93YXRjaGRvZy9yZW5lc2FzX3dkdC5jIHwg
+MjYgKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDI2IGlu
+c2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3dhdGNoZG9nL3JlbmVz
+YXNfd2R0LmMgYi9kcml2ZXJzL3dhdGNoZG9nL3JlbmVzYXNfd2R0LmMNCj4gPiBpbmRleCA4MzFl
+ZjgzLi4wMjRkNTRlIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvd2F0Y2hkb2cvcmVuZXNhc193
+ZHQuYw0KPiA+ICsrKyBiL2RyaXZlcnMvd2F0Y2hkb2cvcmVuZXNhc193ZHQuYw0KPiA+IEBAIC00
+OSw2ICs0OSw3IEBAIHN0cnVjdCByd2R0X3ByaXYgew0KPiA+ICAgICAgICAgdm9pZCBfX2lvbWVt
+ICpiYXNlOw0KPiA+ICAgICAgICAgc3RydWN0IHdhdGNoZG9nX2RldmljZSB3ZGV2Ow0KPiA+ICAg
+ICAgICAgdW5zaWduZWQgbG9uZyBjbGtfcmF0ZTsNCj4gPiArICAgICAgIHUxNiB0aW1lX2xlZnQ7
+DQo+ID4gICAgICAgICB1OCBja3M7DQo+ID4gIH07DQo+ID4NCj4gPiBAQCAtMjAzLDYgKzIwNCwz
+MCBAQCBzdGF0aWMgaW50IHJ3ZHRfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
+DQo+ID4gICAgICAgICByZXR1cm4gMDsNCj4gPiAgfQ0KPiA+DQo+ID4gK3N0YXRpYyBpbnQgX19t
+YXliZV91bnVzZWQgcndkdF9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gPiArew0KPiA+
+ICsgICAgICAgc3RydWN0IHJ3ZHRfcHJpdiAqcHJpdiA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOw0K
+PiA+ICsNCj4gPiArICAgICAgIGlmICh3YXRjaGRvZ19hY3RpdmUoJnByaXYtPndkZXYpKSB7DQo+
+ID4gKyAgICAgICAgICAgICAgIHByaXYtPnRpbWVfbGVmdCA9IHJlYWR3KHByaXYtPmJhc2UgKyBS
+V1RDTlQpOw0KPiA+ICsgICAgICAgICAgICAgICByd2R0X3N0b3AoJnByaXYtPndkZXYpOw0KPiA+
+ICsgICAgICAgfQ0KPiA+ICsgICAgICAgcmV0dXJuIDA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0
+YXRpYyBpbnQgX19tYXliZV91bnVzZWQgcndkdF9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQ0K
+PiA+ICt7DQo+ID4gKyAgICAgICBzdHJ1Y3QgcndkdF9wcml2ICpwcml2ID0gZGV2X2dldF9kcnZk
+YXRhKGRldik7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKHdhdGNoZG9nX2FjdGl2ZSgmcHJpdi0+
+d2RldikpIHsNCj4gPiArICAgICAgICAgICAgICAgcndkdF9zdGFydCgmcHJpdi0+d2Rldik7DQo+
+ID4gKyAgICAgICAgICAgICAgIHJ3ZHRfd3JpdGUocHJpdiwgcHJpdi0+dGltZV9sZWZ0LCBSV1RD
+TlQpOw0KPg0KPiBVcG9uIGdpdmVuIGl0IG1vcmUgdGhvdWdodCwgSSdtIGEgYml0IHdvcnJpZWQg
+YWJvdXQgcmVzdG9yaW5nIHRoZQ0KPiBvcmlnaW5hbCB0aW1lIGxlZnQuDQo+IEluIG15IGV4cGVy
+aW1lbnRzLCBpdCBtYXkgdGFrZSBhIGZldyBzZWNvbmRzIGJlZm9yZSB1c2Vyc3BhY2UgZnVsbHkg
+cmVzdW1lcy4NCj4gSWYgdGltZV9sZWZ0IHdhcyBhIHNtYWxsIHZhbHVlLCB0aGUgc3lzdGVtIG1h
+eSByZWJvb3QgYmVmb3JlIHVzZXJzcGFjZSBoYXMNCj4gYSBjaGFuY2UgdG8gc2VuZCBpdHMgbmV4
+dCBwaW5nLg0KPiBUaGlzIHdhcyB3aXRoIE5GUyByb290LCBzbyBoZWF2aWx5IGltcGFjdGVkIGJ5
+IHRoZSBkZWxheXMgaW50cm9kdWNlZCBieSB0aGUNCj4gUEhZIGxpbmsgZ2V0dGluZyB1cCBhZ2Fp
+bi4NCj4NCj4gU28ganVzdCB1c2luZyByd2R0X3N0b3AoKS9yd2R0X3N0YXJ0KCkgbWF5IGJlIHRo
+ZSBzYWZlc3Qgb3B0aW9uLg0KPg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4NCj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgR2VlcnQNCj4NCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRo
+ZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0K
+Pg0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBj
+YWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlz
+dHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCg0KUmVu
+ZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2Fk
+LCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGlu
+IEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
