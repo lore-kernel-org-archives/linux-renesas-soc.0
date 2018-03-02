@@ -1,56 +1,55 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:48438 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424003AbeCBM1u (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 2 Mar 2018 07:27:50 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/4] mfd: bd9571mwv: Allow DDR Backup Power register access
-Date: Wed, 14 Mar 2018 12:08:41 +0100
-Message-Id: <1521025722-24205-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
-References: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v2 1/2] ARM: shmobile: defconfig: Refresh
+Date: Fri,  2 Mar 2018 13:27:45 +0100
+Message-Id: <1519993666-11041-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1519993666-11041-1-git-send-email-geert+renesas@glider.be>
+References: <1519993666-11041-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable read/write access to the BD9571MWV_BKUP_MODE_CNT register, which
-is amongst others used to configure DDR Backup Power.
+  - CONFIG_AEABI is enabled since commit 494609701e06a004 ("ARM: always
+    enable AEABI for ARMv6+"),
+  - CONFIG_SERIAL_SH_SCI_CONSOLE is enabled since commit
+    c5bb576d5e21e91a ("tty: serial: sh-sci: Hide serial console config
+    question"),
+  - CONFIG_SERIAL_SH_SCI_DMA is enabled since commit be7e251d20e6c800
+    ("tty: serial: sh-sci: Hide DMA config question").
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+ arch/arm/configs/shmobile_defconfig | 3 ---
+ 1 file changed, 3 deletions(-)
 
-v2:
-  - Expand "a.o.",
-  - Add Acked-for-MFD-by (for Lee's own reference).
----
- drivers/mfd/bd9571mwv.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
-index 64e088dfe7b05b5b..503979c81dae11bb 100644
---- a/drivers/mfd/bd9571mwv.c
-+++ b/drivers/mfd/bd9571mwv.c
-@@ -29,6 +29,7 @@ static const struct mfd_cell bd9571mwv_cells[] = {
- 
- static const struct regmap_range bd9571mwv_readable_yes_ranges[] = {
- 	regmap_reg_range(BD9571MWV_VENDOR_CODE, BD9571MWV_PRODUCT_REVISION),
-+	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
- 	regmap_reg_range(BD9571MWV_AVS_SET_MONI, BD9571MWV_AVS_DVFS_VID(3)),
- 	regmap_reg_range(BD9571MWV_VD18_VID, BD9571MWV_VD33_VID),
- 	regmap_reg_range(BD9571MWV_DVFS_VINIT, BD9571MWV_DVFS_VINIT),
-@@ -44,6 +45,7 @@ static const struct regmap_access_table bd9571mwv_readable_table = {
- };
- 
- static const struct regmap_range bd9571mwv_writable_yes_ranges[] = {
-+	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
- 	regmap_reg_range(BD9571MWV_AVS_VD09_VID(0), BD9571MWV_AVS_VD09_VID(3)),
- 	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_SETVID),
- 	regmap_reg_range(BD9571MWV_GPIO_DIR, BD9571MWV_GPIO_OUT),
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 79b2b7c122644033..e3658ec04e837f8a 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -34,7 +34,6 @@ CONFIG_SMP=y
+ CONFIG_SCHED_MC=y
+ CONFIG_HAVE_ARM_ARCH_TIMER=y
+ CONFIG_NR_CPUS=8
+-CONFIG_AEABI=y
+ CONFIG_HIGHMEM=y
+ CONFIG_CMA=y
+ CONFIG_ZBOOT_ROM_TEXT=0x0
+@@ -105,8 +104,6 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_8250_EM=y
+ CONFIG_SERIAL_SH_SCI=y
+ CONFIG_SERIAL_SH_SCI_NR_UARTS=20
+-CONFIG_SERIAL_SH_SCI_CONSOLE=y
+-CONFIG_SERIAL_SH_SCI_DMA=y
+ CONFIG_I2C_CHARDEV=y
+ CONFIG_I2C_MUX=y
+ CONFIG_I2C_DEMUX_PINCTRL=y
 -- 
 2.7.4
-
