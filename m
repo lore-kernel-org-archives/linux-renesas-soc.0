@@ -1,143 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:46145 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751275AbeCEQra (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:47638 "EHLO
+        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1163784AbeCBB67 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 11:47:30 -0500
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-CC: Adrian Hunter <adrian.hunter@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] mmc: sdhci-of-arasan: Add quirk to avoid erroneous msg
-Date: Mon, 5 Mar 2018 16:47:25 +0000
-Message-ID: <HK2PR0601MB139301F701386BB74CF369E2F5DA0@HK2PR0601MB1393.apcprd06.prod.outlook.com>
-References: <1519739731-27920-1-git-send-email-phil.edworthy@renesas.com>
- <b35a8ac6-af47-5851-95ae-371288bb5f25@rock-chips.com>
- <HK2PR0601MB1393B39958A128DCB8CA0E44F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
- <b725dcf5-2f53-dab7-1e0c-85ea138f54a9@rock-chips.com>
- <HK2PR0601MB139380F295EF5CE849288F91F5C00@HK2PR0601MB1393.apcprd06.prod.outlook.com>
- <52191012-300a-e13d-fa54-8717eb97c2e1@rock-chips.com>
-In-Reply-To: <52191012-300a-e13d-fa54-8717eb97c2e1@rock-chips.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 1 Mar 2018 20:58:59 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v11 08/32] rcar-vin: move max width and height information to chip information
+Date: Fri,  2 Mar 2018 02:57:27 +0100
+Message-Id: <20180302015751.25596-9-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shawn,
+On Gen3 the max supported width and height will be different from Gen2.
+Move the limits to the struct rvin_info to prepare for Gen3 support.
 
-On 28 February 2018 01:53, Shawn Lin wrote:
-> On 2018/2/27 23:05, Phil Edworthy wrote:
-> > On 27 February 2018 14:42, Shawn Lin wrote:
-> >> On 2018/2/27 22:31, Phil Edworthy wrote:
-> >>> On 27 February 2018 14:28, Shawn Lin wrote:
-> >>>> =1B$B:_=1B(B 2018/2/27 21:55, Phil Edworthy =1B$B<LF;=1B(B:
-> >>>>> Since the controller does not support the end-of-busy IRQ, don't us=
-e
-> it.
-> >>>>> Otherwise, on older SD cards you will get lots of these messages:
-> >>>>> "mmc0: Got data interrupt 0x00000002 even though no data operation
-> >>>>> was
-> >>>> in progress"
-> >>>>>
-> >>>>
-> >>>> I'm afraid you have to explain which version of arasan's IP suffer
-> >>>> from this and what does the "older SD cards" mean?
-> >>> Ok, I'll try to find out the IP version...
-> >>> For "older SD cards", I can provide a list of a few cards that
-> >>> exhibit this problem and others that don't, is that enough info?
-> >>
-> >> What I meant is could you elaborate more about what kind of cards,
-> >> e.g, are them the  legacy SDSC cards or SDHC cards, or maybe they are
-> >> only running with defaut speed? or whatever, but not just with a
-> >> vague "older" cards. :)
-> > Unfortunately, I have one SDHC card that works, one that doesn't. Both
-> > cards are running with a 50MHz SD clock. All I know is this:
->=20
-> Thanks for sharing these, though it looks wired as I never remember I saw
-> this problem when extensively tested SD cards on one of arasan controller=
-s
-> in 2014.
-Not sure what you mean by 'wired'?
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 6 ++++++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++----
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 5 +++++
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
-Note that this is on a relatively slow device, a dual core Cortex A7 @500MH=
-z.
-Maybe that has some effect.
-
-It's also interesting that someone posted the same fix for Xilinx a while
-back, I linked to it in the commit msg.
-
-Thanks
-Phil
-
-
-> > SD cards that report unexpected interrupts:
-> > 2GB Sandisk Extreme III                     (e624 SD02G 1.89 GiB)
-> > 8GB Sandisk (SDHC class 4)              (aaaa SU08G 7.40 GiB)
-> > 8GB Sandisk Extreme III (SDHC class 6)    (bb4e SD08G 7.61 GiB)
-> >
-> > SD cards that work ok:
-> > 16GB Samsung (microSDHC U1 class 10)          (0001 00000 14.6 GiB)
-> > 16GB Sandisk Ultra (microSDHC U1 class 10)    (aaaa SL16G 14.8 GiB)
-> > 32GB Sandisk Ultra (microSDHC U1 class 10)    (aaaa SL32G 29.7 GiB)
-> >
-> > Thanks
-> > Phil
-> >
-> >>>>> This has been reported on Xilinx devices that also use the Arasan I=
-P.
-> >>>>> See https://patchwork.kernel.org/patch/8062871/
-> >>>>>
-> >>>>> This has been tested on the Renesas RZ/ND-DB board with the RZ/N1
-> >> SoC.
-> >>>>>
-> >>>>> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> >>>>> ---
-> >>>>>     drivers/mmc/host/sdhci-of-arasan.c | 3 ++-
-> >>>>>     1 file changed, 2 insertions(+), 1 deletion(-)
-> >>>>>
-> >>>>> diff --git a/drivers/mmc/host/sdhci-of-arasan.c
-> >>>>> b/drivers/mmc/host/sdhci-of-arasan.c
-> >>>>> index c33a5f7..ab66e32 100644
-> >>>>> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> >>>>> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> >>>>> @@ -290,7 +290,8 @@ static const struct sdhci_pltfm_data
-> >>>> sdhci_arasan_pdata =3D {
-> >>>>>     	.ops =3D &sdhci_arasan_ops,
-> >>>>>     	.quirks =3D SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> >>>>>     	.quirks2 =3D SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> >>>>> -			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
-> >>>>> +			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN
-> |
-> >>>>> +			SDHCI_QUIRK2_STOP_WITH_TC,
-> >>>>>     };
-> >>>>>
-> >>>>>     static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32
-> >>>>> intmask)
-> >>>>>
-> >>>>
-> >>>>
-> >>>> --
-> >>>> Best Regards
-> >>>> Shawn Lin
-> >>>
-> >>>
-> >>>
-> >>>
-> >>
-> >>
-> >> --
-> >> Best Regards
-> >> Shawn Lin
-> >
-> >
-> >
-> >
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index d2b27ccff690cede..cc863e4ec9a4d4b3 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -243,14 +243,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 
+ static const struct rvin_info rcar_info_h1 = {
+ 	.model = RCAR_H1,
++	.max_width = 2048,
++	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_m1 = {
+ 	.model = RCAR_M1,
++	.max_width = 2048,
++	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.model = RCAR_GEN2,
++	.max_width = 2048,
++	.max_height = 2048,
+ };
+ 
+ static const struct of_device_id rvin_of_id_table[] = {
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 0a035667c0b0e93f..8805d7911a761019 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -23,8 +23,6 @@
+ #include "rcar-vin.h"
+ 
+ #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+-#define RVIN_MAX_WIDTH		2048
+-#define RVIN_MAX_HEIGHT		2048
+ 
+ /* -----------------------------------------------------------------------------
+  * Format Conversions
+@@ -258,8 +256,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+ 
+ 	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
+-			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
++	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
++			      &pix->height, 4, vin->info->max_height, 2, 0);
+ 
+ 	pix->bytesperline = max_t(u32, pix->bytesperline,
+ 				  rvin_format_bytesperline(pix));
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 3f49d2f2d6b88471..f195d174eeacda10 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -91,9 +91,14 @@ struct rvin_graph_entity {
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @model:		VIN model
++ * @max_width:		max input width the VIN supports
++ * @max_height:		max input height the VIN supports
+  */
+ struct rvin_info {
+ 	enum model_id model;
++
++	unsigned int max_width;
++	unsigned int max_height;
+ };
+ 
+ /**
+-- 
+2.16.2
