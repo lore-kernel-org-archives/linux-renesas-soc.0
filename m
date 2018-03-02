@@ -1,9 +1,4 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:32039 "EHLO
-        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934216AbeCGWFv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:05:51 -0500
+Return-Path: <linux-media-owner@vger.kernel.org>
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -12,98 +7,196 @@ Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v12 20/33] rcar-vin: add function to manipulate Gen3 chsel value
-Date: Wed,  7 Mar 2018 23:04:58 +0100
-Message-Id: <20180307220511.9826-21-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v11 03/32] rcar-vin: add Gen3 devicetree bindings documentation
+Date: Fri,  2 Mar 2018 02:57:22 +0100
+Message-Id: <20180302015751.25596-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
-feature of this register is that it's only present in the VIN0 and VIN4
-instances. The register in VIN0 controls the routing for VIN0-3 and the
-register in VIN4 controls routing for VIN4-7.
+Document the devicetree bindings for the CSI-2 inputs available on Gen3.
 
-To be able to control routing from a media device this function is need
-to control runtime PM for the subgroup master (VIN0 and VIN4). The
-subgroup master must be switched on before the register is manipulated,
-once the operation is complete it's safe to switch the master off and
-the new routing will still be in effect.
+There is a need to add a custom property 'renesas,id' and to define
+which CSI-2 input is described in which endpoint under the port@1 node.
+This information is needed since there are a set of predefined routes
+between each VIN and CSI-2 block. This routing table will be kept
+inside the driver but in order for it to act on it it must know which
+VIN and CSI-2 is which.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 38 ++++++++++++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
- 2 files changed, 40 insertions(+)
+ .../devicetree/bindings/media/rcar_vin.txt         | 118 ++++++++++++++++++---
+ 1 file changed, 106 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 483d31f07b934929..75382ee0f3fc1dde 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -16,6 +16,7 @@
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index c60e6b0a89b67a8c..90d92836284b7f68 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -2,8 +2,12 @@ Renesas R-Car Video Input driver (rcar_vin)
+ -------------------------------------------
  
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-+#include <linux/pm_runtime.h>
+ The rcar_vin device provides video input capabilities for the Renesas R-Car
+-family of devices. The current blocks are always slaves and suppot one input
+-channel which can be either RGB, YUYV or BT656.
++family of devices.
++
++Each VIN instance has a single parallel input that supports RGB and YUV video,
++with both external synchronization and BT.656 synchronization for the latter.
++Depending on the instance the VIN input is connected to external SoC pins, or
++on Gen3 platforms to a CSI-2 receiver.
  
- #include <media/videobuf2-dma-contig.h>
+  - compatible: Must be one or more of the following
+    - "renesas,vin-r8a7743" for the R8A7743 device
+@@ -16,6 +20,8 @@ channel which can be either RGB, YUYV or BT656.
+    - "renesas,vin-r8a7793" for the R8A7793 device
+    - "renesas,vin-r8a7794" for the R8A7794 device
+    - "renesas,vin-r8a7795" for the R8A7795 device
++   - "renesas,vin-r8a7796" for the R8A7796 device
++   - "renesas,vin-r8a77970" for the R8A77970 device
+    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
+      device.
+    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+@@ -31,21 +37,38 @@ channel which can be either RGB, YUYV or BT656.
+ Additionally, an alias named vinX will need to be created to specify
+ which video input device this is.
  
-@@ -1224,3 +1225,40 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
+-The per-board settings:
++The per-board settings Gen2 platforms:
+  - port sub-node describing a single endpoint connected to the vin
+    as described in video-interfaces.txt[1]. Only the first one will
+    be considered as each vin interface has one input port.
  
- 	return ret;
- }
-+
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CHSEL manipulation
-+ */
-+
-+/*
-+ * There is no need to have locking around changing the routing
-+ * as it's only possible to do so when no VIN in the group is
-+ * streaming so nothing can race with the VNMC register.
-+ */
-+int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
-+{
-+	u32 ifmd, vnmc;
-+	int ret;
-+
-+	ret = pm_runtime_get_sync(vin->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Make register writes take effect immediately. */
-+	vnmc = rvin_read(vin, VNMC_REG);
-+	rvin_write(vin, vnmc & ~VNMC_VUP, VNMC_REG);
-+
-+	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
-+		VNCSI_IFMD_CSI_CHSEL(chsel);
-+
-+	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
-+
-+	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
-+
-+	/* Restore VNMC. */
-+	rvin_write(vin, vnmc, VNMC_REG);
-+
-+	pm_runtime_put(vin->dev);
-+
-+	return ret;
-+}
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 5e3ea8d401d934d1..8e20455927fe5224 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -169,4 +169,6 @@ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- /* Cropping, composing and scaling */
- void rvin_crop_scale_comp(struct rvin_dev *vin);
+-   These settings are used to work out video input format and widths
+-   into the system.
++The per-board settings Gen3 platforms:
  
-+int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
++Gen3 platforms can support both a single connected parallel input source
++from external SoC pins (port0) and/or multiple parallel input sources
++from local SoC CSI-2 receivers (port1) depending on SoC.
+ 
+-Device node example
+--------------------
++- renesas,id - ID number of the VIN, VINx in the documentation.
++- ports
++    - port 0 - sub-node describing a single endpoint connected to the VIN
++      from external SoC pins described in video-interfaces.txt[1].
++      Describing more then one endpoint in port 0 is invalid. Only VIN
++      instances that are connected to external pins should have port 0.
++    - port 1 - sub-nodes describing one or more endpoints connected to
++      the VIN from local SoC CSI-2 receivers. The endpoint numbers must
++      use the following schema.
+ 
+-	aliases {
+-	       vin0 = &vin0;
+-	};
++        - Endpoint 0 - sub-node describing the endpoint connected to CSI20
++        - Endpoint 1 - sub-node describing the endpoint connected to CSI21
++        - Endpoint 2 - sub-node describing the endpoint connected to CSI40
++        - Endpoint 3 - sub-node describing the endpoint connected to CSI41
 +
- #endif
++Device node example for Gen2 platforms
++--------------------------------------
++
++        aliases {
++                vin0 = &vin0;
++        };
+ 
+         vin0: vin@e6ef0000 {
+                 compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
+@@ -55,8 +78,8 @@ Device node example
+                 status = "disabled";
+         };
+ 
+-Board setup example (vin1 composite video input)
+-------------------------------------------------
++Board setup example for Gen2 platforms (vin1 composite video input)
++-------------------------------------------------------------------
+ 
+ &i2c2   {
+         status = "ok";
+@@ -95,6 +118,77 @@ Board setup example (vin1 composite video input)
+         };
+ };
+ 
++Device node example for Gen3 platforms
++--------------------------------------
+ 
++        vin0: video@e6ef0000 {
++                compatible = "renesas,vin-r8a7795";
++                reg = <0 0xe6ef0000 0 0x1000>;
++                interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cpg CPG_MOD 811>;
++                power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++                resets = <&cpg 811>;
++                renesas,id = <0>;
++
++                ports {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
++
++                        port@1 {
++                                #address-cells = <1>;
++                                #size-cells = <0>;
++
++                                reg = <1>;
++
++                                vin0csi20: endpoint@0 {
++                                        reg = <0>;
++                                        remote-endpoint= <&csi20vin0>;
++                                };
++                                vin0csi21: endpoint@1 {
++                                        reg = <1>;
++                                        remote-endpoint= <&csi21vin0>;
++                                };
++                                vin0csi40: endpoint@2 {
++                                        reg = <2>;
++                                        remote-endpoint= <&csi40vin0>;
++                                };
++                        };
++                };
++        };
++
++        csi20: csi2@fea80000 {
++                compatible = "renesas,r8a7795-csi2";
++                reg = <0 0xfea80000 0 0x10000>;
++                interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cpg CPG_MOD 714>;
++                power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++                resets = <&cpg 714>;
++
++                ports {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
++
++                        port@0 {
++                                reg = <0>;
++                                csi20_in: endpoint {
++                                        clock-lanes = <0>;
++                                        data-lanes = <1>;
++                                        remote-endpoint = <&adv7482_txb>;
++                                };
++                        };
++
++                        port@1 {
++                                #address-cells = <1>;
++                                #size-cells = <0>;
++
++                                reg = <1>;
++
++                                csi20vin0: endpoint@0 {
++                                        reg = <0>;
++                                        remote-endpoint = <&vin0csi20>;
++                                };
++                        };
++                };
++        };
+ 
+ [1] video-interfaces.txt common video media interface
 -- 
 2.16.2
