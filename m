@@ -1,4 +1,9 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:48829 "EHLO
+        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1163209AbeCBB65 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 1 Mar 2018 20:58:57 -0500
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -7,15 +12,15 @@ Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 06/33] rcar-vin: move subdevice handling to async callbacks
-Date: Mon, 26 Mar 2018 23:44:29 +0200
-Message-Id: <20180326214456.6655-7-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v11 06/32] rcar-vin: move subdevice handling to async callbacks
+Date: Fri,  2 Mar 2018 02:57:25 +0100
+Message-Id: <20180302015751.25596-7-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 In preparation for Gen3 support move the subdevice initialization and
@@ -31,20 +36,13 @@ functions to increase readability.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-
----
-
-* Changes since v12
-- 'shuld' -> should in comment to rvin_digital_subdevice_attach().
-- Add review tag from Hans.
 ---
  drivers/media/platform/rcar-vin/rcar-core.c | 108 +++++++++++++++++++---------
  drivers/media/platform/rcar-vin/rcar-v4l2.c |  35 ---------
  2 files changed, 74 insertions(+), 69 deletions(-)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 47f06acde2e698f2..64daf92bc66dd81b 100644
+index 47f06acde2e698f2..663309ca9c04f208 100644
 --- a/drivers/media/platform/rcar-vin/rcar-core.c
 +++ b/drivers/media/platform/rcar-vin/rcar-core.c
 @@ -46,46 +46,88 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
@@ -52,7 +50,7 @@ index 47f06acde2e698f2..64daf92bc66dd81b 100644
  }
  
 -static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
-+/* The vin lock should be held when calling the subdevice attach and detach */
++/* The vin lock shuld be held when calling the subdevice attach and detach */
 +static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
 +					 struct v4l2_subdev *subdev)
  {
