@@ -1,156 +1,303 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39420 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52791 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932451AbeCIWET (ORCPT
+        with ESMTP id S932104AbeCBLis (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:04:19 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 06/11] media: vsp1: Provide VSP1 feature helper macro
-Date: Fri,  9 Mar 2018 22:04:04 +0000
-Message-Id: <28ec6f0766328c462a15c3f37307b02c83f4a12a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 2 Mar 2018 06:38:48 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v11 21/32] rcar-vin: use different v4l2 operations in media controller mode
+Date: Fri, 02 Mar 2018 13:39:37 +0200
+Message-ID: <17282166.lZv8P2lcqN@avalon>
+In-Reply-To: <20180302015751.25596-22-niklas.soderlund+renesas@ragnatech.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se> <20180302015751.25596-22-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The VSP1 devices define their specific capabilities through features
-marked in their device info structure. Various parts of the code read
-this info structure to infer if the features are available.
+Hi Niklas,
 
-Wrap this into a more readable vsp1_feature(vsp1, f) macro to ensure
-that usage is consistent throughout the driver.
+Thank you for the patch.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1.h     |  2 ++
- drivers/media/platform/vsp1/vsp1_drv.c | 16 ++++++++--------
- drivers/media/platform/vsp1/vsp1_wpf.c |  6 +++---
- 3 files changed, 13 insertions(+), 11 deletions(-)
+On Friday, 2 March 2018 03:57:40 EET Niklas S=F6derlund wrote:
+> When the driver runs in media controller mode it should not directly
+> control the subdevice instead userspace will be responsible for
+> configuring the pipeline. To be able to run in this mode a different set
+> of v4l2 operations needs to be used.
+>=20
+> Add a new set of v4l2 operations to support operation without directly
+> interacting with the source subdevice.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c  |   3 +-
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 161 ++++++++++++++++++++++=
+++-
+>  2 files changed, 160 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> b/drivers/media/platform/rcar-vin/rcar-dma.c index
+> 3fb9c325285c5a5a..27d0c098f1da40f9 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -628,7 +628,8 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		/* Default to TB */
+>  		vnmc =3D VNMC_IM_FULL;
+>  		/* Use BT if video standard can be read and is 60 Hz format */
+> -		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+> +		if (!vin->info->use_mc &&
+> +		    !v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
 
-diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/vsp1/vsp1.h
-index 78ef838416b3..1c080538c993 100644
---- a/drivers/media/platform/vsp1/vsp1.h
-+++ b/drivers/media/platform/vsp1/vsp1.h
-@@ -69,6 +69,8 @@ struct vsp1_device_info {
- 	bool uapi;
- };
- 
-+#define vsp1_feature(vsp1, f) ((vsp1)->info->features & (f))
-+
- struct vsp1_device {
- 	struct device *dev;
- 	const struct vsp1_device_info *info;
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index eed9516e25e1..6fa0019ffc6e 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -268,7 +268,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 	}
- 
- 	/* Instantiate all the entities. */
--	if (vsp1->info->features & VSP1_HAS_BRS) {
-+	if (vsp1_feature(vsp1, VSP1_HAS_BRS)) {
- 		vsp1->brs = vsp1_bru_create(vsp1, VSP1_ENTITY_BRS);
- 		if (IS_ERR(vsp1->brs)) {
- 			ret = PTR_ERR(vsp1->brs);
-@@ -278,7 +278,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 		list_add_tail(&vsp1->brs->entity.list_dev, &vsp1->entities);
- 	}
- 
--	if (vsp1->info->features & VSP1_HAS_BRU) {
-+	if (vsp1_feature(vsp1, VSP1_HAS_BRU)) {
- 		vsp1->bru = vsp1_bru_create(vsp1, VSP1_ENTITY_BRU);
- 		if (IS_ERR(vsp1->bru)) {
- 			ret = PTR_ERR(vsp1->bru);
-@@ -288,7 +288,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 		list_add_tail(&vsp1->bru->entity.list_dev, &vsp1->entities);
- 	}
- 
--	if (vsp1->info->features & VSP1_HAS_CLU) {
-+	if (vsp1_feature(vsp1, VSP1_HAS_CLU)) {
- 		vsp1->clu = vsp1_clu_create(vsp1);
- 		if (IS_ERR(vsp1->clu)) {
- 			ret = PTR_ERR(vsp1->clu);
-@@ -314,7 +314,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 
- 	list_add_tail(&vsp1->hst->entity.list_dev, &vsp1->entities);
- 
--	if (vsp1->info->features & VSP1_HAS_HGO && vsp1->info->uapi) {
-+	if (vsp1_feature(vsp1, VSP1_HAS_HGO) && vsp1->info->uapi) {
- 		vsp1->hgo = vsp1_hgo_create(vsp1);
- 		if (IS_ERR(vsp1->hgo)) {
- 			ret = PTR_ERR(vsp1->hgo);
-@@ -325,7 +325,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 			      &vsp1->entities);
- 	}
- 
--	if (vsp1->info->features & VSP1_HAS_HGT && vsp1->info->uapi) {
-+	if (vsp1_feature(vsp1, VSP1_HAS_HGT) && vsp1->info->uapi) {
- 		vsp1->hgt = vsp1_hgt_create(vsp1);
- 		if (IS_ERR(vsp1->hgt)) {
- 			ret = PTR_ERR(vsp1->hgt);
-@@ -356,7 +356,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 		}
- 	}
- 
--	if (vsp1->info->features & VSP1_HAS_LUT) {
-+	if (vsp1_feature(vsp1, VSP1_HAS_LUT)) {
- 		vsp1->lut = vsp1_lut_create(vsp1);
- 		if (IS_ERR(vsp1->lut)) {
- 			ret = PTR_ERR(vsp1->lut);
-@@ -390,7 +390,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 		}
- 	}
- 
--	if (vsp1->info->features & VSP1_HAS_SRU) {
-+	if (vsp1_feature(vsp1, VSP1_HAS_SRU)) {
- 		vsp1->sru = vsp1_sru_create(vsp1);
- 		if (IS_ERR(vsp1->sru)) {
- 			ret = PTR_ERR(vsp1->sru);
-@@ -524,7 +524,7 @@ static int vsp1_device_init(struct vsp1_device *vsp1)
- 	vsp1_write(vsp1, VI6_DPR_HSI_ROUTE, VI6_DPR_NODE_UNUSED);
- 	vsp1_write(vsp1, VI6_DPR_BRU_ROUTE, VI6_DPR_NODE_UNUSED);
- 
--	if (vsp1->info->features & VSP1_HAS_BRS)
-+	if (vsp1_feature(vsp1, VSP1_HAS_BRS))
- 		vsp1_write(vsp1, VI6_DPR_ILV_BRS_ROUTE, VI6_DPR_NODE_UNUSED);
- 
- 	vsp1_write(vsp1, VI6_DPR_HGO_SMPPT, (7 << VI6_DPR_SMPPT_TGW_SHIFT) |
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index 68218625549e..f90e474cf2cc 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -146,13 +146,13 @@ static int wpf_init_controls(struct vsp1_rwpf *wpf)
- 	if (wpf->entity.index != 0) {
- 		/* Only WPF0 supports flipping. */
- 		num_flip_ctrls = 0;
--	} else if (vsp1->info->features & VSP1_HAS_WPF_HFLIP) {
-+	} else if (vsp1_feature(vsp1, VSP1_HAS_WPF_HFLIP)) {
- 		/*
- 		 * When horizontal flip is supported the WPF implements three
- 		 * controls (horizontal flip, vertical flip and rotation).
- 		 */
- 		num_flip_ctrls = 3;
--	} else if (vsp1->info->features & VSP1_HAS_WPF_VFLIP) {
-+	} else if (vsp1_feature(vsp1, VSP1_HAS_WPF_VFLIP)) {
- 		/*
- 		 * When only vertical flip is supported the WPF implements a
- 		 * single control (vertical flip).
-@@ -281,7 +281,7 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
- 
- 		vsp1_wpf_write(wpf, dlb, VI6_WPF_DSWAP, fmtinfo->swap);
- 
--		if (vsp1->info->features & VSP1_HAS_WPF_HFLIP &&
-+		if (vsp1_feature(vsp1, VSP1_HAS_WPF_HFLIP) &&
- 		    wpf->entity.index == 0)
- 			vsp1_wpf_write(wpf, dlb, VI6_WPF_ROT_CTRL,
- 				       VI6_WPF_ROT_CTRL_LN16 |
--- 
-git-series 0.9.1
+To avoid spreading the discussion across several mail threads, I'll repeat =
+my=20
+comment made today on v9:
+
+> > I think the subdev should be queried in rcar-v4l2.c and the information
+> > cached in the rvin_dev structure instead of queried here. Interactions
+> > with the subdev should be minimized in rvin-dma.c. You can fix this in a
+> > separate patch if you prefer.
+>
+> This can't be a cached value it needs to be read at stream on time. The
+> input source could have changed format, e.g. the user may have
+> disconnected a NTSC source and plugged in a PAL.
+
+Please note that in that case the source subdev will not have changed its=20
+format yet, it only does so when the s_std operation is called.
+
+> This is a shame as I otherwise agree with you that interactions with the
+> subdevice should be kept at a minimum.
+
+>  			if (std & V4L2_STD_525_60)
+>  				vnmc =3D VNMC_IM_FULL | VNMC_FOC;
+>  		}
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> 20be21cb1cf521e5..8d92710efffa7276 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -18,12 +18,16 @@
+>=20
+>  #include <media/v4l2-event.h>
+>  #include <media/v4l2-ioctl.h>
+> +#include <media/v4l2-mc.h>
+>  #include <media/v4l2-rect.h>
+>=20
+>  #include "rcar-vin.h"
+>=20
+>  #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
+> +#define RVIN_DEFAULT_WIDTH	800
+> +#define RVIN_DEFAULT_HEIGHT	600
+>  #define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
+> +#define RVIN_DEFAULT_COLORSPACE	V4L2_COLORSPACE_SRGB
+>=20
+>  /* ---------------------------------------------------------------------=
+=2D--
+>   * Format Conversions
+> @@ -667,6 +671,74 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops =
+=3D {
+>  	.vidioc_unsubscribe_event	=3D v4l2_event_unsubscribe,
+>  };
+>=20
+> +/* ---------------------------------------------------------------------=
+=2D--
+> + * V4L2 Media Controller
+> + */
+> +
+> +static int rvin_mc_try_fmt_vid_cap(struct file *file, void *priv,
+> +				   struct v4l2_format *f)
+> +{
+> +	struct rvin_dev *vin =3D video_drvdata(file);
+> +
+> +	return rvin_format_align(vin, &f->fmt.pix);
+> +}
+> +
+> +static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
+> +				 struct v4l2_format *f)
+> +{
+> +	struct rvin_dev *vin =3D video_drvdata(file);
+> +	int ret;
+> +
+> +	if (vb2_is_busy(&vin->queue))
+> +		return -EBUSY;
+> +
+> +	ret =3D rvin_format_align(vin, &f->fmt.pix);
+> +	if (ret)
+> +		return ret;
+> +
+> +	vin->format =3D f->fmt.pix;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rvin_mc_enum_input(struct file *file, void *priv,
+> +			      struct v4l2_input *i)
+> +{
+> +	if (i->index !=3D 0)
+> +		return -EINVAL;
+> +
+> +	i->type =3D V4L2_INPUT_TYPE_CAMERA;
+> +	strlcpy(i->name, "Camera", sizeof(i->name));
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops =3D {
+> +	.vidioc_querycap		=3D rvin_querycap,
+> +	.vidioc_try_fmt_vid_cap		=3D rvin_mc_try_fmt_vid_cap,
+> +	.vidioc_g_fmt_vid_cap		=3D rvin_g_fmt_vid_cap,
+> +	.vidioc_s_fmt_vid_cap		=3D rvin_mc_s_fmt_vid_cap,
+> +	.vidioc_enum_fmt_vid_cap	=3D rvin_enum_fmt_vid_cap,
+> +
+> +	.vidioc_enum_input		=3D rvin_mc_enum_input,
+> +	.vidioc_g_input			=3D rvin_g_input,
+> +	.vidioc_s_input			=3D rvin_s_input,
+> +
+> +	.vidioc_reqbufs			=3D vb2_ioctl_reqbufs,
+> +	.vidioc_create_bufs		=3D vb2_ioctl_create_bufs,
+> +	.vidioc_querybuf		=3D vb2_ioctl_querybuf,
+> +	.vidioc_qbuf			=3D vb2_ioctl_qbuf,
+> +	.vidioc_dqbuf			=3D vb2_ioctl_dqbuf,
+> +	.vidioc_expbuf			=3D vb2_ioctl_expbuf,
+> +	.vidioc_prepare_buf		=3D vb2_ioctl_prepare_buf,
+> +	.vidioc_streamon		=3D vb2_ioctl_streamon,
+> +	.vidioc_streamoff		=3D vb2_ioctl_streamoff,
+> +
+> +	.vidioc_log_status		=3D v4l2_ctrl_log_status,
+> +	.vidioc_subscribe_event		=3D rvin_subscribe_event,
+> +	.vidioc_unsubscribe_event	=3D v4l2_event_unsubscribe,
+> +};
+> +
+>  /* ---------------------------------------------------------------------=
+=2D--
+>   * File Operations
+>   */
+> @@ -810,6 +882,74 @@ static const struct v4l2_file_operations rvin_fops =
+=3D {
+>  	.read		=3D vb2_fop_read,
+>  };
+>=20
+> +/* ---------------------------------------------------------------------=
+=2D--
+> + * Media controller file operations
+> + */
+> +
+> +static int rvin_mc_open(struct file *file)
+> +{
+> +	struct rvin_dev *vin =3D video_drvdata(file);
+> +	int ret;
+> +
+> +	ret =3D mutex_lock_interruptible(&vin->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D pm_runtime_get_sync(vin->dev);
+> +	if (ret < 0)
+> +		goto err_pm;
+> +
+> +	ret =3D v4l2_pipeline_pm_use(&vin->vdev.entity, 1);
+> +	if (ret < 0)
+> +		goto err_v4l2pm;
+> +
+> +	file->private_data =3D vin;
+> +
+> +	ret =3D v4l2_fh_open(file);
+> +	if (ret)
+> +		goto err_open;
+> +
+> +	mutex_unlock(&vin->lock);
+> +
+> +	return 0;
+> +err_open:
+> +	v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
+> +err_v4l2pm:
+> +	pm_runtime_put(vin->dev);
+> +err_pm:
+> +	mutex_unlock(&vin->lock);
+
+Error labels should be named according to the action performed in the clean=
+up=20
+path, not based on the error that causes to jump to them.
+
+> +	return ret;
+> +}
+> +
+> +static int rvin_mc_release(struct file *file)
+> +{
+> +	struct rvin_dev *vin =3D video_drvdata(file);
+> +	int ret;
+> +
+> +	mutex_lock(&vin->lock);
+> +
+> +	/* the release helper will cleanup any on-going streaming. */
+> +	ret =3D _vb2_fop_release(file, NULL);
+> +
+> +	v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
+> +	pm_runtime_put(vin->dev);
+> +
+> +	mutex_unlock(&vin->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct v4l2_file_operations rvin_mc_fops =3D {
+> +	.owner		=3D THIS_MODULE,
+> +	.unlocked_ioctl	=3D video_ioctl2,
+> +	.open		=3D rvin_mc_open,
+> +	.release	=3D rvin_mc_release,
+> +	.poll		=3D vb2_fop_poll,
+> +	.mmap		=3D vb2_fop_mmap,
+> +	.read		=3D vb2_fop_read,
+> +};
+> +
+>  void rvin_v4l2_unregister(struct rvin_dev *vin)
+>  {
+>  	if (!video_is_registered(&vin->vdev))
+> @@ -845,18 +985,33 @@ int rvin_v4l2_register(struct rvin_dev *vin)
+>  	vin->v4l2_dev.notify =3D rvin_notify;
+>=20
+>  	/* video node */
+> -	vdev->fops =3D &rvin_fops;
+>  	vdev->v4l2_dev =3D &vin->v4l2_dev;
+>  	vdev->queue =3D &vin->queue;
+>  	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
+>  	vdev->release =3D video_device_release_empty;
+> -	vdev->ioctl_ops =3D &rvin_ioctl_ops;
+>  	vdev->lock =3D &vin->lock;
+>  	vdev->device_caps =3D V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+>  		V4L2_CAP_READWRITE;
+>=20
+> +	/* Set a default format */
+>  	vin->format.pixelformat	=3D RVIN_DEFAULT_FORMAT;
+> -	rvin_reset_format(vin);
+> +	vin->format.width =3D RVIN_DEFAULT_WIDTH;
+> +	vin->format.height =3D RVIN_DEFAULT_HEIGHT;
+> +	vin->format.field =3D RVIN_DEFAULT_FIELD;
+> +	vin->format.colorspace =3D RVIN_DEFAULT_COLORSPACE;
+> +
+> +	if (vin->info->use_mc) {
+> +		vdev->fops =3D &rvin_mc_fops;
+> +		vdev->ioctl_ops =3D &rvin_mc_ioctl_ops;
+> +	} else {
+> +		vdev->fops =3D &rvin_fops;
+> +		vdev->ioctl_ops =3D &rvin_ioctl_ops;
+> +		rvin_reset_format(vin);
+> +	}
+> +
+> +	ret =3D rvin_format_align(vin, &vin->format);
+> +	if (ret)
+> +		return ret;
+>=20
+>  	ret =3D video_register_device(&vin->vdev, VFL_TYPE_GRABBER, -1);
+>  	if (ret) {
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
