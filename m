@@ -1,54 +1,53 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S . Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] dt-bindings: net: renesas-ravb: Make stream buffer optional
-Date: Fri,  2 Mar 2018 16:01:48 +0100
-Message-Id: <1520002908-24947-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 2/2] dt-bindings: pwm: renesas-tpu: Correct SoC part numbers and family names
+Date: Fri,  2 Mar 2018 15:39:45 +0100
+Message-Id: <1520001585-12899-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1520001585-12899-1-git-send-email-geert+renesas@glider.be>
+References: <1520001585-12899-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Stream Buffer for EtherAVB-IF (STBE) is an optional component, and
-is not present on all SoCs.
+R8A73A4 (not R8A77A4) is R-Mobile APE6,
+R8A7740 is R-Mobile (not R-Car) A1.
 
-Document this in the DT bindings, including a list of SoCs that do have
-it.
-
-Fixes: 785ec87483d1e24a ("ravb: document R8A77970 bindings")
-Fixes: f231c4178a655b09 ("dt-bindings: net: renesas-ravb: Add support for R8A77995 RAVB")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 v2:
-  - Add Reviewed-by, Acked-by,
-  - Add R-Car M3-N.
+  - Add Acked-by, Reviewed-by.
 ---
- Documentation/devicetree/bindings/net/renesas,ravb.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-index bf071a58f2926ad3..2b5cb655b0e93bfd 100644
---- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-+++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-@@ -27,7 +27,11 @@ Required properties:
- 	SoC-specific version corresponding to the platform first followed by
- 	the generic version.
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
+index 641b5b4c648340ee..fb633129d845a893 100644
+--- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
++++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
+@@ -3,7 +3,7 @@
+ Required Properties:
  
--- reg: offset and length of (1) the register block and (2) the stream buffer.
-+- reg: Offset and length of (1) the register block and (2) the stream buffer.
-+       The region for the register block is mandatory.
-+       The region for the stream buffer is optional, as it is only present on
-+       R-Car Gen2 and RZ/G1 SoCs, and on R-Car H3 (R8A7795), M3-W (R8A7796),
-+       and M3-N (R8A77965).
- - interrupts: A list of interrupt-specifiers, one for each entry in
- 	      interrupt-names.
- 	      If interrupt-names is not present, an interrupt specifier
+   - compatible: should be one of the following.
+-    - "renesas,tpu-r8a73a4": for R8A77A4 (R-Mobile APE6) compatible PWM controller.
++    - "renesas,tpu-r8a73a4": for R8A73A4 (R-Mobile APE6) compatible PWM controller.
+     - "renesas,tpu-r8a7740": for R8A7740 (R-Mobile A1) compatible PWM controller.
+     - "renesas,tpu-r8a7790": for R8A7790 (R-Car H2) compatible PWM controller.
+     - "renesas,tpu": for generic R-Car TPU PWM controller.
+@@ -18,7 +18,7 @@ Required Properties:
+ Please refer to pwm.txt in this directory for details of the common PWM bindings
+ used by client devices.
+ 
+-Example: R8A7740 (R-Car A1) TPU controller node
++Example: R8A7740 (R-Mobile A1) TPU controller node
+ 
+ 	tpu: pwm@e6600000 {
+ 		compatible = "renesas,tpu-r8a7740", "renesas,tpu";
 -- 
 2.7.4
 
