@@ -1,77 +1,207 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50941 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965203AbeCGTpA (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:39918 "EHLO
+        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1164180AbeCBB7c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 14:45:00 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: geert@glider.be
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] VSP1 dynamic BRU/BRS allocation
-Date: Wed, 07 Mar 2018 21:45:55 +0200
-Message-ID: <1550269.Ny8GyIV5Bq@avalon>
+        Thu, 1 Mar 2018 20:59:32 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v11 30/32] rcar-vin: enable support for r8a7795
+Date: Fri,  2 Mar 2018 02:57:49 +0100
+Message-Id: <20180302015751.25596-31-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Add the SoC specific information for Renesas r8a7795 ES1.x and ES2.0.
 
-The following changes since commit 15ea2df9143729a2b722d4ca2b52cfa14a819d8e:
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/media/platform/rcar-vin/Kconfig     |   2 +-
+ drivers/media/platform/rcar-vin/rcar-core.c | 120 ++++++++++++++++++++++++++++
+ 2 files changed, 121 insertions(+), 1 deletion(-)
 
-  media: ov2685: mark PM functions as __maybe_unused (2018-02-26 10:38:56 
--0500)
-
-are available in the Git repository at:
-
-  git://linuxtv.org/pinchartl/media.git tags/v4l2-vsp1-bru-brs-v1-20180226
-
-for you to fetch changes up to 66de53df73042978c8560a2a596a4e9b7a6bb485:
-
-  v4l: vsp1: Rename BRU to BRx (2018-03-07 21:41:34 +0200)
-
-----------------------------------------------------------------
-Laurent Pinchart (15):
-      v4l: vsp1: Don't start/stop media pipeline for DRM
-      v4l: vsp1: Remove outdated comment
-      v4l: vsp1: Remove unused field from vsp1_drm_pipeline structure
-      v4l: vsp1: Store pipeline pointer in vsp1_entity
-      v4l: vsp1: Use vsp1_entity.pipe to check if entity belongs to a pipeline
-      v4l: vsp1: Share duplicated DRM pipeline configuration code
-      v4l: vsp1: Move DRM atomic commit pipeline setup to separate function
-      v4l: vsp1: Setup BRU at atomic commit time
-      v4l: vsp1: Replace manual DRM pipeline input setup in vsp1_du_setup_lif
-      v4l: vsp1: Move DRM pipeline output setup code to a function
-      v4l: vsp1: Add per-display list completion notification support
-      v4l: vsp1: Generalize detection of entity removal from DRM pipeline
-      v4l: vsp1: Assign BRU and BRS to pipelines dynamically
-      v4l: vsp1: Add BRx dynamic assignment debugging messages
-      v4l: vsp1: Rename BRU to BRx
-
- drivers/media/platform/vsp1/Makefile                   |   2 +-
- drivers/media/platform/vsp1/vsp1.h                     |   6 +-
- drivers/media/platform/vsp1/{vsp1_bru.c => vsp1_brx.c} | 202 +++---
- drivers/media/platform/vsp1/{vsp1_bru.h => vsp1_brx.h} |  18 +-
- drivers/media/platform/vsp1/vsp1_dl.c                  |  27 +-
- drivers/media/platform/vsp1/vsp1_dl.h                  |   4 +-
- drivers/media/platform/vsp1/vsp1_drm.c                 | 829 ++++++++++------
- drivers/media/platform/vsp1/vsp1_drm.h                 |  16 +-
- drivers/media/platform/vsp1/vsp1_drv.c                 |   8 +-
- drivers/media/platform/vsp1/vsp1_entity.h              |   2 +
- drivers/media/platform/vsp1/vsp1_histo.c               |   2 +-
- drivers/media/platform/vsp1/vsp1_histo.h               |   3 -
- drivers/media/platform/vsp1/vsp1_pipe.c                |  50 +-
- drivers/media/platform/vsp1/vsp1_pipe.h                |   7 +-
- drivers/media/platform/vsp1/vsp1_rpf.c                 |  12 +-
- drivers/media/platform/vsp1/vsp1_rwpf.h                |   4 +-
- drivers/media/platform/vsp1/vsp1_video.c               |  37 +-
- drivers/media/platform/vsp1/vsp1_wpf.c                 |   8 +-
- 18 files changed, 705 insertions(+), 532 deletions(-)
- rename drivers/media/platform/vsp1/{vsp1_bru.c => vsp1_brx.c} (63%)
- rename drivers/media/platform/vsp1/{vsp1_bru.h => vsp1_brx.h} (66%)
-
+diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
+index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
+--- a/drivers/media/platform/rcar-vin/Kconfig
++++ b/drivers/media/platform/rcar-vin/Kconfig
+@@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
+ 	select V4L2_FWNODE
+ 	---help---
+ 	  Support for Renesas R-Car Video Input (VIN) driver.
+-	  Supports R-Car Gen2 SoCs.
++	  Supports R-Car Gen2 and Gen3 SoCs.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called rcar-vin.
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index c015f3c284439285..8017d386fc9bc545 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -21,6 +21,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
++#include <linux/sys_soc.h>
+ 
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-fwnode.h>
+@@ -832,6 +833,104 @@ static const struct rvin_info rcar_info_gen2 = {
+ 	.max_height = 2048,
+ };
+ 
++static const struct rvin_group_route rcar_info_r8a7795_routes[] = {
++	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
++	{ .vin = 0, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
++	{ .vin = 0, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(2) },
++	{ .vin = 1, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
++	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(1) | BIT(3) },
++	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
++	{ .vin = 1, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(0) },
++	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
++	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
++	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
++	{ .vin = 3, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) | BIT(2) },
++	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
++	{ .vin = 3, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
++	{ .vin = 4, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(0) | BIT(3) },
++	{ .vin = 4, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
++	{ .vin = 4, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(2) },
++	{ .vin = 5, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
++	{ .vin = 5, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(1) | BIT(3) },
++	{ .vin = 5, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(2) },
++	{ .vin = 5, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(0) },
++	{ .vin = 6, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(1) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
++	{ .vin = 6, .csi = RVIN_CSI41, .chan = 2, .mask = BIT(3) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
++	{ .vin = 7, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(0) },
++	{ .vin = 7, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) | BIT(2) },
++	{ .vin = 7, .csi = RVIN_CSI41, .chan = 3, .mask = BIT(3) },
++	{ .vin = 7, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
++	{ /* Sentinel */ }
++};
++
++static const struct rvin_info rcar_info_r8a7795 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a7795_routes,
++};
++
++static const struct rvin_group_route rcar_info_r8a7795es1_routes[] = {
++	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
++	{ .vin = 0, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
++	{ .vin = 0, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(2) | BIT(5) },
++	{ .vin = 1, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
++	{ .vin = 1, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(1) },
++	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
++	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(3) },
++	{ .vin = 1, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
++	{ .vin = 1, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(5) },
++	{ .vin = 2, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(0) },
++	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
++	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
++	{ .vin = 2, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
++	{ .vin = 2, .csi = RVIN_CSI21, .chan = 2, .mask = BIT(5) },
++	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
++	{ .vin = 3, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
++	{ .vin = 3, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(2) },
++	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
++	{ .vin = 3, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
++	{ .vin = 3, .csi = RVIN_CSI21, .chan = 3, .mask = BIT(5) },
++	{ .vin = 4, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(0) | BIT(3) },
++	{ .vin = 4, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
++	{ .vin = 4, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(2) | BIT(5) },
++	{ .vin = 5, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
++	{ .vin = 5, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(1) },
++	{ .vin = 5, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(2) },
++	{ .vin = 5, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(3) },
++	{ .vin = 5, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
++	{ .vin = 5, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(5) },
++	{ .vin = 6, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(0) },
++	{ .vin = 6, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(1) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
++	{ .vin = 6, .csi = RVIN_CSI41, .chan = 2, .mask = BIT(3) },
++	{ .vin = 6, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
++	{ .vin = 6, .csi = RVIN_CSI21, .chan = 2, .mask = BIT(5) },
++	{ .vin = 7, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(0) },
++	{ .vin = 7, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
++	{ .vin = 7, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(2) },
++	{ .vin = 7, .csi = RVIN_CSI41, .chan = 3, .mask = BIT(3) },
++	{ .vin = 7, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
++	{ .vin = 7, .csi = RVIN_CSI21, .chan = 3, .mask = BIT(5) },
++	{ /* Sentinel */ }
++};
++
++static const struct rvin_info rcar_info_r8a7795es1 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a7795es1_routes,
++};
++
+ static const struct of_device_id rvin_of_id_table[] = {
+ 	{
+ 		.compatible = "renesas,vin-r8a7778",
+@@ -861,12 +960,25 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,rcar-gen2-vin",
+ 		.data = &rcar_info_gen2,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a7795",
++		.data = &rcar_info_r8a7795,
++	},
+ 	{ /* Sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+ 
++static const struct soc_device_attribute r8a7795es1[] = {
++	{
++		.soc_id = "r8a7795", .revision = "ES1.*",
++		.data = &rcar_info_r8a7795es1,
++	},
++	{ /* Sentinel */ }
++};
++
+ static int rcar_vin_probe(struct platform_device *pdev)
+ {
++	const struct soc_device_attribute *attr;
+ 	struct rvin_dev *vin;
+ 	struct resource *mem;
+ 	int irq, ret;
+@@ -878,6 +990,14 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 	vin->dev = &pdev->dev;
+ 	vin->info = of_device_get_match_data(&pdev->dev);
+ 
++	/*
++	 * Special care is needed on r8a7795 ES1.x since it
++	 * uses different routing than r8a7795 ES2.0.
++	 */
++	attr = soc_device_match(r8a7795es1);
++	if (attr)
++		vin->info = attr->data;
++
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (mem == NULL)
+ 		return -EINVAL;
 -- 
-Regards,
-
-Laurent Pinchart
+2.16.2
