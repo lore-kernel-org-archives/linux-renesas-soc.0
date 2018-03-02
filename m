@@ -1,72 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:43960 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932282AbeCLVmk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41886 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1426337AbeCBKV0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Mar 2018 17:42:40 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: qemu-devel@nongnu.org
-Cc: Michael Davidsaver <mdavidsaver@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/3] nvram: at24c: remove doubled prefix for ERR
-Date: Mon, 12 Mar 2018 22:42:28 +0100
-Message-Id: <20180312214230.17561-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180312214230.17561-1-wsa+renesas@sang-engineering.com>
-References: <20180312214230.17561-1-wsa+renesas@sang-engineering.com>
+        Fri, 2 Mar 2018 05:21:26 -0500
+Date: Fri, 2 Mar 2018 11:21:06 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
+Message-ID: <20180302102106.enyb2ldmylgklqom@verge.net.au>
+References: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
+ <2fd26075-525c-8d86-ef81-f32c73cf3e8b@cogentembedded.com>
+ <20180228132707.mgunezg5o4lul7x5@verge.net.au>
+ <f9574ea2-d8ee-7c9f-b850-874074eddad2@cogentembedded.com>
+ <20180301095451.jvsybu5k6pnahfbi@verge.net.au>
+ <5f65b46d-be0f-a1ae-3d97-37f62ecf1657@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f65b46d-be0f-a1ae-3d97-37f62ecf1657@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ERR macro already has the TYPE_AT24C_EE prefix, no need to repeat in
-the error message.
+On Thu, Mar 01, 2018 at 06:28:29PM +0300, Sergei Shtylyov wrote:
+> On 03/01/2018 12:54 PM, Simon Horman wrote:
+> 
+> >>>>> Here's the set of 5 patches against Simon Horman's 'renesas.git' repo's
+> >>>>> 'renesas-devel-20180227-v4.16-rc3' tag. We're adding the R8A77970 FCPVD/VSPD/
+> >>>>> DU/LVDS device nodes and then describing the HDMI encoder connected to the LVDS
+> >>>>> output (we're omitting the LVDS decoder for now). These patches depend on
+> >>>>> the recent R8A77970 DU/LVDS rework patches by Laurent in order to work...	
+> >>>>
+> >>>>    Need to mention that the DU driver silently fails to probe now. I do
+> >>>>    hope that this is not due to my updates. :-)
+> >>>
+> >>> Please test that theory.
+> >>
+> >>    Yeah, after sucking in the recent versions of the DU/LVDS patches and uncommenting
+> >> and fixing rejects in a couple patches here, the graphical console works again. :-)
+> > 
+> > Ok, but does this patchset cause a regression? If so it seems
+> 
+>     Sorry, somehow missed that question. No regression is possible as the display just
+> doesn't work before these patches are applied. It's just that it doesn't start to work
+> until the recent DU/LVDS driver updates are applied.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- hw/nvram/eeprom_at24c.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/hw/nvram/eeprom_at24c.c b/hw/nvram/eeprom_at24c.c
-index 5494351976..8507516b7e 100644
---- a/hw/nvram/eeprom_at24c.c
-+++ b/hw/nvram/eeprom_at24c.c
-@@ -60,8 +60,7 @@ int at24c_eeprom_event(I2CSlave *s, enum i2c_event event)
-         if (ee->blk && ee->changed) {
-             int len = blk_pwrite(ee->blk, 0, ee->mem, ee->rsize, 0);
-             if (len != ee->rsize) {
--                ERR(TYPE_AT24C_EE
--                        " : failed to write backing file\n");
-+                ERR("failed to write backing file\n");
-             }
-             DPRINTK("Wrote to backing file\n");
-         }
-@@ -127,7 +126,7 @@ int at24c_eeprom_init(I2CSlave *i2c)
-         int64_t len = blk_getlength(ee->blk);
- 
-         if (len != ee->rsize) {
--            ERR(TYPE_AT24C_EE " : Backing file size %lu != %u\n",
-+            ERR("Backing file size %lu != %u\n",
-                     (unsigned long)len, (unsigned)ee->rsize);
-             exit(1);
-         }
-@@ -135,8 +134,7 @@ int at24c_eeprom_init(I2CSlave *i2c)
-         if (blk_set_perm(ee->blk, BLK_PERM_CONSISTENT_READ | BLK_PERM_WRITE,
-                          BLK_PERM_ALL, &error_fatal) < 0)
-         {
--            ERR(TYPE_AT24C_EE
--                    " : Backing file incorrect permission\n");
-+            ERR("Backing file incorrect permission\n");
-             exit(1);
-         }
-     }
-@@ -158,8 +156,7 @@ void at24c_eeprom_reset(DeviceState *state)
-         int len = blk_pread(ee->blk, 0, ee->mem, ee->rsize);
- 
-         if (len != ee->rsize) {
--            ERR(TYPE_AT24C_EE
--                    " : Failed initial sync with backing file\n");
-+            ERR("Failed initial sync with backing file\n");
-         }
-         DPRINTK("Reset read backing file\n");
-     }
--- 
-2.11.0
+Ok, but my question remains: does the display work before these patches?
