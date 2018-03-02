@@ -1,82 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:16765 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1033321AbeCASR6 (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:25277 "EHLO
+        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1164157AbeCBB7U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:17:58 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Wim Van Sebroeck <wim@iguana.be>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v7 3/3] watchdog: renesas_wdt: Add restart handler
-Date: Thu,  1 Mar 2018 18:17:23 +0000
-Message-Id: <1519928243-28596-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1519928243-28596-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1519928243-28596-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Thu, 1 Mar 2018 20:59:20 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v11 23/32] rcar-vin: prepare for media controller mode initialization
+Date: Fri,  2 Mar 2018 02:57:42 +0100
+Message-Id: <20180302015751.25596-24-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-by means of the watchdog.
-This patch adds a restart handler to rwdt_ops, and also makes sure we
-keep its priority to the lowest level, in order to not override other
-more effective handlers.
+Prepare for media controller by calling a different initialization then
+when running in device centric mode. Add trivial configuration of
+the mbus and creation of the media pad for the video device entity.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+While we are at it clearly mark the digital device centric notifier
+functions with a comment.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v6->v7:
-* fix changelog
+ drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++--
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
+ 2 files changed, 22 insertions(+), 2 deletions(-)
 
- drivers/watchdog/renesas_wdt.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 9fc4c78..d287854 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -108,6 +108,16 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
- 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index ca22903c375d2018..eb67ad5e2633064b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
+ 	return -EINVAL;
  }
  
-+static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-+			void *data)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
++/* -----------------------------------------------------------------------------
++ * Digital async notifier
++ */
 +
-+	rwdt_start(wdev);
-+	rwdt_write(priv, 0xffff, RWTCNT);
-+	return 0;
+ /* The vin lock shuld be held when calling the subdevice attach and detach */
+ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
+ 					 struct v4l2_subdev *subdev)
+@@ -237,6 +241,16 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 	return 0;
+ }
+ 
++static int rvin_mc_init(struct rvin_dev *vin)
++{
++	/* All our sources are CSI-2 */
++	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
++	vin->mbus_cfg.flags = 0;
++
++	vin->pad.flags = MEDIA_PAD_FL_SINK;
++	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
 +}
 +
- static const struct watchdog_info rwdt_ident = {
- 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
- 	.identity = "Renesas WDT Watchdog",
-@@ -119,6 +129,7 @@ static const struct watchdog_ops rwdt_ops = {
- 	.stop = rwdt_stop,
- 	.ping = rwdt_init_timeout,
- 	.get_timeleft = rwdt_get_timeleft,
-+	.restart = rwdt_restart,
- };
+ /* -----------------------------------------------------------------------------
+  * Platform Device Driver
+  */
+@@ -325,8 +339,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 		return ret;
  
- static int rwdt_probe(struct platform_device *pdev)
-@@ -177,6 +188,7 @@ static int rwdt_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, priv);
- 	watchdog_set_drvdata(&priv->wdev, priv);
- 	watchdog_set_nowayout(&priv->wdev, nowayout);
-+	watchdog_set_restart_priority(&priv->wdev, 0);
+ 	platform_set_drvdata(pdev, vin);
+-
+-	ret = rvin_digital_graph_init(vin);
++	if (vin->info->use_mc)
++		ret = rvin_mc_init(vin);
++	else
++		ret = rvin_digital_graph_init(vin);
+ 	if (ret < 0)
+ 		goto error;
  
- 	/* This overrides the default timeout only if DT configuration was found */
- 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 7bae9270c6216c3e..849f428871af113f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -101,6 +101,8 @@ struct rvin_info {
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+  *
++ * @pad:		media pad for the video device entity
++ *
+  * @lock:		protects @queue
+  * @queue:		vb2 buffers queue
+  *
+@@ -130,6 +132,8 @@ struct rvin_dev {
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity *digital;
+ 
++	struct media_pad pad;
++
+ 	struct mutex lock;
+ 	struct vb2_queue queue;
+ 
 -- 
-2.7.4
+2.16.2
