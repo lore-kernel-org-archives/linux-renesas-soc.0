@@ -1,39 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:49814 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751790AbeCWJJu (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:37355 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164680AbeCBNBE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:09:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] pinctrl: sh-pfc: r8a7796: Fix comment for MSIOF3 SS2_E pin
-Date: Fri, 23 Mar 2018 10:09:42 +0100
-Message-Id: <1521796182-24791-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1521796182-24791-1-git-send-email-geert+renesas@glider.be>
-References: <1521796182-24791-1-git-send-email-geert+renesas@glider.be>
+        Fri, 2 Mar 2018 08:01:04 -0500
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdaCssQcgrwAe93Mad6Dj__aRTCRL9oKLptQqUCCH28eEg@mail.gmail.com>
+References: <1519985886-3889-1-git-send-email-geert+renesas@glider.be> <CACRpkdaCssQcgrwAe93Mad6Dj__aRTCRL9oKLptQqUCCH28eEg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 2 Mar 2018 14:01:03 +0100
+Message-ID: <CAMuHMdVHEB1xxkR-vKCjeM-VMnOUGHmFy-Nca4ngWMri0sXHTA@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.17
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Linus,
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 4bc5b1f820c1f241..764afa13a8c63658 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -3122,7 +3122,7 @@ static const unsigned int msiof3_ss1_e_mux[] = {
- 	MSIOF3_SS1_E_MARK,
- };
- static const unsigned int msiof3_ss2_e_pins[] = {
--	/* SS1 */
-+	/* SS2 */
- 	RCAR_GP_PIN(2, 0),
- };
- static const unsigned int msiof3_ss2_e_mux[] = {
--- 
-2.7.4
+On Fri, Mar 2, 2018 at 1:39 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Mar 2, 2018 at 11:18 AM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+>>
+>>   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.17-tag1
+>>
+>> for you to fetch changes up to a8ab4f2bd8a5298679dabe16910322625a0df247:
+>>
+>>   pinctrl: sh-pfc: r8a77965: Add support for INTC-EX IRQ pins (2018-02-28 09:17:54 +0100)
+>
+> Pulled into the pinctrl devel branch for v4.17!
+>
+> Excellent job as usual!
+
+Thanks!
+
+> And I'm amazed that Renesas manage to churn out
+> so many ASICs.
+
+You can expect support for another new SoC in take two, after review
+comments have been addresses....
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
