@@ -1,82 +1,97 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH  07/12] ARM: shmobile: r8a77470: basic SoC support
-Date: Tue, 27 Mar 2018 15:37:18 +0100
-Message-Id: <1522161443-54428-8-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
-References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:26193 "EHLO
+        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1164151AbeCBB7Q (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 1 Mar 2018 20:59:16 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v11 20/32] rcar-vin: add flag to switch to media controller mode
+Date: Fri,  2 Mar 2018 02:57:39 +0100
+Message-Id: <20180302015751.25596-21-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add minimal support for the RZ/G1C (R8A77470) SoC.
+On Gen3 a media controller API needs to be used to allow userspace to
+configure the subdevices in the pipeline instead of directly controlling
+a single source subdevice, which is and will continue to be the mode of
+operation on Gen2.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Prepare for these two modes of operation by adding a flag to struct
+rvin_info which will control which mode to use.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- arch/arm/mach-shmobile/Kconfig                     | 4 ++++
- arch/arm/mach-shmobile/setup-rcar-gen2.c           | 2 ++
- 3 files changed, 8 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 6 +++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index d3d1df9..86ac320 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -21,6 +21,8 @@ SoCs:
-     compatible = "renesas,r8a7744"
-   - RZ/G1E (R8A77450)
-     compatible = "renesas,r8a7745"
-+  - RZ/G1C (R8A77470)
-+    compatible = "renesas,r8a77470"
-   - R-Car M1A (R8A77781)
-     compatible = "renesas,r8a7778"
-   - R-Car H1 (R8A77790)
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 280e731..6b91114 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -75,6 +75,10 @@ config ARCH_R8A7745
- 	bool "RZ/G1E (R8A77450)"
- 	select ARCH_RCAR_GEN2
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 449175c3133e42c6..ca22903c375d2018 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -243,18 +243,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
  
-+config ARCH_R8A77470
-+	bool "RZ/G1C (R8A77470)"
-+	select ARCH_RCAR_GEN2
-+
- config ARCH_R8A7778
- 	bool "R-Car M1A (R8A77781)"
- 	select ARCH_RCAR_GEN1
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 5561dbe..80de6be 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -73,6 +73,7 @@ void __init rcar_gen2_timer_init(void)
- 	shmobile_init_cntvoff();
- 
- 	if (of_machine_is_compatible("renesas,r8a7745") ||
-+	    of_machine_is_compatible("renesas,r8a77470") ||
- 	    of_machine_is_compatible("renesas,r8a7792") ||
- 	    of_machine_is_compatible("renesas,r8a7794")) {
- 		freq = 260000000 / 8;	/* ZS / 8 */
-@@ -205,6 +206,7 @@ MACHINE_END
- static const char * const rz_g1_boards_compat_dt[] __initconst = {
- 	"renesas,r8a7743",
- 	"renesas,r8a7745",
-+	"renesas,r8a77470",
- 	NULL,
+ static const struct rvin_info rcar_info_h1 = {
+ 	.model = RCAR_H1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
  };
  
+ static const struct rvin_info rcar_info_m1 = {
+ 	.model = RCAR_M1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+ 
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.model = RCAR_GEN2,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+@@ -349,7 +352,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
+ 
+-	v4l2_ctrl_handler_free(&vin->ctrl_handler);
++	if (!vin->info->use_mc)
++		v4l2_ctrl_handler_free(&vin->ctrl_handler);
+ 
+ 	rvin_dma_unregister(vin);
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 666308946eb4994d..7bae9270c6216c3e 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -77,11 +77,13 @@ struct rvin_graph_entity {
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @model:		VIN model
++ * @use_mc:		use media controller instead of controlling subdevice
+  * @max_width:		max input width the VIN supports
+  * @max_height:		max input height the VIN supports
+  */
+ struct rvin_info {
+ 	enum model_id model;
++	bool use_mc;
+ 
+ 	unsigned int max_width;
+ 	unsigned int max_height;
 -- 
-2.7.4
-
+2.16.2
