@@ -1,142 +1,147 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v8 0/4] R-Car DU: Convert LVDS code to bridge driver
-Date: Tue,  6 Mar 2018 00:53:59 +0200
-Message-Id: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v11 10/32] rcar-vin: all Gen2 boards can scale simplify logic
+Date: Fri,  2 Mar 2018 02:57:29 +0100
+Message-Id: <20180302015751.25596-11-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+The logic to preserve the requested format width and height are too
+complex and come from a premature optimization for Gen3. All Gen2 SoC
+can scale and the Gen3 implementation will not use these functions at
+all so simply preserve the width and height when interacting with the
+subdevice much like the field is preserved simplifies the logic quite a
+bit.
 
-This patch series addresses a design mistake that dates back from the initial
-DU support. Support for the LVDS encoders, which are IP cores separate from
-the DU, was bundled in the DU driver. Worse, both the DU and LVDS were
-described through a single DT node.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  8 --------
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 25 +++++++++++--------------
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  2 --
+ 3 files changed, 11 insertions(+), 24 deletions(-)
 
-To fix the, patches 1/4 and 2/4 define new DT bindings for the LVDS
-encoders, and deprecate their description inside the DU bindings. To retain
-backward compatibility with existing DT, patch 3/4 then patch the device tree
-at runtime to convert the legacy bindings to the new ones.
-
-With the DT side addressed, patch 4/4 converts the LVDS support code to a
-separate bridge driver.
-
-I decided to go for live DT patching in patch 3/4 because implementing
-support for both the legacy and new bindings in the driver would have been
-very intrusive, and prevented further cleanups. This version relies more
-heavily on overlays to avoid touching the internals of the OF core compared to
-v2, even if manual fixes to the device tree are still needed.
-
-The patches and their dependencies are available from
-
-	git://linuxtv.org/pinchartl/media.git drm/next/du
-
-I plan to send a pull request tomorrow if no new issue is discovered.
-
-Compared to v7, the series has been rebased on top of Frank Rowand's
-"[PATCH v7 0/5] of: change overlay apply input data from unflattened"
-patches. Patch 3/4 now uses of_overlay_fdt_apply() instead of
-of_overlay_apply().
-
-Compared to v6, patch 3/4 now exists in two variants, to accommodate Frank's
-"[PATCH v4 0/4] of: change overlay apply input data from unflattened" patch
-series. If that series can't make it to v4.17, patch 3/4 variant 1 will be
-used. Otherwise I will go with variant 2.
-
-Compared to v5, I've dropped the OF changeset halpers series as Frank raised
-concerns about hidding it in the middle of a driver patch series. I've thus
-copied the implementation of of_changeset_add_property_copy() in the driver to
-avoid blocking this series. The function arguments are identical, so when the
-OF changeset helpers will land it will be very easy to drop the private copy
-and use the of_changeset_add_property_copy() helper.
-
-Compared to v4, the patch "of: changeset: Add of_changeset_node_move method"
-has been dropped as it's not needed. The patches that update the DT sources to
-the new DU and LVDS bindings have been dropped as well to avoid spamming the
-lists as they depend on the driver changes going in first to avoid
-regressions and haven't been changed.
-
-Compared to v3, this series uses the OF changeset API to update properties
-instead of accessing the internals of the property structure. This removes the
-local implementation of functions to look up nodes by path and update
-properties. In order to do this, I pulled in Pantelis' patch series titled
-"[PATCH v2 0/5] of: dynamic: Changesets helpers & fixes" at Rob's request, and
-rebased it while taking two small review comments into account.
-
-Rob, I'd like this series to be merged in v4.17. As the changeset helpers are
-now a dependency, I'd need you to merge them early (ideally on top of
-v4.16-rc1) and provide a stable branch, or get your ack to merge them through
-Dave's tree if they don't conflict with what you have and will queue for
-v4.17.
-
-This version also drops the small fix to the Porter board device tree that has
-been queued for v4.17 already.
-
-Compared to v2, the biggest change is in patch 3/4. Following Rob's and
-Frank's reviews it was clear that modifying the unflattened DT structure of
-the overlay before applying it wasn't popular. I have thus decided to use one
-overlay source per SoC to move as much of the DT changes to the overlay as
-possible, and only perform manual modifications (that are still needed as some
-of the information is board-specific) on the system DT after applying the
-overlay. As a result the overlay is parsed and applied without being modified.
-
-Compared to v1, this series update the r8a7792 and r8a7794 device tree sources
-and incorporate review feedback as described by the changelogs of individual
-patches.
-
-Laurent Pinchart (4):
-  dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
-  dt-bindings: display: renesas: Deprecate LVDS support in the DU
-    bindings
-  drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
-  drm: rcar-du: Convert LVDS encoder code to bridge driver
-
- .../bindings/display/bridge/renesas,lvds.txt       |  56 +++
- .../devicetree/bindings/display/renesas,du.txt     |  31 +-
- MAINTAINERS                                        |   1 +
- drivers/gpu/drm/rcar-du/Kconfig                    |   6 +-
- drivers/gpu/drm/rcar-du/Makefile                   |  10 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  21 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   5 -
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 175 +------
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |  12 -
- drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  14 +-
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  93 ----
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h          |  24 -
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c          | 238 ----------
- drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h          |  64 ---
- drivers/gpu/drm/rcar-du/rcar_du_of.c               | 322 +++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 +
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  76 +++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  50 ++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  50 ++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  50 ++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  50 ++
- drivers/gpu/drm/rcar-du/rcar_lvds.c                | 524 +++++++++++++++++++++
- 22 files changed, 1255 insertions(+), 637 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
- delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_lvds.c
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index a7cda3922cb74baa..fd14be20a6604d7a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -585,14 +585,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+ 		0, 0);
+ }
+ 
+-void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
+-		    u32 width, u32 height)
+-{
+-	/* All VIN channels on Gen2 have scalers */
+-	pix->width = width;
+-	pix->height = height;
+-}
+-
+ /* -----------------------------------------------------------------------------
+  * Hardware setup
+  */
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 8805d7911a761019..c2265324c7c96308 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -166,6 +166,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 		.which = which,
+ 	};
+ 	enum v4l2_field field;
++	u32 width, height;
+ 	int ret;
+ 
+ 	sd = vin_to_source(vin);
+@@ -178,7 +179,10 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 
+ 	format.pad = vin->digital->source_pad;
+ 
++	/* Allow the video device to override field and to scale */
+ 	field = pix->field;
++	width = pix->width;
++	height = pix->height;
+ 
+ 	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
+ 	if (ret < 0 && ret != -ENOIOCTLCMD)
+@@ -186,11 +190,13 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 
+ 	v4l2_fill_pix_format(pix, &format.format);
+ 
+-	pix->field = field;
+-
+ 	source->width = pix->width;
+ 	source->height = pix->height;
+ 
++	pix->field = field;
++	pix->width = width;
++	pix->height = height;
++
+ 	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
+ 		source->height);
+ 
+@@ -204,13 +210,9 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 			     struct v4l2_pix_format *pix,
+ 			     struct rvin_source_fmt *source)
+ {
+-	u32 rwidth, rheight, walign;
++	u32 walign;
+ 	int ret;
+ 
+-	/* Requested */
+-	rwidth = pix->width;
+-	rheight = pix->height;
+-
+ 	/* Keep current field if no specific one is asked for */
+ 	if (pix->field == V4L2_FIELD_ANY)
+ 		pix->field = vin->format.field;
+@@ -248,10 +250,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 		break;
+ 	}
+ 
+-	/* If source can't match format try if VIN can scale */
+-	if (source->width != rwidth || source->height != rheight)
+-		rvin_scale_try(vin, pix, rwidth, rheight);
+-
+ 	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
+ 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+ 
+@@ -270,9 +268,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 		return -EINVAL;
+ 	}
+ 
+-	vin_dbg(vin, "Requested %ux%u Got %ux%u bpl: %d size: %d\n",
+-		rwidth, rheight, pix->width, pix->height,
+-		pix->bytesperline, pix->sizeimage);
++	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
++		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index f195d174eeacda10..8daba9db0e927a49 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -175,8 +175,6 @@ void rvin_v4l2_unregister(struct rvin_dev *vin);
+ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
+ 
+ /* Cropping, composing and scaling */
+-void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
+-		    u32 width, u32 height);
+ void rvin_crop_scale_comp(struct rvin_dev *vin);
+ 
+ #endif
 -- 
-Regards,
-
-Laurent Pinchart
-
+2.16.2
