@@ -1,41 +1,47 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 2/2] phy: rcar-gen3-usb3: Add binding for r8a77965
-Date: Mon, 5 Mar 2018 05:19:17 +0000
-Message-ID: <TY1PR06MB0992BB23EF4B56F1D7719D2CD8DA0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH 2/2] phy: rcar-gen3-usb3: Add binding for r8a77965
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
 References: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <1519710747-26435-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <6df55c1d-8855-7aff-af13-cf0f43cc5f8b@ti.com>
-In-Reply-To: <6df55c1d-8855-7aff-af13-cf0f43cc5f8b@ti.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <6df55c1d-8855-7aff-af13-cf0f43cc5f8b@ti.com>
+Date: Fri, 2 Mar 2018 13:44:37 +0530
 MIME-Version: 1.0
+In-Reply-To: <1519710747-26435-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
 
-> From: Kishon Vijay Abraham I, Sent: Friday, March 2, 2018 5:15 PM
->=20
-> On Tuesday 27 February 2018 11:22 AM, Yoshihiro Shimoda wrote:
-> > This patch adds binding for r8a77965 (R-Car M3-N).
->=20
-> $subject should be  dt-bindings: rcar-gen3-phy-usb3: Add binding for r8a7=
-7965
 
-I will revise this in v2.
+On Tuesday 27 February 2018 11:22 AM, Yoshihiro Shimoda wrote:
+> This patch adds binding for r8a77965 (R-Car M3-N).
 
-Best regards,
-Yoshihiro Shimoda
+$subject should be  dt-bindings: rcar-gen3-phy-usb3: Add binding for r8a77965
 
-> Thanks
-> Kishon
-
+Thanks
+Kishon
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+> index f94cea4..47dd296 100644
+> --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+> +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
+> @@ -11,6 +11,8 @@ Required properties:
+>  	      SoC.
+>  	      "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
+>  	      SoC.
+> +	      "renesas,r8a77965-usb3-phy" if the device is a part of an
+> +	      R8A77965 SoC.
+>  	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 compatible
+>  	      device.
+>  
+> 
