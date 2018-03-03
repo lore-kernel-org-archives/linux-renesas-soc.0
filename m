@@ -1,781 +1,404 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v8 3/4] drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
-Date: Tue,  6 Mar 2018 00:54:02 +0200
-Message-Id: <20180305225403.25298-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:46052 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbeCCRE6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 3 Mar 2018 12:04:58 -0500
+Received: by mail-lf0-f65.google.com with SMTP id h127so16509403lfg.12
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Mar 2018 09:04:57 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Sat, 3 Mar 2018 18:04:54 +0100
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v11 16/32] rcar-vin: read subdevice format for crop only
+ when needed
+Message-ID: <20180303170454.GL12470@bigcity.dyn.berto.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180302015751.25596-17-niklas.soderlund+renesas@ragnatech.se>
+ <1860931.WLVs16Imm2@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1860931.WLVs16Imm2@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoders now have their own DT bindings. Before
-switching the driver infrastructure to those new bindings, implement
-backward-compatibility through live DT patching.
+Hi Laurent,
 
-Patching is disabled and will be enabled along with support for the new
-DT bindings in the DU driver.
+Thanks for your feedback.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Frank Rowand <frank.rowand@sony.com>
----
-Changes since v7:
+On 2018-03-02 13:06:27 +0200, Laurent Pinchart wrote:
+> Hi Niklas,
+> 
+> Thank you for the patch.
+> 
+> On Friday, 2 March 2018 03:57:35 EET Niklas S�derlund wrote:
+> > Instead of caching the subdevice format each time the video device
+> > format is set read it directly when it's needed. As it turns out the
+> > format is only needed when figuring out the max rectangle for cropping.
+> > 
+> > This simplifies the code and makes it clearer what the source format is
+> > used for.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-v4l2.c | 158 +++++++++++++------------
+> >  drivers/media/platform/rcar-vin/rcar-vin.h  |  12 ---
+> >  2 files changed, 80 insertions(+), 90 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> > 3290e603b44cdf3a..55640c6b2a1200ca 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > @@ -144,67 +144,62 @@ static int rvin_format_align(struct rvin_dev *vin,
+> > struct v4l2_pix_format *pix) * V4L2
+> >   */
+> > 
+> > -static void rvin_reset_crop_compose(struct rvin_dev *vin)
+> > +static int rvin_get_vin_format_from_source(struct rvin_dev *vin,
+> > +					   struct v4l2_pix_format *pix)
+> >  {
+> > +	struct v4l2_subdev_format fmt = {
+> > +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+> > +		.pad = vin->digital->source_pad,
+> > +	};
+> > +	int ret;
+> > +
+> > +	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	v4l2_fill_pix_format(pix, &fmt.format);
+> > +
+> > +	return rvin_format_align(vin, pix);
+> > +}
+> > +
+> > +static int rvin_reset_format(struct rvin_dev *vin)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = rvin_get_vin_format_from_source(vin, &vin->format);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	vin->crop.top = vin->crop.left = 0;
+> > -	vin->crop.width = vin->source.width;
+> > -	vin->crop.height = vin->source.height;
+> > +	vin->crop.width = vin->format.width;
+> > +	vin->crop.height = vin->format.height;
+> > 
+> >  	vin->compose.top = vin->compose.left = 0;
+> >  	vin->compose.width = vin->format.width;
+> >  	vin->compose.height = vin->format.height;
+> > -}
+> > -
+> > -static int rvin_reset_format(struct rvin_dev *vin)
+> > -{
+> > -	struct v4l2_subdev_format fmt = {
+> > -		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+> > -	};
+> > -	struct v4l2_mbus_framefmt *mf = &fmt.format;
+> > -	int ret;
+> > -
+> > -	fmt.pad = vin->digital->source_pad;
+> > -
+> > -	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	vin->format.width	= mf->width;
+> > -	vin->format.height	= mf->height;
+> > -	vin->format.colorspace	= mf->colorspace;
+> > -	vin->format.field	= mf->field;
+> > -
+> > -	rvin_reset_crop_compose(vin);
+> > -
+> > -	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
+> > -	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
+> > 
+> >  	return 0;
+> >  }
+> > 
+> > -static int __rvin_try_format_source(struct rvin_dev *vin,
+> > -				    u32 which,
+> > -				    struct v4l2_pix_format *pix,
+> > -				    struct rvin_source_fmt *source)
+> > +static int rvin_try_format(struct rvin_dev *vin, u32 which,
+> > +			   struct v4l2_pix_format *pix,
+> > +			   struct v4l2_rect *crop, struct v4l2_rect *compose)
+> >  {
+> > -	struct v4l2_subdev *sd;
+> > +	struct v4l2_subdev *sd = vin_to_source(vin);
+> >  	struct v4l2_subdev_pad_config *pad_cfg;
+> >  	struct v4l2_subdev_format format = {
+> >  		.which = which,
+> > +		.pad = vin->digital->source_pad,
+> >  	};
+> >  	enum v4l2_field field;
+> >  	u32 width, height;
+> >  	int ret;
+> > 
+> > -	sd = vin_to_source(vin);
+> > -
+> > -	v4l2_fill_mbus_format(&format.format, pix, vin->digital->code);
+> > -
+> >  	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
+> >  	if (pad_cfg == NULL)
+> >  		return -ENOMEM;
+> > 
+> > -	format.pad = vin->digital->source_pad;
+> > +	v4l2_fill_mbus_format(&format.format, pix, vin->digital->code);
+> > 
+> >  	/* Allow the video device to override field and to scale */
+> >  	field = pix->field;
+> > @@ -217,34 +212,34 @@ static int __rvin_try_format_source(struct rvin_dev
+> > *vin,
+> > 
+> >  	v4l2_fill_pix_format(pix, &format.format);
+> > 
+> > -	source->width = pix->width;
+> > -	source->height = pix->height;
+> > +	crop->top = crop->left = 0;
+> > +	crop->width = pix->width;
+> > +	crop->height = pix->height;
+> > +
+> > +	/*
+> > +	 * If source is ALTERNATE the driver will use the VIN hardware
+> > +	 * to INTERLACE it. The crop height then needs to be doubled.
+> > +	 */
+> > +	if (pix->field == V4L2_FIELD_ALTERNATE)
+> > +		crop->height *= 2;
+> > +
+> > +	if (field != V4L2_FIELD_ANY)
+> > +		pix->field = field;
+> > 
+> > -	pix->field = field;
+> >  	pix->width = width;
+> >  	pix->height = height;
+> > 
+> > -	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
+> > -		source->height);
+> > +	ret = rvin_format_align(vin, pix);
+> > +	if (ret)
+> > +		return ret;
+> > 
+> > +	compose->top = compose->left = 0;
+> > +	compose->width = pix->width;
+> > +	compose->height = pix->height;
+> >  done:
+> >  	v4l2_subdev_free_pad_config(pad_cfg);
+> > -	return ret;
+> > -}
+> > 
+> > -static int __rvin_try_format(struct rvin_dev *vin,
+> > -			     u32 which,
+> > -			     struct v4l2_pix_format *pix,
+> > -			     struct rvin_source_fmt *source)
+> > -{
+> > -	int ret;
+> > -
+> > -	/* Limit to source capabilities */
+> > -	ret = __rvin_try_format_source(vin, which, pix, source);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	return rvin_format_align(vin, pix);
+> > +	return 0;
+> >  }
+> > 
+> >  static int rvin_querycap(struct file *file, void *priv,
+> > @@ -263,33 +258,30 @@ static int rvin_try_fmt_vid_cap(struct file *file,
+> > void *priv, struct v4l2_format *f)
+> >  {
+> >  	struct rvin_dev *vin = video_drvdata(file);
+> > -	struct rvin_source_fmt source;
+> > +	struct v4l2_rect crop, compose;
+> > 
+> > -	return __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, &f->fmt.pix,
+> > -				 &source);
+> > +	return rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, &f->fmt.pix, &crop,
+> > +			       &compose);
+> >  }
+> > 
+> >  static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
+> >  			      struct v4l2_format *f)
+> >  {
+> >  	struct rvin_dev *vin = video_drvdata(file);
+> > -	struct rvin_source_fmt source;
+> > +	struct v4l2_rect crop, compose;
+> >  	int ret;
+> > 
+> >  	if (vb2_is_busy(&vin->queue))
+> >  		return -EBUSY;
+> > 
+> > -	ret = __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_ACTIVE, &f->fmt.pix,
+> > -				&source);
+> > +	ret = rvin_try_format(vin, V4L2_SUBDEV_FORMAT_ACTIVE, &f->fmt.pix,
+> > +			      &crop, &compose);
+> >  	if (ret)
+> >  		return ret;
+> > 
+> > -	vin->source.width = source.width;
+> > -	vin->source.height = source.height;
+> > -
+> >  	vin->format = f->fmt.pix;
+> > -
+> > -	rvin_reset_crop_compose(vin);
+> > +	vin->crop = crop;
+> > +	vin->compose = compose;
+> > 
+> >  	return 0;
+> >  }
+> > @@ -319,6 +311,8 @@ static int rvin_g_selection(struct file *file, void *fh,
+> > struct v4l2_selection *s)
+> >  {
+> >  	struct rvin_dev *vin = video_drvdata(file);
+> > +	struct v4l2_pix_format pix;
+> > +	int ret;
+> > 
+> >  	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+> >  		return -EINVAL;
+> > @@ -326,9 +320,12 @@ static int rvin_g_selection(struct file *file, void
+> > *fh, switch (s->target) {
+> >  	case V4L2_SEL_TGT_CROP_BOUNDS:
+> >  	case V4L2_SEL_TGT_CROP_DEFAULT:
+> > +		ret = rvin_get_vin_format_from_source(vin, &pix);
+> > +		if (ret)
+> > +			return ret;
+> >  		s->r.left = s->r.top = 0;
+> > -		s->r.width = vin->source.width;
+> > -		s->r.height = vin->source.height;
+> > +		s->r.width = pix.width;
+> > +		s->r.height = pix.height;
+> >  		break;
+> >  	case V4L2_SEL_TGT_CROP:
+> >  		s->r = vin->crop;
+> > @@ -353,6 +350,7 @@ static int rvin_s_selection(struct file *file, void *fh,
+> > struct v4l2_selection *s)
+> >  {
+> >  	struct rvin_dev *vin = video_drvdata(file);
+> > +	struct v4l2_pix_format pix;
+> >  	const struct rvin_video_format *fmt;
+> >  	struct v4l2_rect r = s->r;
+> >  	struct v4l2_rect max_rect;
+> > @@ -360,6 +358,7 @@ static int rvin_s_selection(struct file *file, void *fh,
+> > .width = 6,
+> >  		.height = 2,
+> >  	};
+> > +	int ret;
+> > 
+> >  	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+> >  		return -EINVAL;
+> > @@ -369,22 +368,25 @@ static int rvin_s_selection(struct file *file, void
+> > *fh, switch (s->target) {
+> >  	case V4L2_SEL_TGT_CROP:
+> >  		/* Can't crop outside of source input */
+> > +		ret = rvin_get_vin_format_from_source(vin, &pix);
+> > +		if (ret)
+> > +			return ret;
+> 
+> I don't think the crop rectangle should be validated against the current 
+> source format, but against the current video node format. As noted in my 
+> review of the previous version:
+> 
+> If you stop caching the source format you'll end up validating the crop 
+> rectangle against the current source format. What will happen if the format 
+> changed since the last VIDIOC_S_FMT call ?
+> 
+> And thinking about it, are sources allowed to change their format autonomously 
+> ? They surely can detect format changes, but can they update the format 
+> without notifying anyone ? Looking at the adv7180 driver for instance, the 
+> format depends on the TV standard, but the driver doesn't change it. It only 
+> reports newly detected standards and relies on someone then calling the s_std 
+> operation. The VIN driver should then in its S_STD handler retrieve the new 
+> source format, and reset the crop rectangle accordingly.
+> 
+> I believe the same applies to V4L2_SEL_TGT_CROP_BOUNDS and 
+> V4L2_SEL_TGT_CROP_DEFAULT.
 
-- Make the LVDS name array 22 characters long
-- Drop attribution comment in *.dts files as they have been completely
-  rewritten
-- Rebase on top of of_overlay_fdt_apply() change from Frank Rowand
+OK, after the latest version and some sleep I now see your point, and I 
+agree with it. I will keep caching the source format :-) I will 
+repurpose this patch to keep the format cleanups but keep caching of the 
+source dimensions. Thanks for being persistent and making me understand 
+the issue.
 
-Changes since v6:
+> 
+> >  		max_rect.top = max_rect.left = 0;
+> > -		max_rect.width = vin->source.width;
+> > -		max_rect.height = vin->source.height;
+> > +		max_rect.width = pix.width;
+> > +		max_rect.height = pix.height;
+> >  		v4l2_rect_map_inside(&r, &max_rect);
+> > 
+> > -		v4l_bound_align_image(&r.width, 2, vin->source.width, 1,
+> > -				      &r.height, 4, vin->source.height, 2, 0);
+> > +		v4l_bound_align_image(&r.width, 2, pix.width, 1,
+> > +				      &r.height, 4, pix.height, 2, 0);
+> > 
+> > -		r.top  = clamp_t(s32, r.top, 0, vin->source.height - r.height);
+> > -		r.left = clamp_t(s32, r.left, 0, vin->source.width - r.width);
+> > +		r.top  = clamp_t(s32, r.top, 0, pix.height - r.height);
+> > +		r.left = clamp_t(s32, r.left, 0, pix.width - r.width);
+> > 
+> >  		vin->crop = s->r = r;
+> > 
+> >  		vin_dbg(vin, "Cropped %dx%d@%d:%d of %dx%d\n",
+> >  			r.width, r.height, r.left, r.top,
+> > -			vin->source.width, vin->source.height);
+> > +			pix.width, pix.height);
+> >  		break;
+> >  	case V4L2_SEL_TGT_COMPOSE:
+> >  		/* Make sure compose rect fits inside output format */
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
+> > b/drivers/media/platform/rcar-vin/rcar-vin.h index
+> > 8daba9db0e927a49..39051da31650bd79 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> > +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> > @@ -48,16 +48,6 @@ enum rvin_dma_state {
+> >  	STOPPING,
+> >  };
+> > 
+> > -/**
+> > - * struct rvin_source_fmt - Source information
+> > - * @width:	Width from source
+> > - * @height:	Height from source
+> > - */
+> > -struct rvin_source_fmt {
+> > -	u32 width;
+> > -	u32 height;
+> > -};
+> > -
+> >  /**
+> >   * struct rvin_video_format - Data format stored in memory
+> >   * @fourcc:	Pixelformat
+> > @@ -124,7 +114,6 @@ struct rvin_info {
+> >   * @sequence:		V4L2 buffers sequence number
+> >   * @state:		keeps track of operation state
+> >   *
+> > - * @source:		active format from the video source
+> >   * @format:		active V4L2 pixel format
+> >   *
+> >   * @crop:		active cropping
+> > @@ -151,7 +140,6 @@ struct rvin_dev {
+> >  	unsigned int sequence;
+> >  	enum rvin_dma_state state;
+> > 
+> > -	struct rvin_source_fmt source;
+> >  	struct v4l2_pix_format format;
+> > 
+> >  	struct v4l2_rect crop;
+> 
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
 
-- Don't free data used by the applied overlay
-
-Changes since v5:
-
-- Use a private copy of rcar_du_of_changeset_add_property()
-
-Changes since v3:
-
-- Use the OF changeset API
-- Use of_graph_get_endpoint_by_regs()
-- Replace hardcoded constants by sizeof()
-
-Changes since v2:
-
-- Update the SPDX headers to use C-style comments in header files
-- Removed the manually created __local_fixups__ node
-- Perform manual fixups on live DT instead of overlay
-
-Changes since v1:
-
-- Select OF_FLATTREE
-- Compile LVDS DT bindings patch code when DRM_RCAR_LVDS is selected
-- Update the SPDX headers to use GPL-2.0 instead of GPL-2.0-only
-- Turn __dtb_rcar_du_of_lvds_(begin|end) from u8 to char
-- Pass void begin and end pointers to rcar_du_of_get_overlay()
-- Use of_get_parent() instead of accessing the parent pointer directly
-- Find the LVDS endpoints nodes based on the LVDS node instead of the
-  root of the overlay
-- Update to the <soc>-lvds compatible string format
----
- drivers/gpu/drm/rcar-du/Kconfig                    |   2 +
- drivers/gpu/drm/rcar-du/Makefile                   |   7 +-
- drivers/gpu/drm/rcar-du/rcar_du_of.c               | 322 +++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 ++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  76 +++++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  50 ++++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  50 ++++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  50 ++++
- .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  50 ++++
- 9 files changed, 626 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
-
-diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
-index 5d0b4b7119af..3f83352a7313 100644
---- a/drivers/gpu/drm/rcar-du/Kconfig
-+++ b/drivers/gpu/drm/rcar-du/Kconfig
-@@ -22,6 +22,8 @@ config DRM_RCAR_LVDS
- 	bool "R-Car DU LVDS Encoder Support"
- 	depends on DRM_RCAR_DU
- 	select DRM_PANEL
-+	select OF_FLATTREE
-+	select OF_OVERLAY
- 	help
- 	  Enable support for the R-Car Display Unit embedded LVDS encoders.
- 
-diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
-index 0cf5c11030e8..86b337b4be5d 100644
---- a/drivers/gpu/drm/rcar-du/Makefile
-+++ b/drivers/gpu/drm/rcar-du/Makefile
-@@ -8,7 +8,12 @@ rcar-du-drm-y := rcar_du_crtc.o \
- 		 rcar_du_plane.o
- 
- rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_lvdsenc.o
--
-+rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_of.o \
-+					   rcar_du_of_lvds_r8a7790.dtb.o \
-+					   rcar_du_of_lvds_r8a7791.dtb.o \
-+					   rcar_du_of_lvds_r8a7793.dtb.o \
-+					   rcar_du_of_lvds_r8a7795.dtb.o \
-+					   rcar_du_of_lvds_r8a7796.dtb.o
- rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
- 
- obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.c b/drivers/gpu/drm/rcar-du/rcar_du_of.c
-new file mode 100644
-index 000000000000..68a0b82cb17e
---- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_of.c
-@@ -0,0 +1,322 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * rcar_du_of.c - Legacy DT bindings compatibility
-+ *
-+ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+ *
-+ * Based on work from Jyri Sarha <jsarha@ti.com>
-+ * Copyright (C) 2015 Texas Instruments
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_fdt.h>
-+#include <linux/of_graph.h>
-+#include <linux/slab.h>
-+
-+#include "rcar_du_crtc.h"
-+#include "rcar_du_drv.h"
-+
-+/* -----------------------------------------------------------------------------
-+ * Generic Overlay Handling
-+ */
-+
-+struct rcar_du_of_overlay {
-+	const char *compatible;
-+	void *begin;
-+	void *end;
-+};
-+
-+#define RCAR_DU_OF_DTB(type, soc)					\
-+	extern char __dtb_rcar_du_of_##type##_##soc##_begin[];		\
-+	extern char __dtb_rcar_du_of_##type##_##soc##_end[]
-+
-+#define RCAR_DU_OF_OVERLAY(type, soc)					\
-+	{								\
-+		.compatible = "renesas,du-" #soc,			\
-+		.begin = __dtb_rcar_du_of_##type##_##soc##_begin,	\
-+		.end = __dtb_rcar_du_of_##type##_##soc##_end,		\
-+	}
-+
-+static int __init rcar_du_of_apply_overlay(const struct rcar_du_of_overlay *dtbs,
-+					   const char *compatible)
-+{
-+	const struct rcar_du_of_overlay *dtb = NULL;
-+	unsigned int i;
-+	int ovcs_id;
-+
-+	for (i = 0; dtbs[i].compatible; ++i) {
-+		if (!strcmp(dtbs[i].compatible, compatible)) {
-+			dtb = &dtbs[i];
-+			break;
-+		}
-+	}
-+
-+	if (!dtb)
-+		return -ENODEV;
-+
-+	ovcs_id = 0;
-+	return of_overlay_fdt_apply(dtb->begin, dtb->end - dtb->begin,
-+				    &ovcs_id);
-+}
-+
-+static int __init rcar_du_of_add_property(struct of_changeset *ocs,
-+					  struct device_node *np,
-+					  const char *name, const void *value,
-+					  int length)
-+{
-+	struct property *prop;
-+	int ret = -ENOMEM;
-+
-+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+	if (!prop)
-+		return -ENOMEM;
-+
-+	prop->name = kstrdup(name, GFP_KERNEL);
-+	if (!prop->name)
-+		goto out_err;
-+
-+	prop->value = kmemdup(value, length, GFP_KERNEL);
-+	if (!prop->value)
-+		goto out_err;
-+
-+	of_property_set_flag(prop, OF_DYNAMIC);
-+
-+	prop->length = length;
-+
-+	ret = of_changeset_add_property(ocs, np, prop);
-+	if (!ret)
-+		return 0;
-+
-+out_err:
-+	kfree(prop->value);
-+	kfree(prop->name);
-+	kfree(prop);
-+	return ret;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * LVDS Overlays
-+ */
-+
-+RCAR_DU_OF_DTB(lvds, r8a7790);
-+RCAR_DU_OF_DTB(lvds, r8a7791);
-+RCAR_DU_OF_DTB(lvds, r8a7793);
-+RCAR_DU_OF_DTB(lvds, r8a7795);
-+RCAR_DU_OF_DTB(lvds, r8a7796);
-+
-+static const struct rcar_du_of_overlay rcar_du_lvds_overlays[] __initconst = {
-+	RCAR_DU_OF_OVERLAY(lvds, r8a7790),
-+	RCAR_DU_OF_OVERLAY(lvds, r8a7791),
-+	RCAR_DU_OF_OVERLAY(lvds, r8a7793),
-+	RCAR_DU_OF_OVERLAY(lvds, r8a7795),
-+	RCAR_DU_OF_OVERLAY(lvds, r8a7796),
-+	{ /* Sentinel */ },
-+};
-+
-+static struct of_changeset rcar_du_lvds_changeset;
-+
-+static void __init rcar_du_of_lvds_patch_one(struct device_node *lvds,
-+					     const struct of_phandle_args *clk,
-+					     struct device_node *local,
-+					     struct device_node *remote)
-+{
-+	unsigned int psize;
-+	unsigned int i;
-+	__be32 value[4];
-+	int ret;
-+
-+	/*
-+	 * Set the LVDS clocks property. This can't be performed by the overlay
-+	 * as the structure of the clock specifier has changed over time, and we
-+	 * don't know at compile time which binding version the system we will
-+	 * run on uses.
-+	 */
-+	if (clk->args_count >= ARRAY_SIZE(value) - 1)
-+		return;
-+
-+	of_changeset_init(&rcar_du_lvds_changeset);
-+
-+	value[0] = cpu_to_be32(clk->np->phandle);
-+	for (i = 0; i < clk->args_count; ++i)
-+		value[i + 1] = cpu_to_be32(clk->args[i]);
-+
-+	psize = (clk->args_count + 1) * 4;
-+	ret = rcar_du_of_add_property(&rcar_du_lvds_changeset, lvds,
-+				      "clocks", value, psize);
-+	if (ret < 0)
-+		goto done;
-+
-+	/*
-+	 * Insert the node in the OF graph: patch the LVDS ports remote-endpoint
-+	 * properties to point to the endpoints of the sibling nodes in the
-+	 * graph. This can't be performed by the overlay: on the input side the
-+	 * overlay would contain a phandle for the DU LVDS output port that
-+	 * would clash with the system DT, and on the output side the connection
-+	 * is board-specific.
-+	 */
-+	value[0] = cpu_to_be32(local->phandle);
-+	value[1] = cpu_to_be32(remote->phandle);
-+
-+	for (i = 0; i < 2; ++i) {
-+		struct device_node *endpoint;
-+
-+		endpoint = of_graph_get_endpoint_by_regs(lvds, i, 0);
-+		if (!endpoint) {
-+			ret = -EINVAL;
-+			goto done;
-+		}
-+
-+		ret = rcar_du_of_add_property(&rcar_du_lvds_changeset,
-+					      endpoint, "remote-endpoint",
-+					      &value[i], sizeof(value[i]));
-+		of_node_put(endpoint);
-+		if (ret < 0)
-+			goto done;
-+	}
-+
-+	ret = of_changeset_apply(&rcar_du_lvds_changeset);
-+
-+done:
-+	if (ret < 0)
-+		of_changeset_destroy(&rcar_du_lvds_changeset);
-+}
-+
-+struct lvds_of_data {
-+	struct resource res;
-+	struct of_phandle_args clkspec;
-+	struct device_node *local;
-+	struct device_node *remote;
-+};
-+
-+static void __init rcar_du_of_lvds_patch(const struct of_device_id *of_ids)
-+{
-+	const struct rcar_du_device_info *info;
-+	const struct of_device_id *match;
-+	struct lvds_of_data lvds_data[2] = { };
-+	struct device_node *lvds_node;
-+	struct device_node *soc_node;
-+	struct device_node *du_node;
-+	char compatible[22];
-+	const char *soc_name;
-+	unsigned int i;
-+	int ret;
-+
-+	/* Get the DU node and exit if not present or disabled. */
-+	du_node = of_find_matching_node_and_match(NULL, of_ids, &match);
-+	if (!du_node || !of_device_is_available(du_node)) {
-+		of_node_put(du_node);
-+		return;
-+	}
-+
-+	info = match->data;
-+	soc_node = of_get_parent(du_node);
-+
-+	if (WARN_ON(info->num_lvds > ARRAY_SIZE(lvds_data)))
-+		goto done;
-+
-+	/*
-+	 * Skip if the LVDS nodes already exists.
-+	 *
-+	 * The nodes are searched based on the compatible string, which we
-+	 * construct from the SoC name found in the DU compatible string. As a
-+	 * match has been found we know the compatible string matches the
-+	 * expected format and can thus skip some of the string manipulation
-+	 * normal safety checks.
-+	 */
-+	soc_name = strchr(match->compatible, '-') + 1;
-+	sprintf(compatible, "renesas,%s-lvds", soc_name);
-+	lvds_node = of_find_compatible_node(NULL, NULL, compatible);
-+	if (lvds_node) {
-+		of_node_put(lvds_node);
-+		return;
-+	}
-+
-+	/*
-+	 * Parse the DU node and store the register specifier, the clock
-+	 * specifier and the local and remote endpoint of the LVDS link for
-+	 * later use.
-+	 */
-+	for (i = 0; i < info->num_lvds; ++i) {
-+		struct lvds_of_data *lvds = &lvds_data[i];
-+		unsigned int port;
-+		char name[7];
-+		int index;
-+
-+		sprintf(name, "lvds.%u", i);
-+		index = of_property_match_string(du_node, "clock-names", name);
-+		if (index < 0)
-+			continue;
-+
-+		ret = of_parse_phandle_with_args(du_node, "clocks",
-+						 "#clock-cells", index,
-+						 &lvds->clkspec);
-+		if (ret < 0)
-+			continue;
-+
-+		port = info->routes[RCAR_DU_OUTPUT_LVDS0 + i].port;
-+
-+		lvds->local = of_graph_get_endpoint_by_regs(du_node, port, 0);
-+		if (!lvds->local)
-+			continue;
-+
-+		lvds->remote = of_graph_get_remote_endpoint(lvds->local);
-+		if (!lvds->remote)
-+			continue;
-+
-+		index = of_property_match_string(du_node, "reg-names", name);
-+		if (index < 0)
-+			continue;
-+
-+		of_address_to_resource(du_node, index, &lvds->res);
-+	}
-+
-+	/* Parse and apply the overlay. This will resolve phandles. */
-+	ret = rcar_du_of_apply_overlay(rcar_du_lvds_overlays,
-+				       match->compatible);
-+	if (ret < 0)
-+		goto done;
-+
-+	/* Patch the newly created LVDS encoder nodes. */
-+	for_each_child_of_node(soc_node, lvds_node) {
-+		struct resource res;
-+
-+		if (!of_device_is_compatible(lvds_node, compatible))
-+			continue;
-+
-+		/* Locate the lvds_data entry based on the resource start. */
-+		ret = of_address_to_resource(lvds_node, 0, &res);
-+		if (ret < 0)
-+			continue;
-+
-+		for (i = 0; i < ARRAY_SIZE(lvds_data); ++i) {
-+			if (lvds_data[i].res.start == res.start)
-+				break;
-+		}
-+
-+		if (i == ARRAY_SIZE(lvds_data))
-+			continue;
-+
-+		/* Patch the LVDS encoder. */
-+		rcar_du_of_lvds_patch_one(lvds_node, &lvds_data[i].clkspec,
-+					  lvds_data[i].local,
-+					  lvds_data[i].remote);
-+	}
-+
-+done:
-+	for (i = 0; i < info->num_lvds; ++i) {
-+		of_node_put(lvds_data[i].clkspec.np);
-+		of_node_put(lvds_data[i].local);
-+		of_node_put(lvds_data[i].remote);
-+	}
-+
-+	of_node_put(soc_node);
-+	of_node_put(du_node);
-+}
-+
-+void __init rcar_du_of_init(const struct of_device_id *of_ids)
-+{
-+	rcar_du_of_lvds_patch(of_ids);
-+}
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.h b/drivers/gpu/drm/rcar-du/rcar_du_of.h
-new file mode 100644
-index 000000000000..c2e65a727e91
---- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_of.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * rcar_du_of.h - Legacy DT bindings compatibility
-+ *
-+ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+ */
-+#ifndef __RCAR_DU_OF_H__
-+#define __RCAR_DU_OF_H__
-+
-+#include <linux/init.h>
-+
-+struct of_device_id;
-+
-+#ifdef CONFIG_DRM_RCAR_LVDS
-+void __init rcar_du_of_init(const struct of_device_id *of_ids);
-+#else
-+static inline void rcar_du_of_init(const struct of_device_id *of_ids) { }
-+#endif /* CONFIG_DRM_RCAR_LVDS */
-+
-+#endif /* __RCAR_DU_OF_H__ */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
-new file mode 100644
-index 000000000000..579753e04f3b
---- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
-@@ -0,0 +1,76 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * rcar_du_of_lvds_r8a7790.dts - Legacy LVDS DT bindings conversion for R8A7790
-+ *
-+ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+/ {
-+	fragment@0 {
-+		target-path = "/";
-+		__overlay__ {
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+
-+			lvds@feb90000 {
-+				compatible = "renesas,r8a7790-lvds";
-+				reg = <0 0xfeb90000 0 0x1c>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+						lvds0_input: endpoint {
-+						};
-+					};
-+					port@1 {
-+						reg = <1>;
-+						lvds0_out: endpoint {
-+						};
-+					};
-+				};
-+			};
-+
-+			lvds@feb94000 {
-+				compatible = "renesas,r8a7790-lvds";
-+				reg = <0 0xfeb94000 0 0x1c>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+						lvds1_input: endpoint {
-+						};
-+					};
-+					port@1 {
-+						reg = <1>;
-+						lvds1_out: endpoint {
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	fragment@1 {
-+		target-path = "/display@feb00000/ports";
-+		__overlay__ {
-+			port@1 {
-+				endpoint {
-+					remote-endpoint = <&lvds0_input>;
-+				};
-+			};
-+			port@2 {
-+				endpoint {
-+					remote-endpoint = <&lvds1_input>;
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
-new file mode 100644
-index 000000000000..cb9da1f3942b
---- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * rcar_du_of_lvds_r8a7791.dts - Legacy LVDS DT bindings conversion for R8A7791
-+ *
-+ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+/ {
-+	fragment@0 {
-+		target-path = "/";
-+		__overlay__ {
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+
-+			lvds@feb90000 {
-+				compatible = "renesas,r8a7791-lvds";
-+				reg = <0 0xfeb90000 0 0x1c>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+						lvds0_input: endpoint {
-+						};
-+					};
-+					port@1 {
-+						reg = <1>;
-+						lvds0_out: endpoint {
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	fragment@1 {
-+		target-path = "/display@feb00000/ports";
-+		__overlay__ {
-+			port@1 {
-+				endpoint {
-+					remote-endpoint = <&lvds0_input>;
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
-new file mode 100644
-index 000000000000..e7b8804dc3c1
---- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * rcar_du_of_lvds_r8a7793.dts - Legacy LVDS DT bindings conversion for R8A7793
-+ *
-+ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+/ {
-+	fragment@0 {
-+		target-path = "/";
-+		__overlay__ {
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+
-+			lvds@feb90000 {
-+				compatible = "renesas,r8a7793-lvds";
-+				reg = <0 0xfeb90000 0 0x1c>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+						lvds0_input: endpoint {
-+						};
-+					};
-+					port@1 {
-+						reg = <1>;
-+						lvds0_out: endpoint {
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	fragment@1 {
-+		target-path = "/display@feb00000/ports";
-+		__overlay__ {
-+			port@1 {
-+				endpoint {
-+					remote-endpoint = <&lvds0_input>;
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
-new file mode 100644
-index 000000000000..a1327443e6fa
---- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * rcar_du_of_lvds_r8a7795.dts - Legacy LVDS DT bindings conversion for R8A7795
-+ *
-+ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+/ {
-+	fragment@0 {
-+		target-path = "/soc";
-+		__overlay__ {
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+
-+			lvds@feb90000 {
-+				compatible = "renesas,r8a7795-lvds";
-+				reg = <0 0xfeb90000 0 0x14>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+						lvds0_input: endpoint {
-+						};
-+					};
-+					port@1 {
-+						reg = <1>;
-+						lvds0_out: endpoint {
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	fragment@1 {
-+		target-path = "/soc/display@feb00000/ports";
-+		__overlay__ {
-+			port@3 {
-+				endpoint {
-+					remote-endpoint = <&lvds0_input>;
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
-new file mode 100644
-index 000000000000..b23d6466c415
---- /dev/null
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * rcar_du_of_lvds_r8a7796.dts - Legacy LVDS DT bindings conversion for R8A7796
-+ *
-+ * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+/ {
-+	fragment@0 {
-+		target-path = "/soc";
-+		__overlay__ {
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+
-+			lvds@feb90000 {
-+				compatible = "renesas,r8a7796-lvds";
-+				reg = <0 0xfeb90000 0 0x14>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+						lvds0_input: endpoint {
-+						};
-+					};
-+					port@1 {
-+						reg = <1>;
-+						lvds0_out: endpoint {
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	fragment@1 {
-+		target-path = "/soc/display@feb00000/ports";
-+		__overlay__ {
-+			port@3 {
-+				endpoint {
-+					remote-endpoint = <&lvds0_input>;
-+				};
-+			};
-+		};
-+	};
-+};
 -- 
 Regards,
-
-Laurent Pinchart
-
+Niklas S�derlund
