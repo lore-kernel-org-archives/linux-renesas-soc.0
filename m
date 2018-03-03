@@ -1,76 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:25059 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1164184AbeCBB7c (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34885 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752116AbeCCTHU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:59:32 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 32/32] rcar-vin: enable support for r8a77970
-Date: Fri,  2 Mar 2018 02:57:51 +0100
-Message-Id: <20180302015751.25596-33-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+        Sat, 3 Mar 2018 14:07:20 -0500
+Received: by mail-lf0-f65.google.com with SMTP id 70so17805998lfw.2
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Mar 2018 11:07:19 -0800 (PST)
+Subject: [PATCH v3 2/2] arm64: dts: renesas: eagle: add I2C0 support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
+Message-ID: <30bfc66d-2bfb-4d6e-8bdc-fcd9cb9522c2@cogentembedded.com>
+Date: Sat, 3 Mar 2018 22:07:16 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a77970.
+Define the Eagle board dependent part of the I2C0 device node.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+The I2C0 bus is populated by ON Semiconductor PCA9653 I/O expander and
+Analog Devices ADV7511W HDMI transmitter (but we're only describing the
+former chip now).
+
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Changes in version 3:
+- added Geert's tag.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index f631a66e9cb69265..29b1ad793deefabc 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -971,6 +971,25 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 	.routes = rcar_info_r8a7796_routes,
+Changes in version 2:
+- refreshed with the patch adding EtherAVB pins removed for now...
+
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -55,7 +55,27 @@
+ 	clock-frequency = <32768>;
  };
  
-+static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
-+	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(3) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
-+	{ /* Sentinel */ }
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	io_expander: gpio@20 {
++		compatible = "onnn,pca9654";
++		reg = <0x20>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
 +};
 +
-+static const struct rvin_info rcar_info_r8a77970 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = _rcar_info_r8a77970_routes,
-+};
+ &pfc {
++	i2c0_pins: i2c0 {
++		groups = "i2c0";
++		function = "i2c0";
++	};
 +
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -1008,6 +1027,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,vin-r8a7796",
- 		.data = &rcar_info_r8a7796,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a77970",
-+		.data = &rcar_info_r8a77970,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
--- 
-2.16.2
+ 	scif0_pins: scif0 {
+ 		groups = "scif0_data";
+ 		function = "scif0";
