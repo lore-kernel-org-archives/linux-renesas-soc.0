@@ -1,33 +1,38 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 5 Mar 2018 10:10:12 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:46245 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752129AbeCCTCp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 3 Mar 2018 14:02:45 -0500
+Received: by mail-lf0-f45.google.com with SMTP id r80so17744909lfe.13
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Mar 2018 11:02:44 -0800 (PST)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v3 0/2] Add R8A77970/Eagle I2C support
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 0/2] Add R8A77970/Eagle I2C support
-Message-ID: <20180305091009.fj4f6riash7ibklw@verge.net.au>
-References: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
+Message-ID: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
+Date: Sat, 3 Mar 2018 22:02:41 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Mar 03, 2018 at 10:02:41PM +0300, Sergei Shtylyov wrote:
-> Hello!
-> 
-> Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
-> 'renesas-devel-20180301-v4.16-rc3' tag. We're adding the R8A77970 I2C nodes
-> and then describing the PCA9654 I/O expander connected to the I2C0 bus.
-> 
-> [1/2] arm64: dts: renesas: r8a77970: add I2C support
-> [2/2] arm64: dts: renesas: eagle: add I2C0 support
+Hello!
 
-Thanks, applied.
+Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20180301-v4.16-rc3' tag. We're adding the R8A77970 I2C nodes
+and then describing the PCA9654 I/O expander connected to the I2C0 bus.
+
+[1/2] arm64: dts: renesas: r8a77970: add I2C support
+[2/2] arm64: dts: renesas: eagle: add I2C0 support
+
+WBR, Sergei
