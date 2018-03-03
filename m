@@ -1,153 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:32901 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752308AbeC1TBg (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39295 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751896AbeCCPT2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Mar 2018 15:01:36 -0400
-Subject: Re: [PATCH 08/15] v4l: vsp1: Setup BRU at atomic commit time
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180226214516.11559-9-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <e5290f90-acdd-b2a1-b709-be88e8801ba8@ideasonboard.com>
-Date: Wed, 28 Mar 2018 20:01:30 +0100
+        Sat, 3 Mar 2018 10:19:28 -0500
+Received: by mail-lf0-f66.google.com with SMTP id f75so17349722lfg.6
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Mar 2018 07:19:28 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Sat, 3 Mar 2018 16:19:25 +0100
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v11 22/32] rcar-vin: force default colorspace for media
+ centric mode
+Message-ID: <20180303151924.GH12470@bigcity.dyn.berto.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180302015751.25596-23-niklas.soderlund+renesas@ragnatech.se>
+ <17480633.KWnsIYxeaE@avalon>
 MIME-Version: 1.0
-In-Reply-To: <20180226214516.11559-9-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <17480633.KWnsIYxeaE@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Laurent,
 
-On 26/02/18 21:45, Laurent Pinchart wrote:
-> To implement fully dynamic plane assignment to pipelines, we need to
-> reassign the BRU and BRS to the DRM pipelines in the atomic commit
-> handler. In preparation for this setup factor out the BRU source pad
-> code and call it both at LIF setup and atomic commit time.
+Thanks for your feedback.
+
+On 2018-03-02 11:59:14 +0200, Laurent Pinchart wrote:
+> Hi Niklas,
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-Oops .. skipped one.
-
-But this looks ok to me.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  drivers/media/platform/vsp1/vsp1_drm.c | 56 +++++++++++++++++++++++++++++++++-
->  drivers/media/platform/vsp1/vsp1_drm.h |  5 +++
->  2 files changed, 60 insertions(+), 1 deletion(-)
+> Thank you for the patch.
 > 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-> index 7bf697ba7969..6ad8aa6c8138 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -148,12 +148,51 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
->  	return 0;
->  }
->  
-> +/* Setup the BRU source pad. */
-> +static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
-> +				      struct vsp1_pipeline *pipe)
-> +{
-> +	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
-> +	struct v4l2_subdev_format format = {
-> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> +	};
-> +	int ret;
-> +
-> +	/*
-> +	 * Configure the format on the BRU source and verify that it matches the
-> +	 * requested format. We don't set the media bus code as it is configured
-> +	 * on the BRU sink pad 0 and propagated inside the entity, not on the
-> +	 * source pad.
-> +	 */
-> +	format.pad = pipe->bru->source_pad;
-> +	format.format.width = drm_pipe->width;
-> +	format.format.height = drm_pipe->height;
-> +	format.format.field = V4L2_FIELD_NONE;
-> +
-> +	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
-> +			       &format);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
-> +		__func__, format.format.width, format.format.height,
-> +		format.format.code, BRU_NAME(pipe->bru), pipe->bru->source_pad);
-> +
-> +	if (format.format.width != drm_pipe->width ||
-> +	    format.format.height != drm_pipe->height) {
-> +		dev_dbg(vsp1->dev, "%s: format mismatch\n", __func__);
-> +		return -EPIPE;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static unsigned int rpf_zpos(struct vsp1_device *vsp1, struct vsp1_rwpf *rpf)
->  {
->  	return vsp1->drm->inputs[rpf->entity.index].zpos;
->  }
->  
-> -/* Setup the input side of the pipeline (RPFs and BRU sink pads). */
-> +/* Setup the input side of the pipeline (RPFs and BRU). */
->  static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
->  					struct vsp1_pipeline *pipe)
->  {
-> @@ -191,6 +230,18 @@ static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
->  		inputs[j] = rpf;
->  	}
->  
-> +	/*
-> +	 * Setup the BRU. This must be done before setting up the RPF input
-> +	 * pipelines as the BRU sink compose rectangles depend on the BRU source
-> +	 * format.
-> +	 */
-> +	ret = vsp1_du_pipeline_setup_bru(vsp1, pipe);
-> +	if (ret < 0) {
-> +		dev_err(vsp1->dev, "%s: failed to setup %s source\n", __func__,
-> +			BRU_NAME(pipe->bru));
-> +		return ret;
-> +	}
-> +
->  	/* Setup the RPF input pipeline for every enabled input. */
->  	for (i = 0; i < pipe->bru->source_pad; ++i) {
->  		struct vsp1_rwpf *rpf = inputs[i];
-> @@ -355,6 +406,9 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
->  		return 0;
->  	}
->  
-> +	drm_pipe->width = cfg->width;
-> +	drm_pipe->height = cfg->height;
-> +
->  	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u\n",
->  		__func__, pipe_index, cfg->width, cfg->height);
->  
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
-> index 9aa19325cbe9..c8dd75ba01f6 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.h
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.h
-> @@ -20,12 +20,17 @@
->  /**
->   * vsp1_drm_pipeline - State for the API exposed to the DRM driver
->   * @pipe: the VSP1 pipeline used for display
-> + * @width: output display width
-> + * @height: output display height
->   * @du_complete: frame completion callback for the DU driver (optional)
->   * @du_private: data to be passed to the du_complete callback
->   */
->  struct vsp1_drm_pipeline {
->  	struct vsp1_pipeline pipe;
->  
-> +	unsigned int width;
-> +	unsigned int height;
-> +
->  	/* Frame synchronisation */
->  	void (*du_complete)(void *, bool);
->  	void *du_private;
+> On Friday, 2 March 2018 03:57:41 EET Niklas S�derlund wrote:
+> > When the VIN driver is running in media centric mode (on Gen3) the
+> > colorspace is not retrieved from the video source instead the user is
+> > expected to set it as part of the format. There is no way for the VIN
+> > driver to validated the colorspace requested by user-space, this creates
+> > a problem where validation tools fail. Until the user requested
+> > colorspace can be validated lets force it to the driver default.
 > 
+> The problem here is that the V4L2 specification clearly documents the 
+> colorspace fields as being set by drivers for capture devices. Using the 
+> values supplied by userspace thus wouldn't comply with the API. The API has to 
+> be updated to allow us to implement this feature, but until then Hans wants 
+> the userspace to be set by the driver to a fixed value. Could you update the 
+> commit message accordingly, as well as the comment below ?
+
+Yes, your description of the issue is better I will rephrase my commit 
+message and comment.
+
+> 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-v4l2.c | 16 ++++++++++++++--
+> >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> > 8d92710efffa7276..02f3100ed30db63c 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> > @@ -675,12 +675,24 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
+> >   * V4L2 Media Controller
+> >   */
+> > 
+> > +static int rvin_mc_try_format(struct rvin_dev *vin, struct v4l2_pix_format
+> > *pix) +{
+> > +	/*
+> > +	 * There is no way to validate the colorspace provided by the
+> > +	 * user. Until it can be validated force colorspace to the
+> > +	 * driver default.
+> > +	 */
+> > +	pix->colorspace = RVIN_DEFAULT_COLORSPACE;
+> 
+> Should you also set the xfer_func, quantization and ycbcr_enc ?
+
+You are correct, I will set these fields as well.
+
+> 
+> Apart from that,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Thank you. As I have rewritten the commit message and set more fields 
+then just the colorspace I have not picked up this tag for the next 
+version.
+
+> 
+> > +
+> > +	return rvin_format_align(vin, pix);
+> > +}
+> > +
+> >  static int rvin_mc_try_fmt_vid_cap(struct file *file, void *priv,
+> >  				   struct v4l2_format *f)
+> >  {
+> >  	struct rvin_dev *vin = video_drvdata(file);
+> > 
+> > -	return rvin_format_align(vin, &f->fmt.pix);
+> > +	return rvin_mc_try_format(vin, &f->fmt.pix);
+> >  }
+> > 
+> >  static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
+> > @@ -692,7 +704,7 @@ static int rvin_mc_s_fmt_vid_cap(struct file *file, void
+> > *priv, if (vb2_is_busy(&vin->queue))
+> >  		return -EBUSY;
+> > 
+> > -	ret = rvin_format_align(vin, &f->fmt.pix);
+> > +	ret = rvin_mc_try_format(vin, &f->fmt.pix);
+> >  	if (ret)
+> >  		return ret;
+> 
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+
+-- 
+Regards,
+Niklas S�derlund
