@@ -1,39 +1,150 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 3/3] dt-bindings: rcar-gen3-phy-usb3: Add bindings for r8a77965
-Date: Mon,  5 Mar 2018 14:32:45 +0900
-Message-Id: <1520227965-4471-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1520227965-4471-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1520227965-4471-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:34135 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752002AbeCCODx (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 3 Mar 2018 09:03:53 -0500
+Received: by mail-lf0-f68.google.com with SMTP id l191so17135430lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Mar 2018 06:03:52 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Sat, 3 Mar 2018 15:03:49 +0100
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v11 19/32] rcar-vin: add function to manipulate Gen3
+ chsel value
+Message-ID: <20180303140349.GG12470@bigcity.dyn.berto.se>
+References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180302015751.25596-20-niklas.soderlund+renesas@ragnatech.se>
+ <1626554.hLmvUq6KA6@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1626554.hLmvUq6KA6@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds bindings for r8a77965 (R-Car M3-N).
+Hi Laurent,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Thank you for your feedback.
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-index f94cea4..47dd296 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-@@ -11,6 +11,8 @@ Required properties:
- 	      SoC.
- 	      "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
- 	      SoC.
-+	      "renesas,r8a77965-usb3-phy" if the device is a part of an
-+	      R8A77965 SoC.
- 	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 compatible
- 	      device.
- 
+On 2018-03-02 13:31:47 +0200, Laurent Pinchart wrote:
+> Hi Niklas,
+> 
+> Thank you for the patch.
+> 
+> On Friday, 2 March 2018 03:57:38 EET Niklas S�derlund wrote:
+> > On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
+> > feature of this register is that it's only present in the VIN0 and VIN4
+> > instances. The register in VIN0 controls the routing for VIN0-3 and the
+> > register in VIN4 controls routing for VIN4-7.
+> > 
+> > To be able to control routing from a media device this function is need
+> > to control runtime PM for the subgroup master (VIN0 and VIN4). The
+> > subgroup master must be switched on before the register is manipulated,
+> > once the operation is complete it's safe to switch the master off and
+> > the new routing will still be in effect.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Thank you.
+
+> 
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-dma.c | 38 +++++++++++++++++++++++++++
+> >  drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
+> >  2 files changed, 40 insertions(+)
+> 
+> By the way it would be useful if you added per-patch changelogs. You can 
+> capture them in the commit message below a --- line.
+
+I'm feeling the pain already of not doing this. I have in the past tried 
+to keep such change long under a --- line like you suggest. But 
+something in my work flow at that time caused the --- to be dropped and 
+I never figured out what caused it.
+
+I will try it again and see if I can figure out what caused it and how I 
+can work around it. Thanks for brining this up.
+
+> 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> > b/drivers/media/platform/rcar-vin/rcar-dma.c index
+> > 57bb288b3ca67a60..3fb9c325285c5a5a 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> > @@ -16,6 +16,7 @@
+> > 
+> >  #include <linux/delay.h>
+> >  #include <linux/interrupt.h>
+> > +#include <linux/pm_runtime.h>
+> > 
+> >  #include <media/videobuf2-dma-contig.h>
+> > 
+> > @@ -1228,3 +1229,40 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
+> > 
+> >  	return ret;
+> >  }
+> > +
+> > +/* ------------------------------------------------------------------------
+> > + * Gen3 CHSEL manipulation
+> > + */
+> > +
+> > +/*
+> > + * There is no need to have locking around changing the routing
+> > + * as it's only possible to do so when no VIN in the group is
+> > + * streaming so nothing can race with the VNMC register.
+> > + */
+> > +int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
+> > +{
+> > +	u32 ifmd, vnmc;
+> > +	int ret;
+> > +
+> > +	ret = pm_runtime_get_sync(vin->dev);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	/* Make register writes take effect immediately. */
+> > +	vnmc = rvin_read(vin, VNMC_REG);
+> > +	rvin_write(vin, vnmc & ~VNMC_VUP, VNMC_REG);
+> > +
+> > +	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
+> > +		VNCSI_IFMD_CSI_CHSEL(chsel);
+> > +
+> > +	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
+> > +
+> > +	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
+> > +
+> > +	/* Restore VNMC. */
+> > +	rvin_write(vin, vnmc, VNMC_REG);
+> > +
+> > +	pm_runtime_put(vin->dev);
+> > +
+> > +	return ret;
+> > +}
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
+> > b/drivers/media/platform/rcar-vin/rcar-vin.h index
+> > b3802651eaa78ea9..666308946eb4994d 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> > +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> > @@ -165,4 +165,6 @@ const struct rvin_video_format
+> > *rvin_format_from_pixel(u32 pixelformat); /* Cropping, composing and
+> > scaling */
+> >  void rvin_crop_scale_comp(struct rvin_dev *vin);
+> > 
+> > +int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
+> > +
+> >  #endif
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+
 -- 
-1.9.1
-
+Regards,
+Niklas S�derlund
