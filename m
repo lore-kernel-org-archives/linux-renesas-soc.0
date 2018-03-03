@@ -1,89 +1,162 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:36331 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932118AbeCDWey (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43849 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752116AbeCCTGZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 4 Mar 2018 17:34:54 -0500
-Date: Sun, 4 Mar 2018 23:34:51 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 14/16] mmc: tmio: move TMIO_MASK_{READOP,WRITEOP}
- handling to correct place
-Message-ID: <20180304223451.joqs2yoopwogncvj@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-15-git-send-email-yamada.masahiro@socionext.com>
+        Sat, 3 Mar 2018 14:06:25 -0500
+Received: by mail-lf0-f68.google.com with SMTP id q69so17783639lfi.10
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Mar 2018 11:06:24 -0800 (PST)
+Subject: [PATCH v3 1/2] arm64: dts: renesas: r8a77970: add I2C support
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
+Message-ID: <27583f7f-d6c3-a692-b994-c78251244b8d@cogentembedded.com>
+Date: Sat, 3 Mar 2018 22:06:21 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7gyjdunorgun5zsi"
-Content-Disposition: inline
-In-Reply-To: <1516206496-16612-15-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Define the generic R8A77970 parts of the I2C[0-4] device node.
 
---7gyjdunorgun5zsi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
 
-On Thu, Jan 18, 2018 at 01:28:14AM +0900, Masahiro Yamada wrote:
-> As far as I tested the IP on UniPhier SoCs, TMIO_STAT_{RXRDY,TXRQ}
-> are asserted for DMA mode as well as for PIO.  I need to disable the
-> those IRQs in dma_ops->start hook, otherwise the DMA transfer fails
-> with the following error message:
->   PIO IRQ in DMA mode!
->=20
-> Renesas chips are the same cases since I see their dma_ops->start
-> hooks explicitly clear TMIO_STAT_{RXRDY,TXRQ} (with nice comment!).
->=20
-> If we do this sanity check in TMIO MMC core, RXRDY/TXRQ handling
-> should be entirely moved to the core.  tmio_mmc_cmd_irq() will
-> be a suitable place to disable them.
->=20
-> The probe function sets TMIO_MASK_{READOP,WRITEOP} but this is odd.
->=20
->     /* Unmask the IRQs we want to know about */
->     if (!_host->chan_rx)
->             irq_mask |=3D TMIO_MASK_READOP;
->     if (!_host->chan_tx)
->             irq_mask |=3D TMIO_MASK_WRITEOP;
->=20
-> At this point, _host->{chan_rx,chan_tx} are _always_ NULL because
-> tmio_mmc_request_dma() is called after this code.  Consequently,
-> TMIO_MASK_{READOP,WRITEOP} are set here whether DMA is used or not.
-> Remove this pointless code.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+Changes in version 3:
+- added SYS-DMAC2 references to the "dmas"/"dma-names" props;
+- added Geert's tag.
 
+Changes in version 2:
+- made  use of  the SYSC power domain #define's;
+- moved the I2C nodes before HSCIF nodes.
 
---7gyjdunorgun5zsi
-Content-Type: application/pgp-signature; name="signature.asc"
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi |   93 ++++++++++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqcdIcACgkQFA3kzBSg
-KbbQ1Q//bxdR3m/BVVyL+YM+FHh5fhacmQn4jWGsiuAoMJxwnoF+7UTkf8esucKs
-VAtJVb+l3nlCDzOKoc25R6o+kJO4RKSKdYRAp2hFQzXPUbA/R34cuANqhdP021JW
-huAbKtbd03f3I5n1HOzplwh5dwUIaSUxK7vMfyRQjeQSJAyFn1K0I10amoVLVEeE
-v2p9AvH/SVsEm5FS+XR+ODEoxs6JXChBdsB6RRuNqDwySpjGy8GI02d3rOpYCLlZ
-ruohLPN7rKUBu344pwHgneb9jlExfQRC81AP1TlVlddPFs1+1xJ5Y0akiZQuYtXs
-PpUnO8z/jZt1Jc/KIiCgZvSm9eYEPf5S/LBJCg2Cb+eNt7z2pMC/NPrm1JWoFsWi
-9MY2bsj/Gzquq3GgwMgIuMZtYNouT41AZXriTdt7ODcM4s67g0RUpAoadejwxQ14
-G2C3cBlZTGneiB/Vi2h3pN7BSAxzuDcBMebyTXwnnf/CDzc2Jf+TGs6K9mONqdKG
-9iVMD3in/d7AOTknxlVo3mrX3usFq1NHhAx7BfcqI02WOoMt6aR2sXDyeIvd+91c
-6Mfg0LWr9mcGSbeRMVSyxakB0ZGC6/xAIxSje+pAbXGNG+s6qeLQtk+VdGL+4Syu
-ZQuN4iMZYOVKFaT8hrC+O/PfyEmMISeP+D78EBuOOikWW7aV230=
-=u/GX
------END PGP SIGNATURE-----
-
---7gyjdunorgun5zsi--
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -19,6 +19,14 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
++	aliases {
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c2 = &i2c2;
++		i2c3 = &i2c3;
++		i2c4 = &i2c4;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
+@@ -338,6 +346,91 @@
+ 			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
+ 		};
+ 
++		i2c0: i2c@e6500000 {
++			compatible = "renesas,i2c-r8a77970",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe6500000 0 0x40>;
++			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 931>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 931>;
++			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
++			       <&dmac2 0x91>, <&dmac2 0x90>;
++			dma-names = "tx", "rx", "tx", "rx";
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c1: i2c@e6508000 {
++			compatible = "renesas,i2c-r8a77970",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe6508000 0 0x40>;
++			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 930>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 930>;
++			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
++			       <&dmac2 0x93>, <&dmac2 0x92>;
++			dma-names = "tx", "rx", "tx", "rx";
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c2: i2c@e6510000 {
++			compatible = "renesas,i2c-r8a77970",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe6510000 0 0x40>;
++			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 929>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 929>;
++			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
++			       <&dmac2 0x95>, <&dmac2 0x94>;
++			dma-names = "tx", "rx", "tx", "rx";
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c3: i2c@e66d0000 {
++			compatible = "renesas,i2c-r8a77970",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe66d0000 0 0x40>;
++			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 928>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 928>;
++			dmas = <&dmac1 0x97>, <&dmac1 0x96>,
++			       <&dmac2 0x97>, <&dmac2 0x96>;
++			dma-names = "tx", "rx", "tx", "rx";
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c4: i2c@e66d8000 {
++			compatible = "renesas,i2c-r8a77970",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe66d8000 0 0x40>;
++			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 927>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 927>;
++			dmas = <&dmac1 0x99>, <&dmac1 0x98>,
++			       <&dmac2 0x99>, <&dmac2 0x98>;
++			dma-names = "tx", "rx", "tx", "rx";
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		hscif0: serial@e6540000 {
+ 			compatible = "renesas,hscif-r8a77970",
+ 				     "renesas,rcar-gen3-hscif",
