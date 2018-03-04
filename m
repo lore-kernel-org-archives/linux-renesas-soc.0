@@ -1,33 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:53256 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933932AbeCGPke (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:43674 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751819AbeCDH7V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:40:34 -0500
-Date: Wed, 07 Mar 2018 10:40:33 -0500 (EST)
-Message-Id: <20180307.104033.1799598549716294161.davem@davemloft.net>
-To: niklas.soderlund+renesas@ragnatech.se
-Cc: sergei.shtylyov@cogentembedded.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+        Sun, 4 Mar 2018 02:59:21 -0500
+Received: by mail-lf0-f46.google.com with SMTP id q69so18844047lfi.10
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Mar 2018 23:59:20 -0800 (PST)
 Subject: Re: [PATCH] ravb: remove erroneous comment
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180303223954.14152-1-niklas.soderlund+renesas@ragnatech.se>
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 References: <20180303223954.14152-1-niklas.soderlund+renesas@ragnatech.se>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <7f564c35-c12e-f51b-e5b4-f793c540d50c@cogentembedded.com>
+Date: Sun, 4 Mar 2018 10:59:20 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180303223954.14152-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-Date: Sat,  3 Mar 2018 23:39:54 +0100
+Hello!
+
+On 3/4/2018 1:39 AM, Niklas Söderlund wrote:
 
 > When addressing a review comment in a early version of the offending
 > patch a comment where left in which should have been removed. Remove the
+
+    s/where/was/?
+
 > comment to keep it consistent with the code.
 > 
 > Fixes: 75efa06f457bbed3 ("ravb: add support for changing MTU")
 > Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Applied to net-next, thanks.
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+[...]
+
+MBR, Sergei
