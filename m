@@ -1,102 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50137 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162480AbeCAWE5 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:36399 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932118AbeCDWj7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 17:04:57 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v7 2/4] dt-bindings: display: renesas: Deprecate LVDS support in the DU bindings
-Date: Fri,  2 Mar 2018 00:05:37 +0200
-Message-Id: <20180301220540.11959-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180301220540.11959-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180301220540.11959-1-laurent.pinchart+renesas@ideasonboard.com>
+        Sun, 4 Mar 2018 17:39:59 -0500
+Date: Sun, 4 Mar 2018 23:39:57 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 16/16] mmc: tmio: remove useless TMIO_MASK_CMD
+ handling in tmio_mmc_host_probe()
+Message-ID: <20180304223957.3f3s3lbrerenyula@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-17-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nwa4ymbvg2u4kg23"
+Content-Disposition: inline
+In-Reply-To: <1516206496-16612-17-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoders now have their own DT bindings, representing
-them as part of the DU is deprecated.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-Changes since v1:
+--nwa4ymbvg2u4kg23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- Remove the LVDS reg range from the example
-- Remove the reg-names property
----
- .../devicetree/bindings/display/renesas,du.txt     | 31 ++++++++--------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
+On Thu, Jan 18, 2018 at 01:28:16AM +0900, Masahiro Yamada wrote:
+> TMIO_MASK_CMD is properly enabled in tmio_mmc_start_command().
+>=20
+> We have no reason to set it up in tmio_mmc_host_probe().  (If we
+> really wanted to set it in the probe, we would have to do likewise
+> when resuming.)
+>=20
+> Even worse, the following code is extremely confusing:
+>=20
+>   _host->sdcard_irq_mask &=3D ~irq_mask;
+>=20
+> The logic is opposite between "->sdcard_irq_mask" and "irq_mask".
+> The intention is not clear at a glance.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index cd48aba3bc8c..e79cf9b0ad38 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -14,12 +14,7 @@ Required Properties:
-     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
-     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
- 
--  - reg: A list of base address and length of each memory resource, one for
--    each entry in the reg-names property.
--  - reg-names: Name of the memory resources. The DU requires one memory
--    resource for the DU core (named "du") and one memory resource for each
--    LVDS encoder (named "lvds.x" with "x" being the LVDS controller numerical
--    index).
-+  - reg: the memory-mapped I/O registers base address and length
- 
-   - interrupt-parent: phandle of the parent interrupt controller.
-   - interrupts: Interrupt specifiers for the DU interrupts.
-@@ -29,14 +24,13 @@ Required Properties:
-   - clock-names: Name of the clocks. This property is model-dependent.
-     - R8A7779 uses a single functional clock. The clock doesn't need to be
-       named.
--    - All other DU instances use one functional clock per channel and one
--      clock per LVDS encoder (if available). The functional clocks must be
--      named "du.x" with "x" being the channel numerical index. The LVDS clocks
--      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
--    - In addition to the functional and encoder clocks, all DU versions also
--      support externally supplied pixel clocks. Those clocks are optional.
--      When supplied they must be named "dclkin.x" with "x" being the input
--      clock numerical index.
-+    - All other DU instances use one functional clock per channel The
-+      functional clocks must be named "du.x" with "x" being the channel
-+      numerical index.
-+    - In addition to the functional clocks, all DU versions also support
-+      externally supplied pixel clocks. Those clocks are optional. When
-+      supplied they must be named "dclkin.x" with "x" being the input clock
-+      numerical index.
- 
-   - vsps: A list of phandle and channel index tuples to the VSPs that handle
-     the memory interfaces for the DU channels. The phandle identifies the VSP
-@@ -69,9 +63,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 
- 	du: display@feb00000 {
- 		compatible = "renesas,du-r8a7795";
--		reg = <0 0xfeb00000 0 0x80000>,
--		      <0 0xfeb90000 0 0x14>;
--		reg-names = "du", "lvds.0";
-+		reg = <0 0xfeb00000 0 0x80000>;
- 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-@@ -79,9 +71,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
- 		clocks = <&cpg CPG_MOD 724>,
- 			 <&cpg CPG_MOD 723>,
- 			 <&cpg CPG_MOD 722>,
--			 <&cpg CPG_MOD 721>,
--			 <&cpg CPG_MOD 727>;
--		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+			 <&cpg CPG_MOD 721>;
-+		clock-names = "du.0", "du.1", "du.2", "du.3";
- 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
- 
- 		ports {
--- 
-Regards,
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Laurent Pinchart
+
+--nwa4ymbvg2u4kg23
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqcdb0ACgkQFA3kzBSg
+KbYKWQ//elSq8BiTicTAt9UFwRn4RrO5B+DNJ0MT8pu0m/uLRxggydHaHTlbUF26
+UQWmWMoV68fYJI1Y+jZl9eQVWIVig9eJkxt5kiG4wzNEv7V0SvlcySEOLC1bmjf/
+L3uFayil/EgZZ9HQijWqUwfz/EctsWd8OeizryDbBFAOtuNJaxnKC+aJhsYFrkZ2
+B4vh/04WU7Ew9hVdpzdbIfA+rywRm5ObHy720uSZPtbHT+ewqgJdnqeHFQZRXRRw
+tgKsGNPtaXsWKIXnucI9jcVrfw1I7myme+B+wdPd6kcdnk91lgCHfaYNSQTy46P/
+BqVa2nTWHACRZOc1KBjzVLsUdUrs6cl8ObZwK5AE3waFPDoj5pDyO8bleMereT98
+F0Ca3jV1M5bssTdFVeSAg/KMW2ppHnkzWBtOdRotFCt35n2Pg+FZ7L9kIDQwIxnj
+Z/QCteOCYCynXC4bhArd3SYhXZsOO+dgrYetD7L2bl7pV9npxUQ9M9HU25bhD3Oz
+rDMBPFwUofm/5kfbhKW/9VZqZINPVryANznqOBVg7m1bBxJlT8kZZEDhLLWMLgIQ
+it989fN2LCI6PQp6fhqFVTcuvpe6O6YcRoff4teKY9FDpzIJGm+UEJANPHbhoRp6
+lKZJ/u4MldEFLpmAYVA0vfUrKXPNuU+0Jm8oGGdxGrBNoLsIhbI=
+=mJIR
+-----END PGP SIGNATURE-----
+
+--nwa4ymbvg2u4kg23--
