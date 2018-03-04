@@ -1,86 +1,89 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 1 Mar 2018 10:54:13 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/2] arm64: dts: renesas: r8a77970: add I2C support
-Message-ID: <20180301095412.obgrryduesbjinbv@verge.net.au>
-References: <3aaa4464-fc85-3fb4-2026-5d9df357bdff@cogentembedded.com>
- <e309d9cd-69c6-7db2-96a4-73bc788b7cfc@cogentembedded.com>
- <CAMuHMdWcwx8=KKf0RajtSXnJY9duaupFmUUKEka=uAmJjTdvoQ@mail.gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:36331 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932118AbeCDWey (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 4 Mar 2018 17:34:54 -0500
+Date: Sun, 4 Mar 2018 23:34:51 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 14/16] mmc: tmio: move TMIO_MASK_{READOP,WRITEOP}
+ handling to correct place
+Message-ID: <20180304223451.joqs2yoopwogncvj@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-15-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7gyjdunorgun5zsi"
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdWcwx8=KKf0RajtSXnJY9duaupFmUUKEka=uAmJjTdvoQ@mail.gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1516206496-16612-15-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 28, 2018 at 11:56:27AM +0100, Geert Uytterhoeven wrote:
-> On Mon, Feb 26, 2018 at 9:54 PM, Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
-> > Define the generic R8A77970 parts of the I2C[0-4] device node.
-> >
-> > Based on the original (and large) patch by Daisuke Matsushita
-> > <daisuke.matsushita.ns@hitachi.com>.
-> >
-> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> >
-> > ---
-> > Changes in version 2:
-> > - made  use of  the SYSC power domain #define's;
-> > - moved the I2C nodes before HSCIF nodes.
-> 
-> auto-repeat below...
-> 
-> >  arch/arm64/boot/dts/renesas/r8a77970.dtsi |   88 ++++++++++++++++++++++++++++++
-> >  1 file changed, 88 insertions(+)
-> >
-> > Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> > ===================================================================
-> > --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> > +++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> > @@ -19,6 +19,14 @@
-> >         #address-cells = <2>;
-> >         #size-cells = <2>;
-> >
-> > +       aliases {
-> > +               i2c0 = &i2c0;
-> > +               i2c1 = &i2c1;
-> > +               i2c2 = &i2c2;
-> > +               i2c3 = &i2c3;
-> > +               i2c4 = &i2c4;
-> > +       };
-> > +
-> >         psci {
-> >                 compatible = "arm,psci-1.0", "arm,psci-0.2";
-> >                 method = "smc";
-> > @@ -338,6 +346,86 @@
-> >                                <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
-> >                 };
-> >
-> > +               i2c0: i2c@e6500000 {
-> > +                       compatible = "renesas,i2c-r8a77970",
-> > +                                    "renesas,rcar-gen3-i2c";
-> > +                       reg = <0 0xe6500000 0 0x40>;
-> > +                       interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clocks = <&cpg CPG_MOD 931>;
-> > +                       power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-> > +                       resets = <&cpg 931>;
-> > +                       dmas = <&dmac1 0x91>, <&dmac1 0x90>;
-> 
-> Can't all five i2c interfaces be used with both dmac1 and dmac2?
-> 
-> With that fixed:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Sergei, please address this review and repost as appropriate.
+--7gyjdunorgun5zsi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jan 18, 2018 at 01:28:14AM +0900, Masahiro Yamada wrote:
+> As far as I tested the IP on UniPhier SoCs, TMIO_STAT_{RXRDY,TXRQ}
+> are asserted for DMA mode as well as for PIO.  I need to disable the
+> those IRQs in dma_ops->start hook, otherwise the DMA transfer fails
+> with the following error message:
+>   PIO IRQ in DMA mode!
+>=20
+> Renesas chips are the same cases since I see their dma_ops->start
+> hooks explicitly clear TMIO_STAT_{RXRDY,TXRQ} (with nice comment!).
+>=20
+> If we do this sanity check in TMIO MMC core, RXRDY/TXRQ handling
+> should be entirely moved to the core.  tmio_mmc_cmd_irq() will
+> be a suitable place to disable them.
+>=20
+> The probe function sets TMIO_MASK_{READOP,WRITEOP} but this is odd.
+>=20
+>     /* Unmask the IRQs we want to know about */
+>     if (!_host->chan_rx)
+>             irq_mask |=3D TMIO_MASK_READOP;
+>     if (!_host->chan_tx)
+>             irq_mask |=3D TMIO_MASK_WRITEOP;
+>=20
+> At this point, _host->{chan_rx,chan_tx} are _always_ NULL because
+> tmio_mmc_request_dma() is called after this code.  Consequently,
+> TMIO_MASK_{READOP,WRITEOP} are set here whether DMA is used or not.
+> Remove this pointless code.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--7gyjdunorgun5zsi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqcdIcACgkQFA3kzBSg
+KbbQ1Q//bxdR3m/BVVyL+YM+FHh5fhacmQn4jWGsiuAoMJxwnoF+7UTkf8esucKs
+VAtJVb+l3nlCDzOKoc25R6o+kJO4RKSKdYRAp2hFQzXPUbA/R34cuANqhdP021JW
+huAbKtbd03f3I5n1HOzplwh5dwUIaSUxK7vMfyRQjeQSJAyFn1K0I10amoVLVEeE
+v2p9AvH/SVsEm5FS+XR+ODEoxs6JXChBdsB6RRuNqDwySpjGy8GI02d3rOpYCLlZ
+ruohLPN7rKUBu344pwHgneb9jlExfQRC81AP1TlVlddPFs1+1xJ5Y0akiZQuYtXs
+PpUnO8z/jZt1Jc/KIiCgZvSm9eYEPf5S/LBJCg2Cb+eNt7z2pMC/NPrm1JWoFsWi
+9MY2bsj/Gzquq3GgwMgIuMZtYNouT41AZXriTdt7ODcM4s67g0RUpAoadejwxQ14
+G2C3cBlZTGneiB/Vi2h3pN7BSAxzuDcBMebyTXwnnf/CDzc2Jf+TGs6K9mONqdKG
+9iVMD3in/d7AOTknxlVo3mrX3usFq1NHhAx7BfcqI02WOoMt6aR2sXDyeIvd+91c
+6Mfg0LWr9mcGSbeRMVSyxakB0ZGC6/xAIxSje+pAbXGNG+s6qeLQtk+VdGL+4Syu
+ZQuN4iMZYOVKFaT8hrC+O/PfyEmMISeP+D78EBuOOikWW7aV230=
+=u/GX
+-----END PGP SIGNATURE-----
+
+--7gyjdunorgun5zsi--
