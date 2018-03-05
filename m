@@ -1,167 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753616AbeCPOwI (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40966 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932530AbeCEWxN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:52:08 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/69] arm64: dts: renesas: initial R8A77980 SoC device tree
-Date: Fri, 16 Mar 2018 15:50:45 +0100
-Message-Id: <f3a54d6c17f5ec826ff81e4f9f35a11e63211c53.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Mon, 5 Mar 2018 17:53:13 -0500
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v8 1/4] dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
+Date: Tue,  6 Mar 2018 00:54:00 +0200
+Message-Id: <20180305225403.25298-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The Renesas R-Car Gen2 and Gen3 SoCs have internal LVDS encoders. Add
+corresponding device tree bindings.
 
-The initial R8A77980 SoC device tree including Cortex-A53 CPU, GIC, timer,
-CPG, RST, and SYSC.
-
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 122 ++++++++++++++++++++++++++++++
- 1 file changed, 122 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77980.dtsi
+Changes since v6:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+- Fixed typo in SoC name
+
+Changes since v1:
+
+- Move the SoC name before the IP name in compatible strings
+- Rename parallel input to parallel RGB input
+- Fixed "renesas,r8a7743-lvds" description
+- Document the resets property
+- Fixed typo
+---
+ .../bindings/display/bridge/renesas,lvds.txt       | 56 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
 new file mode 100644
-index 000000000000..6a92bbf55013
+index 000000000000..af45ba9d8f90
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -0,0 +1,122 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the r8a77980 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2018 Cogent Embedded, Inc.
-+ */
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+@@ -0,0 +1,56 @@
++Renesas R-Car LVDS Encoder
++==========================
 +
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
++These DT bindings describe the LVDS encoder embedded in the Renesas R-Car
++Gen2, R-Car Gen3 and RZ/G SoCs.
 +
-+/ {
-+	compatible = "renesas,r8a77980";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
++Required properties:
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++- compatible : Shall contain one of
++  - "renesas,r8a7743-lvds" for R8A7743 (RZ/G1M) compatible LVDS encoders
++  - "renesas,r8a7790-lvds" for R8A7790 (R-Car H2) compatible LVDS encoders
++  - "renesas,r8a7791-lvds" for R8A7791 (R-Car M2-W) compatible LVDS encoders
++  - "renesas,r8a7793-lvds" for R8A7793 (R-Car M2-N) compatible LVDS encoders
++  - "renesas,r8a7795-lvds" for R8A7795 (R-Car H3) compatible LVDS encoders
++  - "renesas,r8a7796-lvds" for R8A7796 (R-Car M3-W) compatible LVDS encoders
 +
-+		a53_0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0>;
-+			clocks = <&cpg CPG_CORE 0>;
-+			power-domains = <&sysc 5>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
++- reg: Base address and length for the memory-mapped registers
++- clocks: A phandle + clock-specifier pair for the functional clock
++- resets: A phandle + reset specifier for the module reset
 +
-+		L2_CA53: cache-controller {
-+			compatible = "cache";
-+			power-domains = <&sysc 21>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
++Required nodes:
 +
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
++The LVDS encoder has two video ports. Their connections are modelled using the
++OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
 +
-+	extalr_clk: extalr {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
++- Video port 0 corresponds to the parallel RGB input
++- Video port 1 corresponds to the LVDS output
 +
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
++Each port shall have a single endpoint.
 +
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
 +
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
++Example:
 +
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77980-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
++	lvds0: lvds@feb90000 {
++		compatible = "renesas,r8a7790-lvds";
++		reg = <0 0xfeb90000 0 0x1c>;
++		clocks = <&cpg CPG_MOD 726>;
++		resets = <&cpg 726>;
 +
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77980-rst";
-+			reg = <0 0xe6160000 0 0x200>;
-+		};
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77980-sysc";
-+			reg = <0 0xe6180000 0 0x440>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1010000 0 0x1000>,
-+			      <0x0 0xf1020000 0 0x20000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
-+				      IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
++			port@0 {
++				reg = <0>;
++				lvds0_in: endpoint {
++					remote-endpoint = <&du_out_lvds0>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				lvds0_out: endpoint {
++				};
++			};
 +		};
 +	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
-+				       IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) |
-+				       IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) |
-+				       IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) |
-+				       IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2afba909724c..13c8ec11135a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4744,6 +4744,7 @@ F:	drivers/gpu/drm/rcar-du/
+ F:	drivers/gpu/drm/shmobile/
+ F:	include/linux/platform_data/shmob_drm.h
+ F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
++F:	Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+ F:	Documentation/devicetree/bindings/display/renesas,du.txt
+ 
+ DRM DRIVERS FOR ROCKCHIP
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
