@@ -1,83 +1,98 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:46233 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeCPPSf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:18:35 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/3]  drm: Add Thine THC63LVD1024 LVDS decoder bridge
-Date: Fri, 16 Mar 2018 16:16:36 +0100
-Message-Id: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v8 2/4] dt-bindings: display: renesas: Deprecate LVDS support in the DU bindings
+Date: Tue,  6 Mar 2018 00:54:01 +0200
+Message-Id: <20180305225403.25298-3-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
-   (hopefully) last iteration, with Niklas' Reviewed-by tags.
+The internal LVDS encoders now have their own DT bindings, representing
+them as part of the DU is deprecated.
 
-Simply drop an un-necessary #ifdef guard for CONFIG_OF in driver's code as
-suggested by Niklas.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+Changes since v1:
 
-Time to talk how this series will go in?
-I assume bindings and driver through DRM tree, while Simon is to pick up
-the Eagle DTS update once the first two patches will get in. Is this ok for
-both DRM and Renesas side? Also I assume before bindings gets accepted someone
-from devicetree list should ack them, correct?
+- Remove the LVDS reg range from the example
+- Remove the reg-names property
+---
+ .../devicetree/bindings/display/renesas,du.txt     | 31 ++++++++--------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
-Simon: as Niklas suggested, I have now listed the series dependencies below
-the commit message. It is my understanding that is not necessary to resend
-his series with that commit squashed on top (which I also prefer not to).
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index cd48aba3bc8c..e79cf9b0ad38 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -14,12 +14,7 @@ Required Properties:
+     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
+     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
+ 
+-  - reg: A list of base address and length of each memory resource, one for
+-    each entry in the reg-names property.
+-  - reg-names: Name of the memory resources. The DU requires one memory
+-    resource for the DU core (named "du") and one memory resource for each
+-    LVDS encoder (named "lvds.x" with "x" being the LVDS controller numerical
+-    index).
++  - reg: the memory-mapped I/O registers base address and length
+ 
+   - interrupt-parent: phandle of the parent interrupt controller.
+   - interrupts: Interrupt specifiers for the DU interrupts.
+@@ -29,14 +24,13 @@ Required Properties:
+   - clock-names: Name of the clocks. This property is model-dependent.
+     - R8A7779 uses a single functional clock. The clock doesn't need to be
+       named.
+-    - All other DU instances use one functional clock per channel and one
+-      clock per LVDS encoder (if available). The functional clocks must be
+-      named "du.x" with "x" being the channel numerical index. The LVDS clocks
+-      must be named "lvds.x" with "x" being the LVDS encoder numerical index.
+-    - In addition to the functional and encoder clocks, all DU versions also
+-      support externally supplied pixel clocks. Those clocks are optional.
+-      When supplied they must be named "dclkin.x" with "x" being the input
+-      clock numerical index.
++    - All other DU instances use one functional clock per channel The
++      functional clocks must be named "du.x" with "x" being the channel
++      numerical index.
++    - In addition to the functional clocks, all DU versions also support
++      externally supplied pixel clocks. Those clocks are optional. When
++      supplied they must be named "dclkin.x" with "x" being the input clock
++      numerical index.
+ 
+   - vsps: A list of phandle and channel index tuples to the VSPs that handle
+     the memory interfaces for the DU channels. The phandle identifies the VSP
+@@ -69,9 +63,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 
+ 	du: display@feb00000 {
+ 		compatible = "renesas,du-r8a7795";
+-		reg = <0 0xfeb00000 0 0x80000>,
+-		      <0 0xfeb90000 0 0x14>;
+-		reg-names = "du", "lvds.0";
++		reg = <0 0xfeb00000 0 0x80000>;
+ 		interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
+@@ -79,9 +71,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 		clocks = <&cpg CPG_MOD 724>,
+ 			 <&cpg CPG_MOD 723>,
+ 			 <&cpg CPG_MOD 722>,
+-			 <&cpg CPG_MOD 721>,
+-			 <&cpg CPG_MOD 727>;
+-		clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
++			 <&cpg CPG_MOD 721>;
++		clock-names = "du.0", "du.1", "du.2", "du.3";
+ 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 
+ 		ports {
+-- 
+Regards,
 
-Thanks
-   j
+Laurent Pinchart
 
-v5 -> v6:
-- Drop check for CONFIG_OF as it is a Kconfig dependency
-- Add Niklas Reviewed-by tags
-- List [3/3] depenencies below commit message to ease integration
-
-v4 -> v5:
-- Fix punctuation in bindings documentation
-- Add small statement to bindings document to clarify the chip has no
-  control bus
-- Print regulator name in enable/disable routines error path
-- Add Andrzej Reviewed-by tag
-
-v3 -> v4:
-- Rename permutations of "pdwn" to just "pdwn" everywhere in the series
-- Improve power enable/disable routines as suggested by Andrzej and Sergei
-- Change "pdwn" gpio initialization to use the logical output level
-- Change Kconfig description
-
-v2 -> v3:
-- Drop support for "lvds-decoder" and make the driver THC63LVD1024 specific
--- Rework bindings to describe multiple input/output ports
--- Rename driver and remove "lvds-decoder" references
--- Rework Eagle DTS to use new bindings
-
-v1 -> v2:
-- Drop support for THC63LVD1024
-
-Jacopo Mondi (3):
-  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-  drm: bridge: Add thc63lvd1024 LVDS decoder driver
-  arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-
- .../bindings/display/bridge/thine,thc63lvd1024.txt |  66 ++++++
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |  33 ++-
- drivers/gpu/drm/bridge/Kconfig                     |   6 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/thc63lvd1024.c              | 255 +++++++++++++++++++++
- 5 files changed, 358 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
- create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
-
---
-2.7.4
