@@ -1,50 +1,33 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:58802 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424508AbeCBOjr (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Mar 2018 09:39:47 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thierry Reding <thierry.reding@gmail.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 5 Mar 2018 10:10:12 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] dt-bindings: pwm: renesas-tpu: Misc Fixes
-Date: Fri,  2 Mar 2018 15:39:43 +0100
-Message-Id: <1520001585-12899-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/2] Add R8A77970/Eagle I2C support
+Message-ID: <20180305091009.fj4f6riash7ibklw@verge.net.au>
+References: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Thierry,
+On Sat, Mar 03, 2018 at 10:02:41PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+> 'renesas-devel-20180301-v4.16-rc3' tag. We're adding the R8A77970 I2C nodes
+> and then describing the PCA9654 I/O expander connected to the I2C0 bus.
+> 
+> [1/2] arm64: dts: renesas: r8a77970: add I2C support
+> [2/2] arm64: dts: renesas: eagle: add I2C0 support
 
-Here are two small fixes for the DT bindings of the Renesas Timer Pulse
-Unit.
-
-Changes compared to v1:
-  - Dropped DTS counterpart (applied),
-  - Add Acked-by, Reviewed-by.
-
-Thanks for applying!
-
-Geert Uytterhoeven (2):
-  dt-bindings: pwm: renesas-tpu: Correct example TPU register block size
-  dt-bindings: pwm: renesas-tpu: Correct SoC part numbers and family
-    names
-
- Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks, applied.
