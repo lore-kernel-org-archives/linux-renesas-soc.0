@@ -1,61 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752657AbeCPOwA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:52:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/69] arm64: dts: renesas: r8a7795: update register size for thermal
-Date: Fri, 16 Mar 2018 15:50:39 +0100
-Message-Id: <cd8325dc194d6fa0707c9d5b427ca1fed6893b53.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 2/2] phy: rcar-gen3-usb3: Add binding for r8a77965
+Date: Mon, 5 Mar 2018 05:19:17 +0000
+Message-ID: <TY1PR06MB0992BB23EF4B56F1D7719D2CD8DA0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1519710747-26435-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <6df55c1d-8855-7aff-af13-cf0f43cc5f8b@ti.com>
+In-Reply-To: <6df55c1d-8855-7aff-af13-cf0f43cc5f8b@ti.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi,
 
-To be able to read fused calibration values from hardware the size of
-the register resource of TSC1 needs to be incremented to cover one more
-register which holds the information if the calibration values have been
-fused or not.
+> From: Kishon Vijay Abraham I, Sent: Friday, March 2, 2018 5:15 PM
+>=20
+> On Tuesday 27 February 2018 11:22 AM, Yoshihiro Shimoda wrote:
+> > This patch adds binding for r8a77965 (R-Car M3-N).
+>=20
+> $subject should be  dt-bindings: rcar-gen3-phy-usb3: Add binding for r8a7=
+7965
 
-Instead of increasing TSC1 size to the value from the datasheet update
-all TSC's size to the smallest granularity of the address decoder
-circuitry
+I will revise this in v2.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Best regards,
+Yoshihiro Shimoda
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 19b7de57704c..ce85704976f0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2385,9 +2385,9 @@
- 
- 		tsc: thermal@e6198000 {
- 			compatible = "renesas,r8a7795-thermal";
--			reg = <0 0xe6198000 0 0x68>,
--			      <0 0xe61a0000 0 0x5c>,
--			      <0 0xe61a8000 0 0x5c>;
-+			reg = <0 0xe6198000 0 0x100>,
-+			      <0 0xe61a0000 0 0x100>,
-+			      <0 0xe61a8000 0 0x100>;
- 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.11.0
+> Thanks
+> Kishon
+
