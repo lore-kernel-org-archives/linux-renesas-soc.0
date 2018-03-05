@@ -1,45 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:44078 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932923AbeCEIS6 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:61936 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932792AbeCEFcq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 03:18:58 -0500
-MIME-Version: 1.0
-In-Reply-To: <1520227965-4471-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 5 Mar 2018 00:32:46 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 2/3] phy: rcar-gen3-usb2: Add support for r8a77965
+Date: Mon,  5 Mar 2018 14:32:44 +0900
+Message-Id: <1520227965-4471-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1520227965-4471-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1520227965-4471-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1520227965-4471-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Mar 2018 09:18:57 +0100
-Message-ID: <CAMuHMdVyEXs940YzGyVuMXYomxUbng_8DSKabODpsBsBDgcs_w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] phy: rcar-gen3-usb2: Add support for r8a77965
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 5, 2018 at 6:32 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch adds support for r8a77965 (R-Car M3-N). This SoC has
-> dedicated pins.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch adds support for r8a77965 (R-Car M3-N). This SoC has
+dedicated pins.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 9c90e7d..fb8f05e 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -397,6 +397,10 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ 		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
+ 	},
+ 	{
++		.compatible = "renesas,usb2-phy-r8a77965",
++		.data = (void *)RCAR_GEN3_PHY_HAS_DEDICATED_PINS,
++	},
++	{
+ 		.compatible = "renesas,rcar-gen3-usb2-phy",
+ 	},
+ 	{ }
+-- 
+1.9.1
