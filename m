@@ -1,12 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:40382 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933579AbeCEJkC (ORCPT
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:55661 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933685AbeCEJfU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:40:02 -0500
-Date: Mon, 5 Mar 2018 10:39:59 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
+        Mon, 5 Mar 2018 04:35:20 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180305092259.bcpfbzvvoqxsfomf@katana>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <20180304224248.mzhsvl4ccmtzg5am@ninjato> <CAPDyKFq_1mR=b3iu6o4ZJQeAjRnWf_tzb=__7SxvZYqDNCo2bg@mail.gmail.com>
+ <20180305092259.bcpfbzvvoqxsfomf@katana>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 5 Mar 2018 18:34:33 +0900
+Message-ID: <CAK7LNATrq11iaa=uTuJx8Z9XMDg9CA8Nf0jdU3GkLKFH5fH9Gg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -24,62 +31,36 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Lee Jones <lee.jones@linaro.org>,
         Rich Felker <dalias@libc.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
- cleanups
-Message-ID: <20180305093959.gaxl74rplmh5er7x@katana>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <20180304224248.mzhsvl4ccmtzg5am@ninjato>
- <CAPDyKFq_1mR=b3iu6o4ZJQeAjRnWf_tzb=__7SxvZYqDNCo2bg@mail.gmail.com>
- <20180305092259.bcpfbzvvoqxsfomf@katana>
- <CAK7LNATrq11iaa=uTuJx8Z9XMDg9CA8Nf0jdU3GkLKFH5fH9Gg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fftsvgsxzyx4czcr"
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATrq11iaa=uTuJx8Z9XMDg9CA8Nf0jdU3GkLKFH5fH9Gg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Ulf, Wolfram,
 
---fftsvgsxzyx4czcr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+2018-03-05 18:22 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
+>
+>> I have added Wolframs tags to the already applied patches and applied
+>> that last two, 15 and 16.
+>
+> Thanks. Please note that patch 14 misses my Rev tag. (I gave it
+> yesterday but the patch was accidently applied before. One round too
+> early, so to say).
+>
+>> They are all present in my next branch. The fix that Wolfram sent on
+>> top, is added immediately after the commit it fixes.
+>
+> Could we also squash it, then?
+>
+
+If Wolfram is fine with squashing,
+that would be cleaner.
+
+In that case, can you add Tested-by
+to patch 12?
 
 
-> >> They are all present in my next branch. The fix that Wolfram sent on
-> >> top, is added immediately after the commit it fixes.
-> >
-> > Could we also squash it, then?
-> >
->=20
-> If Wolfram is fine with squashing,
-> that would be cleaner.
->=20
-> In that case, can you add Tested-by
-> to patch 12?
-
-Yup, sounds best to me.
 
 
---fftsvgsxzyx4czcr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqdEG8ACgkQFA3kzBSg
-Kbbdrw/9FS5fg7H/KFEoJl7C1DXVOVzIORnhYtPHmGYptzEYy1ruDWBEKxP7EcdU
-qhVrpVpQlcbYpIEBYnMEXIUtKKeAyLHdu0vDpfxNCbatYLv53J/Q3Bgpx9bJ4Si2
-ZmBkBV8zlzZQcClbEuUJbjWj/1NdGe5IQRbhnoMiyaqItpP/4e+8HgAZJ9TZDjvK
-+Butc3IKriFvGXUoTEaL0ItUCxLWV8l3O2seyKyQtVmbzTOb63FF6D6hXv79GjcH
-dfDNAM/r7zzw7cfpFi6/mOn1iQYyXCQhqhbJpmYKxpsx0e25TCfctAP0bi04dubO
-DnDPuAVPwJl9oVGsTWC0Z5MEYwDMfRR9fGYWB04Vw/fMIUa+3TnXeOoulde0jLpE
-P+9Lc/rOgBnRsKDx+BsYxZALvPzO2E6fNkVWe6/M3TTHyAHl3cOipbRzGENdFf9w
-mOjfpMtjYZTW5WimA92zjfhrMZ/+KYKJe8jNgZTrD3qMip1OqnETHz5r0inXu06n
-RPdhlJJYERapMb2Uf2wbUBoNapQgArvgBvpjM+usL6K2zKLNv2yp7o2lusWwzOOj
-tggXakq8E6mB6y1wrSzXOvGsOaBkMULg4401NlQcfiEVWIF826/KH9nkNkIBLobI
-KE92OgornpnD/xXYykDarpuHaJrbs07CpT0Qf4baNWp/bs74uow=
-=YD3V
------END PGP SIGNATURE-----
-
---fftsvgsxzyx4czcr--
+-- 
+Best Regards
+Masahiro Yamada
