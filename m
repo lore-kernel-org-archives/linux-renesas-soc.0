@@ -1,83 +1,142 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:36425 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932118AbeCDWmu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 4 Mar 2018 17:42:50 -0500
-Date: Sun, 4 Mar 2018 23:42:48 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-sh@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rich Felker <dalias@libc.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
- cleanups
-Message-ID: <20180304224248.mzhsvl4ccmtzg5am@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v8 0/4] R-Car DU: Convert LVDS code to bridge driver
+Date: Tue,  6 Mar 2018 00:53:59 +0200
+Message-Id: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yszxsr7oewrqteql"
-Content-Disposition: inline
-In-Reply-To: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello,
 
---yszxsr7oewrqteql
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch series addresses a design mistake that dates back from the initial
+DU support. Support for the LVDS encoders, which are IP cores separate from
+the DU, was bundled in the DU driver. Worse, both the DU and LVDS were
+described through a single DT node.
 
-On Thu, Jan 18, 2018 at 01:28:00AM +0900, Masahiro Yamada wrote:
->=20
-> In the previous batch (https://lkml.org/lkml/2017/11/24/428)
-> I sent 22 patches for TMIO MMC.
->=20
-> 14 patches were applied, the rest is under discussion.
->=20
-> This series consists of 16 patches.
+To fix the, patches 1/4 and 2/4 define new DT bindings for the LVDS
+encoders, and deprecate their description inside the DU bindings. To retain
+backward compatibility with existing DT, patch 3/4 then patch the device tree
+at runtime to convert the legacy bindings to the new ones.
 
-Which I tested now, so we can add
+With the DT side addressed, patch 4/4 converts the LVDS support code to a
+separate bridge driver.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+I decided to go for live DT patching in patch 3/4 because implementing
+support for both the legacy and new bindings in the driver would have been
+very intrusive, and prevented further cleanups. This version relies more
+heavily on overlays to avoid touching the internals of the OF core compared to
+v2, even if manual fixes to the device tree are still needed.
 
-to the patches except for
+The patches and their dependencies are available from
 
-> Patch 12: updated per Wolfram
+	git://linuxtv.org/pinchartl/media.git drm/next/du
 
-this one which needs a fix. I will send it as an incremental patch.
+I plan to send a pull request tomorrow if no new issue is discovered.
 
+Compared to v7, the series has been rebased on top of Frank Rowand's
+"[PATCH v7 0/5] of: change overlay apply input data from unflattened"
+patches. Patch 3/4 now uses of_overlay_fdt_apply() instead of
+of_overlay_apply().
 
---yszxsr7oewrqteql
-Content-Type: application/pgp-signature; name="signature.asc"
+Compared to v6, patch 3/4 now exists in two variants, to accommodate Frank's
+"[PATCH v4 0/4] of: change overlay apply input data from unflattened" patch
+series. If that series can't make it to v4.17, patch 3/4 variant 1 will be
+used. Otherwise I will go with variant 2.
 
------BEGIN PGP SIGNATURE-----
+Compared to v5, I've dropped the OF changeset halpers series as Frank raised
+concerns about hidding it in the middle of a driver patch series. I've thus
+copied the implementation of of_changeset_add_property_copy() in the driver to
+avoid blocking this series. The function arguments are identical, so when the
+OF changeset helpers will land it will be very easy to drop the private copy
+and use the of_changeset_add_property_copy() helper.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqcdmgACgkQFA3kzBSg
-KbZk8Q/9HwCGNFQurY6N8ZOxjaTvUVyMWSSfTRbGAIq5dE8cDMsIzKjxzurENvNs
-1eg1aq2HG/W59pbCcqbt5rcCwtnqWjXjXprbVXQWbDxOfDh5MracWtCsyGxiDvLt
-MADjdQlRBEumF2XGlVpcSgFmQqG/W3vjvPXaYijInc8twkIGOd/bPU71Kt4bQXZV
-5Ft4VOLK/JQXfysIqHDZL9z1LTeCMeJ1Ow6+vK/izpTS9O2sv5a/ZmjnQKLEX+8V
-GZdaLDEsZ1CbAmMj0ByQ3udvqrw5K8j+MpR41T6wb2XilMG8a9i+PsuRG517P+94
-DLq0PnyUy4ABEAzR6/fGhuera1x6oRSvYzOfuXtwy0n+xPS2Nq0gSaDnO6VWYoBg
-kjoUDdujpFbFV2mc7eaV+oHfRLzCFO3hmm8NlQGIY59/ESmk5Fq2dtcIKarYaYkS
-phWN8dgpE6uiMeCFuzdeXwloYcCw5kehYfxBgHmVGQuRlNqsWQnr7W6tvqOgxbFh
-UDATbvqQ+haeKmrzduMjrtSNKwk2kK95T2vrCDK3XUMDou2N6hmkL0VFbOuxRe9p
-WQ9ayT/rEI0N2z6QG64E4KED89FgZu7B6KWCC4Yo40pb45xjxZQUEavPmXQbzoTb
-vi9eMvgMsgeJy7JSv1TW1QUclewYXxPhK0puxY5r0QuyzRZTDDc=
-=8bck
------END PGP SIGNATURE-----
+Compared to v4, the patch "of: changeset: Add of_changeset_node_move method"
+has been dropped as it's not needed. The patches that update the DT sources to
+the new DU and LVDS bindings have been dropped as well to avoid spamming the
+lists as they depend on the driver changes going in first to avoid
+regressions and haven't been changed.
 
---yszxsr7oewrqteql--
+Compared to v3, this series uses the OF changeset API to update properties
+instead of accessing the internals of the property structure. This removes the
+local implementation of functions to look up nodes by path and update
+properties. In order to do this, I pulled in Pantelis' patch series titled
+"[PATCH v2 0/5] of: dynamic: Changesets helpers & fixes" at Rob's request, and
+rebased it while taking two small review comments into account.
+
+Rob, I'd like this series to be merged in v4.17. As the changeset helpers are
+now a dependency, I'd need you to merge them early (ideally on top of
+v4.16-rc1) and provide a stable branch, or get your ack to merge them through
+Dave's tree if they don't conflict with what you have and will queue for
+v4.17.
+
+This version also drops the small fix to the Porter board device tree that has
+been queued for v4.17 already.
+
+Compared to v2, the biggest change is in patch 3/4. Following Rob's and
+Frank's reviews it was clear that modifying the unflattened DT structure of
+the overlay before applying it wasn't popular. I have thus decided to use one
+overlay source per SoC to move as much of the DT changes to the overlay as
+possible, and only perform manual modifications (that are still needed as some
+of the information is board-specific) on the system DT after applying the
+overlay. As a result the overlay is parsed and applied without being modified.
+
+Compared to v1, this series update the r8a7792 and r8a7794 device tree sources
+and incorporate review feedback as described by the changelogs of individual
+patches.
+
+Laurent Pinchart (4):
+  dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
+  dt-bindings: display: renesas: Deprecate LVDS support in the DU
+    bindings
+  drm: rcar-du: Fix legacy DT to create LVDS encoder nodes
+  drm: rcar-du: Convert LVDS encoder code to bridge driver
+
+ .../bindings/display/bridge/renesas,lvds.txt       |  56 +++
+ .../devicetree/bindings/display/renesas,du.txt     |  31 +-
+ MAINTAINERS                                        |   1 +
+ drivers/gpu/drm/rcar-du/Kconfig                    |   6 +-
+ drivers/gpu/drm/rcar-du/Makefile                   |  10 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  21 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   5 -
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 175 +------
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |  12 -
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  14 +-
+ drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  93 ----
+ drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h          |  24 -
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c          | 238 ----------
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h          |  64 ---
+ drivers/gpu/drm/rcar-du/rcar_du_of.c               | 322 +++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_of.h               |  20 +
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts    |  76 +++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts    |  50 ++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts    |  50 ++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts    |  50 ++
+ .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts    |  50 ++
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                | 524 +++++++++++++++++++++
+ 22 files changed, 1255 insertions(+), 637 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.c
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of.h
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_lvds.c
+
+-- 
+Regards,
+
+Laurent Pinchart
+
