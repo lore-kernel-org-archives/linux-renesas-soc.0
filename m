@@ -1,65 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:42946 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751480AbeCUIH1 (ORCPT
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:43739 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933054AbeCEKYU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:07:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Stefan Agner <stefan@agner.ch>, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] spi: sh-msiof: Use correct enum for DMA transfer direction
-Date: Wed, 21 Mar 2018 09:07:23 +0100
-Message-Id: <1521619643-4492-1-git-send-email-geert+renesas@glider.be>
+        Mon, 5 Mar 2018 05:24:20 -0500
+MIME-Version: 1.0
+In-Reply-To: <1519697995-6061-5-git-send-email-gaku.inami.xh@renesas.com>
+References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com> <1519697995-6061-5-git-send-email-gaku.inami.xh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Mar 2018 11:24:18 +0100
+Message-ID: <CAMuHMdWpUJXvuFpTzE0t3ysLEC8exa169J64H2Q0w4NH_+k=gg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] arm64: dts: renesas: r8a7796: Add cpu capacity-dmips-mhz
+To: Gaku Inami <gaku.inami.xh@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use enum dma_transfer_direction as required by dmaengine_prep_slave_sg()
-instead of enum dma_data_direction.  This won't change behavior in
-practice as the enum values are equivalent.
+Hi Inami-san,
 
-This fixes two warnings when building with clang:
-  drivers/spi/spi-sh-msiof.c:755:27: warning: implicit conversion from enumeration
-      type 'enum dma_data_direction' to different enumeration type
-      'enum dma_transfer_direction' [-Wenum-conversion]
-					rx->sgl, rx->nents, DMA_FROM_DEVICE,
-							    ^~~~~~~~~~~~~~~
-  drivers/spi/spi-sh-msiof.c:772:27: warning: implicit conversion from enumeration
-      type 'enum dma_data_direction' to different enumeration type
-      'enum dma_transfer_direction' [-Wenum-conversion]
-					tx->sgl, tx->nents, DMA_TO_DEVICE,
-							    ^~~~~~~~~~~~~
+On Tue, Feb 27, 2018 at 3:19 AM, Gaku Inami <gaku.inami.xh@renesas.com> wrote:
+> Set the capacity-dmips-mhz for r8a7796, that is based on dhrystone.
+>
+> Expected cpu capacity:
+> Cortex-A57@1.5Ghz: 1024, Cortex-A53@1.2GHz: 411
 
-Based on commit 768d59f5d0139a6f ("spi: rspi: use correct enum for DMA
-transfer direction").
+Thanks for your patch!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/spi/spi-sh-msiof.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index c5dcfb434a498b27..ae086aab57d51edc 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -752,7 +752,7 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 	if (rx) {
- 		ier_bits |= IER_RDREQE | IER_RDMAE;
- 		desc_rx = dmaengine_prep_slave_single(p->master->dma_rx,
--					p->rx_dma_addr, len, DMA_FROM_DEVICE,
-+					p->rx_dma_addr, len, DMA_DEV_TO_MEM,
- 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 		if (!desc_rx)
- 			return -EAGAIN;
-@@ -769,7 +769,7 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 		dma_sync_single_for_device(p->master->dma_tx->device->dev,
- 					   p->tx_dma_addr, len, DMA_TO_DEVICE);
- 		desc_tx = dmaengine_prep_slave_single(p->master->dma_tx,
--					p->tx_dma_addr, len, DMA_TO_DEVICE,
-+					p->tx_dma_addr, len, DMA_MEM_TO_DEV,
- 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 		if (!desc_tx) {
- 			ret = -EAGAIN;
--- 
-2.7.4
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+But same comment as for r8a7795.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
