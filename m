@@ -1,54 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45959 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeCERMj (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41799 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751144AbeCEPak (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 12:12:39 -0500
-MIME-Version: 1.0
-In-Reply-To: <1520263826-1937-2-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1520263826-1937-1-git-send-email-fabrizio.castro@bp.renesas.com> <1520263826-1937-2-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Mar 2018 18:12:37 +0100
-Message-ID: <CAMuHMdVP8QY_nZqHaTUrCE-ghx1F0P03gX13knzZ+Y09bFJC4Q@mail.gmail.com>
-Subject: Re: [PATCH v8 1/3] watchdog: renesas_wdt: Add suspend/resume support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>,
+        Mon, 5 Mar 2018 10:30:40 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wim Van Sebroeck <wim@iguana.be>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Guenter Roeck <linux@roeck-us.net>,
+        Simon Horman <horms@verge.net.au>
+Cc: Guenter Roeck <linux@roeck-us.net>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v8 1/3] watchdog: renesas_wdt: Add suspend/resume support
+Date: Mon,  5 Mar 2018 15:30:24 +0000
+Message-Id: <1520263826-1937-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1520263826-1937-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1520263826-1937-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 5, 2018 at 4:30 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> On R-Car Gen2 and RZ/G1 the watchdog IP clock needs to be always ON,
-> on R-Car Gen3 we power the IP down during suspend.
->
-> This commit adds suspend/resume support, so that the watchdog counting
-> "pauses" during suspend on all of the SoCs compatible with this driver
-> and on those we are now adding support for (R-Car Gen2 and RZ/G1).
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+On R-Car Gen2 and RZ/G1 the watchdog IP clock needs to be always ON,
+on R-Car Gen3 we power the IP down during suspend.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This commit adds suspend/resume support, so that the watchdog counting
+"pauses" during suspend on all of the SoCs compatible with this driver
+and on those we are now adding support for (R-Car Gen2 and RZ/G1).
 
-Gr{oetje,eeting}s,
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-                        Geert
+---
+v7->v8:
+* no change
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ drivers/watchdog/renesas_wdt.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 831ef83..024d54e 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -49,6 +49,7 @@ struct rwdt_priv {
+ 	void __iomem *base;
+ 	struct watchdog_device wdev;
+ 	unsigned long clk_rate;
++	u16 time_left;
+ 	u8 cks;
+ };
+ 
+@@ -203,6 +204,30 @@ static int rwdt_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int __maybe_unused rwdt_suspend(struct device *dev)
++{
++	struct rwdt_priv *priv = dev_get_drvdata(dev);
++
++	if (watchdog_active(&priv->wdev)) {
++		priv->time_left = readw(priv->base + RWTCNT);
++		rwdt_stop(&priv->wdev);
++	}
++	return 0;
++}
++
++static int __maybe_unused rwdt_resume(struct device *dev)
++{
++	struct rwdt_priv *priv = dev_get_drvdata(dev);
++
++	if (watchdog_active(&priv->wdev)) {
++		rwdt_start(&priv->wdev);
++		rwdt_write(priv, priv->time_left, RWTCNT);
++	}
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(rwdt_pm_ops, rwdt_suspend, rwdt_resume);
++
+ /*
+  * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
+  * to work there, one also needs a RESET (RST) driver which does not exist yet
+@@ -218,6 +243,7 @@ static struct platform_driver rwdt_driver = {
+ 	.driver = {
+ 		.name = "renesas_wdt",
+ 		.of_match_table = rwdt_ids,
++		.pm = &rwdt_pm_ops,
+ 	},
+ 	.probe = rwdt_probe,
+ 	.remove = rwdt_remove,
+-- 
+2.7.4
