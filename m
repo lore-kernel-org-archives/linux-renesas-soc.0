@@ -1,104 +1,121 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 24/33] rcar-vin: prepare for media controller mode initialization
-Date: Mon, 26 Mar 2018 23:44:47 +0200
-Message-Id: <20180326214456.6655-25-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:42094 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751462AbeCER0p (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 5 Mar 2018 12:26:45 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <1520270260-16009-1-git-send-email-geert+renesas@glider.be>
+References: <1520270260-16009-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Mar 2018 18:26:44 +0100
+Message-ID: <CAMuHMdXsvGcBgNAn3_pVD3q68yzP_chvkjvDZUwpSsYhiYkT3w@mail.gmail.com>
+Subject: Re: [PATCH] serial: sh-sci: Add support for dynamic instances
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        linux-serial@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Prepare for media controller by calling a different initialization then
-when running in device centric mode. Add trivial configuration of
-the mbus and creation of the media pad for the video device entity.
+CC devicetree
 
-While we are at it clearly mark the digital device centric notifier
-functions with a comment.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
- 2 files changed, 22 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index c0e0412e2ecd9487..e0a33d372c500ccd 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- /* The vin lock should be held when calling the subdevice attach and detach */
- static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
- 					 struct v4l2_subdev *subdev)
-@@ -243,6 +247,16 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	return 0;
- }
- 
-+static int rvin_mc_init(struct rvin_dev *vin)
-+{
-+	/* All our sources are CSI-2 */
-+	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-+	vin->mbus_cfg.flags = 0;
-+
-+	vin->pad.flags = MEDIA_PAD_FL_SINK;
-+	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -331,8 +345,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	platform_set_drvdata(pdev, vin);
--
--	ret = rvin_digital_graph_init(vin);
-+	if (vin->info->use_mc)
-+		ret = rvin_mc_init(vin);
-+	else
-+		ret = rvin_digital_graph_init(vin);
- 	if (ret < 0)
- 		goto error;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index e5668c1120a67899..5102ad254bff515b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -99,6 +99,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @pad:		media pad for the video device entity
-+ *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
-  * @scratch:		cpu address for scratch buffer
-@@ -131,6 +133,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct media_pad pad;
-+
- 	struct mutex lock;
- 	struct vb2_queue queue;
- 	void *scratch;
--- 
-2.16.2
+On Mon, Mar 5, 2018 at 6:17 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> On DT platforms, the sh-sci driver requires the presence of "serialN"
+> aliases in DT, from which instance IDs are derived.  If a DT alias is
+> missing, the drivers fails to probe the corresponding serial port.
+>
+> This becomes cumbersome when considering DT overlays, as currently
+> there is no upstream support for dynamically updating the /aliases node
+> in DT.  Furthermore, even in the presence of such support, hardcoded
+> instance IDs in independent overlays are prone to conflicts.
+>
+> Hence add support for dynamic instance IDs, to be used in the absence of
+> a DT alias.  This makes serial ports behave similar to I2C and SPI
+> buses, which already support dynamic instances.
+>
+> Ports in use are tracked using a simple bitmask of type unsigned long,
+> which is sufficient to handle all current hardware (max. 18 ports).
+> The maximum number of serial ports is still fixed, and configurable
+> through Kconfig.  Range validation is done through both Kconfig and a
+> compile-time check.
+>
+> Due to the fixed maximum number of serial ports, dynamic and static
+> instances share the same ID space.  Static instances added later are
+> rejected when conflicting with dynamic instances registered earlier.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/tty/serial/Kconfig  | 2 ++
+>  drivers/tty/serial/sh-sci.c | 8 ++++++++
+>  2 files changed, 10 insertions(+)
+>
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index 3682fd3e960cbd64..76005dc5f6246593 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -762,6 +762,8 @@ config SERIAL_SH_SCI
+>
+>  config SERIAL_SH_SCI_NR_UARTS
+>         int "Maximum number of SCI(F) serial ports" if EXPERT
+> +       range 1 64 if 64BIT
+> +       range 1 32 if !64BIT
+>         depends on SERIAL_SH_SCI
+>         default "3" if H8300
+>         default "10" if SUPERH
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 9e1dfbb4b40bf849..3a03d391fcc72656 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -159,6 +159,7 @@ struct sci_port {
+>  #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS
+>
+>  static struct sci_port sci_ports[SCI_NPORTS];
+> +static unsigned long sci_ports_in_use;
+>  static struct uart_driver sci_uart_driver;
+>
+>  static inline struct sci_port *
+> @@ -3011,6 +3012,7 @@ static int sci_remove(struct platform_device *dev)
+>  {
+>         struct sci_port *port = platform_get_drvdata(dev);
+>
+> +       sci_ports_in_use &= ~BIT(port->port.line);
+>         uart_remove_one_port(&sci_uart_driver, &port->port);
+>
+>         sci_cleanup_single(port);
+> @@ -3092,6 +3094,8 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
+>
+>         /* Get the line number from the aliases node. */
+>         id = of_alias_get_id(np, "serial");
+> +       if (id < 0 && ~sci_ports_in_use)
+> +               id = ffz(sci_ports_in_use);
+>         if (id < 0) {
+>                 dev_err(&pdev->dev, "failed to get alias id (%d)\n", id);
+>                 return NULL;
+> @@ -3126,6 +3130,9 @@ static int sci_probe_single(struct platform_device *dev,
+>                 dev_notice(&dev->dev, "Consider bumping CONFIG_SERIAL_SH_SCI_NR_UARTS!\n");
+>                 return -EINVAL;
+>         }
+> +       BUILD_BUG_ON(SCI_NPORTS > sizeof(sci_ports_in_use) * 8);
+> +       if (sci_ports_in_use & BIT(index))
+> +               return -EBUSY;
+>
+>         mutex_lock(&sci_uart_registration_lock);
+>         if (!sci_uart_driver.state) {
+> @@ -3224,6 +3231,7 @@ static int sci_probe(struct platform_device *dev)
+>         sh_bios_gdb_detach();
+>  #endif
+>
+> +       sci_ports_in_use |= BIT(dev_id);
+>         return 0;
+>  }
+>
+> --
+> 2.7.4
