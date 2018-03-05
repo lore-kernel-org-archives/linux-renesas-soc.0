@@ -1,96 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753405AbeCPOvy (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36405 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751490AbeCERX1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:51:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/69] arm64: dts: renesas: r8a77995: move nodes which have no reg property out of bus
-Date: Fri, 16 Mar 2018 15:50:38 +0100
-Message-Id: <f320eead5dad37f296201bbcc00a88188a63a7da.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Mon, 5 Mar 2018 12:23:27 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm: rcar-du: lvds: add R8A77970 support
+Date: Mon, 05 Mar 2018 19:24:19 +0200
+Message-ID: <2295290.zHy4kQuxHF@avalon>
+In-Reply-To: <5b92565f-3857-af0f-a953-3588cfbe331d@cogentembedded.com>
+References: <df9de4e7-cf72-cdb5-5111-9fd616f51509@cogentembedded.com> <5b92565f-3857-af0f-a953-3588cfbe331d@cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move pmu_a53 and timer nodes from soc node to root node.  The nodes that
-have been moved do not have any register properties and thus shouldn't be
-placed on the bus.
+Hi Sergei,
 
-This problem is flagged by the compiler as follows:
-$ make W=1
-...
-arch/arm64/boot/dts/renesas/r8a77995-draak.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-arch/arm64/boot/dts/renesas/r8a77995-draak.dtb: Warning (simple_bus_reg): Node /soc/pmu_a53 missing or empty reg/ranges property
+Thank you for the patch.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 +++++++++++++-----------------
- 1 file changed, 13 insertions(+), 17 deletions(-)
+On Thursday, 1 March 2018 20:10:16 EET Sergei Shtylyov wrote:
+> Add support for the R-Car V3M (R8A77970) SoC to the LVDS encoder driver.
+> Note that there are some differences with the other R-Car gen3 SoCs, e.g.
+> LVDPLLCR has the same layout as in the R-Car gen2 SoCs...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index cff42cd1a6c8..23f763beab46 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -58,6 +58,11 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	pmu_a53 {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -88,18 +93,6 @@
- 			resets = <&cpg 408>;
- 		};
- 
--		timer {
--			compatible = "arm,armv8-timer";
--			interrupts = <GIC_PPI 13
--					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 14
--					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 11
--					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 10
--					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
--		};
--
- 		rwdt: watchdog@e6020000 {
- 			compatible = "renesas,r8a77995-wdt",
- 				     "renesas,rcar-gen3-wdt";
-@@ -110,11 +103,6 @@
- 			status = "disabled";
- 		};
- 
--		pmu_a53 {
--			compatible = "arm,cortex-a53-pmu";
--			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
--		};
--
- 		ipmmu_vi0: mmu@febd0000 {
- 			compatible = "renesas,ipmmu-r8a77995";
- 			reg = <0 0xfebd0000 0 0x1000>;
-@@ -637,4 +625,12 @@
- 			status = "disabled";
- 		};
- 	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
- };
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and applied to my tree.
+
+> ---
+> Changes in version 2:
+> - shortened the comment to #define RCAR_LVDS_QUIRK_GEN2_PLLCR and applied
+> this quitk to all R-Car gen2 SoCs, thus simplifying the check for the gen2
+> LVDPLLCR layout;
+> - renamed RCAR_LVDS_QUIRK_PHY to RCAR_LVDS_QUIRK_GEN3_LVEN, reworded the
+> comment to this #define;
+> - removed the 'quirks' variable from rcar_lvds_enable();
+> - resolved rejects atop of the recent version of the LVDS driver.
+> 
+>  drivers/gpu/drm/rcar-du/rcar_lvds.c |   20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
+> Index: linux/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> ===================================================================
+> --- linux.orig/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> +++ linux/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> @@ -32,6 +32,9 @@ enum rcar_lvds_mode {
+>  };
+> 
+>  #define RCAR_LVDS_QUIRK_LANES	(1 << 0)	/* LVDS lanes 1 and 3 inverted */
+> +#define RCAR_LVDS_QUIRK_GEN2_PLLCR (1 << 1)	/* LVDPLLCR has gen2 layout */
+> +#define RCAR_LVDS_QUIRK_GEN3_LVEN (1 << 2)	/* LVEN bit needs to be set */
+> +						/* on R8A77970/R8A7799x */
+> 
+>  struct rcar_lvds_device_info {
+>  	unsigned int gen;
+> @@ -191,7 +194,7 @@ static void rcar_lvds_enable(struct drm_
+>  	rcar_lvds_write(lvds, LVDCHCR, lvdhcr);
+> 
+>  	/* PLL clock configuration. */
+> -	if (lvds->info->gen < 3)
+> +	if (lvds->info->quirks & RCAR_LVDS_QUIRK_GEN2_PLLCR)
+>  		lvdpllcr = rcar_lvds_lvdpllcr_gen2(mode->clock);
+>  	else
+>  		lvdpllcr = rcar_lvds_lvdpllcr_gen3(mode->clock);
+> @@ -224,6 +227,12 @@ static void rcar_lvds_enable(struct drm_
+>  		rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+>  	}
+> 
+> +	if (lvds->info->quirks & RCAR_LVDS_QUIRK_GEN3_LVEN) {
+> +		/* Turn on the LVDS PHY. */
+> +		lvdcr0 |= LVDCR0_LVEN;
+> +		rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+> +	}
+> +
+>  	/* Wait for the startup delay. */
+>  	usleep_range(100, 150);
+> 
+> @@ -485,17 +494,23 @@ static int rcar_lvds_remove(struct platf
+> 
+>  static const struct rcar_lvds_device_info rcar_lvds_gen2_info = {
+>  	.gen = 2,
+> +	.quirks = RCAR_LVDS_QUIRK_GEN2_PLLCR,
+>  };
+> 
+>  static const struct rcar_lvds_device_info rcar_lvds_r8a7790_info = {
+>  	.gen = 2,
+> -	.quirks = RCAR_LVDS_QUIRK_LANES,
+> +	.quirks = RCAR_LVDS_QUIRK_GEN2_PLLCR | RCAR_LVDS_QUIRK_LANES,
+>  };
+> 
+>  static const struct rcar_lvds_device_info rcar_lvds_gen3_info = {
+>  	.gen = 3,
+>  };
+> 
+> +static const struct rcar_lvds_device_info rcar_lvds_r8a77970_info = {
+> +	.gen = 3,
+> +	.quirks = RCAR_LVDS_QUIRK_GEN2_PLLCR | RCAR_LVDS_QUIRK_GEN3_LVEN,
+> +};
+> +
+>  static const struct of_device_id rcar_lvds_of_table[] = {
+>  	{ .compatible = "renesas,r8a7743-lvds", .data = &rcar_lvds_gen2_info },
+>  	{ .compatible = "renesas,r8a7790-lvds", .data = &rcar_lvds_r8a7790_info },
+> @@ -503,6 +518,7 @@ static const struct of_device_id rcar_lv
+>  	{ .compatible = "renesas,r8a7793-lvds", .data = &rcar_lvds_gen2_info },
+>  	{ .compatible = "renesas,r8a7795-lvds", .data = &rcar_lvds_gen3_info },
+>  	{ .compatible = "renesas,r8a7796-lvds", .data = &rcar_lvds_gen3_info },
+> +	{ .compatible = "renesas,r8a77970-lvds", .data = &rcar_lvds_r8a77970_info
+> }, { }
+>  };
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
