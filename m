@@ -1,66 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] DT: display: renesas,du: document R8A77970 bindings
-Date: Wed, 07 Mar 2018 19:18:41 +0200
-Message-ID: <3942494.WgSgihLYRZ@avalon>
-In-Reply-To: <20180118211024.314876177@cogentembedded.com>
-References: <20180118211024.314876177@cogentembedded.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:46682 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751462AbeCEQmw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 5 Mar 2018 11:42:52 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1520263826-1937-4-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1520263826-1937-1-git-send-email-fabrizio.castro@bp.renesas.com> <1520263826-1937-4-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Mar 2018 17:42:50 +0100
+Message-ID: <CAMuHMdU8xd3j0sCGUF9dD3iBXmbMJfM9S2cQmBrj6p97nuiUbQ@mail.gmail.com>
+Subject: Re: [PATCH v8 3/3] watchdog: renesas_wdt: Add restart handler
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Wim Van Sebroeck <wim@iguana.be>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+On Mon, Mar 5, 2018 at 4:30 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> On iWave's boards iwg20d and iwg22d the only way to reboot the system is
+> by means of the watchdog.
+> This patch adds a restart handler to rwdt_ops, and also makes sure we
+> keep its priority to the lowest level, in order to not override other
+> more effective handlers.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thank you for the patch.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Thursday, 18 January 2018 23:05:58 EET Sergei Shtylyov wrote:
-> Document the R-Car V3M (R8A77970) SoC in the R-Car DU bindings.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Gr{oetje,eeting}s,
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+                        Geert
 
-and applied to my tree with the subject prefixed changed per Rob's request.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> ---
-> Changes in version 2:
-> - documented  R8A77970 DU ports;
-> - patch split from the main R8A77970 DU support patch.
-> 
->  Documentation/devicetree/bindings/display/renesas,du.txt |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> Index: linux/Documentation/devicetree/bindings/display/renesas,du.txt
-> ===================================================================
-> --- linux.orig/Documentation/devicetree/bindings/display/renesas,du.txt
-> +++ linux/Documentation/devicetree/bindings/display/renesas,du.txt
-> @@ -13,6 +13,7 @@ Required Properties:
->      - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
->      - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
->      - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
-> +    - "renesas,du-r8a77970" for R8A77970 (R-Car V3M) compatible DU
-> 
->    - reg: A list of base address and length of each memory resource, one for
-> each entry in the reg-names property.
-> @@ -63,6 +64,7 @@ corresponding to each DU output.
->   R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
->   R8A7795 (R-Car H3)   DPAD 0         HDMI 0         HDMI 1         LVDS 0
->   R8A7796 (R-Car M3-W) DPAD 0         HDMI 0         LVDS 0         -
-> + R8A77970 (R-Car V3M) DPAD 0         LVDS 0         -              -
-> 
-> 
->  Example: R8A7795 (R-Car H3) ES2.0 DU
-
-
--- 
-Regards,
-
-Laurent Pinchart
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
