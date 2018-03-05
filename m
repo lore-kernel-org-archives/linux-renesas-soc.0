@@ -1,51 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:32650 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752362AbeCZVq6 (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:41282 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932912AbeCEJwR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:46:58 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 26/33] rcar-vin: change name of video device
-Date: Mon, 26 Mar 2018 23:44:49 +0200
-Message-Id: <20180326214456.6655-27-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 5 Mar 2018 04:52:17 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519647518-15579-3-git-send-email-michel.pollet@bp.renesas.com>
+References: <1519647518-15579-1-git-send-email-michel.pollet@bp.renesas.com> <1519647518-15579-3-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Mar 2018 10:52:16 +0100
+Message-ID: <CAMuHMdVdXh428vfLW5has3THUWq5x6iA-6CLL+uQudOGOJfTrA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm: rzn1: Add basic support for RZN1D-DB Board
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar-vin driver needs to be part of a media controller to support
-Gen3. Give each VIN instance a unique name so it can be referenced from
-userspace.
+Hi Michel,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Feb 26, 2018 at 1:18 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> Only enables the uart0 for now, and also relies on the bootloader
+> for setting up the clocks and pinctrl.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index ea0759a645e49490..7c10557d965ea6ed 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -993,7 +993,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	/* video node */
- 	vdev->v4l2_dev = &vin->v4l2_dev;
- 	vdev->queue = &vin->queue;
--	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
-+	snprintf(vdev->name, sizeof(vdev->name), "VIN%u output", vin->id);
- 	vdev->release = video_device_release_empty;
- 	vdev->lock = &vin->lock;
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
--- 
-2.16.2
+Thanks for your patch!
+
+This should be split in two parts:
+
+>  Documentation/devicetree/bindings/arm/shmobile.txt |  2 ++
+
+1. DT bindings
+
+>  arch/arm/boot/dts/rzn1d400-db.dts                  | 25 ++++++++++++++++++++++
+
+2. Board DTS + (missing) arch/arm/boot/dts/Makefile update.
+
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/rzn1d400-db.dts
+
+Why the 400? 400-pin package?
+
+Please follow <SoC>-<board>.dts naming convention, i.e.
+r9a06g032-rzn1d-db.dts
+
+> @@ -0,0 +1,25 @@
+> +/*
+> + * Device Tree Source for the RZN1D-DB Board
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "rzn1.dtsi"
+> +
+> +/ {
+> +       model = "RZN1D-DB Board";
+> +       compatible = "renesas,rzn1d-db", "renesas,r9a06g032";
+> +
+> +       chosen {
+> +               bootargs = "console=ttyS0,115200";
+
+"console=" is not needed, as it is handled by stdout-path these days,
+so you can remove bootargs for now.
+
+> +               stdout-path = &uart0;
+
+stdout-path = "serial0:115200n8";
+
+Please move the serial0 alias definition to the board DTS, as labeling
+of serial ports
+is board-specific.
+
+> +               linux,stdout-path = &uart0;
+
+linux,stdout-path is deprecated, please remove it.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
