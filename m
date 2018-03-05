@@ -1,53 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:46682 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751462AbeCEQmw (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41799 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751144AbeCEPaq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 11:42:52 -0500
-MIME-Version: 1.0
-In-Reply-To: <1520263826-1937-4-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1520263826-1937-1-git-send-email-fabrizio.castro@bp.renesas.com> <1520263826-1937-4-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Mar 2018 17:42:50 +0100
-Message-ID: <CAMuHMdU8xd3j0sCGUF9dD3iBXmbMJfM9S2cQmBrj6p97nuiUbQ@mail.gmail.com>
-Subject: Re: [PATCH v8 3/3] watchdog: renesas_wdt: Add restart handler
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>,
+        Mon, 5 Mar 2018 10:30:46 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Wim Van Sebroeck <wim@iguana.be>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Guenter Roeck <linux@roeck-us.net>,
+        Simon Horman <horms@verge.net.au>
+Cc: Guenter Roeck <linux@roeck-us.net>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v8 3/3] watchdog: renesas_wdt: Add restart handler
+Date: Mon,  5 Mar 2018 15:30:26 +0000
+Message-Id: <1520263826-1937-4-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1520263826-1937-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1520263826-1937-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 5, 2018 at 4:30 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-> by means of the watchdog.
-> This patch adds a restart handler to rwdt_ops, and also makes sure we
-> keep its priority to the lowest level, in order to not override other
-> more effective handlers.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On iWave's boards iwg20d and iwg22d the only way to reboot the system is
+by means of the watchdog.
+This patch adds a restart handler to rwdt_ops, and also makes sure we
+keep its priority to the lowest level, in order to not override other
+more effective handlers.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v7->v8:
+* no change
 
-Gr{oetje,eeting}s,
+ drivers/watchdog/renesas_wdt.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 0dede5b..6b8c6dd 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -110,6 +110,16 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
+ 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+ }
+ 
++static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
++			void *data)
++{
++	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
++
++	rwdt_start(wdev);
++	rwdt_write(priv, 0xffff, RWTCNT);
++	return 0;
++}
++
+ static const struct watchdog_info rwdt_ident = {
+ 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
+ 	.identity = "Renesas WDT Watchdog",
+@@ -121,6 +131,7 @@ static const struct watchdog_ops rwdt_ops = {
+ 	.stop = rwdt_stop,
+ 	.ping = rwdt_init_timeout,
+ 	.get_timeleft = rwdt_get_timeleft,
++	.restart = rwdt_restart,
+ };
+ 
+ #if defined(CONFIG_ARCH_RCAR_GEN2) && defined(CONFIG_SMP)
+@@ -220,6 +231,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, priv);
+ 	watchdog_set_drvdata(&priv->wdev, priv);
+ 	watchdog_set_nowayout(&priv->wdev, nowayout);
++	watchdog_set_restart_priority(&priv->wdev, 0);
+ 
+ 	/* This overrides the default timeout only if DT configuration was found */
+ 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
+-- 
+2.7.4
