@@ -1,59 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753313AbeCPOxV (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42052 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752931AbeCFRhQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 6 Mar 2018 12:37:16 -0500
+Date: Tue, 6 Mar 2018 17:37:11 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] ARM: shmobile: defconfig: Refresh
-Date: Fri, 16 Mar 2018 15:51:50 +0100
-Message-Id: <c7b6b600a23473748d5e82e814c6ebbbcf37b006.1521206439.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206439.git.horms+renesas@verge.net.au>
-References: <cover.1521206439.git.horms+renesas@verge.net.au>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
+ r8a7743
+Message-ID: <20180306173711.GB1605@e107981-ln.cambridge.arm.com>
+References: <1510653543-53770-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1510653543-53770-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Nov 14, 2017 at 09:59:03AM +0000, Biju Das wrote:
+> Add support for r8a7743. The Renesas RZ/G1M(R8A7743)PCIe controller
+> is identical to the R-Car Gen2 family.
+> 
+> No driver change is needed due to the fallback compatible value
+> "renesas,pcie-rcar-gen2".
+> Adding the SoC-specific compatible values here has three purposes:
+> 1. Document which SoCs have this hardware module,
+> 2. Allow checkpatch to validate compatible values.
+> 3. Allow the driver to support SoC specific implementations in future
+>    as necessary.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v1-->v2
+>    Corrected RZ-G1 to RZ/G1.
+> 
+>  Documentation/devicetree/bindings/pci/rcar-pci.txt | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-- CONFIG_AEABI is enabled since commit 494609701e06a004 ("ARM: always
-    enable AEABI for ARMv6+"),
-  - CONFIG_SERIAL_SH_SCI_CONSOLE is enabled since commit
-    c5bb576d5e21e91a ("tty: serial: sh-sci: Hide serial console config
-    question"),
-  - CONFIG_SERIAL_SH_SCI_DMA is enabled since commit be7e251d20e6c800
-    ("tty: serial: sh-sci: Hide DMA config question").
+Applied to pci/rcar for v4.17, apologies for the delay.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/shmobile_defconfig | 3 ---
- 1 file changed, 3 deletions(-)
+Thanks,
+Lorenzo
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 79b2b7c12264..e3658ec04e83 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -34,7 +34,6 @@ CONFIG_SMP=y
- CONFIG_SCHED_MC=y
- CONFIG_HAVE_ARM_ARCH_TIMER=y
- CONFIG_NR_CPUS=8
--CONFIG_AEABI=y
- CONFIG_HIGHMEM=y
- CONFIG_CMA=y
- CONFIG_ZBOOT_ROM_TEXT=0x0
-@@ -105,8 +104,6 @@ CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_8250_EM=y
- CONFIG_SERIAL_SH_SCI=y
- CONFIG_SERIAL_SH_SCI_NR_UARTS=20
--CONFIG_SERIAL_SH_SCI_CONSOLE=y
--CONFIG_SERIAL_SH_SCI_DMA=y
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_MUX=y
- CONFIG_I2C_DEMUX_PINCTRL=y
--- 
-2.11.0
+> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> index 76ba3a6..1fb614e 100644
+> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> @@ -1,13 +1,15 @@
+>  * Renesas R-Car PCIe interface
+>  
+>  Required properties:
+> -compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
+> +compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+> +	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
+>  	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
+>  	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
+>  	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
+>  	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
+>  	    "renesas,pcie-r8a7796" for the R8A7796 SoC;
+> -	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
+> +	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
+> +				     RZ/G1 compatible device.
+>  	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
+>  
+>  	    When compatible with the generic version, nodes must list the
+> -- 
+> 1.9.1
+> 
