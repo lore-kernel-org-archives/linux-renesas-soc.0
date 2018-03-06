@@ -1,72 +1,25 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:50897 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751219AbeC2Hwj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:52:39 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v3 7/8] DT: arm: Add Renesas RZN1D-DB Board base file
-Date: Thu, 29 Mar 2018 08:47:03 +0100
-Message-Id: <1522309629-10152-8-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 6 Mar 2018 10:40:27 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] usb: renesas_usbhs: add binding for r8a77965
+Message-ID: <20180306094026.r6mt7laicddvq4zv@verge.net.au>
+References: <1519719363-27850-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1519719363-27850-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519719363-27850-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds a base device tree file for the RZN1-DB board, with only the
-basic support allowing the system to boot to a prompt. Only one UART is
-used, with only a single CPU running.
+On Tue, Feb 27, 2018 at 05:16:02PM +0900, Yoshihiro Shimoda wrote:
+> This patch adds binding for r8a77965 (R-Car M3-N).
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-new file mode 100644
-index 0000000..a462b1a
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZN1D-DB Board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+/dts-v1/;
-+
-+#include "r9a06g0xx.dtsi"
-+
-+/ {
-+	model = "RZN1D-DB Board";
-+	compatible = "renesas,rzn1d400-db", "renesas,r9a06g032", "renesas,rzn1";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+};
-+&uart0 {
-+	status = "okay";
-+};
--- 
-2.7.4
