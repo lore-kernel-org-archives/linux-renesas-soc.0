@@ -1,65 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:8959 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1163946AbeCBB7I (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:18686 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750723AbeCFFLh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:59:08 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 13/32] rcar-vin: update bytesperline and sizeimage calculation
-Date: Fri,  2 Mar 2018 02:57:32 +0100
-Message-Id: <20180302015751.25596-14-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 6 Mar 2018 00:11:37 -0500
+From: Gaku Inami <gaku.inami.xh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 5/5] soc: renesas: rcar-topology: Add support to be aware
+ cpu capacity
+Date: Tue, 6 Mar 2018 05:11:33 +0000
+Message-ID: <OSBPR01MB180009CEB4121AD9859EE36AA2D90@OSBPR01MB1800.jpnprd01.prod.outlook.com>
+References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+ <1519697995-6061-6-git-send-email-gaku.inami.xh@renesas.com>
+ <CAMuHMdVZzCOqatGA4PH0Gr+noTEhQ8RAW=pK5K1e7KrAM8VS-A@mail.gmail.com>
+In-Reply-To: <CAMuHMdVZzCOqatGA4PH0Gr+noTEhQ8RAW=pK5K1e7KrAM8VS-A@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove over complicated logic to calculate the value for bytesperline
-and sizeimage that was carried over from the soc_camera port. There is
-no need to find the max value of bytesperline and sizeimage from
-user-space as they are set to 0 before the max_t() operation.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index cef9070884d93ba6..652b85300b4ef9db 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -194,10 +194,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
- 	}
- 
--	/* Always recalculate */
--	pix->bytesperline = 0;
--	pix->sizeimage = 0;
--
- 	/* Limit to source capabilities */
- 	ret = __rvin_try_format_source(vin, which, pix, source);
- 	if (ret)
-@@ -232,10 +228,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
- 			      &pix->height, 4, vin->info->max_height, 2, 0);
- 
--	pix->bytesperline = max_t(u32, pix->bytesperline,
--				  rvin_format_bytesperline(pix));
--	pix->sizeimage = max_t(u32, pix->sizeimage,
--			       rvin_format_sizeimage(pix));
-+	pix->bytesperline = rvin_format_bytesperline(pix);
-+	pix->sizeimage = rvin_format_sizeimage(pix);
- 
- 	if (vin->info->model == RCAR_M1 &&
- 	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
--- 
-2.16.2
+SGkgR2VlcnQtc2FuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGdl
+ZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb20gW21haWx0bzpnZWVydC51eXR0ZXJob2V2ZW5AZ21h
+aWwuY29tXSBPbiBCZWhhbGYgT2YgR2VlcnQgVXl0dGVyaG9ldmVuDQoNCltzbmlwXQ0KDQo+IE5v
+bmUgb2YgdGhlIGFib3ZlIHNlZW1zIFItQ2FyIHNwZWNpZmljIHRvIG1lLiBTbyBwbGVhc2UgZXhw
+bGFpbiB3aHkgdGhpcw0KPiBjYW4ndCBqdXN0IGJlIGFkZGVkIHRvIGFyY2gvYXJtNjQva2VybmVs
+L3RvcG9sb2d5LmMgaW5zdGVhZCwgYW5kIGVuYWJsZWQNCj4gdW5jb25kaXRpb25hbGx5Lg0KDQpU
+aGFua3MgZm9yIHlvdXIgZmVlZGJhY2suDQoNCkFzIHlvdSBzYWlkLCB0aGlzIGNvZGUgc2hvdWxk
+IG5vdCBiZSBSLUNhciBzcGVjaWZpYy4gSSB3aWxsIGNvbnNpZGVyIGFnYWluDQp0aGF0IGl0IGVu
+YWJsZXMgU0RfQVNZTV9DUFVDQVBBQ0lUWSB1bmNvbmRpdGlvbmFsbHkuDQoNClJlZ2FyZHMsDQpJ
+bmFtaQ0K
