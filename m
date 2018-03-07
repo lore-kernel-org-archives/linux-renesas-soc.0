@@ -1,67 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753683AbeCPOwV (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:32141 "EHLO
+        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934222AbeCGWFz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:52:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 34/69] arm64: dts: renesas: condor: add EtherAVB support
-Date: Fri, 16 Mar 2018 15:51:04 +0100
-Message-Id: <8091788f3d3856a0b6eabebf4e34cfecb38cfe96.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Wed, 7 Mar 2018 17:05:55 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v12 24/33] rcar-vin: prepare for media controller mode initialization
+Date: Wed,  7 Mar 2018 23:05:02 +0100
+Message-Id: <20180307220511.9826-25-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Prepare for media controller by calling a different initialization then
+when running in device centric mode. Add trivial configuration of
+the mbus and creation of the media pad for the video device entity.
 
-Define the Condor board dependent part of the EtherAVB device node.
+While we are at it clearly mark the digital device centric notifier
+functions with a comment.
 
-Based  on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++--
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
+ 2 files changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-index daf2957d3504..06cf6845765a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -15,6 +15,7 @@
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index ed370b7fb58c3e8a..592dbd8642361f1e 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
+ 	return -EINVAL;
+ }
  
- 	aliases {
- 		serial0 = &scif0;
-+		ethernet0 = &avb;
- 	};
- 
- 	chosen {
-@@ -28,6 +29,18 @@
- 	};
- };
- 
-+&avb {
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&phy0>;
-+	renesas,no-ether-link;
-+	status = "okay";
++/* -----------------------------------------------------------------------------
++ * Digital async notifier
++ */
 +
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+	};
-+};
+ /* The vin lock shuld be held when calling the subdevice attach and detach */
+ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
+ 					 struct v4l2_subdev *subdev)
+@@ -243,6 +247,16 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 	return 0;
+ }
+ 
++static int rvin_mc_init(struct rvin_dev *vin)
++{
++	/* All our sources are CSI-2 */
++	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
++	vin->mbus_cfg.flags = 0;
 +
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
++	vin->pad.flags = MEDIA_PAD_FL_SINK;
++	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
++}
++
+ /* -----------------------------------------------------------------------------
+  * Platform Device Driver
+  */
+@@ -331,8 +345,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	platform_set_drvdata(pdev, vin);
+-
+-	ret = rvin_digital_graph_init(vin);
++	if (vin->info->use_mc)
++		ret = rvin_mc_init(vin);
++	else
++		ret = rvin_digital_graph_init(vin);
+ 	if (ret < 0)
+ 		goto error;
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 83feef08367bde30..7c3b734c2cd09d9a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -101,6 +101,8 @@ struct rvin_info {
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+  *
++ * @pad:		media pad for the video device entity
++ *
+  * @lock:		protects @queue
+  * @queue:		vb2 buffers queue
+  *
+@@ -132,6 +134,8 @@ struct rvin_dev {
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity *digital;
+ 
++	struct media_pad pad;
++
+ 	struct mutex lock;
+ 	struct vb2_queue queue;
+ 
 -- 
-2.11.0
+2.16.2
