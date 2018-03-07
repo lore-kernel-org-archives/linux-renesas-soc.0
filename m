@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44679 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934320AbeCGXCM (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33098 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754553AbeCGXAy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 18:02:12 -0500
-Received: by mail-lf0-f65.google.com with SMTP id v9-v6so5653369lfa.11
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Mar 2018 15:02:11 -0800 (PST)
+        Wed, 7 Mar 2018 18:00:54 -0500
+Received: by mail-lf0-f66.google.com with SMTP id o145-v6so5696943lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Mar 2018 15:00:53 -0800 (PST)
 From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Thu, 8 Mar 2018 00:02:09 +0100
+Date: Thu, 8 Mar 2018 00:00:51 +0100
 To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-media@vger.kernel.org
+        linux-media@vger.kernel.or
 Cc: linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v2] i2c: adv748x: afe: fix sparse warning
-Message-ID: <20180307230209.GB2205@bigcity.dyn.berto.se>
+Message-ID: <20180307230051.GA2205@bigcity.dyn.berto.se>
 References: <20180307225816.9801-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
@@ -24,7 +24,7 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 CC linux-media.
 
-It's linux-media@vger.kernel.org not linux-media@vger.kernel.or, sorry
+It's linux-media@vger.kernel.org not linux-media@vger.kernel.or, sorry 
 for the noise.
 
 On 2018-03-07 23:58:16 +0100, Niklas S�derlund wrote:
