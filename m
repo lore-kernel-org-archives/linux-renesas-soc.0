@@ -1,20 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f179.google.com ([209.85.220.179]:33202 "EHLO
-        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751074AbeCGHro (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:20605 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753898AbeCGBs5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 02:47:44 -0500
-MIME-Version: 1.0
-In-Reply-To: <OSBPR01MB1800C2DBEAB2BC506BF80AB9A2D80@OSBPR01MB1800.jpnprd01.prod.outlook.com>
-References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
- <1519697995-6061-4-git-send-email-gaku.inami.xh@renesas.com>
- <CAMuHMdWswL8N3uTCcGmWSfa98_bpz7_11PDs=m+_RC--wBVu6w@mail.gmail.com> <OSBPR01MB1800C2DBEAB2BC506BF80AB9A2D80@OSBPR01MB1800.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 Mar 2018 08:47:43 +0100
-Message-ID: <CAMuHMdXYZB8emmj5TdZih-VQ5SVF-F0LkBRsPPGe=XGvNDt_Lg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] arm64: dts: renesas: r8a7795: Add cpu capacity-dmips-mhz
-To: Gaku Inami <gaku.inami.xh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 6 Mar 2018 20:48:57 -0500
+From: Gaku Inami <gaku.inami.xh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -22,67 +14,42 @@ Cc: Simon Horman <horms@verge.net.au>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH 3/5] arm64: dts: renesas: r8a7795: Add cpu
+ capacity-dmips-mhz
+Date: Wed, 7 Mar 2018 01:48:50 +0000
+Message-ID: <OSBPR01MB1800C2DBEAB2BC506BF80AB9A2D80@OSBPR01MB1800.jpnprd01.prod.outlook.com>
+References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+ <1519697995-6061-4-git-send-email-gaku.inami.xh@renesas.com>
+ <CAMuHMdWswL8N3uTCcGmWSfa98_bpz7_11PDs=m+_RC--wBVu6w@mail.gmail.com>
+In-Reply-To: <CAMuHMdWswL8N3uTCcGmWSfa98_bpz7_11PDs=m+_RC--wBVu6w@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Inami-san,
-
-On Wed, Mar 7, 2018 at 2:48 AM, Gaku Inami <gaku.inami.xh@renesas.com> wrote:
->> From: geert.uytterhoeven@gmail.com [mailto:geert.uytterhoeven@gmail.com] On Behalf Of Geert Uytterhoeven
->> Sent: Monday, March 5, 2018 7:24 PM
-> [snip]
->>
->> 411 for the A53 cores sounds a bit low to me, though.
->> Documentation/devicetree/bindings/arm/cpu-capacity.txt uses 578.
->>
->> Perhaps you already took into account the maximum clock frequencies?
->> According to the binding document, you should not do that (cfr.
->> "final capacities are 1024 for cluster0 and 446 for cluster1" in the
->> bindings doc).
->
-> Thanks for your review.
->
-> I set 411 for CA53 based on dhrystone measurement and current implementation.
->
-> The average in 10 times of measurement as follows:
->
->   cpu   max-freq   dhrystone
->   ---------------------------------
->   A57   1500 MHz  15532585 lps/s
->   A53   1200 MHz   6241541 lps/s
->
-> With the value of CA57 is scaled at 1024, I end up with 411 for CA53.
-> However, since cpufreq is not available on renesas-devel-20180212-v4.16-rc1,
-> the final capacity is set by directly using capacity-dmips-mhz in dt as below.
-
-Documentation/devicetree/bindings/arm/cpu-capacity.txt:
-
-"capacity-dmips-mhz is an optional cpu node [1] property: u32 value
- representing CPU capacity expressed in normalized DMIPS/MHz. At boot time, the
- maximum frequency available to the cpu is then used to calculate the capacity
- value internally used by the kernel."
-
-IIUIC, you should thus not use 15532585 and 6241541 directly, but
-scale them to the frequency.
-
-So the formula for CA53 becomes:
-
-1024 / (15532585 / 1500) * (6241541 / 1200) = 514
-
-> Considering cpufreq is available later, is it better to set the value(514)
-> for CA53 scaled by different maximum frequencies?
-
-DT describes the hardware, not software limitations, so IMHO 514 is the correct
-value.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQtc2FuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGdl
+ZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb20gW21haWx0bzpnZWVydC51eXR0ZXJob2V2ZW5AZ21h
+aWwuY29tXSBPbiBCZWhhbGYgT2YgR2VlcnQgVXl0dGVyaG9ldmVuDQo+IFNlbnQ6IE1vbmRheSwg
+TWFyY2ggNSwgMjAxOCA3OjI0IFBNDQpbc25pcF0NCj4NCj4gNDExIGZvciB0aGUgQTUzIGNvcmVz
+IHNvdW5kcyBhIGJpdCBsb3cgdG8gbWUsIHRob3VnaC4NCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL2FybS9jcHUtY2FwYWNpdHkudHh0IHVzZXMgNTc4Lg0KPiANCj4gUGVyaGFw
+cyB5b3UgYWxyZWFkeSB0b29rIGludG8gYWNjb3VudCB0aGUgbWF4aW11bSBjbG9jayBmcmVxdWVu
+Y2llcz8NCj4gQWNjb3JkaW5nIHRvIHRoZSBiaW5kaW5nIGRvY3VtZW50LCB5b3Ugc2hvdWxkIG5v
+dCBkbyB0aGF0IChjZnIuDQo+ICJmaW5hbCBjYXBhY2l0aWVzIGFyZSAxMDI0IGZvciBjbHVzdGVy
+MCBhbmQgNDQ2IGZvciBjbHVzdGVyMSIgaW4gdGhlDQo+IGJpbmRpbmdzIGRvYykuDQoNClRoYW5r
+cyBmb3IgeW91ciByZXZpZXcuDQoNCkkgc2V0IDQxMSBmb3IgQ0E1MyBiYXNlZCBvbiBkaHJ5c3Rv
+bmUgbWVhc3VyZW1lbnQgYW5kIGN1cnJlbnQgaW1wbGVtZW50YXRpb24uDQoNClRoZSBhdmVyYWdl
+IGluIDEwIHRpbWVzIG9mIG1lYXN1cmVtZW50IGFzIGZvbGxvd3M6DQoNCiAgY3B1ICAgbWF4LWZy
+ZXEgICBkaHJ5c3RvbmUNCiAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQogIEE1
+NyAgIDE1MDAgTUh6ICAxNTUzMjU4NSBscHMvcw0KICBBNTMgICAxMjAwIE1IeiAgIDYyNDE1NDEg
+bHBzL3MNCg0KV2l0aCB0aGUgdmFsdWUgb2YgQ0E1NyBpcyBzY2FsZWQgYXQgMTAyNCwgSSBlbmQg
+dXAgd2l0aCA0MTEgZm9yIENBNTMuIA0KSG93ZXZlciwgc2luY2UgY3B1ZnJlcSBpcyBub3QgYXZh
+aWxhYmxlIG9uIHJlbmVzYXMtZGV2ZWwtMjAxODAyMTItdjQuMTYtcmMxLA0KdGhlIGZpbmFsIGNh
+cGFjaXR5IGlzIHNldCBieSBkaXJlY3RseSB1c2luZyBjYXBhY2l0eS1kbWlwcy1taHogaW4gZHQg
+YXMgYmVsb3cuDQoNCiAgJCBjYXQgL3N5cy9kZXZpY2VzL3N5c3RlbS9jcHUvY3B1Ki9jcHVfY2Fw
+YWNpdHkNCiAgMTAyNA0KICAxMDI0DQogIDEwMjQNCiAgMTAyNA0KICA0MTENCiAgNDExDQogIDQx
+MQ0KICA0MTENCg0KQ29uc2lkZXJpbmcgY3B1ZnJlcSBpcyBhdmFpbGFibGUgbGF0ZXIsIGlzIGl0
+IGJldHRlciB0byBzZXQgdGhlIHZhbHVlKDUxNCkNCmZvciBDQTUzIHNjYWxlZCBieSBkaWZmZXJl
+bnQgbWF4aW11bSBmcmVxdWVuY2llcz8NCg0KUmVnYXJkcywNCkluYW1pDQo=
