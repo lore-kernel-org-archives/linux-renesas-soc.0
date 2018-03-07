@@ -1,95 +1,207 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:41560 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754863AbeCSM2j (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:31539 "EHLO
+        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754753AbeCGWF1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Mar 2018 08:28:39 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/7] arm64: dts: renesas: r8a77965: add USB 2.0 host nodes
-Date: Mon, 19 Mar 2018 21:28:23 +0900
-Message-Id: <1521462507-23287-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 7 Mar 2018 17:05:27 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v12 03/33] rcar-vin: add Gen3 devicetree bindings documentation
+Date: Wed,  7 Mar 2018 23:04:41 +0100
+Message-Id: <20180307220511.9826-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds USB 2.0 host (EHCI/OHCI) nodes for r8a77965.
+Document the devicetree bindings for the CSI-2 inputs available on Gen3.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+There is a need to add a custom property 'renesas,id' and to define
+which CSI-2 input is described in which endpoint under the port@1 node.
+This information is needed since there are a set of predefined routes
+between each VIN and CSI-2 block. This routing table will be kept
+inside the driver but in order for it to act on it it must know which
+VIN and CSI-2 is which.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 38 +++++++++++++++++++++++++++----
- 1 file changed, 34 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/media/rcar_vin.txt         | 118 ++++++++++++++++++---
+ 1 file changed, 106 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index abb4d4d..ecc34ce 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -640,13 +640,28 @@
- 		};
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index c60e6b0a89b67a8c..90d92836284b7f68 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -2,8 +2,12 @@ Renesas R-Car Video Input driver (rcar_vin)
+ -------------------------------------------
  
- 		ohci0: usb@ee080000 {
-+			compatible = "generic-ohci";
- 			reg = <0 0xee080000 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
- 		};
+ The rcar_vin device provides video input capabilities for the Renesas R-Car
+-family of devices. The current blocks are always slaves and suppot one input
+-channel which can be either RGB, YUYV or BT656.
++family of devices.
++
++Each VIN instance has a single parallel input that supports RGB and YUV video,
++with both external synchronization and BT.656 synchronization for the latter.
++Depending on the instance the VIN input is connected to external SoC pins, or
++on Gen3 platforms to a CSI-2 receiver.
  
- 		ehci0: usb@ee080100 {
-+			compatible = "generic-ehci";
- 			reg = <0 0xee080100 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			companion = <&ohci0>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
- 		};
+  - compatible: Must be one or more of the following
+    - "renesas,vin-r8a7743" for the R8A7743 device
+@@ -16,6 +20,8 @@ channel which can be either RGB, YUYV or BT656.
+    - "renesas,vin-r8a7793" for the R8A7793 device
+    - "renesas,vin-r8a7794" for the R8A7794 device
+    - "renesas,vin-r8a7795" for the R8A7795 device
++   - "renesas,vin-r8a7796" for the R8A7796 device
++   - "renesas,vin-r8a77970" for the R8A77970 device
+    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
+      device.
+    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+@@ -31,21 +37,38 @@ channel which can be either RGB, YUYV or BT656.
+ Additionally, an alias named vinX will need to be created to specify
+ which video input device this is.
  
- 		usb2_phy0: usb-phy@ee080200 {
-@@ -673,13 +688,28 @@
- 		};
+-The per-board settings:
++The per-board settings Gen2 platforms:
+  - port sub-node describing a single endpoint connected to the vin
+    as described in video-interfaces.txt[1]. Only the first one will
+    be considered as each vin interface has one input port.
  
- 		ohci1: usb@ee0a0000 {
-+			compatible = "generic-ohci";
- 			reg = <0 0xee0a0000 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 702>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 702>;
-+			status = "disabled";
- 		};
+-   These settings are used to work out video input format and widths
+-   into the system.
++The per-board settings Gen3 platforms:
  
- 		ehci1: usb@ee0a0100 {
-+			compatible = "generic-ehci";
- 			reg = <0 0xee0a0100 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 702>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			companion = <&ohci1>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 702>;
-+			status = "disabled";
- 		};
++Gen3 platforms can support both a single connected parallel input source
++from external SoC pins (port0) and/or multiple parallel input sources
++from local SoC CSI-2 receivers (port1) depending on SoC.
  
- 		i2c0: i2c@e6500000 {
+-Device node example
+--------------------
++- renesas,id - ID number of the VIN, VINx in the documentation.
++- ports
++    - port 0 - sub-node describing a single endpoint connected to the VIN
++      from external SoC pins described in video-interfaces.txt[1].
++      Describing more then one endpoint in port 0 is invalid. Only VIN
++      instances that are connected to external pins should have port 0.
++    - port 1 - sub-nodes describing one or more endpoints connected to
++      the VIN from local SoC CSI-2 receivers. The endpoint numbers must
++      use the following schema.
+ 
+-	aliases {
+-	       vin0 = &vin0;
+-	};
++        - Endpoint 0 - sub-node describing the endpoint connected to CSI20
++        - Endpoint 1 - sub-node describing the endpoint connected to CSI21
++        - Endpoint 2 - sub-node describing the endpoint connected to CSI40
++        - Endpoint 3 - sub-node describing the endpoint connected to CSI41
++
++Device node example for Gen2 platforms
++--------------------------------------
++
++        aliases {
++                vin0 = &vin0;
++        };
+ 
+         vin0: vin@e6ef0000 {
+                 compatible = "renesas,vin-r8a7790", "renesas,rcar-gen2-vin";
+@@ -55,8 +78,8 @@ Device node example
+                 status = "disabled";
+         };
+ 
+-Board setup example (vin1 composite video input)
+-------------------------------------------------
++Board setup example for Gen2 platforms (vin1 composite video input)
++-------------------------------------------------------------------
+ 
+ &i2c2   {
+         status = "ok";
+@@ -95,6 +118,77 @@ Board setup example (vin1 composite video input)
+         };
+ };
+ 
++Device node example for Gen3 platforms
++--------------------------------------
+ 
++        vin0: video@e6ef0000 {
++                compatible = "renesas,vin-r8a7795";
++                reg = <0 0xe6ef0000 0 0x1000>;
++                interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cpg CPG_MOD 811>;
++                power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++                resets = <&cpg 811>;
++                renesas,id = <0>;
++
++                ports {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
++
++                        port@1 {
++                                #address-cells = <1>;
++                                #size-cells = <0>;
++
++                                reg = <1>;
++
++                                vin0csi20: endpoint@0 {
++                                        reg = <0>;
++                                        remote-endpoint= <&csi20vin0>;
++                                };
++                                vin0csi21: endpoint@1 {
++                                        reg = <1>;
++                                        remote-endpoint= <&csi21vin0>;
++                                };
++                                vin0csi40: endpoint@2 {
++                                        reg = <2>;
++                                        remote-endpoint= <&csi40vin0>;
++                                };
++                        };
++                };
++        };
++
++        csi20: csi2@fea80000 {
++                compatible = "renesas,r8a7795-csi2";
++                reg = <0 0xfea80000 0 0x10000>;
++                interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cpg CPG_MOD 714>;
++                power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++                resets = <&cpg 714>;
++
++                ports {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
++
++                        port@0 {
++                                reg = <0>;
++                                csi20_in: endpoint {
++                                        clock-lanes = <0>;
++                                        data-lanes = <1>;
++                                        remote-endpoint = <&adv7482_txb>;
++                                };
++                        };
++
++                        port@1 {
++                                #address-cells = <1>;
++                                #size-cells = <0>;
++
++                                reg = <1>;
++
++                                csi20vin0: endpoint@0 {
++                                        reg = <0>;
++                                        remote-endpoint = <&vin0csi20>;
++                                };
++                        };
++                };
++        };
+ 
+ [1] video-interfaces.txt common video media interface
 -- 
-1.9.1
+2.16.2
