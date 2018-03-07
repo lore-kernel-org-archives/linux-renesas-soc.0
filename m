@@ -1,61 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753576AbeCPOvz (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:31512 "EHLO
+        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754621AbeCGWF0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:51:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/69] arm64: dts: renesas: r8a7796: update register size for thermal
-Date: Fri, 16 Mar 2018 15:50:40 +0100
-Message-Id: <a052d934a4e03a81e1f6cf1c63ac693b04e9a441.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Wed, 7 Mar 2018 17:05:26 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v12 02/33] dt-bindings: media: rcar_vin: add device tree support for r8a774[35]
+Date: Wed,  7 Mar 2018 23:04:40 +0100
+Message-Id: <20180307220511.9826-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-To be able to read fused calibration values from hardware the size of
-the register resource of TSC1 needs to be incremented to cover one more
-register which holds the information if the calibration values have been
-fused or not.
+Add compatible strings for r8a7743 and r8a7745. No driver change
+is needed as "renesas,rcar-gen2-vin" will activate the right code.
+However, it is good practice to document compatible strings for the
+specific SoC as this allows SoC specific changes to the driver if
+needed, in addition to document SoC support and therefore allow
+checkpatch.pl to validate compatible string values.
 
-Instead of increasing TSC1 size to the value from the datasheet update
-all TSC's size to the smallest granularity of the address decoder
-circuitry.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/media/rcar_vin.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index ef10fb548681..f8e9313f9405 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1625,9 +1625,9 @@
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index 0ac715a5c331bc26..c60e6b0a89b67a8c 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -6,6 +6,8 @@ family of devices. The current blocks are always slaves and suppot one input
+ channel which can be either RGB, YUYV or BT656.
  
- 		tsc: thermal@e6198000 {
- 			compatible = "renesas,r8a7796-thermal";
--			reg = <0 0xe6198000 0 0x68>,
--			      <0 0xe61a0000 0 0x5c>,
--			      <0 0xe61a8000 0 0x5c>;
-+			reg = <0 0xe6198000 0 0x100>,
-+			      <0 0xe61a0000 0 0x100>,
-+			      <0 0xe61a8000 0 0x100>;
- 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+  - compatible: Must be one or more of the following
++   - "renesas,vin-r8a7743" for the R8A7743 device
++   - "renesas,vin-r8a7745" for the R8A7745 device
+    - "renesas,vin-r8a7778" for the R8A7778 device
+    - "renesas,vin-r8a7779" for the R8A7779 device
+    - "renesas,vin-r8a7790" for the R8A7790 device
+@@ -14,7 +16,8 @@ channel which can be either RGB, YUYV or BT656.
+    - "renesas,vin-r8a7793" for the R8A7793 device
+    - "renesas,vin-r8a7794" for the R8A7794 device
+    - "renesas,vin-r8a7795" for the R8A7795 device
+-   - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 compatible device.
++   - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
++     device.
+    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+ 
+    When compatible with the generic version nodes must list the
 -- 
-2.11.0
+2.16.2
