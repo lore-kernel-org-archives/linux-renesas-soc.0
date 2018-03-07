@@ -1,214 +1,659 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753539AbeCPOxh (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:31715 "EHLO
+        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754760AbeCGWFf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Updates for v4.17
-Date: Fri, 16 Mar 2018 15:53:09 +0100
-Message-Id: <cover.1521208546.git.horms+renesas@verge.net.au>
+        Wed, 7 Mar 2018 17:05:35 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v12 09/33] rcar-vin: move functions regarding scaling
+Date: Wed,  7 Mar 2018 23:04:47 +0100
+Message-Id: <20180307220511.9826-10-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+In preparation of refactoring the scaling code move the code regarding
+scaling to to the top of the file to avoid the need to add forward
+declarations. No code is changed in this commit only whole functions
+moved inside the same file.
 
-Please consider these Renesas ARM based SoC DT updates for v4.17.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 602 +++++++++++++++--------------
+ 1 file changed, 303 insertions(+), 299 deletions(-)
 
-
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-for-v4.17
-
-for you to fetch changes up to 49846cbda7d3f85f0bb6cebccf8f039b51401fcb:
-
-  ARM: dts: silk: Add GPIO keys to DT (2018-03-13 19:33:11 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Updates for v4.17
-
-* Silk board with R-Car E2 (r8a7794) SoC
-  - Add r1ex24002 EEPROM to DT
-
-    Magnus Damm says "Extend the Silk board support to include U14 which is
-    an I2C based EEPROM hooked up to the I2C1 bus."
-
-  - Add GPIO keys to DT
-
-    Magnus Damm says "Extend the Silk board support to include SW3, SW4,
-    SW6 and SW12. They are all connected via GPIO lines and handled by the
-    gpio-keys driver"
-
-* Marzen board with R-Car H1 (r7a7779) SoC
-  - Add SDHI0 VCCQ Regulator
-
-    Magnus Damm says "Add support for the on-board voltage regulator hooked
-    up to GPIO3_20 on r8a7779 Marzen. The board schematics describes the
-    regulator as U4 TPS2110A. Input wise, U4 has D0 fixed to ground, D1
-    tied to GPIO3_20 while IN1 is fixed to 3.3V and IN2 is fixed to 1.8V.
-    OUT goes to the pull-ups for the data pins of SDHI0."
-
-* Porter board with R-Car M3W (r8a7791) SoC
-  - Fix HDMI output routing
-
-    Laurent Pinchart says "The HDMI encoder is connected to the RGB output
-    of the DU, which is port@0, not port@1."
-
-* iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-SM) and
-  iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
-  - Enable cmt0
-
-* Stout board with R-Car H2 (r8a7790) SoC
-  - Initial support
-
-* Lager board with R-Car H2 (r8a7790) SoC
-  - Add CEC clock for HDMI transmitter
-
-    Niklas Söderlund says "The adv7511 on the Lager board has a 12 MHz
-    fixed clock for the CEC block. Specify this in the dts to enable CEC
-    support."
-
-  - Move cec_clock to root node
-
-    By definition nodes without a bus address do not belong on the bus
-
-* kzm9d board with EMMA Mobile EV2 (EMEV2) SoC
-  - Fix "debounce-interval" property misspelling
-
-* RZ/A1 (r7s72100) SoC
-  - Add USB nodes
-
-* RZ/G1M (r8a7743) and RZ/G1H (r8a7745) SoCs
-  - Add IPMMU DT nodes
-  - Add VSP support
-
-* R-Car Gen2 boards
-  - Use I2C demuxer for
-
-    This allows run-time switching between alternate I2C IP blocks
-
-* R-Car Gen2 and RZ SoCs
-  - Clean up DT files to ease future maintenance
-    + add soc node for IP attached to the bus
-    + sort subnodes of soc and root node
-    + consistently use single space after =
-
-* R-Car H2 (r8a7790), M3-W (r8a7791) and M3-N (r7a7793) SoCs
-  - Reduce size of thermal registers
-
-    According to the "User's Manual: Hardware" v2.00 the registers at base
-    0xe61f0000 extend to an offset of 0x10, rather than 0x14 which is the
-    case on the r8a73a4 (R-Mobile APE6).
-
-    This should not have any runtime affect as mapping granularity is
-    PAGE_SIZE.
-
-----------------------------------------------------------------
-Biju Das (4):
-      ARM: dts: r8a7743: Add IPMMU DT nodes
-      ARM: dts: r8a7745: Add IPMMU DT nodes
-      ARM: dts: r8a7743: Add VSP support
-      ARM: dts: r8a7745: Add VSP support
-
-Chris Brandt (1):
-      ARM: dts: r7s72100: add USB device to device tree
-
-Fabrizio Castro (2):
-      ARM: dts: iwg20m: Enable cmt0
-      ARM: dts: iwg22m: Enable cmt0
-
-Geert Uytterhoeven (2):
-      ARM: dts: kzm9d: Fix "debounce-interval" property misspelling
-      ARM: dts: lager: Move cec_clock to root node
-
-Laurent Pinchart (1):
-      ARM: dts: porter: Fix HDMI output routing
-
-Magnus Damm (3):
-      ARM: dts: marzen: Add SDHI0 VCCQ Regulator
-      ARM: dts: silk: Add r1ex24002 EEPROM to DT
-      ARM: dts: silk: Add GPIO keys to DT
-
-Marek Vasut (1):
-      ARM: dts: stout: Initial r8a7790 Stout board support
-
-Niklas Söderlund (1):
-      ARM: dts: lager: Add CEC clock for HDMI transmitter
-
-Simon Horman (28):
-      ARM: dts: r8a7790: Reduce size of thermal registers
-      ARM: dts: r8a7791: Reduce size of thermal registers
-      ARM: dts: r8a7793: Reduce size of thermal registers
-      ARM: dts: r8a7790: consistently use single space after =
-      ARM: dts: r8a7790: add soc node
-      ARM: dts: r8a7790: sort subnodes of soc node
-      ARM: dts: r8a7790: sort subnodes of root node
-      ARM: dts: r8a7791: consistently use single space after =
-      ARM: dts: r8a7791: add soc node
-      ARM: dts: r8a7791: sort subnodes of root node
-      ARM: dts: r8a7792: sort subnodes of soc node
-      ARM: dts: r8a7793: consistently use single space after =
-      ARM: dts: r8a7793: add soc node
-      ARM: dts: r8a7793: sort subnodes of soc node
-      ARM: dts: r8a7793: sort subnodes of root node
-      ARM: dts: r8a7794: consistently use single space after =
-      ARM: dts: r8a7794: add soc node
-      ARM: dts: r8a7794: sort subnodes of soc node
-      ARM: dts: r8a7794: sort subnodes of root node
-      ARM: dts: r8a7790: consistently use single space before =
-      ARM: dts: r8a7791: consistently use single space before =
-      ARM: dts: r8a7793: consistently use single space before =
-      ARM: dts: r8a7743: sort subnodes of soc node
-      ARM: dts: r8a7745: sort subnodes of soc node
-      ARM: dts: r7s72100: add soc node
-      ARM: dts: r7s72100: sort subnodes of soc node
-      ARM: dts: r7s72100: stop grouping clocks under a "clocks" subnode
-      ARM: dts: r7s72100: sort subnodes of root node
-
-Wolfram Sang (9):
-      ARM: dts: lager: use demuxer for IIC2/I2C2
-      ARM: dts: lager: use demuxer for IIC3/I2C3
-      ARM: dts: koelsch: use demuxer for I2C2
-      ARM: dts: koelsch: use demuxer for I2C4
-      ARM: dts: porter: use demuxer for I2C2
-      ARM: dts: alt: use demuxer for I2C1
-      ARM: dts: silk: use demuxer for I2C1
-      ARM: dts: gose: use demuxer for I2C2
-      ARM: dts: gose: use demuxer for I2C4
-
- arch/arm/boot/dts/Makefile            |    1 +
- arch/arm/boot/dts/emev2-kzm9d.dts     |    8 +-
- arch/arm/boot/dts/r7s72100.dtsi       | 1018 +++++------
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi |    4 +
- arch/arm/boot/dts/r8a7743.dtsi        | 1324 ++++++++-------
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi |    4 +
- arch/arm/boot/dts/r8a7745.dtsi        | 1778 ++++++++++----------
- arch/arm/boot/dts/r8a7779-marzen.dts  |   14 +
- arch/arm/boot/dts/r8a7790-lager.dts   |  287 ++--
- arch/arm/boot/dts/r8a7790-stout.dts   |  363 ++++
- arch/arm/boot/dts/r8a7790.dtsi        | 2837 ++++++++++++++++---------------
- arch/arm/boot/dts/r8a7791-koelsch.dts |  232 ++-
- arch/arm/boot/dts/r8a7791-porter.dts  |  130 +-
- arch/arm/boot/dts/r8a7791.dtsi        | 2986 +++++++++++++++++----------------
- arch/arm/boot/dts/r8a7792.dtsi        |  498 +++---
- arch/arm/boot/dts/r8a7793-gose.dts    |  252 +--
- arch/arm/boot/dts/r8a7793.dtsi        | 2392 +++++++++++++-------------
- arch/arm/boot/dts/r8a7794-alt.dts     |   53 +-
- arch/arm/boot/dts/r8a7794-silk.dts    |  189 ++-
- arch/arm/boot/dts/r8a7794.dtsi        | 2421 +++++++++++++-------------
- 20 files changed, 8957 insertions(+), 7834 deletions(-)
- create mode 100644 arch/arm/boot/dts/r8a7790-stout.dts
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index d701b52d198243b5..a7cda3922cb74baa 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -138,305 +138,6 @@ static u32 rvin_read(struct rvin_dev *vin, u32 offset)
+ 	return ioread32(vin->base + offset);
+ }
+ 
+-static int rvin_setup(struct rvin_dev *vin)
+-{
+-	u32 vnmc, dmr, dmr2, interrupts;
+-	v4l2_std_id std;
+-	bool progressive = false, output_is_yuv = false, input_is_yuv = false;
+-
+-	switch (vin->format.field) {
+-	case V4L2_FIELD_TOP:
+-		vnmc = VNMC_IM_ODD;
+-		break;
+-	case V4L2_FIELD_BOTTOM:
+-		vnmc = VNMC_IM_EVEN;
+-		break;
+-	case V4L2_FIELD_INTERLACED:
+-		/* Default to TB */
+-		vnmc = VNMC_IM_FULL;
+-		/* Use BT if video standard can be read and is 60 Hz format */
+-		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+-			if (std & V4L2_STD_525_60)
+-				vnmc = VNMC_IM_FULL | VNMC_FOC;
+-		}
+-		break;
+-	case V4L2_FIELD_INTERLACED_TB:
+-		vnmc = VNMC_IM_FULL;
+-		break;
+-	case V4L2_FIELD_INTERLACED_BT:
+-		vnmc = VNMC_IM_FULL | VNMC_FOC;
+-		break;
+-	case V4L2_FIELD_ALTERNATE:
+-	case V4L2_FIELD_NONE:
+-		if (vin->continuous) {
+-			vnmc = VNMC_IM_ODD_EVEN;
+-			progressive = true;
+-		} else {
+-			vnmc = VNMC_IM_ODD;
+-		}
+-		break;
+-	default:
+-		vnmc = VNMC_IM_ODD;
+-		break;
+-	}
+-
+-	/*
+-	 * Input interface
+-	 */
+-	switch (vin->digital->code) {
+-	case MEDIA_BUS_FMT_YUYV8_1X16:
+-		/* BT.601/BT.1358 16bit YCbCr422 */
+-		vnmc |= VNMC_INF_YUV16;
+-		input_is_yuv = true;
+-		break;
+-	case MEDIA_BUS_FMT_UYVY8_2X8:
+-		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
+-		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
+-			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
+-		input_is_yuv = true;
+-		break;
+-	case MEDIA_BUS_FMT_RGB888_1X24:
+-		vnmc |= VNMC_INF_RGB888;
+-		break;
+-	case MEDIA_BUS_FMT_UYVY10_2X10:
+-		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
+-		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
+-			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
+-		input_is_yuv = true;
+-		break;
+-	default:
+-		break;
+-	}
+-
+-	/* Enable VSYNC Field Toogle mode after one VSYNC input */
+-	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+-
+-	/* Hsync Signal Polarity Select */
+-	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+-		dmr2 |= VNDMR2_HPS;
+-
+-	/* Vsync Signal Polarity Select */
+-	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
+-		dmr2 |= VNDMR2_VPS;
+-
+-	/*
+-	 * Output format
+-	 */
+-	switch (vin->format.pixelformat) {
+-	case V4L2_PIX_FMT_NV16:
+-		rvin_write(vin,
+-			   ALIGN(vin->format.width * vin->format.height, 0x80),
+-			   VNUVAOF_REG);
+-		dmr = VNDMR_DTMD_YCSEP;
+-		output_is_yuv = true;
+-		break;
+-	case V4L2_PIX_FMT_YUYV:
+-		dmr = VNDMR_BPSM;
+-		output_is_yuv = true;
+-		break;
+-	case V4L2_PIX_FMT_UYVY:
+-		dmr = 0;
+-		output_is_yuv = true;
+-		break;
+-	case V4L2_PIX_FMT_XRGB555:
+-		dmr = VNDMR_DTMD_ARGB1555;
+-		break;
+-	case V4L2_PIX_FMT_RGB565:
+-		dmr = 0;
+-		break;
+-	case V4L2_PIX_FMT_XBGR32:
+-		/* Note: not supported on M1 */
+-		dmr = VNDMR_EXRGB;
+-		break;
+-	default:
+-		vin_err(vin, "Invalid pixelformat (0x%x)\n",
+-			vin->format.pixelformat);
+-		return -EINVAL;
+-	}
+-
+-	/* Always update on field change */
+-	vnmc |= VNMC_VUP;
+-
+-	/* If input and output use the same colorspace, use bypass mode */
+-	if (input_is_yuv == output_is_yuv)
+-		vnmc |= VNMC_BPS;
+-
+-	/* Progressive or interlaced mode */
+-	interrupts = progressive ? VNIE_FIE : VNIE_EFE;
+-
+-	/* Ack interrupts */
+-	rvin_write(vin, interrupts, VNINTS_REG);
+-	/* Enable interrupts */
+-	rvin_write(vin, interrupts, VNIE_REG);
+-	/* Start capturing */
+-	rvin_write(vin, dmr, VNDMR_REG);
+-	rvin_write(vin, dmr2, VNDMR2_REG);
+-
+-	/* Enable module */
+-	rvin_write(vin, vnmc | VNMC_ME, VNMC_REG);
+-
+-	return 0;
+-}
+-
+-static void rvin_disable_interrupts(struct rvin_dev *vin)
+-{
+-	rvin_write(vin, 0, VNIE_REG);
+-}
+-
+-static u32 rvin_get_interrupt_status(struct rvin_dev *vin)
+-{
+-	return rvin_read(vin, VNINTS_REG);
+-}
+-
+-static void rvin_ack_interrupt(struct rvin_dev *vin)
+-{
+-	rvin_write(vin, rvin_read(vin, VNINTS_REG), VNINTS_REG);
+-}
+-
+-static bool rvin_capture_active(struct rvin_dev *vin)
+-{
+-	return rvin_read(vin, VNMS_REG) & VNMS_CA;
+-}
+-
+-static int rvin_get_active_slot(struct rvin_dev *vin, u32 vnms)
+-{
+-	if (vin->continuous)
+-		return (vnms & VNMS_FBS_MASK) >> VNMS_FBS_SHIFT;
+-
+-	return 0;
+-}
+-
+-static enum v4l2_field rvin_get_active_field(struct rvin_dev *vin, u32 vnms)
+-{
+-	if (vin->format.field == V4L2_FIELD_ALTERNATE) {
+-		/* If FS is set it's a Even field */
+-		if (vnms & VNMS_FS)
+-			return V4L2_FIELD_BOTTOM;
+-		return V4L2_FIELD_TOP;
+-	}
+-
+-	return vin->format.field;
+-}
+-
+-static void rvin_set_slot_addr(struct rvin_dev *vin, int slot, dma_addr_t addr)
+-{
+-	const struct rvin_video_format *fmt;
+-	int offsetx, offsety;
+-	dma_addr_t offset;
+-
+-	fmt = rvin_format_from_pixel(vin->format.pixelformat);
+-
+-	/*
+-	 * There is no HW support for composition do the beast we can
+-	 * by modifying the buffer offset
+-	 */
+-	offsetx = vin->compose.left * fmt->bpp;
+-	offsety = vin->compose.top * vin->format.bytesperline;
+-	offset = addr + offsetx + offsety;
+-
+-	/*
+-	 * The address needs to be 128 bytes aligned. Driver should never accept
+-	 * settings that do not satisfy this in the first place...
+-	 */
+-	if (WARN_ON((offsetx | offsety | offset) & HW_BUFFER_MASK))
+-		return;
+-
+-	rvin_write(vin, offset, VNMB_REG(slot));
+-}
+-
+-/* Moves a buffer from the queue to the HW slots */
+-static bool rvin_fill_hw_slot(struct rvin_dev *vin, int slot)
+-{
+-	struct rvin_buffer *buf;
+-	struct vb2_v4l2_buffer *vbuf;
+-	dma_addr_t phys_addr_top;
+-
+-	if (vin->queue_buf[slot] != NULL)
+-		return true;
+-
+-	if (list_empty(&vin->buf_list))
+-		return false;
+-
+-	vin_dbg(vin, "Filling HW slot: %d\n", slot);
+-
+-	/* Keep track of buffer we give to HW */
+-	buf = list_entry(vin->buf_list.next, struct rvin_buffer, list);
+-	vbuf = &buf->vb;
+-	list_del_init(to_buf_list(vbuf));
+-	vin->queue_buf[slot] = vbuf;
+-
+-	/* Setup DMA */
+-	phys_addr_top = vb2_dma_contig_plane_dma_addr(&vbuf->vb2_buf, 0);
+-	rvin_set_slot_addr(vin, slot, phys_addr_top);
+-
+-	return true;
+-}
+-
+-static bool rvin_fill_hw(struct rvin_dev *vin)
+-{
+-	int slot, limit;
+-
+-	limit = vin->continuous ? HW_BUFFER_NUM : 1;
+-
+-	for (slot = 0; slot < limit; slot++)
+-		if (!rvin_fill_hw_slot(vin, slot))
+-			return false;
+-	return true;
+-}
+-
+-static void rvin_capture_on(struct rvin_dev *vin)
+-{
+-	vin_dbg(vin, "Capture on in %s mode\n",
+-		vin->continuous ? "continuous" : "single");
+-
+-	if (vin->continuous)
+-		/* Continuous Frame Capture Mode */
+-		rvin_write(vin, VNFC_C_FRAME, VNFC_REG);
+-	else
+-		/* Single Frame Capture Mode */
+-		rvin_write(vin, VNFC_S_FRAME, VNFC_REG);
+-}
+-
+-static int rvin_capture_start(struct rvin_dev *vin)
+-{
+-	struct rvin_buffer *buf, *node;
+-	int bufs, ret;
+-
+-	/* Count number of free buffers */
+-	bufs = 0;
+-	list_for_each_entry_safe(buf, node, &vin->buf_list, list)
+-		bufs++;
+-
+-	/* Continuous capture requires more buffers then there are HW slots */
+-	vin->continuous = bufs > HW_BUFFER_NUM;
+-
+-	if (!rvin_fill_hw(vin)) {
+-		vin_err(vin, "HW not ready to start, not enough buffers available\n");
+-		return -EINVAL;
+-	}
+-
+-	rvin_crop_scale_comp(vin);
+-
+-	ret = rvin_setup(vin);
+-	if (ret)
+-		return ret;
+-
+-	rvin_capture_on(vin);
+-
+-	vin->state = RUNNING;
+-
+-	return 0;
+-}
+-
+-static void rvin_capture_stop(struct rvin_dev *vin)
+-{
+-	/* Set continuous & single transfer off */
+-	rvin_write(vin, 0, VNFC_REG);
+-
+-	/* Disable module */
+-	rvin_write(vin, rvin_read(vin, VNMC_REG) & ~VNMC_ME, VNMC_REG);
+-}
+-
+ /* -----------------------------------------------------------------------------
+  * Crop and Scaling Gen2
+  */
+@@ -892,6 +593,309 @@ void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
+ 	pix->height = height;
+ }
+ 
++/* -----------------------------------------------------------------------------
++ * Hardware setup
++ */
++
++static int rvin_setup(struct rvin_dev *vin)
++{
++	u32 vnmc, dmr, dmr2, interrupts;
++	v4l2_std_id std;
++	bool progressive = false, output_is_yuv = false, input_is_yuv = false;
++
++	switch (vin->format.field) {
++	case V4L2_FIELD_TOP:
++		vnmc = VNMC_IM_ODD;
++		break;
++	case V4L2_FIELD_BOTTOM:
++		vnmc = VNMC_IM_EVEN;
++		break;
++	case V4L2_FIELD_INTERLACED:
++		/* Default to TB */
++		vnmc = VNMC_IM_FULL;
++		/* Use BT if video standard can be read and is 60 Hz format */
++		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
++			if (std & V4L2_STD_525_60)
++				vnmc = VNMC_IM_FULL | VNMC_FOC;
++		}
++		break;
++	case V4L2_FIELD_INTERLACED_TB:
++		vnmc = VNMC_IM_FULL;
++		break;
++	case V4L2_FIELD_INTERLACED_BT:
++		vnmc = VNMC_IM_FULL | VNMC_FOC;
++		break;
++	case V4L2_FIELD_ALTERNATE:
++	case V4L2_FIELD_NONE:
++		if (vin->continuous) {
++			vnmc = VNMC_IM_ODD_EVEN;
++			progressive = true;
++		} else {
++			vnmc = VNMC_IM_ODD;
++		}
++		break;
++	default:
++		vnmc = VNMC_IM_ODD;
++		break;
++	}
++
++	/*
++	 * Input interface
++	 */
++	switch (vin->digital->code) {
++	case MEDIA_BUS_FMT_YUYV8_1X16:
++		/* BT.601/BT.1358 16bit YCbCr422 */
++		vnmc |= VNMC_INF_YUV16;
++		input_is_yuv = true;
++		break;
++	case MEDIA_BUS_FMT_UYVY8_2X8:
++		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
++		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
++			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
++		input_is_yuv = true;
++		break;
++	case MEDIA_BUS_FMT_RGB888_1X24:
++		vnmc |= VNMC_INF_RGB888;
++		break;
++	case MEDIA_BUS_FMT_UYVY10_2X10:
++		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
++		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
++			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
++		input_is_yuv = true;
++		break;
++	default:
++		break;
++	}
++
++	/* Enable VSYNC Field Toogle mode after one VSYNC input */
++	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
++
++	/* Hsync Signal Polarity Select */
++	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
++		dmr2 |= VNDMR2_HPS;
++
++	/* Vsync Signal Polarity Select */
++	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
++		dmr2 |= VNDMR2_VPS;
++
++	/*
++	 * Output format
++	 */
++	switch (vin->format.pixelformat) {
++	case V4L2_PIX_FMT_NV16:
++		rvin_write(vin,
++			   ALIGN(vin->format.width * vin->format.height, 0x80),
++			   VNUVAOF_REG);
++		dmr = VNDMR_DTMD_YCSEP;
++		output_is_yuv = true;
++		break;
++	case V4L2_PIX_FMT_YUYV:
++		dmr = VNDMR_BPSM;
++		output_is_yuv = true;
++		break;
++	case V4L2_PIX_FMT_UYVY:
++		dmr = 0;
++		output_is_yuv = true;
++		break;
++	case V4L2_PIX_FMT_XRGB555:
++		dmr = VNDMR_DTMD_ARGB1555;
++		break;
++	case V4L2_PIX_FMT_RGB565:
++		dmr = 0;
++		break;
++	case V4L2_PIX_FMT_XBGR32:
++		/* Note: not supported on M1 */
++		dmr = VNDMR_EXRGB;
++		break;
++	default:
++		vin_err(vin, "Invalid pixelformat (0x%x)\n",
++			vin->format.pixelformat);
++		return -EINVAL;
++	}
++
++	/* Always update on field change */
++	vnmc |= VNMC_VUP;
++
++	/* If input and output use the same colorspace, use bypass mode */
++	if (input_is_yuv == output_is_yuv)
++		vnmc |= VNMC_BPS;
++
++	/* Progressive or interlaced mode */
++	interrupts = progressive ? VNIE_FIE : VNIE_EFE;
++
++	/* Ack interrupts */
++	rvin_write(vin, interrupts, VNINTS_REG);
++	/* Enable interrupts */
++	rvin_write(vin, interrupts, VNIE_REG);
++	/* Start capturing */
++	rvin_write(vin, dmr, VNDMR_REG);
++	rvin_write(vin, dmr2, VNDMR2_REG);
++
++	/* Enable module */
++	rvin_write(vin, vnmc | VNMC_ME, VNMC_REG);
++
++	return 0;
++}
++
++static void rvin_disable_interrupts(struct rvin_dev *vin)
++{
++	rvin_write(vin, 0, VNIE_REG);
++}
++
++static u32 rvin_get_interrupt_status(struct rvin_dev *vin)
++{
++	return rvin_read(vin, VNINTS_REG);
++}
++
++static void rvin_ack_interrupt(struct rvin_dev *vin)
++{
++	rvin_write(vin, rvin_read(vin, VNINTS_REG), VNINTS_REG);
++}
++
++static bool rvin_capture_active(struct rvin_dev *vin)
++{
++	return rvin_read(vin, VNMS_REG) & VNMS_CA;
++}
++
++static int rvin_get_active_slot(struct rvin_dev *vin, u32 vnms)
++{
++	if (vin->continuous)
++		return (vnms & VNMS_FBS_MASK) >> VNMS_FBS_SHIFT;
++
++	return 0;
++}
++
++static enum v4l2_field rvin_get_active_field(struct rvin_dev *vin, u32 vnms)
++{
++	if (vin->format.field == V4L2_FIELD_ALTERNATE) {
++		/* If FS is set it's a Even field */
++		if (vnms & VNMS_FS)
++			return V4L2_FIELD_BOTTOM;
++		return V4L2_FIELD_TOP;
++	}
++
++	return vin->format.field;
++}
++
++static void rvin_set_slot_addr(struct rvin_dev *vin, int slot, dma_addr_t addr)
++{
++	const struct rvin_video_format *fmt;
++	int offsetx, offsety;
++	dma_addr_t offset;
++
++	fmt = rvin_format_from_pixel(vin->format.pixelformat);
++
++	/*
++	 * There is no HW support for composition do the beast we can
++	 * by modifying the buffer offset
++	 */
++	offsetx = vin->compose.left * fmt->bpp;
++	offsety = vin->compose.top * vin->format.bytesperline;
++	offset = addr + offsetx + offsety;
++
++	/*
++	 * The address needs to be 128 bytes aligned. Driver should never accept
++	 * settings that do not satisfy this in the first place...
++	 */
++	if (WARN_ON((offsetx | offsety | offset) & HW_BUFFER_MASK))
++		return;
++
++	rvin_write(vin, offset, VNMB_REG(slot));
++}
++
++/* Moves a buffer from the queue to the HW slots */
++static bool rvin_fill_hw_slot(struct rvin_dev *vin, int slot)
++{
++	struct rvin_buffer *buf;
++	struct vb2_v4l2_buffer *vbuf;
++	dma_addr_t phys_addr_top;
++
++	if (vin->queue_buf[slot] != NULL)
++		return true;
++
++	if (list_empty(&vin->buf_list))
++		return false;
++
++	vin_dbg(vin, "Filling HW slot: %d\n", slot);
++
++	/* Keep track of buffer we give to HW */
++	buf = list_entry(vin->buf_list.next, struct rvin_buffer, list);
++	vbuf = &buf->vb;
++	list_del_init(to_buf_list(vbuf));
++	vin->queue_buf[slot] = vbuf;
++
++	/* Setup DMA */
++	phys_addr_top = vb2_dma_contig_plane_dma_addr(&vbuf->vb2_buf, 0);
++	rvin_set_slot_addr(vin, slot, phys_addr_top);
++
++	return true;
++}
++
++static bool rvin_fill_hw(struct rvin_dev *vin)
++{
++	int slot, limit;
++
++	limit = vin->continuous ? HW_BUFFER_NUM : 1;
++
++	for (slot = 0; slot < limit; slot++)
++		if (!rvin_fill_hw_slot(vin, slot))
++			return false;
++	return true;
++}
++
++static void rvin_capture_on(struct rvin_dev *vin)
++{
++	vin_dbg(vin, "Capture on in %s mode\n",
++		vin->continuous ? "continuous" : "single");
++
++	if (vin->continuous)
++		/* Continuous Frame Capture Mode */
++		rvin_write(vin, VNFC_C_FRAME, VNFC_REG);
++	else
++		/* Single Frame Capture Mode */
++		rvin_write(vin, VNFC_S_FRAME, VNFC_REG);
++}
++
++static int rvin_capture_start(struct rvin_dev *vin)
++{
++	struct rvin_buffer *buf, *node;
++	int bufs, ret;
++
++	/* Count number of free buffers */
++	bufs = 0;
++	list_for_each_entry_safe(buf, node, &vin->buf_list, list)
++		bufs++;
++
++	/* Continuous capture requires more buffers then there are HW slots */
++	vin->continuous = bufs > HW_BUFFER_NUM;
++
++	if (!rvin_fill_hw(vin)) {
++		vin_err(vin, "HW not ready to start, not enough buffers available\n");
++		return -EINVAL;
++	}
++
++	rvin_crop_scale_comp(vin);
++
++	ret = rvin_setup(vin);
++	if (ret)
++		return ret;
++
++	rvin_capture_on(vin);
++
++	vin->state = RUNNING;
++
++	return 0;
++}
++
++static void rvin_capture_stop(struct rvin_dev *vin)
++{
++	/* Set continuous & single transfer off */
++	rvin_write(vin, 0, VNFC_REG);
++
++	/* Disable module */
++	rvin_write(vin, rvin_read(vin, VNMC_REG) & ~VNMC_ME, VNMC_REG);
++}
++
+ /* -----------------------------------------------------------------------------
+  * DMA Functions
+  */
+-- 
+2.16.2
