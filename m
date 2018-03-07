@@ -1,37 +1,41 @@
-Return-Path: <kieranbingham@gmail.com>
-Subject: Re: [PATCH v2] i2c: adv748x: afe: fix sparse warning
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Linux Media Mailing List <linux-media@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44679 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934320AbeCGXCM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Mar 2018 18:02:12 -0500
+Received: by mail-lf0-f65.google.com with SMTP id v9-v6so5653369lfa.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Mar 2018 15:02:11 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Thu, 8 Mar 2018 00:02:09 +0100
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: adv748x: afe: fix sparse warning
+Message-ID: <20180307230209.GB2205@bigcity.dyn.berto.se>
 References: <20180307225816.9801-1-niklas.soderlund+renesas@ragnatech.se>
-From: Kieran Bingham <kieranbingham@gmail.com>
-Message-ID: <f0c23d2b-c71d-3769-171b-c62733853397@gmail.com>
-Date: Wed, 7 Mar 2018 23:12:34 +0000
 MIME-Version: 1.0
-In-Reply-To: <20180307225816.9801-1-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180307225816.9801-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+CC linux-media.
 
-Thank you for your patch.
+It's linux-media@vger.kernel.org not linux-media@vger.kernel.or, sorry
+for the noise.
 
-On 07/03/18 22:58, Niklas Söderlund wrote:
+On 2018-03-07 23:58:16 +0100, Niklas S�derlund wrote:
 > This fixes the following sparse warning:
 > 
 > drivers/media/i2c/adv748x/adv748x-afe.c:294:34:    expected unsigned int [usertype] *signal
 > drivers/media/i2c/adv748x/adv748x-afe.c:294:34:    got int *<noident>
 > drivers/media/i2c/adv748x/adv748x-afe.c:294:34: warning: incorrect type in argument 2 (different signedness)
 > 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> 
 > ---
 > 
 > * Changes since v1
@@ -54,4 +58,10 @@ Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 >  
 >  	mutex_lock(&state->mutex);
 >  
+> -- 
+> 2.16.2
 > 
+
+-- 
+Regards,
+Niklas S�derlund
