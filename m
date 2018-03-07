@@ -1,207 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:39918 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1164180AbeCBB7c (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:59:32 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 30/32] rcar-vin: enable support for r8a7795
-Date: Fri,  2 Mar 2018 02:57:49 +0100
-Message-Id: <20180302015751.25596-31-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Gaku Inami <gaku.inami.xh@renesas.com>
+To: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 3/5] arm64: dts: renesas: r8a7795: Add cpu
+ capacity-dmips-mhz
+Date: Wed, 7 Mar 2018 08:23:50 +0000
+Message-ID: <OSBPR01MB180025867BBE83FBCCE1A139A2D80@OSBPR01MB1800.jpnprd01.prod.outlook.com>
+References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com>
+ <1519697995-6061-4-git-send-email-gaku.inami.xh@renesas.com>
+ <CAMuHMdWswL8N3uTCcGmWSfa98_bpz7_11PDs=m+_RC--wBVu6w@mail.gmail.com>
+ <OSBPR01MB1800C2DBEAB2BC506BF80AB9A2D80@OSBPR01MB1800.jpnprd01.prod.outlook.com>
+ <CAMuHMdXYZB8emmj5TdZih-VQ5SVF-F0LkBRsPPGe=XGvNDt_Lg@mail.gmail.com>
+ <20180307081112.scl7cwnat562muer@verge.net.au>
+In-Reply-To: <20180307081112.scl7cwnat562muer@verge.net.au>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a7795 ES1.x and ES2.0.
+Hi Geert-san, Simon-san,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/Kconfig     |   2 +-
- drivers/media/platform/rcar-vin/rcar-core.c | 120 ++++++++++++++++++++++++++++
- 2 files changed, 121 insertions(+), 1 deletion(-)
+> -----Original Message-----
+> From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc-o=
+wner@vger.kernel.org] On Behalf Of Simon
+> Horman
+> Sent: Wednesday, March 7, 2018 5:11 PM
+[snip]
+> >
+> > Documentation/devicetree/bindings/arm/cpu-capacity.txt:
+> >
+> > "capacity-dmips-mhz is an optional cpu node [1] property: u32 value
+> >  representing CPU capacity expressed in normalized DMIPS/MHz. At boot t=
+ime, the
+> >  maximum frequency available to the cpu is then used to calculate the c=
+apacity
+> >  value internally used by the kernel."
+> >
+> > IIUIC, you should thus not use 15532585 and 6241541 directly, but
+> > scale them to the frequency.
+> >
+> > So the formula for CA53 becomes:
+> >
+> > 1024 / (15532585 / 1500) * (6241541 / 1200) =3D 514
+> >
+> > > Considering cpufreq is available later, is it better to set the value=
+(514)
+> > > for CA53 scaled by different maximum frequencies?
+> >
+> > DT describes the hardware, not software limitations, so IMHO 514 is the=
+ correct
+> > value.
 
-diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
---- a/drivers/media/platform/rcar-vin/Kconfig
-+++ b/drivers/media/platform/rcar-vin/Kconfig
-@@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
- 	select V4L2_FWNODE
- 	---help---
- 	  Support for Renesas R-Car Video Input (VIN) driver.
--	  Supports R-Car Gen2 SoCs.
-+	  Supports R-Car Gen2 and Gen3 SoCs.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rcar-vin.
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index c015f3c284439285..8017d386fc9bc545 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -21,6 +21,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
- 
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
-@@ -832,6 +833,104 @@ static const struct rvin_info rcar_info_gen2 = {
- 	.max_height = 2048,
- };
- 
-+static const struct rvin_group_route rcar_info_r8a7795_routes[] = {
-+	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 0, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 0, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(2) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(1) | BIT(3) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) | BIT(2) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ .vin = 4, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 4, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 4, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(2) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 5, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(1) | BIT(3) },
-+	{ .vin = 5, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 6, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 6, .csi = RVIN_CSI41, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 7, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) | BIT(2) },
-+	{ .vin = 7, .csi = RVIN_CSI41, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a7795 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a7795_routes,
-+};
-+
-+static const struct rvin_group_route rcar_info_r8a7795es1_routes[] = {
-+	{ .vin = 0, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 0, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 0, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(2) | BIT(5) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 1, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 1, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(3) },
-+	{ .vin = 1, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 1, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(5) },
-+	{ .vin = 2, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 2, .csi = RVIN_CSI40, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 2, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 2, .csi = RVIN_CSI21, .chan = 2, .mask = BIT(5) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
-+	{ .vin = 3, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(2) },
-+	{ .vin = 3, .csi = RVIN_CSI40, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 3, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ .vin = 3, .csi = RVIN_CSI21, .chan = 3, .mask = BIT(5) },
-+	{ .vin = 4, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(0) | BIT(3) },
-+	{ .vin = 4, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(1) | BIT(4) },
-+	{ .vin = 4, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(2) | BIT(5) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 5, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 5, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 5, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(3) },
-+	{ .vin = 5, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(4) },
-+	{ .vin = 5, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(5) },
-+	{ .vin = 6, .csi = RVIN_CSI21, .chan = 0, .mask = BIT(0) },
-+	{ .vin = 6, .csi = RVIN_CSI41, .chan = 0, .mask = BIT(1) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 0, .mask = BIT(2) },
-+	{ .vin = 6, .csi = RVIN_CSI41, .chan = 2, .mask = BIT(3) },
-+	{ .vin = 6, .csi = RVIN_CSI20, .chan = 2, .mask = BIT(4) },
-+	{ .vin = 6, .csi = RVIN_CSI21, .chan = 2, .mask = BIT(5) },
-+	{ .vin = 7, .csi = RVIN_CSI41, .chan = 1, .mask = BIT(0) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 1, .mask = BIT(1) },
-+	{ .vin = 7, .csi = RVIN_CSI21, .chan = 1, .mask = BIT(2) },
-+	{ .vin = 7, .csi = RVIN_CSI41, .chan = 3, .mask = BIT(3) },
-+	{ .vin = 7, .csi = RVIN_CSI20, .chan = 3, .mask = BIT(4) },
-+	{ .vin = 7, .csi = RVIN_CSI21, .chan = 3, .mask = BIT(5) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a7795es1 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a7795es1_routes,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -861,12 +960,25 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,rcar-gen2-vin",
- 		.data = &rcar_info_gen2,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a7795",
-+		.data = &rcar_info_r8a7795,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
- 
-+static const struct soc_device_attribute r8a7795es1[] = {
-+	{
-+		.soc_id = "r8a7795", .revision = "ES1.*",
-+		.data = &rcar_info_r8a7795es1,
-+	},
-+	{ /* Sentinel */ }
-+};
-+
- static int rcar_vin_probe(struct platform_device *pdev)
- {
-+	const struct soc_device_attribute *attr;
- 	struct rvin_dev *vin;
- 	struct resource *mem;
- 	int irq, ret;
-@@ -878,6 +990,14 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	vin->dev = &pdev->dev;
- 	vin->info = of_device_get_match_data(&pdev->dev);
- 
-+	/*
-+	 * Special care is needed on r8a7795 ES1.x since it
-+	 * uses different routing than r8a7795 ES2.0.
-+	 */
-+	attr = soc_device_match(r8a7795es1);
-+	if (attr)
-+		vin->info = attr->data;
-+
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (mem == NULL)
- 		return -EINVAL;
--- 
-2.16.2
+Sorry, I misunderstood the intention of definition in DT.
+Thanks for your detailed explanation. I understood it.
+
+> Yes agreed. Please refresh this patchset accordingly.
+
+I will update v2 patch.
+
+Regards,
+Inami
