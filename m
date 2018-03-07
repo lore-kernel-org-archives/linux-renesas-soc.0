@@ -1,65 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753644AbeCPOwR (ORCPT
+Received: from mail-pl0-f48.google.com ([209.85.160.48]:40911 "EHLO
+        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932753AbeCGCmH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:52:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 28/69] arm64: dts: renesas: r8a7795: Fix register mappings on VSPs
-Date: Fri, 16 Mar 2018 15:50:58 +0100
-Message-Id: <c5dcfe6552f418df8db03e92e645339cdf746e34.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Tue, 6 Mar 2018 21:42:07 -0500
+Subject: Re: Overlay sugar syntax (was: Re: [PATCH v6 3/4] drm: rcar-du: Fix
+ legacy DT to create LVDS encoder nodes)
+To: David Gibson <david@gibson.dropbear.id.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Devicetree Compiler <devicetree-compiler@vger.kernel.org>
+References: <CAMuHMdUqvZEKu5v4E29ofjj09sv+Yxk41W4K+FnfqKQ=88AWRA@mail.gmail.com>
+ <20180306035412.GU2650@umbus.fritz.box>
+ <CAMuHMdU54Bb8aObwaOuq6u7HO_LVhpGv9uMjGbt8VcKruop_tA@mail.gmail.com>
+ <e46f67ff-2900-8500-b1aa-503a9757997f@gmail.com>
+ <28e8e3cb-263d-5352-badf-34b269ad860b@gmail.com>
+ <20180307023031.GC3083@umbus.fritz.box>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <52edd21d-de54-9612-e50a-8bc9b6d2c39d@gmail.com>
+Date: Tue, 6 Mar 2018 18:42:04 -0800
+MIME-Version: 1.0
+In-Reply-To: <20180307023031.GC3083@umbus.fritz.box>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 03/06/18 18:30, David Gibson wrote:
+> On Tue, Mar 06, 2018 at 01:40:20PM -0800, Frank Rowand wrote:
+>> On 03/06/18 11:51, Frank Rowand wrote:
+>>> On 03/06/18 04:30, Geert Uytterhoeven wrote:
 
-The VSPD includes a CLUT on RPF2. Ensure that the register space is
-mapped correctly to support this.
+< snip >
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+>>> And the patched dtc works for a dts file that I was trying to convert
+>>> to sugar dts syntax
+>>
+>> < snip >
+>>
+>> I noticed that a space in "&{/}" is an error.  I wanted to check whether
+>> that was deliberate, or that the patch wasn't fully complete yet.
+> 
+> That's essentially deliberate - it's not really related to this patch
+> at all.  The patch just re-uses the existing syntax for a "path
+> reference".  The whole thing is treated as a single token, hence, no
+> spaces.
+> 
+> It might be possible to change that, but it could introduce some
+> complications when the path reference syntax is used in other places.
+> So I'm disinclined to change it, unless there's a very strong reason
+> to.
+> 
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index ce85704976f0..9dc2b43e59f5 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2208,7 +2208,7 @@
- 
- 		vspd0: vsp@fea20000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea20000 0 0x4000>;
-+			reg = <0 0xfea20000 0 0x8000>;
- 			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 623>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -2228,7 +2228,7 @@
- 
- 		vspd1: vsp@fea28000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea28000 0 0x4000>;
-+			reg = <0 0xfea28000 0 0x8000>;
- 			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 622>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-@@ -2248,7 +2248,7 @@
- 
- 		vspd2: vsp@fea30000 {
- 			compatible = "renesas,vsp2";
--			reg = <0 0xfea30000 0 0x4000>;
-+			reg = <0 0xfea30000 0 0x8000>;
- 			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 621>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
--- 
-2.11.0
+< snip >
+
+No, please do not change.  I just wanted to make sure I understood the
+intended syntax.
+
+BTW, thanks for all the time you've been putting into this recent stuff.
