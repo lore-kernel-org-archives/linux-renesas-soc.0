@@ -1,75 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:35286 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754219AbeCGJtt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34391 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751174AbeCGJk4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 04:49:49 -0500
-Received: by mail-qk0-f195.google.com with SMTP id s188so1895853qkb.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Mar 2018 01:49:49 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <20180307094046.4907-3-horms+renesas@verge.net.au>
-References: <20180307094046.4907-1-horms+renesas@verge.net.au> <20180307094046.4907-3-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 Mar 2018 10:49:47 +0100
-Message-ID: <CAMuHMdUnpvF0TXW9FaoYTe-dTQ9prDNmHa6OkbZbww-m7wav_A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a7795: sort subnodes of the
- cpu node
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 7 Mar 2018 04:40:56 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] arm64: dts: renesas: r8a7795: sort subnodes of the cpu node
+Date: Wed,  7 Mar 2018 10:40:45 +0100
+Message-Id: <20180307094046.4907-3-horms+renesas@verge.net.au>
+In-Reply-To: <20180307094046.4907-1-horms+renesas@verge.net.au>
+References: <20180307094046.4907-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Sort subnodes of the cpu node alphanumerically.
 
-On Wed, Mar 7, 2018 at 10:40 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Sort subnodes of the cpu node alphanumerically.
->
-> This is part of an ongoing effort to provide consistent node
-> order in the DT of Renesas SoCs to improve maintainability.
->
-> This should not have any run-time effect.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+This is part of an ongoing effort to provide consistent node
+order in the DT of Renesas SoCs to improve maintainability.
 
-Thanks for your patch!
+This should not have any run-time effect.
 
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -34,6 +34,50 @@
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> +               a53_0: cpu@100 {
-> +                       compatible = "arm,cortex-a53", "arm,armv8";
-> +                       reg = <0x100>;
-> +                       device_type = "cpu";
-> +                       power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
-> +                       next-level-cache = <&L2_CA53>;
-> +                       enable-method = "psci";
-> +                       clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
-> +                       operating-points-v2 = <&cluster1_opp>;
-> +               };
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 88 ++++++++++++++++----------------
+ 1 file changed, 44 insertions(+), 44 deletions(-)
 
-[...]
-
->                 a57_0: cpu@0 {
->                         compatible = "arm,cortex-a57", "arm,armv8";
->                         reg = <0x0>;
-
-Given the CPU nodes do have reg properties and unit addresses, shouldn't
-they be sorted by these values, instead of alphabetically?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 119c245b4ee2..d2ecb1dfa487 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -34,6 +34,50 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
++		a53_0: cpu@100 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x100>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
++		};
++
++		a53_1: cpu@101 {
++			compatible = "arm,cortex-a53","arm,armv8";
++			reg = <0x101>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
++		};
++
++		a53_2: cpu@102 {
++			compatible = "arm,cortex-a53","arm,armv8";
++			reg = <0x102>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
++		};
++
++		a53_3: cpu@103 {
++			compatible = "arm,cortex-a53","arm,armv8";
++			reg = <0x103>;
++			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
++		};
++
+ 		a57_0: cpu@0 {
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x0>;
+@@ -82,50 +126,6 @@
+ 			#cooling-cells = <2>;
+ 		};
+ 
+-		a53_0: cpu@100 {
+-			compatible = "arm,cortex-a53", "arm,armv8";
+-			reg = <0x100>;
+-			device_type = "cpu";
+-			power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
+-			next-level-cache = <&L2_CA53>;
+-			enable-method = "psci";
+-			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
+-			operating-points-v2 = <&cluster1_opp>;
+-		};
+-
+-		a53_1: cpu@101 {
+-			compatible = "arm,cortex-a53","arm,armv8";
+-			reg = <0x101>;
+-			device_type = "cpu";
+-			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
+-			next-level-cache = <&L2_CA53>;
+-			enable-method = "psci";
+-			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
+-			operating-points-v2 = <&cluster1_opp>;
+-		};
+-
+-		a53_2: cpu@102 {
+-			compatible = "arm,cortex-a53","arm,armv8";
+-			reg = <0x102>;
+-			device_type = "cpu";
+-			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
+-			next-level-cache = <&L2_CA53>;
+-			enable-method = "psci";
+-			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
+-			operating-points-v2 = <&cluster1_opp>;
+-		};
+-
+-		a53_3: cpu@103 {
+-			compatible = "arm,cortex-a53","arm,armv8";
+-			reg = <0x103>;
+-			device_type = "cpu";
+-			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
+-			next-level-cache = <&L2_CA53>;
+-			enable-method = "psci";
+-			clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
+-			operating-points-v2 = <&cluster1_opp>;
+-		};
+-
+ 		L2_CA57: cache-controller-0 {
+ 			compatible = "cache";
+ 			power-domains = <&sysc R8A7795_PD_CA57_SCU>;
+-- 
+2.11.0
