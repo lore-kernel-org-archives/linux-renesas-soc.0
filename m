@@ -1,109 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:32141 "EHLO
-        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934222AbeCGWFz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34397 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754264AbeCGJk6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:05:55 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v12 24/33] rcar-vin: prepare for media controller mode initialization
-Date: Wed,  7 Mar 2018 23:05:02 +0100
-Message-Id: <20180307220511.9826-25-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 7 Mar 2018 04:40:58 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/3] arm64: dts: renesas: r8a7795: sort subnodes of the root node
+Date: Wed,  7 Mar 2018 10:40:44 +0100
+Message-Id: <20180307094046.4907-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180307094046.4907-1-horms+renesas@verge.net.au>
+References: <20180307094046.4907-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Prepare for media controller by calling a different initialization then
-when running in device centric mode. Add trivial configuration of
-the mbus and creation of the media pad for the video device entity.
+Sort subnodes of the root node alphanumerically.
 
-While we are at it clearly mark the digital device centric notifier
-functions with a comment.
+This is part of an ongoing effort to provide consistent node
+order in the DT of Renesas SoCs to improve maintainability.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This should not have any run-time effect.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
- 2 files changed, 22 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index ed370b7fb58c3e8a..592dbd8642361f1e 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 09953cda3a55..119c245b4ee2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -247,18 +247,6 @@
+ 		clock-frequency = <0>;
+ 	};
  
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- /* The vin lock shuld be held when calling the subdevice attach and detach */
- static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
- 					 struct v4l2_subdev *subdev)
-@@ -243,6 +247,16 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	return 0;
- }
- 
-+static int rvin_mc_init(struct rvin_dev *vin)
-+{
-+	/* All our sources are CSI-2 */
-+	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-+	vin->mbus_cfg.flags = 0;
-+
-+	vin->pad.flags = MEDIA_PAD_FL_SINK;
-+	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -331,8 +345,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	platform_set_drvdata(pdev, vin);
+-	pmu_a57 {
+-		compatible = "arm,cortex-a57-pmu";
+-		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+-		                      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+-				      <&gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+-				      <&gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-affinity = <&a57_0>,
+-				     <&a57_1>,
+-				     <&a57_2>,
+-				     <&a57_3>;
+-	};
 -
--	ret = rvin_digital_graph_init(vin);
-+	if (vin->info->use_mc)
-+		ret = rvin_mc_init(vin);
-+	else
-+		ret = rvin_digital_graph_init(vin);
- 	if (ret < 0)
- 		goto error;
+ 	pmu_a53 {
+ 		compatible = "arm,cortex-a53-pmu";
+ 		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
+@@ -271,6 +259,18 @@
+ 				     <&a53_3>;
+ 	};
  
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 83feef08367bde30..7c3b734c2cd09d9a 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -101,6 +101,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @pad:		media pad for the video device entity
-+ *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
-  *
-@@ -132,6 +134,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct media_pad pad;
++	pmu_a57 {
++		compatible = "arm,cortex-a57-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++		                      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a57_0>,
++				     <&a57_1>,
++				     <&a57_2>,
++				     <&a57_3>;
++	};
 +
- 	struct mutex lock;
- 	struct vb2_queue queue;
- 
+ 	psci {
+ 		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
 -- 
-2.16.2
+2.11.0
