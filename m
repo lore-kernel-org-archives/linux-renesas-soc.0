@@ -1,47 +1,89 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH 2/2] phy: rcar-gen3-usb3: Add binding for r8a77965
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-References: <1519710747-26435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1519710747-26435-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <6df55c1d-8855-7aff-af13-cf0f43cc5f8b@ti.com>
-Date: Fri, 2 Mar 2018 13:44:37 +0530
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50655 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754395AbeCGRSM (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Mar 2018 12:18:12 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm: rcar-du: add R8A77970 support
+Date: Wed, 07 Mar 2018 19:19:07 +0200
+Message-ID: <2541825.7YWZoi4xG1@avalon>
+In-Reply-To: <20180118211027.375081728@cogentembedded.com>
+References: <20180118211027.375081728@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1519710747-26435-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Sergei,
 
+Thank you for the patch.
 
-On Tuesday 27 February 2018 11:22 AM, Yoshihiro Shimoda wrote:
-> This patch adds binding for r8a77965 (R-Car M3-N).
-
-$subject should be  dt-bindings: rcar-gen3-phy-usb3: Add binding for r8a77965
-
-Thanks
-Kishon
+On Thursday, 18 January 2018 23:05:59 EET Sergei Shtylyov wrote:
+> Add support for the R-Car V3M (R8A77970) SoC to the R-Car DU driver.
 > 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and applied to my tree.
+
 > ---
->  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 2 ++
->  1 file changed, 2 insertions(+)
+> Changes in version 2:
+> - removed  the 'model' and 'dpll_ch' field initializers;
+> - fixed up the DU port numbers;
+> - split the DU bindings and the LVDS driver updates into a separate patches;
+> - removed  the check before the DPTSR write (to be done in a separate
+> patch).
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-> index f94cea4..47dd296 100644
-> --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-> +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-> @@ -11,6 +11,8 @@ Required properties:
->  	      SoC.
->  	      "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
->  	      SoC.
-> +	      "renesas,r8a77965-usb3-phy" if the device is a part of an
-> +	      R8A77965 SoC.
->  	      "renesas,rcar-gen3-usb3-phy" for a generic R-Car Gen3 compatible
->  	      device.
->  
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c |   21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
+> Index: linux/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> ===================================================================
+> --- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ linux/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -249,6 +249,26 @@ static const struct rcar_du_device_info
+>  	.dpll_ch =  BIT(1),
+>  };
+> 
+> +static const struct rcar_du_device_info rcar_du_r8a77970_info = {
+> +	.gen = 3,
+> +	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+> +		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+> +	.num_crtcs = 1,
+> +	.routes = {
+> +		/* R8A77970 has one RGB output and one LVDS output. */
+> +		[RCAR_DU_OUTPUT_DPAD0] = {
+> +			.possible_crtcs = BIT(0),
+> +			.port = 0,
+> +		},
+> +		[RCAR_DU_OUTPUT_LVDS0] = {
+> +			.possible_crtcs = BIT(0),
+> +			.port = 1,
+> +		},
+> +	},
+> +	.num_lvds = 1,
+> +};
+> +
+>  static const struct of_device_id rcar_du_of_table[] = {
+>  	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+>  	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
+> @@ -260,6 +280,7 @@ static const struct of_device_id rcar_du
+>  	{ .compatible = "renesas,du-r8a7794", .data = &rcar_du_r8a7794_info },
+>  	{ .compatible = "renesas,du-r8a7795", .data = &rcar_du_r8a7795_info },
+>  	{ .compatible = "renesas,du-r8a7796", .data = &rcar_du_r8a7796_info },
+> +	{ .compatible = "renesas,du-r8a77970", .data = &rcar_du_r8a77970_info },
+>  	{ }
+>  };
+
+
+-- 
+Regards,
+
+Laurent Pinchart
