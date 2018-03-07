@@ -1,68 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49841 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbeCVKYk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:24:40 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 3/4] arm64: dts: renesas: r8a7796: sort subnodes of the root node
-Date: Thu, 22 Mar 2018 11:24:22 +0100
-Message-Id: <20180322102423.18269-4-horms+renesas@verge.net.au>
-In-Reply-To: <20180322102423.18269-1-horms+renesas@verge.net.au>
-References: <20180322102423.18269-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] DT: display: renesas,du: document R8A77970 bindings
+Date: Wed, 07 Mar 2018 19:18:41 +0200
+Message-ID: <3942494.WgSgihLYRZ@avalon>
+In-Reply-To: <20180118211024.314876177@cogentembedded.com>
+References: <20180118211024.314876177@cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort subnodes of the root node alphanumerically.
+Hi Sergei,
 
-This is part of an ongoing effort to provide consistent node
-order in the DT of Renesas SoCs to improve maintainability.
+Thank you for the patch.
 
-This should not have any run-time effect.
+On Thursday, 18 January 2018 23:05:58 EET Sergei Shtylyov wrote:
+> Document the R-Car V3M (R8A77970) SoC in the R-Car DU bindings.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* New patch
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 556eb8e45499..4e5fb961fbf2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -234,13 +234,6 @@
- 		clock-frequency = <0>;
- 	};
- 
--	pmu_a57 {
--		compatible = "arm,cortex-a57-pmu";
--		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
--				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-affinity = <&a57_0>, <&a57_1>;
--	};
--
- 	pmu_a53 {
- 		compatible = "arm,cortex-a53-pmu";
- 		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-@@ -250,6 +243,13 @@
- 		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
- 	};
- 
-+	pmu_a57 {
-+		compatible = "arm,cortex-a57-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a57_0>, <&a57_1>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0", "arm,psci-0.2";
- 		method = "smc";
+and applied to my tree with the subject prefixed changed per Rob's request.
+
+> ---
+> Changes in version 2:
+> - documented  R8A77970 DU ports;
+> - patch split from the main R8A77970 DU support patch.
+> 
+>  Documentation/devicetree/bindings/display/renesas,du.txt |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> Index: linux/Documentation/devicetree/bindings/display/renesas,du.txt
+> ===================================================================
+> --- linux.orig/Documentation/devicetree/bindings/display/renesas,du.txt
+> +++ linux/Documentation/devicetree/bindings/display/renesas,du.txt
+> @@ -13,6 +13,7 @@ Required Properties:
+>      - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
+>      - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
+>      - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
+> +    - "renesas,du-r8a77970" for R8A77970 (R-Car V3M) compatible DU
+> 
+>    - reg: A list of base address and length of each memory resource, one for
+> each entry in the reg-names property.
+> @@ -63,6 +64,7 @@ corresponding to each DU output.
+>   R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
+>   R8A7795 (R-Car H3)   DPAD 0         HDMI 0         HDMI 1         LVDS 0
+>   R8A7796 (R-Car M3-W) DPAD 0         HDMI 0         LVDS 0         -
+> + R8A77970 (R-Car V3M) DPAD 0         LVDS 0         -              -
+> 
+> 
+>  Example: R8A7795 (R-Car H3) ES2.0 DU
+
+
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
+
