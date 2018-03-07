@@ -1,246 +1,348 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48421 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751727AbeCMUDH (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:31455 "EHLO
+        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754498AbeCGWFZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 16:03:07 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: qemu-devel@nongnu.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH] i2c: device passthrough HACK(!) & evaluation
-Date: Tue, 13 Mar 2018 21:02:45 +0100
-Message-Id: <20180313200245.2350-1-wsa+renesas@sang-engineering.com>
+        Wed, 7 Mar 2018 17:05:25 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v12 00/33] rcar-vin: Add Gen3 with media controller
+Date: Wed,  7 Mar 2018 23:04:38 +0100
+Message-Id: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I was asked to investigate I2C device passthrough possibilities for QEMU
-on Linux. The idea was to expose only a single device, not the whole
-bus. There was no specific use case explained, so some decisions are
-still to be made. E.g. I think the host-device should get its own
-virtualized bus later, but I can't really tell yet.
+Hi,
 
-This is my first contact with QEMU, so the patch is more like getting my
-feet wet. I wouldn't even call it a proof-of-concept. However, while
-working on this (which gets at least something done), I already gained
-experiences which I would like to share here:
+This series adds Gen3 VIN support to rcar-vin driver for Renesas r8a7795,
+r8a7796 and r8a77970. It is based on the media-tree and depends on
+Fabrizio Castro patches as they touches the order of the compatible
+strings in the documentation to reduce merge conflicts. The dependencies
+are included in this series.
 
-Full virtualization
--------------------
+The driver is tested on Renesas H3 (r8a7795, ES2.0),
+M3-W (r8a7796) together with the rcar-csi2 driver (posted separately and
+not yet upstream) and the Salvator-X onboard ADV7482. It is also tested
+on the V3M (r8a77970) on the Eagle board together with its expansion
+board with a ADV7482 and out of tree patches for GMSL capture using the
+max9286 and rdacm20 drivers.
 
-Would be nice to have because it would work with all virtual I2C
-adapters instantly, however there come problems with it. For that to
-work, we would need to be able to transmit the QEMU I2C primitives from
-userspace to the kernel. There is currently no such interface for that.
-As of today, there is only the i2c-dev interface which allows to send
-a complete transfer (which may consist of multiple, combined messages)
-or SMBus commands. There is no way to send more primitive commands like
-"send {start|stop|acknowledge}-bit". Even if there was, most hardware I
-know of wouldn't work well with this. We often need a-priori knowledge
-like length of the message to program the controller. Such information
-is not available when working with such primitives. On top of that, that
-approach would cause quite some overhead, so performance regressions for
-drivers which use other devices on the same bus are likely.
+It is possible to capture both CVBS and HDMI video streams,
+v4l2-compliance passes with no errors and media-ctl can be used to
+change the routing and formats for the different entities in the media
+graph.
 
-virtio?
--------
+Gen2 compatibility is verified on Koelsch and no problems where found,
+video can be captured just like before and v4l2-compliance passes
+without errors or warnings just like before this series.
 
->From what I understood so far, virtio could help here. Yes, we would
-need separate drivers, yet data transfer could be super simple. If we
-had a simple virtio-PCI I2C master device, it could have a really simple
-kernel driver. It basically takes the I2C transfer it gets, does some
-sanity checking so no other devices are accessed, and then passes it
-to the kernel. I have not fully understood yet, if the virtio
-transportation mechanism is better/required here, or if we can/should
-still use the existing i2c-dev character interface.
+For convenience the series can be fetched from:
 
-Other problems found
---------------------
+  git://git.ragnatech.se/linux rcar/vin/mc-v12
 
-Here is a list of other problems I discovered which need addressing in
-one way or the other:
+I have started on a very basic test suite for the VIN driver at:
 
-* exclusive access to I2C devices
+  https://git.ragnatech.se/vin-tests
 
-We currently don't have a way to mark devices as being "in use, don't
-touch" from userspace. This could be added but we need to decide on the
-transportation layer first (i2c-dev vs. virtio).
+And as before the state of the driver and information about how to test
+it can be found on the elinux wiki:
 
-* no generic I2C master (at least for x86)
+  http://elinux.org/R-Car/Tests:rcar-vin
 
-Unless I overlooked something, we currently can't simply add a new I2C
-bus on x86 because there is no virtual hardware encoded just doing that.
-I found patches for a USB-to-I2C bridge floating around. USB is nicely
-generic, so probably worth evaluating those again if this task is to be
-continued.
+* Changes since v11
+- Rewrote commit message for '[PATCH v11 22/32] rcar-vin: force default 
+  colorspace for media centric mode'. Also set fixed values for 
+  xfer_func, quantization and ycbcr_enc.
+- Reorderd filed order in struct rvin_group_route.
+- Renamed chan to channel in struct rvin_group_route.
+- Rework 'rcar-vin: read subdevice format for crop only when
+  needed' into 'rcar-vin: simplify how formats are set and reset'.
+- Keep caching the source dimensions and drop all changes to
+  rvin_g_selection() and rvin_s_selection().
+- Inline rvin_get_vin_format_from_source() into rvin_reset_format()
+  which now is the only user left.
+- Add patch to cache the video standard instead of reading it at stream 
+  on.
+- Fix error labels in rvin_mc_open().
+- Fixed spelling in commit messages and comment, thanks Laurent!
+- Added reviewed tags from Laurent, Thanks!
 
-* re-definition of I2C_SLAVE
+* Changes since v10
+- Corrected spelling in comments and commit messages.
+- Reworked 'rcar-vin: read subdevice format for crop only when needed'
+  to only get the source format once per operation.
+- Moved some patches around to make it easier to review, moved:
+    - rcar-vin: set a default field to fallback on
+    - rcar-vin: fix handling of single field frames (top, bottom and alternate fields)
+    - rcar-vin: update bytesperline and sizeimage calculation
+    - rcar-vin: break out format alignment and checking
+    - rcar-vin: update pixelformat check for M1
+  Before:
+    - rcar-vin: read subdevice format for crop only when needed
+- Rename variable 'code' to 'mbus_code' in struct rvin_dev.
+- Add comment describing no locking is needed in
+  rvin_set_channel_routing().
+- Check return value of pm_runtime_get_sync() in
+  rvin_set_channel_routing().
+- Rework 'rcar-vin: add check for colorspace' to not try to check the
+  format, instead force a default format. This should be revisited once
+  either v4l2-compliance or v4l2 framework changes are worked out to
+  allow for MC centric drivers to validate user supplied colorspace.
+- Add error checking for pm_runtime_get_sync() and
+  v4l2_pipeline_pm_use().
+- Change mutex_lock() to mutex_lock_interruptible() in rvin_mc_open().
+- Rewrote documentation for struct rvin_group_route.
+- Rename rvin_mc_parse_v4l2() to rvin_mc_parse_of_endpoint().
+- Reword error messages in rvin_mc_parse_of_endpoint().
+- Removed unneeded loop in rvin_mc_parse_of_endpoint().
+- Remove check !is_media_entity_v4l2_subdev() in
+  rvin_group_entity_to_csi_id().
+- Add documentation for the algorithm used to figure out if a link can
+  be enabled or not in rvin_group_link_notify().
+- Break out format validation to rvin_mc_validate_format().
+- Include two DT documentation patches from Fabrizio Castro which
+  previously where mentioned as the only dependency for this series.
+- Added reviewed tags from Laurent, Thanks!
 
-QEMU defines I2C_SLAVE as well as <linux/i2c-dev.h>. So, if that
-interface is going to be used, we need something to fix this.
+* Changes since v9
+- Fixed mistakes in the device tree description pointed out by  Laurent.
+    - GenX -> GenX platforms
+    - portX -> port X
+    - Explicitly state the on Gen3 platforms port 0 can only describe
+      one endpoint and that only VIN instances connected to external
+      pins should have a port 0 node.
+    - s/which is/connected to/ in he endpoint description for Gen3
+      platforms.
+- Update some poorly written commit messages.
+- Moved the digital subdevice attach and detach code to two separate
+  functions to increase readability.
+- Rename the struct rvin_info member chip to model to better describe
+  its purpose.
+- Change the video name from "rcar_vin e6ef0000.video" to "VINx output"
+  where x is the VIN id.
+- Dropped patch 'rcar-vin: do not allow changing scaling and composing
+  while streaming' as it removed Gen2 functionality which is valid as
+  pointed out by Laurent.
+- Rename rvin_get_sd_format() to rvin_get_source_format() and change its
+  parameter from struct v4l2_pix_format* to struct v4l2_mbus_framefmt*.
+- Clarified commit message and add a few move comments to 'rcar-vin: fix
+  handling of single field frames (top, bottom and alternate fields'.
+- Update documentation for struct rvin_dev fields mbus_cfg and code.
+- Fix argument in VNCSI_IFMD_CSI_CHSEL macro.
+- Renamed rvin_set_chsel() to rvin_set_channel_routing().
+- Restore the VNMC register after changing CHSEL setting.
+- Broke patch 'rcar-vin: break out format alignment and checking' into
+  three parts to ease review.
+- Add new patch to introduce a default field.
+- Only include media/v4l2-mc.h in the .c files that needs it and not in
+  rcar-vin.h.
+- Rename rvin_group_allocate() rvin_group_get()
+- Rename rvin_group_delete() rvin_group_put()
+- Updated error message "VIN number %d already occupied\n" to "Duplicate
+  renesas,id property value %u\n".
+- Removed dev_dbg messages which only where useful during development.
+- Dropped patch '[PATCH v9 10/28] rcar-vin: do not reset crop and
+  compose when setting format' as it introduces a regression on Gen2.
+- Inline rvin_group_read_id() and rvin_group_add_vin() into
+  rvin_group_get().
+- Define static variables at the top of rcar-core.c.
+- Fix potential deadlock in rvin_group_get().
+- Set media device model name to the VIN module name.
+- Set media device model to matched complicity string.
+- Do not use a 2 dimensional sparse array for chsel values in struct
+  rvin_info, instead use a flat array and store VIN and CHSEL value
+  inside each array item.
+- Reworked DT parsing code to make use of the new
+  v4l2_async_notifier_parse_fwnode_endpoints_by_port() helper removing a
+  lot of iffy custom parsing code.
+- Rework how CHSEL value is calculated in the link notifier callback.
+  Using a bitmap of possible values instead of looping over an array
+  turned out great reducing both LoC and increasing readability of the
+  code which was a bit difficult before. It also reduced to memory
+  needed to contain the static routing information.
+- Verify the media bus pixel code when starting a stream.
+- Take the media device graph lock when figuring out and starting a
+  stream so not to race between simultaneous stream start from multiple
+  rcar-vin instances as they might share common subdevices.
+- Added review tags from Laurent.
+- Dropped tags from patches that where changed more then just correcting
+  spelling or other gramma errors.
 
-* likely improvements to the QEMU I2C core
+* Changes since v8
+- Fixed issue in rvin_group_init() where rvin_group_update_links() was
+  called, but after moving the video device registration to the
+  complete() callback this is now invalid.
+- Fixed spelling in commit messages.
+- Added review and acks from Hans, Kieran and Rob.
 
->From visual review, I am quite sure QEMU I2C core does not support
-'repeated start' with the following message having a different I2C
-destination address than the previous one. This is legal, but up to
-now very rarely seen in practice. However, with devices becoming more
-complex and those devices maybe being passed-through as well, more
-improvements to the QEMU I2C core might be needed as well.
+* Changes since v7
+- Dropped '[PATCH v7 02/25] rcar-vin: register the video device at probe time'
+- Add patch which renames four badly name functions. Some of the
+  renaming was in v7 part of the dropped patch 02/25. Make it a own
+  patch and rename all badly named functions in one patch.
+- Add patch to replace part of the functionality of the dropped patch v7
+  02/25. The new patch keeps the subdevice (un)registration calls in the
+  async callbacks bind() and unbind() but moves the direct subdevice
+  initialization which only is used on Gen2 from the Gen2 and Gen3
+  shared rvin_v4l2_register().
+- Add patch to enable Renesas V3M (r8a77970)
+- Patch 'rcar-vin: parse Gen3 OF and setup media graph' have had code
+  additions since v7 since it now registers the video devices in the
+  async complete() callback instead of at probe time as an effect of
+  dropping v7 02/25.
+  - The complete() callback now register all video devices.
+  - The unbind() callback now unregister all video devices.
+  - A new member '*notifier' is added to struct rvin_group which keeps
+    track of which rcar-vin instance have registered its notifier on the
+    groups behalf.
+  For the reason above all Reviewed-by tags have been dropped for this
+  patch.
+- Replaced all kernel messages which used of_node_full_name() as now
+  only returns the basename and not till full path, thanks Geert.
 
-Conclusion
-----------
+    printk("%s", of_node_full_name(ep)); -> printk("%pOF", ep);
 
-These are my finding regarding I2C device passthrough with QEMU. The
-below patch is a very first step in the "full virtualization" direction
-because it transports every read byte access directly to the host
-(totally missing proper I2C start/stop/ack generation). Write byte
-access is discarded here for security reasons. As described above, I
-would not recommend this approach any further. My staring point now
-would be a simplified virtio or virtio-alike device where the transfer
-is passed-through as such to the host, and not split up into primitives.
-So the patch itself is somehow already obsolete, but it served well for
-gaining experience.
+- Added Reviewed-by tags from Hans, big thanks!
 
-For the record, the description of my test procedure is here:
-    https://elinux.org/R-Car/I2C-Virtualization
+* Changes since v6
+- Rebase ontop of latest media-tree which brings in the use of the
+  fwnode async helpers for Gen2.
+- Updated DT binding documentation, thanks Laurent for very helpful
+  input!
+- Removed help text which where copied in from v4l2_ctrl_handler_init()
+  documentation when moving that code block, this was a residue from the
+  soc_camera conversion and should have been removed at that time.
+- Removed bad check of tvnorms which disables IOCTLs if it's not set,
+  this was a residue from soc_camera conversion and have use in the
+  current driver.
+- Moved all subdevice initialization from complete to bound handler
+  while improving the unbind handler. With this move all operations of
+  the ctrl_handler from the subdevice is handled in either bound or
+  unbind removing races pointed out by Laurent.
+- Renamed rvin_v4l2_probe() -> rvin_v4l2_register() and
+  rvin_v4l2_remove() -> rvin_v4l2_unregister().
+- Fold rvin_mbus_supported() into its only caller.
+- Sort compatible string entries in ascending order.
+- Improved documentation for struct rvin_group_chsel.
+- Clarify comment in rvin_group_csi_pad_to_chan().
+- Make use of of_device_get_match_data() as suggested by Geert.
+- Fixed spelling mistakes.
+- Added review tags from Hans.
 
-I will still be around for further discussion. I can't really tell,
-though, if there will be a follow-up task for me to continue this.
+* Changes since v5
+- Extract and make use of common format checking for both Gen2 and Gen3.
+- Assign pad at declaration time in rvin_get_sd_format()
+- Always call pm_runtime_{get_sync,put}() and v4l2_pipeline_pm_use()
+  when opening/closing a video device, remove the check of
+  v4l2_fh_is_singular_file().
+- Make rvin_set_chsel() return void instead of int since it always
+  return 0.
+- Simplify the VIN group allocator functions.
+- Make the group notifier callbacks and setup more robust.
+- Moved the video device registration back to probe time.
+- Add H3 ES2.0 support.
+- Fix handling of single field formats (top, bottom, alternate) as this
+  was obviously wrong before but hidden by the Gen2 scaler support.
+- Added review tags from Kieran.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- hw/i2c/Makefile.objs |   2 +-
- hw/i2c/host-i2cdev.c | 110 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 111 insertions(+), 1 deletion(-)
- create mode 100644 hw/i2c/host-i2cdev.c
+* Changes since v4 (Not posted to ML)
+- Updated to the new fwnode functions.
+- Moved the registration of the video devices to the async notification
+  callback.
 
-diff --git a/hw/i2c/Makefile.objs b/hw/i2c/Makefile.objs
-index 37cacde978..d0cc08dd10 100644
---- a/hw/i2c/Makefile.objs
-+++ b/hw/i2c/Makefile.objs
-@@ -1,4 +1,4 @@
--common-obj-$(CONFIG_I2C) += core.o smbus.o smbus_eeprom.o
-+common-obj-$(CONFIG_I2C) += core.o smbus.o smbus_eeprom.o host-i2cdev.o
- common-obj-$(CONFIG_DDC) += i2c-ddc.o
- common-obj-$(CONFIG_VERSATILE_I2C) += versatile_i2c.o
- common-obj-$(CONFIG_ACPI_X86) += smbus_ich9.o
-diff --git a/hw/i2c/host-i2cdev.c b/hw/i2c/host-i2cdev.c
-new file mode 100644
-index 0000000000..a7f2d549f1
---- /dev/null
-+++ b/hw/i2c/host-i2cdev.c
-@@ -0,0 +1,110 @@
-+/*
-+ * I2C device passthrough HACK
-+ *
-+ * Copyright (c) 2018 Wolfram Sang, Sang Engineering, Renesas Electronics
-+ *
-+ * This work is licensed under the terms of the GNU GPL, version 2.  See
-+ * the LICENSE file in the top-level directory.
-+ *
-+ * Example to use:
-+ *     -device host-i2cdev,address=0x64,file=/dev/i2c-0,hostaddr=0x50
-+ */
-+
-+#include <sys/ioctl.h>
-+#include "qemu/osdep.h"
-+#include "qapi/error.h"
-+#include "hw/hw.h"
-+#include "hw/i2c/i2c.h"
-+
-+/* Ugh, problem! QEMU defines I2C_SLAVE, too */
-+#undef I2C_SLAVE
-+#include <linux/i2c.h>
-+#include <linux/i2c-dev.h>
-+
-+#define ERR(FMT, ...) fprintf(stderr, TYPE_HOST_I2CDEV " : " FMT, \
-+                            ## __VA_ARGS__)
-+
-+#define TYPE_HOST_I2CDEV "host-i2cdev"
-+#define HOST_I2CDEV(obj) OBJECT_CHECK(HostI2CDevState, (obj), TYPE_HOST_I2CDEV)
-+
-+typedef struct HostI2CDevState {
-+    I2CSlave parent_obj;
-+    char *file;
-+    int fd;
-+    uint32_t hostaddr;
-+} HostI2CDevState;
-+
-+static int host_i2cdev_recv(I2CSlave *s)
-+{
-+    HostI2CDevState *i2cdev = HOST_I2CDEV(s);
-+    union i2c_smbus_data data;
-+    struct i2c_smbus_ioctl_data args = {
-+        .read_write = I2C_SMBUS_READ,
-+        .size = I2C_SMBUS_BYTE,
-+        .data = &data,
-+    };
-+    int err;
-+
-+    err = ioctl(i2cdev->fd, I2C_SMBUS, &args);
-+
-+    return err == 0 ? data.byte : 0;
-+}
-+
-+static int host_i2cdev_send(I2CSlave *s, uint8_t data)
-+{
-+    /* We don't support writes */
-+    return -1;
-+}
-+
-+static int host_i2cdev_init(I2CSlave *i2c)
-+{
-+    HostI2CDevState *i2cdev = HOST_I2CDEV(i2c);
-+
-+    if (!i2cdev->file) {
-+        ERR("file is required!\n");
-+        exit(1);
-+    }
-+
-+    i2cdev->fd = qemu_open(i2cdev->file, O_RDWR);
-+
-+    if (i2cdev->fd < 0) {
-+        ERR("file can't be opened!\n");
-+        exit(1);
-+    }
-+
-+    return ioctl(i2cdev->fd, I2C_SLAVE, i2cdev->hostaddr ?: i2c->address);
-+}
-+
-+static Property host_i2cdev_props[] = {
-+    DEFINE_PROP_STRING("file", HostI2CDevState, file),
-+    DEFINE_PROP_UINT32("hostaddr", HostI2CDevState, hostaddr, 0),
-+    DEFINE_PROP_END_OF_LIST()
-+};
-+
-+static void host_i2cdev_class_init(ObjectClass *klass, void *data)
-+{
-+    DeviceClass *dc = DEVICE_CLASS(klass);
-+    I2CSlaveClass *k = I2C_SLAVE_CLASS(klass);
-+
-+    k->init = &host_i2cdev_init;
-+    k->recv = &host_i2cdev_recv;
-+    k->send = &host_i2cdev_send;
-+
-+    dc->props = host_i2cdev_props;
-+}
-+
-+static
-+const TypeInfo host_i2cdev_type = {
-+    .name = TYPE_HOST_I2CDEV,
-+    .parent = TYPE_I2C_SLAVE,
-+    .instance_size = sizeof(HostI2CDevState),
-+    .class_size = sizeof(I2CSlaveClass),
-+    .class_init = host_i2cdev_class_init,
-+};
-+
-+static void host_i2cdev_register(void)
-+{
-+    type_register_static(&host_i2cdev_type);
-+}
-+
-+type_init(host_i2cdev_register)
+* Changes since v3
+- Only add neighboring subdevices to the async notifier. Instead of
+  parsing the whole OF graph depend on incremental async subnotifier to
+  discover the whole pipeline. This is needed to support arbitrarily
+  long graphs and support the new ADV7482 prototype driver which Kieran
+  is working on.
+- Fix warning from lockdep, reported by Kieran.
+- Fix commit messages from feedback from Sergei, thanks.
+- Fix chip info an OF device ids sorting order, thanks Geert.
+- Use subdev->of_node instead of subdev->dev->of_node, thanks Kieran.
+
+* Changes since v2
+- Do not try to control the subdevices in the media graph from the rcar-vin
+  driver. Have user-space configure to format in the pipeline instead.
+- Add link validation before starting the stream.
+- Rework on how the subdevices are and the video node behave by defining
+  specific V4L2 operations for the MC mode of operation, this simplified
+  the driver quit a bit, thanks Laurent!
+- Add a new 'renesas,id' DT property which is needed to to be able to
+  keep the VIN to CSI-2 routing table inside the driver. Previously this
+  information was taken from the CSI-2 DT node which is obviously the
+  wrong way to do things. Thanks Laurent for pointing this out.
+- Fixed a memory leek in the group allocator function.
+- Return -EMLINK instead of -EBUSY if a MC link is not possible given
+  the current routing setup.
+- Add comments to clarify that the 4 channels from the CSI-2 node is not
+  directly related to CSI-2 virtual channels, the CSI-2 node can output
+  any VC on any of its output channels.
+
+* Changes since v1
+- Remove unneeded casts as pointed out by Geert.
+- Fix spelling and DT documentation as pointed out by Geert and Sergei,
+  thanks!
+- Refresh patch 2/32 with an updated version, thanks Sakari for pointing
+  this out.
+- Add Sakaris Ack to patch 1/32.
+- Rebase on top of v4.9-rc1 instead of v4.9-rc3 to ease integration
+  testing together with renesas-drivers tree.
+
+Fabrizio Castro (2):
+  dt-bindings: media: rcar_vin: Reverse SoC part number list
+  dt-bindings: media: rcar_vin: add device tree support for r8a774[35]
+
+Niklas Söderlund (31):
+  rcar-vin: add Gen3 devicetree bindings documentation
+  rcar-vin: rename poorly named initialize and cleanup functions
+  rcar-vin: unregister video device on driver removal
+  rcar-vin: move subdevice handling to async callbacks
+  rcar-vin: move model information to own struct
+  rcar-vin: move max width and height information to chip information
+  rcar-vin: move functions regarding scaling
+  rcar-vin: all Gen2 boards can scale simplify logic
+  rcar-vin: set a default field to fallback on
+  rcar-vin: fix handling of single field frames (top, bottom and
+    alternate fields)
+  rcar-vin: update bytesperline and sizeimage calculation
+  rcar-vin: align pixelformat check
+  rcar-vin: break out format alignment and checking
+  rcar-vin: simplify how formats are set and reset
+  rcar-vin: cache video standard
+  rcar-vin: move media bus configuration to struct rvin_dev
+  rcar-vin: enable Gen3 hardware configuration
+  rcar-vin: add function to manipulate Gen3 chsel value
+  rcar-vin: add flag to switch to media controller mode
+  rcar-vin: use different v4l2 operations in media controller mode
+  rcar-vin: force default colorspace for media centric mode
+  rcar-vin: prepare for media controller mode initialization
+  rcar-vin: add group allocator functions
+  rcar-vin: change name of video device
+  rcar-vin: add chsel information to rvin_info
+  rcar-vin: parse Gen3 OF and setup media graph
+  rcar-vin: add link notify for Gen3
+  rcar-vin: extend {start,stop}_streaming to work with media controller
+  rcar-vin: enable support for r8a7795
+  rcar-vin: enable support for r8a7796
+  rcar-vin: enable support for r8a77970
+
+ .../devicetree/bindings/media/rcar_vin.txt         | 137 ++-
+ drivers/media/platform/rcar-vin/Kconfig            |   2 +-
+ drivers/media/platform/rcar-vin/rcar-core.c        | 962 +++++++++++++++++++--
+ drivers/media/platform/rcar-vin/rcar-dma.c         | 859 ++++++++++--------
+ drivers/media/platform/rcar-vin/rcar-v4l2.c        | 488 ++++++-----
+ drivers/media/platform/rcar-vin/rcar-vin.h         | 146 +++-
+ 6 files changed, 1950 insertions(+), 644 deletions(-)
+
 -- 
-2.11.0
+2.16.2
