@@ -1,55 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:48438 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424003AbeCBM1u (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Mar 2018 07:27:50 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] ARM: shmobile: defconfig: Refresh
-Date: Fri,  2 Mar 2018 13:27:45 +0100
-Message-Id: <1519993666-11041-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1519993666-11041-1-git-send-email-geert+renesas@glider.be>
-References: <1519993666-11041-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v12 01/33] dt-bindings: media: rcar_vin: Reverse SoC part number list
+Date: Wed,  7 Mar 2018 23:04:39 +0100
+Message-Id: <20180307220511.9826-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-  - CONFIG_AEABI is enabled since commit 494609701e06a004 ("ARM: always
-    enable AEABI for ARMv6+"),
-  - CONFIG_SERIAL_SH_SCI_CONSOLE is enabled since commit
-    c5bb576d5e21e91a ("tty: serial: sh-sci: Hide serial console config
-    question"),
-  - CONFIG_SERIAL_SH_SCI_DMA is enabled since commit be7e251d20e6c800
-    ("tty: serial: sh-sci: Hide DMA config question").
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Change the sorting of the part numbers from descending to ascending to
+match with other documentation.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/configs/shmobile_defconfig | 3 ---
- 1 file changed, 3 deletions(-)
+ Documentation/devicetree/bindings/media/rcar_vin.txt | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 79b2b7c122644033..e3658ec04e837f8a 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -34,7 +34,6 @@ CONFIG_SMP=y
- CONFIG_SCHED_MC=y
- CONFIG_HAVE_ARM_ARCH_TIMER=y
- CONFIG_NR_CPUS=8
--CONFIG_AEABI=y
- CONFIG_HIGHMEM=y
- CONFIG_CMA=y
- CONFIG_ZBOOT_ROM_TEXT=0x0
-@@ -105,8 +104,6 @@ CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_8250_EM=y
- CONFIG_SERIAL_SH_SCI=y
- CONFIG_SERIAL_SH_SCI_NR_UARTS=20
--CONFIG_SERIAL_SH_SCI_CONSOLE=y
--CONFIG_SERIAL_SH_SCI_DMA=y
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_MUX=y
- CONFIG_I2C_DEMUX_PINCTRL=y
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index 19357d0bbe6539b3..0ac715a5c331bc26 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -6,14 +6,14 @@ family of devices. The current blocks are always slaves and suppot one input
+ channel which can be either RGB, YUYV or BT656.
+ 
+  - compatible: Must be one or more of the following
+-   - "renesas,vin-r8a7795" for the R8A7795 device
+-   - "renesas,vin-r8a7794" for the R8A7794 device
+-   - "renesas,vin-r8a7793" for the R8A7793 device
+-   - "renesas,vin-r8a7792" for the R8A7792 device
+-   - "renesas,vin-r8a7791" for the R8A7791 device
+-   - "renesas,vin-r8a7790" for the R8A7790 device
+-   - "renesas,vin-r8a7779" for the R8A7779 device
+    - "renesas,vin-r8a7778" for the R8A7778 device
++   - "renesas,vin-r8a7779" for the R8A7779 device
++   - "renesas,vin-r8a7790" for the R8A7790 device
++   - "renesas,vin-r8a7791" for the R8A7791 device
++   - "renesas,vin-r8a7792" for the R8A7792 device
++   - "renesas,vin-r8a7793" for the R8A7793 device
++   - "renesas,vin-r8a7794" for the R8A7794 device
++   - "renesas,vin-r8a7795" for the R8A7795 device
+    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 compatible device.
+    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+ 
 -- 
-2.7.4
+2.16.2
