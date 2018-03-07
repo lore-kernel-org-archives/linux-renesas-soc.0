@@ -1,102 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:60459 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752591AbeCMOay (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34397 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754275AbeCGJk7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:30:54 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-Date: Tue, 13 Mar 2018 15:30:23 +0100
-Message-Id: <1520951425-13843-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 7 Mar 2018 04:40:59 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/3] arm64: dts: renesas: r8a7795: sort nodes
+Date: Wed,  7 Mar 2018 10:40:43 +0100
+Message-Id: <20180307094046.4907-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+Sort nodes of the r8a7785 DT.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- .../bindings/display/bridge/thine,thc63lvd1024.txt | 63 ++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+This is part of an ongoing effort to provide consistent node
+order in the DT of Renesas SoCs to improve maintainability.
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-new file mode 100644
-index 0000000..5b5afcd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-@@ -0,0 +1,63 @@
-+Thine Electronics THC63LVD1024 LVDS decoder
-+-------------------------------------------
-+
-+The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
-+to parallel data outputs. The chip supports single/dual input/output modes,
-+handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
-+
-+Required properties:
-+- compatible: Shall be "thine,thc63lvd1024",
-+
-+Optional properties:
-+- vcc-supply: Power supply for TTL output and digital circuitry
-+- cvcc-supply: Power supply for TTL CLOCKOUT signal
-+- lvcc-supply: Power supply for LVDS inputs
-+- pvcc-supply: Power supply for PLL circuitry
-+- pwnd-gpios: Power down GPIO signal. Active low.
-+- oe-gpios: Output enable GPIO signal. Active high.
-+
-+The THC63LVD1024 video port connections are modeled according
-+to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
-+
-+Required video port nodes:
-+- Port@0: First LVDS input port
-+- Port@2: First digital CMOS/TTL parallel output
-+
-+Optional video port nodes:
-+- Port@1: Second LVDS input port
-+- Port@3: Second digital CMOS/TTL parallel output
-+
-+Example:
-+--------
-+
-+	thc63lvd1024: lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		vcc-supply = <&reg_lvds_vcc>;
-+		lvcc-supply = <&reg_lvds_lvcc>;
-+
-+		pwdn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				lvds_dec_in_0: endpoint {
-+					remote-endpoint = <&lvds_out>;
-+				};
-+			};
-+
-+			port@2{
-+				reg = <2>;
-+
-+				lvds_dec_out_2: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+
-+			};
-+
-+		};
-+	};
+This should not have any run-time effect.
+
+Based on renesas-devel-20180306-v4.16-rc4
+
+Simon Horman (3):
+  arm64: dts: renesas: r8a7795: sort subnodes of the root node
+  arm64: dts: renesas: r8a7795: sort subnodes of the cpu node
+  arm64: dts: renesas: r8a7795: sort subnodes of the soc node
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1912 +++++++++++++++---------------
+ 1 file changed, 956 insertions(+), 956 deletions(-)
+
 -- 
-2.7.4
+2.11.0
