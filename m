@@ -1,149 +1,149 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35779 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753775AbeCRKxG (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52115 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754963AbeCHAFl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Mar 2018 06:53:06 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] PCI: rcar: Clean up the macros
-Date: Sun, 18 Mar 2018 11:52:53 +0100
-Message-Id: <20180318105253.30532-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180318105253.30532-1-marek.vasut+renesas@gmail.com>
-References: <20180318105253.30532-1-marek.vasut+renesas@gmail.com>
+        Wed, 7 Mar 2018 19:05:41 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v7 5/8] media: vsp1: Use reference counting for bodies
+Date: Thu,  8 Mar 2018 00:05:28 +0000
+Message-Id: <0715289430f60017f1ea6e6043ee78cfedab7b6c.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch replaces the (1 << n) with BIT(n) and cleans up whitespace,
-no functional change.
+Extend the display list body with a reference count, allowing bodies to
+be kept as long as a reference is maintained. This provides the ability
+to keep a cached copy of bodies which will not change, so that they can
+be re-applied to multiple display lists.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Reword the commit message
----
- drivers/pci/host/pcie-rcar.c | 52 ++++++++++++++++++++++----------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 099998f1923a..35815d516125 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -30,9 +30,9 @@
+---
+This could be squashed into the body update code, but it's not a
+straightforward squash as the refcounts will affect both:
+  v4l: vsp1: Provide a body pool
+and
+  v4l: vsp1: Convert display lists to use new body pool
+therefore, I have kept this separate to prevent breaking bisectability
+of the vsp-tests.
+
+v3:
+ - 's/fragment/body/'
+
+v4:
+ - Fix up reference handling comments.
+
+ drivers/media/platform/vsp1/vsp1_clu.c |  7 ++++++-
+ drivers/media/platform/vsp1/vsp1_dl.c  | 15 ++++++++++++++-
+ drivers/media/platform/vsp1/vsp1_lut.c |  7 ++++++-
+ 3 files changed, 26 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
+index 2018144470c5..b2a39a6ef7e4 100644
+--- a/drivers/media/platform/vsp1/vsp1_clu.c
++++ b/drivers/media/platform/vsp1/vsp1_clu.c
+@@ -257,8 +257,13 @@ static void clu_configure(struct vsp1_entity *entity,
+ 		clu->clu = NULL;
+ 		spin_unlock_irqrestore(&clu->lock, flags);
  
- #define PCIECAR			0x000010
- #define PCIECCTLR		0x000018
--#define  CONFIG_SEND_ENABLE	(1 << 31)
-+#define  CONFIG_SEND_ENABLE	BIT(31)
- #define  TYPE0			(0 << 8)
--#define  TYPE1			(1 << 8)
-+#define  TYPE1			BIT(8)
- #define PCIECDR			0x000020
- #define PCIEMSR			0x000028
- #define PCIEINTXR		0x000400
-@@ -44,7 +44,7 @@
- #define PCIETSTR		0x02004
- #define  DATA_LINK_ACTIVE	1
- #define PCIEERRFR		0x02020
--#define  UNSUPPORTED_REQUEST	(1 << 4)
-+#define  UNSUPPORTED_REQUEST	BIT(4)
- #define PCIEMSIFR		0x02044
- #define PCIEMSIALR		0x02048
- #define  MSIFE			1
-@@ -57,17 +57,17 @@
- /* local address reg & mask */
- #define PCIELAR(x)		(0x02200 + ((x) * 0x20))
- #define PCIELAMR(x)		(0x02208 + ((x) * 0x20))
--#define  LAM_PREFETCH		(1 << 3)
--#define  LAM_64BIT		(1 << 2)
--#define  LAR_ENABLE		(1 << 1)
-+#define  LAM_PREFETCH		BIT(3)
-+#define  LAM_64BIT		BIT(2)
-+#define  LAR_ENABLE		BIT(1)
+-		if (dlb)
++		if (dlb) {
+ 			vsp1_dl_list_add_body(dl, dlb);
++
++			/* release our local reference */
++			vsp1_dl_body_put(dlb);
++		}
++
+ 		break;
+ 	}
+ }
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 74476726451c..134865287c02 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -14,6 +14,7 @@
+ #include <linux/device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/gfp.h>
++#include <linux/refcount.h>
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
  
- /* PCIe address reg & mask */
- #define PCIEPALR(x)		(0x03400 + ((x) * 0x20))
- #define PCIEPAUR(x)		(0x03404 + ((x) * 0x20))
- #define PCIEPAMR(x)		(0x03408 + ((x) * 0x20))
- #define PCIEPTCTLR(x)		(0x0340c + ((x) * 0x20))
--#define  PAR_ENABLE		(1 << 31)
--#define  IO_SPACE		(1 << 8)
-+#define  PAR_ENABLE		BIT(31)
-+#define  IO_SPACE		BIT(8)
+@@ -58,6 +59,8 @@ struct vsp1_dl_body {
+ 	struct list_head list;
+ 	struct list_head free;
  
- /* Configuration */
- #define PCICONF(x)		(0x010000 + ((x) * 0x4))
-@@ -79,23 +79,23 @@
- #define IDSETR1			0x011004
- #define TLCTLR			0x011048
- #define MACSR			0x011054
--#define  SPCHGFIN		(1 << 4)
--#define  SPCHGFAIL		(1 << 6)
--#define  SPCHGSUC		(1 << 7)
-+#define  SPCHGFIN		BIT(4)
-+#define  SPCHGFAIL		BIT(6)
-+#define  SPCHGSUC		BIT(7)
- #define  LINK_SPEED		(0xf << 16)
- #define  LINK_SPEED_2_5GTS	(1 << 16)
- #define  LINK_SPEED_5_0GTS	(2 << 16)
- #define MACCTLR			0x011058
--#define  SPEED_CHANGE		(1 << 24)
--#define  SCRAMBLE_DISABLE	(1 << 27)
-+#define  SPEED_CHANGE		BIT(24)
-+#define  SCRAMBLE_DISABLE	BIT(27)
- #define MACS2R			0x011078
- #define MACCGSPSETR		0x011084
--#define  SPCNGRSN		(1 << 31)
-+#define  SPCNGRSN		BIT(31)
++	refcount_t refcnt;
++
+ 	struct vsp1_dl_body_pool *pool;
+ 	struct vsp1_device *vsp1;
  
- /* R-Car H1 PHY */
- #define H1_PCIEPHYADRR		0x04000c
--#define  WRITE_CMD		(1 << 16)
--#define  PHY_ACK		(1 << 24)
-+#define  WRITE_CMD		BIT(16)
-+#define  PHY_ACK		BIT(24)
- #define  RATE_POS		12
- #define  LANE_POS		8
- #define  ADR_POS		0
-@@ -107,19 +107,19 @@
- #define GEN2_PCIEPHYDATA	0x784
- #define GEN2_PCIEPHYCTRL	0x78c
+@@ -259,6 +262,7 @@ struct vsp1_dl_body *vsp1_dl_body_get(struct vsp1_dl_body_pool *pool)
+ 	if (!list_empty(&pool->free)) {
+ 		dlb = list_first_entry(&pool->free, struct vsp1_dl_body, free);
+ 		list_del(&dlb->free);
++		refcount_set(&dlb->refcnt, 1);
+ 	}
  
--#define INT_PCI_MSI_NR	32
-+#define INT_PCI_MSI_NR		32
+ 	spin_unlock_irqrestore(&pool->lock, flags);
+@@ -279,6 +283,9 @@ void vsp1_dl_body_put(struct vsp1_dl_body *dlb)
+ 	if (!dlb)
+ 		return;
  
--#define RCONF(x)	(PCICONF(0)+(x))
--#define RPMCAP(x)	(PMCAP(0)+(x))
--#define REXPCAP(x)	(EXPCAP(0)+(x))
--#define RVCCAP(x)	(VCCAP(0)+(x))
-+#define RCONF(x)		(PCICONF(0) + (x))
-+#define RPMCAP(x)		(PMCAP(0) + (x))
-+#define REXPCAP(x)		(EXPCAP(0) + (x))
-+#define RVCCAP(x)		(VCCAP(0) + (x))
++	if (!refcount_dec_and_test(&dlb->refcnt))
++		return;
++
+ 	dlb->num_entries = 0;
  
--#define  PCIE_CONF_BUS(b)	(((b) & 0xff) << 24)
--#define  PCIE_CONF_DEV(d)	(((d) & 0x1f) << 19)
--#define  PCIE_CONF_FUNC(f)	(((f) & 0x7) << 16)
-+#define PCIE_CONF_BUS(b)	(((b) & 0xff) << 24)
-+#define PCIE_CONF_DEV(d)	(((d) & 0x1f) << 19)
-+#define PCIE_CONF_FUNC(f)	(((f) & 0x7) << 16)
+ 	spin_lock_irqsave(&dlb->pool->lock, flags);
+@@ -465,7 +472,11 @@ void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data)
+  * in the order in which bodies are added.
+  *
+  * Adding a body to a display list passes ownership of the body to the list. The
+- * caller must not touch the body after this call.
++ * caller retains its reference to the fragment when adding it to the display
++ * list, but is not allowed to add new entries to the body.
++ *
++ * The reference must be explicitly released by a call to vsp1_dl_body_put()
++ * when the body isn't needed anymore.
+  *
+  * Additional bodies are only usable for display lists in header mode.
+  * Attempting to add a body to a header-less display list will return an error.
+@@ -476,6 +487,8 @@ int vsp1_dl_list_add_body(struct vsp1_dl_list *dl, struct vsp1_dl_body *dlb)
+ 	if (dl->dlm->mode != VSP1_DL_MODE_HEADER)
+ 		return -EINVAL;
  
--#define RCAR_PCI_MAX_RESOURCES 4
--#define MAX_NR_INBOUND_MAPS 6
-+#define RCAR_PCI_MAX_RESOURCES	4
-+#define MAX_NR_INBOUND_MAPS	6
++	refcount_inc(&dlb->refcnt);
++
+ 	list_add_tail(&dlb->list, &dl->bodies);
  
- struct rcar_msi {
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+ 	return 0;
+diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
+index 262cb72139d6..77cf7137a0f2 100644
+--- a/drivers/media/platform/vsp1/vsp1_lut.c
++++ b/drivers/media/platform/vsp1/vsp1_lut.c
+@@ -213,8 +213,13 @@ static void lut_configure(struct vsp1_entity *entity,
+ 		lut->lut = NULL;
+ 		spin_unlock_irqrestore(&lut->lock, flags);
+ 
+-		if (dlb)
++		if (dlb) {
+ 			vsp1_dl_list_add_body(dl, dlb);
++
++			/* release our local reference */
++			vsp1_dl_body_put(dlb);
++		}
++
+ 		break;
+ 	}
+ }
 -- 
-2.16.2
+git-series 0.9.1
