@@ -1,51 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:54923 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932467AbeCEFWP (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:43830 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934577AbeCHI3a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 00:22:15 -0500
-Date: Mon, 5 Mar 2018 10:56:06 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com,
-        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: usb-dmac: add binding for r8a77965
-Message-ID: <20180305052606.GM15443@localhost>
-References: <1519710896-26527-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 8 Mar 2018 03:29:30 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519710896-26527-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20180307230209.GB2205@bigcity.dyn.berto.se>
+References: <20180307225816.9801-1-niklas.soderlund+renesas@ragnatech.se> <20180307230209.GB2205@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 Mar 2018 09:29:29 +0100
+Message-ID: <CAMuHMdV_e8o9BrrjhrXM1CVgXyNTRCrUmt0NwVU2N=qkzavqkg@mail.gmail.com>
+Subject: Re: [PATCH v2] i2c: adv748x: afe: fix sparse warning
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 02:54:56PM +0900, Yoshihiro Shimoda wrote:
-> This patch adds binding for r8a77965 (R-Car M3-N).
+On Thu, Mar 8, 2018 at 12:02 AM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> CC linux-media.
+>
+> It's linux-media@vger.kernel.org not linux-media@vger.kernel.or, sorry
+> for the noise.
+>
+> On 2018-03-07 23:58:16 +0100, Niklas S=C3=B6derlund wrote:
+>> This fixes the following sparse warning:
+>>
+>> drivers/media/i2c/adv748x/adv748x-afe.c:294:34:    expected unsigned int=
+ [usertype] *signal
+>> drivers/media/i2c/adv748x/adv748x-afe.c:294:34:    got int *<noident>
+>> drivers/media/i2c/adv748x/adv748x-afe.c:294:34: warning: incorrect type =
+in argument 2 (different signedness)
+>>
+>> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
 
-Applied, thanks
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-> index f3d1f15..9dc935e 100644
-> --- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-> +++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-> @@ -11,6 +11,7 @@ Required Properties:
->  	  - "renesas,r8a7794-usb-dmac" (R-Car E2)
->  	  - "renesas,r8a7795-usb-dmac" (R-Car H3)
->  	  - "renesas,r8a7796-usb-dmac" (R-Car M3-W)
-> +	  - "renesas,r8a77965-usb-dmac" (R-Car M3-N)
->  - reg: base address and length of the registers block for the DMAC
->  - interrupts: interrupt specifiers for the DMAC, one for each entry in
->    interrupt-names.
-> -- 
-> 1.9.1
-> 
+Gr{oetje,eeting}s,
 
--- 
-~Vinod
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
