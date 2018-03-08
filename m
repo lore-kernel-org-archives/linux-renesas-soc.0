@@ -1,74 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:59420 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751478AbeCLOk1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46607 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755182AbeCHIkz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:40:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/6] pinctrl: sh-pfc: r8a77965: Rename EtherAVB "mdc" pin group to "mdio"
-Date: Mon, 12 Mar 2018 15:40:21 +0100
-Message-Id: <1520865622-11774-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1520865622-11774-1-git-send-email-geert+renesas@glider.be>
-References: <1520865622-11774-1-git-send-email-geert+renesas@glider.be>
+        Thu, 8 Mar 2018 03:40:55 -0500
+Date: Thu, 8 Mar 2018 09:40:51 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a7795: sort subnodes of the
+ cpu node
+Message-ID: <20180308084051.ikrjqzv63sc2qv5w@verge.net.au>
+References: <20180307094046.4907-1-horms+renesas@verge.net.au>
+ <20180307094046.4907-3-horms+renesas@verge.net.au>
+ <CAMuHMdUnpvF0TXW9FaoYTe-dTQ9prDNmHa6OkbZbww-m7wav_A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUnpvF0TXW9FaoYTe-dTQ9prDNmHa6OkbZbww-m7wav_A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On other Renesas SoCs, the pin group for the MDIO bus is named "mdio"
-instead of "mdc".  Fix the inconsistency, while retaining backwards
-compatibility with old DTBs using a pin group alias.
+On Wed, Mar 07, 2018 at 10:49:47AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Mar 7, 2018 at 10:40 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Sort subnodes of the cpu node alphanumerically.
+> >
+> > This is part of an ongoing effort to provide consistent node
+> > order in the DT of Renesas SoCs to improve maintainability.
+> >
+> > This should not have any run-time effect.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Thanks for your patch!
+> 
+> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> > @@ -34,6 +34,50 @@
+> >                 #address-cells = <1>;
+> >                 #size-cells = <0>;
+> >
+> > +               a53_0: cpu@100 {
+> > +                       compatible = "arm,cortex-a53", "arm,armv8";
+> > +                       reg = <0x100>;
+> > +                       device_type = "cpu";
+> > +                       power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
+> > +                       next-level-cache = <&L2_CA53>;
+> > +                       enable-method = "psci";
+> > +                       clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
+> > +                       operating-points-v2 = <&cluster1_opp>;
+> > +               };
+> 
+> [...]
+> 
+> >                 a57_0: cpu@0 {
+> >                         compatible = "arm,cortex-a57", "arm,armv8";
+> >                         reg = <0x0>;
+> 
+> Given the CPU nodes do have reg properties and unit addresses, shouldn't
+> they be sorted by these values, instead of alphabetically?
 
-Fixes: fa3e8b71b955af86 ("pinctrl: sh-pfc: r8a77965: Add EtherAVB groups/functions")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Thanks, I agree.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 363ccc3b1bdc7a88..d403764798d46103 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1597,11 +1597,11 @@ static const unsigned int avb_phy_int_pins[] = {
- static const unsigned int avb_phy_int_mux[] = {
- 	AVB_PHY_INT_MARK,
- };
--static const unsigned int avb_mdc_pins[] = {
-+static const unsigned int avb_mdio_pins[] = {
- 	/* AVB_MDC, AVB_MDIO */
- 	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
- };
--static const unsigned int avb_mdc_mux[] = {
-+static const unsigned int avb_mdio_mux[] = {
- 	AVB_MDC_MARK, AVB_MDIO_MARK,
- };
- static const unsigned int avb_mii_pins[] = {
-@@ -1921,7 +1921,8 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_link),
- 	SH_PFC_PIN_GROUP(avb_magic),
- 	SH_PFC_PIN_GROUP(avb_phy_int),
--	SH_PFC_PIN_GROUP(avb_mdc),
-+	SH_PFC_PIN_GROUP_ALIAS(avb_mdc, avb_mdio),	/* Deprecated */
-+	SH_PFC_PIN_GROUP(avb_mdio),
- 	SH_PFC_PIN_GROUP(avb_mii),
- 	SH_PFC_PIN_GROUP(avb_avtp_pps),
- 	SH_PFC_PIN_GROUP(avb_avtp_match_a),
-@@ -1969,7 +1970,8 @@ static const char * const avb_groups[] = {
- 	"avb_link",
- 	"avb_magic",
- 	"avb_phy_int",
--	"avb_mdc",
-+	"avb_mdc",	/* Deprecated, please use "avb_mdio" instead */
-+	"avb_mdio",
- 	"avb_mii",
- 	"avb_avtp_pps",
- 	"avb_avtp_match_a",
--- 
-2.7.4
+It looks like the nodes are already sorted according to that order
+so I withdraw this patch.
