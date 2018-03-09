@@ -1,46 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56453 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967059AbeCAJxF (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:62874 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750937AbeCILy7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:53:05 -0500
-Date: Thu, 1 Mar 2018 10:53:00 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] R-Car M3-N: Enable EtherAVB device node
-Message-ID: <20180301095300.egvxwzpiuhwabwzg@verge.net.au>
-References: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 9 Mar 2018 06:54:59 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: thierry.reding@gmail.com
+Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] pwm: rcar: Add suspend/resume support and cleanup for runtime_pm
+Date: Fri,  9 Mar 2018 20:54:56 +0900
+Message-Id: <1520596498-4801-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 11:22:44AM +0100, Jacopo Mondi wrote:
-> Hi Simon, Geert,
->    in this second iteration I have dropped iommu dependencies for EtherAVB
-> and have changed "phy-mode" for all mainlines Gen-3 boards, this time including
-> ULCB, Draak, Eagle and V3MSK.
-> 
-> The series add phy-mode as a board property to the following board files:
-> - salvator-common.dtsi
-> - ulcb.dtsi
-> - r8a77995-draak.dts
-> - r8a77970-eagle.dts
-> - r8a77970-v3msk.dts
-> 
-> And reset the EtherAVB phy-mode to "rgmii" in the following SoC DTSI:
-> - r8a7795.dtsi
-> - r8a7796.dtsi
-> - r8a77995.dtsi
-> - r8a77970.dtsi
-> 
-> And finally, I added EtherAVB device node for M3-N on top.
+This patch set improves power management for Renesas PWM driver.
 
-Thanks for the test report, applied.
+Hien Dang (1):
+  pwm: rcar: Use PM Runtime to control module clock
+
+Yoshihiro Shimoda (1):
+  pwm: rcar: add suspend/resume support
+
+ drivers/pwm/pwm-rcar.c | 35 +++++++++++++++++++++++++++++------
+ 1 file changed, 29 insertions(+), 6 deletions(-)
+
+-- 
+1.9.1
