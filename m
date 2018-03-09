@@ -1,293 +1,285 @@
 Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v12 16/33] rcar-vin: simplify how formats are set and reset
-Date: Wed,  7 Mar 2018 23:04:54 +0100
-Message-Id: <20180307220511.9826-17-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 10/11] media: vsp1: Support Interlaced display pipelines
+Date: Fri,  9 Mar 2018 22:04:08 +0000
+Message-Id: <4d4ec5c814b5517f4cfe231ec73aff5060889164.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With the recent cleanup of the format code to prepare for Gen3 it's
-possible to simplify the Gen2 format code path as well. Clean up the
-process by defining two functions to handle the set format and reset of
-format when the standard is changed.
+Calculate the top and bottom fields for the interlaced frames and
+utilise the extended display list command feature to implement the
+auto-field operations. This allows the DU to update the VSP2 registers
+dynamically based upon the currently processing field.
 
-While at it replace the driver local struct rvin_source_fmt with a
-struct v4l2_rect as all it's used for is keep track of the source
-dimensions.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
+ drivers/media/platform/vsp1/vsp1_dl.c   | 10 +++-
+ drivers/media/platform/vsp1/vsp1_dl.h   |  2 +-
+ drivers/media/platform/vsp1/vsp1_drm.c  | 12 ++++-
+ drivers/media/platform/vsp1/vsp1_pipe.c |  3 +-
+ drivers/media/platform/vsp1/vsp1_regs.h |  1 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c  | 72 ++++++++++++++++++++++++--
+ drivers/media/platform/vsp1/vsp1_rwpf.h |  1 +-
+ include/media/vsp1.h                    |  1 +-
+ 8 files changed, 96 insertions(+), 6 deletions(-)
 
-* Changes since v11
-- This patch where 'rcar-vin: read subdevice format for crop only when
-needed'
-- Keep caching the source dimensions and drop all changes to
-rvin_g_selection() and rvin_s_selection().
-- Inline rvin_get_vin_format_from_source() into rvin_reset_format()
-which now is the only user left.
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 120 ++++++++++++----------------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  14 +---
- 2 files changed, 55 insertions(+), 79 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 680b25f610d1d8bb..c4be0bcb8b16f941 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -138,67 +138,60 @@ static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
-  * V4L2
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 6d17b8bfa21c..4a079060864b 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -886,8 +886,9 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
+  * with the frame end interrupt. The function always returns true in header mode
+  * as display list processing is then not continuous and races never occur.
   */
- 
--static void rvin_reset_crop_compose(struct rvin_dev *vin)
--{
--	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = vin->source.width;
--	vin->crop.height = vin->source.height;
--
--	vin->compose.top = vin->compose.left = 0;
--	vin->compose.width = vin->format.width;
--	vin->compose.height = vin->format.height;
--}
--
- static int rvin_reset_format(struct rvin_dev *vin)
+-bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
++bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm, bool interlaced)
  {
- 	struct v4l2_subdev_format fmt = {
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.pad = vin->digital->source_pad,
- 	};
--	struct v4l2_mbus_framefmt *mf = &fmt.format;
- 	int ret;
++	struct vsp1_device *vsp1 = dlm->vsp1;
+ 	bool completed = false;
  
--	fmt.pad = vin->digital->source_pad;
--
- 	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
- 	if (ret)
- 		return ret;
+ 	spin_lock(&dlm->lock);
+@@ -912,6 +913,13 @@ bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+ 	if (vsp1_dl_list_hw_update_pending(dlm))
+ 		goto done;
  
--	vin->format.width	= mf->width;
--	vin->format.height	= mf->height;
--	vin->format.colorspace	= mf->colorspace;
--	vin->format.field	= mf->field;
-+	v4l2_fill_pix_format(&vin->format, &fmt.format);
- 
--	rvin_reset_crop_compose(vin);
-+	ret = rvin_format_align(vin, &vin->format);
-+	if (ret)
-+		return ret;
- 
--	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
--	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
-+	vin->source.top = vin->crop.top = 0;
-+	vin->source.left = vin->crop.left = 0;
-+	vin->source.width = vin->crop.width = vin->format.width;
-+	vin->source.height = vin->crop.height = vin->format.height;
++	if (interlaced) {
++		u32 status = vsp1_read(vsp1, VI6_STATUS);
 +
-+	vin->compose.top = vin->compose.left = 0;
-+	vin->compose.width = vin->format.width;
-+	vin->compose.height = vin->format.height;
- 
- 	return 0;
- }
- 
--static int __rvin_try_format_source(struct rvin_dev *vin,
--				    u32 which,
--				    struct v4l2_pix_format *pix,
--				    struct rvin_source_fmt *source)
-+static int rvin_try_format(struct rvin_dev *vin, u32 which,
-+			   struct v4l2_pix_format *pix,
-+			   struct v4l2_rect *crop, struct v4l2_rect *compose)
- {
--	struct v4l2_subdev *sd;
-+	struct v4l2_subdev *sd = vin_to_source(vin);
- 	struct v4l2_subdev_pad_config *pad_cfg;
- 	struct v4l2_subdev_format format = {
- 		.which = which,
-+		.pad = vin->digital->source_pad,
- 	};
- 	enum v4l2_field field;
- 	u32 width, height;
- 	int ret;
- 
--	sd = vin_to_source(vin);
--
--	v4l2_fill_mbus_format(&format.format, pix, vin->digital->code);
--
- 	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
- 	if (pad_cfg == NULL)
- 		return -ENOMEM;
- 
--	format.pad = vin->digital->source_pad;
-+	if (!rvin_format_from_pixel(pix->pixelformat) ||
-+	    (vin->info->model == RCAR_M1 &&
-+	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
-+		pix->pixelformat = RVIN_DEFAULT_FORMAT;
++		if (!(status & VI6_STATUS_FLD_STD(dlm->index)))
++			goto done;
++	}
 +
-+	v4l2_fill_mbus_format(&format.format, pix, vin->digital->code);
+ 	/*
+ 	 * The device starts processing the queued display list right after the
+ 	 * frame end interrupt. The display list thus becomes active.
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
+index 3009912ddefb..24a9fb53223a 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.h
++++ b/drivers/media/platform/vsp1/vsp1_dl.h
+@@ -57,7 +57,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
+ 					unsigned int prealloc);
+ void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm);
+ void vsp1_dlm_reset(struct vsp1_dl_manager *dlm);
+-bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
++bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm, bool interlaced);
+ struct vsp1_dl_ext_cmd *vsp1_dlm_get_autofld_cmd(struct vsp1_dl_list *dl);
  
- 	/* Allow the video device to override field and to scale */
- 	field = pix->field;
-@@ -211,39 +204,34 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 0459b970e9da..d7028de053ae 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -329,6 +329,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
+ 	const struct vsp1_format_info *fmtinfo;
++	struct vsp1_rwpf *output = drm_pipe->pipe.output;
+ 	struct vsp1_rwpf *rpf;
  
- 	v4l2_fill_pix_format(pix, &format.format);
+ 	if (rpf_index >= vsp1->info->rpf_count)
+@@ -368,6 +369,17 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 		return -EINVAL;
+ 	}
  
--	source->width = pix->width;
--	source->height = pix->height;
-+	crop->top = crop->left = 0;
-+	crop->width = pix->width;
-+	crop->height = pix->height;
++	if (!(vsp1_feature(vsp1, VSP1_HAS_EXT_DL)) && cfg->interlaced) {
++		/*
++		 * Interlaced support requires extended display lists to
++		 * provide the auto-fld feature with the DU.
++		 */
++		dev_dbg(vsp1->dev, "Interlaced unsupported on this output\n");
++		return -EINVAL;
++	}
 +
++	rpf->interlaced = output->interlaced = cfg->interlaced;
++
+ 	rpf->fmtinfo = fmtinfo;
+ 	rpf->format.num_planes = fmtinfo->planes;
+ 	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
+index fa445b1a2e38..df674b3bb9a0 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.c
++++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+@@ -341,7 +341,8 @@ void vsp1_pipeline_frame_end(struct vsp1_pipeline *pipe)
+ 	 * up being postponed by one frame. @completed represents whether the
+ 	 * active frame was finished or postponed.
+ 	 */
+-	completed = vsp1_dlm_irq_frame_end(pipe->output->dlm);
++	completed = vsp1_dlm_irq_frame_end(pipe->output->dlm,
++					   pipe->output->interlaced);
+ 
+ 	if (pipe->hgo)
+ 		vsp1_hgo_frame_end(pipe->hgo);
+diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
+index 43ad68ff3167..e2dffbe82809 100644
+--- a/drivers/media/platform/vsp1/vsp1_regs.h
++++ b/drivers/media/platform/vsp1/vsp1_regs.h
+@@ -31,6 +31,7 @@
+ #define VI6_SRESET_SRTS(n)		(1 << (n))
+ 
+ #define VI6_STATUS			0x0038
++#define VI6_STATUS_FLD_STD(n)		(1 << ((n) + 28))
+ #define VI6_STATUS_SYS_ACT(n)		(1 << ((n) + 8))
+ 
+ #define VI6_WPF_IRQ_ENB(n)		(0x0048 + (n) * 12)
+diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
+index 67f2fb3e0611..51c02a1d40e5 100644
+--- a/drivers/media/platform/vsp1/vsp1_rpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rpf.c
+@@ -24,6 +24,20 @@
+ #define RPF_MAX_WIDTH				8190
+ #define RPF_MAX_HEIGHT				8190
+ 
++/* Pre extended display list command data structure */
++struct vsp1_extcmd_auto_fld_body {
++	u32 top_y0;
++	u32 bottom_y0;
++	u32 top_c0;
++	u32 bottom_c0;
++	u32 top_c1;
++	u32 bottom_c1;
++	u32 reserved0;
++	u32 reserved1;
++} __packed;
++
++#define VSP1_DL_EXT_AUTOFLD_INT		BIT(1)
++
+ /* -----------------------------------------------------------------------------
+  * Device Access
+  */
+@@ -68,6 +82,14 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+ 		pstride |= format->plane_fmt[1].bytesperline
+ 			<< VI6_RPF_SRCM_PSTRIDE_C_SHIFT;
+ 
 +	/*
-+	 * If source is ALTERNATE the driver will use the VIN hardware
-+	 * to INTERLACE it. The crop height then needs to be doubled.
++	 * pstride has both STRIDE_Y and STRIDE_C, but multiplying the whole
++	 * of pstride by 2 is conveniently OK here as we are multiplying both
++	 * values.
 +	 */
-+	if (pix->field == V4L2_FIELD_ALTERNATE)
-+		crop->height *= 2;
++	if (rpf->interlaced)
++		pstride *= 2;
 +
-+	if (field != V4L2_FIELD_ANY)
-+		pix->field = field;
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_PSTRIDE, pstride);
  
--	pix->field = field;
- 	pix->width = width;
- 	pix->height = height;
+ 	/* Format */
+@@ -104,6 +126,9 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+ 		top = compose->top;
+ 	}
  
--	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
--		source->height);
-+	ret = rvin_format_align(vin, pix);
-+	if (ret)
-+		return ret;
++	if (rpf->interlaced)
++		top /= 2;
++
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_LOC,
+ 		       (left << VI6_RPF_LOC_HCOORD_SHIFT) |
+ 		       (top << VI6_RPF_LOC_VCOORD_SHIFT));
+@@ -173,6 +198,31 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
  
-+	compose->top = compose->left = 0;
-+	compose->width = pix->width;
-+	compose->height = pix->height;
- done:
- 	v4l2_subdev_free_pad_config(pad_cfg);
--	return ret;
--}
- 
--static int __rvin_try_format(struct rvin_dev *vin,
--			     u32 which,
--			     struct v4l2_pix_format *pix,
--			     struct rvin_source_fmt *source)
--{
--	int ret;
--
--	if (!rvin_format_from_pixel(pix->pixelformat) ||
--	    (vin->info->model == RCAR_M1 &&
--	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
--		pix->pixelformat = RVIN_DEFAULT_FORMAT;
--
--	/* Limit to source capabilities */
--	ret = __rvin_try_format_source(vin, which, pix, source);
--	if (ret)
--		return ret;
--
--	return rvin_format_align(vin, pix);
-+	return 0;
  }
  
- static int rvin_querycap(struct file *file, void *priv,
-@@ -262,33 +250,31 @@ static int rvin_try_fmt_vid_cap(struct file *file, void *priv,
- 				struct v4l2_format *f)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
--	struct rvin_source_fmt source;
-+	struct v4l2_rect crop, compose;
- 
--	return __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, &f->fmt.pix,
--				 &source);
-+	return rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, &f->fmt.pix, &crop,
-+			       &compose);
- }
- 
- static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
- 			      struct v4l2_format *f)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
--	struct rvin_source_fmt source;
-+	struct v4l2_rect crop, compose;
- 	int ret;
- 
- 	if (vb2_is_busy(&vin->queue))
- 		return -EBUSY;
- 
--	ret = __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_ACTIVE, &f->fmt.pix,
--				&source);
-+	ret = rvin_try_format(vin, V4L2_SUBDEV_FORMAT_ACTIVE, &f->fmt.pix,
-+			      &crop, &compose);
- 	if (ret)
- 		return ret;
- 
--	vin->source.width = source.width;
--	vin->source.height = source.height;
--
- 	vin->format = f->fmt.pix;
--
--	rvin_reset_crop_compose(vin);
-+	vin->crop = crop;
-+	vin->compose = compose;
-+	vin->source = crop;
- 
- 	return 0;
- }
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 8daba9db0e927a49..7fcf984f21466855 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -48,16 +48,6 @@ enum rvin_dma_state {
- 	STOPPING,
- };
- 
--/**
-- * struct rvin_source_fmt - Source information
-- * @width:	Width from source
-- * @height:	Height from source
-- */
--struct rvin_source_fmt {
--	u32 width;
--	u32 height;
--};
--
- /**
-  * struct rvin_video_format - Data format stored in memory
-  * @fourcc:	Pixelformat
-@@ -124,11 +114,11 @@ struct rvin_info {
-  * @sequence:		V4L2 buffers sequence number
-  * @state:		keeps track of operation state
-  *
-- * @source:		active format from the video source
-  * @format:		active V4L2 pixel format
-  *
-  * @crop:		active cropping
-  * @compose:		active composing
-+ * @source:		active size of the video source
-  */
- struct rvin_dev {
- 	struct device *dev;
-@@ -151,11 +141,11 @@ struct rvin_dev {
- 	unsigned int sequence;
- 	enum rvin_dma_state state;
- 
--	struct rvin_source_fmt source;
- 	struct v4l2_pix_format format;
- 
++static void vsp1_rpf_configure_autofld(struct vsp1_rwpf *rpf,
++				       struct vsp1_dl_ext_cmd *cmd)
++{
++	const struct v4l2_pix_format_mplane *format = &rpf->format;
++	struct vsp1_extcmd_auto_fld_body *auto_fld = cmd->data;
++	u32 offset_y, offset_c;
++
++	/* Re-index our auto_fld to match the current RPF */
++	auto_fld = &auto_fld[rpf->entity.index];
++
++	auto_fld->top_y0 = rpf->mem.addr[0];
++	auto_fld->top_c0 = rpf->mem.addr[1];
++	auto_fld->top_c1 = rpf->mem.addr[2];
++
++	offset_y = format->plane_fmt[0].bytesperline;
++	offset_c = format->plane_fmt[1].bytesperline;
++
++	auto_fld->bottom_y0 = rpf->mem.addr[0] + offset_y;
++	auto_fld->bottom_c0 = rpf->mem.addr[1] + offset_c;
++	auto_fld->bottom_c1 = rpf->mem.addr[2] + offset_c;
++
++	cmd->flags |= VSP1_DL_EXT_AUTOFLD_INT;
++	cmd->flags |= BIT(16 + rpf->entity.index);
++}
++
+ static void rpf_configure_frame(struct vsp1_entity *entity,
+ 				struct vsp1_pipeline *pipe,
+ 				struct vsp1_dl_list *dl,
+@@ -182,6 +232,7 @@ static void rpf_configure_frame(struct vsp1_entity *entity,
+ 	struct vsp1_rwpf *rpf = to_rwpf(&entity->subdev);
+ 	struct vsp1_rwpf_memory mem = rpf->mem;
+ 	struct vsp1_device *vsp1 = rpf->entity.vsp1;
++	struct vsp1_dl_ext_cmd *cmd;
+ 	const struct vsp1_format_info *fmtinfo = rpf->fmtinfo;
+ 	const struct v4l2_pix_format_mplane *format = &rpf->format;
  	struct v4l2_rect crop;
- 	struct v4l2_rect compose;
-+	struct v4l2_rect source;
+@@ -220,6 +271,11 @@ static void rpf_configure_frame(struct vsp1_entity *entity,
+ 		crop.left += pipe->partition->rpf.left;
+ 	}
+ 
++	if (rpf->interlaced) {
++		crop.height = round_down(crop.height / 2, fmtinfo->vsub);
++		crop.top = round_down(crop.top / 2, fmtinfo->vsub);
++	}
++
+ 	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRC_BSIZE,
+ 		       (crop.width << VI6_RPF_SRC_BSIZE_BHSIZE_SHIFT) |
+ 		       (crop.height << VI6_RPF_SRC_BSIZE_BVSIZE_SHIFT));
+@@ -248,11 +304,21 @@ static void rpf_configure_frame(struct vsp1_entity *entity,
+ 	    fmtinfo->swap_uv)
+ 		swap(mem.addr[1], mem.addr[2]);
+ 
+-	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_Y, mem.addr[0]);
+-	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C0, mem.addr[1]);
+-	vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C1, mem.addr[2]);
++	/*
++	 * Interlaced pipelines will use the extended pre-cmd to process
++	 * SRCM_ADDR_{Y,C0,C1}
++	 */
++	if (rpf->interlaced) {
++		cmd = vsp1_dlm_get_autofld_cmd(dl);
++		vsp1_rpf_configure_autofld(rpf, cmd);
++	} else {
++		vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_Y, mem.addr[0]);
++		vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C0, mem.addr[1]);
++		vsp1_rpf_write(rpf, dlb, VI6_RPF_SRCM_ADDR_C1, mem.addr[2]);
++	}
+ }
+ 
++
+ static void rpf_partition(struct vsp1_entity *entity,
+ 			  struct vsp1_pipeline *pipe,
+ 			  struct vsp1_partition *partition,
+diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h b/drivers/media/platform/vsp1/vsp1_rwpf.h
+index 58215a7ab631..27ada15e8f00 100644
+--- a/drivers/media/platform/vsp1/vsp1_rwpf.h
++++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
+@@ -47,6 +47,7 @@ struct vsp1_rwpf {
+ 
+ 	struct v4l2_pix_format_mplane format;
+ 	const struct vsp1_format_info *fmtinfo;
++	bool interlaced;
+ 	unsigned int bru_input;
+ 
+ 	unsigned int alpha;
+diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+index 68a8abe4fac5..1f7e1dfe0c12 100644
+--- a/include/media/vsp1.h
++++ b/include/media/vsp1.h
+@@ -49,6 +49,7 @@ struct vsp1_du_atomic_config {
+ 	struct v4l2_rect dst;
+ 	unsigned int alpha;
+ 	unsigned int zpos;
++	bool interlaced;
  };
  
- #define vin_to_source(vin)		((vin)->digital->subdev)
+ void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index);
 -- 
-2.16.2
+git-series 0.9.1
