@@ -1,46 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f175.google.com ([209.85.216.175]:33569 "EHLO
-        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751059AbeCIMru (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:29761 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750939AbeCILzA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:47:50 -0500
-MIME-Version: 1.0
-In-Reply-To: <1520596498-4801-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 9 Mar 2018 06:55:00 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: thierry.reding@gmail.com
+Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/2] pwm: rcar: Use PM Runtime to control module clock
+Date: Fri,  9 Mar 2018 20:54:57 +0900
+Message-Id: <1520596498-4801-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1520596498-4801-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1520596498-4801-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1520596498-4801-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Mar 2018 13:47:48 +0100
-Message-ID: <CAMuHMdWC7WnyCKmwd+BRWRcd_bPa-qmPZJ58p8mcr277jHhUPw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pwm: rcar: Use PM Runtime to control module clock
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Hien Dang <hien.dang.eb@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Mar 9, 2018 at 12:54 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Hien Dang <hien.dang.eb@renesas.com>
->
-> Runtime PM API (pm_runtime_get_sync/pm_runtime_put) should be used
-> to control module clock instead of clk_prepare_enable and
-> clk_disable_unprepare.
->
-> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Hien Dang <hien.dang.eb@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Runtime PM API (pm_runtime_get_sync/pm_runtime_put) should be used
+to control module clock instead of clk_prepare_enable and
+clk_disable_unprepare.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/pwm/pwm-rcar.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index 1c85ecc..b942010 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -134,16 +134,12 @@ static int rcar_pwm_set_counter(struct rcar_pwm_chip *rp, int div, int duty_ns,
+ 
+ static int rcar_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
+-
+-	return clk_prepare_enable(rp->clk);
++	return pm_runtime_get_sync(chip->dev);
+ }
+ 
+ static void rcar_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
+-
+-	clk_disable_unprepare(rp->clk);
++	pm_runtime_put(chip->dev);
+ }
+ 
+ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+-- 
+1.9.1
