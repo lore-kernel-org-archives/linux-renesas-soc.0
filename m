@@ -1,83 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35379 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752326AbeC0XVK (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:33244 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751008AbeCILY1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Mar 2018 19:21:10 -0400
-Date: Wed, 28 Mar 2018 01:21:08 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+        Fri, 9 Mar 2018 06:24:27 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: thierry.reding@gmail.com
 Cc: ryo.kodama.vz@renesas.com, linux-pwm@vger.kernel.org,
-        stable@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] pwm: rcar: fix a condition to prevent mismatch value
- setting to duty
-Message-ID: <20180327232107.GD4097@mithrandir>
-References: <1520594661-6897-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        stable@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] pwm: rcar: fix a condition to prevent mismatch value setting to duty
+Date: Fri,  9 Mar 2018 20:24:21 +0900
+Message-Id: <1520594661-6897-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="48TaNjbzBVislYPb"
-Content-Disposition: inline
-In-Reply-To: <1520594661-6897-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Ryo Kodama <ryo.kodama.vz@renesas.com>
 
---48TaNjbzBVislYPb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch fixes an issue that is possible to set mismatch value
+to duty for R-Car PWM if we input the following commands:
 
-On Fri, Mar 09, 2018 at 08:24:21PM +0900, Yoshihiro Shimoda wrote:
-> From: Ryo Kodama <ryo.kodama.vz@renesas.com>
->=20
-> This patch fixes an issue that is possible to set mismatch value
-> to duty for R-Car PWM if we input the following commands:
->=20
->  # cd /sys/class/pwm/<pwmchip>/
->  # echo 0 > export
->  # cd pwm0
->  # echo 30 > period
->  # echo 30 > duty_cycle
->  # echo 0 > duty_cycle
->  # cat duty_cycle
->  0
->  # echo 1 > enable
->  --> Then, the actual duty_cycle is 30, not 0.
->=20
-> So, this patch adds a condition into rcar_pwm_config() to fix
-> this issue.
->=20
-> Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
-> [shimoda: revise the commit log and add Fixes and Cc tags]
-> Fixes: ed6c1476bf7f ("pwm: Add support for R-Car PWM Timer")
-> Cc: Cc: <stable@vger.kernel.org> # v4.4+
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  drivers/pwm/pwm-rcar.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+ # cd /sys/class/pwm/<pwmchip>/
+ # echo 0 > export
+ # cd pwm0
+ # echo 30 > period
+ # echo 30 > duty_cycle
+ # echo 0 > duty_cycle
+ # cat duty_cycle
+ 0
+ # echo 1 > enable
+ --> Then, the actual duty_cycle is 30, not 0.
 
-Applied, thanks.
+So, this patch adds a condition into rcar_pwm_config() to fix
+this issue.
 
-Thierry
+Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
+[shimoda: revise the commit log and add Fixes and Cc tags]
+Fixes: ed6c1476bf7f ("pwm: Add support for R-Car PWM Timer")
+Cc: Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/pwm/pwm-rcar.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---48TaNjbzBVislYPb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq60eMACgkQ3SOs138+
-s6EoBw/8Ci1i8K/d4aBCM0kdtAgaG08yMGzH0j8+z/1s9C6Yhu1QOBOqBqrmUqlT
-TqsHcTNlfBZZ463FLPNMWz7gEaJ0SRCoGJxsmWMGmE8ccEO/YinxDnuD3urG9MvD
-Ty4PMILaYWkgTQbxU4BqDHMpJHOX7fgZSe9TJ12m8c5IpVOxsryMT9+3IhrVhm5n
-XsgRG3+kCFTTGGy5ZwbVsy1vhC2rhHztVIkwIBgUbRosTnBCwQlBKyC0LpEvOqwg
-T0CWsF3A5m80VYzNC1sB3YQujhBqqbWX+xerAV1Cnby8yfWBrQPDCw5fVdWMT9zF
-yCSIMsCpOhbml7dFAQtxexUfUHdP9ZR2YVcrBjITDhEXNvy/kxFWPGEtA6canD5d
-LcsCk4RVz3n4wujal6z1cWHKkHiE+zSyOZeMlOyOhW9Ma54FWSx4GLAKWvsNXaNG
-2ck+KZcPreWkCoCNewxnxyRN6IpSfZ5KoWKqBtMdzvHpPL2mvD0tB+TZyNKeomvL
-M3AACoFZxt22DplAD8Xhd7CNOycnA6M0dGLTgXKfEQdrmjIvsudKmMRHHzxw6iWh
-ch0t5hOuWQHMQpjUohI66NRFt8ik47qCpzYWQsNM7ArrXb301OBCmdWEiFBh9ub+
-O+WRpO3gR4ZRLJ2KlmalwNHzkDD+W4/Y7Iw9AfbkWslsqG8kJAo=
-=Oeqe
------END PGP SIGNATURE-----
-
---48TaNjbzBVislYPb--
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index 1c85ecc..0fcf94f 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -156,8 +156,12 @@ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	if (div < 0)
+ 		return div;
+ 
+-	/* Let the core driver set pwm->period if disabled and duty_ns == 0 */
+-	if (!pwm_is_enabled(pwm) && !duty_ns)
++	/*
++	 * Let the core driver set pwm->period if disabled and duty_ns == 0.
++	 * But, this driver should prevent to set the new duty_ns if current
++	 * duty_cycle is not set
++	 */
++	if (!pwm_is_enabled(pwm) && !duty_ns && !pwm->state.duty_cycle)
+ 		return 0;
+ 
+ 	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
+-- 
+1.9.1
