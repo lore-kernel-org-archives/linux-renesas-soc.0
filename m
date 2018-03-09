@@ -1,90 +1,78 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-Date: Fri,  9 Mar 2018 14:51:40 +0100
-Message-Id: <1520603500-15218-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:46526 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751211AbeCIPaC (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:30:02 -0500
+Subject: Re: [PATCH v12 14/33] rcar-vin: align pixelformat check
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180307220511.9826-15-niklas.soderlund+renesas@ragnatech.se>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <09e74fb4-817f-ae34-ed1e-91523a5029cb@xs4all.nl>
+Date: Fri, 9 Mar 2018 16:30:00 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180307220511.9826-15-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car V3M Eagle board includes a transparent LVDS decoder, connected
-to the on-chip LVDS encoder output on one side and to HDMI encoder
-ADV7511w on the other one.
+On 07/03/18 23:04, Niklas Söderlund wrote:
+> If the pixelformat is not supported it should not fail but be set to
+> something that works. While we are at it move the two different
+> checks of the pixelformat to the same statement.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-As the decoder does not need any configuration it has been so-far
-omitted from DTS. Now that a driver for transparent LVDS decoder is
-available, describe it in DT as well.
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 31 ++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+Regards,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index c0fd144..0a95c20 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -42,6 +42,33 @@
- 			};
- 		};
- 	};
-+
-+	lvds,decoder {
-+		compatible = "lvds-decoder";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				lvds_dec_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@1{
-+				reg = <1>;
-+
-+				lvds_dec_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+
-+			};
-+
-+		};
-+	};
- };
- 
- &avb {
-@@ -98,7 +125,7 @@
- 			port@0 {
- 				reg = <0>;
- 				adv7511_in: endpoint {
--					remote-endpoint = <&lvds0_out>;
-+					remote-endpoint = <&lvds_dec_out>;
- 				};
- 			};
- 
-@@ -153,7 +180,7 @@
- 	ports {
- 		port@1 {
- 			endpoint {
--				remote-endpoint = <&adv7511_in>;
-+				remote-endpoint = <&lvds_dec_in>;
- 			};
- 		};
- 	};
--- 
-2.7.4
+	Hans
 
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 14 +++-----------
+>  1 file changed, 3 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 55fa69aa7c454928..01f2a14169a74ff3 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -187,12 +187,10 @@ static int __rvin_try_format(struct rvin_dev *vin,
+>  	u32 walign;
+>  	int ret;
+>  
+> -	/* If requested format is not supported fallback to the default */
+> -	if (!rvin_format_from_pixel(pix->pixelformat)) {
+> -		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
+> -			pix->pixelformat, RVIN_DEFAULT_FORMAT);
+> +	if (!rvin_format_from_pixel(pix->pixelformat) ||
+> +	    (vin->info->model == RCAR_M1 &&
+> +	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
+>  		pix->pixelformat = RVIN_DEFAULT_FORMAT;
+> -	}
+>  
+>  	/* Limit to source capabilities */
+>  	ret = __rvin_try_format_source(vin, which, pix, source);
+> @@ -231,12 +229,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+>  	pix->bytesperline = rvin_format_bytesperline(pix);
+>  	pix->sizeimage = rvin_format_sizeimage(pix);
+>  
+> -	if (vin->info->model == RCAR_M1 &&
+> -	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+> -		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+> -		return -EINVAL;
+> -	}
+> -
+>  	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
+>  		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+>  
+> 
