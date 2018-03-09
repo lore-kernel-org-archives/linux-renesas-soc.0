@@ -1,60 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39473 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751903AbeCMT0F (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 15:26:05 -0400
-Received: by mail-lf0-f65.google.com with SMTP id f75-v6so1137242lfg.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Mar 2018 12:26:04 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: v3msk: add SCIF0 pins
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Message-ID: <d21e29c9-1364-357e-dd64-af14b0068cbd@cogentembedded.com>
-Date: Tue, 13 Mar 2018 22:26:01 +0300
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <464a8a05-25af-69c0-4daa-ee0ef2a0fe7f@cogentembedded.com>
+References: <21306a59-8f20-ad08-fdc1-bcc6333c01d4@cogentembedded.com> <464a8a05-25af-69c0-4daa-ee0ef2a0fe7f@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Mar 2018 13:14:21 +0100
+Message-ID: <CAMuHMdUH5qAbjMmpspmBxy4_mbyQF3oQoSd5q6SNLHw44aRbXA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: sh-pfc: add R8A77980 PFC support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the (previously omitted) SCIF0 pin data to the V3M Starter Kit board's
-device tree.
+Hi Sergei,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Thu, Mar 8, 2018 at 8:14 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the PFC support for the R8A77980 SoC including pin groups for some
+> on-chip devices such as AVB, CAN-FD, GETHER, [H]SCIF, I2C, INTC-EX, MMC,
+> MSIOF, PWM, and VIN...
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
----
-The patch is against the 'renesas-devel-20180308-v4.16-rc4' tag of Simon's
-'renesas.git repo...
+> Changes in version 2:
+> - moved the CANFD_CLK and SCIF_CLK pin groups to their own functions;
+> - added the DU RGB-888 pin group;
+> - added the VIN0 RGB-666 pin group;
+> - swapped HSYNC/VSYNC in the initializer of vin{0|1}_sync_mux[];
+> - fixed up the comments to the initializer of du_rgb666_pins[];
+> - added Rob's tag.
 
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+Thanks for the update!
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-@@ -51,6 +51,16 @@
- 	clock-frequency = <32768>;
- };
- 
-+&pfc {
-+	scif0_pins: scif0 {
-+		groups = "scif0_data";
-+		function = "scif0";
-+	};
-+};
-+
- &scif0 {
-+	pinctrl-0 = <&scif0_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.17.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
