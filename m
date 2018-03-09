@@ -1,77 +1,124 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 03/11] media: vsp1: Rename dl_child to dl_next
-Date: Fri,  9 Mar 2018 22:04:01 +0000
-Message-Id: <1ea56c7da943673569811579d823b489d4ae291e.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:52396 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751096AbeCIPoB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:44:01 -0500
+Subject: Re: [PATCH v12 27/33] rcar-vin: add chsel information to rvin_info
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180307220511.9826-28-niklas.soderlund+renesas@ragnatech.se>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <3f1a6dd6-c92b-a618-65f1-5e7af551bda9@xs4all.nl>
+Date: Fri, 9 Mar 2018 16:43:59 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180307220511.9826-28-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Both vsp1_dl_list_commit() and __vsp1_dl_list_put() walk the display
-list chain referencing the nodes as children, when in reality they are
-siblings.
+On 07/03/18 23:05, Niklas Söderlund wrote:
+> Each Gen3 SoC has a limited set of predefined routing possibilities for
+> which CSI-2 device and channel can be routed to which VIN instance.
+> Prepare to store this information in the struct rvin_info.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Update the terminology to 'dl_next' to be consistent with the
-vsp1_video_pipeline_run() usage.
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Regards,
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 382e45c2054e..057f0f093222 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -400,7 +400,7 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm)
- /* This function must be called with the display list manager lock held.*/
- static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
- {
--	struct vsp1_dl_list *dl_child;
-+	struct vsp1_dl_list *dl_next;
- 
- 	if (!dl)
- 		return;
-@@ -410,8 +410,8 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
- 	 * hardware operation.
- 	 */
- 	if (dl->has_chain) {
--		list_for_each_entry(dl_child, &dl->chain, chain)
--			__vsp1_dl_list_put(dl_child);
-+		list_for_each_entry(dl_next, &dl->chain, chain)
-+			__vsp1_dl_list_put(dl_next);
- 	}
- 
- 	dl->has_chain = false;
-@@ -667,17 +667,17 @@ static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
- void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
- {
- 	struct vsp1_dl_manager *dlm = dl->dlm;
--	struct vsp1_dl_list *dl_child;
-+	struct vsp1_dl_list *dl_next;
- 	unsigned long flags;
- 
- 	if (dlm->mode == VSP1_DL_MODE_HEADER) {
- 		/* Fill the header for the head and chained display lists. */
- 		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
- 
--		list_for_each_entry(dl_child, &dl->chain, chain) {
--			bool last = list_is_last(&dl_child->chain, &dl->chain);
-+		list_for_each_entry(dl_next, &dl->chain, chain) {
-+			bool last = list_is_last(&dl_next->chain, &dl->chain);
- 
--			vsp1_dl_list_fill_header(dl_child, last);
-+			vsp1_dl_list_fill_header(dl_next, last);
- 		}
- 	}
- 
--- 
-git-series 0.9.1
+	Hans
+
+> 
+> ---
+> 
+> * Changes since v11
+> - Fixed spelling.
+> - Reorderd filed order in struct rvin_group_route.
+> - Renamed chan to channel in struct rvin_group_route.
+> ---
+>  drivers/media/platform/rcar-vin/rcar-vin.h | 42 ++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index d64cbb5716ab6f6a..9a68a5909fe07ec7 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -43,6 +43,14 @@ enum model_id {
+>  	RCAR_GEN3,
+>  };
+>  
+> +enum rvin_csi_id {
+> +	RVIN_CSI20,
+> +	RVIN_CSI21,
+> +	RVIN_CSI40,
+> +	RVIN_CSI41,
+> +	RVIN_CSI_MAX,
+> +};
+> +
+>  /**
+>   * STOPPED  - No operation in progress
+>   * RUNNING  - Operation in progress have buffers
+> @@ -81,12 +89,45 @@ struct rvin_graph_entity {
+>  	unsigned int sink_pad;
+>  };
+>  
+> +/**
+> + * struct rvin_group_route - describes a route from a channel of a
+> + *	CSI-2 receiver to a VIN
+> + *
+> + * @csi:	CSI-2 receiver ID.
+> + * @channel:	Output channel of the CSI-2 receiver.
+> + * @vin:	VIN ID.
+> + * @mask:	Bitmask of the different CHSEL register values that
+> + *		allow for a route from @csi + @chan to @vin.
+> + *
+> + * .. note::
+> + *	Each R-Car CSI-2 receiver has four output channels facing the VIN
+> + *	devices, each channel can carry one CSI-2 Virtual Channel (VC).
+> + *	There is no correlation between channel number and CSI-2 VC. It's
+> + *	up to the CSI-2 receiver driver to configure which VC is output
+> + *	on which channel, the VIN devices only care about output channels.
+> + *
+> + *	There are in some cases multiple CHSEL register settings which would
+> + *	allow for the same route from @csi + @channel to @vin. For example
+> + *	on R-Car H3 both the CHSEL values 0 and 3 allow for a route from
+> + *	CSI40/VC0 to VIN0. All possible CHSEL values for a route need to be
+> + *	recorded as a bitmask in @mask, in this example bit 0 and 3 should
+> + *	be set.
+> + */
+> +struct rvin_group_route {
+> +	enum rvin_csi_id csi;
+> +	unsigned int channel;
+> +	unsigned int vin;
+> +	unsigned int mask;
+> +};
+> +
+>  /**
+>   * struct rvin_info - Information about the particular VIN implementation
+>   * @model:		VIN model
+>   * @use_mc:		use media controller instead of controlling subdevice
+>   * @max_width:		max input width the VIN supports
+>   * @max_height:		max input height the VIN supports
+> + * @routes:		list of possible routes from the CSI-2 recivers to
+> + *			all VINs. The list mush be NULL terminated.
+>   */
+>  struct rvin_info {
+>  	enum model_id model;
+> @@ -94,6 +135,7 @@ struct rvin_info {
+>  
+>  	unsigned int max_width;
+>  	unsigned int max_height;
+> +	const struct rvin_group_route *routes;
+>  };
+>  
+>  /**
+> 
