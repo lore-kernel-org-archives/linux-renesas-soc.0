@@ -1,114 +1,164 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58544 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751045AbeCIJEc (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:58591 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbeCIIxd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:04:32 -0500
-Date: Fri, 9 Mar 2018 10:04:22 +0100
+        Fri, 9 Mar 2018 03:53:33 -0500
+Date: Fri, 9 Mar 2018 09:53:23 +0100
 From: jacopo mondi <jacopo@jmondi.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 1/3] dt-bindings: display: bridge: Document THC63LVD1024
  LVDS decoder
-Message-ID: <20180309090422.GD14819@w540>
+Message-ID: <20180309085323.GC14819@w540>
 References: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CGME20180308152434epcas2p273cdc2c4bfe226a0f3dd55c15993bef5@epcas2p2.samsung.com>
  <1520522643-11756-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdVQqp7YcoQ6eN5pSznZB4zn7ztv1WFfkcQOzP_3DhG_Vg@mail.gmail.com>
+ <41900058-274f-c533-f744-17e495a3beb2@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVQqp7YcoQ6eN5pSznZB4zn7ztv1WFfkcQOzP_3DhG_Vg@mail.gmail.com>
+In-Reply-To: <41900058-274f-c533-f744-17e495a3beb2@samsung.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-   thanks for review
+Hi Andrzej,
 
-On Fri, Mar 09, 2018 at 09:10:55AM +0100, Geert Uytterhoeven wrote:
-> Hi Jacopo,
->
-> On Thu, Mar 8, 2018 at 4:24 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+On Fri, Mar 09, 2018 at 09:01:24AM +0100, Andrzej Hajda wrote:
+> On 08.03.2018 16:24, Jacopo Mondi wrote:
 > > Document Thine THC63LVD1024 LVDS decoder.
 > >
 > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->
-> Thanks for your patch!
->
+> > ---
+> >  .../bindings/display/bridge/thine,thc63lvd1024.txt | 59 ++++++++++++++++++++++
+> >  1 file changed, 59 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> > new file mode 100644
+> > index 0000000..53b6453
 > > --- /dev/null
 > > +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
 > > @@ -0,0 +1,59 @@
 > > +THine Electronics THC63LVD1024 LVDS receiver
->
-> Thine
->
 > > +--------------------------------------------
 > > +
 > > +The THC63LVD1024 is an LVDS receiver designed to convert multiple LVDS streams
 > > +to digital CMOS/TTL parallel data.
+>
+>You say multiple streams, but bindings describe only one stream.
+
+I'm always confused by the fact that "bindings should describe
+hardware" even when the driver does not support some features the
+hardware provides.
+
+In this case, the driver and its bindigns does not expose "MODE1/2"
+pins that are used to control single/double stream mode, assuming they
+are hard-wired and single/double stream mode is not controllable by
+the SoC.
+
+I should have reserved two more ports for one (optional) additional input and
+one (optional) additional output, as chip can be configured to work in
+that mode even if MODE1/2 are not hardwired.
+
+Will add them in v2.
+
 > > +
 > > +Required properties:
 > > +- compatible: Shall be one of the following:
 > > +  "thine,thc63lvd1024",
 > > +  "lvds-decoder"
+> > +
+> > +Optional properties:
+> > +- supply-vcc: Power supply for TTL output and digital circuitry
+> > +- supply-cvcc: Power supply for TTL CLOCKOUT signal
+> > +- supply-lvcc: Power supply for LVDS inputs
+> > +- supply-pvcc: Power supply for PLL circuitry
+> > +- pwnd-gpio: Power down GPIO signal. Active low.
 >
-> What's the purpose of the second compatible value?
-> When should it be used?
+> Specs [1] uses "/PDWN" name for the pin, moreover gpios suffix is preferred.
+>
+> Another issue I see is two possibly contradicting conventions:
+> 1. Properties should be named according to specs - so here it should be
+> named pdwn-gpios.
+> 2. The bindings tries to be generic for lvds decoders, in such case
+> probably preferred name should be more generic, maybe power-gpios.
+>
+> Personally I would prefer 1, in such case generic lvds-decoder driver
+> should look for gpio names according to compatible string.
+>
 
-It is probably my bad having started with a generic LVDS decoder in
-mind and having then added properties specific to THC63LVD1024 to the
-driver and its bindings.
+I will go for 1 and associate the power control gpio name to the
+matched compatible string.
 
-"lvds,decoder" can be used when the chip is completely transparent to
-the SoC and none of the optional properties I have described in the
-bindings are specified (a generic "power-gpios" apart, see Andrzej
-comments on "pwdn-gpios" property).
+"thine,thc63lvd1024" will look for "pwnd-gpios"
+"lvds,decoder" will look for "power-gpios"
 
-Also, I should make the driver behavior depend on the matched compatible
-string. When "lvds-decoder" is matched, it will just look for an
-optional power down gpio, when "thc63lvd1024" is matched, all of its
-Vcc supplies, pwdn gpio and oe gpios will be queried and, if present,
-eventually used in enable/disable routines.
+> [1]: http://www.thine.co.jp/files/topics/179_ext_12_0.pdf
+>
+> > +- oe-gpio: Output enable GPIO signal. Active high.
+>
+> oe-gpios
+>
+> > +
+> > +The THC63LVD1024 has two video ports, whose connections are modeled according
+> > +to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
+> > +
+> > +- Port@0: LVDS input port
+> > +- Port@1: Digital CMOS/TTL parallel output
+>
+> According to specs it has two lvds input and two parallel output ports,
+> maybe it would be good to describe all here.
 
-I'm just not sure how to describe that in bindings. Would something
-like the following work?
-
-Optional properties for "lvds,decoder"
-- power-gpios: Power control GPIOs
-
-Optional properties for "thine,thc63lvd1024"
-- pwdn-gpios: ...
-- oe-gpios: ...
-- supply-vcc: ...
-- supply-cvcc: ...
-- supply-pvcc: ...
-- supply-lvcc: ...
+I will in v2.
 
 Thanks
    j
 
 >
-> Gr{oetje,eeting}s,
+> Regards
+> Andrzej
 >
->                         Geert
+> > +
+> > +Example:
+> > +-------
+> > +
+> > +	lvds_decoder: decoder-0 {
+> > +		compatible = "thine,thc63lvd1024";
+> > +
+> > +		vcc-supply = <&reg_lvds_vcc>;
+> > +		lvcc-supply = <&reg_lvds_lvcc>;
+> > +
+> > +		pwdn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
+> > +
+> > +		ports {
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +
+> > +			port@0 {
+> > +				reg = <0>;
+> > +
+> > +				lvds_dec_in: endpoint {
+> > +					remote-endpoint = <&lvds_out>;
+> > +				};
+> > +			};
+> > +
+> > +			port@1{
+> > +				reg = <1>;
+> > +
+> > +				lvds_dec_out: endpoint {
+> > +					remote-endpoint = <&adv7511_in>;
+> > +				};
+> > +
+> > +			};
+> > +
+> > +		};
+> > +	};
 >
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 >
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
