@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:46504 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753989AbeCRMsP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40837 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932178AbeCIOxV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Mar 2018 08:48:15 -0400
-Date: Sun, 18 Mar 2018 07:48:13 -0500
-From: Rob Herring <robh@kernel.org>
+        Fri, 9 Mar 2018 09:53:21 -0500
+Date: Fri, 9 Mar 2018 15:53:17 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: thierry.reding@gmail.com, mark.rutland@arm.com,
+Cc: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org
 Subject: Re: [PATCH] dt-bindings: pwm: renesas,pwm-rcar: add bindings for
  R-Car M3N support
-Message-ID: <20180318124813.6arthsa6rpvbcquy@rob-hp-laptop>
+Message-ID: <20180309145316.umuyypzferjudymh@verge.net.au>
 References: <1520596397-4716-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -25,8 +25,5 @@ On Fri, Mar 09, 2018 at 08:53:17PM +0900, Yoshihiro Shimoda wrote:
 > This patch adds bindings for R-Car M3N. No driver update is needed.
 > 
 > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 1 +
->  1 file changed, 1 insertion(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
