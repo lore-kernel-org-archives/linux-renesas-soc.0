@@ -1,29 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40837 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932178AbeCIOxV (ORCPT
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:42277 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751059AbeCIMxa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:53:21 -0500
-Date: Fri, 9 Mar 2018 15:53:17 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
+        Fri, 9 Mar 2018 07:53:30 -0500
+MIME-Version: 1.0
+In-Reply-To: <1520596397-4716-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1520596397-4716-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Mar 2018 13:53:29 +0100
+Message-ID: <CAMuHMdX6Nr9BFdkoQ2Vq10ZVe2ezdX=2W1aXga5=UAxLh+n2ug@mail.gmail.com>
 Subject: Re: [PATCH] dt-bindings: pwm: renesas,pwm-rcar: add bindings for
  R-Car M3N support
-Message-ID: <20180309145316.umuyypzferjudymh@verge.net.au>
-References: <1520596397-4716-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520596397-4716-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Mar 09, 2018 at 08:53:17PM +0900, Yoshihiro Shimoda wrote:
+On Fri, Mar 9, 2018 at 12:53 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
 > This patch adds bindings for R-Car M3N. No driver update is needed.
-> 
+>
 > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
