@@ -1,369 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34774 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965324AbeCSQhy (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35491 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751462AbeCIR0I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:37:54 -0400
-Received: by mail-wr0-f194.google.com with SMTP id o8so19332943wra.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Mar 2018 09:37:53 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: laurent.pinchart@ideasonboard.com, kbingham@kernel.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 2/3] pinctrl: sh-pfc: r8a7796: deduplicate VIN4 pin definitions
-Date: Mon, 19 Mar 2018 17:37:44 +0100
-Message-Id: <1521477465-1174-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1521477465-1174-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1521477465-1174-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 9 Mar 2018 12:26:08 -0500
+Received: by mail-lf0-f67.google.com with SMTP id z128-v6so8028740lff.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Mar 2018 09:26:07 -0800 (PST)
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: condor: add EtherAVB pins
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <88e52531-e538-8685-110a-1a2e79a3fe49@cogentembedded.com>
+ <82c33f37-bfbb-e515-f996-83333cd26171@cogentembedded.com>
+ <CAMuHMdVJkRuEvzmAJf2pWd9E+XVgmO122-2mHSgw7Y4aLXdfYA@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <b1450eb7-4635-804a-ed8b-34d6c1942fa4@cogentembedded.com>
+Date: Fri, 9 Mar 2018 20:26:03 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVJkRuEvzmAJf2pWd9E+XVgmO122-2mHSgw7Y4aLXdfYA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use union vin_data and VIN_DATA_PIN_GROUP() to reduce redundancies
-in pin definitions.
+Hello!
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 308 ++++++++---------------------------
- 1 file changed, 72 insertions(+), 236 deletions(-)
+On 03/09/2018 03:44 PM, Geert Uytterhoeven wrote:
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 7a26392..96ddcf7 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -3897,130 +3897,6 @@ static const unsigned int usb30_mux[] = {
- };
- 
- /* - VIN4 ------------------------------------------------------------------- */
--static const unsigned int vin4_data8_a_pins[] = {
--	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
--	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
--	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
--	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
--};
--static const unsigned int vin4_data8_a_mux[] = {
--	VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
--	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
--	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
--	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
--};
--static const unsigned int vin4_data8_b_pins[] = {
--	RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
--	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
--	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
--	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
--};
--static const unsigned int vin4_data8_b_mux[] = {
--	VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
--	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
--	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
--	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
--};
--static const unsigned int vin4_data10_a_pins[] = {
--	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
--	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
--	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
--	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--};
--static const unsigned int vin4_data10_a_mux[] = {
--	VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
--	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
--	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
--	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--};
--static const unsigned int vin4_data10_b_pins[] = {
--	RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
--	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
--	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
--	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--};
--static const unsigned int vin4_data10_b_mux[] = {
--	VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
--	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
--	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
--	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--};
--static const unsigned int vin4_data12_a_pins[] = {
--	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
--	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
--	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
--	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
--};
--static const unsigned int vin4_data12_a_mux[] = {
--	VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
--	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
--	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
--	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--	VI4_DATA10_MARK, VI4_DATA11_MARK,
--};
--static const unsigned int vin4_data12_b_pins[] = {
--	RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
--	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
--	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
--	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
--};
--static const unsigned int vin4_data12_b_mux[] = {
--	VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
--	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
--	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
--	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--	VI4_DATA10_MARK, VI4_DATA11_MARK,
--};
--static const unsigned int vin4_data16_a_pins[] = {
--	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
--	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
--	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
--	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
--	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
--	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
--};
--static const unsigned int vin4_data16_a_mux[] = {
--	VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
--	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
--	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
--	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--	VI4_DATA10_MARK, VI4_DATA11_MARK,
--	VI4_DATA12_MARK, VI4_DATA13_MARK,
--	VI4_DATA14_MARK, VI4_DATA15_MARK,
--};
--static const unsigned int vin4_data16_b_pins[] = {
--	RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
--	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
--	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
--	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
--	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
--	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
--};
--static const unsigned int vin4_data16_b_mux[] = {
--	VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
--	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
--	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
--	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--	VI4_DATA10_MARK, VI4_DATA11_MARK,
--	VI4_DATA12_MARK, VI4_DATA13_MARK,
--	VI4_DATA14_MARK, VI4_DATA15_MARK,
--};
- static const unsigned int vin4_data18_a_pins[] = {
- 	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
- 	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-@@ -4065,109 +3941,69 @@ static const unsigned int vin4_data18_b_mux[] = {
- 	VI4_DATA20_MARK, VI4_DATA21_MARK,
- 	VI4_DATA22_MARK, VI4_DATA23_MARK,
- };
--static const unsigned int vin4_data20_a_pins[] = {
--	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
--	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
--	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
--	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
--	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
--	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
--	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
--};
--static const unsigned int vin4_data20_a_mux[] = {
--	VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
--	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
--	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
--	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--	VI4_DATA10_MARK, VI4_DATA11_MARK,
--	VI4_DATA12_MARK, VI4_DATA13_MARK,
--	VI4_DATA14_MARK, VI4_DATA15_MARK,
--	VI4_DATA16_MARK, VI4_DATA17_MARK,
--	VI4_DATA18_MARK, VI4_DATA19_MARK,
--};
--static const unsigned int vin4_data20_b_pins[] = {
--	RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
--	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
--	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
--	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
--	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
--	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
--	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
--};
--static const unsigned int vin4_data20_b_mux[] = {
--	VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
--	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
--	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
--	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--	VI4_DATA10_MARK, VI4_DATA11_MARK,
--	VI4_DATA12_MARK, VI4_DATA13_MARK,
--	VI4_DATA14_MARK, VI4_DATA15_MARK,
--	VI4_DATA16_MARK, VI4_DATA17_MARK,
--	VI4_DATA18_MARK, VI4_DATA19_MARK,
--};
--static const unsigned int vin4_data24_a_pins[] = {
--	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
--	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
--	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
--	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
--	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
--	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
--	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
--	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
--	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-+static const union vin_data vin4_data_a_pins = {
-+	.data24 = {
-+		RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
-+		RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
-+		RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-+		RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-+		RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
-+		RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
-+		RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
-+		RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+		RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-+		RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-+		RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-+		RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-+	},
- };
--static const unsigned int vin4_data24_a_mux[] = {
--	VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
--	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
--	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
--	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--	VI4_DATA10_MARK, VI4_DATA11_MARK,
--	VI4_DATA12_MARK, VI4_DATA13_MARK,
--	VI4_DATA14_MARK, VI4_DATA15_MARK,
--	VI4_DATA16_MARK, VI4_DATA17_MARK,
--	VI4_DATA18_MARK, VI4_DATA19_MARK,
--	VI4_DATA20_MARK, VI4_DATA21_MARK,
--	VI4_DATA22_MARK, VI4_DATA23_MARK,
-+static const union vin_data vin4_data_a_mux = {
-+	.data24 = {
-+		VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
-+		VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
-+		VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
-+		VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
-+		VI4_DATA8_MARK,  VI4_DATA9_MARK,
-+		VI4_DATA10_MARK, VI4_DATA11_MARK,
-+		VI4_DATA12_MARK, VI4_DATA13_MARK,
-+		VI4_DATA14_MARK, VI4_DATA15_MARK,
-+		VI4_DATA16_MARK, VI4_DATA17_MARK,
-+		VI4_DATA18_MARK, VI4_DATA19_MARK,
-+		VI4_DATA20_MARK, VI4_DATA21_MARK,
-+		VI4_DATA22_MARK, VI4_DATA23_MARK,
-+	},
- };
--static const unsigned int vin4_data24_b_pins[] = {
--	RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
--	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
--	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
--	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
--	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
--	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
--	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
--	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
--	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
--	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-+static const union vin_data vin4_data_b_pins = {
-+	.data24 = {
-+		RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
-+		RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
-+		RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
-+		RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
-+		RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
-+		RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
-+		RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
-+		RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+		RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-+		RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-+		RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-+		RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-+	},
- };
--static const unsigned int vin4_data24_b_mux[] = {
--	VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
--	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
--	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
--	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--	VI4_DATA10_MARK, VI4_DATA11_MARK,
--	VI4_DATA12_MARK, VI4_DATA13_MARK,
--	VI4_DATA14_MARK, VI4_DATA15_MARK,
--	VI4_DATA16_MARK, VI4_DATA17_MARK,
--	VI4_DATA18_MARK, VI4_DATA19_MARK,
--	VI4_DATA20_MARK, VI4_DATA21_MARK,
--	VI4_DATA22_MARK, VI4_DATA23_MARK,
-+static const union vin_data vin4_data_b_mux = {
-+	.data24 = {
-+		VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
-+		VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
-+		VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
-+		VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
-+		VI4_DATA8_MARK,  VI4_DATA9_MARK,
-+		VI4_DATA10_MARK, VI4_DATA11_MARK,
-+		VI4_DATA12_MARK, VI4_DATA13_MARK,
-+		VI4_DATA14_MARK, VI4_DATA15_MARK,
-+		VI4_DATA16_MARK, VI4_DATA17_MARK,
-+		VI4_DATA18_MARK, VI4_DATA19_MARK,
-+		VI4_DATA20_MARK, VI4_DATA21_MARK,
-+		VI4_DATA22_MARK, VI4_DATA23_MARK,
-+	},
- };
- static const unsigned int vin4_sync_pins[] = {
- 	/* HSYNC#, VSYNC# */
-@@ -4604,20 +4440,20 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb30),
--	SH_PFC_PIN_GROUP(vin4_data8_a),
--	SH_PFC_PIN_GROUP(vin4_data10_a),
--	SH_PFC_PIN_GROUP(vin4_data12_a),
--	SH_PFC_PIN_GROUP(vin4_data16_a),
-+	VIN_DATA_PIN_GROUP(vin4_data_a, 8),
-+	VIN_DATA_PIN_GROUP(vin4_data_a, 10),
-+	VIN_DATA_PIN_GROUP(vin4_data_a, 12),
-+	VIN_DATA_PIN_GROUP(vin4_data_a, 16),
- 	SH_PFC_PIN_GROUP(vin4_data18_a),
--	SH_PFC_PIN_GROUP(vin4_data20_a),
--	SH_PFC_PIN_GROUP(vin4_data24_a),
--	SH_PFC_PIN_GROUP(vin4_data8_b),
--	SH_PFC_PIN_GROUP(vin4_data10_b),
--	SH_PFC_PIN_GROUP(vin4_data12_b),
--	SH_PFC_PIN_GROUP(vin4_data16_b),
-+	VIN_DATA_PIN_GROUP(vin4_data_a, 20),
-+	VIN_DATA_PIN_GROUP(vin4_data_a, 24),
-+	VIN_DATA_PIN_GROUP(vin4_data_b, 8),
-+	VIN_DATA_PIN_GROUP(vin4_data_b, 10),
-+	VIN_DATA_PIN_GROUP(vin4_data_b, 12),
-+	VIN_DATA_PIN_GROUP(vin4_data_b, 16),
- 	SH_PFC_PIN_GROUP(vin4_data18_b),
--	SH_PFC_PIN_GROUP(vin4_data20_b),
--	SH_PFC_PIN_GROUP(vin4_data24_b),
-+	VIN_DATA_PIN_GROUP(vin4_data_b, 20),
-+	VIN_DATA_PIN_GROUP(vin4_data_b, 24),
- 	SH_PFC_PIN_GROUP(vin4_sync),
- 	SH_PFC_PIN_GROUP(vin4_field),
- 	SH_PFC_PIN_GROUP(vin4_clkenb),
--- 
-2.7.4
+>> Add the (previously omitted) EtherAVB pin data to the Condor board's
+>> device tree.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> According to the Condor schematics, the KSZ9031RNXVB is wired to
+> GEther by default. So I guess you are using a modified board?
+
+  Artemy told me they haven't been able to bring up the GEther (due to wrong
+base address?), so they resoldered the reisitors. He also told me there are now
+versions of the board that wire the PHY to EtherAVB. Go figure...
+
+[...]
+
+MBR, Sergei
