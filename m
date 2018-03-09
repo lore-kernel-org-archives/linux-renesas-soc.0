@@ -1,67 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40016 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935649AbeCSQha (ORCPT
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:40467 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932068AbeCIPsP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:37:30 -0400
-Received: by mail-wm0-f67.google.com with SMTP id t6so17036621wmt.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Mar 2018 09:37:30 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: laurent.pinchart@ideasonboard.com, kbingham@kernel.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 3/3] pinctrl: sh-pfc: r8a77995: correct VIN4 18-bit pins
-Date: Mon, 19 Mar 2018 17:37:20 +0100
-Message-Id: <1521477440-1047-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1521477440-1047-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1521477440-1047-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 9 Mar 2018 10:48:15 -0500
+Subject: Re: [PATCH v12 32/33] rcar-vin: enable support for r8a7796
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180307220511.9826-33-niklas.soderlund+renesas@ragnatech.se>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <1e34a894-bdd6-b095-5133-8976a624bf9e@xs4all.nl>
+Date: Fri, 9 Mar 2018 16:48:13 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180307220511.9826-33-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RGB666 has a pin assignment that differs from the other formats.
+On 07/03/18 23:05, Niklas Söderlund wrote:
+> Add the SoC specific information for Renesas r8a7796.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index 27b9417..62bab9f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -1690,26 +1690,26 @@ static const unsigned int vin4_data16_mux[] = {
- 	VI4_DATA14_MARK, VI4_DATA15_MARK,
- };
- static const unsigned int vin4_data18_pins[] = {
--	RCAR_GP_PIN(2, 1), RCAR_GP_PIN(2, 2),
- 	RCAR_GP_PIN(2, 3), RCAR_GP_PIN(2, 4),
- 	RCAR_GP_PIN(2, 5), RCAR_GP_PIN(2, 6),
- 	RCAR_GP_PIN(2, 7), RCAR_GP_PIN(2, 8),
--	RCAR_GP_PIN(2, 9), RCAR_GP_PIN(2, 10),
- 	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 12),
- 	RCAR_GP_PIN(2, 13), RCAR_GP_PIN(2, 14),
- 	RCAR_GP_PIN(2, 15), RCAR_GP_PIN(2, 16),
--	RCAR_GP_PIN(2, 17), RCAR_GP_PIN(2, 18),
-+	RCAR_GP_PIN(2, 19), RCAR_GP_PIN(2, 20),
-+	RCAR_GP_PIN(2, 21), RCAR_GP_PIN(2, 22),
-+	RCAR_GP_PIN(2, 23), RCAR_GP_PIN(2, 24),
- };
- static const unsigned int vin4_data18_mux[] = {
--	VI4_DATA0_MARK, VI4_DATA1_MARK,
- 	VI4_DATA2_MARK, VI4_DATA3_MARK,
- 	VI4_DATA4_MARK, VI4_DATA5_MARK,
- 	VI4_DATA6_MARK, VI4_DATA7_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
- 	VI4_DATA10_MARK, VI4_DATA11_MARK,
- 	VI4_DATA12_MARK, VI4_DATA13_MARK,
- 	VI4_DATA14_MARK, VI4_DATA15_MARK,
--	VI4_DATA16_MARK, VI4_DATA17_MARK,
-+	VI4_DATA18_MARK, VI4_DATA19_MARK,
-+	VI4_DATA20_MARK, VI4_DATA21_MARK,
-+	VI4_DATA22_MARK, VI4_DATA23_MARK,
- };
- static const unsigned int vin4_data20_pins[] = {
- 	RCAR_GP_PIN(2, 1), RCAR_GP_PIN(2, 2),
--- 
-2.7.4
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 44 +++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index bc116cc0181171e0..0040f92bfdff947a 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -931,6 +931,46 @@ static const struct rvin_info rcar_info_r8a7795es1 = {
+>  	.routes = rcar_info_r8a7795es1_routes,
+>  };
+>  
+> +static const struct rvin_group_route rcar_info_r8a7796_routes[] = {
+> +	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
+> +	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
+> +	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
+> +	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
+> +	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
+> +	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
+> +	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
+> +	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
+> +	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
+> +	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
+> +	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
+> +	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) },
+> +	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
+> +	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
+> +	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
+> +	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
+> +	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
+> +	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
+> +	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(3) },
+> +	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
+> +	{ .csi = RVIN_CSI40, .channel = 0, .vin = 6, .mask = BIT(1) },
+> +	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
+> +	{ .csi = RVIN_CSI40, .channel = 2, .vin = 6, .mask = BIT(3) },
+> +	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
+> +	{ .csi = RVIN_CSI40, .channel = 1, .vin = 7, .mask = BIT(0) },
+> +	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) },
+> +	{ .csi = RVIN_CSI40, .channel = 3, .vin = 7, .mask = BIT(3) },
+> +	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
+> +	{ /* Sentinel */ }
+> +};
+> +
+> +static const struct rvin_info rcar_info_r8a7796 = {
+> +	.model = RCAR_GEN3,
+> +	.use_mc = true,
+> +	.max_width = 4096,
+> +	.max_height = 4096,
+> +	.routes = rcar_info_r8a7796_routes,
+> +};
+> +
+>  static const struct of_device_id rvin_of_id_table[] = {
+>  	{
+>  		.compatible = "renesas,vin-r8a7778",
+> @@ -964,6 +1004,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+>  		.compatible = "renesas,vin-r8a7795",
+>  		.data = &rcar_info_r8a7795,
+>  	},
+> +	{
+> +		.compatible = "renesas,vin-r8a7796",
+> +		.data = &rcar_info_r8a7796,
+> +	},
+>  	{ /* Sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+> 
