@@ -1,84 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42862 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751060AbeCIMxF (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:29761 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751033AbeCILzC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:53:05 -0500
-MIME-Version: 1.0
-In-Reply-To: <1520596498-4801-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 9 Mar 2018 06:55:02 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: thierry.reding@gmail.com
+Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] pwm: rcar: add suspend/resume support
+Date: Fri,  9 Mar 2018 20:54:58 +0900
+Message-Id: <1520596498-4801-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1520596498-4801-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1520596498-4801-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1520596498-4801-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Mar 2018 13:53:03 +0100
-Message-ID: <CAMuHMdV-vutHutGJnOhqJ14_+-ig2jzFakeWzOxBy+5F6XRFXw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pwm: rcar: add suspend/resume support
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
+This patch adds suspend/resume support for Renesas PWM driver.
 
-On Fri, Mar 9, 2018 at 12:54 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch adds suspend/resume support for Renesas PWM driver.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/pwm/pwm-rcar.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Thanks for your patch!
-
-> --- a/drivers/pwm/pwm-rcar.c
-> +++ b/drivers/pwm/pwm-rcar.c
-> @@ -254,11 +254,38 @@ static int rcar_pwm_remove(struct platform_device *pdev)
->  };
->  MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
->
-> +#ifdef CONFIG_PM_SLEEP
-> +static int rcar_pwm_suspend(struct device *dev)
-> +{
-> +       pm_runtime_put(dev);
-> +
-> +       return 0;
-> +}
-> +
-> +static int rcar_pwm_resume(struct device *dev)
-> +{
-> +       struct platform_device *pdev = to_platform_device(dev);
-> +       struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
-> +       struct pwm_chip *chip = &rcar_pwm->chip;
-> +       struct pwm_device *pwm = &chip->pwms[0];
-> +
-> +       pm_runtime_get_sync(dev);
-
-This enables the module clock unconditionally, so you can restore the
-register values below...
-
-> +       rcar_pwm_config(chip, pwm, pwm->state.duty_cycle, pwm->state.period);
-> +       if (pwm_is_enabled(pwm))
-> +               rcar_pwm_enable(chip, pwm);
-
-... but shouldn't you disable the clock again if the PWM is not in use,
-like below?
-
-        else
-                pm_runtime_put(dev);
-
-Likewise, I think the call to "pm_runtime_put(dev)" in rcar_pwm_suspend()
-should be protected by a pwm_is_enabled(pwm) check.
-
-> +       return 0;
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index b942010..f62045c 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -254,11 +254,38 @@ static int rcar_pwm_remove(struct platform_device *pdev)
+ };
+ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
+ 
++#ifdef CONFIG_PM_SLEEP
++static int rcar_pwm_suspend(struct device *dev)
++{
++	pm_runtime_put(dev);
++
++	return 0;
++}
++
++static int rcar_pwm_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
++	struct pwm_chip *chip = &rcar_pwm->chip;
++	struct pwm_device *pwm = &chip->pwms[0];
++
++	pm_runtime_get_sync(dev);
++
++	rcar_pwm_config(chip, pwm, pwm->state.duty_cycle, pwm->state.period);
++	if (pwm_is_enabled(pwm))
++		rcar_pwm_enable(chip, pwm);
++
++	return 0;
++}
++#endif /* CONFIG_PM_SLEEP */
++static SIMPLE_DEV_PM_OPS(rcar_pwm_pm_ops, rcar_pwm_suspend, rcar_pwm_resume);
++
+ static struct platform_driver rcar_pwm_driver = {
+ 	.probe = rcar_pwm_probe,
+ 	.remove = rcar_pwm_remove,
+ 	.driver = {
+ 		.name = "pwm-rcar",
++		.pm	= &rcar_pwm_pm_ops,
+ 		.of_match_table = of_match_ptr(rcar_pwm_of_table),
+ 	}
+ };
+-- 
+1.9.1
