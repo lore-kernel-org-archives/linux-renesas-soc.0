@@ -1,49 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753477AbeCPOw5 (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:54616 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeCINwI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:52:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 57/69] arm64: dts: renesas: v3msk: Override EtherAVB phy-mode
-Date: Fri, 16 Mar 2018 15:51:27 +0100
-Message-Id: <9dcd1f26b9914864e0218712a666b23cf7e589c8.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Fri, 9 Mar 2018 08:52:08 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] dt-bindings: display: bridge: Document LVDS to parallel decoder
+Date: Fri,  9 Mar 2018 14:51:38 +0100
+Message-Id: <1520603500-15218-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-As the PHY interface installed on the V3MSK board provides TX and RX
-channels delays, make the "phy-mode" property a board-specific one,
-meant to override the one specified in the SoC DTSI.
-
-Follow up patches will reset the r8a77970 SoC DTSI to use "rgmii"
-mode and let the board file override that.
+Document transparent LVDS to CMOS/TTL decoder that do not require any
+configuration.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/display/bridge/lvds-decoder.txt       | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-decoder.txt
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-index 8624ca87d6b2..bb554eec57c8 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-@@ -34,6 +34,7 @@
- &avb {
- 	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-id";
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
+diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-decoder.txt b/Documentation/devicetree/bindings/display/bridge/lvds-decoder.txt
+new file mode 100644
+index 0000000..a9b1d9e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/lvds-decoder.txt
+@@ -0,0 +1,42 @@
++LVDS to Parallel CMOS/TTL decoder
++---------------------------------
++
++Bindings for transparent LVDS to CMOS/TTL parallel data decoder that don't
++require any configuration.
++
++Required properties:
++- compatible: shall be "lvds-decoder"
++
++The LVDS decoder has two video ports, whose connections are modeled according
++to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
++
++- Port@0: LVDS input port
++- Port@1: Digital CMOS/TTL parallel output
++
++Example:
++-------
++
++	lvds,decoder: decoder-0 {
++		compatible = "lvds-decoder";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				lvds_dec_in: endpoint {
++					remote-endpoint = <&lvds_out>;
++				};
++			};
++
++			port@1{
++				reg = <1>;
++
++				lvds_dec_out: endpoint {
++					remote-endpoint = <&adv7511_in>;
++				};
++			};
++		};
++	};
 -- 
-2.11.0
+2.7.4
