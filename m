@@ -1,199 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:31995 "EHLO
-        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934195AbeCGWFu (ORCPT
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:33106 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751159AbeCIPsc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:05:50 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+        Fri, 9 Mar 2018 10:48:32 -0500
+Subject: Re: [PATCH v12 33/33] rcar-vin: enable support for r8a77970
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v12 18/33] rcar-vin: move media bus configuration to struct rvin_dev
-Date: Wed,  7 Mar 2018 23:04:56 +0100
-Message-Id: <20180307220511.9826-19-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
 References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180307220511.9826-34-niklas.soderlund+renesas@ragnatech.se>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <deec6186-a016-dd1f-82c5-b60247cfb76f@xs4all.nl>
+Date: Fri, 9 Mar 2018 16:48:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180307220511.9826-34-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Bus configuration will once the driver is extended to support Gen3
-contain information not specific to only the directly connected parallel
-subdevice. Move it to struct rvin_dev to show it's not always coupled
-to the parallel subdevice.
+On 07/03/18 23:05, Niklas Söderlund wrote:
+> Add the SoC specific information for Renesas r8a77970.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 18 +++++++++---------
- drivers/media/platform/rcar-vin/rcar-dma.c  | 10 +++++-----
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  2 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  9 ++++-----
- 4 files changed, 19 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index ae0339d4ec104e8c..7e494b140aaf6b7e 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -65,10 +65,10 @@ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
- 	vin->digital->sink_pad = ret < 0 ? 0 : ret;
- 
- 	/* Find compatible subdevices mbus format */
--	vin->digital->code = 0;
-+	vin->mbus_code = 0;
- 	code.index = 0;
- 	code.pad = vin->digital->source_pad;
--	while (!vin->digital->code &&
-+	while (!vin->mbus_code &&
- 	       !v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL, &code)) {
- 		code.index++;
- 		switch (code.code) {
-@@ -76,16 +76,16 @@ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
- 		case MEDIA_BUS_FMT_UYVY8_2X8:
- 		case MEDIA_BUS_FMT_UYVY10_2X10:
- 		case MEDIA_BUS_FMT_RGB888_1X24:
--			vin->digital->code = code.code;
-+			vin->mbus_code = code.code;
- 			vin_dbg(vin, "Found media bus format for %s: %d\n",
--				subdev->name, vin->digital->code);
-+				subdev->name, vin->mbus_code);
- 			break;
- 		default:
- 			break;
- 		}
- 	}
- 
--	if (!vin->digital->code) {
-+	if (!vin->mbus_code) {
- 		vin_err(vin, "Unsupported media bus format for %s\n",
- 			subdev->name);
- 		return -EINVAL;
-@@ -196,16 +196,16 @@ static int rvin_digital_parse_v4l2(struct device *dev,
- 	if (vep->base.port || vep->base.id)
- 		return -ENOTCONN;
- 
--	rvge->mbus_cfg.type = vep->bus_type;
-+	vin->mbus_cfg.type = vep->bus_type;
- 
--	switch (rvge->mbus_cfg.type) {
-+	switch (vin->mbus_cfg.type) {
- 	case V4L2_MBUS_PARALLEL:
- 		vin_dbg(vin, "Found PARALLEL media bus\n");
--		rvge->mbus_cfg.flags = vep->bus.parallel.flags;
-+		vin->mbus_cfg.flags = vep->bus.parallel.flags;
- 		break;
- 	case V4L2_MBUS_BT656:
- 		vin_dbg(vin, "Found BT656 media bus\n");
--		rvge->mbus_cfg.flags = 0;
-+		vin->mbus_cfg.flags = 0;
- 		break;
- 	default:
- 		vin_err(vin, "Unknown media bus type\n");
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 7c64f1f8ec63bcf4..ee8d991a9d223778 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -630,7 +630,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 	/*
- 	 * Input interface
- 	 */
--	switch (vin->digital->code) {
-+	switch (vin->mbus_code) {
- 	case MEDIA_BUS_FMT_YUYV8_1X16:
- 		/* BT.601/BT.1358 16bit YCbCr422 */
- 		vnmc |= VNMC_INF_YUV16;
-@@ -638,7 +638,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY8_2X8:
- 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
--		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -647,7 +647,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY10_2X10:
- 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
--		vnmc |= vin->digital->mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -659,11 +659,11 @@ static int rvin_setup(struct rvin_dev *vin)
- 	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
- 	/* Hsync Signal Polarity Select */
--	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-+	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_HPS;
- 
- 	/* Vsync Signal Polarity Select */
--	if (!(vin->digital->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
-+	if (!(vin->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_VPS;
- 
- 	/*
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 43370c57d4b6239a..dd835be0f9cbcc05 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -191,7 +191,7 @@ static int rvin_try_format(struct rvin_dev *vin, u32 which,
- 	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
- 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
- 
--	v4l2_fill_mbus_format(&format.format, pix, vin->digital->code);
-+	v4l2_fill_mbus_format(&format.format, pix, vin->mbus_code);
- 
- 	/* Allow the video device to override field and to scale */
- 	field = pix->field;
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 458373af9e60ea07..92a2a196cce73d75 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -62,8 +62,6 @@ struct rvin_video_format {
-  * struct rvin_graph_entity - Video endpoint from async framework
-  * @asd:	sub-device descriptor for async framework
-  * @subdev:	subdevice matched using async framework
-- * @code:	Media bus format from source
-- * @mbus_cfg:	Media bus format from DT
-  * @source_pad:	source pad of remote subdevice
-  * @sink_pad:	sink pad of remote subdevice
-  */
-@@ -71,9 +69,6 @@ struct rvin_graph_entity {
- 	struct v4l2_async_subdev asd;
- 	struct v4l2_subdev *subdev;
- 
--	u32 code;
--	struct v4l2_mbus_config mbus_cfg;
--
- 	unsigned int source_pad;
- 	unsigned int sink_pad;
- };
-@@ -114,6 +109,8 @@ struct rvin_info {
-  * @sequence:		V4L2 buffers sequence number
-  * @state:		keeps track of operation state
-  *
-+ * @mbus_cfg:		media bus configuration from DT
-+ * @mbus_code:		media bus format code
-  * @format:		active V4L2 pixel format
-  *
-  * @crop:		active cropping
-@@ -142,6 +139,8 @@ struct rvin_dev {
- 	unsigned int sequence;
- 	enum rvin_dma_state state;
- 
-+	struct v4l2_mbus_config mbus_cfg;
-+	u32 mbus_code;
- 	struct v4l2_pix_format format;
- 
- 	struct v4l2_rect crop;
--- 
-2.16.2
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 0040f92bfdff947a..a7e65c720f2c191b 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -971,6 +971,25 @@ static const struct rvin_info rcar_info_r8a7796 = {
+>  	.routes = rcar_info_r8a7796_routes,
+>  };
+>  
+> +static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
+> +	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
+> +	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
+> +	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
+> +	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
+> +	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
+> +	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
+> +	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
+> +	{ /* Sentinel */ }
+> +};
+> +
+> +static const struct rvin_info rcar_info_r8a77970 = {
+> +	.model = RCAR_GEN3,
+> +	.use_mc = true,
+> +	.max_width = 4096,
+> +	.max_height = 4096,
+> +	.routes = _rcar_info_r8a77970_routes,
+> +};
+> +
+>  static const struct of_device_id rvin_of_id_table[] = {
+>  	{
+>  		.compatible = "renesas,vin-r8a7778",
+> @@ -1008,6 +1027,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+>  		.compatible = "renesas,vin-r8a7796",
+>  		.data = &rcar_info_r8a7796,
+>  	},
+> +	{
+> +		.compatible = "renesas,vin-r8a77970",
+> +		.data = &rcar_info_r8a77970,
+> +	},
+>  	{ /* Sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+> 
