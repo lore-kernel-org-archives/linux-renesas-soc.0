@@ -1,140 +1,57 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v12 15/33] rcar-vin: break out format alignment and checking
-Date: Wed,  7 Mar 2018 23:04:53 +0100
-Message-Id: <20180307220511.9826-16-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M
+ Eagle
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
+        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1520522643-11756-4-git-send-email-jacopo+renesas@jmondi.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <fd5245a5-5a65-f5f4-6d25-fc5b70060fbe@cogentembedded.com>
+Date: Fri, 9 Mar 2018 11:43:32 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <1520522643-11756-4-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Part of the format alignment and checking can be shared with the Gen3
-format handling. Break that part out to a separate function.
+Hello!
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 85 ++++++++++++++++-------------
- 1 file changed, 48 insertions(+), 37 deletions(-)
+On 3/8/2018 6:24 PM, Jacopo Mondi wrote:
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 01f2a14169a74ff3..680b25f610d1d8bb 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -87,6 +87,53 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
- 	return pix->bytesperline * pix->height;
- }
- 
-+static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
-+{
-+	u32 walign;
-+
-+	if (!rvin_format_from_pixel(pix->pixelformat) ||
-+	    (vin->info->model == RCAR_M1 &&
-+	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
-+		pix->pixelformat = RVIN_DEFAULT_FORMAT;
-+
-+	switch (pix->field) {
-+	case V4L2_FIELD_TOP:
-+	case V4L2_FIELD_BOTTOM:
-+	case V4L2_FIELD_NONE:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+	case V4L2_FIELD_INTERLACED:
-+		break;
-+	case V4L2_FIELD_ALTERNATE:
-+		/*
-+		 * Driver dose not (yet) support outputting ALTERNATE to a
-+		 * userspace. It does support outputting INTERLACED so use
-+		 * the VIN hardware to combine the two fields.
-+		 */
-+		pix->field = V4L2_FIELD_INTERLACED;
-+		pix->height *= 2;
-+		break;
-+	default:
-+		pix->field = RVIN_DEFAULT_FIELD;
-+		break;
-+	}
-+
-+	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
-+	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
-+
-+	/* Limit to VIN capabilities */
-+	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
-+			      &pix->height, 4, vin->info->max_height, 2, 0);
-+
-+	pix->bytesperline = rvin_format_bytesperline(pix);
-+	pix->sizeimage = rvin_format_sizeimage(pix);
-+
-+	vin_dbg(vin, "Format %ux%u bpl: %u size: %u\n",
-+		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
-+
-+	return 0;
-+}
-+
- /* -----------------------------------------------------------------------------
-  * V4L2
-  */
-@@ -184,7 +231,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 			     struct v4l2_pix_format *pix,
- 			     struct rvin_source_fmt *source)
- {
--	u32 walign;
- 	int ret;
- 
- 	if (!rvin_format_from_pixel(pix->pixelformat) ||
-@@ -197,42 +243,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	if (ret)
- 		return ret;
- 
--	switch (pix->field) {
--	case V4L2_FIELD_TOP:
--	case V4L2_FIELD_BOTTOM:
--	case V4L2_FIELD_NONE:
--	case V4L2_FIELD_INTERLACED_TB:
--	case V4L2_FIELD_INTERLACED_BT:
--	case V4L2_FIELD_INTERLACED:
--		break;
--	case V4L2_FIELD_ALTERNATE:
--		/*
--		 * Driver dose not (yet) support outputting ALTERNATE to a
--		 * userspace. It does support outputting INTERLACED so use
--		 * the VIN hardware to combine the two fields.
--		 */
--		pix->field = V4L2_FIELD_INTERLACED;
--		pix->height *= 2;
--		break;
--	default:
--		pix->field = RVIN_DEFAULT_FIELD;
--		break;
--	}
--
--	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
--	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
--
--	/* Limit to VIN capabilities */
--	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
--			      &pix->height, 4, vin->info->max_height, 2, 0);
--
--	pix->bytesperline = rvin_format_bytesperline(pix);
--	pix->sizeimage = rvin_format_sizeimage(pix);
--
--	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
--		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
--
--	return 0;
-+	return rvin_format_align(vin, pix);
- }
- 
- static int rvin_querycap(struct file *file, void *priv,
--- 
-2.16.2
+> The R-Car V3M Eagle board includes a transparent LVDS decoder, connected
+> to the on-chip LVDS encoder output on one side and to HDMI encoder
+> ADV7511w on the other one.
+> 
+> As the decoder does not need any configuration it has been so-far
+> omitted from DTS. Now that a driver for transparent LVDS decoder is
+> available, describe it in DT as well.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>   arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 31 ++++++++++++++++++++++++--
+>   1 file changed, 29 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> index c0fd144..0d62b40 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> @@ -42,6 +42,33 @@
+>   			};
+>   		};
+>   	};
+> +
+> +	lvds_decoder {
+
+    Hyphens are preferred to underscored in the node names.
+
+> +		compatible = "thine,thc63lvd1024";
+[...]
+
+MBR, Sergei
