@@ -1,47 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753777AbeCPOxB (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:23752 "EHLO
+        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932854AbeCJAKx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:01 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 61/69] arm64: dts: renesas: r8a77970: Set EtherAVB phy mode to "rgmii"
-Date: Fri, 16 Mar 2018 15:51:31 +0100
-Message-Id: <95c969d12ea19062077448a0081dc657232edd1d.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Fri, 9 Mar 2018 19:10:53 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/3] rcar-vin: always run in continues mode
+Date: Sat, 10 Mar 2018 01:09:50 +0100
+Message-Id: <20180310000953.25366-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Hi,
 
-Set the "phy-mode" property of EtherAVB device to "rgmii" and let board
-files override it if the installed PHY layer provides delays for the
-RX/TX channels.
+This series reworks the R-Car VIN driver to only run using its continues 
+capture mode. This improves performance a lot when userspace struggles 
+to keep up and queue buffers as fast as the VIN driver consumes them.  
+The solution to always be able to run in continues is to introduce a 
+scratch buffer inside the VIN driver which it can pad the hardware 
+capture buffer ring with if it have no buffer from userspace. Using this 
+scratch buffer allows the driver to not need to stop capturing when it 
+run out of buffers and then restart it once it have more buffers.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 1/3 removes a duplicated check in the VIN interrupt handler. Patch 
+2/3 adds the allocation of the scratch buffer. And finally 3/3 drops the 
+single capture mode in favor of always running in continues capture mode 
+and the scratch buffer.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 31eeca1531f6..13ff4305416e 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -519,7 +519,7 @@
- 			clocks = <&cpg CPG_MOD 812>;
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
--			phy-mode = "rgmii-id";
-+			phy-mode = "rgmii";
- 			iommus = <&ipmmu_rt 3>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+The series is based on top of the latest media-tree master branch and 
+can be fetched from.
+
+git://git.ragnatech.se/linux v4l2/next/vin/mode-v1
+
+It is tested on R-Car Koelsch Gen2 board using the onboard HDMI and CVBS 
+inputs. The test application v4l2-compliance pass for both inputs 
+without issues or warnings. A slight adaption of these patches to the 
+pending VIN Gen3 patches have been tested with great improvement in 
+capture speed for buffer strained situations and no regressions in the 
+vin-tests suite.
+
+Niklas Söderlund (3):
+  rcar-vin: remove duplicated check of state in irq handler
+  rcar-vin: allocate a scratch buffer at stream start
+  rcar-vin: use scratch buffer and always run in continuous mode
+
+ drivers/media/platform/rcar-vin/rcar-dma.c | 212 ++++++++++-------------------
+ drivers/media/platform/rcar-vin/rcar-vin.h |  10 +-
+ 2 files changed, 75 insertions(+), 147 deletions(-)
+
 -- 
-2.11.0
+2.16.2
