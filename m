@@ -1,61 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:37781 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751320AbeCLQdl (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:43854 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752067AbeCJL0k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Mar 2018 12:33:41 -0400
-Date: Mon, 12 Mar 2018 17:30:45 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
+        Sat, 10 Mar 2018 06:26:40 -0500
+Reply-To: kieran.bingham@ideasonboard.com
 Subject: Re: [PATCH 09/11] media: vsp1: Provide support for extended command
  pools
-Message-ID: <20180312163045.GE12967@w540>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
 References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
  <02dcefdd58c734623b9caf2513316380feb9f993.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <a4d6291d-7f33-e353-a080-463a86de308b@ideasonboard.com>
+Date: Sat, 10 Mar 2018 11:26:32 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SWTRyWv/ijrBap1m"
-Content-Disposition: inline
 In-Reply-To: <02dcefdd58c734623b9caf2513316380feb9f993.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---SWTRyWv/ijrBap1m
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Kieran,
-    just one small thing I noticed below...
-
-On Fri, Mar 09, 2018 at 10:04:07PM +0000, Kieran Bingham wrote:
+On 09/03/18 22:04, Kieran Bingham wrote:
 > VSPD and VSP-DL devices can provide extended display lists supporting
 > extended command display list objects.
->
+> 
 > These extended commands require their own dma memory areas for a header
 > and body specific to the command type.
->
+> 
 > Implement a command pool to allocate all necessary memory in a single
 > DMA allocation to reduce pressure on the TLB, and provide convenvient
+
+s/convenvient/convenient/
+
 > re-usable command objects for the entities to utilise.
->
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > ---
+
+I feel like this adds quite a bit of 'duplication' against the body pool
+implementation - and there is scope for re-factoring somehow to make a lot more
+of this common.
+
+I think this is still fine to go in as is for now (as an approach that is) - but
+I'd like to work out how to make this better as a later task.
+
+Then with a reusable implementation then we can easily move the excess display
+list headers (which are currently being allocated 1 for *every dlb* rather than
+1 for every dl) to their own pool and allocate as appropriate.
+
+Essentially we have the following 'object's which want to have minimal DMA
+allocations (to reduce TLB pressure) - and are all sharing the same size.
+
+ - Display list headers (72 or 96 bytes)
+ - Display list bodys   (variable size - multiple per header)
+if (VSPD) {
+ - Extended display list header (16 bytes * number of bodies)
+ - Extended display list body   (autodisp 96 bytes, autofld 160 bytes)
+}
+
+The dma_pool API's don't seem to be suitable here because as far as I can tell
+it is still calling dma_alloc_coherent for each page.., rather than creating a
+large pre-allocated slab and carving from it.
+
+There certainly doesn't seem to be a way to say the number of elements to
+pre-allocate... If I'm missing something obvious here - I'd love to hear it as I
+don't want to re-invent any wheels!
+
+Surely this similar pattern occurs elsewhere in the kernel ?
+
+--
+Kieran
+
+
 >  drivers/media/platform/vsp1/vsp1_dl.c | 189 +++++++++++++++++++++++++++-
 >  drivers/media/platform/vsp1/vsp1_dl.h |   3 +-
 >  2 files changed, 192 insertions(+)
->
+> 
 > diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
 > index 36440a2a2c8b..6d17b8bfa21c 100644
 > --- a/drivers/media/platform/vsp1/vsp1_dl.c
 > +++ b/drivers/media/platform/vsp1/vsp1_dl.c
 > @@ -121,6 +121,30 @@ struct vsp1_dl_body_pool {
 >  };
->
+>  
 >  /**
 > + * struct vsp1_cmd_pool - display list body pool
 > + * @dma: DMA address of the entries
@@ -86,15 +116,15 @@ On Fri, Mar 09, 2018 at 10:04:07PM +0000, Kieran Bingham wrote:
 >   * @dlm: the display list manager
 > @@ -176,6 +200,7 @@ struct vsp1_dl_manager {
 >  	struct vsp1_dl_list *pending;
->
+>  
 >  	struct vsp1_dl_body_pool *pool;
 > +	struct vsp1_dl_cmd_pool *autfld_cmds;
 >  };
->
+>  
 >  /* -----------------------------------------------------------------------------
 > @@ -339,6 +364,139 @@ void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
 >  }
->
+>  
 >  /* -----------------------------------------------------------------------------
 > + * Display List Extended Command Management
 > + */
@@ -111,32 +141,203 @@ On Fri, Mar 09, 2018 at 10:04:07PM +0000, Kieran Bingham wrote:
 > +	[VSP1_EXTCMD_AUTODISP] = { 0x02, 96 },
 > +	[VSP1_EXTCMD_AUTOFLD]  = { 0x03, 160 },
 > +};
-
-How about making this one static and const, since it does not get
-modified?
-
-Thanks
-   j
-
---SWTRyWv/ijrBap1m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJapqs1AAoJEHI0Bo8WoVY8eOYQAIoBKwpSJUZE6EWSOsqOJf3v
-ofU5P1hmKqXG3HKbY8iYJlYaoKm/26XSsmtzk1suu+0iUGO0yt/4qwGQR8zr3l/U
-40ADoaB6w1Ofrz9Rur2cR8nQMevyxnMTle6w1ptmoiE4Ztor28J/Nvp96m9hsNQ6
-Yv1jYgbIHh2NHkDK2kG8YD4NDDmt02li7bdCLDOEHvfnvkZoznV2EJg5shczYwU0
-PEMwfaFly5TQaWHocP7Oo3mS3vhSLenRAutap5HyDUm0Ne5u18DnLEibsnoeGXvJ
-7or5jphSij0nhkqhzadUevMaP+wmVpJ8mz+GAVgSRYCaPEhOcH7L9cJ9uCfuxPMa
-dOJ4PyUvAp+VquO+gMrCbfVCbzgO5ynGEYOMGomtTX02E7wOOwAfeRFo7I6vQaWK
-CRYdaUP8paY4/ypmr8wt+nyGWL9SZeBGcNVA6dS85tSZqlu/vJY1vufHwFlJYvds
-EO5I0YCBnXNkv9NjjDjaUg07ZDamObiiXt38oMrfSMOtCNhLONeq4h7dGN2x0Fzz
-gERpS9yMWXRNDqfWFrlALz6Nz8a3ogCUvQng4shPkRCQ4CUmMjKR3F0rdRLEY+2X
-sCr6Zpjv3U3rMtbQrFh3tjOv2zO862CIfNpLlH2OrDe3iw2dmi88GlJGkGGqv97/
-IlToYUJNcopWwAhUoVqk
-=SoGE
------END PGP SIGNATURE-----
-
---SWTRyWv/ijrBap1m--
+> +
+> +/**
+> + * vsp1_dl_cmd_pool_create - Create a pool of commands from a single allocation
+> + * @vsp1: The VSP1 device
+> + * @type: The command pool type
+> + * @num_commands: The quantity of commands to allocate
+> + *
+> + * Allocate a pool of commands each with enough memory to contain the private
+> + * data of each command. The allocation sizes are dependent upon the command
+> + * type.
+> + *
+> + * Return a pointer to a pool on success or NULL if memory can't be allocated.
+> + */
+> +struct vsp1_dl_cmd_pool *
+> +vsp1_dl_cmd_pool_create(struct vsp1_device *vsp1, enum vsp1_extcmd_type type,
+> +			unsigned int num_cmds)
+> +{
+> +	struct vsp1_dl_cmd_pool *pool;
+> +	unsigned int i;
+> +	size_t cmd_size;
+> +
+> +	pool = kzalloc(sizeof(*pool), GFP_KERNEL);
+> +	if (!pool)
+> +		return NULL;
+> +
+> +	pool->cmds = kcalloc(num_cmds, sizeof(*pool->cmds), GFP_KERNEL);
+> +	if (!pool->cmds) {
+> +		kfree(pool);
+> +		return NULL;
+> +	}
+> +
+> +	cmd_size = sizeof(struct vsp1_dl_ext_cmd_header) +
+> +		   vsp1_extended_commands[type].body_size;
+> +	cmd_size = ALIGN(cmd_size, 16);
+> +
+> +	pool->size = cmd_size * num_cmds;
+> +	pool->mem = dma_alloc_wc(vsp1->bus_master, pool->size, &pool->dma,
+> +				 GFP_KERNEL);
+> +	if (!pool->mem) {
+> +		kfree(pool->cmds);
+> +		kfree(pool);
+> +		return NULL;
+> +	}
+> +
+> +	spin_lock_init(&pool->lock);
+> +	INIT_LIST_HEAD(&pool->free);
+> +
+> +	for (i = 0; i < num_cmds; ++i) {
+> +		struct vsp1_dl_ext_cmd *cmd = &pool->cmds[i];
+> +		size_t cmd_offset = i * cmd_size;
+> +		size_t data_offset = sizeof(struct vsp1_dl_ext_cmd_header) +
+> +				     cmd_offset;
+> +
+> +		cmd->pool = pool;
+> +		cmd->cmd_opcode = vsp1_extended_commands[type].opcode;
+> +
+> +		/* TODO: Auto-disp can utilise more than one command per cmd */
+> +		cmd->num_cmds = 1;
+> +		cmd->cmds = pool->mem + cmd_offset;
+> +		cmd->cmd_dma = pool->dma + cmd_offset;
+> +
+> +		cmd->data = pool->mem + data_offset;
+> +		cmd->data_dma = pool->dma + data_offset;
+> +		cmd->data_size = vsp1_extended_commands[type].body_size;
+> +
+> +		list_add_tail(&cmd->free, &pool->free);
+> +	}
+> +
+> +	return pool;
+> +}
+> +
+> +struct vsp1_dl_ext_cmd *vsp1_dl_ext_cmd_get(struct vsp1_dl_cmd_pool *pool)
+> +{
+> +	struct vsp1_dl_ext_cmd *cmd = NULL;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&pool->lock, flags);
+> +
+> +	if (!list_empty(&pool->free)) {
+> +		cmd = list_first_entry(&pool->free, struct vsp1_dl_ext_cmd,
+> +				       free);
+> +		list_del(&cmd->free);
+> +	}
+> +
+> +	spin_unlock_irqrestore(&pool->lock, flags);
+> +
+> +	return cmd;
+> +}
+> +
+> +void vsp1_dl_ext_cmd_put(struct vsp1_dl_ext_cmd *cmd)
+> +{
+> +	unsigned long flags;
+> +
+> +	if (!cmd)
+> +		return;
+> +
+> +	/* Reset flags, these mark data usage */
+> +	cmd->flags = 0;
+> +
+> +	spin_lock_irqsave(&cmd->pool->lock, flags);
+> +	list_add_tail(&cmd->free, &cmd->pool->free);
+> +	spin_unlock_irqrestore(&cmd->pool->lock, flags);
+> +}
+> +
+> +void vsp1_dl_ext_cmd_pool_destroy(struct vsp1_dl_cmd_pool *pool)
+> +{
+> +	if (!pool)
+> +		return;
+> +
+> +	if (pool->mem)
+> +		dma_free_wc(pool->vsp1->bus_master, pool->size, pool->mem,
+> +			    pool->dma);
+> +
+> +	kfree(pool->cmds);
+> +	kfree(pool);
+> +}
+> +
+> +/* ----------------------------------------------------------------------------
+>   * Display List Transaction Management
+>   */
+>  
+> @@ -442,6 +600,12 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
+>  
+>  	vsp1_dl_list_bodies_put(dl);
+>  
+> +	vsp1_dl_ext_cmd_put(dl->pre_cmd);
+> +	vsp1_dl_ext_cmd_put(dl->post_cmd);
+> +
+> +	dl->pre_cmd = NULL;
+> +	dl->post_cmd = NULL;
+> +
+>  	/*
+>  	 * body0 is reused as as an optimisation as presently every display list
+>  	 * has at least one body, thus we reinitialise the entries list
+> @@ -863,6 +1027,15 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
+>  		list_add_tail(&dl->list, &dlm->free);
+>  	}
+>  
+> +	if (vsp1_feature(vsp1, VSP1_HAS_EXT_DL)) {
+> +		dlm->autfld_cmds = vsp1_dl_cmd_pool_create(vsp1,
+> +					VSP1_EXTCMD_AUTOFLD, prealloc);
+> +		if (!dlm->autfld_cmds) {
+> +			vsp1_dlm_destroy(dlm);
+> +			return NULL;
+> +		}
+> +	}
+> +
+>  	return dlm;
+>  }
+>  
+> @@ -879,4 +1052,20 @@ void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm)
+>  	}
+>  
+>  	vsp1_dl_body_pool_destroy(dlm->pool);
+> +	vsp1_dl_ext_cmd_pool_destroy(dlm->autfld_cmds);
+> +}
+> +
+> +struct vsp1_dl_ext_cmd *vsp1_dlm_get_autofld_cmd(struct vsp1_dl_list *dl)
+> +{
+> +	struct vsp1_dl_manager *dlm = dl->dlm;
+> +	struct vsp1_dl_ext_cmd *cmd;
+> +
+> +	if (dl->pre_cmd)
+> +		return dl->pre_cmd;
+> +
+> +	cmd = vsp1_dl_ext_cmd_get(dlm->autfld_cmds);
+> +	if (cmd)
+> +		dl->pre_cmd = cmd;
+> +
+> +	return cmd;
+>  }
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
+> index 4898b21dc840..3009912ddefb 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.h
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.h
+> @@ -23,6 +23,7 @@ struct vsp1_dl_manager;
+>  
+>  /**
+>   * struct vsp1_dl_ext_cmd - Extended Display command
+> + * @pool: pool to which this command belongs
+>   * @free: entry in the pool of free commands list
+>   * @cmd_opcode: command type opcode
+>   * @flags: flags used by the command
+> @@ -34,6 +35,7 @@ struct vsp1_dl_manager;
+>   * @data_size: size of the @data_dma memory in bytes
+>   */
+>  struct vsp1_dl_ext_cmd {
+> +	struct vsp1_dl_cmd_pool *pool;
+>  	struct list_head free;
+>  
+>  	u8 cmd_opcode;
+> @@ -56,6 +58,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
+>  void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm);
+>  void vsp1_dlm_reset(struct vsp1_dl_manager *dlm);
+>  bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
+> +struct vsp1_dl_ext_cmd *vsp1_dlm_get_autofld_cmd(struct vsp1_dl_list *dl);
+>  
+>  struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
+>  void vsp1_dl_list_put(struct vsp1_dl_list *dl);
+> 
