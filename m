@@ -1,64 +1,52 @@
-Subject: Re: [PATCH 1/3] rcar-vin: remove duplicated check of state in irq
- handler
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:23769 "EHLO
+        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932814AbeCJAKx (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 9 Mar 2018 19:10:53 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/3] rcar-vin: remove duplicated check of state in irq handler
+Date: Sat, 10 Mar 2018 01:09:51 +0100
+Message-Id: <20180310000953.25366-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180310000953.25366-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180310000953.25366-1-niklas.soderlund+renesas@ragnatech.se>
- <20180310000953.25366-2-niklas.soderlund+renesas@ragnatech.se>
-Reply-To: kieran.bingham@ideasonboard.com
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <a6fa3bbf-52e5-5576-fbea-3a280a1c8bb1@ideasonboard.com>
-Date: Tue, 13 Mar 2018 17:42:25 +0100
 MIME-Version: 1.0
-In-Reply-To: <20180310000953.25366-2-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+This is an error from when the driver where converted from soc-camera.
+There is absolutely no gain to check the state variable two times to be
+extra sure if the hardware is stopped.
 
-Thanks for the patch series :) - I've been looking forward to seeing this one !
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-On 10/03/18 01:09, Niklas Söderlund wrote:
-> This is an error from when the driver where converted from soc-camera.
-> There is absolutely no gain to check the state variable two times to be
-> extra sure if the hardware is stopped.
-
-I'll not say this isn't a redundant check ... but isn't the check against two
-different states, and thus the remaining check doesn't actually catch the case
-now where state == STOPPED ?
-
-(Perhaps state != RUNNING would be better ?, but I haven't checked the rest of
-the code)
-
---
-Kieran
-
-
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-dma.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-> index 23fdff7a7370842e..b4be75d5009080f7 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-> @@ -916,12 +916,6 @@ static irqreturn_t rvin_irq(int irq, void *data)
->  	rvin_ack_interrupt(vin);
->  	handled = 1;
->  
-> -	/* Nothing to do if capture status is 'STOPPED' */
-> -	if (vin->state == STOPPED) {
-> -		vin_dbg(vin, "IRQ while state stopped\n");
-> -		goto done;
-> -	}
-> -
->  	/* Nothing to do if capture status is 'STOPPING' */
->  	if (vin->state == STOPPING) {
->  		vin_dbg(vin, "IRQ while state stopping\n");
-> 
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 23fdff7a7370842e..b4be75d5009080f7 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -916,12 +916,6 @@ static irqreturn_t rvin_irq(int irq, void *data)
+ 	rvin_ack_interrupt(vin);
+ 	handled = 1;
+ 
+-	/* Nothing to do if capture status is 'STOPPED' */
+-	if (vin->state == STOPPED) {
+-		vin_dbg(vin, "IRQ while state stopped\n");
+-		goto done;
+-	}
+-
+ 	/* Nothing to do if capture status is 'STOPPING' */
+ 	if (vin->state == STOPPING) {
+ 		vin_dbg(vin, "IRQ while state stopping\n");
+-- 
+2.16.2
