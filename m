@@ -1,52 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:36116 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeC2RdO (ORCPT
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:43556 "EHLO
+        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751248AbeCLQJv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 13:33:14 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/5] clk: renesas: r8a7743: Fix LB clock divider
-Date: Thu, 29 Mar 2018 19:33:06 +0200
-Message-Id: <1522344790-20061-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+        Mon, 12 Mar 2018 12:09:51 -0400
+Date: Mon, 12 Mar 2018 13:02:35 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] media: MAINTAINERS: Add entry for Aptina MT9T112
+Message-ID: <20180312120235.GD10752@w540>
+References: <1520008541-3961-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1520008541-3961-6-git-send-email-jacopo+renesas@jmondi.org>
+ <20180311201514.7ljwikv4twj6hxpk@valkosipuli.retiisi.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180311201514.7ljwikv4twj6hxpk@valkosipuli.retiisi.org.uk>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-the LB clock divider depends on the value of the MD18 pin.
+Hi Sakari,
 
-On RZ/G1M, the LB clock divider is fixed to 24.  Hence model the clock
-as a fixed factor clock instead.
+On Sun, Mar 11, 2018 at 10:15:14PM +0200, Sakari Ailus wrote:
+> Hi Jacopo,
+>
+> On Fri, Mar 02, 2018 at 05:35:41PM +0100, Jacopo Mondi wrote:
+> > Add entry for Aptina/Micron MT9T112 camera sensor. The driver is
+> > currently orphaned.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  MAINTAINERS | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 91ed6ad..1d8be25 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -9385,6 +9385,13 @@ S:	Maintained
+> >  F:	drivers/media/i2c/mt9t001.c
+> >  F:	include/media/i2c/mt9t001.h
+> >
+> > +MT9T112 APTINA CAMERA SENSOR
+> > +L:	linux-media@vger.kernel.org
+> > +T:	git git://linuxtv.org/media_tree.git
+> > +S:	Orphan
+>
+> I don't like adding a driver which is in orphaned state to begin with.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I don't as well :)
 
-diff --git a/drivers/clk/renesas/r8a7743-cpg-mssr.c b/drivers/clk/renesas/r8a7743-cpg-mssr.c
-index d3c8b1e2969fd305..011c170ec3f95d65 100644
---- a/drivers/clk/renesas/r8a7743-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7743-cpg-mssr.c
-@@ -52,7 +52,6 @@ static const struct cpg_core_clk r8a7743_core_clks[] __initconst = {
- 
- 	/* Core Clock Outputs */
- 	DEF_BASE("z",    R8A7743_CLK_Z,    CLK_TYPE_GEN2_Z,	CLK_PLL0),
--	DEF_BASE("lb",   R8A7743_CLK_LB,   CLK_TYPE_GEN2_LB,	CLK_PLL1),
- 	DEF_BASE("sdh",  R8A7743_CLK_SDH,  CLK_TYPE_GEN2_SDH,	CLK_PLL1),
- 	DEF_BASE("sd0",  R8A7743_CLK_SD0,  CLK_TYPE_GEN2_SD0,	CLK_PLL1),
- 	DEF_BASE("qspi", R8A7743_CLK_QSPI, CLK_TYPE_GEN2_QSPI,	CLK_PLL1_DIV2),
-@@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7743_core_clks[] __initconst = {
- 	DEF_FIXED("zs",    R8A7743_CLK_ZS,	CLK_PLL1,	    6, 1),
- 	DEF_FIXED("hp",    R8A7743_CLK_HP,	CLK_PLL1,	   12, 1),
- 	DEF_FIXED("b",     R8A7743_CLK_B,	CLK_PLL1,	   12, 1),
-+	DEF_FIXED("lb",    R8A7743_CLK_LB,	CLK_PLL1,	   24, 1),
- 	DEF_FIXED("p",     R8A7743_CLK_P,	CLK_PLL1,	   24, 1),
- 	DEF_FIXED("cl",    R8A7743_CLK_CL,	CLK_PLL1,	   48, 1),
- 	DEF_FIXED("m2",    R8A7743_CLK_M2,	CLK_PLL1,	    8, 1),
--- 
-2.7.4
+>
+> Would you like to maintain it? :-)
+
+I would, but I currently have no camera module to test with... Maybe
+just for "Odd Fixes"?
+
+>
+> > +F:	drivers/media/i2c/mt9t112.c
+> > +F:	include/media/i2c/mt9t112.h
+> > +
+> >  MT9V032 APTINA CAMERA SENSOR
+> >  M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >  L:	linux-media@vger.kernel.org
+>
+> --
+> Regards,
+>
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi
