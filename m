@@ -1,55 +1,56 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 11/11] drm: rcar-du: Support interlaced video output through vsp1
-Date: Fri,  9 Mar 2018 22:04:09 +0000
-Message-Id: <6f3952607748a5bc62dfa59a522ac1111b5d63e4.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:56712 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751255AbeCLPMD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:12:03 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] arm64: dts: renesas: ulcb: Rename EtherAVB "mdc" pin group to "mdio"
+Date: Mon, 12 Mar 2018 16:11:59 +0100
+Message-Id: <1520867520-13942-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
+References: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the newly exposed VSP1 interface to enable interlaced frame support
-through the VSP1 lif pipelines.
+On other Renesas SoCs, the pin group for the MDIO bus is named "mdio"
+instead of "mdc".  Fix the inconsistency, now the pinctrl drivers for
+R-Car H3, M3-W, and M3-N have gained support for the traditional pin
+group name.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 1 +
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 3 +++
- 2 files changed, 4 insertions(+)
+This depends on:
+  - pinctrl: sh-pfc: r8a7795-es1: Rename EtherAVB "mdc" pin group to "mdio"
+  - pinctrl: sh-pfc: r8a7795: Rename EtherAVB "mdc" pin group to "mdio"
+  - pinctrl: sh-pfc: r8a7796: Rename EtherAVB "mdc" pin group to "mdio"
+---
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 5685d5af6998..9854d9deb944 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -248,6 +248,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	/* Signal polarities */
- 	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
- 	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-+	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
- 	      | DSMR_DIPM_DISP | DSMR_CSPM;
- 	rcar_du_crtc_write(rcrtc, DSMR, value);
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 6f814845f8b665f3..93402783d52f0927 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -255,12 +255,12 @@
  
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 2c260c33840b..5e47daef8bd2 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -178,6 +178,9 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
- 	};
- 	unsigned int i;
+ 	avb_pins: avb {
+ 		mux {
+-			groups = "avb_link", "avb_mdc", "avb_mii";
++			groups = "avb_link", "avb_mdio", "avb_mii";
+ 			function = "avb";
+ 		};
  
-+	cfg.interlaced = !!(plane->plane.state->crtc->mode.flags
-+			    & DRM_MODE_FLAG_INTERLACE);
-+
- 	cfg.src.left = state->state.src.x1 >> 16;
- 	cfg.src.top = state->state.src.y1 >> 16;
- 	cfg.src.width = drm_rect_width(&state->state.src) >> 16;
+-		pins_mdc {
+-			groups = "avb_mdc";
++		pins_mdio {
++			groups = "avb_mdio";
+ 			drive-strength = <24>;
+ 		};
+ 
 -- 
-git-series 0.9.1
+2.7.4
