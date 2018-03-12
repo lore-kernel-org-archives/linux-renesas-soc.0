@@ -1,18 +1,12 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:44355 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751961AbeCMQlJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 12:41:09 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXB+WCwC7cOpQF-4fPD7VN2UUCDTfgvy6B0cS1UWWx4yw@mail.gmail.com>
-References: <1520799995-26347-1-git-send-email-ykaneko0929@gmail.com>
- <1520799995-26347-4-git-send-email-ykaneko0929@gmail.com> <CAMuHMdXB+WCwC7cOpQF-4fPD7VN2UUCDTfgvy6B0cS1UWWx4yw@mail.gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Date: Wed, 14 Mar 2018 01:41:08 +0900
-Message-ID: <CAH1o70LsCUxJSzJcbcqRP7a_B82BHJCrD2wxO6bOb1zHM7OKQw@mail.gmail.com>
+In-Reply-To: <1520799995-26347-4-git-send-email-ykaneko0929@gmail.com>
+References: <1520799995-26347-1-git-send-email-ykaneko0929@gmail.com> <1520799995-26347-4-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Mar 2018 11:56:15 +0100
+Message-ID: <CAMuHMdXB+WCwC7cOpQF-4fPD7VN2UUCDTfgvy6B0cS1UWWx4yw@mail.gmail.com>
 Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a77995: add thermal device support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
@@ -21,63 +15,44 @@ Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert-san,
+Hi Kaneko-san,
 
-Thanks for your review.
+On Sun, Mar 11, 2018 at 9:26 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-2018-03-12 19:56 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
-> Hi Kaneko-san,
->
-> On Sun, Mar 11, 2018 at 9:26 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->
-> Thanks for your patch!
->
->> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
->> @@ -402,5 +402,36 @@
->>                         #phy-cells = <0>;
->>                         status = "disabled";
->>                 };
->> +
->> +               thermal: thermal@e61f0000 {
->
-> According to the Hard User Manual rev. 0.80, the base address is e6190000?
+Thanks for your patch!
 
-You are correct.
-I will update this patch to fix it.
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -402,5 +402,36 @@
+>                         #phy-cells = <0>;
+>                         status = "disabled";
+>                 };
+> +
+> +               thermal: thermal@e61f0000 {
 
->
->> +                       compatible = "renesas,thermal-r8a77995",
->> +                                    "renesas,rcar-thermal";
->
-> I would drop the fallback property, cfr. my comments on the DT binding
-> patch.
+According to the Hard User Manual rev. 0.80, the base address is e6190000?
 
-Yes. I will do it.
+> +                       compatible = "renesas,thermal-r8a77995",
+> +                                    "renesas,rcar-thermal";
 
->
->> +                       reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
->
-> 0xe619... (twice)
+I would drop the fallback property, cfr. my comments on the DT binding
+patch.
 
-I will fix it.
+> +                       reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
 
+0xe619... (twice)
 
-Thanks,
-Kaneko
+Gr{oetje,eeting}s,
 
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
