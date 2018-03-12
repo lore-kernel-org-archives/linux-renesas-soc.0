@@ -1,78 +1,57 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 23/33] rcar-vin: force default colorspace for media centric mode
-Date: Mon, 26 Mar 2018 23:44:46 +0200
-Message-Id: <20180326214456.6655-24-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:49096 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751293AbeCLPME (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:12:04 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] arm64: dts: renesas: salvator-common: Rename EtherAVB "mdc" pin group to "mdio"
+Date: Mon, 12 Mar 2018 16:11:58 +0100
+Message-Id: <1520867520-13942-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
+References: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The V4L2 specification clearly documents the colorspace fields as being
-set by drivers for capture devices. Using the values supplied by
-userspace thus wouldn't comply with the API. Until the API is updated to
-allow for userspace to set these Hans wants the fields to be set by the
-driver to fixed values.
+On other Renesas SoCs, the pin group for the MDIO bus is named "mdio"
+instead of "mdc".  Fix the inconsistency, now the pinctrl drivers for
+R-Car H3, M3-W, and M3-N have gained support for the traditional pin
+group name.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+This depends on:
+  - pinctrl: sh-pfc: r8a7795-es1: Rename EtherAVB "mdc" pin group to "mdio"
+  - pinctrl: sh-pfc: r8a7795: Rename EtherAVB "mdc" pin group to "mdio"
+  - pinctrl: sh-pfc: r8a7796: Rename EtherAVB "mdc" pin group to "mdio"
+  - pinctrl: sh-pfc: r8a77965: Rename EtherAVB "mdc" pin group to "mdio"
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 2280535ca981993f..ea0759a645e49490 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -664,12 +664,29 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
-  * V4L2 Media Controller
-  */
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 2a7f36abd2dd85c6..1642bc9c8906f010 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -416,12 +416,12 @@
  
-+static int rvin_mc_try_format(struct rvin_dev *vin, struct v4l2_pix_format *pix)
-+{
-+	/*
-+	 * The V4L2 specification clearly documents the colorspace fields
-+	 * as being set by drivers for capture devices. Using the values
-+	 * supplied by userspace thus wouldn't comply with the API. Until
-+	 * the API is updated force fixed vaules.
-+	 */
-+	pix->colorspace = RVIN_DEFAULT_COLORSPACE;
-+	pix->xfer_func = V4L2_MAP_XFER_FUNC_DEFAULT(pix->colorspace);
-+	pix->ycbcr_enc = V4L2_MAP_YCBCR_ENC_DEFAULT(pix->colorspace);
-+	pix->quantization = V4L2_MAP_QUANTIZATION_DEFAULT(true, pix->colorspace,
-+							  pix->ycbcr_enc);
-+
-+	return rvin_format_align(vin, pix);
-+}
-+
- static int rvin_mc_try_fmt_vid_cap(struct file *file, void *priv,
- 				   struct v4l2_format *f)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
+ 	avb_pins: avb {
+ 		mux {
+-			groups = "avb_link", "avb_mdc", "avb_mii";
++			groups = "avb_link", "avb_mdio", "avb_mii";
+ 			function = "avb";
+ 		};
  
--	return rvin_format_align(vin, &f->fmt.pix);
-+	return rvin_mc_try_format(vin, &f->fmt.pix);
- }
- 
- static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
-@@ -681,7 +698,7 @@ static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
- 	if (vb2_is_busy(&vin->queue))
- 		return -EBUSY;
- 
--	ret = rvin_format_align(vin, &f->fmt.pix);
-+	ret = rvin_mc_try_format(vin, &f->fmt.pix);
- 	if (ret)
- 		return ret;
+-		pins_mdc {
+-			groups = "avb_mdc";
++		pins_mdio {
++			groups = "avb_mdio";
+ 			drive-strength = <24>;
+ 		};
  
 -- 
-2.16.2
+2.7.4
