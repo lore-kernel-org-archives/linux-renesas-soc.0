@@ -1,158 +1,167 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 04/32] rcar-vin: rename poorly named initialize and cleanup functions
-Date: Fri,  2 Mar 2018 02:57:23 +0100
-Message-Id: <20180302015751.25596-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:52550 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751647AbeCLOYT (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 12 Mar 2018 10:24:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] arm64: dts: renesas: r8a7795: Add missing SYS-DMAC2 dmas
+Date: Mon, 12 Mar 2018 15:24:14 +0100
+Message-Id: <1520864654-10664-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The functions to register and unregister the hardware and video device
-where poorly named from the start. Rename them to better describe their
-intended function.
+On R-Car H3, on-chip peripheral modules that can make use of DMA are
+wired to either SYS-DMAC0 only, or to both SYS-DMAC1 and SYS-DMAC2.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Add the missing DMA properties pointing to SYS-DMAC2 for HSCIF[0-2],
+SCIF[0125], and I2C[0-2].  These were initially left out because early
+firmware versions prohibited using SYS-DMAC2.  This restriction has been
+lifted in IPL and Secure Monitor Rev1.0.6 (released on Feb 25, 2016).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 10 +++++-----
- drivers/media/platform/rcar-vin/rcar-dma.c  |  6 +++---
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  4 ++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  8 ++++----
- 4 files changed, 14 insertions(+), 14 deletions(-)
+FTR, other devices already have dmas pointing to SYS-DMAC2.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index f1fc7978d6d1523d..2bedf20abcf3ca07 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -93,7 +93,7 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- 		return ret;
- 	}
- 
--	return rvin_v4l2_probe(vin);
-+	return rvin_v4l2_register(vin);
- }
- 
- static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
-@@ -103,7 +103,7 @@ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
- 
- 	vin_dbg(vin, "unbind digital subdev %s\n", subdev->name);
--	rvin_v4l2_remove(vin);
-+	rvin_v4l2_unregister(vin);
- 	vin->digital->subdev = NULL;
- }
- 
-@@ -245,7 +245,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return irq;
- 
--	ret = rvin_dma_probe(vin, irq);
-+	ret = rvin_dma_register(vin, irq);
- 	if (ret)
- 		return ret;
- 
-@@ -260,7 +260,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 
- 	return 0;
- error:
--	rvin_dma_remove(vin);
-+	rvin_dma_unregister(vin);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
- 	return ret;
-@@ -275,7 +275,7 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
--	rvin_dma_remove(vin);
-+	rvin_dma_unregister(vin);
- 
- 	return 0;
- }
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 23fdff7a7370842e..d701b52d198243b5 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -1153,14 +1153,14 @@ static const struct vb2_ops rvin_qops = {
- 	.wait_finish		= vb2_ops_wait_finish,
- };
- 
--void rvin_dma_remove(struct rvin_dev *vin)
-+void rvin_dma_unregister(struct rvin_dev *vin)
- {
- 	mutex_destroy(&vin->lock);
- 
- 	v4l2_device_unregister(&vin->v4l2_dev);
- }
- 
--int rvin_dma_probe(struct rvin_dev *vin, int irq)
-+int rvin_dma_register(struct rvin_dev *vin, int irq)
- {
- 	struct vb2_queue *q = &vin->queue;
- 	int i, ret;
-@@ -1208,7 +1208,7 @@ int rvin_dma_probe(struct rvin_dev *vin, int irq)
- 
- 	return 0;
- error:
--	rvin_dma_remove(vin);
-+	rvin_dma_unregister(vin);
- 
- 	return ret;
- }
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index b479b882da12f62d..178aecc94962abe2 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -839,7 +839,7 @@ static const struct v4l2_file_operations rvin_fops = {
- 	.read		= vb2_fop_read,
- };
- 
--void rvin_v4l2_remove(struct rvin_dev *vin)
-+void rvin_v4l2_unregister(struct rvin_dev *vin)
- {
- 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
- 		  video_device_node_name(&vin->vdev));
-@@ -866,7 +866,7 @@ static void rvin_notify(struct v4l2_subdev *sd,
- 	}
- }
- 
--int rvin_v4l2_probe(struct rvin_dev *vin)
-+int rvin_v4l2_register(struct rvin_dev *vin)
- {
- 	struct video_device *vdev = &vin->vdev;
- 	struct v4l2_subdev *sd = vin_to_source(vin);
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 5382078143fb3869..85cb7ec53d2b08b5 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -153,11 +153,11 @@ struct rvin_dev {
- #define vin_warn(d, fmt, arg...)	dev_warn(d->dev, fmt, ##arg)
- #define vin_err(d, fmt, arg...)		dev_err(d->dev, fmt, ##arg)
- 
--int rvin_dma_probe(struct rvin_dev *vin, int irq);
--void rvin_dma_remove(struct rvin_dev *vin);
-+int rvin_dma_register(struct rvin_dev *vin, int irq);
-+void rvin_dma_unregister(struct rvin_dev *vin);
- 
--int rvin_v4l2_probe(struct rvin_dev *vin);
--void rvin_v4l2_remove(struct rvin_dev *vin);
-+int rvin_v4l2_register(struct rvin_dev *vin);
-+void rvin_v4l2_unregister(struct rvin_dev *vin);
- 
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
+v2:
+  - Add Reviewed-by,
+  - Update forgotten SCIF2 node.
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 50 +++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 20 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 0648fe451d097f4e..1d5e3ac0231ca6ab 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1076,8 +1076,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x31>, <&dmac1 0x30>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
++			       <&dmac2 0x31>, <&dmac2 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 520>;
+ 			status = "disabled";
+@@ -1093,8 +1094,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x33>, <&dmac1 0x32>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
++			       <&dmac2 0x33>, <&dmac2 0x32>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 519>;
+ 			status = "disabled";
+@@ -1110,8 +1112,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x35>, <&dmac1 0x34>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
++			       <&dmac2 0x35>, <&dmac2 0x34>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 518>;
+ 			status = "disabled";
+@@ -1222,8 +1225,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x51>, <&dmac1 0x50>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
++			       <&dmac2 0x51>, <&dmac2 0x50>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 207>;
+ 			status = "disabled";
+@@ -1238,8 +1242,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x53>, <&dmac1 0x52>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
++			       <&dmac2 0x53>, <&dmac2 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 206>;
+ 			status = "disabled";
+@@ -1254,8 +1259,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x13>, <&dmac1 0x12>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x13>, <&dmac1 0x12>,
++			       <&dmac2 0x13>, <&dmac2 0x12>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 310>;
+ 			status = "disabled";
+@@ -1302,8 +1308,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
++			       <&dmac2 0x5b>, <&dmac2 0x5a>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 202>;
+ 			status = "disabled";
+@@ -1335,8 +1342,9 @@
+ 			clocks = <&cpg CPG_MOD 931>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 931>;
+-			dmas = <&dmac1 0x91>, <&dmac1 0x90>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
++			       <&dmac2 0x91>, <&dmac2 0x90>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -1351,8 +1359,9 @@
+ 			clocks = <&cpg CPG_MOD 930>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 930>;
+-			dmas = <&dmac1 0x93>, <&dmac1 0x92>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
++			       <&dmac2 0x93>, <&dmac2 0x92>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -1367,8 +1376,9 @@
+ 			clocks = <&cpg CPG_MOD 929>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 929>;
+-			dmas = <&dmac1 0x95>, <&dmac1 0x94>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
++			       <&dmac2 0x95>, <&dmac2 0x94>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
 -- 
-2.16.2
+2.7.4
