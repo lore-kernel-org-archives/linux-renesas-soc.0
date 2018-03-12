@@ -1,40 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:49098 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751186AbeCTPnL (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49330 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751999AbeCLI0k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Mar 2018 11:43:11 -0400
+        Mon, 12 Mar 2018 04:26:40 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180312082637euoutp02847d9d63e95a1976acaf346917ec73b8~bHtSTPCIB0655406554euoutp02c
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Mar 2018 08:26:37 +0000 (GMT)
 Subject: Re: [PATCH v2 2/3] drm: bridge: Add LVDS decoder driver
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, <architt@codeaurora.org>,
-        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
-        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
-        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-References: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
- <1520603500-15218-3-git-send-email-jacopo+renesas@jmondi.org>
-CC: <dri-devel@lists.freedesktop.org>,
-        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <dc468964-dc9c-65fb-7ec8-e180409ffa03@mentor.com>
-Date: Tue, 20 Mar 2018 17:42:59 +0200
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <c698987c-5fec-da8a-c2a0-80bf11b579a8@samsung.com>
+Date: Mon, 12 Mar 2018 09:26:33 +0100
 MIME-Version: 1.0
 In-Reply-To: <1520603500-15218-3-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+References: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
+        <CGME20180309135214epcas5p26c0b31def45b1fb5a41c7adcc9a45f92@epcas5p2.samsung.com>
+        <1520603500-15218-3-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
-
-On 03/09/2018 03:51 PM, Jacopo Mondi wrote:
+On 09.03.2018 14:51, Jacopo Mondi wrote:
 > Add transparent LVDS decoder driver.
-> 
+>
 > A transparent LVDS decoder is a DRM bridge device that does not require
 > any configuration and converts LVDS input to digital CMOS/TTL parallel
 > data output.
-> 
+
+Neither code, neither bindings are LVDS specific, this is driver for any
+bridge w/o configuration.
+I  am not sure how many bridges does not need configuration, usually
+they need to be powered at least.
+I guess in many cases power line is always on, but this is board
+specific not device specific.
+
+Looking at previous version of the patchset it looks little bit as a
+hack, and certainly it will be a hack in case of R-Car Gen3 V3M Eagle,
+which I guess you want to use it.
+
 > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
 >  drivers/gpu/drm/bridge/Kconfig        |   8 +++
@@ -42,7 +54,7 @@ On 03/09/2018 03:51 PM, Jacopo Mondi wrote:
 >  drivers/gpu/drm/bridge/lvds-decoder.c | 129 ++++++++++++++++++++++++++++++++++
 >  3 files changed, 138 insertions(+)
 >  create mode 100644 drivers/gpu/drm/bridge/lvds-decoder.c
-> 
+>
 > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
 > index 3b99d5a..e52a5af 100644
 > --- a/drivers/gpu/drm/bridge/Kconfig
@@ -50,7 +62,7 @@ On 03/09/2018 03:51 PM, Jacopo Mondi wrote:
 > @@ -32,6 +32,14 @@ config DRM_DUMB_VGA_DAC
 >  	help
 >  	  Support for RGB to VGA DAC based bridges
-> 
+>
 > +config DRM_LVDS_DECODER
 > +	tristate "Transparent LVDS to parallel decoder support"
 > +	depends on OF
@@ -99,6 +111,13 @@ On 03/09/2018 03:51 PM, Jacopo Mondi wrote:
 > +	struct drm_bridge bridge;
 > +	struct drm_bridge *next;
 > +	struct drm_encoder *bridge_encoder;
+
+Unused field.
+
+
+Regards
+Andrzej
+
 > +};
 > +
 > +static inline struct lvds_decoder *to_lvds_decoder(struct drm_bridge *bridge)
@@ -114,9 +133,6 @@ On 03/09/2018 03:51 PM, Jacopo Mondi wrote:
 > +}
 > +
 > +struct drm_bridge_funcs lvds_dec_bridge_func = {
-
-static const struct drm_bridge_funcs lvds_dec_bridge_func
-
 > +	.attach	= lvds_decoder_attach,
 > +};
 > +
@@ -133,10 +149,6 @@ static const struct drm_bridge_funcs lvds_dec_bridge_func
 > +	}
 > +
 > +	remote = of_graph_get_remote_port_parent(lvds_output);
-
-Add of_node_put(lvds_output) right here to get rid of error_put_lvds_node
-goto label.
-
 > +	if (!remote) {
 > +		dev_err(lvds->dev, "Endpoint in Port@1 unconnected\n");
 > +		ret = -ENODEV;
@@ -203,9 +215,6 @@ goto label.
 > +MODULE_DEVICE_TABLE(of, lvds_decoder_match);
 > +#endif
 > +
-
-I would say "#ifdef CONFIG_OF" is redundant, because the driver "depends on OF".
-
 > +static struct platform_driver lvds_decoder_driver = {
 > +	.probe	= lvds_decoder_probe,
 > +	.remove	= lvds_decoder_remove,
@@ -219,7 +228,9 @@ I would say "#ifdef CONFIG_OF" is redundant, because the driver "depends on OF".
 > +MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
 > +MODULE_DESCRIPTION("Transparent LVDS to parallel data decoder");
 > +MODULE_LICENSE("GPL v2");
-
---
-With best wishes,
-Vladimir
+> --
+> 2.7.4
+>
+>
+>
+>
