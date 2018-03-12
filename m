@@ -1,84 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:37856 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751474AbeCNMKU (ORCPT
+Received: from sauhun.de ([88.99.104.3]:43954 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932265AbeCLVmk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Mar 2018 08:10:20 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/3] arm64: dts: renesas: ulcb: Add BD9571 PMIC
-Date: Wed, 14 Mar 2018 13:09:44 +0100
-Message-Id: <1521029386-29975-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1521029386-29975-1-git-send-email-geert+renesas@glider.be>
-References: <1521029386-29975-1-git-send-email-geert+renesas@glider.be>
+        Mon, 12 Mar 2018 17:42:40 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: qemu-devel@nongnu.org
+Cc: Michael Davidsaver <mdavidsaver@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/3] nvram: at24c: fix problems related to "rom-size"
+Date: Mon, 12 Mar 2018 22:42:27 +0100
+Message-Id: <20180312214230.17561-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the ROHM BD9571MWV PMIC.
+I used this driver as a template for a custom one. While hacking on my own, I
+noticed some problems in this driver, too. This series fixes the first set of
+them, mostly related to "rom-size". It fixes a segfault.
 
-This was based on the example in the DT binding documentation, but using
-IRQ0 instead of a GPIO interrupt, as that matches the schematics, and
-because INTC-EX is a simpler block.
+Wolfram Sang (3):
+  nvram: at24c: remove doubled prefix for ERR
+  nvram: at24c: prevent segfault by checking "rom-size"
+  nvram: at24c: use a sane default for "rom-size"
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ hw/nvram/eeprom_at24c.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 6f814845f8b665f3..bb21ae335e8b8489 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -243,6 +243,30 @@
- 
- &i2c_dvfs {
- 	status = "okay";
-+
-+	pmic: pmic@30 {
-+		pinctrl-0 = <&irq0_pins>;
-+		pinctrl-names = "default";
-+
-+		compatible = "rohm,bd9571mwv";
-+		reg = <0x30>;
-+		interrupt-parent = <&intc_ex>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		regulators {
-+			dvfs: dvfs {
-+				regulator-name = "dvfs";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <1030000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
- };
- 
- &ohci1 {
-@@ -276,6 +300,11 @@
- 		function = "i2c2";
- 	};
- 
-+	irq0_pins: irq0 {
-+		groups = "intc_ex_irq0";
-+		function = "intc_ex";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
 -- 
-2.7.4
+2.11.0
