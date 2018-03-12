@@ -1,152 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753959AbeCPOyi (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:53058 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751248AbeCLPMD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:54:38 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 12 Mar 2018 11:12:03 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 46/52] ARM: dts: r7s72100: sort subnodes of root node
-Date: Fri, 16 Mar 2018 15:53:05 +0100
-Message-Id: <8234641d84ca17e0f6f8cfbb4f34fa56d73a07ab.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] arm64: dts: renesas: draak: Rename EtherAVB "mdc" pin group to "mdio"
+Date: Mon, 12 Mar 2018 16:12:00 +0100
+Message-Id: <1520867520-13942-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
+References: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort the subnodes of the soc node to improve maintainability.
-The sort has been done alphabetically with the node name as the key.
+On other Renesas SoCs, the pin group for the MDIO bus is named "mdio"
+instead of "mdc".  Fix the inconsistency, now the pinctrl drivers for
+R-Car H3, M3-W, and M3-N have gained support for the traditional pin
+group name.
 
-This patch should not introduce any functional change.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100.dtsi | 78 +++++++++++++++++++++--------------------
- 1 file changed, 40 insertions(+), 38 deletions(-)
+This depends on:
+  - pinctrl: sh-pfc: r8a77995: Rename EtherAVB "mdc" pin group to "mdio"
+---
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index d69d4810e597..ecf9516bcda8 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -30,43 +30,45 @@
- 		spi4 = &spi4;
- 	};
- 
--	/* External clocks */
--	extal_clk: extal {
-+	/* Fixed factor clocks */
-+	b_clk: b {
- 		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		/* If clk present, value must be set by board */
--		clock-frequency = <0>;
-+		compatible = "fixed-factor-clock";
-+		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
-+		clock-mult = <1>;
-+		clock-div = <3>;
- 	};
- 
--	usb_x1_clk: usb_x1 {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		/* If clk present, value must be set by board */
--		clock-frequency = <0>;
--	};
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 
--	rtc_x1_clk: rtc_x1 {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		/* If clk present, value must be set by board to 32678 */
--		clock-frequency = <0>;
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0>;
-+			clock-frequency = <400000000>;
-+			clocks = <&cpg_clocks R7S72100_CLK_I>;
-+			next-level-cache = <&L2>;
-+		};
- 	};
- 
--	rtc_x3_clk: rtc_x3 {
-+	/* External clocks */
-+	extal_clk: extal {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
--		/* If clk present, value must be set by board to 4000000 */
-+		/* If clk present, value must be set by board */
- 		clock-frequency = <0>;
- 	};
- 
--	/* Fixed factor clocks */
--	b_clk: b {
-+	p0_clk: p0 {
- 		#clock-cells = <0>;
- 		compatible = "fixed-factor-clock";
- 		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
- 		clock-mult = <1>;
--		clock-div = <3>;
-+		clock-div = <12>;
- 	};
-+
- 	p1_clk: p1 {
- 		#clock-cells = <0>;
- 		compatible = "fixed-factor-clock";
-@@ -74,26 +76,19 @@
- 		clock-mult = <1>;
- 		clock-div = <6>;
- 	};
--	p0_clk: p0 {
-+
-+	rtc_x1_clk: rtc_x1 {
- 		#clock-cells = <0>;
--		compatible = "fixed-factor-clock";
--		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
--		clock-mult = <1>;
--		clock-div = <12>;
-+		compatible = "fixed-clock";
-+		/* If clk present, value must be set by board to 32678 */
-+		clock-frequency = <0>;
- 	};
- 
--	cpus {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		cpu@0 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a9";
--			reg = <0>;
--			clock-frequency = <400000000>;
--			clocks = <&cpg_clocks R7S72100_CLK_I>;
--			next-level-cache = <&L2>;
--		};
-+	rtc_x3_clk: rtc_x3 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		/* If clk present, value must be set by board to 4000000 */
-+		clock-frequency = <0>;
- 	};
- 
- 	soc {
-@@ -689,4 +684,11 @@
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index d03f19414028c6c4..9d73de8bc94d3873 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -91,7 +91,7 @@
+ &pfc {
+ 	avb0_pins: avb {
+ 		mux {
+-			groups = "avb0_link", "avb0_mdc", "avb0_mii";
++			groups = "avb0_link", "avb0_mdio", "avb0_mii";
+ 			function = "avb0";
  		};
  	};
-+
-+	usb_x1_clk: usb_x1 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		/* If clk present, value must be set by board */
-+		clock-frequency = <0>;
-+	};
- };
 -- 
-2.11.0
+2.7.4
