@@ -1,52 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:53942 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752004AbeCWJJu (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:38703 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751652AbeCLGlP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:09:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] pinctrl: sh-pfc: rcar-gen3: MSIOF enhancements
-Date: Fri, 23 Mar 2018 10:09:39 +0100
-Message-Id: <1521796182-24791-1-git-send-email-geert+renesas@glider.be>
+        Mon, 12 Mar 2018 02:41:15 -0400
+Received: by mail-qk0-f193.google.com with SMTP id 132so360401qkd.5
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 11 Mar 2018 23:41:14 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1520633188-13721-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1520633188-13721-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Mar 2018 07:41:13 +0100
+Message-ID: <CAMuHMdWkhiJXgvZw03xT415808533xN+KJqa1eRS3=xbefUAng@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] vsp1/du/interlaced/v1
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Laurent, Linus,
+Hi Kieran,
 
-This patch series:
-  - Adds MSIOF groups on R-Car M3-N,
-  - Fixes two small mistakes in comments.
+On Fri, Mar 9, 2018 at 11:06 PM, Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> Please consider including this branch in renesas-drivers.
+>
+> The following changes since commit 397eb3811ec096d0ceefa1dbea2d0ae68feb0587:
+>
+>   media: vsp1: Move video configuration to a cached dlb (2018-03-07 21:19:29 +0000)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/du/interlaced/v1
+>
+> for you to fetch changes up to 6f3952607748a5bc62dfa59a522ac1111b5d63e4:
+>
+>   drm: rcar-du: Support interlaced video output through vsp1 (2018-03-09 21:43:55 +0000)
 
-To be queued in sh-pfc-for-v4.18.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  pinctrl: sh-pfc: r8a7795: Fix comment for MSIOF3 SS2_E pin
-  pinctrl: sh-pfc: r8a7796: Fix comment for MSIOF3 SS2_E pin
-
-Takeshi Kihara (1):
-  pinctrl: sh-pfc: r8a77965: Add MSIOF pins, groups and functions
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c  |   2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c  |   2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 912 ++++++++++++++++++++++++++++++++++
- 3 files changed, 914 insertions(+), 2 deletions(-)
-
--- 
-2.7.4
+Thank you, merges cleanly into today's (well, lastFriday's) linux-next.
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
