@@ -1,90 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:56002 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752571AbeCOOqQ (ORCPT
+Received: from relay3.mail.gandi.net ([217.70.178.223]:35339 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932394AbeCMTmf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:46:16 -0400
-Received: by mail-wm0-f67.google.com with SMTP id q83so11028259wme.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Mar 2018 07:46:15 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: intel-gfx@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH igt 7/8] tests/kms_addfb_basic: size_tests(): reduce test buffer size
-Date: Thu, 15 Mar 2018 15:45:43 +0100
-Message-Id: <1521125144-28614-8-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1521125144-28614-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1521125144-28614-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Tue, 13 Mar 2018 15:42:35 -0400
+Date: Mon, 12 Mar 2018 14:55:13 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com
+Subject: Re: [PATCH 2/3] rcar-vin: allocate a scratch buffer at stream start
+Message-ID: <20180312135513.GB12967@w540>
+References: <20180310000953.25366-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180310000953.25366-3-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
+Content-Disposition: inline
+In-Reply-To: <20180310000953.25366-3-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fixes fails on low-memory devices.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- tests/kms_addfb_basic.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+--LpQ9ahxlCli8rRTG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tests/kms_addfb_basic.c b/tests/kms_addfb_basic.c
-index cf9ba37..d1da718 100644
---- a/tests/kms_addfb_basic.c
-+++ b/tests/kms_addfb_basic.c
-@@ -238,26 +238,26 @@ static void size_tests(int fd)
- 	struct drm_mode_fb_cmd2 f_16 = {};
- 	struct drm_mode_fb_cmd2 f_8 = {};
- 
--	f.width = 1024;
--	f.height = 1024;
-+	f.width = 512;
-+	f.height = 512;
- 	f.pixel_format = DRM_FORMAT_XRGB8888;
--	f.pitches[0] = 1024*4;
-+	f.pitches[0] = 512*4;
- 
--	f_16.width = 1024;
--	f_16.height = 1024*2;
-+	f_16.width = 512;
-+	f_16.height = 512*2;
- 	f_16.pixel_format = DRM_FORMAT_RGB565;
--	f_16.pitches[0] = 1024*2;
-+	f_16.pitches[0] = 512*2;
- 
--	f_8.width = 1024*2;
--	f_8.height = 1024*2;
-+	f_8.width = 512*2;
-+	f_8.height = 512*2;
- 	f_8.pixel_format = DRM_FORMAT_C8;
--	f_8.pitches[0] = 1024*2;
-+	f_8.pitches[0] = 512*2;
- 
- 	igt_fixture {
--		gem_bo = igt_create_bo_with_dimensions(fd, 1024, 1024,
-+		gem_bo = igt_create_bo_with_dimensions(fd, 512, 512,
- 			DRM_FORMAT_XRGB8888, 0, 0, NULL, NULL, NULL);
- 		igt_assert(gem_bo);
--		gem_bo_small = igt_create_bo_with_dimensions(fd, 1024, 1023,
-+		gem_bo_small = igt_create_bo_with_dimensions(fd, 512, 511,
- 			DRM_FORMAT_XRGB8888, 0, 0, NULL, NULL, NULL);
- 		igt_assert(gem_bo_small);
- 	}
-@@ -311,7 +311,7 @@ static void size_tests(int fd)
- 	}
- 
- 	/* Just to check that the parameters would work. */
--	f.height = 1020;
-+	f.height = 510;
- 	igt_subtest("small-bo") {
- 		igt_assert(drmIoctl(fd, DRM_IOCTL_MODE_ADDFB2, &f) == 0);
- 		igt_assert(drmIoctl(fd, DRM_IOCTL_MODE_RMFB, &f.fb_id) == 0);
-@@ -320,7 +320,7 @@ static void size_tests(int fd)
- 
- 	igt_subtest("bo-too-small-due-to-tiling") {
- 		igt_require(is_i915_device(fd));
--		gem_set_tiling(fd, gem_bo_small, I915_TILING_X, 1024*4);
-+		gem_set_tiling(fd, gem_bo_small, I915_TILING_X, 512*4);
- 		igt_assert(drmIoctl(fd, DRM_IOCTL_MODE_ADDFB2, &f) == -1 &&
- 			   errno == EINVAL);
- 	}
--- 
-2.7.4
+Hi Niklas,
+
+On Sat, Mar 10, 2018 at 01:09:52AM +0100, Niklas S=C3=B6derlund wrote:
+> Before starting capturing allocate a scratch buffer which can be used by
+> the driver to give to the hardware if no buffers are available from
+> userspace. The buffer is not used in this patch but prepares for future
+> refactoring where the scratch buffer can be used to avoid the need to
+> fallback on single capture mode if userspace don't queue buffers as fast
+> as the VIN driver consumes them.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c | 19 +++++++++++++++++++
+>  drivers/media/platform/rcar-vin/rcar-vin.h |  4 ++++
+>  2 files changed, 23 insertions(+)
+>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/p=
+latform/rcar-vin/rcar-dma.c
+> index b4be75d5009080f7..8ea73cdc9a720abe 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -1070,6 +1070,17 @@ static int rvin_start_streaming(struct vb2_queue *=
+vq, unsigned int count)
+>  	unsigned long flags;
+>  	int ret;
+>
+> +	/* Allocate scratch buffer. */
+> +	vin->scratch =3D dma_alloc_coherent(vin->dev, vin->format.sizeimage,
+> +					  &vin->scratch_phys, GFP_KERNEL);
+> +	if (!vin->scratch) {
+> +		spin_lock_irqsave(&vin->qlock, flags);
+> +		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
+> +		spin_unlock_irqrestore(&vin->qlock, flags);
+> +		vin_err(vin, "Failed to allocate scratch buffer\n");
+> +		return -ENOMEM;
+> +	}
+> +
+>  	sd =3D vin_to_source(vin);
+>  	v4l2_subdev_call(sd, video, s_stream, 1);
+>
+> @@ -1085,6 +1096,10 @@ static int rvin_start_streaming(struct vb2_queue *=
+vq, unsigned int count)
+>
+>  	spin_unlock_irqrestore(&vin->qlock, flags);
+>
+> +	if (ret)
+> +		dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
+> +				  vin->scratch_phys);
+> +
+>  	return ret;
+>  }
+>
+> @@ -1135,6 +1150,10 @@ static void rvin_stop_streaming(struct vb2_queue *=
+vq)
+>
+>  	/* disable interrupts */
+>  	rvin_disable_interrupts(vin);
+> +
+> +	/* Free scratch buffer. */
+> +	dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
+> +			  vin->scratch_phys);
+>  }
+>
+>  static const struct vb2_ops rvin_qops =3D {
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/p=
+latform/rcar-vin/rcar-vin.h
+> index 5382078143fb3869..11a981d707c7ca47 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -102,6 +102,8 @@ struct rvin_graph_entity {
+>   *
+>   * @lock:		protects @queue
+>   * @queue:		vb2 buffers queue
+> + * @scratch:		cpu address for scratch buffer
+> + * @scratch_phys:	pysical address of the scratch buffer
+
+Nitpicking: physical
+
+Thanks
+   j
+
+>   *
+>   * @qlock:		protects @queue_buf, @buf_list, @continuous, @sequence
+>   *			@state
+> @@ -130,6 +132,8 @@ struct rvin_dev {
+>
+>  	struct mutex lock;
+>  	struct vb2_queue queue;
+> +	void *scratch;
+> +	dma_addr_t scratch_phys;
+>
+>  	spinlock_t qlock;
+>  	struct vb2_v4l2_buffer *queue_buf[HW_BUFFER_NUM];
+> --
+> 2.16.2
+>
+
+--LpQ9ahxlCli8rRTG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJapobBAAoJEHI0Bo8WoVY8tl8P/122gpN1fv+J3QEC2/CwdVrN
+TFvZL6qJgn5dgY+JmCy3nY5D9SsWcM2Jv+L0W1KjLkSwyhLsaQeBoAMGXZ4iY4gb
+8HDnFiEZeyar3/1mxA31uGKyAfnXDcQTIypg6EsAlxLOiVrhonJfSfpy2qTO3Jvw
+tWFlU2RKwu0qomB49AzNlg/gPftkUdXm+/u/dO0QogAXl7r+WyOYGhG4L2jQ364x
+JG5y4VFUOSabsJMmisupaIb/FbQSYbm3ACnpuhI5Samo4vTS4P08fOib3JRVGAOw
+96Hp+KXy/atIrtS3Lo6+tCzNPFR2dydqfRVZKwkeh/THR1mPumdoRduxYYSNmDEE
+9RFY/SYhCbZy9Ihj8PHSVi9ezjq+z21mu9KzAHFQksX9QbfiqgLVydeRZO+3X/a4
+0m3U3Oxu5Dnv4mPsHi9mUqRXPNckLOVaAkQt2YuLziOmMHZQQdcYRtUb6g+QQfaQ
+fVFAtr/2aOL7VirfLNkYQRGn/wEaFpiZ51H0VSJWEapSJ6P+GnGz/tGlpcYTSBVu
+vTgWFmy52hI47HXRVbH3qst2jImQTvQL8izwkuA0rSnOVwoHGEvVLXD28GR/gNM2
+kZrpZN6o5omk7vqnBw0gHqDoDuO/9KpeHBKBNbFE57w7Jl2sw/R8m4i4Vr1uwSfJ
+tBhzL17Ibd6LUztaG/Ft
+=blpB
+-----END PGP SIGNATURE-----
+
+--LpQ9ahxlCli8rRTG--
