@@ -1,46 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:46171 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751991AbeCNNO3 (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:39473 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751903AbeCMT0F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Mar 2018 09:14:29 -0400
-MIME-Version: 1.0
-In-Reply-To: <d21e29c9-1364-357e-dd64-af14b0068cbd@cogentembedded.com>
-References: <d21e29c9-1364-357e-dd64-af14b0068cbd@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Mar 2018 14:14:27 +0100
-Message-ID: <CAMuHMdW6CwF25pPXQqMKy=ZdV0oPDrxyEnt8p_NWjDT=ZSOS8Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: v3msk: add SCIF0 pins
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 13 Mar 2018 15:26:05 -0400
+Received: by mail-lf0-f65.google.com with SMTP id f75-v6so1137242lfg.6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Mar 2018 12:26:04 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] arm64: dts: renesas: v3msk: add SCIF0 pins
+To: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <d21e29c9-1364-357e-dd64-af14b0068cbd@cogentembedded.com>
+Date: Tue, 13 Mar 2018 22:26:01 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 8:26 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the (previously omitted) SCIF0 pin data to the V3M Starter Kit board's
-> device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add the (previously omitted) SCIF0 pin data to the V3M Starter Kit board's
+device tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+The patch is against the 'renesas-devel-20180308-v4.16-rc4' tag of Simon's
+'renesas.git repo...
 
-                        Geert
+ arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+@@ -51,6 +51,16 @@
+ 	clock-frequency = <32768>;
+ };
+ 
++&pfc {
++	scif0_pins: scif0 {
++		groups = "scif0_data";
++		function = "scif0";
++	};
++};
++
+ &scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
