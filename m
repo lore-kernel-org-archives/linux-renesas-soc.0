@@ -1,39 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:49820 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751948AbeCWJJu (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41748 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753078AbeCMSFm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:09:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+        Tue, 13 Mar 2018 14:05:42 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] pinctrl: sh-pfc: r8a7795: Fix comment for MSIOF3 SS2_E pin
-Date: Fri, 23 Mar 2018 10:09:41 +0100
-Message-Id: <1521796182-24791-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1521796182-24791-1-git-send-email-geert+renesas@glider.be>
-References: <1521796182-24791-1-git-send-email-geert+renesas@glider.be>
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 04/11] media: vsp1: Remove unused display list structure field
+Date: Tue, 13 Mar 2018 19:05:20 +0100
+Message-Id: <8ee09a94a13469d440cd1ef163125c4b4d453531.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The vsp1 reference in the vsp1_dl_body structure is not used.
+Remove it.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 038fb52499b3c9be..19a2f7c15bcb4dca 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3123,7 +3123,7 @@ static const unsigned int msiof3_ss1_e_mux[] = {
- 	MSIOF3_SS1_E_MARK,
- };
- static const unsigned int msiof3_ss2_e_pins[] = {
--	/* SS1 */
-+	/* SS2 */
- 	RCAR_GP_PIN(2, 0),
- };
- static const unsigned int msiof3_ss2_e_mux[] = {
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_dl.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 8162f4ce66eb..310ce81cd724 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -48,7 +48,6 @@ struct vsp1_dl_entry {
+  * @list: entry in the display list list of bodies
+  * @free: entry in the pool free body list
+  * @pool: pool to which this body belongs
+- * @vsp1: the VSP1 device
+  * @entries: array of entries
+  * @dma: DMA address of the entries
+  * @size: size of the DMA memory in bytes
+@@ -62,7 +61,6 @@ struct vsp1_dl_body {
+ 	refcount_t refcnt;
+ 
+ 	struct vsp1_dl_body_pool *pool;
+-	struct vsp1_device *vsp1;
+ 
+ 	struct vsp1_dl_entry *entries;
+ 	dma_addr_t dma;
 -- 
-2.7.4
+git-series 0.9.1
