@@ -1,143 +1,69 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35488 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751808AbeCMODx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 10:03:53 -0400
-Subject: Re: [PATCH 02/11] media: vsp1: use kernel __packed for structures
-To: David Laight <David.Laight@ACULAB.COM>,
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'kieran.bingham@ideasonboard.com'" <kieran.bingham@ideasonboard.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+CC: Mauro Carvalho Chehab <mchehab@kernel.org>,
         open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 02/11] media: vsp1: use kernel __packed for structures
+Date: Tue, 13 Mar 2018 12:38:33 +0000
+Message-ID: <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
 References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
  <767c4c9f6aa4799a58f0979b318208f1d3e27860.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
  <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
  <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
- <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <8ecfb374-e979-a54d-74d9-d65dfbb5c3ef@ideasonboard.com>
-Date: Tue, 13 Mar 2018 15:03:47 +0100
+In-Reply-To: <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi David,
-
-On 13/03/18 13:38, David Laight wrote:
-> From: Kieran Bingham [mailto:kieran.bingham+renesas@ideasonboard.com]
->> On 13/03/18 11:20, David Laight wrote:
->>> From: Kieran Bingham
->>>> Sent: 09 March 2018 22:04
->>>> The kernel provides a __packed definition to abstract away from the
->>>> compiler specific attributes tag.
->>>>
->>>> Convert all packed structures in VSP1 to use it.
->>>>
->>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>>> ---
->>>>  drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
->>>>  1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
->>>> index 37e2c984fbf3..382e45c2054e 100644
->>>> --- a/drivers/media/platform/vsp1/vsp1_dl.c
->>>> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
->>>> @@ -29,19 +29,19 @@
->>>>  struct vsp1_dl_header_list {
->>>>  	u32 num_bytes;
->>>>  	u32 addr;
->>>> -} __attribute__((__packed__));
->>>> +} __packed;
->>>>
->>>>  struct vsp1_dl_header {
->>>>  	u32 num_lists;
->>>>  	struct vsp1_dl_header_list lists[8];
->>>>  	u32 next_header;
->>>>  	u32 flags;
->>>> -} __attribute__((__packed__));
->>>> +} __packed;
->>>>
->>>>  struct vsp1_dl_entry {
->>>>  	u32 addr;
->>>>  	u32 data;
->>>> -} __attribute__((__packed__));
->>>> +} __packed;
->>>
->>> Do these structures ever actually appear in misaligned memory?
->>> If they don't then they shouldn't be marked 'packed'.
->>
->> I believe the declaration is to ensure that the struct definition is not altered
->> by the compiler as these structures specifically define the layout of how the
->> memory is read by the VSP1 hardware.
-> 
-> The C language and ABI define structure layouts.
-> 
->> Certainly 2 u32's sequentially stored in a struct are unlikely to be moved or
->> rearranged by the compiler (though I believe it would be free to do so if it
->> chose without this attribute), but I think the declaration shows the intent of
->> the memory structure.
-> 
-> The language requires the fields be in order and the ABI stops the compiler
-> adding 'random' padding.
-> 
->> Isn't this a common approach throughout the kernel when dealing with hardware
->> defined memory structures ?
-> 
-> Absolutely not.
-> __packed tells the compiler that the structure might be on any address boundary.
-> On many architectures this means the compiler must use byte accesses with shifts
-> and ors for every access.
-> The most a hardware defined structure will have is a compile-time assert
-> that it is the correct size (to avoid silly errors from changes).
-
-
-
-Ok - interesting, I see what you're saying - and certainly don't want the
-compiler to be performing byte accesses on the structures unnecessarily.
-
-I'm trying to distinguish the difference here. Is the single point that
- __packed
-
-causes byte-access, where as
-
-__attribute__((__packed__));
-
-does not?
-
-Looking at the GCC docs [0]: I see that  __attribute__((__packed__)) tells the
-compiler that the "structure or union is placed to minimize the memory required".
-
-However, the keil compiler docs[1] do certainly declare that __packed causes
-byte alignment.
-
-I was confused/thrown off here by the Kernel defining __packed as
-__attribute__((packed)) at [2].
-
-Do __attribute__((packed)) and __attribute__((__packed__)) differ ?
-
-In which case, from what I've read so far I wish "__packed" was "__unaligned"...
-
-
-[0]
-https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-packed-type-attribute
-
-[1] http://www.keil.com/support/man/docs/armcc/armcc_chr1359124230195.htm
-
-[2]
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/compiler-gcc.h?h=v4.16-rc5#n92
-
-
-Regards
-
-Kieran
-
-
-> 	David
-> 
+RnJvbTogS2llcmFuIEJpbmdoYW0gW21haWx0bzpraWVyYW4uYmluZ2hhbStyZW5lc2FzQGlkZWFz
+b25ib2FyZC5jb21dDQo+IE9uIDEzLzAzLzE4IDExOjIwLCBEYXZpZCBMYWlnaHQgd3JvdGU6DQo+
+ID4gRnJvbTogS2llcmFuIEJpbmdoYW0NCj4gPj4gU2VudDogMDkgTWFyY2ggMjAxOCAyMjowNA0K
+PiA+PiBUaGUga2VybmVsIHByb3ZpZGVzIGEgX19wYWNrZWQgZGVmaW5pdGlvbiB0byBhYnN0cmFj
+dCBhd2F5IGZyb20gdGhlDQo+ID4+IGNvbXBpbGVyIHNwZWNpZmljIGF0dHJpYnV0ZXMgdGFnLg0K
+PiA+Pg0KPiA+PiBDb252ZXJ0IGFsbCBwYWNrZWQgc3RydWN0dXJlcyBpbiBWU1AxIHRvIHVzZSBp
+dC4NCj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogS2llcmFuIEJpbmdoYW0gPGtpZXJhbi5iaW5n
+aGFtK3JlbmVzYXNAaWRlYXNvbmJvYXJkLmNvbT4NCj4gPj4gLS0tDQo+ID4+ICBkcml2ZXJzL21l
+ZGlhL3BsYXRmb3JtL3ZzcDEvdnNwMV9kbC5jIHwgNiArKystLS0NCj4gPj4gIDEgZmlsZSBjaGFu
+Z2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ID4+DQo+ID4+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3ZzcDEvdnNwMV9kbC5jIGIvZHJpdmVycy9tZWRp
+YS9wbGF0Zm9ybS92c3AxL3ZzcDFfZGwuYw0KPiA+PiBpbmRleCAzN2UyYzk4NGZiZjMuLjM4MmU0
+NWMyMDU0ZSAxMDA2NDQNCj4gPj4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS92c3AxL3Zz
+cDFfZGwuYw0KPiA+PiArKysgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3ZzcDEvdnNwMV9kbC5j
+DQo+ID4+IEBAIC0yOSwxOSArMjksMTkgQEANCj4gPj4gIHN0cnVjdCB2c3AxX2RsX2hlYWRlcl9s
+aXN0IHsNCj4gPj4gIAl1MzIgbnVtX2J5dGVzOw0KPiA+PiAgCXUzMiBhZGRyOw0KPiA+PiAtfSBf
+X2F0dHJpYnV0ZV9fKChfX3BhY2tlZF9fKSk7DQo+ID4+ICt9IF9fcGFja2VkOw0KPiA+Pg0KPiA+
+PiAgc3RydWN0IHZzcDFfZGxfaGVhZGVyIHsNCj4gPj4gIAl1MzIgbnVtX2xpc3RzOw0KPiA+PiAg
+CXN0cnVjdCB2c3AxX2RsX2hlYWRlcl9saXN0IGxpc3RzWzhdOw0KPiA+PiAgCXUzMiBuZXh0X2hl
+YWRlcjsNCj4gPj4gIAl1MzIgZmxhZ3M7DQo+ID4+IC19IF9fYXR0cmlidXRlX18oKF9fcGFja2Vk
+X18pKTsNCj4gPj4gK30gX19wYWNrZWQ7DQo+ID4+DQo+ID4+ICBzdHJ1Y3QgdnNwMV9kbF9lbnRy
+eSB7DQo+ID4+ICAJdTMyIGFkZHI7DQo+ID4+ICAJdTMyIGRhdGE7DQo+ID4+IC19IF9fYXR0cmli
+dXRlX18oKF9fcGFja2VkX18pKTsNCj4gPj4gK30gX19wYWNrZWQ7DQo+ID4NCj4gPiBEbyB0aGVz
+ZSBzdHJ1Y3R1cmVzIGV2ZXIgYWN0dWFsbHkgYXBwZWFyIGluIG1pc2FsaWduZWQgbWVtb3J5Pw0K
+PiA+IElmIHRoZXkgZG9uJ3QgdGhlbiB0aGV5IHNob3VsZG4ndCBiZSBtYXJrZWQgJ3BhY2tlZCcu
+DQo+IA0KPiBJIGJlbGlldmUgdGhlIGRlY2xhcmF0aW9uIGlzIHRvIGVuc3VyZSB0aGF0IHRoZSBz
+dHJ1Y3QgZGVmaW5pdGlvbiBpcyBub3QgYWx0ZXJlZA0KPiBieSB0aGUgY29tcGlsZXIgYXMgdGhl
+c2Ugc3RydWN0dXJlcyBzcGVjaWZpY2FsbHkgZGVmaW5lIHRoZSBsYXlvdXQgb2YgaG93IHRoZQ0K
+PiBtZW1vcnkgaXMgcmVhZCBieSB0aGUgVlNQMSBoYXJkd2FyZS4NCg0KVGhlIEMgbGFuZ3VhZ2Ug
+YW5kIEFCSSBkZWZpbmUgc3RydWN0dXJlIGxheW91dHMuDQoNCj4gQ2VydGFpbmx5IDIgdTMyJ3Mg
+c2VxdWVudGlhbGx5IHN0b3JlZCBpbiBhIHN0cnVjdCBhcmUgdW5saWtlbHkgdG8gYmUgbW92ZWQg
+b3INCj4gcmVhcnJhbmdlZCBieSB0aGUgY29tcGlsZXIgKHRob3VnaCBJIGJlbGlldmUgaXQgd291
+bGQgYmUgZnJlZSB0byBkbyBzbyBpZiBpdA0KPiBjaG9zZSB3aXRob3V0IHRoaXMgYXR0cmlidXRl
+KSwgYnV0IEkgdGhpbmsgdGhlIGRlY2xhcmF0aW9uIHNob3dzIHRoZSBpbnRlbnQgb2YNCj4gdGhl
+IG1lbW9yeSBzdHJ1Y3R1cmUuDQoNClRoZSBsYW5ndWFnZSByZXF1aXJlcyB0aGUgZmllbGRzIGJl
+IGluIG9yZGVyIGFuZCB0aGUgQUJJIHN0b3BzIHRoZSBjb21waWxlcg0KYWRkaW5nICdyYW5kb20n
+IHBhZGRpbmcuDQoNCj4gSXNuJ3QgdGhpcyBhIGNvbW1vbiBhcHByb2FjaCB0aHJvdWdob3V0IHRo
+ZSBrZXJuZWwgd2hlbiBkZWFsaW5nIHdpdGggaGFyZHdhcmUNCj4gZGVmaW5lZCBtZW1vcnkgc3Ry
+dWN0dXJlcyA/DQoNCkFic29sdXRlbHkgbm90Lg0KX19wYWNrZWQgdGVsbHMgdGhlIGNvbXBpbGVy
+IHRoYXQgdGhlIHN0cnVjdHVyZSBtaWdodCBiZSBvbiBhbnkgYWRkcmVzcyBib3VuZGFyeS4NCk9u
+IG1hbnkgYXJjaGl0ZWN0dXJlcyB0aGlzIG1lYW5zIHRoZSBjb21waWxlciBtdXN0IHVzZSBieXRl
+IGFjY2Vzc2VzIHdpdGggc2hpZnRzDQphbmQgb3JzIGZvciBldmVyeSBhY2Nlc3MuDQpUaGUgbW9z
+dCBhIGhhcmR3YXJlIGRlZmluZWQgc3RydWN0dXJlIHdpbGwgaGF2ZSBpcyBhIGNvbXBpbGUtdGlt
+ZSBhc3NlcnQNCnRoYXQgaXQgaXMgdGhlIGNvcnJlY3Qgc2l6ZSAodG8gYXZvaWQgc2lsbHkgZXJy
+b3JzIGZyb20gY2hhbmdlcykuDQoNCglEYXZpZA0KDQo=
