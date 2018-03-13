@@ -1,295 +1,97 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36688 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753493AbeCXUHp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:07:45 -0400
-Received: by mail-lf0-f68.google.com with SMTP id z143-v6so22881849lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Mar 2018 13:07:44 -0700 (PDT)
-Subject: [PATCH 1/5] sh_eth: add sh_eth_cpu_data::soft_reset() method
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
-References: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
-Message-ID: <bd34aa02-0393-d590-0774-d2d37bb2e414@cogentembedded.com>
-Date: Sat, 24 Mar 2018 23:07:41 +0300
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdV3JHySCmNoeaNNwF7iewRo-hUJQbErONEyn6EpOh=Weg@mail.gmail.com>
+References: <1520799995-26347-1-git-send-email-ykaneko0929@gmail.com>
+ <1520799995-26347-2-git-send-email-ykaneko0929@gmail.com> <CAMuHMdV3JHySCmNoeaNNwF7iewRo-hUJQbErONEyn6EpOh=Weg@mail.gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Date: Wed, 14 Mar 2018 01:59:01 +0900
+Message-ID: <CAH1o70LX5_UHHeN67PXWsq-bcE7MJZs4UtkGDg1hjaEEUEtG0g@mail.gmail.com>
+Subject: Re: [PATCH/RFT 1/3] thermal: rcar_thermal: add r8a77995 support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-sh_eth_reset() performs a software reset which is implemented in a
-completely different way for the GEther-like controllers vs the other
-controllers due to a different layout of EDMR (and other factors) --
-it therefore makes sense to convert this function to a mandatory
-sh_eth_cpu_data::soft_reset() method and thus get rid of the runtime
-controller type check via sh_eth_is_{gether|rz_fast_ether}().
+Hi Geert-san,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thanks for your review.
 
----
- drivers/net/ethernet/renesas/sh_eth.c |  135 ++++++++++++++++++++--------------
- drivers/net/ethernet/renesas/sh_eth.h |    3 
- 2 files changed, 83 insertions(+), 55 deletions(-)
+2018-03-12 20:02 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+> Hi  Kaneko-san,
+>
+> On Sun, Mar 11, 2018 at 9:26 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+>> Add support for R-Car D3 (r8a77995) thermal sensor.
+>>
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>
+> Thanks for your patch!
+>
+>> --- a/drivers/thermal/rcar_thermal.c
+>> +++ b/drivers/thermal/rcar_thermal.c
+>
+>> @@ -77,13 +101,23 @@ struct rcar_thermal_priv {
+>>  #define rcar_priv_to_dev(priv)         ((priv)->common->dev)
+>>  #define rcar_has_irq_support(priv)     ((priv)->common->base)
+>>  #define rcar_id_to_shift(priv)         ((priv)->id * 8)
+>> -#define rcar_of_data(dev)              ((unsigned long)of_device_get_match_data(dev))
+>> -#define rcar_use_of_thermal(dev)       (rcar_of_data(dev) == USE_OF_THERMAL)
+>> +#define rcar_of_data(dev) \
+>> +       ((struct rcar_thermal_chip *)of_device_get_match_data(dev))
+>
+> I think it would be better to get rid of this macro, as
+> of_device_get_match_data()
+> walks the rcar_thermal_dt_ids[] over and over again.
+>
+> Instead, you can store a pointer to struct rcar_thermal_chip in struct
+> rcar_thermal_priv in rcar_thermal_probe().
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -501,6 +501,62 @@ static void sh_eth_chip_reset(struct net
- 	mdelay(1);
- }
- 
-+static int sh_eth_soft_reset(struct net_device *ndev)
-+{
-+	sh_eth_modify(ndev, EDMR, EDMR_SRST_ETHER, EDMR_SRST_ETHER);
-+	mdelay(3);
-+	sh_eth_modify(ndev, EDMR, EDMR_SRST_ETHER, 0);
-+
-+	return 0;
-+}
-+
-+static int sh_eth_check_soft_reset(struct net_device *ndev)
-+{
-+	int cnt;
-+
-+	for (cnt = 100; cnt > 0; cnt--) {
-+		if (!(sh_eth_read(ndev, EDMR) & EDMR_SRST_GETHER))
-+			return 0;
-+		mdelay(1);
-+	}
-+
-+	netdev_err(ndev, "Device reset failed\n");
-+	return -ETIMEDOUT;
-+}
-+
-+static int sh_eth_soft_reset_gether(struct net_device *ndev)
-+{
-+	struct sh_eth_private *mdp = netdev_priv(ndev);
-+	int ret;
-+
-+	sh_eth_write(ndev, EDSR_ENALL, EDSR);
-+	sh_eth_modify(ndev, EDMR, EDMR_SRST_GETHER, EDMR_SRST_GETHER);
-+
-+	ret = sh_eth_check_soft_reset(ndev);
-+	if (ret)
-+		return ret;
-+
-+	/* Table Init */
-+	sh_eth_write(ndev, 0, TDLAR);
-+	sh_eth_write(ndev, 0, TDFAR);
-+	sh_eth_write(ndev, 0, TDFXR);
-+	sh_eth_write(ndev, 0, TDFFR);
-+	sh_eth_write(ndev, 0, RDLAR);
-+	sh_eth_write(ndev, 0, RDFAR);
-+	sh_eth_write(ndev, 0, RDFXR);
-+	sh_eth_write(ndev, 0, RDFFR);
-+
-+	/* Reset HW CRC register */
-+	if (mdp->cd->hw_checksum)
-+		sh_eth_write(ndev, 0, CSMR);
-+
-+	/* Select MII mode */
-+	if (mdp->cd->select_mii)
-+		sh_eth_select_mii(ndev);
-+
-+	return ret;
-+}
-+
- static void sh_eth_set_rate_gether(struct net_device *ndev)
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
-@@ -521,6 +577,8 @@ static void sh_eth_set_rate_gether(struc
- #ifdef CONFIG_OF
- /* R7S72100 */
- static struct sh_eth_cpu_data r7s72100_data = {
-+	.soft_reset	= sh_eth_soft_reset_gether,
-+
- 	.chip_reset	= sh_eth_chip_reset,
- 	.set_duplex	= sh_eth_set_duplex,
- 
-@@ -565,6 +623,8 @@ static void sh_eth_chip_reset_r8a7740(st
- 
- /* R8A7740 */
- static struct sh_eth_cpu_data r8a7740_data = {
-+	.soft_reset	= sh_eth_soft_reset_gether,
-+
- 	.chip_reset	= sh_eth_chip_reset_r8a7740,
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_gether,
-@@ -620,6 +680,8 @@ static void sh_eth_set_rate_rcar(struct
- 
- /* R-Car Gen1 */
- static struct sh_eth_cpu_data rcar_gen1_data = {
-+	.soft_reset	= sh_eth_soft_reset,
-+
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_rcar,
- 
-@@ -647,6 +709,8 @@ static struct sh_eth_cpu_data rcar_gen1_
- 
- /* R-Car Gen2 and RZ/G1 */
- static struct sh_eth_cpu_data rcar_gen2_data = {
-+	.soft_reset	= sh_eth_soft_reset,
-+
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_rcar,
- 
-@@ -694,6 +758,8 @@ static void sh_eth_set_rate_sh7724(struc
- 
- /* SH7724 */
- static struct sh_eth_cpu_data sh7724_data = {
-+	.soft_reset	= sh_eth_soft_reset,
-+
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_sh7724,
- 
-@@ -736,6 +802,8 @@ static void sh_eth_set_rate_sh7757(struc
- 
- /* SH7757 */
- static struct sh_eth_cpu_data sh7757_data = {
-+	.soft_reset	= sh_eth_soft_reset,
-+
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_sh7757,
- 
-@@ -808,6 +876,8 @@ static void sh_eth_set_rate_giga(struct
- 
- /* SH7757(GETHERC) */
- static struct sh_eth_cpu_data sh7757_data_giga = {
-+	.soft_reset	= sh_eth_soft_reset_gether,
-+
- 	.chip_reset	= sh_eth_chip_reset_giga,
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_giga,
-@@ -847,6 +917,8 @@ static struct sh_eth_cpu_data sh7757_dat
- 
- /* SH7734 */
- static struct sh_eth_cpu_data sh7734_data = {
-+	.soft_reset	= sh_eth_soft_reset_gether,
-+
- 	.chip_reset	= sh_eth_chip_reset,
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_gether,
-@@ -883,6 +955,8 @@ static struct sh_eth_cpu_data sh7734_dat
- 
- /* SH7763 */
- static struct sh_eth_cpu_data sh7763_data = {
-+	.soft_reset	= sh_eth_soft_reset_gether,
-+
- 	.chip_reset	= sh_eth_chip_reset,
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_gether,
-@@ -917,6 +991,8 @@ static struct sh_eth_cpu_data sh7763_dat
- };
- 
- static struct sh_eth_cpu_data sh7619_data = {
-+	.soft_reset	= sh_eth_soft_reset,
-+
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
- 
- 	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-@@ -935,6 +1011,8 @@ static struct sh_eth_cpu_data sh7619_dat
- };
- 
- static struct sh_eth_cpu_data sh771x_data = {
-+	.soft_reset	= sh_eth_soft_reset,
-+
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
- 
- 	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ECIIP |
-@@ -974,59 +1052,6 @@ static void sh_eth_set_default_cpu_data(
- 		cd->trscer_err_mask = DEFAULT_TRSCER_ERR_MASK;
- }
- 
--static int sh_eth_check_reset(struct net_device *ndev)
--{
--	int cnt;
--
--	for (cnt = 100; cnt > 0; cnt--) {
--		if (!(sh_eth_read(ndev, EDMR) & EDMR_SRST_GETHER))
--			return 0;
--		mdelay(1);
--	}
--
--	netdev_err(ndev, "Device reset failed\n");
--	return -ETIMEDOUT;
--}
--
--static int sh_eth_reset(struct net_device *ndev)
--{
--	struct sh_eth_private *mdp = netdev_priv(ndev);
--	int ret = 0;
--
--	if (sh_eth_is_gether(mdp) || sh_eth_is_rz_fast_ether(mdp)) {
--		sh_eth_write(ndev, EDSR_ENALL, EDSR);
--		sh_eth_modify(ndev, EDMR, EDMR_SRST_GETHER, EDMR_SRST_GETHER);
--
--		ret = sh_eth_check_reset(ndev);
--		if (ret)
--			return ret;
--
--		/* Table Init */
--		sh_eth_write(ndev, 0x0, TDLAR);
--		sh_eth_write(ndev, 0x0, TDFAR);
--		sh_eth_write(ndev, 0x0, TDFXR);
--		sh_eth_write(ndev, 0x0, TDFFR);
--		sh_eth_write(ndev, 0x0, RDLAR);
--		sh_eth_write(ndev, 0x0, RDFAR);
--		sh_eth_write(ndev, 0x0, RDFXR);
--		sh_eth_write(ndev, 0x0, RDFFR);
--
--		/* Reset HW CRC register */
--		if (mdp->cd->hw_checksum)
--			sh_eth_write(ndev, 0x0, CSMR);
--
--		/* Select MII mode */
--		if (mdp->cd->select_mii)
--			sh_eth_select_mii(ndev);
--	} else {
--		sh_eth_modify(ndev, EDMR, EDMR_SRST_ETHER, EDMR_SRST_ETHER);
--		mdelay(3);
--		sh_eth_modify(ndev, EDMR, EDMR_SRST_ETHER, 0);
--	}
--
--	return ret;
--}
--
- static void sh_eth_set_receive_align(struct sk_buff *skb)
- {
- 	uintptr_t reserve = (uintptr_t)skb->data & (SH_ETH_RX_ALIGN - 1);
-@@ -1362,7 +1387,7 @@ static int sh_eth_dev_init(struct net_de
- 	int ret;
- 
- 	/* Soft Reset */
--	ret = sh_eth_reset(ndev);
-+	ret = mdp->cd->soft_reset(ndev);
- 	if (ret)
- 		return ret;
- 
-@@ -1463,7 +1488,7 @@ static void sh_eth_dev_exit(struct net_d
- 	 */
- 	msleep(2); /* max frame time at 10 Mbps < 1250 us */
- 	sh_eth_get_stats(ndev);
--	sh_eth_reset(ndev);
-+	mdp->cd->soft_reset(ndev);
- 
- 	/* Set MAC address again */
- 	update_mac_address(ndev);
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -469,6 +469,9 @@ struct sh_eth_rxdesc {
- 
- /* This structure is used by each CPU dependency handling. */
- struct sh_eth_cpu_data {
-+	/* mandatory functions */
-+	int (*soft_reset)(struct net_device *ndev);
-+
- 	/* optional functions */
- 	void (*chip_reset)(struct net_device *ndev);
- 	void (*set_duplex)(struct net_device *ndev);
+I understand.
+I will work on this improvement.
+
+>
+>> +#define rcar_use_of_thermal(dev)       (rcar_of_data(dev)->use_of_thermal)
+>> -#define USE_OF_THERMAL 1
+>>  static const struct of_device_id rcar_thermal_dt_ids[] = {
+>> -       { .compatible = "renesas,rcar-thermal", },
+>> -       { .compatible = "renesas,rcar-gen2-thermal", .data = (void *)USE_OF_THERMAL },
+>> +       {
+>> +               .compatible = "renesas,rcar-thermal",
+>> +               .data = (void *)&rcar_thermal,
+>
+> This cast not needed.
+
+Yes.
+
+>
+>> @@ -438,6 +473,7 @@ static int rcar_thermal_probe(struct platform_device *pdev)
+>>         struct rcar_thermal_priv *priv;
+>>         struct device *dev = &pdev->dev;
+>>         struct resource *res, *irq;
+>> +       int nirq = rcar_of_data(dev)->type == RCAR_GEN3_THERMAL ? 2 : 1;
+>
+> Why 2? Your DT patch has 3 interrupts, which matches the datasheet.
+
+This driver uses INTDT0 and INTDT1. INTDT2 is not used.
+
+
+Thanks,
+Kaneko
+
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
