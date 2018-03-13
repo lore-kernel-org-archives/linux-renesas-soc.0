@@ -1,147 +1,98 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 10/32] rcar-vin: all Gen2 boards can scale simplify logic
-Date: Fri,  2 Mar 2018 02:57:29 +0100
-Message-Id: <20180302015751.25596-11-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:33395 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751679AbeCMHcA (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 13 Mar 2018 03:32:00 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <TY1PR06MB0992451635511B45D8D7C345D8D20@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1520596498-4801-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1520596498-4801-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdV-vutHutGJnOhqJ14_+-ig2jzFakeWzOxBy+5F6XRFXw@mail.gmail.com> <TY1PR06MB0992451635511B45D8D7C345D8D20@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Mar 2018 08:31:58 +0100
+Message-ID: <CAMuHMdXoJNZBcgTvryd0a7FfAngR_dYBwxV5GewwFAuCHSuspg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pwm: rcar: add suspend/resume support
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The logic to preserve the requested format width and height are too
-complex and come from a premature optimization for Gen3. All Gen2 SoC
-can scale and the Gen3 implementation will not use these functions at
-all so simply preserve the width and height when interacting with the
-subdevice much like the field is preserved simplifies the logic quite a
-bit.
+Hi Shimoda-san,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-dma.c  |  8 --------
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 25 +++++++++++--------------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  2 --
- 3 files changed, 11 insertions(+), 24 deletions(-)
+On Tue, Mar 13, 2018 at 8:04 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+>> From: Geert Uytterhoeven, Sent: Friday, March 9, 2018 9:53 PM
+>> On Fri, Mar 9, 2018 at 12:54 PM, Yoshihiro Shimoda
+>> <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> > This patch adds suspend/resume support for Renesas PWM driver.
+>> >
+>> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>>
+>> Thanks for your patch!
+>
+> Thank you for your review!
+>
+>> > --- a/drivers/pwm/pwm-rcar.c
+>> > +++ b/drivers/pwm/pwm-rcar.c
+>> > @@ -254,11 +254,38 @@ static int rcar_pwm_remove(struct platform_device *pdev)
+>> >  };
+>> >  MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
+>> >
+>> > +#ifdef CONFIG_PM_SLEEP
+>> > +static int rcar_pwm_suspend(struct device *dev)
+>> > +{
+>> > +       pm_runtime_put(dev);
+>> > +
+>> > +       return 0;
+>> > +}
+>> > +
+>> > +static int rcar_pwm_resume(struct device *dev)
+>> > +{
+>> > +       struct platform_device *pdev = to_platform_device(dev);
+>> > +       struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
+>> > +       struct pwm_chip *chip = &rcar_pwm->chip;
+>> > +       struct pwm_device *pwm = &chip->pwms[0];
+>> > +
+>> > +       pm_runtime_get_sync(dev);
+>>
+>> This enables the module clock unconditionally, so you can restore the
+>> register values below...
+>>
+>> > +       rcar_pwm_config(chip, pwm, pwm->state.duty_cycle, pwm->state.period);
+>> > +       if (pwm_is_enabled(pwm))
+>> > +               rcar_pwm_enable(chip, pwm);
+>>
+>> ... but shouldn't you disable the clock again if the PWM is not in use,
+>> like below?
+>>
+>>         else
+>>                 pm_runtime_put(dev);
+>
+> Thank you for the pointing out.
+> I realize that this suspend/resume function should check PWMF_REQUESTED condition
+> because this driver enables the clock after the .request(rcar_pwm_request) was called.
+> So, I will fix this patch in v2.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index a7cda3922cb74baa..fd14be20a6604d7a 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -585,14 +585,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
- 		0, 0);
- }
- 
--void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
--		    u32 width, u32 height)
--{
--	/* All VIN channels on Gen2 have scalers */
--	pix->width = width;
--	pix->height = height;
--}
--
- /* -----------------------------------------------------------------------------
-  * Hardware setup
-  */
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 8805d7911a761019..c2265324c7c96308 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -166,6 +166,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 		.which = which,
- 	};
- 	enum v4l2_field field;
-+	u32 width, height;
- 	int ret;
- 
- 	sd = vin_to_source(vin);
-@@ -178,7 +179,10 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	format.pad = vin->digital->source_pad;
- 
-+	/* Allow the video device to override field and to scale */
- 	field = pix->field;
-+	width = pix->width;
-+	height = pix->height;
- 
- 	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
-@@ -186,11 +190,13 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	v4l2_fill_pix_format(pix, &format.format);
- 
--	pix->field = field;
--
- 	source->width = pix->width;
- 	source->height = pix->height;
- 
-+	pix->field = field;
-+	pix->width = width;
-+	pix->height = height;
-+
- 	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
- 		source->height);
- 
-@@ -204,13 +210,9 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 			     struct v4l2_pix_format *pix,
- 			     struct rvin_source_fmt *source)
- {
--	u32 rwidth, rheight, walign;
-+	u32 walign;
- 	int ret;
- 
--	/* Requested */
--	rwidth = pix->width;
--	rheight = pix->height;
--
- 	/* Keep current field if no specific one is asked for */
- 	if (pix->field == V4L2_FIELD_ANY)
- 		pix->field = vin->format.field;
-@@ -248,10 +250,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 		break;
- 	}
- 
--	/* If source can't match format try if VIN can scale */
--	if (source->width != rwidth || source->height != rheight)
--		rvin_scale_try(vin, pix, rwidth, rheight);
--
- 	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
- 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
- 
-@@ -270,9 +268,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 		return -EINVAL;
- 	}
- 
--	vin_dbg(vin, "Requested %ux%u Got %ux%u bpl: %d size: %d\n",
--		rwidth, rheight, pix->width, pix->height,
--		pix->bytesperline, pix->sizeimage);
-+	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
-+		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
- 
- 	return 0;
- }
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index f195d174eeacda10..8daba9db0e927a49 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -175,8 +175,6 @@ void rvin_v4l2_unregister(struct rvin_dev *vin);
- const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- 
- /* Cropping, composing and scaling */
--void rvin_scale_try(struct rvin_dev *vin, struct v4l2_pix_format *pix,
--		    u32 width, u32 height);
- void rvin_crop_scale_comp(struct rvin_dev *vin);
- 
- #endif
--- 
-2.16.2
+OK.
+
+> Also, reducing power point of view, this driver should call not pm_runtime_get_sync/put()
+> in _request/_free(). But, I would like to implement such code as a next step :)
+
+That makes sense.  I was already wondering whether those are the best
+locations to call the pm_runtime_*() functions, but I'm not sufficiently
+familiar with the PWM subsystem.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
