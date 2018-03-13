@@ -1,264 +1,152 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:24710 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1163973AbeCBB7T (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:59:19 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 21/32] rcar-vin: use different v4l2 operations in media controller mode
-Date: Fri,  2 Mar 2018 02:57:40 +0100
-Message-Id: <20180302015751.25596-22-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH 02/11] media: vsp1: use kernel __packed for structures
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ David Laight <David.Laight@ACULAB.COM>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <767c4c9f6aa4799a58f0979b318208f1d3e27860.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <b58ff7ec7f7246498325e74b31ba3664@AcuMS.aculab.com>
+ <8513c264-103f-94c8-cc46-972412d13da5@ideasonboard.com>
+ <554b73e9ee2d43b19ac42ee380b7d160@AcuMS.aculab.com>
+ <8ecfb374-e979-a54d-74d9-d65dfbb5c3ef@ideasonboard.com>
+Reply-To: kieran.bingham@ideasonboard.com
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <a7a5de70-1042-e819-f3b8-52287348397f@ideasonboard.com>
+Date: Tue, 13 Mar 2018 23:34:07 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <8ecfb374-e979-a54d-74d9-d65dfbb5c3ef@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the driver runs in media controller mode it should not directly
-control the subdevice instead userspace will be responsible for
-configuring the pipeline. To be able to run in this mode a different set
-of v4l2 operations needs to be used.
+Hi David,
 
-Add a new set of v4l2 operations to support operation without directly
-interacting with the source subdevice.
+Just for reference here, I've posted a v2 of this patch now titled:
+[PATCH v2 02/11] media: vsp1: Remove packed attributes from aligned structures
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-dma.c  |   3 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 161 +++++++++++++++++++++++++++-
- 2 files changed, 160 insertions(+), 4 deletions(-)
+which removes the attributes instead of modifying them.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 3fb9c325285c5a5a..27d0c098f1da40f9 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -628,7 +628,8 @@ static int rvin_setup(struct rvin_dev *vin)
- 		/* Default to TB */
- 		vnmc = VNMC_IM_FULL;
- 		/* Use BT if video standard can be read and is 60 Hz format */
--		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
-+		if (!vin->info->use_mc &&
-+		    !v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
- 			if (std & V4L2_STD_525_60)
- 				vnmc = VNMC_IM_FULL | VNMC_FOC;
- 		}
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 20be21cb1cf521e5..8d92710efffa7276 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -18,12 +18,16 @@
- 
- #include <media/v4l2-event.h>
- #include <media/v4l2-ioctl.h>
-+#include <media/v4l2-mc.h>
- #include <media/v4l2-rect.h>
- 
- #include "rcar-vin.h"
- 
- #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
-+#define RVIN_DEFAULT_WIDTH	800
-+#define RVIN_DEFAULT_HEIGHT	600
- #define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
-+#define RVIN_DEFAULT_COLORSPACE	V4L2_COLORSPACE_SRGB
- 
- /* -----------------------------------------------------------------------------
-  * Format Conversions
-@@ -667,6 +671,74 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
- 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
- };
- 
-+/* -----------------------------------------------------------------------------
-+ * V4L2 Media Controller
-+ */
-+
-+static int rvin_mc_try_fmt_vid_cap(struct file *file, void *priv,
-+				   struct v4l2_format *f)
-+{
-+	struct rvin_dev *vin = video_drvdata(file);
-+
-+	return rvin_format_align(vin, &f->fmt.pix);
-+}
-+
-+static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
-+				 struct v4l2_format *f)
-+{
-+	struct rvin_dev *vin = video_drvdata(file);
-+	int ret;
-+
-+	if (vb2_is_busy(&vin->queue))
-+		return -EBUSY;
-+
-+	ret = rvin_format_align(vin, &f->fmt.pix);
-+	if (ret)
-+		return ret;
-+
-+	vin->format = f->fmt.pix;
-+
-+	return 0;
-+}
-+
-+static int rvin_mc_enum_input(struct file *file, void *priv,
-+			      struct v4l2_input *i)
-+{
-+	if (i->index != 0)
-+		return -EINVAL;
-+
-+	i->type = V4L2_INPUT_TYPE_CAMERA;
-+	strlcpy(i->name, "Camera", sizeof(i->name));
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
-+	.vidioc_querycap		= rvin_querycap,
-+	.vidioc_try_fmt_vid_cap		= rvin_mc_try_fmt_vid_cap,
-+	.vidioc_g_fmt_vid_cap		= rvin_g_fmt_vid_cap,
-+	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
-+	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
-+
-+	.vidioc_enum_input		= rvin_mc_enum_input,
-+	.vidioc_g_input			= rvin_g_input,
-+	.vidioc_s_input			= rvin_s_input,
-+
-+	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
-+	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
-+	.vidioc_querybuf		= vb2_ioctl_querybuf,
-+	.vidioc_qbuf			= vb2_ioctl_qbuf,
-+	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
-+	.vidioc_expbuf			= vb2_ioctl_expbuf,
-+	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
-+	.vidioc_streamon		= vb2_ioctl_streamon,
-+	.vidioc_streamoff		= vb2_ioctl_streamoff,
-+
-+	.vidioc_log_status		= v4l2_ctrl_log_status,
-+	.vidioc_subscribe_event		= rvin_subscribe_event,
-+	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
-+};
-+
- /* -----------------------------------------------------------------------------
-  * File Operations
-  */
-@@ -810,6 +882,74 @@ static const struct v4l2_file_operations rvin_fops = {
- 	.read		= vb2_fop_read,
- };
- 
-+/* -----------------------------------------------------------------------------
-+ * Media controller file operations
-+ */
-+
-+static int rvin_mc_open(struct file *file)
-+{
-+	struct rvin_dev *vin = video_drvdata(file);
-+	int ret;
-+
-+	ret = mutex_lock_interruptible(&vin->lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_get_sync(vin->dev);
-+	if (ret < 0)
-+		goto err_pm;
-+
-+	ret = v4l2_pipeline_pm_use(&vin->vdev.entity, 1);
-+	if (ret < 0)
-+		goto err_v4l2pm;
-+
-+	file->private_data = vin;
-+
-+	ret = v4l2_fh_open(file);
-+	if (ret)
-+		goto err_open;
-+
-+	mutex_unlock(&vin->lock);
-+
-+	return 0;
-+err_open:
-+	v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
-+err_v4l2pm:
-+	pm_runtime_put(vin->dev);
-+err_pm:
-+	mutex_unlock(&vin->lock);
-+
-+	return ret;
-+}
-+
-+static int rvin_mc_release(struct file *file)
-+{
-+	struct rvin_dev *vin = video_drvdata(file);
-+	int ret;
-+
-+	mutex_lock(&vin->lock);
-+
-+	/* the release helper will cleanup any on-going streaming. */
-+	ret = _vb2_fop_release(file, NULL);
-+
-+	v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
-+	pm_runtime_put(vin->dev);
-+
-+	mutex_unlock(&vin->lock);
-+
-+	return ret;
-+}
-+
-+static const struct v4l2_file_operations rvin_mc_fops = {
-+	.owner		= THIS_MODULE,
-+	.unlocked_ioctl	= video_ioctl2,
-+	.open		= rvin_mc_open,
-+	.release	= rvin_mc_release,
-+	.poll		= vb2_fop_poll,
-+	.mmap		= vb2_fop_mmap,
-+	.read		= vb2_fop_read,
-+};
-+
- void rvin_v4l2_unregister(struct rvin_dev *vin)
- {
- 	if (!video_is_registered(&vin->vdev))
-@@ -845,18 +985,33 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	vin->v4l2_dev.notify = rvin_notify;
- 
- 	/* video node */
--	vdev->fops = &rvin_fops;
- 	vdev->v4l2_dev = &vin->v4l2_dev;
- 	vdev->queue = &vin->queue;
- 	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
- 	vdev->release = video_device_release_empty;
--	vdev->ioctl_ops = &rvin_ioctl_ops;
- 	vdev->lock = &vin->lock;
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
- 		V4L2_CAP_READWRITE;
- 
-+	/* Set a default format */
- 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
--	rvin_reset_format(vin);
-+	vin->format.width = RVIN_DEFAULT_WIDTH;
-+	vin->format.height = RVIN_DEFAULT_HEIGHT;
-+	vin->format.field = RVIN_DEFAULT_FIELD;
-+	vin->format.colorspace = RVIN_DEFAULT_COLORSPACE;
-+
-+	if (vin->info->use_mc) {
-+		vdev->fops = &rvin_mc_fops;
-+		vdev->ioctl_ops = &rvin_mc_ioctl_ops;
-+	} else {
-+		vdev->fops = &rvin_fops;
-+		vdev->ioctl_ops = &rvin_ioctl_ops;
-+		rvin_reset_format(vin);
-+	}
-+
-+	ret = rvin_format_align(vin, &vin->format);
-+	if (ret)
-+		return ret;
- 
- 	ret = video_register_device(&vin->vdev, VFL_TYPE_GRABBER, -1);
- 	if (ret) {
--- 
-2.16.2
+Thanks for the pointers!
+
+Regards
+
+Kieran
+
+On 13/03/18 15:03, Kieran Bingham wrote:
+> Hi David,
+> 
+> On 13/03/18 13:38, David Laight wrote:
+>> From: Kieran Bingham [mailto:kieran.bingham+renesas@ideasonboard.com]
+>>> On 13/03/18 11:20, David Laight wrote:
+>>>> From: Kieran Bingham
+>>>>> Sent: 09 March 2018 22:04
+>>>>> The kernel provides a __packed definition to abstract away from the
+>>>>> compiler specific attributes tag.
+>>>>>
+>>>>> Convert all packed structures in VSP1 to use it.
+>>>>>
+>>>>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>>>> ---
+>>>>>  drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
+>>>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+>>>>> index 37e2c984fbf3..382e45c2054e 100644
+>>>>> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+>>>>> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+>>>>> @@ -29,19 +29,19 @@
+>>>>>  struct vsp1_dl_header_list {
+>>>>>  	u32 num_bytes;
+>>>>>  	u32 addr;
+>>>>> -} __attribute__((__packed__));
+>>>>> +} __packed;
+>>>>>
+>>>>>  struct vsp1_dl_header {
+>>>>>  	u32 num_lists;
+>>>>>  	struct vsp1_dl_header_list lists[8];
+>>>>>  	u32 next_header;
+>>>>>  	u32 flags;
+>>>>> -} __attribute__((__packed__));
+>>>>> +} __packed;
+>>>>>
+>>>>>  struct vsp1_dl_entry {
+>>>>>  	u32 addr;
+>>>>>  	u32 data;
+>>>>> -} __attribute__((__packed__));
+>>>>> +} __packed;
+>>>>
+>>>> Do these structures ever actually appear in misaligned memory?
+>>>> If they don't then they shouldn't be marked 'packed'.
+>>>
+>>> I believe the declaration is to ensure that the struct definition is not altered
+>>> by the compiler as these structures specifically define the layout of how the
+>>> memory is read by the VSP1 hardware.
+>>
+>> The C language and ABI define structure layouts.
+>>
+>>> Certainly 2 u32's sequentially stored in a struct are unlikely to be moved or
+>>> rearranged by the compiler (though I believe it would be free to do so if it
+>>> chose without this attribute), but I think the declaration shows the intent of
+>>> the memory structure.
+>>
+>> The language requires the fields be in order and the ABI stops the compiler
+>> adding 'random' padding.
+>>
+>>> Isn't this a common approach throughout the kernel when dealing with hardware
+>>> defined memory structures ?
+>>
+>> Absolutely not.
+>> __packed tells the compiler that the structure might be on any address boundary.
+>> On many architectures this means the compiler must use byte accesses with shifts
+>> and ors for every access.
+>> The most a hardware defined structure will have is a compile-time assert
+>> that it is the correct size (to avoid silly errors from changes).
+> 
+> 
+> 
+> Ok - interesting, I see what you're saying - and certainly don't want the
+> compiler to be performing byte accesses on the structures unnecessarily.
+> 
+> I'm trying to distinguish the difference here. Is the single point that
+>  __packed
+> 
+> causes byte-access, where as
+> 
+> __attribute__((__packed__));
+> 
+> does not?
+> 
+> Looking at the GCC docs [0]: I see that  __attribute__((__packed__)) tells the
+> compiler that the "structure or union is placed to minimize the memory required".
+> 
+> However, the keil compiler docs[1] do certainly declare that __packed causes
+> byte alignment.
+> 
+> I was confused/thrown off here by the Kernel defining __packed as
+> __attribute__((packed)) at [2].
+> 
+> Do __attribute__((packed)) and __attribute__((__packed__)) differ ?
+> 
+> In which case, from what I've read so far I wish "__packed" was "__unaligned"...
+> 
+> 
+> [0]
+> https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-packed-type-attribute
+> 
+> [1] http://www.keil.com/support/man/docs/armcc/armcc_chr1359124230195.htm
+> 
+> [2]
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/compiler-gcc.h?h=v4.16-rc5#n92
+> 
+> 
+> Regards
+> 
+> Kieran
+> 
+> 
+>> 	David
+>>
