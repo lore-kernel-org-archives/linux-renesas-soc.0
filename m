@@ -1,89 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753556AbeCPOzU (ORCPT
+Received: from mail-qt0-f173.google.com ([209.85.216.173]:43343 "EHLO
+        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751824AbeCMQO1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:55:20 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/14] ARM: shmobile: rcar-gen2: Add watchdog support
-Date: Fri, 16 Mar 2018 15:53:36 +0100
-Message-Id: <01d675f159e0f0792947fb823cf2425da4d747ad.1521211738.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521211738.git.horms+renesas@verge.net.au>
-References: <cover.1521211738.git.horms+renesas@verge.net.au>
+        Tue, 13 Mar 2018 12:14:27 -0400
+Received: by mail-qt0-f173.google.com with SMTP id s48so154718qtb.10
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Mar 2018 09:14:27 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1520954300-15884-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1520954300-15884-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Mar 2018 17:14:26 +0100
+Message-ID: <CAMuHMdWxnKZtaAEP66qP8m5xc_XhuBhBkq7CVaeRWV8CGjfToQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: r8a77965: Replace DU2 clock
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Hi Jacopo,
 
-This patch adds watchdog support by installing shmobile_boot_vector_gen2
-to ICRAM1 when enough memory is available, in which case we also keep a
-copy of MPIDR to complete the reset vector logic.
+On Tue, Mar 13, 2018 at 4:18 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> R-Car M3-N does not have DU2 unit but DU3 instead. Fix the module clocks
+> definition to reflect that.
+>
+> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/platsmp-apmu.c |  1 +
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 15 ++++++++++++---
- 2 files changed, 13 insertions(+), 3 deletions(-)
+Thank you!
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 4422b615a6ee..ba732effc90b 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -191,6 +191,7 @@ static void __init shmobile_smp_apmu_setup_boot(void)
- {
- 	/* install boot code shared by all CPUs */
- 	shmobile_boot_fn = __pa_symbol(shmobile_smp_boot);
-+	shmobile_boot_fn_gen2 = shmobile_boot_fn;
- }
- 
- void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index e5f215c8b218..5a798b406af0 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -17,6 +17,7 @@
- #include <linux/smp.h>
- #include <linux/soc/renesas/rcar-sysc.h>
- #include <asm/io.h>
-+#include <asm/cputype.h>
- #include "common.h"
- #include "rcar-gen2.h"
- 
-@@ -37,7 +38,6 @@
- #define CA7RESCNT_CODE	0x5a5a0000
- #define CA7RESCNT_CPUS	0xf		/* CPU0-3 */
- 
--
- /* On-chip RAM */
- #define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
- 
-@@ -119,8 +119,17 @@ void __init rcar_gen2_pm_init(void)
- 	p = ioremap(res.start, resource_size(&res));
- 	if (!p)
- 		return;
--
--	memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
-+	/*
-+	 * install the reset vector, use the largest version if we have enough
-+	 * memory available
-+	 */
-+	if (resource_size(&res) >= shmobile_boot_size_gen2) {
-+		shmobile_boot_cpu_gen2 = read_cpuid_mpidr();
-+		memcpy_toio(p, shmobile_boot_vector_gen2,
-+			    shmobile_boot_size_gen2);
-+	} else {
-+		memcpy_toio(p, shmobile_boot_vector, shmobile_boot_size);
-+	}
- 	iounmap(p);
- 
- 	/* setup reset vectors */
--- 
-2.11.0
+Fixes: 7ce36da900c0a2ff ("clk: renesas: cpg-mssr: Add support for R-Car M3-N")
+
+Queued in clk-renesas-for-v4.17.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
