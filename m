@@ -1,81 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61969 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1031911AbeCAPpC (ORCPT
+Received: from mga11.intel.com ([192.55.52.93]:27989 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751556AbeCMRnj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:45:02 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Wim Van Sebroeck <wim@iguana.be>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 3/3] watchdog: renesas_wdt: Add restart handler
-Date: Thu,  1 Mar 2018 15:44:08 +0000
-Message-Id: <1519919048-21884-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1519919048-21884-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1519919048-21884-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 13 Mar 2018 13:43:39 -0400
+Date: Wed, 14 Mar 2018 01:42:54 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: kbuild-all@01.org, linux-renesas-soc@vger.kernel.org
+Subject: [RFC PATCH renesas-drivers] media: vsp1: vsp1_dl_cmd_pool_create can
+ be static
+Message-ID: <20180313174253.GA35618@lkp-ib03>
+References: <201803140159.HHeMqOzI%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201803140159.HHeMqOzI%fengguang.wu@intel.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-by means of the watchdog.
-This patch adds a restart handler to rwdt_ops, and also makes sure we
-keep its priority to a medium level, in order to not override other more
-effective handlers.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: 02dcefdd58c7 ("media: vsp1: Provide support for extended command pools")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
-v5->v6:
-* no change
+ vsp1_dl.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
- drivers/watchdog/renesas_wdt.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 609056f..ce36efc 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -112,6 +112,16 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
- 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 6d17b8b..7b99d47 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -392,7 +392,7 @@ struct vsp1_extended_command_info {
+  *
+  * Return a pointer to a pool on success or NULL if memory can't be allocated.
+  */
+-struct vsp1_dl_cmd_pool *
++static struct vsp1_dl_cmd_pool *
+ vsp1_dl_cmd_pool_create(struct vsp1_device *vsp1, enum vsp1_extcmd_type type,
+ 			unsigned int num_cmds)
+ {
+@@ -450,7 +450,7 @@ vsp1_dl_cmd_pool_create(struct vsp1_device *vsp1, enum vsp1_extcmd_type type,
+ 	return pool;
  }
  
-+static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-+			void *data)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	rwdt_start(wdev);
-+	rwdt_write(priv, 0xffff, RWTCNT);
-+	return 0;
-+}
-+
- static const struct watchdog_info rwdt_ident = {
- 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
- 	.identity = "Renesas WDT Watchdog",
-@@ -123,6 +133,7 @@ static const struct watchdog_ops rwdt_ops = {
- 	.stop = rwdt_stop,
- 	.ping = rwdt_init_timeout,
- 	.get_timeleft = rwdt_get_timeleft,
-+	.restart = rwdt_restart,
- };
+-struct vsp1_dl_ext_cmd *vsp1_dl_ext_cmd_get(struct vsp1_dl_cmd_pool *pool)
++static struct vsp1_dl_ext_cmd *vsp1_dl_ext_cmd_get(struct vsp1_dl_cmd_pool *pool)
+ {
+ 	struct vsp1_dl_ext_cmd *cmd = NULL;
+ 	unsigned long flags;
+@@ -468,7 +468,7 @@ struct vsp1_dl_ext_cmd *vsp1_dl_ext_cmd_get(struct vsp1_dl_cmd_pool *pool)
+ 	return cmd;
+ }
  
- static int rwdt_probe(struct platform_device *pdev)
-@@ -181,6 +192,7 @@ static int rwdt_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, priv);
- 	watchdog_set_drvdata(&priv->wdev, priv);
- 	watchdog_set_nowayout(&priv->wdev, nowayout);
-+	watchdog_set_restart_priority(&priv->wdev, 0);
+-void vsp1_dl_ext_cmd_put(struct vsp1_dl_ext_cmd *cmd)
++static void vsp1_dl_ext_cmd_put(struct vsp1_dl_ext_cmd *cmd)
+ {
+ 	unsigned long flags;
  
- 	/* This overrides the default timeout only if DT configuration was found */
- 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
--- 
-2.7.4
+@@ -483,7 +483,7 @@ void vsp1_dl_ext_cmd_put(struct vsp1_dl_ext_cmd *cmd)
+ 	spin_unlock_irqrestore(&cmd->pool->lock, flags);
+ }
+ 
+-void vsp1_dl_ext_cmd_pool_destroy(struct vsp1_dl_cmd_pool *pool)
++static void vsp1_dl_ext_cmd_pool_destroy(struct vsp1_dl_cmd_pool *pool)
+ {
+ 	if (!pool)
+ 		return;
