@@ -1,76 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:10001 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753181AbeCVLtn (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36842 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932566AbeCMK77 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Mar 2018 07:49:43 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2 0/8] arm: Base support for Renesas RZN1D-DB Board
-Date: Thu, 22 Mar 2018 11:44:37 +0000
-Message-Id: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
+        Tue, 13 Mar 2018 06:59:59 -0400
+Received: by mail-wr0-f196.google.com with SMTP id d10so8868412wrf.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Mar 2018 03:59:58 -0700 (PDT)
+Subject: Re: [Qemu-devel] [PATCH 2/3] nvram: at24c: prevent segfault by
+ checking "rom-size"
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        qemu-devel@nongnu.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Michael Davidsaver <mdavidsaver@gmail.com>
+References: <20180312214230.17561-1-wsa+renesas@sang-engineering.com>
+ <20180312214230.17561-3-wsa+renesas@sang-engineering.com>
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
+Message-ID: <a6e49f6a-5c78-6628-d530-cfd47b566296@amsat.org>
+Date: Tue, 13 Mar 2018 11:59:56 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180312214230.17561-3-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds the plain basic support for booting a bare
-kernel on the RZ/N1D-DB Board. It's been trimmed to the strict
-minimum as a 'base', further patches that will add the
-rest of the support, pinctrl, clock architecture and quite
-a few others.
+On 03/12/2018 10:42 PM, Wolfram Sang wrote:
+> The value for "rom-size" is used as a divisor, so it must not be 0 or it
+> will segfault. A size of 0 wouldn't make sense as well.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  hw/nvram/eeprom_at24c.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/hw/nvram/eeprom_at24c.c b/hw/nvram/eeprom_at24c.c
+> index 8507516b7e..d82710e1df 100644
+> --- a/hw/nvram/eeprom_at24c.c
+> +++ b/hw/nvram/eeprom_at24c.c
+> @@ -120,6 +120,11 @@ int at24c_eeprom_init(I2CSlave *i2c)
+>  {
+>      EEPROMState *ee = AT24C_EE(i2c);
+>  
+> +    if (!ee->rsize) {
+> +        ERR("rom-size not allowed to be 0\n");
 
-Thanks for the comments on the previous version!
+This might be more useful:
 
-v2: 
- + Fixes for suggestions by Simon Horman
- + Fixes for suggestions by Rob Herring
- + Fixes for suggestions by Geert Uytterhoeven
- + Removed the mach file
- + Added a MFD base for the sysctrl block
- + Added a regmap based sub driver for the reboot handler
- + Renamed the files to match shmobile conventions
- + Adapted the compatible= strings to reflect 'family' vs 'part'
-   distinction.
- + Removed the sysctrl.h file entirelly. 
- + Fixed every warnings from the DTC compiler on W=12 mode.
- + Split the device-tree patches from the code.
- 
-Michel Pollet (8):
-  DT: mfd: renesas,rzn1-sysctrl: document RZ/N1 sysctrl node
-  DT: reset: renesas,rzn1-reboot: document RZ/N1 reboot driver
-  DT: arm: renesas,r9a06g032: add the RZ/N1 bindings
-  reset: Renesas RZ/N1 reboot driver
-  arm: rzn1: Add the RZ/N1 arch to the shmobile Kconfig
-  DT: arm: Add Renesas RZ/N1 SoC base device tree file
-  DT: arm: Add Renesas RZN1D-DB Board base file
-  DT: arm: Add the RZN1D-DB Board to Renesas Makefile target
+           error_report("Minimum rom-size is %u", AT24C_ROMSIZE_MIN);
 
- Documentation/devicetree/bindings/arm/shmobile.txt |   5 +-
- .../bindings/mfd/renesas,rzn1-sysctrl.txt          |  22 +++++
- .../bindings/power/renesas,rzn1-reboot.txt         |  22 +++++
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts        |  26 +++++
- arch/arm/boot/dts/r9a06g0xx.dtsi                   |  96 ++++++++++++++++++
- arch/arm/mach-shmobile/Kconfig                     |   5 +
- drivers/power/reset/Kconfig                        |   7 ++
- drivers/power/reset/Makefile                       |   1 +
- drivers/power/reset/rzn1-reboot.c                  | 109 +++++++++++++++++++++
- 10 files changed, 293 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
- create mode 100644 arch/arm/boot/dts/r9a06g0xx.dtsi
- create mode 100644 drivers/power/reset/rzn1-reboot.c
-
--- 
-2.7.4
+> +        exit(1);
+> +    }
+> +
+>      ee->mem = g_malloc0(ee->rsize);
+>  
+>      if (ee->blk) {
+> 
