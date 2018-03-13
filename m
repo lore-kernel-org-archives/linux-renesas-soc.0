@@ -1,47 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:53058 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751248AbeCLPMD (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:30843 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752043AbeCMISc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:12:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] arm64: dts: renesas: draak: Rename EtherAVB "mdc" pin group to "mdio"
-Date: Mon, 12 Mar 2018 16:12:00 +0100
-Message-Id: <1520867520-13942-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
-References: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
+        Tue, 13 Mar 2018 04:18:32 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: thierry.reding@gmail.com
+Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 1/2] pwm: rcar: Use PM Runtime to control module clock
+Date: Tue, 13 Mar 2018 17:18:17 +0900
+Message-Id: <1520929098-20873-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1520929098-20873-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1520929098-20873-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On other Renesas SoCs, the pin group for the MDIO bus is named "mdio"
-instead of "mdc".  Fix the inconsistency, now the pinctrl drivers for
-R-Car H3, M3-W, and M3-N have gained support for the traditional pin
-group name.
+From: Hien Dang <hien.dang.eb@renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on:
-  - pinctrl: sh-pfc: r8a77995: Rename EtherAVB "mdc" pin group to "mdio"
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Runtime PM API (pm_runtime_get_sync/pm_runtime_put) should be used
+to control module clock instead of clk_prepare_enable and
+clk_disable_unprepare.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index d03f19414028c6c4..9d73de8bc94d3873 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -91,7 +91,7 @@
- &pfc {
- 	avb0_pins: avb {
- 		mux {
--			groups = "avb0_link", "avb0_mdc", "avb0_mii";
-+			groups = "avb0_link", "avb0_mdio", "avb0_mii";
- 			function = "avb0";
- 		};
- 	};
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pwm/pwm-rcar.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index 1c85ecc..b942010 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -134,16 +134,12 @@ static int rcar_pwm_set_counter(struct rcar_pwm_chip *rp, int div, int duty_ns,
+ 
+ static int rcar_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
+-
+-	return clk_prepare_enable(rp->clk);
++	return pm_runtime_get_sync(chip->dev);
+ }
+ 
+ static void rcar_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
+-
+-	clk_disable_unprepare(rp->clk);
++	pm_runtime_put(chip->dev);
+ }
+ 
+ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
 -- 
-2.7.4
+1.9.1
