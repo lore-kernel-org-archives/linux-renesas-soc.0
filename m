@@ -1,77 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:48506 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752407AbeCMUQu (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41826 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932627AbeCMKx6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 16:16:50 -0400
-Date: Tue, 13 Mar 2018 21:16:49 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        qemu-devel@nongnu.org, linux-renesas-soc@vger.kernel.org,
-        Michael Davidsaver <mdavidsaver@gmail.com>
+        Tue, 13 Mar 2018 06:53:58 -0400
+Received: by mail-wr0-f195.google.com with SMTP id f14so21268977wre.8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Mar 2018 03:53:58 -0700 (PDT)
 Subject: Re: [Qemu-devel] [PATCH 3/3] nvram: at24c: use a sane default for
  "rom-size"
-Message-ID: <20180313201649.w44jtdbk4bow2f7x@ninjato>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        qemu-devel@nongnu.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Michael Davidsaver <mdavidsaver@gmail.com>
 References: <20180312214230.17561-1-wsa+renesas@sang-engineering.com>
  <20180312214230.17561-4-wsa+renesas@sang-engineering.com>
- <5108cc9b-9fb9-d202-d4bc-a5c1dd4d4f76@amsat.org>
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
+Message-ID: <5108cc9b-9fb9-d202-d4bc-a5c1dd4d4f76@amsat.org>
+Date: Tue, 13 Mar 2018 11:53:55 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="76e3fl6etoahgbib"
-Content-Disposition: inline
-In-Reply-To: <5108cc9b-9fb9-d202-d4bc-a5c1dd4d4f76@amsat.org>
+In-Reply-To: <20180312214230.17561-4-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---76e3fl6etoahgbib
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/12/2018 10:42 PM, Wolfram Sang wrote:
+> 0 as "rom-size" doesn't make much sense, let's use the smallest 24cXX
+> which has 128 byte.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  hw/nvram/eeprom_at24c.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/hw/nvram/eeprom_at24c.c b/hw/nvram/eeprom_at24c.c
+> index d82710e1df..de988f8d07 100644
+> --- a/hw/nvram/eeprom_at24c.c
+> +++ b/hw/nvram/eeprom_at24c.c
+> @@ -168,7 +168,7 @@ void at24c_eeprom_reset(DeviceState *state)
+>  }
+>  
+>  static Property at24c_eeprom_props[] = {
+> -    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 0),
+> +    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 128),
 
-Hi Philippe,
+This patch should goes before your 2/3 in your series.
 
-> >  static Property at24c_eeprom_props[] =3D {
-> > -    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 0),
-> > +    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 128),
->=20
-> This patch should goes before your 2/3 in your series.
+Can you add a #define for this value? Such AT24C_ROMSIZE_MIN.
 
-I don't mind much, but why? My reasoning was "let's first fix the cause
-and then the symptom"?
+With a #define you can add:
+Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
 
-> Can you add a #define for this value? Such AT24C_ROMSIZE_MIN.
-
-Can do, of course. But won't that give room for regressions because
-people are already using it with lower values?
-
-Ideally, we would have a "model" variable. The model type would define
-the size of the memory. The "rom-size" variable could then be kept as is
-(except for the 0 bugfix) or deprecated?
-
-Thanks for the review,
-
-   Wolfram
-
---76e3fl6etoahgbib
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqoMbEACgkQFA3kzBSg
-Kbb3Ow//UFSVqr8NJsUtIhd0lLW2Kitt/ZRtWtWJIj1KpfLglXszlcU9x9Ux6Fb4
-NklEmfYC/7Deca9xssxPXj05/5fVoW18yqoo/wtV/bEtKPQJ31qjuNq/ZtN51ruJ
-G0s599zbx1qVURUsrjoNUWSdTrJzBlgeEnP4veCHoA0NRqBArBongexHUm9sSeKN
-Bv8s9w0SXsLGmTXX8xP6XQB3V1OLnzvP0aw+Nh7WizjTvqZPB40qIGanMSKQiTHe
-VQEuuO1CUPQPbOHIIEvdi7YgT2LVFe7kvsL7fIwZNnFKA0rWwPdBXrz8ASGgpgTa
-918fbQVlSHqcQELhahC28epuFICfnQwLbfGxDwLk5GO5NKFfMEimcbzW42x0xKO3
-EQ2HddiI84qT77pZssjXIQ6NiIwBLwPix6EnQgeC+1lBjO1YlNIFsDPvb9L43VpI
-CBSPzC7z334/dY6Kvw629r/RqlhgnENJo9IAOCjTDUOZc1TQ/ZD84mJntpqPF8IH
-UFgDRK6ovtvdJwxurerWqub3/M8X0m0u63D9rO8vVr9CuG8RVdGouGOfilU0YRcr
-NqGoFjc6QX+Yi7415gBX+pcTti6a8x9LD8E+jyRuOl+bnGcsdgBBiMk9Y5j2ex7P
-PhTgDqrCQHyO0VeVivP711I7edh2iaYYiESCNoG5n6/JRUBCKHk=
-=w1F9
------END PGP SIGNATURE-----
-
---76e3fl6etoahgbib--
+>      DEFINE_PROP_BOOL("writable", EEPROMState, writable, true),
+>      DEFINE_PROP_DRIVE("drive", EEPROMState, blk),
+>      DEFINE_PROP_END_OF_LIST()
+> 
