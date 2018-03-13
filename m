@@ -1,56 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:56712 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751255AbeCLPMD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:12:03 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] arm64: dts: renesas: ulcb: Rename EtherAVB "mdc" pin group to "mdio"
-Date: Mon, 12 Mar 2018 16:11:59 +0100
-Message-Id: <1520867520-13942-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
-References: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] drm: Add Thine THC63LVD1024 LVDS decoder bridge
+Date: Tue, 13 Mar 2018 15:30:22 +0100
+Message-Id: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On other Renesas SoCs, the pin group for the MDIO bus is named "mdio"
-instead of "mdc".  Fix the inconsistency, now the pinctrl drivers for
-R-Car H3, M3-W, and M3-N have gained support for the traditional pin
-group name.
+Hello,
+   opposed to v2, this version drops the "transparent LVDS decoder" and provides
+support for the Thine THC63LVD1024 chip only.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on:
-  - pinctrl: sh-pfc: r8a7795-es1: Rename EtherAVB "mdc" pin group to "mdio"
-  - pinctrl: sh-pfc: r8a7795: Rename EtherAVB "mdc" pin group to "mdio"
-  - pinctrl: sh-pfc: r8a7796: Rename EtherAVB "mdc" pin group to "mdio"
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I removed all references to "lvds-decoder" and made driver and bindings
+specific for the above mentioned chip.
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 6f814845f8b665f3..93402783d52f0927 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -255,12 +255,12 @@
- 
- 	avb_pins: avb {
- 		mux {
--			groups = "avb_link", "avb_mdc", "avb_mii";
-+			groups = "avb_link", "avb_mdio", "avb_mii";
- 			function = "avb";
- 		};
- 
--		pins_mdc {
--			groups = "avb_mdc";
-+		pins_mdio {
-+			groups = "avb_mdio";
- 			drive-strength = <24>;
- 		};
- 
--- 
+Andrzej: Bindings now describe 2 available inputs (Port@0 mandatory, Port@1
+optional) and 2 possible outputs (Port@2 mandatory, Port@3 optional). The driver
+still takes only Port@0 and Port@2 into account. This leaves out discussions
+on how support bridges with multiple input streams within the DRM framework from
+this series.
+
+Simon: Please drop the previous bindings proposal you marked as "deferred" as
+that one is superseded by this new one.
+
+I still plan to use this series to propose an API to propagate formats through
+bridges, which is not possible at the moment, if I got things right.
+
+Thanks
+   j
+
+v2 -> v3:
+- Drop support for "lvds-decoder" and make the driver THC63LVD1024 specific
+-- Rework bindings to describe multiple input/output ports
+-- Rename driver and remove "lvds-decoder" references
+-- Rework Eagle DTS to use new bindings
+
+v1 -> v2:
+- Drop support for THC63LVD1024
+
+Jacopo Mondi (3):
+  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+  drm: bridge: Add thc63lvd1024 LVDS decoder driver
+  arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
+
+ .../bindings/display/bridge/thine,thc63lvd1024.txt |  63 ++++++
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |  31 ++-
+ drivers/gpu/drm/bridge/Kconfig                     |  10 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/thc63lvd1024.c              | 239 +++++++++++++++++++++
+ 5 files changed, 342 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+ create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+
+--
 2.7.4
+
