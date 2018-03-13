@@ -1,41 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay0.mail.gandi.net ([217.70.178.220]:50327 "EHLO
-        relay0-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751089AbeCMPSi (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 11:18:38 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au,
-        yoshihiro.shimoda.uh@renesas.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: cpg-mssr: r8a77965: Replace DU2 clock
-Date: Tue, 13 Mar 2018 16:18:20 +0100
-Message-Id: <1520954300-15884-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 11/11] drm: rcar-du: Support interlaced video output through vsp1
+Date: Tue, 13 Mar 2018 19:05:27 +0100
+Message-Id: <334f0b14fde0ddcfd02a12c41878a1b792221e4d.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car M3-N does not have DU2 unit but DU3 instead. Fix the module clocks
-definition to reflect that.
+Use the newly exposed VSP1 interface to enable interlaced frame support
+through the VSP1 lif pipelines.
 
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 1 +
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-index 41e506a..b1acfb6 100644
---- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-@@ -173,7 +173,7 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
- 	DEF_MOD("hsusb",		704,	R8A77965_CLK_S3D4),
- 	DEF_MOD("csi20",		714,	R8A77965_CLK_CSI0),
- 	DEF_MOD("csi40",		716,	R8A77965_CLK_CSI0),
--	DEF_MOD("du2",			722,	R8A77965_CLK_S2D1),
-+	DEF_MOD("du3",			721,	R8A77965_CLK_S2D1),
- 	DEF_MOD("du1",			723,	R8A77965_CLK_S2D1),
- 	DEF_MOD("du0",			724,	R8A77965_CLK_S2D1),
- 	DEF_MOD("lvds",			727,	R8A77965_CLK_S2D1),
---
-2.7.4
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 5685d5af6998..9854d9deb944 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -248,6 +248,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 	/* Signal polarities */
+ 	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
+ 	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
++	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
+ 	      | DSMR_DIPM_DISP | DSMR_CSPM;
+ 	rcar_du_crtc_write(rcrtc, DSMR, value);
+ 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index 2c260c33840b..5e47daef8bd2 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -178,6 +178,9 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
+ 	};
+ 	unsigned int i;
+ 
++	cfg.interlaced = !!(plane->plane.state->crtc->mode.flags
++			    & DRM_MODE_FLAG_INTERLACE);
++
+ 	cfg.src.left = state->state.src.x1 >> 16;
+ 	cfg.src.top = state->state.src.y1 >> 16;
+ 	cfg.src.width = drm_rect_width(&state->state.src) >> 16;
+-- 
+git-series 0.9.1
