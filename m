@@ -1,109 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:25277 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1164157AbeCBB7U (ORCPT
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34191 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752463AbeCNPu7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:59:20 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 23/32] rcar-vin: prepare for media controller mode initialization
-Date: Fri,  2 Mar 2018 02:57:42 +0100
-Message-Id: <20180302015751.25596-24-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 14 Mar 2018 11:50:59 -0400
+Received: by mail-qt0-f194.google.com with SMTP id l25so3951188qtj.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Mar 2018 08:50:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521042402-30927-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+References: <1521042402-30927-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 14 Mar 2018 16:50:57 +0100
+Message-ID: <CAMuHMdVAmcwYsSWcFRwzvmW+4BPgKZ3u-=GAFTguujA+xtR5yg@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] vsp1/du/interlaced/v2
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Prepare for media controller by calling a different initialization then
-when running in device centric mode. Add trivial configuration of
-the mbus and creation of the media pad for the video device entity.
+Hi Kieran,
 
-While we are at it clearly mark the digital device centric notifier
-functions with a comment.
+On Wed, Mar 14, 2018 at 4:46 PM, Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> Please consider including this release in renesas-drivers.
+>
+> --
+> Regards
+>
+> Kieran
+>
+> The following changes since commit 397eb3811ec096d0ceefa1dbea2d0ae68feb0587:
+>
+>   media: vsp1: Move video configuration to a cached dlb (2018-03-07 21:19:29 +0000)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/du/interlaced/v2
+>
+> for you to fetch changes up to 334f0b14fde0ddcfd02a12c41878a1b792221e4d:
+>
+>   drm: rcar-du: Support interlaced video output through vsp1 (2018-03-13 18:50:00 +0100)
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
- 2 files changed, 22 insertions(+), 2 deletions(-)
+Thank you, merges cleanly into today's linux-next.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index ca22903c375d2018..eb67ad5e2633064b 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- /* The vin lock shuld be held when calling the subdevice attach and detach */
- static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
- 					 struct v4l2_subdev *subdev)
-@@ -237,6 +241,16 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	return 0;
- }
- 
-+static int rvin_mc_init(struct rvin_dev *vin)
-+{
-+	/* All our sources are CSI-2 */
-+	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-+	vin->mbus_cfg.flags = 0;
-+
-+	vin->pad.flags = MEDIA_PAD_FL_SINK;
-+	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -325,8 +339,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	platform_set_drvdata(pdev, vin);
--
--	ret = rvin_digital_graph_init(vin);
-+	if (vin->info->use_mc)
-+		ret = rvin_mc_init(vin);
-+	else
-+		ret = rvin_digital_graph_init(vin);
- 	if (ret < 0)
- 		goto error;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 7bae9270c6216c3e..849f428871af113f 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -101,6 +101,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @pad:		media pad for the video device entity
-+ *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
-  *
-@@ -130,6 +132,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct media_pad pad;
-+
- 	struct mutex lock;
- 	struct vb2_queue queue;
- 
--- 
-2.16.2
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
