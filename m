@@ -1,37 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:52735 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751480AbeCTVx3 (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:37856 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751474AbeCNMKU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Mar 2018 17:53:29 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] dt-bindings: i2c: document R8A77965 bindings
-Date: Tue, 20 Mar 2018 22:53:20 +0100
-Message-Id: <20180320215320.21628-1-wsa+renesas@sang-engineering.com>
+        Wed, 14 Mar 2018 08:10:20 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] arm64: dts: renesas: ulcb: Add BD9571 PMIC
+Date: Wed, 14 Mar 2018 13:09:44 +0100
+Message-Id: <1521029386-29975-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521029386-29975-1-git-send-email-geert+renesas@glider.be>
+References: <1521029386-29975-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car M3-N (R8A77965) SoC has a R-Car Gen3-compatible I2C controller.
+Add a device node for the ROHM BD9571MWV PMIC.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This was based on the example in the DT binding documentation, but using
+IRQ0 instead of a GPIO interrupt, as that matches the schematics, and
+because INTC-EX is a simpler block.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+v2:
+  - New.
+---
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-index e91dbafe71e5d9..4a7811ecd95447 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
-@@ -13,6 +13,7 @@ Required properties:
- 	"renesas,i2c-r8a7794" if the device is a part of a R8A7794 SoC.
- 	"renesas,i2c-r8a7795" if the device is a part of a R8A7795 SoC.
- 	"renesas,i2c-r8a7796" if the device is a part of a R8A7796 SoC.
-+	"renesas,i2c-r8a77965" if the device is a part of a R8A77965 SoC.
- 	"renesas,i2c-r8a77970" if the device is a part of a R8A77970 SoC.
- 	"renesas,i2c-r8a77995" if the device is a part of a R8A77995 SoC.
- 	"renesas,rcar-gen1-i2c" for a generic R-Car Gen1 compatible device.
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 6f814845f8b665f3..bb21ae335e8b8489 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -243,6 +243,30 @@
+ 
+ &i2c_dvfs {
+ 	status = "okay";
++
++	pmic: pmic@30 {
++		pinctrl-0 = <&irq0_pins>;
++		pinctrl-names = "default";
++
++		compatible = "rohm,bd9571mwv";
++		reg = <0x30>;
++		interrupt-parent = <&intc_ex>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		regulators {
++			dvfs: dvfs {
++				regulator-name = "dvfs";
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <1030000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
+ };
+ 
+ &ohci1 {
+@@ -276,6 +300,11 @@
+ 		function = "i2c2";
+ 	};
+ 
++	irq0_pins: irq0 {
++		groups = "intc_ex_irq0";
++		function = "intc_ex";
++	};
++
+ 	scif2_pins: scif2 {
+ 		groups = "scif2_data_a";
+ 		function = "scif2";
 -- 
-2.11.0
+2.7.4
