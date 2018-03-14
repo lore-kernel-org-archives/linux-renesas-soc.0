@@ -1,64 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36293 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751114AbeCIMJl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35099 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbeCNOrG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:09:41 -0500
-Received: by mail-lf0-f67.google.com with SMTP id e28-v6so3955058lfc.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Mar 2018 04:09:41 -0800 (PST)
-Subject: [PATCH 3/3] arm64: dts: renesas: condor: add EtherAVB pins
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <88e52531-e538-8685-110a-1a2e79a3fe49@cogentembedded.com>
-Message-ID: <82c33f37-bfbb-e515-f996-83333cd26171@cogentembedded.com>
-Date: Fri, 9 Mar 2018 15:09:38 +0300
+        Wed, 14 Mar 2018 10:47:06 -0400
+Received: from penelope.horms.nl (unknown [217.111.208.18])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 3AE6725B788
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Mar 2018 01:47:05 +1100 (AEDT)
+Date: Wed, 14 Mar 2018 15:47:03 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: [ANNOUNCE] Renesas tree closed for v4.17
+Message-ID: <20180314144703.ejnsoeoaaz35vlhy@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <88e52531-e538-8685-110a-1a2e79a3fe49@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the (previously omitted) EtherAVB pin data to the Condor board's
-device tree.
+Hi,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I would like to stop accepting non-bug-fix patches for v4.17 and get
+the last pull requests posted by the end of this week. This is in order
+for them to be sent before the release of v4.16-rc6, the deadline set by the
+ARM SoC maintainers.  As patches should ideally progress from the renesas
+tree into linux-next before sending pull requests there is a few days lead
+time involved.
 
----
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -30,6 +30,9 @@
- };
- 
- &avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-mode = "rgmii-id";
- 	phy-handle = <&phy0>;
- 	renesas,no-ether-link;
-@@ -50,6 +53,11 @@
- };
- 
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_rgmii";
-+		function = "avb";
-+	};
-+
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
- 		function = "scif0";
+I intend to begin queueing up patches for v4.18 as new patches are ready.
