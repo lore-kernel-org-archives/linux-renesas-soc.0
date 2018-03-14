@@ -1,56 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35087 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752274AbeCNP5z (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:40106 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751426AbeCNL0e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Mar 2018 11:57:55 -0400
-Received: by mail-lf0-f66.google.com with SMTP id t132-v6so5598339lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Mar 2018 08:57:54 -0700 (PDT)
-Subject: Re: [PATCH/RFC 1/2] PM / wakeup: Add callback for wake-up change
- notification
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Wed, 14 Mar 2018 07:26:34 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
 Cc: linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/2] PM / wakeup: Add callback for wake-up change notification
+Date: Wed, 14 Mar 2018 12:26:24 +0100
+Message-Id: <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
 References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
- <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <b2fbba62-72c9-f21a-5aa1-f96291fddb3e@cogentembedded.com>
-Date: Wed, 14 Mar 2018 18:57:51 +0300
-MIME-Version: 1.0
-In-Reply-To: <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 03/14/2018 02:26 PM, Geert Uytterhoeven wrote:
+Add a callback to inform a device that his wake-up setting has been
+changed.  This allows a device to synchronize device configuration with
+an external user action.
 
-> Add a callback to inform a device that his wake-up setting has been
+E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
+switch, the system suspend procedure is:
+  1. Configure PMIC for DDR backup mode, which changes the role of the
+     accessory power switch from a power to a wake-up switch,
+  2. Switch accessory power switch off, to prepare for system suspend,
+  3. Suspend system.
 
-   s/his/its/.
+Hence step 1 cannot be done in the PMIC's suspend callback, but it can
+be done in the new callback, in response to the user writing "enabled"
+to the PMIC's wakeup virtual file in sysfs.
 
-> changed.  This allows a device to synchronize device configuration with
-> an external user action.
-> 
-> E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
-> switch, the system suspend procedure is:
->   1. Configure PMIC for DDR backup mode, which changes the role of the
->      accessory power switch from a power to a wake-up switch,
->   2. Switch accessory power switch off, to prepare for system suspend,
->   3. Suspend system.
-> 
-> Hence step 1 cannot be done in the PMIC's suspend callback, but it can
-> be done in the new callback, in response to the user writing "enabled"
-> to the PMIC's wakeup virtual file in sysfs.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[...]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Is there a better way to handle this?
+---
+ drivers/base/power/wakeup.c | 4 ++++
+ include/linux/pm.h          | 1 +
+ 2 files changed, 5 insertions(+)
 
-MBR, Sergei
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index ea01621ed769ab26..40bda13d4dcd36f3 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -256,6 +256,8 @@ static int device_wakeup_attach(struct device *dev, struct wakeup_source *ws)
+ 	if (dev->power.wakeirq)
+ 		device_wakeup_attach_irq(dev, dev->power.wakeirq);
+ 	spin_unlock_irq(&dev->power.lock);
++	if (dev->power.wakeup_change_notify)
++		dev->power.wakeup_change_notify(dev, true);
+ 	return 0;
+ }
+ 
+@@ -373,6 +375,8 @@ static struct wakeup_source *device_wakeup_detach(struct device *dev)
+ {
+ 	struct wakeup_source *ws;
+ 
++	if (dev->power.wakeup_change_notify)
++		dev->power.wakeup_change_notify(dev, false);
+ 	spin_lock_irq(&dev->power.lock);
+ 	ws = dev->power.wakeup;
+ 	dev->power.wakeup = NULL;
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+index e723b78d835706f2..3dec274bffffc6f8 100644
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -599,6 +599,7 @@ struct dev_pm_info {
+ 	struct list_head	entry;
+ 	struct completion	completion;
+ 	struct wakeup_source	*wakeup;
++	void (*wakeup_change_notify)(struct device *dev, bool enable);
+ 	bool			wakeup_path:1;
+ 	bool			syscore:1;
+ 	bool			no_pm_callbacks:1;	/* Owned by the PM core */
+-- 
+2.7.4
