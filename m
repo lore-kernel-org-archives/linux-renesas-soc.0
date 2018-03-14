@@ -1,49 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753599AbeCPOw6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:52:58 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 56/69] arm64: dts: renesas: eagle: Override EtherAVB phy-mode
-Date: Fri, 16 Mar 2018 15:51:26 +0100
-Message-Id: <e5daa084cc9f6019a905785f0dfd1ffb146a519a.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/4] mfd: bd9571mwv: Allow DDR Backup Power register access
+Date: Wed, 14 Mar 2018 12:08:41 +0100
+Message-Id: <1521025722-24205-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
+References: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Enable read/write access to the BD9571MWV_BKUP_MODE_CNT register, which
+is amongst others used to configure DDR Backup Power.
 
-As the PHY interface installed on the Eagle board provides TX and RX
-channels delays, make the "phy-mode" property a board-specific one,
-meant to override the one specified in the SoC DTSI.
-
-Follow up patches will reset the r8a77970 SoC DTSI to use "rgmii" mode
-and let the board file override that.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 1 +
- 1 file changed, 1 insertion(+)
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index cb4bd40584cf..fd3448deb714 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -36,6 +36,7 @@
- &avb {
- 	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-id";
- 	status = "okay";
+v2:
+  - Expand "a.o.",
+  - Add Acked-for-MFD-by (for Lee's own reference).
+---
+ drivers/mfd/bd9571mwv.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+index 64e088dfe7b05b5b..503979c81dae11bb 100644
+--- a/drivers/mfd/bd9571mwv.c
++++ b/drivers/mfd/bd9571mwv.c
+@@ -29,6 +29,7 @@ static const struct mfd_cell bd9571mwv_cells[] = {
  
- 	phy0: ethernet-phy@0 {
+ static const struct regmap_range bd9571mwv_readable_yes_ranges[] = {
+ 	regmap_reg_range(BD9571MWV_VENDOR_CODE, BD9571MWV_PRODUCT_REVISION),
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
+ 	regmap_reg_range(BD9571MWV_AVS_SET_MONI, BD9571MWV_AVS_DVFS_VID(3)),
+ 	regmap_reg_range(BD9571MWV_VD18_VID, BD9571MWV_VD33_VID),
+ 	regmap_reg_range(BD9571MWV_DVFS_VINIT, BD9571MWV_DVFS_VINIT),
+@@ -44,6 +45,7 @@ static const struct regmap_access_table bd9571mwv_readable_table = {
+ };
+ 
+ static const struct regmap_range bd9571mwv_writable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
+ 	regmap_reg_range(BD9571MWV_AVS_VD09_VID(0), BD9571MWV_AVS_VD09_VID(3)),
+ 	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_SETVID),
+ 	regmap_reg_range(BD9571MWV_GPIO_DIR, BD9571MWV_GPIO_OUT),
 -- 
-2.11.0
+2.7.4
+
