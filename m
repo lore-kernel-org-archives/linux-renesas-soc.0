@@ -1,113 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:39130 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752343AbeCWJRf (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35087 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752274AbeCNP5z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:17:35 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: r8a77965: Add all MSIOF device nodes
-Date: Fri, 23 Mar 2018 10:17:32 +0100
-Message-Id: <1521796652-26136-1-git-send-email-geert+renesas@glider.be>
+        Wed, 14 Mar 2018 11:57:55 -0400
+Received: by mail-lf0-f66.google.com with SMTP id t132-v6so5598339lfe.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Mar 2018 08:57:54 -0700 (PDT)
+Subject: Re: [PATCH/RFC 1/2] PM / wakeup: Add callback for wake-up change
+ notification
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
+ <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <b2fbba62-72c9-f21a-5aa1-f96291fddb3e@cogentembedded.com>
+Date: Wed, 14 Mar 2018 18:57:51 +0300
+MIME-Version: 1.0
+In-Reply-To: <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On 03/14/2018 02:26 PM, Geert Uytterhoeven wrote:
 
-Add the device nodes for all MSIOF SPI controllers.
+> Add a callback to inform a device that his wake-up setting has been
 
-Based on several similar patches of the R8A7796 device tree
-by Geert Uytterhoeven <geert+renesas@glider.be>
-and Simon Horman <horms+renesas@verge.net.au>.
+   s/his/its/.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Use numerical power domain indices for initial r8a77965.dtsi]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested with arch/arm64/boot/dts/renesas/salvator-x-exio-d-msiof3a-2xHC595.dtso
-https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/renesas-overlays&id=b52ff2b481438cedd68effcad7ea2fc85b14f5f2
-and blinkenlights.
+> changed.  This allows a device to synchronize device configuration with
+> an external user action.
+> 
+> E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
+> switch, the system suspend procedure is:
+>   1. Configure PMIC for DDR backup mode, which changes the role of the
+>      accessory power switch from a power to a wake-up switch,
+>   2. Switch accessory power switch off, to prepare for system suspend,
+>   3. Suspend system.
+> 
+> Hence step 1 cannot be done in the PMIC's suspend callback, but it can
+> be done in the new callback, in response to the user writing "enabled"
+> to the PMIC's wakeup virtual file in sysfs.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[...]
 
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 62 +++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 6f748e94a9016e01..4371be3e869a258f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -805,6 +805,68 @@
- 			/* placeholder */
- 		};
- 
-+		msiof0: spi@e6e90000 {
-+			compatible = "renesas,msiof-r8a77965",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6e90000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 211>;
-+			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
-+			       <&dmac2 0x41>, <&dmac2 0x40>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 211>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@e6ea0000 {
-+			compatible = "renesas,msiof-r8a77965",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6ea0000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 210>;
-+			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
-+			       <&dmac2 0x43>, <&dmac2 0x42>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 210>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@e6c00000 {
-+			compatible = "renesas,msiof-r8a77965",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6c00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 209>;
-+			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 209>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		msiof3: spi@e6c10000 {
-+			compatible = "renesas,msiof-r8a77965",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6c10000 0 0x0064>;
-+			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 208>;
-+			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 208>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		du: display@feb00000 {
- 			reg = <0 0xfeb00000 0 0x80000>,
- 			      <0 0xfeb90000 0 0x14>;
--- 
-2.7.4
+MBR, Sergei
