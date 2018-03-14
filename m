@@ -1,107 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753996AbeCPOyw (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:33231 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753069AbeCNCtf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:54:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 52/52] ARM: dts: silk: Add GPIO keys to DT
-Date: Fri, 16 Mar 2018 15:53:11 +0100
-Message-Id: <49846cbda7d3f85f0bb6cebccf8f039b51401fcb.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
+        Tue, 13 Mar 2018 22:49:35 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/2] rcar-vin: allocate a scratch buffer at stream start
+Date: Wed, 14 Mar 2018 03:49:09 +0100
+Message-Id: <20180314024910.16676-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180314024910.16676-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180314024910.16676-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Before starting a capture, allocate a scratch buffer which can be used
+by the driver to give to the hardware if no buffers are available from
+userspace. The buffer is not used in this patch but prepares for future
+refactoring where the scratch buffer can be used to avoid the need to
+fallback on single capture mode if userspace can't queue buffers as fast
+as the VIN driver consumes them.
 
-Extend the Silk board support to include SW3, SW4, SW6 and SW12. They
-are all connected via GPIO lines and handled by the gpio-keys driver.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7794-silk.dts | 55 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 19 +++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-vin.h |  4 ++++
+ 2 files changed, 23 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index befd0fb880cc..351cb3b3d966 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -24,6 +24,7 @@
- /dts-v1/;
- #include "r8a7794.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 23fdff7a7370842e..1f91b056188ebdb3 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -1076,6 +1076,17 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	unsigned long flags;
+ 	int ret;
  
- / {
- 	model = "SILK";
-@@ -45,6 +46,60 @@
- 		reg = <0 0x40000000 0 0x40000000>;
- 	};
++	/* Allocate scratch buffer. */
++	vin->scratch = dma_alloc_coherent(vin->dev, vin->format.sizeimage,
++					  &vin->scratch_phys, GFP_KERNEL);
++	if (!vin->scratch) {
++		spin_lock_irqsave(&vin->qlock, flags);
++		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
++		spin_unlock_irqrestore(&vin->qlock, flags);
++		vin_err(vin, "Failed to allocate scratch buffer\n");
++		return -ENOMEM;
++	}
++
+ 	sd = vin_to_source(vin);
+ 	v4l2_subdev_call(sd, video, s_stream, 1);
  
-+	gpio-keys {
-+		compatible = "gpio-keys";
+@@ -1091,6 +1102,10 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+ 
++	if (ret)
++		dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
++				  vin->scratch_phys);
 +
-+		key-3 {
-+			gpios = <&gpio5 10 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_3>;
-+			label = "SW3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-4 {
-+			gpios = <&gpio5 11 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_4>;
-+			label = "SW4";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-6 {
-+			gpios = <&gpio5 12 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_6>;
-+			label = "SW6";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-a {
-+			gpios = <&gpio3 9 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_A>;
-+			label = "SW12-1";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-b {
-+			gpios = <&gpio3 10 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_B>;
-+			label = "SW12-2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-c {
-+			gpios = <&gpio3 11 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_C>;
-+			label = "SW12-3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-d {
-+			gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_D>;
-+			label = "SW12-4";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+	};
+ 	return ret;
+ }
+ 
+@@ -1141,6 +1156,10 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
+ 
+ 	/* disable interrupts */
+ 	rvin_disable_interrupts(vin);
 +
- 	d3_3v: regulator-d3-3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "D3.3V";
++	/* Free scratch buffer. */
++	dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
++			  vin->scratch_phys);
+ }
+ 
+ static const struct vb2_ops rvin_qops = {
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 5382078143fb3869..00b405f78d0912c9 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -102,6 +102,8 @@ struct rvin_graph_entity {
+  *
+  * @lock:		protects @queue
+  * @queue:		vb2 buffers queue
++ * @scratch:		cpu address for scratch buffer
++ * @scratch_phys:	physical address of the scratch buffer
+  *
+  * @qlock:		protects @queue_buf, @buf_list, @continuous, @sequence
+  *			@state
+@@ -130,6 +132,8 @@ struct rvin_dev {
+ 
+ 	struct mutex lock;
+ 	struct vb2_queue queue;
++	void *scratch;
++	dma_addr_t scratch_phys;
+ 
+ 	spinlock_t qlock;
+ 	struct vb2_v4l2_buffer *queue_buf[HW_BUFFER_NUM];
 -- 
-2.11.0
+2.16.2
