@@ -1,63 +1,260 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 02/11] media: vsp1: Remove packed attributes from aligned structures
-Date: Tue, 13 Mar 2018 19:05:18 +0100
-Message-Id: <30abb41033b9670c06a54ff484d61d25d3c6e5cd.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 15 Mar 2018 11:30:27 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
+Message-ID: <20180315103027.GE16424@w540>
+References: <1520951425-13843-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CGME20180313143057epcas4p4c747ed8c1b333a557eef5aa8e15376fd@epcas4p4.samsung.com>
+ <1520951425-13843-3-git-send-email-jacopo+renesas@jmondi.org>
+ <8c224e1e-9871-dce9-89d0-3dad8218a747@samsung.com>
+ <20180314100902.GB16424@w540>
+ <4204d21d-080f-b275-1f89-828cfdcdf90a@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zjcmjzIkjQU2rmur"
+Content-Disposition: inline
+In-Reply-To: <4204d21d-080f-b275-1f89-828cfdcdf90a@samsung.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The use of the packed attribute can cause a performance penalty for
-all accesses to the struct members, as the compiler will assume that the
-structure has the potential to have an unaligned base.
 
-These structures are all correctly aligned and contain no holes, thus
-the attribute is redundant and negatively impacts performance, so we
-remove the attributes entirely.
+--zjcmjzIkjQU2rmur
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
-v2
- - Remove attributes entirely
+HI Andrezej,
 
- drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Thu, Mar 15, 2018 at 10:44:42AM +0100, Andrzej Hajda wrote:
+> On 14.03.2018 11:09, jacopo mondi wrote:
+> > Hi Andrzej,
+> >     thanks for review
+> >
+> > On Wed, Mar 14, 2018 at 09:42:36AM +0100, Andrzej Hajda wrote:
+> >> On 13.03.2018 15:30, Jacopo Mondi wrote:
+> >>> Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
+> >>> output decoder.
+> >> IMO converter suits here better, but it is just suggestion.
+> >>
+> >>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>> ---
+> >>>  drivers/gpu/drm/bridge/Kconfig        |   7 +
+> >>>  drivers/gpu/drm/bridge/Makefile       |   1 +
+> >>>  drivers/gpu/drm/bridge/thc63lvd1024.c | 241 ++++++++++++++++++++++++++++++++++
+> >>>  3 files changed, 249 insertions(+)
+> >>>  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+> >>>
+> >>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> >>> index 3b99d5a..facf6bd 100644
+> >>> --- a/drivers/gpu/drm/bridge/Kconfig
+> >>> +++ b/drivers/gpu/drm/bridge/Kconfig
+> >>> @@ -92,6 +92,13 @@ config DRM_SII9234
+> >>>  	  It is an I2C driver, that detects connection of MHL bridge
+> >>>  	  and starts encapsulation of HDMI signal.
+> >>>
+> >>> +config DRM_THINE_THC63LVD1024
+> >>> +	tristate "Thine THC63LVD1024 LVDS decoder bridge"
+> >>> +	depends on OF
+> >>> +	select DRM_PANEL_BRIDGE
+> >> You don't use PANEL_BRIDGE, it should be possible to drop the select.
+> >>
+> > Ack
+> >
+> >>> +	---help---
+> >>> +	  Thine THC63LVD1024 LVDS decoder bridge driver.
+> >> Decoder to what?
+> >> Maybe it would be better to say it is LVDS/parallel or LVDS/RGB
+> >> converter or bridge.
+> > "LVDS to digital CMOS/TTL parallel data converter" as the manual
+> > describes the chip?
+>
+> Should work, unless we want some consistency in interface names, we have
+> already: parallel / DPI / RGB. I am little bit confused about relations
+> between them so I do not want to enforce any.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 37e2c984fbf3..85795b55a357 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -29,19 +29,19 @@
- struct vsp1_dl_header_list {
- 	u32 num_bytes;
- 	u32 addr;
--} __attribute__((__packed__));
-+};
- 
- struct vsp1_dl_header {
- 	u32 num_lists;
- 	struct vsp1_dl_header_list lists[8];
- 	u32 next_header;
- 	u32 flags;
--} __attribute__((__packed__));
-+};
- 
- struct vsp1_dl_entry {
- 	u32 addr;
- 	u32 data;
--} __attribute__((__packed__));
-+};
- 
- /**
-  * struct vsp1_dl_body - Display list body
--- 
-git-series 0.9.1
+config DRM_THINE_THC63LVD1024
+	tristate "Thine THC63LVD1024 LVDS decoder bridge"
+	depends on OF
+	---help---
+	  Thine THC63LVD1024 LVDS/parallel converter driver.
+
+I guess this is consistent with other symbol descriptions I found
+
+>
+
+[snip]
+>
+> >>> +
+> >>> +static int thc63_gpio_init(struct thc63_dev *thc63)
+> >>> +{
+> >>> +	thc63->pwdn = devm_gpiod_get_optional(thc63->dev, "pwdn",
+> >>> +					      GPIOD_OUT_LOW);
+> >> Shouldn't be GPIOD_OUT_HIGH - bridge initially disabled?
+> > No, the PWDN gpio is active low, it puts the chip in power down mode
+> > when the physical line level is set to 0.
+> >
+> > That's another confusing thing, when requesting the GPIO, the actual
+> > physical line value has to be provided, while when "set_value()" the
+> > logical one is requested, iirc.
+>
+> I think it is opposite, only *raw* functions uses physical level. Other
+> uses logical level.
+>
+> >
+> > Being the GPIO defined as active low, in power enable we set it to
+> > "logical inactive" == "physical 1", while during power disable it has
+> > to be set to "logical active" == "physical 0"
+> >
+> > Not the right place to complain here, but imo that's not consistent.
+> > Or have I misinterpreted the APIs? I cannot do much test, as in my setup
+> > the PWDN pin is hardwired to +vcc (through a physical switch, not
+> > controlled through a GPIO though).
+>
+> devm_gpiod_get_optional calls (indirectly) gpiod_configure_flags, which
+> calls gpiod_direction_output which uses logical levels.
+
+I clearly mis-interpreted the APIs.
+
+I'll fix and I'm sending v4 out shortly.
+
+Thanks
+   j
+
+>
+> Regards
+> Andrzej
+>
+> >
+> > Thanks
+> >    j
+> >
+> >> Regards
+> >> Andrzej
+> >>> +	if (IS_ERR(thc63->pwdn)) {
+> >>> +		dev_err(thc63->dev, "Unable to get GPIO \"pwdn\"\n");
+> >>> +		return PTR_ERR(thc63->pwdn);
+> >>> +	}
+> >>> +
+> >>> +	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
+> >>> +	if (IS_ERR(thc63->oe)) {
+> >>> +		dev_err(thc63->dev, "Unable to get GPIO \"oe\"\n");
+> >>> +		return PTR_ERR(thc63->oe);
+> >>> +	}
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int thc63_regulator_init(struct thc63_dev *thc63)
+> >>> +{
+> >>> +	struct regulator **reg;
+> >>> +	int i;
+> >>> +
+> >>> +	reg = &thc63->vccs[0];
+> >>> +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++, reg++) {
+> >>> +		*reg = devm_regulator_get_optional(thc63->dev,
+> >>> +						   thc63_reg_names[i]);
+> >>> +		if (IS_ERR(*reg)) {
+> >>> +			if (PTR_ERR(*reg) == -EPROBE_DEFER)
+> >>> +				return -EPROBE_DEFER;
+> >>> +			*reg = NULL;
+> >>> +		}
+> >>> +	}
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int thc63_probe(struct platform_device *pdev)
+> >>> +{
+> >>> +	struct thc63_dev *thc63;
+> >>> +	int ret;
+> >>> +
+> >>> +	thc63 = devm_kzalloc(&pdev->dev, sizeof(*thc63), GFP_KERNEL);
+> >>> +	if (!thc63)
+> >>> +		return -ENOMEM;
+> >>> +
+> >>> +	thc63->dev = &pdev->dev;
+> >>> +	platform_set_drvdata(pdev, thc63);
+> >>> +
+> >>> +	ret = thc63_regulator_init(thc63);
+> >>> +	if (ret)
+> >>> +		return ret;
+> >>> +
+> >>> +	ret = thc63_gpio_init(thc63);
+> >>> +	if (ret)
+> >>> +		return ret;
+> >>> +
+> >>> +	ret = thc63_parse_dt(thc63);
+> >>> +	if (ret)
+> >>> +		return ret;
+> >>> +
+> >>> +	thc63->bridge.driver_private = thc63;
+> >>> +	thc63->bridge.of_node = pdev->dev.of_node;
+> >>> +	thc63->bridge.funcs = &thc63_bridge_func;
+> >>> +
+> >>> +	drm_bridge_add(&thc63->bridge);
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int thc63_remove(struct platform_device *pdev)
+> >>> +{
+> >>> +	struct thc63_dev *thc63 = platform_get_drvdata(pdev);
+> >>> +
+> >>> +	drm_bridge_remove(&thc63->bridge);
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +#ifdef CONFIG_OF
+> >>> +static const struct of_device_id thc63_match[] = {
+> >>> +	{ .compatible = "thine,thc63lvd1024", },
+> >>> +	{ },
+> >>> +};
+> >>> +MODULE_DEVICE_TABLE(of, thc63_match);
+> >>> +#endif
+> >>> +
+> >>> +static struct platform_driver thc63_driver = {
+> >>> +	.probe	= thc63_probe,
+> >>> +	.remove	= thc63_remove,
+> >>> +	.driver	= {
+> >>> +		.name		= "thc63lvd1024",
+> >>> +		.of_match_table	= thc63_match,
+> >>> +	},
+> >>> +};
+> >>> +module_platform_driver(thc63_driver);
+> >>> +
+> >>> +MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
+> >>> +MODULE_DESCRIPTION("Thine THC63LVD1024 LVDS decoder DRM bridge driver");
+> >>> +MODULE_LICENSE("GPL v2");
+> >>
+>
+
+--zjcmjzIkjQU2rmur
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJaqktDAAoJEHI0Bo8WoVY8LtAP/3DDVciU0sbBOOzRmJDOhKvX
+tp8CL5/6Y1hL76QcnEwBjfh5yYeHpi5VSbTVPnsbCZ7UeepzDVCPqcx7YeXjImRQ
+g8bMeIz2h9tRY66xtwtvCtSNNGp8icO3ux7l/gL5t9jQupqe5SPlFJd8pdEkNw4o
+wZzl7RoimObi/SXL4VHtQym70RLtBco9N1UVg/Lb2gK8K1hHlnGHCL/IVbLxEayk
+KFoZHyq7DJkgvBbZMRppV6oktMdUQr7YzKdsXnyJDOGxKliDE6sMj2pskSW7eSaH
+QLys3csCoQ/aaPv3QLSM9TQbs0XMrLr5qYAfEjo3TJ33AyEzkEbzIgJCEUf++Fa7
+ZC8jhIEbK/RZOlDvKFx/X3X7ofiaOh83P9zsbQ5yBdr3AZv8lj2iqHYGykHNhSVp
+ZcLR7aOKvm870MWMFqWd3JlExdOfEAZdQ6r79XA/8HIgXCn5xZKxCE4wrQ1TOfI2
+jK2N4eLnHjLUu7qMWSbNU2JTzQKVkeuAP6lDrpe97eMsRqh1LPDyRDuDZMK79Nw+
+XvZTZM2QOQznHikQMgLOh8eNz5eakImVEoJp++jkzaw5SxMiVeNixIcAkicg9ovg
+XbCLNsjIavng0FSAz3O52CN/JIiRUNMpiESgfktRnaOy/+lfEjNIU2R1LxB5i/YG
+WeXaFGrTasPXLTnDLgXy
+=L0Kg
+-----END PGP SIGNATURE-----
+
+--zjcmjzIkjQU2rmur--
