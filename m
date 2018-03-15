@@ -1,84 +1,121 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34885 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752116AbeCCTHU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 3 Mar 2018 14:07:20 -0500
-Received: by mail-lf0-f65.google.com with SMTP id 70so17805998lfw.2
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Mar 2018 11:07:19 -0800 (PST)
-Subject: [PATCH v3 2/2] arm64: dts: renesas: eagle: add I2C0 support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
-Message-ID: <30bfc66d-2bfb-4d6e-8bdc-fcd9cb9522c2@cogentembedded.com>
-Date: Sat, 3 Mar 2018 22:07:16 +0300
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 16 Mar 2018 00:43:34 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        sergei.shtylyov@cogentembedded.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] dt-bindings: display: bridge: Document
+ THC63LVD1024 LVDS decoder
+Message-ID: <20180315234334.GA3432@bigcity.dyn.berto.se>
+References: <1521130316-1221-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1521130316-1221-2-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <23c5b1f4-d92b-455f-7288-5aabd002183a@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521130316-1221-2-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Eagle board dependent part of the I2C0 device node.
+Hi Jacopo,
 
-The I2C0 bus is populated by ON Semiconductor PCA9653 I/O expander and
-Analog Devices ADV7511W HDMI transmitter (but we're only describing the
-former chip now).
+Thanks for your patch,
 
-Based on the original (and large) patch by Vladimir Barinov.
+On 2018-03-15 17:11:54 +0100, Jacopo Mondi wrote:
+> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
----
-Changes in version 3:
-- added Geert's tag.
+> ---
+>  .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 ++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> new file mode 100644
+> index 0000000..8225c6a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> @@ -0,0 +1,66 @@
+> +Thine Electronics THC63LVD1024 LVDS decoder
+> +-------------------------------------------
+> +
+> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
+> +to parallel data outputs. The chip supports single/dual input/output modes,
+> +handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
+> +
+> +Single or dual operation modes, output data mapping and DDR output modes are
+> +configured through input signals and the chip does not expose any control bus.
+> +
+> +Required properties:
+> +- compatible: Shall be "thine,thc63lvd1024"
+> +
+> +Optional properties:
+> +- vcc-supply: Power supply for TTL output and digital circuitry
+> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
+> +- lvcc-supply: Power supply for LVDS inputs
+> +- pvcc-supply: Power supply for PLL circuitry
+> +- pdwn-gpios: Power down GPIO signal. Active low
+> +- oe-gpios: Output enable GPIO signal. Active high
+> +
+> +The THC63LVD1024 video port connections are modeled according
+> +to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
+> +
+> +Required video port nodes:
+> +- Port@0: First LVDS input port
+> +- Port@2: First digital CMOS/TTL parallel output
+> +
+> +Optional video port nodes:
+> +- Port@1: Second LVDS input port
+> +- Port@3: Second digital CMOS/TTL parallel output
+> +
+> +Example:
+> +--------
+> +
+> +	thc63lvd1024: lvds-decoder {
+> +		compatible = "thine,thc63lvd1024";
+> +
+> +		vcc-supply = <&reg_lvds_vcc>;
+> +		lvcc-supply = <&reg_lvds_lvcc>;
+> +
+> +		pdwn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +
+> +				lvds_dec_in_0: endpoint {
+> +					remote-endpoint = <&lvds_out>;
+> +				};
+> +			};
+> +
+> +			port@2{
+> +				reg = <2>;
+> +
+> +				lvds_dec_out_2: endpoint {
+> +					remote-endpoint = <&adv7511_in>;
+> +				};
+> +
+> +			};
+> +
+> +		};
+> +	};
+> -- 
+> 2.7.4
+> 
 
-Changes in version 2:
-- refreshed with the patch adding EtherAVB pins removed for now...
-
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -55,7 +55,27 @@
- 	clock-frequency = <32768>;
- };
- 
-+&i2c0 {
-+	pinctrl-0 = <&i2c0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	io_expander: gpio@20 {
-+		compatible = "onnn,pca9654";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+};
-+
- &pfc {
-+	i2c0_pins: i2c0 {
-+		groups = "i2c0";
-+		function = "i2c0";
-+	};
-+
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
- 		function = "scif0";
+-- 
+Regards,
+Niklas S�derlund
