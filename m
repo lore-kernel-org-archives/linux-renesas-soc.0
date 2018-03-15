@@ -1,53 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41748 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753078AbeCMSFm (ORCPT
+Received: from mga12.intel.com ([192.55.52.136]:11704 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751372AbeCORn1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:05:42 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 04/11] media: vsp1: Remove unused display list structure field
-Date: Tue, 13 Mar 2018 19:05:20 +0100
-Message-Id: <8ee09a94a13469d440cd1ef163125c4b4d453531.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Thu, 15 Mar 2018 13:43:27 -0400
+Date: Thu, 15 Mar 2018 19:43:23 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: intel-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com
+Subject: Re: [Intel-gfx] [PATCH igt 6/8] lib/igt_pm: turn absence of
+ autosuspend_delay_ms from fail to skip
+Message-ID: <20180315174323.GY5453@intel.com>
+References: <1521125144-28614-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1521125144-28614-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521125144-28614-7-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vsp1 reference in the vsp1_dl_body structure is not used.
-Remove it.
+On Thu, Mar 15, 2018 at 03:45:42PM +0100, Ulrich Hecht wrote:
+> Fixes false negatives on everything that doesn't happen to be at a
+> specific hard-coded sysfs path...
+> 
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  lib/igt_pm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/igt_pm.c b/lib/igt_pm.c
+> index 5bf5b2e..641157b 100644
+> --- a/lib/igt_pm.c
+> +++ b/lib/igt_pm.c
+> @@ -262,7 +262,7 @@ bool igt_setup_runtime_pm(void)
+>  	 * suite goes faster and we have a higher probability of triggering race
+>  	 * conditions. */
+>  	fd = open(POWER_DIR "/autosuspend_delay_ms", O_WRONLY);
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c | 2 --
- 1 file changed, 2 deletions(-)
+The hardocded path should probably go then.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 8162f4ce66eb..310ce81cd724 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -48,7 +48,6 @@ struct vsp1_dl_entry {
-  * @list: entry in the display list list of bodies
-  * @free: entry in the pool free body list
-  * @pool: pool to which this body belongs
-- * @vsp1: the VSP1 device
-  * @entries: array of entries
-  * @dma: DMA address of the entries
-  * @size: size of the DMA memory in bytes
-@@ -62,7 +61,6 @@ struct vsp1_dl_body {
- 	refcount_t refcnt;
- 
- 	struct vsp1_dl_body_pool *pool;
--	struct vsp1_device *vsp1;
- 
- 	struct vsp1_dl_entry *entries;
- 	dma_addr_t dma;
+igt_sysfs_path() + "/device/power" looks like it should dtrt.
+Would need to plumb the fd down though. Hopefully every caller
+has it handy.
+
+> -	igt_assert_f(fd >= 0,
+> +	igt_require_f(fd >= 0,
+>  		     "Can't open " POWER_DIR "/autosuspend_delay_ms\n");
+>  
+>  	/* If we fail to write to the file, it means this system doesn't support
+> -- 
+> 2.7.4
+> 
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+
 -- 
-git-series 0.9.1
+Ville Syrj�l�
+Intel OTC
