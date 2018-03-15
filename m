@@ -1,71 +1,116 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:33030 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753374AbeCPNom (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 09:44:42 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 7/8] clk: renesas: sh73a0: Always use readl()/writel()
-Date: Fri, 16 Mar 2018 14:40:21 +0100
-Message-Id: <1521207622-3311-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
-References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] dt-bindings: display: bridge: Document
+ THC63LVD1024 LVDS decoder
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <ee9a65b5-28ca-7404-36e2-29732e9ddfb8@samsung.com>
+Date: Thu, 15 Mar 2018 14:14:28 +0100
+MIME-Version: 1.0
+In-Reply-To: <1521111391-3515-2-git-send-email-jacopo+renesas@jmondi.org>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+References: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
+        <CGME20180315111511epcas3p41569bd909fe6916429f3a016b0b88f57@epcas3p4.samsung.com>
+        <1521111391-3515-2-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On arm32, there is no reason to use the (soon deprecated)
-clk_readl()/clk_writel().  Hence use the generic readl()/writel()
-instead.
+On 15.03.2018 11:56, Jacopo Mondi wrote:
+> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  .../bindings/display/bridge/thine,thc63lvd1024.txt | 63 ++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+>
+> diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> new file mode 100644
+> index 0000000..0936bde
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> @@ -0,0 +1,63 @@
+> +Thine Electronics THC63LVD1024 LVDS decoder
+> +-------------------------------------------
+> +
+> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
+> +to parallel data outputs. The chip supports single/dual input/output modes,
+> +handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
+> +
+> +Required properties:
+> +- compatible: Shall be "thine,thc63lvd1024",
+> +
+> +Optional properties:
+> +- vcc-supply: Power supply for TTL output and digital circuitry
+> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
+> +- lvcc-supply: Power supply for LVDS inputs
+> +- pvcc-supply: Power supply for PLL circuitry
+> +- pdwn-gpios: Power down GPIO signal. Active low.
+> +- oe-gpios: Output enable GPIO signal. Active high.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/clk-sh73a0.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Nitpick: different lines ends differently: period, dot, nothing.
+Another thing if there will be next iteration it would be good to
+emphasize converter has no control bus.
+Anyway:
 
-diff --git a/drivers/clk/renesas/clk-sh73a0.c b/drivers/clk/renesas/clk-sh73a0.c
-index eea38f6ea77e995d..6cfa6b51904117a5 100644
---- a/drivers/clk/renesas/clk-sh73a0.c
-+++ b/drivers/clk/renesas/clk-sh73a0.c
-@@ -85,7 +85,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
- 
- 	if (!strcmp(name, "main")) {
- 		/* extal1, extal1_div2, extal2, extal2_div2 */
--		u32 parent_idx = (clk_readl(cpg->reg + CPG_CKSCR) >> 28) & 3;
-+		u32 parent_idx = (readl(cpg->reg + CPG_CKSCR) >> 28) & 3;
- 
- 		parent_name = of_clk_get_parent_name(np, parent_idx >> 1);
- 		div = (parent_idx & 1) + 1;
-@@ -110,11 +110,11 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
- 		default:
- 			return ERR_PTR(-EINVAL);
- 		}
--		if (clk_readl(cpg->reg + CPG_PLLECR) & BIT(enable_bit)) {
--			mult = ((clk_readl(enable_reg) >> 24) & 0x3f) + 1;
-+		if (readl(cpg->reg + CPG_PLLECR) & BIT(enable_bit)) {
-+			mult = ((readl(enable_reg) >> 24) & 0x3f) + 1;
- 			/* handle CFG bit for PLL1 and PLL2 */
- 			if (enable_bit == 1 || enable_bit == 2)
--				if (clk_readl(enable_reg) & BIT(20))
-+				if (readl(enable_reg) & BIT(20))
- 					mult *= 2;
- 		}
- 	} else if (!strcmp(name, "dsi0phy") || !strcmp(name, "dsi1phy")) {
-@@ -193,9 +193,9 @@ static void __init sh73a0_cpg_clocks_init(struct device_node *np)
- 		return;
- 
- 	/* Set SDHI clocks to a known state */
--	clk_writel(0x108, cpg->reg + CPG_SD0CKCR);
--	clk_writel(0x108, cpg->reg + CPG_SD1CKCR);
--	clk_writel(0x108, cpg->reg + CPG_SD2CKCR);
-+	writel(0x108, cpg->reg + CPG_SD0CKCR);
-+	writel(0x108, cpg->reg + CPG_SD1CKCR);
-+	writel(0x108, cpg->reg + CPG_SD2CKCR);
- 
- 	for (i = 0; i < num_clks; ++i) {
- 		const char *name;
--- 
-2.7.4
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+
+ --
+Regards
+Andrzej
+
+> +
+> +The THC63LVD1024 video port connections are modeled according
+> +to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
+> +
+> +Required video port nodes:
+> +- Port@0: First LVDS input port
+> +- Port@2: First digital CMOS/TTL parallel output
+> +
+> +Optional video port nodes:
+> +- Port@1: Second LVDS input port
+> +- Port@3: Second digital CMOS/TTL parallel output
+> +
+> +Example:
+> +--------
+> +
+> +	thc63lvd1024: lvds-decoder {
+> +		compatible = "thine,thc63lvd1024";
+> +
+> +		vcc-supply = <&reg_lvds_vcc>;
+> +		lvcc-supply = <&reg_lvds_lvcc>;
+> +
+> +		pdwn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +
+> +				lvds_dec_in_0: endpoint {
+> +					remote-endpoint = <&lvds_out>;
+> +				};
+> +			};
+> +
+> +			port@2{
+> +				reg = <2>;
+> +
+> +				lvds_dec_out_2: endpoint {
+> +					remote-endpoint = <&adv7511_in>;
+> +				};
+> +
+> +			};
+> +
+> +		};
+> +	};
+
+
