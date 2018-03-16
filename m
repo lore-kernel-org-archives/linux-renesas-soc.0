@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752697AbeCPQjq (ORCPT
+        with ESMTP id S1753723AbeCPOyr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:39:46 -0400
+        Fri, 16 Mar 2018 10:54:47 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Magnus Damm <damm+renesas@opensource.se>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 45/47] ARM: dts: marzen: Add SDHI0 VCCQ Regulator
-Date: Fri, 16 Mar 2018 17:38:42 +0100
-Message-Id: <56bac953b15087dbced6951248ca05a6f0888831.1521218085.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
-References: <cover.1521218085.git.horms+renesas@verge.net.au>
+Subject: [PATCH 50/52] ARM: dts: marzen: Add SDHI0 VCCQ Regulator
+Date: Fri, 16 Mar 2018 15:53:09 +0100
+Message-Id: <55bb4ae21d5819177200765d582e4a544e120260.1521208546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
+References: <cover.1521208546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
