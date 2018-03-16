@@ -1,70 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753959AbeCPOym (ORCPT
+        with ESMTP id S1751665AbeCPOxg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:54:42 -0400
+        Fri, 16 Mar 2018 10:53:36 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 48/52] ARM: dts: lager: Move cec_clock to root node
-Date: Fri, 16 Mar 2018 15:53:07 +0100
-Message-Id: <c449938ed383a964019e1d7106e8d47c5cec04f0.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 8/8] dt-bindings: arm: Document Renesas R-Car M3-N-based Salvator-X board
+Date: Fri, 16 Mar 2018 15:52:04 +0100
+Message-Id: <09bea76aad76058d7d1dae8f5804751a017967c1.1521206902.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206902.git.horms+renesas@verge.net.au>
+References: <cover.1521206902.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-cec-clock is a fixed clock generator that is not controlled by i2c-12
-and thus should not be a child of the i2c-12 bus node. Rather, it should
-be a child of the root node of the DT.
+The Renesas Salvator-X development board can be equipped with an R-Car
+H3, M3-W, or M3-N SiP, which are pin-compatible.
 
-Fixes: c5aa87977626e778 ("ARM: dts: lager: Add CEC clock for HDMI transmitter")
+Document board part number and compatible values for the version with
+R-Car M3-N.
+
+The board part number was extracted from a big patch by Takeshi Kihara
+in the BSP.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 20c1b4f224b8..063fdb65dc60 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -247,6 +247,12 @@
- 		};
- 	};
- 
-+	cec_clock: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
-+
- 	hdmi-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -352,12 +358,6 @@
- 			};
- 		};
- 
--		cec_clock: cec-clock {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <12000000>;
--		};
--
- 		hdmi@39 {
- 			compatible = "adi,adv7511w";
- 			reg = <0x39>;
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 02c77e58301b..d3d1df97834f 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -108,6 +108,8 @@ Boards:
+     compatible = "renesas,salvator-x", "renesas,r8a7795"
+   - Salvator-X (RTP0RC7796SIPB0011S)
+     compatible = "renesas,salvator-x", "renesas,r8a7796"
++  - Salvator-X (RTP0RC7796SIPB0011S (M3N))
++    compatible = "renesas,salvator-x", "renesas,r8a77965"
+   - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
+     compatible = "renesas,salvator-xs", "renesas,r8a7795"
+   - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
 -- 
 2.11.0
