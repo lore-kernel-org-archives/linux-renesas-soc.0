@@ -1,46 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:11574 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752352AbeC0Olo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752936AbeCPQi4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:41:44 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 16 Mar 2018 12:38:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH  11/12] ARM: shmobile: defconfig: Enable r8a77470 SoC
-Date: Tue, 27 Mar 2018 15:37:22 +0100
-Message-Id: <1522161443-54428-12-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
-References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/47] ARM: dts: r8a7793: Reduce size of thermal registers
+Date: Fri, 16 Mar 2018 17:38:00 +0100
+Message-Id: <1cfe2186c708c8f954097086e3da0cffd1e75f4e.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable recently added r8a77470 (RZ/G1C) SoC.
+Reduce size of thermal registers in DT for r8a7793 (R-Car M3-N) SoC.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+According to the "User's Manual: Hardware" v2.00 the registers at base
+0xe61f0000 extend to an offset of 0x10, rather than 0x14 which is the case
+on the r8a73a4 (R-Mobile APE6).
+
+This should not have any runtime affect as mapping granularity is PAGE_SIZE.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7793.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index a701601..dc650db 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -14,6 +14,7 @@ CONFIG_ARCH_R8A73A4=y
- CONFIG_ARCH_R8A7740=y
- CONFIG_ARCH_R8A7743=y
- CONFIG_ARCH_R8A7745=y
-+CONFIG_ARCH_R8A77470=y
- CONFIG_ARCH_R8A7778=y
- CONFIG_ARCH_R8A7779=y
- CONFIG_ARCH_R8A7790=y
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 039b22517526..e95f4fb44dc4 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -231,7 +231,7 @@
+ 		compatible =	"renesas,thermal-r8a7793",
+ 				"renesas,rcar-gen2-thermal",
+ 				"renesas,rcar-thermal";
+-		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
++		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 522>;
+ 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
 -- 
-2.7.4
+2.11.0
