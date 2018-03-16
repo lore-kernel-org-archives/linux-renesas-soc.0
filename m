@@ -1,57 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:49096 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751293AbeCLPME (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753584AbeCPOv4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:12:04 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Fri, 16 Mar 2018 10:51:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] arm64: dts: renesas: salvator-common: Rename EtherAVB "mdc" pin group to "mdio"
-Date: Mon, 12 Mar 2018 16:11:58 +0100
-Message-Id: <1520867520-13942-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
-References: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/69] arm64: dts: renesas: r8a77970: move node which has no reg property out of bus
+Date: Fri, 16 Mar 2018 15:50:37 +0100
+Message-Id: <7569d1ee01c75b8581521bc67e595a575a7eafce.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On other Renesas SoCs, the pin group for the MDIO bus is named "mdio"
-instead of "mdc".  Fix the inconsistency, now the pinctrl drivers for
-R-Car H3, M3-W, and M3-N have gained support for the traditional pin
-group name.
+Move timer node from soc node to root node.  The node that have been moved
+do not have any register properties and thus shouldn't be placed on the
+bus.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on:
-  - pinctrl: sh-pfc: r8a7795-es1: Rename EtherAVB "mdc" pin group to "mdio"
-  - pinctrl: sh-pfc: r8a7795: Rename EtherAVB "mdc" pin group to "mdio"
-  - pinctrl: sh-pfc: r8a7796: Rename EtherAVB "mdc" pin group to "mdio"
-  - pinctrl: sh-pfc: r8a77965: Rename EtherAVB "mdc" pin group to "mdio"
----
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This problem is flagged by the compiler as follows:
+$ make W=1
+...
+  DTC     arch/arm64/boot/dts/renesas/r8a77970-eagle.dtb
+arch/arm64/boot/dts/renesas/r8a77970-eagle.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+  DTC     arch/arm64/boot/dts/renesas/r8a77970-v3msk.dtb
+arch/arm64/boot/dts/renesas/r8a77970-v3msk.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 2a7f36abd2dd85c6..1642bc9c8906f010 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -416,12 +416,12 @@
- 
- 	avb_pins: avb {
- 		mux {
--			groups = "avb_link", "avb_mdc", "avb_mii";
-+			groups = "avb_link", "avb_mdio", "avb_mii";
- 			function = "avb";
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index c35a117fc447..566a7f704830 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -92,18 +92,6 @@
+ 			resets = <&cpg 408>;
  		};
  
--		pins_mdc {
--			groups = "avb_mdc";
-+		pins_mdio {
-+			groups = "avb_mdio";
- 			drive-strength = <24>;
+-		timer {
+-			compatible = "arm,armv8-timer";
+-			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) |
+-						  IRQ_TYPE_LEVEL_LOW)>,
+-				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) |
+-						  IRQ_TYPE_LEVEL_LOW)>;
+-		};
+-
+ 		rwdt: watchdog@e6020000 {
+ 			compatible = "renesas,r8a77970-wdt",
+ 				     "renesas,rcar-gen3-wdt";
+@@ -442,4 +430,12 @@
+ 			#size-cells = <0>;
  		};
- 
+ 	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++	};
+ };
 -- 
-2.7.4
+2.11.0
