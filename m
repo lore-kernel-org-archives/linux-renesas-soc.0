@@ -1,47 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753884AbeCPOxm (ORCPT
+        with ESMTP id S1752697AbeCPQjq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:42 -0400
+        Fri, 16 Mar 2018 12:39:46 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/52] ARM: dts: r8a7793: Reduce size of thermal registers
-Date: Fri, 16 Mar 2018 15:52:22 +0100
-Message-Id: <1cfe2186c708c8f954097086e3da0cffd1e75f4e.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
+Subject: [PATCH 45/47] ARM: dts: marzen: Add SDHI0 VCCQ Regulator
+Date: Fri, 16 Mar 2018 17:38:42 +0100
+Message-Id: <56bac953b15087dbced6951248ca05a6f0888831.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reduce size of thermal registers in DT for r8a7793 (R-Car M3-N) SoC.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-According to the "User's Manual: Hardware" v2.00 the registers at base
-0xe61f0000 extend to an offset of 0x10, rather than 0x14 which is the case
-on the r8a73a4 (R-Mobile APE6).
+Add support for the on-board voltage regulator hooked up to GPIO3_20
+on r8a7779 Marzen. The board schematics describes the regulator as U4
+TPS2110A. Input wise, U4 has D0 fixed to ground, D1 tied to GPIO3_20
+while IN1 is fixed to 3.3V and IN2 is fixed to 1.8V. OUT goes to the
+pull-ups for the data pins of SDHI0.
 
-This should not have any runtime affect as mapping granularity is PAGE_SIZE.
-
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7779-marzen.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 039b22517526..e95f4fb44dc4 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -231,7 +231,7 @@
- 		compatible =	"renesas,thermal-r8a7793",
- 				"renesas,rcar-gen2-thermal",
- 				"renesas,rcar-thermal";
--		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
-+		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 522>;
- 		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
+index 9412a86f9b30..4b9006bac3cb 100644
+--- a/arch/arm/boot/dts/r8a7779-marzen.dts
++++ b/arch/arm/boot/dts/r8a7779-marzen.dts
+@@ -42,6 +42,19 @@
+ 		regulator-always-on;
+ 	};
+ 
++	vccq_sdhi0: regulator-vccq-sdhi0 {
++		compatible = "regulator-gpio";
++
++		regulator-name = "SDHI0 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio3 20 GPIO_ACTIVE_HIGH>;
++		gpios-states = <1>;
++		states = <3300000 1
++			  1800000 0>;
++	};
++
+ 	ethernet@18000000 {
+ 		compatible = "smsc,lan9220", "smsc,lan9115";
+ 		reg = <0x18000000 0x100>;
+@@ -243,6 +256,7 @@
+ 	pinctrl-names = "default";
+ 
+ 	vmmc-supply = <&fixedregulator3v3>;
++	vqmmc-supply = <&vccq_sdhi0>;
+ 	bus-width = <4>;
+ 	status = "okay";
+ };
 -- 
 2.11.0
