@@ -1,126 +1,108 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33895 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753212AbeCTNAw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Mar 2018 09:00:52 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
         horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
         niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-Date: Tue, 20 Mar 2018 15:01:57 +0200
-Message-ID: <3127791.hHqCBynxiV@avalon>
-In-Reply-To: <1521213399-31947-4-git-send-email-jacopo+renesas@jmondi.org>
-References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org> <1521213399-31947-4-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v6 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
+Date: Fri, 16 Mar 2018 16:16:39 +0100
+Message-Id: <1521213399-31947-4-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
+decoder, connected to the on-chip LVDS encoder output on one side
+and to HDMI encoder ADV7511w on the other one.
 
-Thank you for the patch.
+As the decoder does not need any configuration it has been so-far
+omitted from DTS. Now that a driver is available, describe it in DT
+as well.
 
-On Friday, 16 March 2018 17:16:39 EET Jacopo Mondi wrote:
-> The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
-> decoder, connected to the on-chip LVDS encoder output on one side
-> and to HDMI encoder ADV7511w on the other one.
-> 
-> As the decoder does not need any configuration it has been so-far
-> omitted from DTS. Now that a driver is available, describe it in DT
-> as well.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-The patch looks OK to me, but I think it should be squashed with Niklas' patch 
-that added display HDMI output support to the V3M Eagle DT.
+---
 
-> ---
-> 
-> List of patch dependencies, as of renesas-drivers-2018-03-13-v4.16-rc5:
-> 
-> - [PATCH v2 0/5] arm64: dts: renesas: r8a77970: enable HDMI output
->    which includes DU, LVDS and FCPD enablement from:
->   [PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
-> - [PATCH v4] v4l: vsp1: Fix video output on R8A77970
-> 
-> Patches to be applied on top of
-> "arm64: dts: renesas: eagle: add HDMI output using the ADV7511W"
-> 
-> Thanks
->    j
-> ---
->  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 33 ++++++++++++++++++++---
->  1 file changed, 30 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts index c0fd144..69f43b8
-> 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> @@ -42,6 +42,33 @@
->  			};
->  		};
->  	};
-> +
-> +	thc63lvd1024: lvds-decoder {
-> +		compatible = "thine,thc63lvd1024";
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				thc63lvd1024_in_0: endpoint {
-> +					remote-endpoint = <&lvds0_out>;
-> +				};
-> +			};
-> +
-> +			port@2{
-> +				reg = <2>;
-> +
-> +				thc63lvd1024_out_2: endpoint {
-> +					remote-endpoint = <&adv7511_in>;
-> +				};
-> +
-> +			};
-> +
-> +		};
-> +	};
->  };
-> 
->  &avb {
-> @@ -98,7 +125,7 @@
->  			port@0 {
->  				reg = <0>;
->  				adv7511_in: endpoint {
-> -					remote-endpoint = <&lvds0_out>;
-> +					remote-endpoint = <&thc63lvd1024_out_2>;
->  				};
->  			};
-> 
-> @@ -152,8 +179,8 @@
-> 
->  	ports {
->  		port@1 {
-> -			endpoint {
-> -				remote-endpoint = <&adv7511_in>;
-> +			lvds0_out: endpoint {
-> +				remote-endpoint = <&thc63lvd1024_in_0>;
->  			};
->  		};
->  	};
+List of patch dependencies, as of renesas-drivers-2018-03-13-v4.16-rc5:
 
+- [PATCH v2 0/5] arm64: dts: renesas: r8a77970: enable HDMI output
+   which includes DU, LVDS and FCPD enablement from:
+  [PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
+- [PATCH v4] v4l: vsp1: Fix video output on R8A77970
+
+Patches to be applied on top of
+"arm64: dts: renesas: eagle: add HDMI output using the ADV7511W"
+
+Thanks
+   j
+---
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 33 +++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+index c0fd144..69f43b8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -42,6 +42,33 @@
+ 			};
+ 		};
+ 	};
++
++	thc63lvd1024: lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				thc63lvd1024_in_0: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++
++			port@2{
++				reg = <2>;
++
++				thc63lvd1024_out_2: endpoint {
++					remote-endpoint = <&adv7511_in>;
++				};
++
++			};
++
++		};
++	};
+ };
+ 
+ &avb {
+@@ -98,7 +125,7 @@
+ 			port@0 {
+ 				reg = <0>;
+ 				adv7511_in: endpoint {
+-					remote-endpoint = <&lvds0_out>;
++					remote-endpoint = <&thc63lvd1024_out_2>;
+ 				};
+ 			};
+ 
+@@ -152,8 +179,8 @@
+ 
+ 	ports {
+ 		port@1 {
+-			endpoint {
+-				remote-endpoint = <&adv7511_in>;
++			lvds0_out: endpoint {
++				remote-endpoint = <&thc63lvd1024_in_0>;
+ 			};
+ 		};
+ 	};
 -- 
-Regards,
+2.7.4
 
-Laurent Pinchart
