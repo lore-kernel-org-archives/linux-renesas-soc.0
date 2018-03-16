@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752813AbeCPQjV (ORCPT
+        with ESMTP id S1753993AbeCPOzA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:39:21 -0400
+        Fri, 16 Mar 2018 10:55:00 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 32/47] ARM: dts: r8a7745: Add VSP support
-Date: Fri, 16 Mar 2018 17:38:29 +0100
-Message-Id: <76a2577d97f0b221245e56a17a70bb10a3a97419.1521218085.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
-References: <cover.1521218085.git.horms+renesas@verge.net.au>
+Subject: [PATCH 32/52] ARM: dts: r8a7745: Add VSP support
+Date: Fri, 16 Mar 2018 15:52:51 +0100
+Message-Id: <76a2577d97f0b221245e56a17a70bb10a3a97419.1521208546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
+References: <cover.1521208546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
