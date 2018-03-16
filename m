@@ -1,105 +1,190 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:40917 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753322AbeCXUM6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751969AbeCPQji (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:12:58 -0400
-Received: by mail-lf0-f67.google.com with SMTP id e5-v6so22906020lfb.7
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Mar 2018 13:12:57 -0700 (PDT)
-Subject: [PATCH 5/5] sh_eth: add sh_eth_cpu_data::cexcr flag
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
-References: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
-Message-ID: <58a630fa-0e76-dea7-bf11-ad872a4de061@cogentembedded.com>
-Date: Sat, 24 Mar 2018 23:12:54 +0300
-MIME-Version: 1.0
-In-Reply-To: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Fri, 16 Mar 2018 12:39:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 39/47] ARM: dts: silk: use demuxer for I2C1
+Date: Fri, 16 Mar 2018 17:38:36 +0100
+Message-Id: <d4c1ce2813942407cead7adb86d1dd9dfc46f74c.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-GEther controllers have CERCR/CEECR instead of CNDCR on the others.
-Currently we are calling sh_eth_is_gether() in order to check for this,
-however it would be simpler  to check the new 'cexcr' bitfield in the
-'struct sh_eth_cpu_data';  then we'd be able to remove sh_eth_is_gether()
-as there would be no callers left...
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
 
+Based on work for the r8a7790/lager by Wolfram Sang.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, fixed aliases, switched to named GPIOs]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |   11 +++++------
- drivers/net/ethernet/renesas/sh_eth.h |    1 +
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7794-silk.dts | 128 ++++++++++++++++++++++---------------
+ 1 file changed, 75 insertions(+), 53 deletions(-)
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -450,11 +450,6 @@ static u32 sh_eth_tsu_read(struct sh_eth
- 	return ioread32(mdp->tsu_addr + mdp->reg_offset[enum_index]);
- }
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index edfad0e5ac53..f1afe2dda13a 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -31,6 +31,8 @@
  
--static bool sh_eth_is_gether(struct sh_eth_private *mdp)
--{
--	return mdp->reg_offset == sh_eth_offset_gigabit;
--}
+ 	aliases {
+ 		serial0 = &scif2;
++		i2c9 = &gpioi2c1;
++		i2c10 = &i2chdmi;
+ 	};
+ 
+ 	chosen {
+@@ -153,6 +155,78 @@
+ 			clocks = <&x9_clk>;
+ 		};
+ 	};
++
++	gpioi2c1: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C1.
++	 */
++	i2chdmi: i2c-10 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ak4643: codec@12 {
++			compatible = "asahi-kasei,ak4643";
++			#sound-dai-cells = <0>;
++			reg = <0x12>;
++		};
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin0>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin0ep>;
++				};
++			};
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio5>;
++			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_rgb0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con>;
++					};
++				};
++			};
++		};
++	};
+ };
+ 
+ &extal_clk {
+@@ -268,61 +342,9 @@
+ 
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+-	status = "okay";
+ 	clock-frequency = <400000>;
 -
- static void sh_eth_select_mii(struct net_device *ndev)
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
-@@ -661,6 +656,7 @@ static struct sh_eth_cpu_data r8a7740_da
- 	.tsu		= 1,
- 	.select_mii	= 1,
- 	.magic		= 1,
-+	.cexcr		= 1,
+-	ak4643: codec@12 {
+-		compatible = "asahi-kasei,ak4643";
+-		#sound-dai-cells = <0>;
+-		reg = <0x12>;
+-	};
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin0>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio5>;
+-		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_rgb0>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
+-				};
+-			};
+-		};
+-	};
  };
  
- /* There is CPU dependent code */
-@@ -918,6 +914,7 @@ static struct sh_eth_cpu_data sh7757_dat
- 	.no_ade		= 1,
- 	.xdfar_rw	= 1,
- 	.tsu		= 1,
-+	.cexcr		= 1,
- 	.dual_port	= 1,
- };
- 
-@@ -959,6 +956,7 @@ static struct sh_eth_cpu_data sh7734_dat
- 	.hw_checksum	= 1,
- 	.select_mii	= 1,
- 	.magic		= 1,
-+	.cexcr		= 1,
- };
- 
- /* SH7763 */
-@@ -997,6 +995,7 @@ static struct sh_eth_cpu_data sh7763_dat
- 	.tsu		= 1,
- 	.irq_flags	= IRQF_SHARED,
- 	.magic		= 1,
-+	.cexcr		= 1,
- 	.dual_port	= 1,
- };
- 
-@@ -2540,7 +2539,7 @@ static struct net_device_stats *sh_eth_g
- 	sh_eth_update_stat(ndev, &ndev->stats.collisions, CDCR);
- 	sh_eth_update_stat(ndev, &ndev->stats.tx_carrier_errors, LCCR);
- 
--	if (sh_eth_is_gether(mdp)) {
-+	if (mdp->cd->cexcr) {
- 		sh_eth_update_stat(ndev, &ndev->stats.tx_carrier_errors,
- 				   CERCR);
- 		sh_eth_update_stat(ndev, &ndev->stats.tx_carrier_errors,
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -515,6 +515,7 @@ struct sh_eth_cpu_data {
- 	unsigned rtrate:1;	/* EtherC has RTRATE register */
- 	unsigned magic:1;	/* EtherC has ECMR.MPDE and ECSR.MPD */
- 	unsigned no_tx_cntrs:1;	/* EtherC DOES NOT have TX error counters */
-+	unsigned cexcr:1;	/* EtherC has CERCR/CEECR */
- 	unsigned dual_port:1;	/* Dual EtherC/E-DMAC */
- };
- 
+ &mmcif0 {
+-- 
+2.11.0
