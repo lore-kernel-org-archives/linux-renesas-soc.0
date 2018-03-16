@@ -1,61 +1,283 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:23752 "EHLO
-        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932854AbeCJAKx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753048AbeCPQjk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Mar 2018 19:10:53 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/3] rcar-vin: always run in continues mode
-Date: Sat, 10 Mar 2018 01:09:50 +0100
-Message-Id: <20180310000953.25366-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Mar 2018 12:39:40 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 40/47] ARM: dts: gose: use demuxer for I2C2
+Date: Fri, 16 Mar 2018 17:38:37 +0100
+Message-Id: <786ef2eeb04cca41d6382556f1409f37f64c4a0c.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This series reworks the R-Car VIN driver to only run using its continues 
-capture mode. This improves performance a lot when userspace struggles 
-to keep up and queue buffers as fast as the VIN driver consumes them.  
-The solution to always be able to run in continues is to introduce a 
-scratch buffer inside the VIN driver which it can pad the hardware 
-capture buffer ring with if it have no buffer from userspace. Using this 
-scratch buffer allows the driver to not need to stop capturing when it 
-run out of buffers and then restart it once it have more buffers.
+Create a separate bus for HDMI related I2C2 and provide fallback to GPIO.
 
-Patch 1/3 removes a duplicated check in the VIN interrupt handler. Patch 
-2/3 adds the allocation of the scratch buffer. And finally 3/3 drops the 
-single capture mode in favor of always running in continues capture mode 
-and the scratch buffer.
+Based on work for the r8a7790/lager by Wolfram Sang.
 
-The series is based on top of the latest media-tree master branch and 
-can be fetched from.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, corrected board name in subject, fixed aliases, switched
+to named GPIOs]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/boot/dts/r8a7793-gose.dts | 218 ++++++++++++++++++++-----------------
+ 1 file changed, 121 insertions(+), 97 deletions(-)
 
-git://git.ragnatech.se/linux v4l2/next/vin/mode-v1
-
-It is tested on R-Car Koelsch Gen2 board using the onboard HDMI and CVBS 
-inputs. The test application v4l2-compliance pass for both inputs 
-without issues or warnings. A slight adaption of these patches to the 
-pending VIN Gen3 patches have been tested with great improvement in 
-capture speed for buffer strained situations and no regressions in the 
-vin-tests suite.
-
-Niklas Söderlund (3):
-  rcar-vin: remove duplicated check of state in irq handler
-  rcar-vin: allocate a scratch buffer at stream start
-  rcar-vin: use scratch buffer and always run in continuous mode
-
- drivers/media/platform/rcar-vin/rcar-dma.c | 212 ++++++++++-------------------
- drivers/media/platform/rcar-vin/rcar-vin.h |  10 +-
- 2 files changed, 75 insertions(+), 147 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 51b3ffac8efa..2b330ef71f4c 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -48,6 +48,8 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scif1;
++		i2c9 = &gpioi2c2;
++		i2c11 = &i2chdmi;
+ 	};
+ 
+ 	chosen {
+@@ -296,6 +298,124 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <148500000>;
+ 	};
++
++	gpioi2c2: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio2 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio2 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C2.
++	 */
++	i2chdmi: i2c-11 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c2>, <&gpioi2c2>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ak4643: codec@12 {
++			compatible = "asahi-kasei,ak4643";
++			#sound-dai-cells = <0>;
++			reg = <0x12>;
++		};
++
++		composite-in@20 {
++			compatible = "adi,adv7180cp";
++			reg = <0x20>;
++			remote = <&vin1>;
++
++			port {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7180_in: endpoint {
++						remote-endpoint = <&composite_con_in>;
++					};
++				};
++
++				port@3 {
++					reg = <3>;
++					adv7180_out: endpoint {
++						bus-width = <8>;
++						remote-endpoint = <&vin1ep>;
++					};
++				};
++			};
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio3>;
++			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_rgb>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con_out>;
++					};
++				};
++			};
++		};
++
++		hdmi-in@4c {
++			compatible = "adi,adv7612";
++			reg = <0x4c>;
++			interrupt-parent = <&gpio4>;
++			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++			default-input = <0>;
++
++			port {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7612_in: endpoint {
++						remote-endpoint = <&hdmi_con_in>;
++					};
++				};
++
++				port@2 {
++					reg = <2>;
++					adv7612_out: endpoint {
++						remote-endpoint = <&vin0ep2>;
++					};
++				};
++			};
++		};
++
++		eeprom@50 {
++			compatible = "renesas,r1ex24002", "atmel,24c02";
++			reg = <0x50>;
++			pagesize = <16>;
++		};
++	};
+ };
+ 
+ &du {
+@@ -544,107 +664,11 @@
+ 
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+ 	status = "okay";
+ 	clock-frequency = <100000>;
+ 
+-	ak4643: codec@12 {
+-		compatible = "asahi-kasei,ak4643";
+-		#sound-dai-cells = <0>;
+-		reg = <0x12>;
+-	};
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180cp";
+-		reg = <0x20>;
+-		remote = <&vin1>;
+-
+-		port {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7180_in: endpoint {
+-					remote-endpoint = <&composite_con_in>;
+-				};
+-			};
+-
+-			port@3 {
+-				reg = <3>;
+-				adv7180_out: endpoint {
+-					bus-width = <8>;
+-					remote-endpoint = <&vin1ep>;
+-				};
+-			};
+-		};
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio3>;
+-		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_rgb>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con_out>;
+-				};
+-			};
+-		};
+-	};
+-
+-	hdmi-in@4c {
+-		compatible = "adi,adv7612";
+-		reg = <0x4c>;
+-		interrupt-parent = <&gpio4>;
+-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+-		default-input = <0>;
+-
+-		port {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7612_in: endpoint {
+-					remote-endpoint = <&hdmi_con_in>;
+-				};
+-			};
+-
+-			port@2 {
+-				reg = <2>;
+-				adv7612_out: endpoint {
+-					remote-endpoint = <&vin0ep2>;
+-				};
+-			};
+-		};
+-	};
+-
+-	eeprom@50 {
+-		compatible = "renesas,r1ex24002", "atmel,24c02";
+-		reg = <0x50>;
+-		pagesize = <16>;
+-	};
+ };
+ 
+ &i2c6 {
 -- 
-2.16.2
+2.11.0
