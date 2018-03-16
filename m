@@ -1,48 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:37461 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753361AbeCPPCQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752487AbeCPOyd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 11:02:16 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: RE: [PATCH 42/52] ARM: dts: r7s72100: add USB device to device tree
-Date: Fri, 16 Mar 2018 15:02:13 +0000
-Message-ID: <TY1PR01MB1562ED183D137FA48FCBC7DB8AD70@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+        Fri, 16 Mar 2018 10:54:33 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 42/52] ARM: dts: r7s72100: add USB device to device tree
+Date: Fri, 16 Mar 2018 15:53:01 +0100
+Message-Id: <faa6c0071114fd433e83dddd3a42fba547ca9a67.1521208546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
 References: <cover.1521208546.git.horms+renesas@verge.net.au>
- <faa6c0071114fd433e83dddd3a42fba547ca9a67.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <faa6c0071114fd433e83dddd3a42fba547ca9a67.1521208546.git.horms+renesas@verge.net.au>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+From: Chris Brandt <chris.brandt@renesas.com>
 
-On Friday, March 16, 2018 1, Simon Horman wrote:
-> From: Chris Brandt <chris.brandt@renesas.com>
->=20
-> Add USB device support.
->=20
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Add USB device support.
 
-This patch is already in mainline:
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D8a99b6ad4da2f90969bb2ebb426c1d3dd0089fa4
-
-Pushed by Greg.
-
-At one point Greg applied it, then reverted it (as requested by Geert),=20
-but then somehow it still went in.
-
-Chris
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index ab9645a42eca..bd6366d1800b 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -667,4 +667,24 @@
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
++
++	usbhs0: usb@e8010000 {
++		compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
++		reg = <0xe8010000 0x1a0>;
++		interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp7_clks R7S72100_CLK_USB0>;
++		renesas,buswait = <4>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	usbhs1: usb@e8207000 {
++		compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
++		reg = <0xe8207000 0x1a0>;
++		interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp7_clks R7S72100_CLK_USB1>;
++		renesas,buswait = <4>;
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
+ };
+-- 
+2.11.0
