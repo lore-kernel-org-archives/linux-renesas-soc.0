@@ -1,148 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753552AbeCPOvw (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45675 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752802AbeCPAQE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:51:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/69] arm64: dts: renesas: r8a7795: add thermal cooling management
-Date: Fri, 16 Mar 2018 15:50:35 +0100
-Message-Id: <0c38c54ef9bc2a1062900adb01833e0b824f8462.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Thu, 15 Mar 2018 20:16:04 -0400
+Received: by mail-lf0-f68.google.com with SMTP id h127-v6so12784389lfg.12
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Mar 2018 17:16:03 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Fri, 16 Mar 2018 01:16:01 +0100
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 0/6] pinctrl: sh-pfc: rcar-gen3: Rename EtherAVB "mdc"
+ pin group to "mdio"
+Message-ID: <20180316001601.GD3432@bigcity.dyn.berto.se>
+References: <1520865622-11774-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520865622-11774-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi Geert,
 
-Add nodes and properties for thermal cooling management support.
+Thanks for your work.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 40 ++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+On 2018-03-12 15:40:16 +0100, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> On Renesas R-Car Gen2 SoCs, the pin group for the MDIO bus is named
+> "mdio".
+> 
+> When initial support was added for R-Car H3, the MDIO pin was forgotten,
+> and the MDC pin got its own group named "mdc".  During the addition of
+> support for R-Car M3-W, this mistake was noticed.  But as R-Car H3 and
+> M3-W are pin compatible, and can be mounted on the same boards, the
+> decision was made to just add the MDIO pin to the existing "mdc" group.
+> Later this was extended to R-Car H3 ES2.0, and M3-N, because of pin
+> compatibility, and to R-Car D3, in the name of consistency among R-Car
+> Gen3 SoCs.
+> 
+> However, this decision keeps on being questioned when adding new SoC
+> support.  Hence bite the bullet and admit our mistake, and rename the
+> pin group from "mdc" to "mdio", like on R-Car Gen2 SoCs.  Backwards
+> compatibility with old DTBs is retained by using a pin group alias.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 1485e6a8e112..19b7de57704c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -43,6 +43,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		a57_1: cpu@1 {
-@@ -54,6 +55,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		a57_2: cpu@2 {
-@@ -65,6 +67,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		a57_3: cpu@3 {
-@@ -76,6 +79,7 @@
- 			enable-method = "psci";
- 			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		a53_0: cpu@100 {
-@@ -2418,12 +2422,24 @@
- 			thermal-sensors = <&tsc 0>;
- 
- 			trips {
-+				sensor1_passive: sensor1-passive {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
- 				sensor1_crit: sensor1-crit {
- 					temperature = <120000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&sensor1_passive>;
-+					cooling-device = <&a57_0 4 4>;
-+				};
-+			};
- 		};
- 
- 		sensor_thermal2: sensor-thermal2 {
-@@ -2432,12 +2448,24 @@
- 			thermal-sensors = <&tsc 1>;
- 
- 			trips {
-+				sensor2_passive: sensor2-passive {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
- 				sensor2_crit: sensor2-crit {
- 					temperature = <120000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&sensor2_passive>;
-+					cooling-device = <&a57_0 4 4>;
-+				};
-+			};
- 		};
- 
- 		sensor_thermal3: sensor-thermal3 {
-@@ -2446,12 +2474,24 @@
- 			thermal-sensors = <&tsc 2>;
- 
- 			trips {
-+				sensor3_passive: sensor3-passive {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
- 				sensor3_crit: sensor3-crit {
- 					temperature = <120000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&sensor3_passive>;
-+					cooling-device = <&a57_0 4 4>;
-+				};
-+			};
- 		};
- 	};
- 
+Thanks for fixing this, it frustrated me in the past :-) i like the pin 
+alias solution neat! For the whole series,
+
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> 
+> This patch series:
+>   1. Introduces a macro for creating pin group aliases,
+>   2. Renames the "mdc" pin group to "mdio" on R-Car H3 (ES1.x and
+>      ES2.0), M3-W, M3-N, and D3.
+> 
+> Thanks for your comments!
+> 
+> Geert Uytterhoeven (6):
+>   pinctrl: sh-pfc: Add SH_PFC_PIN_GROUP_ALIAS()
+>   pinctrl: sh-pfc: r8a7795: Rename EtherAVB "mdc" pin group to "mdio"
+>   pinctrl: sh-pfc: r8a7795-es1: Rename EtherAVB "mdc" pin group to
+>     "mdio"
+>   pinctrl: sh-pfc: r8a7796: Rename EtherAVB "mdc" pin group to "mdio"
+>   pinctrl: sh-pfc: r8a77965: Rename EtherAVB "mdc" pin group to "mdio"
+>   pinctrl: sh-pfc: r8a77995: Rename EtherAVB "mdc" pin group to "mdio"
+> 
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 10 ++++++----
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 10 ++++++----
+>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 10 ++++++----
+>  drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 10 ++++++----
+>  drivers/pinctrl/sh-pfc/pfc-r8a77995.c    | 10 ++++++----
+>  drivers/pinctrl/sh-pfc/sh_pfc.h          |  5 +++--
+>  6 files changed, 33 insertions(+), 22 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
+> Gr{oetje,eeting}s,
+> 
+> 						Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
