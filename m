@@ -1,64 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753879AbeCPOxj (ORCPT
+        with ESMTP id S1753986AbeCPOzH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:39 -0400
+        Fri, 16 Mar 2018 10:55:07 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/52] ARM: dts: lager: Add CEC clock for HDMI transmitter
-Date: Fri, 16 Mar 2018 15:52:23 +0100
-Message-Id: <c5aa87977626e778e1ee3bd03b14a300d9338a3a.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 01/14] soc: renesas: rcar-sysc: Mark rcar_sysc_matches[] __initconst
+Date: Fri, 16 Mar 2018 15:53:23 +0100
+Message-Id: <707aa45d2612778e2f3b6c5e1950ed9fa48974aa.1521211738.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521211738.git.horms+renesas@verge.net.au>
+References: <cover.1521211738.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The adv7511 on the Lager board has a 12 MHz fixed clock
-for the CEC block. Specify this in the dts to enable CEC support.
+rcar_sysc_matches[] is used only by rcar_sysc_pd_init(), which is
+__init.  Hence mark rcar_sysc_matches[] __initconst.
 
-Based on a similar patch for Koelsch by Hans Verkuil.
+This frees another 1764 bytes (arm32/shmobile_defconfig) or 1000 bytes
+(arm64/renesas_defconfig) of memory after kernel init.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/soc/renesas/rcar-sysc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index f2ea632381e7..7892b113ecaa 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -669,11 +669,19 @@
- 		};
- 	};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 52c25a5e2646..636872bc2416 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -254,7 +254,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 	pm_genpd_init(genpd, gov, false);
+ }
  
-+	cec_clock: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
-+
- 	hdmi@39 {
- 		compatible = "adi,adv7511w";
- 		reg = <0x39>;
- 		interrupt-parent = <&gpio1>;
- 		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&cec_clock>;
-+		clock-names = "cec";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
+-static const struct of_device_id rcar_sysc_matches[] = {
++static const struct of_device_id rcar_sysc_matches[] __initconst = {
+ #ifdef CONFIG_SYSC_R8A7743
+ 	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
+ #endif
 -- 
 2.11.0
