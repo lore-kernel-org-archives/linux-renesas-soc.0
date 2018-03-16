@@ -1,39 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:39730 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932210AbeCKU1V (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:59854 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753389AbeCPNom (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 11 Mar 2018 16:27:21 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 2/3] dt-bindings: thermal: rcar-thermal: add R8A77995 support
-Date: Mon, 12 Mar 2018 05:26:34 +0900
-Message-Id: <1520799995-26347-3-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1520799995-26347-1-git-send-email-ykaneko0929@gmail.com>
-References: <1520799995-26347-1-git-send-email-ykaneko0929@gmail.com>
+        Fri, 16 Mar 2018 09:44:42 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 8/8] clk: renesas: rcar-gen3: Always use readl()/writel()
+Date: Fri, 16 Mar 2018 14:40:22 +0100
+Message-Id: <1521207622-3311-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
- Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
- 1 file changed, 1 insertion(+)
+The R-Car Gen3 CPG/MSSR driver (again) uses a mix of
+clk_readl()/clk_writel() and readl()/writel() to access the clock
+registers. Settle on the generic readl()/writel().
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-index 349e635..b2829cb 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-@@ -12,6 +12,7 @@ Required properties:
- 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
- 			    - "renesas,thermal-r8a7792" (R-Car V2H)
- 			    - "renesas,thermal-r8a7793" (R-Car M2-N)
-+			    - "renesas,thermal-r8a77995" (R-Car D3)
- - reg			: Address range of the thermal registers.
- 			  The 1st reg will be recognized as common register
- 			  if it has "interrupts".
+Cfr. commit 30ad3cf00e94f4a7 ("clk: renesas: rcar-gen3-cpg: Always use
+readl()/writel()").
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 0c8fe10d57fe2942..628b63b85d3f09c5 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -93,7 +93,7 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+ 	unsigned int mult;
+ 	u32 val;
+ 
+-	val = clk_readl(zclk->reg) & zclk->mask;
++	val = readl(zclk->reg) & zclk->mask;
+ 	mult = 32 - (val >> __ffs(zclk->mask));
+ 
+ 	/* Factor of 2 is for fixed divider */
+@@ -125,20 +125,20 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * 2, parent_rate);
+ 	mult = clamp(mult, 1U, 32U);
+ 
+-	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
++	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+ 		return -EBUSY;
+ 
+-	val = clk_readl(zclk->reg) & ~zclk->mask;
++	val = readl(zclk->reg) & ~zclk->mask;
+ 	val |= ((32 - mult) << __ffs(zclk->mask)) & zclk->mask;
+-	clk_writel(val, zclk->reg);
++	writel(val, zclk->reg);
+ 
+ 	/*
+ 	 * Set KICK bit in FRQCRB to update hardware setting and wait for
+ 	 * clock change completion.
+ 	 */
+-	kick = clk_readl(zclk->kick_reg);
++	kick = readl(zclk->kick_reg);
+ 	kick |= CPG_FRQCRB_KICK;
+-	clk_writel(kick, zclk->kick_reg);
++	writel(kick, zclk->kick_reg);
+ 
+ 	/*
+ 	 * Note: There is no HW information about the worst case latency.
+@@ -150,7 +150,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * "super" safe value.
+ 	 */
+ 	for (i = 1000; i; i--) {
+-		if (!(clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
++		if (!(readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
+ 			return 0;
+ 
+ 		cpu_relax();
 -- 
-1.9.1
+2.7.4
