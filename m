@@ -1,68 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:60963 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936660AbeCBQgQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752927AbeCPQix (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:36:16 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
-        sakari.ailus@iki.fi, mchehab@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5] Renesas CEU: SH7724 ECOVEC + Aptina mt9t112
-Date: Fri,  2 Mar 2018 17:35:36 +0100
-Message-Id: <1520008541-3961-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 16 Mar 2018 12:38:53 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 02/47] ARM: dts: r8a7791: Reduce size of thermal registers
+Date: Fri, 16 Mar 2018 17:37:59 +0100
+Message-Id: <3f599906744ecc2ece7ed0418a5822348000c0e2.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   now that CEU has been picked up for inclusion in v4.17, we can start moving
-users of old sh_mobile_ceu_camera driver to use the newly introduced one.
+Reduce size of thermal registers in DT for r8a7791 (R-Car M3-W) SoC.
 
-Migo-R has been first, now it's SH7724 ECOVEC board turn.
+According to the "User's Manual: Hardware" v2.00 the registers at base
+0xe61f0000 extend to an offset of 0x10, rather than 0x14 which is the case
+on the r8a73a4 (R-Mobile APE6).
 
-ECOVEC has a camera board with two MT9T112 image sensor and one TW9910 video
-decoder input. This series moves the mt9t112 driver away from soc_camera
-framework and remove dependencies on it in mach-ecovec board code.
+This should not have any runtime affect as mapping granularity is PAGE_SIZE.
 
-As per Migo-R, memory for CEU is reserved using memblocks APIs and declared
-as DMA-capable in board code, power up/down routines have been removed from
-board code, and GPIOs lookup table registered for sensor drivers.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As in the previous series, still no code has been removed or changed in
-drivers/media/i2c/soc_camera/ until we do not remove all dependencies on it
-in all board files.
-
-Hans, since you asked me to add frame rate interval support for ov772x I expect
-to receive the same request for mt9t112. Unfortunately I do not have access to
-register level documentation, nor can perform any testing as I don't have the
-camera modules. For the same reason I cannot run any v4l2-compliance test on
-that driver, but just make sure the ECOVEC boots cleanly with the new board
-file. I'm in favour of moving the driver to staging if you think that's the case.
-
-Series based on media-tree master, and as per Migo-R I would ask SH arch/
-changes to go through media tree as SH maintainers are un-responsive.
-
-Thanks
-  j
-
-Jacopo Mondi (5):
-  media: i2c: Copy mt9t112 soc_camera sensor driver
-  media: i2c: mt9t112: Remove soc_camera dependencies
-  media: i2c: mt9t112: Fix code style issues
-  arch: sh: ecovec: Use new renesas-ceu camera driver
-  media: MAINTAINERS: Add entry for Aptina MT9T112
-
- MAINTAINERS                            |    7 +
- arch/sh/boards/mach-ecovec24/setup.c   |  338 +++++-----
- arch/sh/kernel/cpu/sh4a/clock-sh7724.c |    4 +-
- drivers/media/i2c/Kconfig              |   11 +
- drivers/media/i2c/Makefile             |    1 +
- drivers/media/i2c/mt9t112.c            | 1136 ++++++++++++++++++++++++++++++++
- include/media/i2c/mt9t112.h            |   17 +-
- 7 files changed, 1333 insertions(+), 181 deletions(-)
- create mode 100644 drivers/media/i2c/mt9t112.c
-
---
-2.7.4
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 008a260f86a5..8266a9b7cafd 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -240,7 +240,7 @@
+ 		compatible =	"renesas,thermal-r8a7791",
+ 				"renesas,rcar-gen2-thermal",
+ 				"renesas,rcar-thermal";
+-		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
++		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 522>;
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+-- 
+2.11.0
