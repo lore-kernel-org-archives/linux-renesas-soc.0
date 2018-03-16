@@ -1,146 +1,166 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753476AbeCPOx6 (ORCPT
+        with ESMTP id S1753778AbeCPOxM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:58 -0400
+        Fri, 16 Mar 2018 10:53:12 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/52] ARM: dts: r8a7791: consistently use single space after =
-Date: Fri, 16 Mar 2018 15:52:31 +0100
-Message-Id: <5025c78b3b69914d4da8e75cf2390329cf04ca95.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
+Subject: [PATCH 68/69] arm64: dts: renesas: r8a7795: Add missing SYS-DMAC2 dmas
+Date: Fri, 16 Mar 2018 15:51:38 +0100
+Message-Id: <eb21089c32054ecd6957d294a7125bbf100ff328.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Consistently use a single space after a =.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch removes instances where a tab or multiple spaces are used
-instead.  It also avoids running over 80 columns in width in one of the
-lines where whitespace is updated.
+On R-Car H3, on-chip peripheral modules that can make use of DMA are
+wired to either SYS-DMAC0 only, or to both SYS-DMAC1 and SYS-DMAC2.
 
-This patch should not introduce any functional change.
+Add the missing DMA properties pointing to SYS-DMAC2 for HSCIF[0-2],
+SCIF[0125], and I2C[0-2].  These were initially left out because early
+firmware versions prohibited using SYS-DMAC2.  This restriction has been
+lifted in IPL and Secure Monitor Rev1.0.6 (released on Feb 25, 2016).
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 75 +++++++++++++++++++++---------------------
- 1 file changed, 38 insertions(+), 37 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 50 +++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 8266a9b7cafd..38a9b8cb736d 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -237,9 +237,9 @@
- 	};
- 
- 	thermal: thermal@e61f0000 {
--		compatible =	"renesas,thermal-r8a7791",
--				"renesas,rcar-gen2-thermal",
--				"renesas,rcar-thermal";
-+		compatible = "renesas,thermal-r8a7791",
-+			     "renesas,rcar-gen2-thermal",
-+			     "renesas,rcar-thermal";
- 		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 522>;
-@@ -375,20 +375,20 @@
- 	audma0: dma-controller@ec700000 {
- 		compatible = "renesas,dmac-r8a7791", "renesas,rcar-dmac";
- 		reg = <0 0xec700000 0 0x10000>;
--		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error",
- 				"ch0", "ch1", "ch2", "ch3",
- 				"ch4", "ch5", "ch6", "ch7",
-@@ -405,20 +405,20 @@
- 	audma1: dma-controller@ec720000 {
- 		compatible = "renesas,dmac-r8a7791", "renesas,rcar-dmac";
- 		reg = <0 0xec720000 0 0x10000>;
--		interrupts =	<GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
--				 GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "error",
- 				"ch0", "ch1", "ch2", "ch3",
- 				"ch4", "ch5", "ch6", "ch7",
-@@ -1487,12 +1487,13 @@
- 		 * Single DAI : #sound-dai-cells = <0>;         <&rcar_sound>;
- 		 * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
- 		 */
--		compatible =  "renesas,rcar_sound-r8a7791", "renesas,rcar_sound-gen2";
--		reg =	<0 0xec500000 0 0x1000>, /* SCU */
--			<0 0xec5a0000 0 0x100>,  /* ADG */
--			<0 0xec540000 0 0x1000>, /* SSIU */
--			<0 0xec541000 0 0x280>,  /* SSI */
--			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
-+		compatible = "renesas,rcar_sound-r8a7791",
-+			     "renesas,rcar_sound-gen2";
-+		reg = <0 0xec500000 0 0x1000>, /* SCU */
-+		      <0 0xec5a0000 0 0x100>,  /* ADG */
-+		      <0 0xec540000 0 0x1000>, /* SSIU */
-+		      <0 0xec541000 0 0x280>,  /* SSI */
-+		      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
- 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
- 
- 		clocks = <&cpg CPG_MOD 1005>,
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 0648fe451d09..1d5e3ac0231c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1076,8 +1076,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x31>, <&dmac1 0x30>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
++			       <&dmac2 0x31>, <&dmac2 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 520>;
+ 			status = "disabled";
+@@ -1093,8 +1094,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x33>, <&dmac1 0x32>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
++			       <&dmac2 0x33>, <&dmac2 0x32>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 519>;
+ 			status = "disabled";
+@@ -1110,8 +1112,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x35>, <&dmac1 0x34>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
++			       <&dmac2 0x35>, <&dmac2 0x34>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 518>;
+ 			status = "disabled";
+@@ -1222,8 +1225,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x51>, <&dmac1 0x50>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
++			       <&dmac2 0x51>, <&dmac2 0x50>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 207>;
+ 			status = "disabled";
+@@ -1238,8 +1242,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x53>, <&dmac1 0x52>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
++			       <&dmac2 0x53>, <&dmac2 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 206>;
+ 			status = "disabled";
+@@ -1254,8 +1259,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x13>, <&dmac1 0x12>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x13>, <&dmac1 0x12>,
++			       <&dmac2 0x13>, <&dmac2 0x12>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 310>;
+ 			status = "disabled";
+@@ -1302,8 +1308,9 @@
+ 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
++			       <&dmac2 0x5b>, <&dmac2 0x5a>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 202>;
+ 			status = "disabled";
+@@ -1335,8 +1342,9 @@
+ 			clocks = <&cpg CPG_MOD 931>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 931>;
+-			dmas = <&dmac1 0x91>, <&dmac1 0x90>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
++			       <&dmac2 0x91>, <&dmac2 0x90>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -1351,8 +1359,9 @@
+ 			clocks = <&cpg CPG_MOD 930>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 930>;
+-			dmas = <&dmac1 0x93>, <&dmac1 0x92>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
++			       <&dmac2 0x93>, <&dmac2 0x92>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -1367,8 +1376,9 @@
+ 			clocks = <&cpg CPG_MOD 929>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 929>;
+-			dmas = <&dmac1 0x95>, <&dmac1 0x94>;
+-			dma-names = "tx", "rx";
++			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
++			       <&dmac2 0x95>, <&dmac2 0x94>;
++			dma-names = "tx", "rx", "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
 -- 
 2.11.0
