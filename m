@@ -1,103 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:58938 "EHLO
+Received: from laurent.telenet-ops.be ([195.130.137.89]:45110 "EHLO
         laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1945947AbeCBKR5 (ORCPT
+        with ESMTP id S1752950AbeCPOUZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:17:57 -0500
+        Fri, 16 Mar 2018 10:20:25 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.17
-Date: Fri,  2 Mar 2018 11:17:52 +0100
-Message-Id: <1519985872-3809-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 1/3] arm64: dts: renesas: r8a7795: Correct whitespace
+Date: Fri, 16 Mar 2018 15:04:24 +0100
+Message-Id: <1521209066-6831-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521209066-6831-1-git-send-email-geert+renesas@glider.be>
+References: <1521209066-6831-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Add missing spaces after commas.
+Replace 8 consecutive spaces by a TAB.
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.17-tag1
-
-for you to fetch changes up to 7ce36da900c0a2ff4777d9ba51c4f1cb74205463:
-
-  clk: renesas: cpg-mssr: Add support for R-Car M3-N (2018-02-26 09:13:29 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.17
-
-  - Update legacy DT Kconfig default,
-  - Add support for CPU (Z/Z2) clocks on R-Car H3 and M3-W,
-  - Add support for the watchdog module clocks on R-Car Gen2 and RZ/G1,
-  - Add support for the new R-Car M3-N and V3H SoCs.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Fabrizio Castro (5):
-      clk: renesas: r8a7743: Add rwdt clock
-      clk: renesas: r8a7745: Add rwdt clock
-      clk: renesas: r8a7790: Add rwdt clock
-      clk: renesas: r8a7791/r8a7793: Add rwdt clock
-      clk: renesas: r8a7794: Add rwdt clock
-
-Geert Uytterhoeven (2):
-      clk: renesas: Stop enabling legacy DT clock support by default
-      clk: renesas: r8a7792: Add rwdt clock
-
-Jacopo Mondi (1):
-      clk: renesas: cpg-mssr: Add support for R-Car M3-N
-
-Sergei Shtylyov (2):
-      dt-bindings: clock: add R8A77980 CPG core clock definitions
-      clk: renesas: cpg-mssr: add R8A77980 support
-
-Takeshi Kihara (6):
-      clk: renesas: rcar-gen3: Add Z clock divider support
-      clk: renesas: rcar-gen3: Add Z2 clock divider support
-      clk: renesas: r8a7795: Add Z clock
-      clk: renesas: r8a7795: Add Z2 clock
-      clk: renesas: r8a7796: Add Z clock
-      clk: renesas: r8a7796: Add Z2 clock
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   6 +-
- drivers/clk/renesas/Kconfig                        |  13 +-
- drivers/clk/renesas/Makefile                       |   2 +
- drivers/clk/renesas/r8a7743-cpg-mssr.c             |   2 +
- drivers/clk/renesas/r8a7745-cpg-mssr.c             |   2 +
- drivers/clk/renesas/r8a7790-cpg-mssr.c             |   2 +
- drivers/clk/renesas/r8a7791-cpg-mssr.c             |   2 +
- drivers/clk/renesas/r8a7792-cpg-mssr.c             |   2 +
- drivers/clk/renesas/r8a7794-cpg-mssr.c             |   2 +
- drivers/clk/renesas/r8a7795-cpg-mssr.c             |   2 +
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |   2 +
- drivers/clk/renesas/r8a77965-cpg-mssr.c            | 334 +++++++++++++++++++++
- drivers/clk/renesas/r8a77980-cpg-mssr.c            | 227 ++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.c                | 143 +++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h                |   2 +
- drivers/clk/renesas/renesas-cpg-mssr.c             |  12 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   2 +
- include/dt-bindings/clock/r8a77965-cpg-mssr.h      |  62 ++++
- include/dt-bindings/clock/r8a77980-cpg-mssr.h      |  51 ++++
- 19 files changed, 867 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a77965-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a77980-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a77965-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a77980-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 5d08d8f54c3c1f00..51e2881138c38bcb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -47,7 +47,7 @@
+ 		};
+ 
+ 		a57_1: cpu@1 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x1>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
+@@ -59,7 +59,7 @@
+ 		};
+ 
+ 		a57_2: cpu@2 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x2>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
+@@ -71,7 +71,7 @@
+ 		};
+ 
+ 		a57_3: cpu@3 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x3>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
+@@ -94,7 +94,7 @@
+ 		};
+ 
+ 		a53_1: cpu@101 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x101>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
+@@ -105,7 +105,7 @@
+ 		};
+ 
+ 		a53_2: cpu@102 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x102>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
+@@ -116,7 +116,7 @@
+ 		};
+ 
+ 		a53_3: cpu@103 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x103>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
+@@ -250,7 +250,7 @@
+ 	pmu_a57 {
+ 		compatible = "arm,cortex-a57-pmu";
+ 		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+-		                      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+ 				      <&gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+ 				      <&gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-affinity = <&a57_0>,
+-- 
+2.7.4
