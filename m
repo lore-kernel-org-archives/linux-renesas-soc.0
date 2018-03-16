@@ -1,67 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:32135 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1033321AbeCASRw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753782AbeCPOxE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:17:52 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Wim Van Sebroeck <wim@iguana.be>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v7 2/3] watchdog: renesas_wdt: Add R-Car Gen2 support
-Date: Thu,  1 Mar 2018 18:17:22 +0000
-Message-Id: <1519928243-28596-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1519928243-28596-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1519928243-28596-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 16 Mar 2018 10:53:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 62/69] arm64: dts: renesas: r8a77965: Add EtherAVB device node
+Date: Fri, 16 Mar 2018 15:51:32 +0100
+Message-Id: <862a61d0e4705409271639fca8776020b6cff4a8.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Due to commits:
-* "ARM: shmobile: Add watchdog support",
-* "ARM: shmobile: rcar-gen2: Add watchdog support", and
-* "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
-we now have everything we needed for the watchdog to work on Gen2 and
-RZ/G1.
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
-Gen2 and RZ/G1.
+Populate the ethernet@e6800000 device node to enable Ethernet interface
+for R-Car M3-N (R8A77965) SoC.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v6->v7:
-* no change
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 43 ++++++++++++++++++++++++++++---
+ 1 file changed, 40 insertions(+), 3 deletions(-)
 
- drivers/watchdog/renesas_wdt.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 024d54e..9fc4c78 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -228,12 +228,8 @@ static int __maybe_unused rwdt_resume(struct device *dev)
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index b9aa0e7eaabf..f0871fcdd984 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -535,11 +535,48 @@
+ 		};
  
- static SIMPLE_DEV_PM_OPS(rwdt_pm_ops, rwdt_suspend, rwdt_resume);
+ 		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a77965",
++				     "renesas,etheravb-rcar-gen3";
++			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15",
++					  "ch16", "ch17", "ch18", "ch19",
++					  "ch20", "ch21", "ch22", "ch23",
++					  "ch24";
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 812>;
++			phy-mode = "rgmii";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-
+-			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
+-			/* placeholder */
++			status = "disabled";
+ 		};
  
--/*
-- * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
-- * to work there, one also needs a RESET (RST) driver which does not exist yet
-- * due to HW issues. This needs to be solved before adding compatibles here.
-- */
- static const struct of_device_id rwdt_ids[] = {
-+	{ .compatible = "renesas,rcar-gen2-wdt", },
- 	{ .compatible = "renesas,rcar-gen3-wdt", },
- 	{ /* sentinel */ }
- };
+ 		csi20: csi2@fea80000 {
 -- 
-2.7.4
+2.11.0
