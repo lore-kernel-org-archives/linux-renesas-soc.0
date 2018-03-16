@@ -1,19 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753253AbeCPQjE (ORCPT
+        with ESMTP id S1753849AbeCPOxu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:39:04 -0400
+        Fri, 16 Mar 2018 10:53:50 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/47] ARM: dts: r8a7791: sort subnodes of root node
-Date: Fri, 16 Mar 2018 17:38:11 +0100
-Message-Id: <21b05c52abe355e205eb133f2fe3dbc2520edeed.1521218085.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
-References: <cover.1521218085.git.horms+renesas@verge.net.au>
+Subject: [PATCH 14/52] ARM: dts: r8a7791: sort subnodes of root node
+Date: Fri, 16 Mar 2018 15:52:33 +0100
+Message-Id: <21b05c52abe355e205eb133f2fe3dbc2520edeed.1521208546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
+References: <cover.1521208546.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
