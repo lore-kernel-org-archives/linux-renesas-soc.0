@@ -1,68 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753723AbeCPOyr (ORCPT
+        with ESMTP id S1751969AbeCPQjn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:54:47 -0400
+        Fri, 16 Mar 2018 12:39:43 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 50/52] ARM: dts: marzen: Add SDHI0 VCCQ Regulator
-Date: Fri, 16 Mar 2018 15:53:09 +0100
-Message-Id: <55bb4ae21d5819177200765d582e4a544e120260.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
+Subject: [PATCH 43/47] ARM: dts: lager: Move cec_clock to root node
+Date: Fri, 16 Mar 2018 17:38:40 +0100
+Message-Id: <fe61513f1611def2535962954be4bb4fc2cb182c.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add support for the on-board voltage regulator hooked up to GPIO3_20
-on r8a7779 Marzen. The board schematics describes the regulator as U4
-TPS2110A. Input wise, U4 has D0 fixed to ground, D1 tied to GPIO3_20
-while IN1 is fixed to 3.3V and IN2 is fixed to 1.8V. OUT goes to the
-pull-ups for the data pins of SDHI0.
+cec-clock is a fixed clock generator that is not controlled by i2c-12
+and thus should not be a child of the i2c-12 bus node. Rather, it should
+be a child of the root node of the DT.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Fixes: c5aa87977626e778 ("ARM: dts: lager: Add CEC clock for HDMI transmitter")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7779-marzen.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/r8a7790-lager.dts | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
-index 9412a86f9b30..4b9006bac3cb 100644
---- a/arch/arm/boot/dts/r8a7779-marzen.dts
-+++ b/arch/arm/boot/dts/r8a7779-marzen.dts
-@@ -42,6 +42,19 @@
- 		regulator-always-on;
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 20c1b4f224b8..063fdb65dc60 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -247,6 +247,12 @@
+ 		};
  	};
  
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio3 20 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
++	cec_clock: cec-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <12000000>;
 +	};
 +
- 	ethernet@18000000 {
- 		compatible = "smsc,lan9220", "smsc,lan9115";
- 		reg = <0x18000000 0x100>;
-@@ -243,6 +256,7 @@
- 	pinctrl-names = "default";
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -352,12 +358,6 @@
+ 			};
+ 		};
  
- 	vmmc-supply = <&fixedregulator3v3>;
-+	vqmmc-supply = <&vccq_sdhi0>;
- 	bus-width = <4>;
- 	status = "okay";
- };
+-		cec_clock: cec-clock {
+-			compatible = "fixed-clock";
+-			#clock-cells = <0>;
+-			clock-frequency = <12000000>;
+-		};
+-
+ 		hdmi@39 {
+ 			compatible = "adi,adv7511w";
+ 			reg = <0x39>;
 -- 
 2.11.0
