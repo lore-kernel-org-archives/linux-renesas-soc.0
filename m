@@ -1,63 +1,59 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v12 01/33] dt-bindings: media: rcar_vin: Reverse SoC part number list
-Date: Wed,  7 Mar 2018 23:04:39 +0100
-Message-Id: <20180307220511.9826-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753622AbeCPOzV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:55:21 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 02/14] soc: renesas: identify R-Car V3H
+Date: Fri, 16 Mar 2018 15:53:24 +0100
+Message-Id: <8447756d1e582a401cdae33c9ed5d68fdb6e0410.1521211738.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521211738.git.horms+renesas@verge.net.au>
+References: <cover.1521211738.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Change the sorting of the part numbers from descending to ascending to
-match with other documentation.
+Add support for identifying the R-Car V3H (R8A77980) SoC.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/media/rcar_vin.txt | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/soc/renesas/renesas-soc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 19357d0bbe6539b3..0ac715a5c331bc26 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -6,14 +6,14 @@ family of devices. The current blocks are always slaves and suppot one input
- channel which can be either RGB, YUYV or BT656.
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 926b7fd6db2d..000834321774 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -149,6 +149,11 @@ static const struct renesas_soc soc_rcar_v3m __initconst __maybe_unused = {
+ 	.id	= 0x54,
+ };
  
-  - compatible: Must be one or more of the following
--   - "renesas,vin-r8a7795" for the R8A7795 device
--   - "renesas,vin-r8a7794" for the R8A7794 device
--   - "renesas,vin-r8a7793" for the R8A7793 device
--   - "renesas,vin-r8a7792" for the R8A7792 device
--   - "renesas,vin-r8a7791" for the R8A7791 device
--   - "renesas,vin-r8a7790" for the R8A7790 device
--   - "renesas,vin-r8a7779" for the R8A7779 device
-    - "renesas,vin-r8a7778" for the R8A7778 device
-+   - "renesas,vin-r8a7779" for the R8A7779 device
-+   - "renesas,vin-r8a7790" for the R8A7790 device
-+   - "renesas,vin-r8a7791" for the R8A7791 device
-+   - "renesas,vin-r8a7792" for the R8A7792 device
-+   - "renesas,vin-r8a7793" for the R8A7793 device
-+   - "renesas,vin-r8a7794" for the R8A7794 device
-+   - "renesas,vin-r8a7795" for the R8A7795 device
-    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 compatible device.
-    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
- 
++static const struct renesas_soc soc_rcar_v3h __initconst __maybe_unused = {
++	.family	= &fam_rcar_gen3,
++	.id	= 0x56,
++};
++
+ static const struct renesas_soc soc_rcar_d3 __initconst __maybe_unused = {
+ 	.family	= &fam_rcar_gen3,
+ 	.id	= 0x58,
+@@ -212,6 +217,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A77970
+ 	{ .compatible = "renesas,r8a77970",	.data = &soc_rcar_v3m },
+ #endif
++#ifdef CONFIG_ARCH_R8A77980
++	{ .compatible = "renesas,r8a77980",	.data = &soc_rcar_v3h },
++#endif
+ #ifdef CONFIG_ARCH_R8A77995
+ 	{ .compatible = "renesas,r8a77995",	.data = &soc_rcar_d3 },
+ #endif
 -- 
-2.16.2
+2.11.0
