@@ -1,59 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753622AbeCPOzV (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:41322 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753372AbeCPNom (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:55:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/14] soc: renesas: identify R-Car V3H
-Date: Fri, 16 Mar 2018 15:53:24 +0100
-Message-Id: <8447756d1e582a401cdae33c9ed5d68fdb6e0410.1521211738.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521211738.git.horms+renesas@verge.net.au>
-References: <cover.1521211738.git.horms+renesas@verge.net.au>
+        Fri, 16 Mar 2018 09:44:42 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/8] clk: renesas: r8a7740: Always use readl()/writel()
+Date: Fri, 16 Mar 2018 14:40:18 +0100
+Message-Id: <1521207622-3311-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On arm32, there is no reason to use the (soon deprecated)
+clk_readl()/clk_writel().  Hence use the generic readl()/writel()
+instead.
 
-Add support for identifying the R-Car V3H (R8A77980) SoC.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/soc/renesas/renesas-soc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/renesas/clk-r8a7740.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 926b7fd6db2d..000834321774 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -149,6 +149,11 @@ static const struct renesas_soc soc_rcar_v3m __initconst __maybe_unused = {
- 	.id	= 0x54,
- };
- 
-+static const struct renesas_soc soc_rcar_v3h __initconst __maybe_unused = {
-+	.family	= &fam_rcar_gen3,
-+	.id	= 0x56,
-+};
-+
- static const struct renesas_soc soc_rcar_d3 __initconst __maybe_unused = {
- 	.family	= &fam_rcar_gen3,
- 	.id	= 0x58,
-@@ -212,6 +217,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
- #ifdef CONFIG_ARCH_R8A77970
- 	{ .compatible = "renesas,r8a77970",	.data = &soc_rcar_v3m },
- #endif
-+#ifdef CONFIG_ARCH_R8A77980
-+	{ .compatible = "renesas,r8a77980",	.data = &soc_rcar_v3h },
-+#endif
- #ifdef CONFIG_ARCH_R8A77995
- 	{ .compatible = "renesas,r8a77995",	.data = &soc_rcar_d3 },
- #endif
+diff --git a/drivers/clk/renesas/clk-r8a7740.c b/drivers/clk/renesas/clk-r8a7740.c
+index 2f7ce6696b6c0f1d..d074f8e982d0851c 100644
+--- a/drivers/clk/renesas/clk-r8a7740.c
++++ b/drivers/clk/renesas/clk-r8a7740.c
+@@ -98,20 +98,20 @@ r8a7740_cpg_register_clock(struct device_node *np, struct r8a7740_cpg *cpg,
+ 		 * clock implementation and we currently have no need to change
+ 		 * the multiplier value.
+ 		 */
+-		u32 value = clk_readl(cpg->reg + CPG_FRQCRC);
++		u32 value = readl(cpg->reg + CPG_FRQCRC);
+ 		parent_name = "system";
+ 		mult = ((value >> 24) & 0x7f) + 1;
+ 	} else if (!strcmp(name, "pllc1")) {
+-		u32 value = clk_readl(cpg->reg + CPG_FRQCRA);
++		u32 value = readl(cpg->reg + CPG_FRQCRA);
+ 		parent_name = "system";
+ 		mult = ((value >> 24) & 0x7f) + 1;
+ 		div = 2;
+ 	} else if (!strcmp(name, "pllc2")) {
+-		u32 value = clk_readl(cpg->reg + CPG_PLLC2CR);
++		u32 value = readl(cpg->reg + CPG_PLLC2CR);
+ 		parent_name = "system";
+ 		mult = ((value >> 24) & 0x3f) + 1;
+ 	} else if (!strcmp(name, "usb24s")) {
+-		u32 value = clk_readl(cpg->reg + CPG_USBCKCR);
++		u32 value = readl(cpg->reg + CPG_USBCKCR);
+ 		if (value & BIT(7))
+ 			/* extal2 */
+ 			parent_name = of_clk_get_parent_name(np, 1);
 -- 
-2.11.0
+2.7.4
