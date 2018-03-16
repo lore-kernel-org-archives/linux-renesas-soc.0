@@ -1,181 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33789 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753079AbeCTMh3 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34213 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753424AbeCPLQv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Mar 2018 08:37:29 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Fri, 16 Mar 2018 07:16:51 -0400
+Date: Fri, 16 Mar 2018 12:16:45 +0100
+From: Simon Horman <horms@verge.net.au>
 To: jacopo mondi <jacopo@jmondi.org>
-Cc: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>,
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
         sergei.shtylyov@cogentembedded.com, robh+dt@kernel.org,
         mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-Date: Tue, 20 Mar 2018 14:38:34 +0200
-Message-ID: <7425649.OD69MjNjYI@avalon>
-In-Reply-To: <20180316093953.GC31710@w540>
-References: <1521130316-1221-1-git-send-email-jacopo+renesas@jmondi.org> <20180316000004.GC3432@bigcity.dyn.berto.se> <20180316093953.GC31710@w540>
+Subject: Re: [PATCH v5 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car
+ V3M Eagle
+Message-ID: <20180316111644.k5ofsl5o5ethbnie@verge.net.au>
+References: <1521130316-1221-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1521130316-1221-4-git-send-email-jacopo+renesas@jmondi.org>
+ <20180316000004.GC3432@bigcity.dyn.berto.se>
+ <20180316093953.GC31710@w540>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180316093953.GC31710@w540>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
-
-On Friday, 16 March 2018 11:39:53 EET jacopo mondi wrote:
-> On Fri, Mar 16, 2018 at 01:00:04AM +0100, Niklas S=F6derlund wrote:
+On Fri, Mar 16, 2018 at 10:39:53AM +0100, jacopo mondi wrote:
+> Hi Niklas,
+>    thanks for review,
+> 
+> On Fri, Mar 16, 2018 at 01:00:04AM +0100, Niklas Söderlund wrote:
 > > Hi Jacopo,
-> >=20
+> >
 > > Thanks for your patch.
-> >=20
+> >
 > > This one must depend on '[PATCH v2 0/5] arm64: dts: renesas: r8a77970:
 > > enable HDMI output' or something similar not yet in renesas-drivers
 > > repository correct?
->=20
+> 
 > Yes, I have listed dependencies of this series in my v1 cover letter:
->=20
-> -------------------------------------------------------------------------=
-=2D-
-> The series is based on Laurent's drm/next/du branch with patches on top f=
-or:
+> 
+> ---------------------------------------------------------------------------
+> The series is based on Laurent's drm/next/du branch with patches on top for:
 > - Sergei: Enable PFC, I2c, GPIOs for r8a77970
 > - Sergei: Add support for r8a77970 in DU and add display device nodes in
 >   r8a77970 DTSI
 > - Niklas: Connect DU LVDS output to HDMI bridge adv7511w in Eagle DTS
 > - Sergei: fix video output on R8A77970
->=20
+> 
 > A base branch with these patches applied is available at
 > git://jmondi.org/linux v3m/v4.16-rc3/base
-> -------------------------------------------------------------------------=
-=2D-
->=20
+> ---------------------------------------------------------------------------
+> 
 > My bad I have not reported this in all cover letters (and I have not
 > reported the full name of the series)
->=20
+> 
 > PFC, GPIO and I2c support I have listed as dependencies seems to have
 > landed in renesas-drivers, while I don't see yet:
->=20
+> 
 > Sergei:
 > [PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
->=20
+> 
 > whose patches for r8a77970 dtsi are included in yours:
 > [PATCH v2 0/5] arm64: dts: renesas: r8a77970: enable HDMI output
->=20
+> 
 > On top I also have Sergei's/Laurent's:
 > [PATCH v4] v4l: vsp1: Fix video output on R8A77970
->=20
-> > In the next version would you care to include the LVDS commit from the
-> > dependency  series and squash this change into that one or in some other
-> > good manger stack to two? Laurent told me he did not like 5/5 in that
-> > patch-set as it did not yet have the LVDS decoder node due to no driver
-> > existed at that time when I posted that even if it's not strictly needed
-> > to get the display working :-)
->=20
-> I'll let Simon suggest how he preferes to handle this, if he wants me
-> to re-submit your series with this patch squashed on top or he prefers
-> to deal with this himself.
->=20
-> > I also think you should split this last patch out to a separate series
-> > as it should go in Simon's tree while the driver and documentation is
-> > going in earlier in a different tree right?
->=20
-> I assume bindings and driver go through DRM and Simon is to pick up
-> the Eagle changes.
->=20
-> > On a side note, do you plan to update the Gen2 boards DTS files which
-> > also have a decoder which are not yet described in DT?
->=20
-> Actually I'm not aware of Gen2 boards with this chip and similar
-> display pipelines. Can you point me to which one needs to have its
-> DTS brushed?
 
-It's the Lager board.
-
-> > On 2018-03-15 17:11:56 +0100, Jacopo Mondi wrote:
-> > > The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
-> > > decoder, connected to the on-chip LVDS encoder output on one side
-> > > and to HDMI encoder ADV7511w on the other one.
-> > >=20
-> > > As the decoder does not need any configuration it has been so-far
-> > > omitted from DTS. Now that a driver is available, describe it in DT
-> > > as well.
-> > >=20
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> > > ---
-> > >=20
-> > >  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 33 ++++++++++++++++=
-=2D--
-> > >  1 file changed, 30 insertions(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> > > b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts index c0fd144..69f43=
-b8
-> > > 100644
-> > > --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> > > +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> > > @@ -42,6 +42,33 @@
-> > >  			};
-> > >  		};
-> > >  	};
-> > > +
-> > > +	thc63lvd1024: lvds-decoder {
-> > > +		compatible =3D "thine,thc63lvd1024";
-> > > +
-> > > +		ports {
-> > > +			#address-cells =3D <1>;
-> > > +			#size-cells =3D <0>;
-> > > +
-> > > +			port@0 {
-> > > +				reg =3D <0>;
-> > > +
-> > > +				thc63lvd1024_in_0: endpoint {
-> > > +					remote-endpoint =3D <&lvds0_out>;
-> > > +				};
-> > > +			};
-> > > +
-> > > +			port@2{
-> > > +				reg =3D <2>;
-> > > +
-> > > +				thc63lvd1024_out_2: endpoint {
-> > > +					remote-endpoint =3D <&adv7511_in>;
-> > > +				};
-> > > +
-> > > +			};
-> > > +
-> > > +		};
-> > > +	};
-> > >  };
-> > > =20
-> > >  &avb {
-> > > @@ -98,7 +125,7 @@
-> > >  			port@0 {
-> > >  				reg =3D <0>;
-> > >  				adv7511_in: endpoint {
-> > > -					remote-endpoint =3D <&lvds0_out>;
-> > > +					remote-endpoint =3D <&thc63lvd1024_out_2>;
-> > >  				};
-> > >  			};
-> > >=20
-> > > @@ -152,8 +179,8 @@
-> > >=20
-> > >  	ports {
-> > >  		port@1 {
-> > > -			endpoint {
-> > > -				remote-endpoint =3D <&adv7511_in>;
-> > > +			lvds0_out: endpoint {
-> > > +				remote-endpoint =3D <&thc63lvd1024_in_0>;
-> > >  			};
-> > >  		};
-> > >  	};
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
+I have marked this patch as Deferred pending acceptance of the
+dependencies. Please repost or otherwise ping me once the
+dependencies are in place.
