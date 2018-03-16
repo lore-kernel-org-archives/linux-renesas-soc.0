@@ -1,196 +1,73 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753977AbeCPOzG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:55:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH  08/12] ARM: dts: r8a77470: Initial SoC device tree
-Date: Tue, 27 Mar 2018 15:37:19 +0100
-Message-Id: <1522161443-54428-9-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
-References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/14] soc: renesas: rcar-rst: add R8A77980 support
+Date: Fri, 16 Mar 2018 15:53:25 +0100
+Message-Id: <7d7b619e16d420b723d6618c60a0aaf0ba4e3666.1521211738.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521211738.git.horms+renesas@verge.net.au>
+References: <cover.1521211738.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The initial R8A77470 SoC device tree including CPU0, GIC, timer, SYSC, RST,
-CPG, and the required clock descriptions.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Add support for R-Car V3H (R8A77980) to the R-Car RST driver -- this driver
+is needed for the clock driver to work.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 156 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 156 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a77470.dtsi
+ Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
+ drivers/soc/renesas/Kconfig                             | 2 +-
+ drivers/soc/renesas/rcar-rst.c                          | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-new file mode 100644
-index 0000000..24e3da6
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the r8a77470 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r8a7747x-cpg-mssr.h>
-+#include <dt-bindings/power/r8a7747x-sysc.h>
-+/ {
-+	compatible = "renesas,r8a77470";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+			clock-frequency = <1000000000>;
-+			clocks = <&cpg CPG_CORE R8A77470_CLK_Z2>;
-+			power-domains = <&sysc R8A77470_PD_CA7_CPU0>;
-+			next-level-cache = <&L2_CA7>;
-+		};
-+
-+
-+		L2_CA7: cache-controller-0 {
-+			compatible = "cache";
-+			cache-unified;
-+			cache-level = <2>;
-+			power-domains = <&sysc R8A77470_PD_CA7_SCU>;
-+		};
-+	};
-+
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77470-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&usb_extal_clk>;
-+			clock-names = "extal", "usb_extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77470-rst";
-+			reg = <0 0xe6160000 0 0x100>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77470-sysc";
-+			reg = <0 0xe6180000 0 0x200>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		icram0:	sram@e63a0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63a0000 0 0x12000>;
-+		};
-+
-+		icram1:	sram@e63c0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63c0000 0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xe63c0000 0x1000>;
-+
-+			smp-sram@0 {
-+				compatible = "renesas,smp-sram";
-+				reg = <0 0x100>;
-+			};
-+		};
-+
-+		icram2:	sram@e6300000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe6300000 0 0x40000>;
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a77470",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 0x40>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&cpg CPG_MOD 720>,
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 720>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
-+			      <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
-+		};
-+
-+	};
-+
-+	prr: chipid@ff000044 {
-+		compatible = "renesas,prr";
-+		reg = <0 0xff000044 0 4>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+};
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+index a8014f3ab8ba..a55b88658446 100644
+--- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
++++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+@@ -27,6 +27,7 @@ Required properties:
+ 		  - "renesas,r8a7795-rst" (R-Car H3)
+ 		  - "renesas,r8a7796-rst" (R-Car M3-W)
+ 		  - "renesas,r8a77970-rst" (R-Car V3M)
++		  - "renesas,r8a77980-rst" (R-Car V3H)
+ 		  - "renesas,r8a77995-rst" (R-Car D3)
+   - reg: Address start and address range for the device.
+ 
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 09550b1da56d..6efd7bef8577 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -4,7 +4,7 @@ config SOC_RENESAS
+ 	select SOC_BUS
+ 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
+ 			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77970 || \
+-			   ARCH_R8A77995
++			   ARCH_R8A77980 || ARCH_R8A77995
+ 	select SYSC_R8A7743 if ARCH_R8A7743
+ 	select SYSC_R8A7745 if ARCH_R8A7745
+ 	select SYSC_R8A7779 if ARCH_R8A7779
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index 3316b028f231..e2340eb9ea9c 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -42,6 +42,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
+ 	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen2 },
++	{ .compatible = "renesas,r8a77980-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
+ 	{ /* sentinel */ }
+ };
 -- 
-2.7.4
-
+2.11.0
