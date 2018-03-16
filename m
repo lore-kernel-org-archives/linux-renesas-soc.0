@@ -1,107 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:33231 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753069AbeCNCtf (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753802AbeCPOxQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 22:49:35 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/2] rcar-vin: allocate a scratch buffer at stream start
-Date: Wed, 14 Mar 2018 03:49:09 +0100
-Message-Id: <20180314024910.16676-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180314024910.16676-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180314024910.16676-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Mar 2018 10:53:16 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/3] ARM: shmobile: Enable RZA1 pin controller
+Date: Fri, 16 Mar 2018 15:51:49 +0100
+Message-Id: <f90d738ef6718b35ac7267b05a2e027c90e19f4d.1521206439.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206439.git.horms+renesas@verge.net.au>
+References: <cover.1521206439.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Before starting a capture, allocate a scratch buffer which can be used
-by the driver to give to the hardware if no buffers are available from
-userspace. The buffer is not used in this patch but prepares for future
-refactoring where the scratch buffer can be used to avoid the need to
-fallback on single capture mode if userspace can't queue buffers as fast
-as the VIN driver consumes them.
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Enable PINCTRL_RZA1 option in shmobile_defconfig
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 19 +++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h |  4 ++++
- 2 files changed, 23 insertions(+)
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 23fdff7a7370842e..1f91b056188ebdb3 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -1076,6 +1076,17 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	unsigned long flags;
- 	int ret;
- 
-+	/* Allocate scratch buffer. */
-+	vin->scratch = dma_alloc_coherent(vin->dev, vin->format.sizeimage,
-+					  &vin->scratch_phys, GFP_KERNEL);
-+	if (!vin->scratch) {
-+		spin_lock_irqsave(&vin->qlock, flags);
-+		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
-+		spin_unlock_irqrestore(&vin->qlock, flags);
-+		vin_err(vin, "Failed to allocate scratch buffer\n");
-+		return -ENOMEM;
-+	}
-+
- 	sd = vin_to_source(vin);
- 	v4l2_subdev_call(sd, video, s_stream, 1);
- 
-@@ -1091,6 +1102,10 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- 
-+	if (ret)
-+		dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
-+				  vin->scratch_phys);
-+
- 	return ret;
- }
- 
-@@ -1141,6 +1156,10 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
- 
- 	/* disable interrupts */
- 	rvin_disable_interrupts(vin);
-+
-+	/* Free scratch buffer. */
-+	dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
-+			  vin->scratch_phys);
- }
- 
- static const struct vb2_ops rvin_qops = {
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 5382078143fb3869..00b405f78d0912c9 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -102,6 +102,8 @@ struct rvin_graph_entity {
-  *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
-+ * @scratch:		cpu address for scratch buffer
-+ * @scratch_phys:	physical address of the scratch buffer
-  *
-  * @qlock:		protects @queue_buf, @buf_list, @continuous, @sequence
-  *			@state
-@@ -130,6 +132,8 @@ struct rvin_dev {
- 
- 	struct mutex lock;
- 	struct vb2_queue queue;
-+	void *scratch;
-+	dma_addr_t scratch_phys;
- 
- 	spinlock_t qlock;
- 	struct vb2_v4l2_buffer *queue_buf[HW_BUFFER_NUM];
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 578434cfd1a0..79b2b7c12264 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -120,6 +120,7 @@ CONFIG_SPI=y
+ CONFIG_SPI_RSPI=y
+ CONFIG_SPI_SH_MSIOF=y
+ CONFIG_SPI_SH_HSPI=y
++CONFIG_PINCTRL_RZA1=y
+ CONFIG_GPIO_EM=y
+ CONFIG_GPIO_RCAR=y
+ CONFIG_GPIO_PCF857X=y
 -- 
-2.16.2
+2.11.0
