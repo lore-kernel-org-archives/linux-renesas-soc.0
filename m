@@ -1,47 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:43835 "EHLO
-        bin-vsp-out-03.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935268AbeCCWkY (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:59416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751348AbeCPWzK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:40:24 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] ravb: remove erroneous comment
-Date: Sat,  3 Mar 2018 23:39:54 +0100
-Message-Id: <20180303223954.14152-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 16 Mar 2018 18:55:10 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+To: Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180216152807.1629038-1-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180216152807.1629038-1-arnd@arndb.de>
+Message-ID: <152124090910.242365.9614136166072414865@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: fix false-positive Wmaybe-uninitialized warning
+Date: Fri, 16 Mar 2018 15:55:09 -0700
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When addressing a review comment in a early version of the offending
-patch a comment where left in which should have been removed. Remove the
-comment to keep it consistent with the code.
+Quoting Arnd Bergmann (2018-02-16 07:27:47)
+> When we build this driver with on x86-32, gcc produces a false-positive warning:
+> 
+> drivers/clk/renesas/clk-sh73a0.c: In function 'sh73a0_cpg_clocks_init':
+> drivers/clk/renesas/clk-sh73a0.c:155:10: error: 'parent_name' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>    return clk_register_fixed_factor(NULL, name, parent_name, 0,
+> 
+> We can work around that warning by adding a fake initialization, I tried
+> and failed to come up with any better workaround. This is currently one
+> of few remaining warnings for a 4.14.y randconfig build, so it would be
+> good to also have it backported at least to that version. Older versions
+> have more randconfig warnings, so we might not care.
+> 
+> I had not noticed this earlier, because one patch in my randconfig test
+> tree removes the '-ffreestanding' option on x86-32, and that avoids
+> the warning. The -ffreestanding flag was originally global but moved
+> into arch/i386 by Andi Kleen in commit 6edfba1b33c7 ("[PATCH] x86_64:
+> Don't define string functions to builtin") as a 'temporary workaround'.
+> 
+> Like many temporary hacks, this turned out to be rather long-lived, from
+> all I can tell we still need a simple fix to asm/string_32.h before it
+> can be removed, but I'm not sure about how to best do that.
+> 
+> Cc: stable@vger.kernel.org
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Fixes: 75efa06f457bbed3 ("ravb: add support for changing MTU")
-Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/net/ethernet/renesas/ravb_main.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 54a6265da7a06460..68f122140966d4de 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -346,7 +346,6 @@ static int ravb_ring_init(struct net_device *ndev, int q)
- 	int ring_size;
- 	int i;
- 
--	/* +16 gets room from the status from the card. */
- 	priv->rx_buf_sz = (ndev->mtu <= 1492 ? PKT_BUF_SZ : ndev->mtu) +
- 		ETH_HLEN + VLAN_HLEN;
- 
--- 
-2.16.2
+Applied to clk-next
