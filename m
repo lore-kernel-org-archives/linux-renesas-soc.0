@@ -1,88 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58386 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752572AbeC1OKP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753273AbeCPQjR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:10:15 -0400
-Subject: Re: [PATCH 05/15] v4l: vsp1: Use vsp1_entity.pipe to check if entity
- belongs to a pipeline
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180226214516.11559-6-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <7198a828-35da-6080-7987-ee0370cbba3c@ideasonboard.com>
-Date: Wed, 28 Mar 2018 15:10:10 +0100
-MIME-Version: 1.0
-In-Reply-To: <20180226214516.11559-6-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Mar 2018 12:39:17 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 30/47] ARM: dts: r8a7745: Add IPMMU DT nodes
+Date: Fri, 16 Mar 2018 17:38:27 +0100
+Message-Id: <0dcba3de58354e35c91a31dafe597e81e7c22294.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+From: Biju Das <biju.das@bp.renesas.com>
 
-On 26/02/18 21:45, Laurent Pinchart wrote:
-> The DRM pipeline handling code uses the entity's pipe list head to check
-> whether the entity is already included in a pipeline. This method is a
-> bit fragile in the sense that it uses list_empty() on a list_head that
-> is a list member. Replace it by a simpler check for the entity pipe
-> pointer.
+Add the six IPMMU instances found in the r8a7745 to DT with a disabled
+status.
 
-Yes, excellent.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7745.dtsi | 58 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  drivers/media/platform/vsp1/vsp1_drm.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-> index a7ad85ab0b08..e210917fdc3f 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -119,9 +119,9 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
->  			 * Remove the RPF from the pipe and the list of BRU
->  			 * inputs.
->  			 */
-> -			WARN_ON(list_empty(&rpf->entity.list_pipe));
-> +			WARN_ON(!rpf->entity.pipe);
-
-Does this WARN_ON() have much value any more ?
-
-I think it could probably be removed... unless there is a race between potential
-calls through vsp1_du_atomic_flush() and vsp1_du_setup_lif() - but I would be
-very surprised if that wasn't protected at the DRM levels.
-
- (Removing it if chosen doesn't need to be in this patch though)
-
->  			rpf->entity.pipe = NULL;
-> -			list_del_init(&rpf->entity.list_pipe);
-> +			list_del(&rpf->entity.list_pipe);
->  			pipe->inputs[i] = NULL;
->  
->  			bru->inputs[rpf->bru_input].rpf = NULL;
-> @@ -537,7 +537,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
->  			continue;
->  		}
->  
-> -		if (list_empty(&rpf->entity.list_pipe)) {
-> +		if (!rpf->entity.pipe) {
->  			rpf->entity.pipe = pipe;
->  			list_add_tail(&rpf->entity.list_pipe, &pipe->entities);
->  		}
-> @@ -566,7 +566,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
->  					   VI6_DPR_NODE_UNUSED);
->  
->  			entity->pipe = NULL;
-> -			list_del_init(&entity->list_pipe);
-> +			list_del(&entity->list_pipe);
->  
->  			continue;
->  		}
-> 
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 9c8d72c83bdc..413288b05515 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -288,6 +288,64 @@
+ 			resets = <&cpg 407>;
+ 		};
+ 
++		ipmmu_sy0: mmu@e6280000 {
++			compatible = "renesas,ipmmu-r8a7745",
++				     "renesas,ipmmu-vmsa";
++			reg = <0 0xe6280000 0 0x1000>;
++			interrupts = <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_sy1: mmu@e6290000 {
++			compatible = "renesas,ipmmu-r8a7745",
++				     "renesas,ipmmu-vmsa";
++			reg = <0 0xe6290000 0 0x1000>;
++			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds: mmu@e6740000 {
++			compatible = "renesas,ipmmu-r8a7745",
++				     "renesas,ipmmu-vmsa";
++			reg = <0 0xe6740000 0 0x1000>;
++			interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mp: mmu@ec680000 {
++			compatible = "renesas,ipmmu-r8a7745",
++				     "renesas,ipmmu-vmsa";
++			reg = <0 0xec680000 0 0x1000>;
++			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mx: mmu@fe951000 {
++			compatible = "renesas,ipmmu-r8a7745",
++				     "renesas,ipmmu-vmsa";
++			reg = <0 0xfe951000 0 0x1000>;
++			interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_gp: mmu@e62a0000 {
++			compatible = "renesas,ipmmu-r8a7745",
++				     "renesas,ipmmu-vmsa";
++			reg = <0 0xe62a0000 0 0x1000>;
++			interrupts = <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
+ 		icram0:	sram@e63a0000 {
+ 			compatible = "mmio-sram";
+ 			reg = <0 0xe63a0000 0 0x12000>;
+-- 
+2.11.0
