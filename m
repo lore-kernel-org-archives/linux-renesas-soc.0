@@ -1,66 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:62650 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751935AbeC2Hvm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753477AbeCPOw5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:51:42 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Fri, 16 Mar 2018 10:52:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v3 2/8] DT: reset: renesas,rzn1-reboot: document RZ/N1 reboot driver
-Date: Thu, 29 Mar 2018 08:46:58 +0100
-Message-Id: <1522309629-10152-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 57/69] arm64: dts: renesas: v3msk: Override EtherAVB phy-mode
+Date: Fri, 16 Mar 2018 15:51:27 +0100
+Message-Id: <9dcd1f26b9914864e0218712a666b23cf7e589c8.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-as part of the sysctrl MFD to handle rebooting the CA7 cores.
-This documents the driver bindings.
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+As the PHY interface installed on the V3MSK board provides TX and RX
+channels delays, make the "phy-mode" property a board-specific one,
+meant to override the one specified in the SoC DTSI.
+
+Follow up patches will reset the r8a77970 SoC DTSI to use "rgmii"
+mode and let the board file override that.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../bindings/power/renesas,rzn1-reboot.txt           | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+ arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-new file mode 100644
-index 0000000..f592769
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-@@ -0,0 +1,20 @@
-+DT bindings for the Renesas RZ/N1 Reboot Driver
-+
-+== Reboot Driver Node ==
-+
-+The reboot driver is always a subnode of the system controller node, see
-+renesas,rzn1-sysctrl.txt for details.
-+
-+Bindings:
-++ Required:
-+	compatible = "renesas,rzn1-reboot";
-+
-+Example:
-+	sysctrl: sysctrl@4000c000 {
-+		compatible = "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
-+		reg = <0x4000c000 0x1000>;
-+
-+		reboot {
-+			compatible = "renesas,rzn1-reboot";
-+		};
-+	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+index 8624ca87d6b2..bb554eec57c8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+@@ -34,6 +34,7 @@
+ &avb {
+ 	renesas,no-ether-link;
+ 	phy-handle = <&phy0>;
++	phy-mode = "rgmii-id";
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
 -- 
-2.7.4
+2.11.0
