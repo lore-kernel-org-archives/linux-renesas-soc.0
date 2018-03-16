@@ -1,209 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:39133 "EHLO
-        bin-vsp-out-01.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1164176AbeCBB7a (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753621AbeCPOwN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:59:30 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 29/32] rcar-vin: extend {start,stop}_streaming to work with media controller
-Date: Fri,  2 Mar 2018 02:57:48 +0100
-Message-Id: <20180302015751.25596-30-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Mar 2018 10:52:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 18/69] arm64: dts: renesas: r8a77995: Remove non-existing STBE region
+Date: Fri, 16 Mar 2018 15:50:48 +0100
+Message-Id: <fa3d4c67dfe920515a3d840de983a2b3e77d3b94.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The procedure to start or stop streaming using the non-MC single
-subdevice and the MC graph and multiple subdevices are quite different.
-Create a new function to abstract which method is used based on which
-mode the driver is running in and add logic to start the MC graph.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+R-Car D3 does not have the Stream Buffer for EtherAVB-IF (STBE).
+
+Note that the RAVB driver does not use this region.
+
+Fixes: f9ba0c4cfe6169b7 ("arm64: dts: renesas: r8a77995: Add EthernetAVB device node")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 133 +++++++++++++++++++++++++++--
- 1 file changed, 126 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 27d0c098f1da40f9..dd70d12ff693e500 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -1087,15 +1087,136 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- }
- 
-+static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
-+				   struct media_pad *pad)
-+{
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+
-+	fmt.pad = pad->index;
-+	if (v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt))
-+		return -EPIPE;
-+
-+	switch (fmt.format.code) {
-+	case MEDIA_BUS_FMT_YUYV8_1X16:
-+	case MEDIA_BUS_FMT_UYVY8_2X8:
-+	case MEDIA_BUS_FMT_UYVY10_2X10:
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+		vin->mbus_code = fmt.format.code;
-+		break;
-+	default:
-+		return -EPIPE;
-+	}
-+
-+	switch (fmt.format.field) {
-+	case V4L2_FIELD_TOP:
-+	case V4L2_FIELD_BOTTOM:
-+	case V4L2_FIELD_NONE:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+	case V4L2_FIELD_INTERLACED:
-+	case V4L2_FIELD_SEQ_TB:
-+	case V4L2_FIELD_SEQ_BT:
-+		/* Supported natively */
-+		break;
-+	case V4L2_FIELD_ALTERNATE:
-+		switch (vin->format.field) {
-+		case V4L2_FIELD_TOP:
-+		case V4L2_FIELD_BOTTOM:
-+		case V4L2_FIELD_NONE:
-+			break;
-+		case V4L2_FIELD_INTERLACED_TB:
-+		case V4L2_FIELD_INTERLACED_BT:
-+		case V4L2_FIELD_INTERLACED:
-+		case V4L2_FIELD_SEQ_TB:
-+		case V4L2_FIELD_SEQ_BT:
-+			/* Use VIN hardware to combine the two fields */
-+			fmt.format.height *= 2;
-+			break;
-+		default:
-+			return -EPIPE;
-+		}
-+		break;
-+	default:
-+		return -EPIPE;
-+	}
-+
-+	if (fmt.format.width != vin->format.width ||
-+	    fmt.format.height != vin->format.height ||
-+	    fmt.format.code != vin->mbus_code)
-+		return -EPIPE;
-+
-+	return 0;
-+}
-+
-+static int rvin_set_stream(struct rvin_dev *vin, int on)
-+{
-+	struct media_pipeline *pipe;
-+	struct media_device *mdev;
-+	struct v4l2_subdev *sd;
-+	struct media_pad *pad;
-+	int ret;
-+
-+	/* No media controller used, simply pass operation to subdevice. */
-+	if (!vin->info->use_mc) {
-+		ret = v4l2_subdev_call(vin->digital->subdev, video, s_stream,
-+				       on);
-+
-+		return ret == -ENOIOCTLCMD ? 0 : ret;
-+	}
-+
-+	pad = media_entity_remote_pad(&vin->pad);
-+	if (!pad)
-+		return -EPIPE;
-+
-+	sd = media_entity_to_v4l2_subdev(pad->entity);
-+
-+	if (!on) {
-+		media_pipeline_stop(&vin->vdev.entity);
-+		return v4l2_subdev_call(sd, video, s_stream, 0);
-+	}
-+
-+	ret = rvin_mc_validate_format(vin, sd, pad);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * The graph lock needs to be taken to protect concurrent
-+	 * starts of multiple VIN instances as they might share
-+	 * a common subdevice down the line and then should use
-+	 * the same pipe.
-+	 */
-+	mdev = vin->vdev.entity.graph_obj.mdev;
-+	mutex_lock(&mdev->graph_mutex);
-+	pipe = sd->entity.pipe ? sd->entity.pipe : &vin->vdev.pipe;
-+	ret = __media_pipeline_start(&vin->vdev.entity, pipe);
-+	mutex_unlock(&mdev->graph_mutex);
-+	if (ret)
-+		return ret;
-+
-+	ret = v4l2_subdev_call(sd, video, s_stream, 1);
-+	if (ret == -ENOIOCTLCMD)
-+		ret = 0;
-+	if (ret)
-+		media_pipeline_stop(&vin->vdev.entity);
-+
-+	return ret;
-+}
-+
- static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int ret;
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 1);
-+	ret = rvin_set_stream(vin, 1);
-+	if (ret) {
-+		spin_lock_irqsave(&vin->qlock, flags);
-+		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
-+		spin_unlock_irqrestore(&vin->qlock, flags);
-+		return ret;
-+	}
- 
- 	spin_lock_irqsave(&vin->qlock, flags);
- 
-@@ -1104,7 +1225,7 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	ret = rvin_capture_start(vin);
- 	if (ret) {
- 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
--		v4l2_subdev_call(sd, video, s_stream, 0);
-+		rvin_set_stream(vin, 0);
- 	}
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
-@@ -1115,7 +1236,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- static void rvin_stop_streaming(struct vb2_queue *vq)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int retries = 0;
- 
-@@ -1154,8 +1274,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 0);
-+	rvin_set_stream(vin, 0);
- 
- 	/* disable interrupts */
- 	rvin_disable_interrupts(vin);
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 22e633c87d4c..cd3c6a30fc47 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -476,7 +476,7 @@
+ 		avb: ethernet@e6800000 {
+ 			compatible = "renesas,etheravb-r8a77995",
+ 				     "renesas,etheravb-rcar-gen3";
+-			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
++			reg = <0 0xe6800000 0 0x800>;
+ 			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
 -- 
-2.16.2
+2.11.0
