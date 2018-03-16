@@ -1,18 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753977AbeCPOzG (ORCPT
+        with ESMTP id S1753992AbeCPOzQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:55:06 -0400
+        Fri, 16 Mar 2018 10:55:16 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/14] soc: renesas: rcar-rst: add R8A77980 support
-Date: Fri, 16 Mar 2018 15:53:25 +0100
-Message-Id: <7d7b619e16d420b723d6618c60a0aaf0ba4e3666.1521211738.git.horms+renesas@verge.net.au>
+Subject: [PATCH 06/14] dt-bindings: power: add R8A77980 SYSC power domain definitions
+Date: Fri, 16 Mar 2018 15:53:28 +0100
+Message-Id: <7755b40d07a8dba723aadcb9a1d2828331f3f1b3.1521211738.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1521211738.git.horms+renesas@verge.net.au>
 References: <cover.1521211738.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -20,54 +21,68 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Add support for R-Car V3H (R8A77980) to the R-Car RST driver -- this driver
-is needed for the clock driver to work.
+Add macros usable by the device tree sources to reference R8A77980 SYSC
+power domains by index.
 
+Based on the original (and large) patch by Vladimir Barinov.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- drivers/soc/renesas/Kconfig                             | 2 +-
- drivers/soc/renesas/rcar-rst.c                          | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ include/dt-bindings/power/r8a77980-sysc.h | 43 +++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 include/dt-bindings/power/r8a77980-sysc.h
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index a8014f3ab8ba..a55b88658446 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -27,6 +27,7 @@ Required properties:
- 		  - "renesas,r8a7795-rst" (R-Car H3)
- 		  - "renesas,r8a7796-rst" (R-Car M3-W)
- 		  - "renesas,r8a77970-rst" (R-Car V3M)
-+		  - "renesas,r8a77980-rst" (R-Car V3H)
- 		  - "renesas,r8a77995-rst" (R-Car D3)
-   - reg: Address start and address range for the device.
- 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 09550b1da56d..6efd7bef8577 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -4,7 +4,7 @@ config SOC_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
- 			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77970 || \
--			   ARCH_R8A77995
-+			   ARCH_R8A77980 || ARCH_R8A77995
- 	select SYSC_R8A7743 if ARCH_R8A7743
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A7779 if ARCH_R8A7779
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index 3316b028f231..e2340eb9ea9c 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -42,6 +42,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a77980-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a77995-rst", .data = &rcar_rst_gen2 },
- 	{ /* sentinel */ }
- };
+diff --git a/include/dt-bindings/power/r8a77980-sysc.h b/include/dt-bindings/power/r8a77980-sysc.h
+new file mode 100644
+index 000000000000..2c90c1237725
+--- /dev/null
++++ b/include/dt-bindings/power/r8a77980-sysc.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A77980_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A77980_SYSC_H__
++
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
++
++#define R8A77980_PD_A2SC2		0
++#define R8A77980_PD_A2SC3		1
++#define R8A77980_PD_A2SC4		2
++#define R8A77980_PD_A2PD0		3
++#define R8A77980_PD_A2PD1		4
++#define R8A77980_PD_CA53_CPU0		5
++#define R8A77980_PD_CA53_CPU1		6
++#define R8A77980_PD_CA53_CPU2		7
++#define R8A77980_PD_CA53_CPU3		8
++#define R8A77980_PD_A2CN		10
++#define R8A77980_PD_A3VIP		11
++#define R8A77980_PD_A2IR5		12
++#define R8A77980_PD_CR7			13
++#define R8A77980_PD_A2IR4		15
++#define R8A77980_PD_CA53_SCU		21
++#define R8A77980_PD_A2IR0		23
++#define R8A77980_PD_A3IR		24
++#define R8A77980_PD_A3VIP1		25
++#define R8A77980_PD_A3VIP2		26
++#define R8A77980_PD_A2IR1		27
++#define R8A77980_PD_A2IR2		28
++#define R8A77980_PD_A2IR3		29
++#define R8A77980_PD_A2SC0		30
++#define R8A77980_PD_A2SC1		31
++
++/* Always-on power area */
++#define R8A77980_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A77980_SYSC_H__ */
 -- 
 2.11.0
