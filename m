@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751881AbeCPQjo (ORCPT
+        with ESMTP id S1753444AbeCPOyy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:39:44 -0400
+        Fri, 16 Mar 2018 10:54:54 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -11,11 +11,11 @@ Cc: linux-arm-kernel@lists.infradead.org,
         Marek Vasut <marek.vasut@gmail.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 44/47] ARM: dts: stout: Initial r8a7790 Stout board support
-Date: Fri, 16 Mar 2018 17:38:41 +0100
-Message-Id: <92bcfdb334ca7fc4c029927d25a89adcf34d0529.1521218085.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
-References: <cover.1521218085.git.horms+renesas@verge.net.au>
+Subject: [PATCH 49/52] ARM: dts: stout: Initial r8a7790 Stout board support
+Date: Fri, 16 Mar 2018 15:53:08 +0100
+Message-Id: <31d65fe0760bbb4a30fded7d051146c1bc7b3915.1521208546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
+References: <cover.1521208546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
