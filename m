@@ -1,53 +1,132 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] dt-bindings: pwm: renesas-tpu: Correct SoC part numbers and family names
-Date: Fri,  2 Mar 2018 15:39:45 +0100
-Message-Id: <1520001585-12899-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1520001585-12899-1-git-send-email-geert+renesas@glider.be>
-References: <1520001585-12899-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753575AbeCPOvv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:51:51 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/69] arm64: dts: renesas: r8a7796: add thermal cooling management
+Date: Fri, 16 Mar 2018 15:50:34 +0100
+Message-Id: <479e5d70a9cee635d0feda260eed3719fb565ca8.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R8A73A4 (not R8A77A4) is R-Mobile APE6,
-R8A7740 is R-Mobile (not R-Car) A1.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-v2:
-  - Add Acked-by, Reviewed-by.
----
- Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Add nodes and properties for thermal cooling management support.
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-index 641b5b4c648340ee..fb633129d845a893 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-@@ -3,7 +3,7 @@
- Required Properties:
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 38 ++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index e06bde6e2853..ef10fb548681 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -73,6 +73,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 		};
  
-   - compatible: should be one of the following.
--    - "renesas,tpu-r8a73a4": for R8A77A4 (R-Mobile APE6) compatible PWM controller.
-+    - "renesas,tpu-r8a73a4": for R8A73A4 (R-Mobile APE6) compatible PWM controller.
-     - "renesas,tpu-r8a7740": for R8A7740 (R-Mobile A1) compatible PWM controller.
-     - "renesas,tpu-r8a7790": for R8A7790 (R-Car H2) compatible PWM controller.
-     - "renesas,tpu": for generic R-Car TPU PWM controller.
-@@ -18,7 +18,7 @@ Required Properties:
- Please refer to pwm.txt in this directory for details of the common PWM bindings
- used by client devices.
+ 		a57_1: cpu@1 {
+@@ -84,6 +85,7 @@
+ 			enable-method = "psci";
+ 			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 		};
  
--Example: R8A7740 (R-Car A1) TPU controller node
-+Example: R8A7740 (R-Mobile A1) TPU controller node
+ 		a53_0: cpu@100 {
+@@ -2060,12 +2062,24 @@
+ 			thermal-sensors = <&tsc 0>;
  
- 	tpu: pwm@e6600000 {
- 		compatible = "renesas,tpu-r8a7740", "renesas,tpu";
+ 			trips {
++				sensor1_passive: sensor1-passive {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
+ 				sensor1_crit: sensor1-crit {
+ 					temperature = <120000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&sensor1_passive>;
++					cooling-device = <&a57_0 5 5>;
++				};
++			};
+ 		};
+ 
+ 		sensor_thermal2: sensor-thermal2 {
+@@ -2074,12 +2088,24 @@
+ 			thermal-sensors = <&tsc 1>;
+ 
+ 			trips {
++				sensor2_passive: sensor2-passive {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
+ 				sensor2_crit: sensor2-crit {
+ 					temperature = <120000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&sensor2_passive>;
++					cooling-device = <&a57_0 5 5>;
++				};
++			};
+ 		};
+ 
+ 		sensor_thermal3: sensor-thermal3 {
+@@ -2088,12 +2114,24 @@
+ 			thermal-sensors = <&tsc 2>;
+ 
+ 			trips {
++				sensor3_passive: sensor3-passive {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
+ 				sensor3_crit: sensor3-crit {
+ 					temperature = <120000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&sensor3_passive>;
++					cooling-device = <&a57_0 5 5>;
++				};
++			};
+ 		};
+ 	};
+ 
 -- 
-2.7.4
-
+2.11.0
