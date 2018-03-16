@@ -1,289 +1,175 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52115 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754781AbeCHAFj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753622AbeCPOzP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 19:05:39 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v7 3/8] media: vsp1: Provide a body pool
-Date: Thu,  8 Mar 2018 00:05:26 +0000
-Message-Id: <9f8fb55c1811825884ab620d2956e0036147bc26.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 16 Mar 2018 10:55:15 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/14] soc: renesas: rcar-sysc: add R8A77980 support
+Date: Fri, 16 Mar 2018 15:53:29 +0100
+Message-Id: <41d6d8bd8ae94ca9ee53720cd530168aca557db7.1521211738.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521211738.git.horms+renesas@verge.net.au>
+References: <cover.1521211738.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each display list allocates a body to store register values in a dma
-accessible buffer from a dma_alloc_wc() allocation. Each of these
-results in an entry in the TLB, and a large number of display list
-allocations adds pressure to this resource.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reduce TLB pressure on the IPMMUs by allocating multiple display list
-bodies in a single allocation, and providing these to the display list
-through a 'body pool'. A pool can be allocated by the display list
-manager or entities which require their own body allocations.
+Add support for R-Car V3H (R8A77980) SoC power areas to the R-Car SYSC
+driver.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Based on the original (and large) patch by Vladimir Barinov.
 
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v4:
- - Provide comment explaining extra allocation on body pool
-   highlighting area for optimisation later.
+ .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+ drivers/soc/renesas/Kconfig                        |  5 +++
+ drivers/soc/renesas/Makefile                       |  1 +
+ drivers/soc/renesas/r8a77980-sysc.c                | 52 ++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c                    |  3 ++
+ drivers/soc/renesas/rcar-sysc.h                    |  1 +
+ 6 files changed, 63 insertions(+)
+ create mode 100644 drivers/soc/renesas/r8a77980-sysc.c
 
-v3:
- - s/fragment/body/, s/fragments/bodies/
- - qty -> num_bodies
- - indentation fix
- - s/vsp1_dl_body_pool_{alloc,free}/vsp1_dl_body_pool_{create,destroy}/'
- - Add kerneldoc to non-static functions
-
-v2:
- - assign dlb->dma correctly
-
- drivers/media/platform/vsp1/vsp1_dl.c | 163 +++++++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_dl.h |   8 +-
- 2 files changed, 171 insertions(+)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 67cc16c1b8e3..0208e72cb356 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -45,6 +45,8 @@ struct vsp1_dl_entry {
- /**
-  * struct vsp1_dl_body - Display list body
-  * @list: entry in the display list list of bodies
-+ * @free: entry in the pool free body list
-+ * @pool: pool to which this body belongs
-  * @vsp1: the VSP1 device
-  * @entries: array of entries
-  * @dma: DMA address of the entries
-@@ -54,6 +56,9 @@ struct vsp1_dl_entry {
-  */
- struct vsp1_dl_body {
- 	struct list_head list;
-+	struct list_head free;
+diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index 8690f10426a3..6284a9550b3c 100644
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -18,6 +18,7 @@ Required properties:
+       - "renesas,r8a7795-sysc" (R-Car H3)
+       - "renesas,r8a7796-sysc" (R-Car M3-W)
+       - "renesas,r8a77970-sysc" (R-Car V3M)
++      - "renesas,r8a77980-sysc" (R-Car V3H)
+       - "renesas,r8a77995-sysc" (R-Car D3)
+   - reg: Address start and address range for the device.
+   - #power-domain-cells: Must be 1.
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 6efd7bef8577..6caa393e3a2d 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -15,6 +15,7 @@ config SOC_RENESAS
+ 	select SYSC_R8A7795 if ARCH_R8A7795
+ 	select SYSC_R8A7796 if ARCH_R8A7796
+ 	select SYSC_R8A77970 if ARCH_R8A77970
++	select SYSC_R8A77980 if ARCH_R8A77980
+ 	select SYSC_R8A77995 if ARCH_R8A77995
+ 
+ if SOC_RENESAS
+@@ -60,6 +61,10 @@ config SYSC_R8A77970
+ 	bool "R-Car V3M System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
+ 
++config SYSC_R8A77980
++	bool "R-Car V3H System Controller support" if COMPILE_TEST
++	select SYSC_RCAR
 +
-+	struct vsp1_dl_body_pool *pool;
- 	struct vsp1_device *vsp1;
+ config SYSC_R8A77995
+ 	bool "R-Car D3 System Controller support" if COMPILE_TEST
+ 	select SYSC_RCAR
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 845d62a08ce1..d3b7bb3284c0 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_SYSC_R8A7794)	+= r8a7794-sysc.o
+ obj-$(CONFIG_SYSC_R8A7795)	+= r8a7795-sysc.o
+ obj-$(CONFIG_SYSC_R8A7796)	+= r8a7796-sysc.o
+ obj-$(CONFIG_SYSC_R8A77970)	+= r8a77970-sysc.o
++obj-$(CONFIG_SYSC_R8A77980)	+= r8a77980-sysc.o
+ obj-$(CONFIG_SYSC_R8A77995)	+= r8a77995-sysc.o
  
- 	struct vsp1_dl_entry *entries;
-@@ -65,6 +70,30 @@ struct vsp1_dl_body {
- };
- 
- /**
-+ * struct vsp1_dl_body_pool - display list body pool
-+ * @dma: DMA address of the entries
-+ * @size: size of the full DMA memory pool in bytes
-+ * @mem: CPU memory pointer for the pool
-+ * @bodies: Array of DLB structures for the pool
-+ * @free: List of free DLB entries
-+ * @lock: Protects the pool and free list
-+ * @vsp1: the VSP1 device
+ # Family
+diff --git a/drivers/soc/renesas/r8a77980-sysc.c b/drivers/soc/renesas/r8a77980-sysc.c
+new file mode 100644
+index 000000000000..9265fb525ef3
+--- /dev/null
++++ b/drivers/soc/renesas/r8a77980-sysc.c
+@@ -0,0 +1,52 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Renesas R-Car V3H System Controller
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
 + */
-+struct vsp1_dl_body_pool {
-+	/* DMA allocation */
-+	dma_addr_t dma;
-+	size_t size;
-+	void *mem;
 +
-+	/* Body management */
-+	struct vsp1_dl_body *bodies;
-+	struct list_head free;
-+	spinlock_t lock;
++#include <linux/bug.h>
++#include <linux/kernel.h>
 +
-+	struct vsp1_device *vsp1;
++#include <dt-bindings/power/r8a77980-sysc.h>
++
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a77980_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A77980_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
++	{ "ca53-scu",	0x140, 0, R8A77980_PD_CA53_SCU,	R8A77980_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca53-cpu0",	0x200, 0, R8A77980_PD_CA53_CPU0, R8A77980_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu1",	0x200, 1, R8A77980_PD_CA53_CPU1, R8A77980_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu2",	0x200, 2, R8A77980_PD_CA53_CPU2, R8A77980_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu3",	0x200, 3, R8A77980_PD_CA53_CPU3, R8A77980_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "cr7",	0x240, 0, R8A77980_PD_CR7,	R8A77980_PD_ALWAYS_ON },
++	{ "a3ir",	0x180, 0, R8A77980_PD_A3IR,	R8A77980_PD_ALWAYS_ON },
++	{ "a2ir0",	0x400, 0, R8A77980_PD_A2IR0,	R8A77980_PD_A3IR },
++	{ "a2ir1",	0x400, 1, R8A77980_PD_A2IR1,	R8A77980_PD_A3IR },
++	{ "a2ir2",	0x400, 2, R8A77980_PD_A2IR2,	R8A77980_PD_A3IR },
++	{ "a2ir3",	0x400, 3, R8A77980_PD_A2IR3,	R8A77980_PD_A3IR },
++	{ "a2ir4",	0x400, 4, R8A77980_PD_A2IR4,	R8A77980_PD_A3IR },
++	{ "a2ir5",	0x400, 5, R8A77980_PD_A2IR5,	R8A77980_PD_A3IR },
++	{ "a2sc0",	0x400, 6, R8A77980_PD_A2SC0,	R8A77980_PD_A3IR },
++	{ "a2sc1",	0x400, 7, R8A77980_PD_A2SC1,	R8A77980_PD_A3IR },
++	{ "a2sc2",	0x400, 8, R8A77980_PD_A2SC2,	R8A77980_PD_A3IR },
++	{ "a2sc3",	0x400, 9, R8A77980_PD_A2SC3,	R8A77980_PD_A3IR },
++	{ "a2sc4",	0x400, 10, R8A77980_PD_A2SC4,	R8A77980_PD_A3IR },
++	{ "a2pd0",	0x400, 11, R8A77980_PD_A2PD0,	R8A77980_PD_A3IR },
++	{ "a2pd1",	0x400, 12, R8A77980_PD_A2PD1,	R8A77980_PD_A3IR },
++	{ "a2cn",	0x400, 13, R8A77980_PD_A2CN,	R8A77980_PD_A3IR },
++	{ "a3vip",	0x2c0, 0, R8A77980_PD_A3VIP,	R8A77980_PD_ALWAYS_ON },
++	{ "a3vip1",	0x300, 0, R8A77980_PD_A3VIP1,	R8A77980_PD_A3VIP },
++	{ "a3vip2",	0x280, 0, R8A77980_PD_A3VIP2,	R8A77980_PD_A3VIP },
 +};
 +
-+/**
-  * struct vsp1_dl_list - Display list
-  * @list: entry in the display list manager lists
-  * @dlm: the display list manager
-@@ -105,6 +134,7 @@ enum vsp1_dl_mode {
-  * @active: list currently being processed (loaded) by hardware
-  * @queued: list queued to the hardware (written to the DL registers)
-  * @pending: list waiting to be queued to the hardware
-+ * @pool: body pool for the display list bodies
-  * @gc_work: bodies garbage collector work struct
-  * @gc_bodies: array of display list bodies waiting to be freed
-  */
-@@ -120,6 +150,8 @@ struct vsp1_dl_manager {
- 	struct vsp1_dl_list *queued;
- 	struct vsp1_dl_list *pending;
++const struct rcar_sysc_info r8a77980_sysc_info __initconst = {
++	.areas = r8a77980_areas,
++	.num_areas = ARRAY_SIZE(r8a77980_areas),
++};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 636872bc2416..72b0f4a9ad4e 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -287,6 +287,9 @@ static const struct of_device_id rcar_sysc_matches[] __initconst = {
+ #ifdef CONFIG_SYSC_R8A77970
+ 	{ .compatible = "renesas,r8a77970-sysc", .data = &r8a77970_sysc_info },
+ #endif
++#ifdef CONFIG_SYSC_R8A77980
++	{ .compatible = "renesas,r8a77980-sysc", .data = &r8a77980_sysc_info },
++#endif
+ #ifdef CONFIG_SYSC_R8A77995
+ 	{ .compatible = "renesas,r8a77995-sysc", .data = &r8a77995_sysc_info },
+ #endif
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index 9d9daf9eb91b..974b18619c08 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -59,6 +59,7 @@ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern const struct rcar_sysc_info r8a7795_sysc_info;
+ extern const struct rcar_sysc_info r8a7796_sysc_info;
+ extern const struct rcar_sysc_info r8a77970_sysc_info;
++extern const struct rcar_sysc_info r8a77980_sysc_info;
+ extern const struct rcar_sysc_info r8a77995_sysc_info;
  
-+	struct vsp1_dl_body_pool *pool;
-+
- 	struct work_struct gc_work;
- 	struct list_head gc_bodies;
- };
-@@ -128,6 +160,137 @@ struct vsp1_dl_manager {
-  * Display List Body Management
-  */
  
-+/**
-+ * vsp1_dl_body_pool_create - Create a pool of bodies from a single allocation
-+ * @vsp1: The VSP1 device
-+ * @num_bodies: The quantity of bodies to allocate
-+ * @num_entries: The maximum number of entries that the body can contain
-+ * @extra_size: Extra allocation provided for the bodies
-+ *
-+ * Allocate a pool of display list bodies each with enough memory to contain the
-+ * requested number of entries.
-+ *
-+ * Return a pointer to a pool on success or NULL if memory can't be allocated.
-+ */
-+struct vsp1_dl_body_pool *
-+vsp1_dl_body_pool_create(struct vsp1_device *vsp1, unsigned int num_bodies,
-+			 unsigned int num_entries, size_t extra_size)
-+{
-+	struct vsp1_dl_body_pool *pool;
-+	size_t dlb_size;
-+	unsigned int i;
-+
-+	pool = kzalloc(sizeof(*pool), GFP_KERNEL);
-+	if (!pool)
-+		return NULL;
-+
-+	pool->vsp1 = vsp1;
-+
-+	/*
-+	 * Todo: 'extra_size' is only used by vsp1_dlm_create(), to allocate
-+	 * extra memory for the display list header. We need only one header per
-+	 * display list, not per display list body, thus this allocation is
-+	 * extraneous and should be reworked in the future.
-+	 */
-+	dlb_size = num_entries * sizeof(struct vsp1_dl_entry) + extra_size;
-+	pool->size = dlb_size * num_bodies;
-+
-+	pool->bodies = kcalloc(num_bodies, sizeof(*pool->bodies), GFP_KERNEL);
-+	if (!pool->bodies) {
-+		kfree(pool);
-+		return NULL;
-+	}
-+
-+	pool->mem = dma_alloc_wc(vsp1->bus_master, pool->size, &pool->dma,
-+				 GFP_KERNEL);
-+	if (!pool->mem) {
-+		kfree(pool->bodies);
-+		kfree(pool);
-+		return NULL;
-+	}
-+
-+	spin_lock_init(&pool->lock);
-+	INIT_LIST_HEAD(&pool->free);
-+
-+	for (i = 0; i < num_bodies; ++i) {
-+		struct vsp1_dl_body *dlb = &pool->bodies[i];
-+
-+		dlb->pool = pool;
-+		dlb->max_entries = num_entries;
-+
-+		dlb->dma = pool->dma + i * dlb_size;
-+		dlb->entries = pool->mem + i * dlb_size;
-+
-+		list_add_tail(&dlb->free, &pool->free);
-+	}
-+
-+	return pool;
-+}
-+
-+/**
-+ * vsp1_dl_body_pool_destroy - Release a body pool
-+ * @pool: The body pool
-+ *
-+ * Release all components of a pool allocation.
-+ */
-+void vsp1_dl_body_pool_destroy(struct vsp1_dl_body_pool *pool)
-+{
-+	if (!pool)
-+		return;
-+
-+	if (pool->mem)
-+		dma_free_wc(pool->vsp1->bus_master, pool->size, pool->mem,
-+			    pool->dma);
-+
-+	kfree(pool->bodies);
-+	kfree(pool);
-+}
-+
-+/**
-+ * vsp1_dl_body_get - Obtain a body from a pool
-+ * @pool: The body pool
-+ *
-+ * Obtain a body from the pool allocation without blocking.
-+ *
-+ * Returns a display list body or NULL if there are none available.
-+ */
-+struct vsp1_dl_body *vsp1_dl_body_get(struct vsp1_dl_body_pool *pool)
-+{
-+	struct vsp1_dl_body *dlb = NULL;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&pool->lock, flags);
-+
-+	if (!list_empty(&pool->free)) {
-+		dlb = list_first_entry(&pool->free, struct vsp1_dl_body, free);
-+		list_del(&dlb->free);
-+	}
-+
-+	spin_unlock_irqrestore(&pool->lock, flags);
-+
-+	return dlb;
-+}
-+
-+/**
-+ * vsp1_dl_body_put - Return a body back to its pool
-+ * @dlb: The display list body
-+ *
-+ * Return a body back to the pool, and reset the num_entries to clear the list.
-+ */
-+void vsp1_dl_body_put(struct vsp1_dl_body *dlb)
-+{
-+	unsigned long flags;
-+
-+	if (!dlb)
-+		return;
-+
-+	dlb->num_entries = 0;
-+
-+	spin_lock_irqsave(&dlb->pool->lock, flags);
-+	list_add_tail(&dlb->free, &dlb->pool->free);
-+	spin_unlock_irqrestore(&dlb->pool->lock, flags);
-+}
-+
- /*
-  * Initialize a display list body object and allocate DMA memory for the body
-  * data. The display list body object is expected to have been initialized to
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-index cf57f986b69a..031032e304d2 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.h
-+++ b/drivers/media/platform/vsp1/vsp1_dl.h
-@@ -17,6 +17,7 @@
- 
- struct vsp1_device;
- struct vsp1_dl_body;
-+struct vsp1_dl_body_pool;
- struct vsp1_dl_list;
- struct vsp1_dl_manager;
- 
-@@ -34,6 +35,13 @@ void vsp1_dl_list_put(struct vsp1_dl_list *dl);
- void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data);
- void vsp1_dl_list_commit(struct vsp1_dl_list *dl);
- 
-+struct vsp1_dl_body_pool *
-+vsp1_dl_body_pool_create(struct vsp1_device *vsp1, unsigned int num_bodies,
-+			 unsigned int num_entries, size_t extra_size);
-+void vsp1_dl_body_pool_destroy(struct vsp1_dl_body_pool *pool);
-+struct vsp1_dl_body *vsp1_dl_body_get(struct vsp1_dl_body_pool *pool);
-+void vsp1_dl_body_put(struct vsp1_dl_body *dlb);
-+
- struct vsp1_dl_body *vsp1_dl_body_alloc(struct vsp1_device *vsp1,
- 					unsigned int num_entries);
- void vsp1_dl_body_free(struct vsp1_dl_body *dlb);
 -- 
-git-series 0.9.1
+2.11.0
