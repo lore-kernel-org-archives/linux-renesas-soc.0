@@ -1,49 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753765AbeCPOwy (ORCPT
+        with ESMTP id S1753802AbeCPOxK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:52:54 -0400
+        Fri, 16 Mar 2018 10:53:10 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 54/69] arm64: dts: renesas: ulcb: Override EtherAVB phy-mode
-Date: Fri, 16 Mar 2018 15:51:24 +0100
-Message-Id: <b3635b18bba8fc6bd57b7747d97fc46afcf551b8.1521206129.git.horms+renesas@verge.net.au>
+Subject: [PATCH 67/69] arm64: dts: renesas: r8a7795: Add IPMMU-PV1 device node
+Date: Fri, 16 Mar 2018 15:51:37 +0100
+Message-Id: <9dd660eb1c201304b5d79012695fc6bca57f99a0.1521206129.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
 References: <cover.1521206129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Add r8a7795 IPMMU-PV1 and keep it disabled by default.
 
-As the PHY interface installed on the ULCB board provides TX
-channel delay, make the "phy-mode" property a board-specific one, meant
-to override the one specified in the SoC DTSI.
+This device is not present in r8a7795 ES1.x and
+is removed from the DT of those SoCs.
 
-Follow up patches will reset the r8a7795/96 SoC DTSI to use "rgmii" mode\
-and let the board files override that.
+This corrects an omission in
+3b7e7848f0e8 ("arm64: dts: renesas: r8a7795: Add IPMMU device nodes")
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+This does not have any runtime effect.
+
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 9 +++++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 3e7a6b94e9f8..6f814845f8b6 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -146,6 +146,7 @@
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
- 	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-txid";
- 	status = "okay";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index f1d5e90503d5..f9acd125d687 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -23,6 +23,7 @@
  
- 	phy0: ethernet-phy@0 {
+ 	/delete-node/ mmu@febe0000;
+ 	/delete-node/ mmu@fe980000;
++	/delete-node/ mmu@fd950000;
+ 	/delete-node/ mmu@fd960000;
+ 	/delete-node/ mmu@fd970000;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 09953cda3a55..0648fe451d09 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -545,6 +545,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		ipmmu_pv1: mmu@fd950000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfd950000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 7>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
+ 		ipmmu_pv2: mmu@fd960000 {
+ 			compatible = "renesas,ipmmu-r8a7795";
+ 			reg = <0 0xfd960000 0 0x1000>;
 -- 
 2.11.0
