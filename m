@@ -1,97 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:32402 "EHLO
-        bin-vsp-out-02.atm.binero.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754837AbeCGWGG (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:33834 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753348AbeCPNol (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:06:06 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v12 32/33] rcar-vin: enable support for r8a7796
-Date: Wed,  7 Mar 2018 23:05:10 +0100
-Message-Id: <20180307220511.9826-33-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Mar 2018 09:44:41 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/8] clk: renesas: rcar-gen2: Always use readl()/writel()
+Date: Fri, 16 Mar 2018 14:40:19 +0100
+Message-Id: <1521207622-3311-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a7796.
+On arm32, there is no reason to use the (soon deprecated)
+clk_readl()/clk_writel().  Hence use the generic readl()/writel()
+instead.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 44 +++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ drivers/clk/renesas/clk-rcar-gen2.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index bc116cc0181171e0..0040f92bfdff947a 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -931,6 +931,46 @@ static const struct rvin_info rcar_info_r8a7795es1 = {
- 	.routes = rcar_info_r8a7795es1_routes,
- };
+diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
+index d14cbe1ca29ac009..ee32a022e6da9548 100644
+--- a/drivers/clk/renesas/clk-rcar-gen2.c
++++ b/drivers/clk/renesas/clk-rcar-gen2.c
+@@ -62,8 +62,7 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+ 	unsigned int mult;
+ 	unsigned int val;
  
-+static const struct rvin_group_route rcar_info_r8a7796_routes[] = {
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 6, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 2, .vin = 6, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 7, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI40, .channel = 3, .vin = 7, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a7796 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a7796_routes,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -964,6 +1004,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,vin-r8a7795",
- 		.data = &rcar_info_r8a7795,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a7796",
-+		.data = &rcar_info_r8a7796,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+-	val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
+-	    >> CPG_FRQCRC_ZFC_SHIFT;
++	val = (readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK) >> CPG_FRQCRC_ZFC_SHIFT;
+ 	mult = 32 - val;
+ 
+ 	return div_u64((u64)parent_rate * mult, 32);
+@@ -95,21 +94,21 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	mult = div_u64((u64)rate * 32, parent_rate);
+ 	mult = clamp(mult, 1U, 32U);
+ 
+-	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
++	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+ 		return -EBUSY;
+ 
+-	val = clk_readl(zclk->reg);
++	val = readl(zclk->reg);
+ 	val &= ~CPG_FRQCRC_ZFC_MASK;
+ 	val |= (32 - mult) << CPG_FRQCRC_ZFC_SHIFT;
+-	clk_writel(val, zclk->reg);
++	writel(val, zclk->reg);
+ 
+ 	/*
+ 	 * Set KICK bit in FRQCRB to update hardware setting and wait for
+ 	 * clock change completion.
+ 	 */
+-	kick = clk_readl(zclk->kick_reg);
++	kick = readl(zclk->kick_reg);
+ 	kick |= CPG_FRQCRB_KICK;
+-	clk_writel(kick, zclk->kick_reg);
++	writel(kick, zclk->kick_reg);
+ 
+ 	/*
+ 	 * Note: There is no HW information about the worst case latency.
+@@ -121,7 +120,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * "super" safe value.
+ 	 */
+ 	for (i = 1000; i; i--) {
+-		if (!(clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
++		if (!(readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
+ 			return 0;
+ 
+ 		cpu_relax();
+@@ -332,7 +331,7 @@ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
+ 			mult = config->pll0_mult;
+ 			div = 3;
+ 		} else {
+-			u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
++			u32 value = readl(cpg->reg + CPG_PLL0CR);
+ 			mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
+ 		}
+ 		parent_name = "main";
 -- 
-2.16.2
+2.7.4
