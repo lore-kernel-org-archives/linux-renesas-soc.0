@@ -1,88 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753992AbeCPOzQ (ORCPT
+        with ESMTP id S1753656AbeCPOw2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:55:16 -0400
+        Fri, 16 Mar 2018 10:52:28 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/14] dt-bindings: power: add R8A77980 SYSC power domain definitions
-Date: Fri, 16 Mar 2018 15:53:28 +0100
-Message-Id: <7755b40d07a8dba723aadcb9a1d2828331f3f1b3.1521211738.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521211738.git.horms+renesas@verge.net.au>
-References: <cover.1521211738.git.horms+renesas@verge.net.au>
+Subject: [PATCH 39/69] arm64: dts: renesas: Add R-Car Salvator-x M3-N support
+Date: Fri, 16 Mar 2018 15:51:09 +0100
+Message-Id: <5a2cd7e84945bc9acfcada18cb5f66cda9c1529e.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Add macros usable by the device tree sources to reference R8A77980 SYSC
-power domains by index.
+Add basic support for R-Car Salvator-X M3-N (R8A77965) board.
 
-Based on the original (and large) patch by Vladimir Barinov.
+Based on original work from:
+Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/dt-bindings/power/r8a77980-sysc.h | 43 +++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a77980-sysc.h
+ arch/arm64/boot/dts/renesas/Makefile                |  1 +
+ arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
 
-diff --git a/include/dt-bindings/power/r8a77980-sysc.h b/include/dt-bindings/power/r8a77980-sysc.h
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index c885eef4e660..9ea5ec0daeba 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
++dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
+ dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
 new file mode 100644
-index 000000000000..2c90c1237725
+index 000000000000..75d890d91df9
 --- /dev/null
-+++ b/include/dt-bindings/power/r8a77980-sysc.h
-@@ -0,0 +1,43 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2018 Cogent Embedded, Inc.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A77980_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A77980_SYSC_H__
-+
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
++ * Device Tree Source for the Salvator-X board with R-Car M3-N
++ *
++ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
 + */
 +
-+#define R8A77980_PD_A2SC2		0
-+#define R8A77980_PD_A2SC3		1
-+#define R8A77980_PD_A2SC4		2
-+#define R8A77980_PD_A2PD0		3
-+#define R8A77980_PD_A2PD1		4
-+#define R8A77980_PD_CA53_CPU0		5
-+#define R8A77980_PD_CA53_CPU1		6
-+#define R8A77980_PD_CA53_CPU2		7
-+#define R8A77980_PD_CA53_CPU3		8
-+#define R8A77980_PD_A2CN		10
-+#define R8A77980_PD_A3VIP		11
-+#define R8A77980_PD_A2IR5		12
-+#define R8A77980_PD_CR7			13
-+#define R8A77980_PD_A2IR4		15
-+#define R8A77980_PD_CA53_SCU		21
-+#define R8A77980_PD_A2IR0		23
-+#define R8A77980_PD_A3IR		24
-+#define R8A77980_PD_A3VIP1		25
-+#define R8A77980_PD_A3VIP2		26
-+#define R8A77980_PD_A2IR1		27
-+#define R8A77980_PD_A2IR2		28
-+#define R8A77980_PD_A2IR3		29
-+#define R8A77980_PD_A2SC0		30
-+#define R8A77980_PD_A2SC1		31
++/dts-v1/;
++#include "r8a77965.dtsi"
++#include "salvator-x.dtsi"
 +
-+/* Always-on power area */
-+#define R8A77980_PD_ALWAYS_ON		32
++/ {
++	model = "Renesas Salvator-X board based on r8a77965";
++	compatible = "renesas,salvator-x", "renesas,r8a77965";
 +
-+#endif /* __DT_BINDINGS_POWER_R8A77980_SYSC_H__ */
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++};
 -- 
 2.11.0
