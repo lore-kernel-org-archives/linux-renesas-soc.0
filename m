@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753304AbeCPQjf (ORCPT
+        with ESMTP id S1753452AbeCPOy3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 12:39:35 -0400
+        Fri, 16 Mar 2018 10:54:29 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 38/47] ARM: dts: alt: use demuxer for I2C1
-Date: Fri, 16 Mar 2018 17:38:35 +0100
-Message-Id: <61866d7fdc7007acfca2107f7d9fcb05ed0c6203.1521218085.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
-References: <cover.1521218085.git.horms+renesas@verge.net.au>
+Subject: [PATCH 38/52] ARM: dts: alt: use demuxer for I2C1
+Date: Fri, 16 Mar 2018 15:52:57 +0100
+Message-Id: <61866d7fdc7007acfca2107f7d9fcb05ed0c6203.1521208546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
+References: <cover.1521208546.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
