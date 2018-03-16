@@ -1,109 +1,207 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] regulator: bd9571mwv: Add support for DDR backup mode
-Date: Wed, 14 Mar 2018 12:08:38 +0100
-Message-Id: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753253AbeCPQjE (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Mar 2018 12:39:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/47] ARM: dts: r8a7791: sort subnodes of root node
+Date: Fri, 16 Mar 2018 17:38:11 +0100
+Message-Id: <21b05c52abe355e205eb133f2fe3dbc2520edeed.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Sort subnodes of root node to aid maintenance.
 
-The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
-development boards supports DDR Backup Power, which means that the DDR
-power rails can be kept powered while the main SoC is powered down.
+This patch should not introduce any functional change.
 
-Currently performing a system suspend/resume cycle involves several
-manual steps:
-  1. Configure the PMIC for Backup Mode, using
-     "i2cset -f -y 7 0x30 0x20 0x0f", which changes the role of the
-     power switch to a wake-up switch,
-  2. Switch off SW23 (the ACC toggle switch) to prepare for suspend
-     (only on Salvator-X(S)),
-  3. Suspend to RAM, using "echo mem > /sys/power/state",
-  4. Switch on SW23 (on Salvator-X(S)) or push momentary switch SW8 (on
-     ULCB) to resume.
-Note the need for step 2 on systems equipped with a toggle instead of
-momentary power switch.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 134 ++++++++++++++++++++---------------------
+ 1 file changed, 67 insertions(+), 67 deletions(-)
 
-Especially the first and second steps are cumbersome, as they rely on
-  1. Intimate knowledge about the PMIC and actual board design,
-  2. Direct i2c access,
-  3. Having the i2cset utility available,
-  4. A manual togle switch operation (on Salvator-X(S)).
-In addition, all of this has to be redone after system resume.
-
-This patch series integrates Backup Mode configuration into the PMIC
-driver, using the "wakeup" sysfs virtual file.  I.e. it can be enabled
-or disabled by writing "enabled" or "disabled" to e.g.
-
-    /sys/devices/platform/soc/e60b0000.i2c/i2c-7/7-0030/bd9571mwv-regulator.2.auto/power/wakeup
-
-Which DDR rails are to be kept powered is board-specific, and controlled
-using the optional "rohm,ddr-backup-power" property in the board DTS
-file.
-
-As the power switch type is board-specific, and cannot be determined
-automatically, it is obtained from the presence of one of the
-"rohm,rstbmode-{pulse,level}" properties in DT.
-
-For now only momentary power switches are supported, and wake-up is
-enabled by default, as it doesn't have any run-time side-effects.
-Support for toggle switches will be added in a follow-up series.
-
-Changes compared to v1:
-  - Improve DT property description,
-  - Add DT properties for power switch type,
-  - Add Acked-by,
-  - Use normal "wakeup" sysfs virtual file instead of adding our own
-    "backup_mode" file,
-  - Differentiate between momentary and toggle power switches:
-      - Support for momentary switches is enabled automatically,
-      - Toggle switches are not yet supported (but still work when
-	backup mode is enabled using i2set from userspace).
-  - Split off DTS part into its own series.
-
-This has been tested on M3ULCB (thanks Jacopo!), and on Salvator-X(S)
-(still using i2set from userspace).
-
-For testing, driver and DTS patches are available in the
-topic/bd9571-ddr-backup-mode-driver-v2 and
-topic/bd9571-ddr-backup-mode-dt-v2 branches of my renesas-drivers git
-repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties
-  mfd: bd9571mwv: Add DDR Backup Power register bit definitions
-  mfd: bd9571mwv: Allow DDR Backup Power register access
-  regulator: bd9571mwv: Add support for DDR backup mode
-
- .../devicetree/bindings/mfd/bd9571mwv.txt          |  21 ++++
- drivers/mfd/bd9571mwv.c                            |   2 +
- drivers/regulator/bd9571mwv-regulator.c            | 127 ++++++++++++++++++++-
- include/linux/mfd/bd9571mwv.h                      |   5 +
- 4 files changed, 154 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index de2af2199731..dc659351472f 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -39,6 +39,35 @@
+ 		vin2 = &vin2;
+ 	};
+ 
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -82,23 +111,27 @@
+ 		};
+ 	};
+ 
+-	thermal-zones {
+-		cpu_thermal: cpu-thermal {
+-			polling-delay-passive	= <0>;
+-			polling-delay		= <0>;
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
+ 
+-			thermal-sensors = <&thermal>;
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
+ 
+-			trips {
+-				cpu-crit {
+-					temperature	= <95000>;
+-					hysteresis	= <0>;
+-					type		= "critical";
+-				};
+-			};
+-			cooling-maps {
+-			};
+-		};
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
+ 	};
+ 
+ 	soc {
+@@ -1668,6 +1701,25 @@
+ 		};
+ 	};
+ 
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			polling-delay-passive	= <0>;
++			polling-delay		= <0>;
++
++			thermal-sensors = <&thermal>;
++
++			trips {
++				cpu-crit {
++					temperature	= <95000>;
++					hysteresis	= <0>;
++					type		= "critical";
++				};
++			};
++			cooling-maps {
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+@@ -1676,62 +1728,10 @@
+ 				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
+-	/* External root clock */
+-	extal_clk: extal {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+-
+-	/*
+-	 * The external audio clocks are configured as 0 Hz fixed frequency
+-	 * clocks by default.
+-	 * Boards that provide audio clocks should override them.
+-	 */
+-	audio_clk_a: audio_clk_a {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-	audio_clk_b: audio_clk_b {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-	audio_clk_c: audio_clk_c {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	/* External PCIe clock - can be overridden by the board */
+-	pcie_bus_clk: pcie_bus {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	/* External SCIF clock */
+-	scif_clk: scif {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+-
+ 	/* External USB clock - can be overridden by the board */
+ 	usb_extal_clk: usb_extal {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <48000000>;
+ 	};
+-
+-	/* External CAN clock */
+-	can_clk: can {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		/* This value must be overridden by the board. */
+-		clock-frequency = <0>;
+-	};
+ };
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0
