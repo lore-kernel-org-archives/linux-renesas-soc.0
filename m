@@ -1,227 +1,289 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v12 29/33] rcar-vin: add link notify for Gen3
-Date: Wed,  7 Mar 2018 23:05:07 +0100
-Message-Id: <20180307220511.9826-30-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753711AbeCPOwd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:52:33 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 43/69] arm64: dts: renesas: r8a77965: Add "reg" properties
+Date: Fri, 16 Mar 2018 15:51:13 +0100
+Message-Id: <9e1b00a2ef43049617e1d3e99e258e7b2d9f98ea.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the ability to process media device link change requests. Link
-enabling is a bit complicated on Gen3, whether or not it's possible to
-enable a link depends on what other links already are enabled. On Gen3
-the 8 VINs are split into two subgroup's (VIN0-3 and VIN4-7) and from a
-routing perspective these two groups are independent of each other.
-Each subgroup's routing is controlled by the subgroup VIN master
-instance (VIN0 and VIN4).
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-There are a limited number of possible route setups available for each
-subgroup and the configuration of each setup is dictated by the
-hardware. On H3 for example there are 6 possible route setups for each
-subgroup to choose from.
+Add "reg" properties to place-holder nodes with unit address defined for
+R-Car M3-N SoC.
 
-This leads to the media device link notification code being rather large
-since it will find the best routing configuration to try and accommodate
-as many links as possible. When it's not possible to enable a new link
-due to hardware constrains the link_notifier callback will return
--EMLINK.
+This silences the following DTC compiler warning:
+Warning (unit_address_vs_reg): Node /soc/... has a unit name,
+but no reg property
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 51 +++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-* Changes since v11
-- Fixed spelling
-- Updated comment to clarify the intent that no link can be enabled if
-any video node is open.
-- Use container_of() instead of a loop to find struct vin_dev from the
-video device.
----
- drivers/media/platform/rcar-vin/rcar-core.c | 147 ++++++++++++++++++++++++++++
- 1 file changed, 147 insertions(+)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 52fad495533bc427..a1c441c1a314feb7 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -24,6 +24,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 55f05f79f7f7..4286453ba92d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -317,6 +317,7 @@
+ 		};
  
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
-+#include <media/v4l2-mc.h>
+ 		intc_ex: interrupt-controller@e61c0000 {
++			reg = <0 0xe61c0000 0 0x200>;
+ 			/* placeholder */
+ 		};
  
- #include "rcar-vin.h"
+@@ -520,130 +521,163 @@
+ 		};
  
-@@ -44,6 +45,151 @@
-  */
- #define rvin_group_id_to_master(vin) ((vin) < 4 ? 0 : 4)
+ 		avb: ethernet@e6800000 {
++			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
+ 			/* placeholder */
+ 		};
  
-+/* -----------------------------------------------------------------------------
-+ * Media Controller link notification
-+ */
-+
-+/* group lock should be held when calling this function. */
-+static int rvin_group_entity_to_csi_id(struct rvin_group *group,
-+				       struct media_entity *entity)
-+{
-+	struct v4l2_subdev *sd;
-+	unsigned int i;
-+
-+	sd = media_entity_to_v4l2_subdev(entity);
-+
-+	for (i = 0; i < RVIN_CSI_MAX; i++)
-+		if (group->csi[i].subdev == sd)
-+			return i;
-+
-+	return -ENODEV;
-+}
-+
-+static unsigned int rvin_group_get_mask(struct rvin_dev *vin,
-+					enum rvin_csi_id csi_id,
-+					unsigned char channel)
-+{
-+	const struct rvin_group_route *route;
-+	unsigned int mask = 0;
-+
-+	for (route = vin->info->routes; route->mask; route++) {
-+		if (route->vin == vin->id &&
-+		    route->csi == csi_id &&
-+		    route->channel == channel) {
-+			vin_dbg(vin,
-+				"Adding route: vin: %d csi: %d channel: %d\n",
-+				route->vin, route->csi, route->channel);
-+			mask |= route->mask;
-+		}
-+	}
-+
-+	return mask;
-+}
-+
-+/*
-+ * Link setup for the links between a VIN and a CSI-2 receiver is a bit
-+ * complex. The reason for this is that the register controlling routing
-+ * is not present in each VIN instance. There are special VINs which
-+ * control routing for themselves and other VINs. There are not many
-+ * different possible links combinations that can be enabled at the same
-+ * time, therefor all already enabled links which are controlled by a
-+ * master VIN need to be taken into account when making the decision
-+ * if a new link can be enabled or not.
-+ *
-+ * 1. Find out which VIN the link the user tries to enable is connected to.
-+ * 2. Lookup which master VIN controls the links for this VIN.
-+ * 3. Start with a bitmask with all bits set.
-+ * 4. For each previously enabled link from the master VIN bitwise AND its
-+ *    route mask (see documentation for mask in struct rvin_group_route)
-+ *    with the bitmask.
-+ * 5. Bitwise AND the mask for the link the user tries to enable to the bitmask.
-+ * 6. If the bitmask is not empty at this point the new link can be enabled
-+ *    while keeping all previous links enabled. Update the CHSEL value of the
-+ *    master VIN and inform the user that the link could be enabled.
-+ *
-+ * Please note that no link can be enabled if any VIN in the group is
-+ * currently open.
-+ */
-+static int rvin_group_link_notify(struct media_link *link, u32 flags,
-+				  unsigned int notification)
-+{
-+	struct rvin_group *group = container_of(link->graph_obj.mdev,
-+						struct rvin_group, mdev);
-+	unsigned int master_id, channel, mask_new, i;
-+	unsigned int mask = ~0;
-+	struct media_entity *entity;
-+	struct video_device *vdev;
-+	struct media_pad *csi_pad;
-+	struct rvin_dev *vin = NULL;
-+	int csi_id, ret;
-+
-+	ret = v4l2_pipeline_link_notify(link, flags, notification);
-+	if (ret)
-+		return ret;
-+
-+	/* Only care about link enablement for VIN nodes. */
-+	if (!(flags & MEDIA_LNK_FL_ENABLED) ||
-+	    !is_media_entity_v4l2_video_device(link->sink->entity))
-+		return 0;
-+
-+	/* If any entity is in use don't allow link changes. */
-+	media_device_for_each_entity(entity, &group->mdev)
-+		if (entity->use_count)
-+			return -EBUSY;
-+
-+	mutex_lock(&group->lock);
-+
-+	/* Find the master VIN that controls the routes. */
-+	vdev = media_entity_to_video_device(link->sink->entity);
-+	vin = container_of(vdev, struct rvin_dev, vdev);
-+	master_id = rvin_group_id_to_master(vin->id);
-+
-+	if (WARN_ON(!group->vin[master_id])) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
-+	/* Build a mask for already enabled links. */
-+	for (i = master_id; i < master_id + 4; i++) {
-+		if (!group->vin[i])
-+			continue;
-+
-+		/* Get remote CSI-2, if any. */
-+		csi_pad = media_entity_remote_pad(
-+				&group->vin[i]->vdev.entity.pads[0]);
-+		if (!csi_pad)
-+			continue;
-+
-+		csi_id = rvin_group_entity_to_csi_id(group, csi_pad->entity);
-+		channel = rvin_group_csi_pad_to_channel(csi_pad->index);
-+
-+		mask &= rvin_group_get_mask(group->vin[i], csi_id, channel);
-+	}
-+
-+	/* Add the new link to the existing mask and check if it works. */
-+	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
-+	channel = rvin_group_csi_pad_to_channel(link->source->index);
-+	mask_new = mask & rvin_group_get_mask(vin, csi_id, channel);
-+
-+	vin_dbg(vin, "Try link change mask: 0x%x new: 0x%x\n", mask, mask_new);
-+
-+	if (!mask_new) {
-+		ret = -EMLINK;
-+		goto out;
-+	}
-+
-+	/* New valid CHSEL found, set the new value. */
-+	ret = rvin_set_channel_routing(group->vin[master_id], __ffs(mask_new));
-+out:
-+	mutex_unlock(&group->lock);
-+
-+	return ret;
-+}
-+
-+static const struct media_device_ops rvin_media_ops = {
-+	.link_notify = rvin_group_link_notify,
-+};
-+
- /* -----------------------------------------------------------------------------
-  * Gen3 CSI2 Group Allocator
-  */
-@@ -85,6 +231,7 @@ static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
- 	vin_dbg(vin, "found %u enabled VIN's in DT", group->count);
+ 		csi20: csi2@fea80000 {
++			reg = <0 0xfea80000 0 0x10000>;
+ 			/* placeholder */
+ 		};
  
- 	mdev->dev = vin->dev;
-+	mdev->ops = &rvin_media_ops;
+ 		csi40: csi2@feaa0000 {
++			reg = <0 0xfeaa0000 0 0x10000>;
+ 			/* placeholder */
+ 		};
  
- 	match = of_match_node(vin->dev->driver->of_match_table,
- 			      vin->dev->of_node);
+ 		vin0: video@e6ef0000 {
++			reg = <0 0xe6ef0000 0 0x1000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		vin1: video@e6ef1000 {
++			reg = <0 0xe6ef1000 0 0x1000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		vin2: video@e6ef2000 {
++			reg = <0 0xe6ef2000 0 0x1000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		vin3: video@e6ef3000 {
++			reg = <0 0xe6ef3000 0 0x1000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		vin4: video@e6ef4000 {
++			reg = <0 0xe6ef4000 0 0x1000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		vin5: video@e6ef5000 {
++			reg = <0 0xe6ef5000 0 0x1000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		vin6: video@e6ef6000 {
++			reg = <0 0xe6ef6000 0 0x1000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		vin7: video@e6ef7000 {
++			reg = <0 0xe6ef7000 0 0x1000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		ohci0: usb@ee080000 {
++			reg = <0 0xee080000 0 0x100>;
+ 			/* placeholder */
+ 		};
+ 
+ 		ehci0: usb@ee080100 {
++			reg = <0 0xee080100 0 0x100>;
+ 			/* placeholder */
+ 		};
+ 
+ 		usb2_phy0: usb-phy@ee080200 {
++			reg = <0 0xee080200 0 0x700>;
+ 			/* placeholder */
+ 		};
+ 
+ 		ohci1: usb@ee0a0000 {
++			reg = <0 0xee0a0000 0 0x100>;
+ 			/* placeholder */
+ 		};
+ 
+ 		ehci1: usb@ee0a0100 {
++			reg = <0 0xee0a0100 0 0x100>;
+ 			/* placeholder */
+ 		};
+ 
+ 		i2c0: i2c@e6500000 {
++			reg = <0 0xe6500000 0 0x40>;
+ 			/* placeholder */
+ 		};
+ 
+ 		i2c1: i2c@e6508000 {
++			reg = <0 0xe6508000 0 0x40>;
+ 			/* placeholder */
+ 		};
+ 
+ 		i2c2: i2c@e6510000 {
++			reg = <0 0xe6510000 0 0x40>;
+ 			/* placeholder */
+ 		};
+ 
+ 		i2c3: i2c@e66d0000 {
++			reg = <0 0xe66d0000 0 0x40>;
+ 			/* placeholder */
+ 		};
+ 
+ 		i2c4: i2c@e66d8000 {
++			reg = <0 0xe66d8000 0 0x40>;
+ 			/* placeholder */
+ 		};
+ 
+ 		i2c5: i2c@e66e0000 {
++			reg = <0 0xe66e0000 0 0x40>;
+ 			/* placeholder */
+ 		};
+ 
+ 		i2c6: i2c@e66e8000 {
++			reg = <0 0xe66e8000 0 0x40>;
+ 			/* placeholder */
+ 		};
+ 
+ 		i2c_dvfs: i2c@e60b0000 {
++			reg = <0 0xe60b0000 0 0x425>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pwm0: pwm@e6e30000 {
++			reg = <0 0xe6e30000 0 8>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pwm1: pwm@e6e31000 {
++			reg = <0 0xe6e31000 0 8>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pwm2: pwm@e6e32000 {
++			reg = <0 0xe6e32000 0 8>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pwm3: pwm@e6e33000 {
++			reg = <0 0xe6e33000 0 8>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pwm4: pwm@e6e34000 {
++			reg = <0 0xe6e34000 0 8>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pwm5: pwm@e6e35000 {
++			reg = <0 0xe6e35000 0 8>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pwm6: pwm@e6e36000 {
++			reg = <0 0xe6e36000 0 8>;
+ 			/* placeholder */
+ 		};
+ 
+ 		du: display@feb00000 {
++			reg = <0 0xfeb00000 0 0x80000>,
++			      <0 0xfeb90000 0 0x14>;
+ 			/* placeholder */
+ 
+ 			ports {
+@@ -666,18 +700,26 @@
+ 		};
+ 
+ 		hsusb: usb@e6590000 {
++			reg = <0 0xe6590000 0 0x100>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pciec0: pcie@fe000000 {
++			reg = <0 0xfe000000 0 0x80000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		pciec1: pcie@ee800000 {
++			reg = <0 0xee800000 0 0x80000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		rcar_sound: sound@ec500000 {
++			reg =	<0 0xec500000 0 0x1000>, /* SCU */
++				<0 0xec5a0000 0 0x100>,  /* ADG */
++				<0 0xec540000 0 0x1000>, /* SSIU */
++				<0 0xec541000 0 0x280>,  /* SSI */
++				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
+ 			/* placeholder */
+ 
+ 			rcar_sound,dvc {
+@@ -703,38 +745,47 @@
+ 		};
+ 
+ 		usb2_phy1: usb-phy@ee0a0200 {
++			reg = <0 0xee0a0200 0 0x700>;
+ 			/* placeholder */
+ 		};
+ 
+ 		sdhi0: sd@ee100000 {
++			reg = <0 0xee100000 0 0x2000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		sdhi1: sd@ee120000 {
++			reg = <0 0xee120000 0 0x2000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		sdhi2: sd@ee140000 {
++			reg = <0 0xee140000 0 0x2000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		sdhi3: sd@ee160000 {
++			reg = <0 0xee160000 0 0x2000>;
+ 			/* placeholder */
+ 		};
+ 
+ 		usb3_phy0: usb-phy@e65ee000 {
++			reg = <0 0xe65ee000 0 0x90>;
+ 			/* placeholder */
+ 		};
+ 
+ 		usb3_peri0: usb@ee020000 {
++			reg = <0 0xee020000 0 0x400>;
+ 			/* placeholder */
+ 		};
+ 
+ 		xhci0: usb@ee000000 {
++			reg = <0 0xee000000 0 0xc00>;
+ 			/* placeholder */
+ 		};
+ 
+ 		wdt0: watchdog@e6020000 {
++			reg = <0 0xe6020000 0 0x0c>;
+ 			/* placeholder */
+ 		};
+ 	};
 -- 
-2.16.2
+2.11.0
