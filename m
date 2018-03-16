@@ -1,65 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39470 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932108AbeCIWGc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751969AbeCPQjI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:06:32 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [GIT PULL FOR renesas-drivers] vsp1/du/interlaced/v1
-Date: Fri,  9 Mar 2018 22:06:28 +0000
-Message-Id: <1520633188-13721-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 16 Mar 2018 12:39:08 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/47] ARM: dts: r8a7793: consistently use single space after =
+Date: Fri, 16 Mar 2018 17:38:13 +0100
+Message-Id: <93a4a46fa1a6b2cf51cfbdd2e46572e5d4dad57d.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Consistently use a single space after a =.
 
-Please consider including this branch in renesas-drivers.
+This patch removes instances where a tab is used instead.  It also avoids
+running over 80 columns in width in one of the lines where whitespace is
+updated.
 
---
-Regards
+This patch should not introduce any functional change.
 
-Kieran
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-The following changes since commit 397eb3811ec096d0ceefa1dbea2d0ae68feb0587:
-
-  media: vsp1: Move video configuration to a cached dlb (2018-03-07 21:19:29 +0000)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git tags/vsp1/du/interlaced/v1
-
-for you to fetch changes up to 6f3952607748a5bc62dfa59a522ac1111b5d63e4:
-
-  drm: rcar-du: Support interlaced video output through vsp1 (2018-03-09 21:43:55 +0000)
-
-----------------------------------------------------------------
-Kieran Bingham (11):
-      media: vsp1: drm: Fix minor grammar error
-      media: vsp1: use kernel __packed for structures
-      media: vsp1: Rename dl_child to dl_next
-      media: vsp1: Remove unused display list structure field
-      media: vsp1: Clean up DLM objects on error
-      media: vsp1: Provide VSP1 feature helper macro
-      media: vsp1: Use header display lists for all WPF outputs linked to the DU
-      media: vsp1: Add support for extended display list headers
-      media: vsp1: Provide support for extended command pools
-      media: vsp1: Support Interlaced display pipelines
-      drm: rcar-du: Support interlaced video output through vsp1
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |   1 +
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   |   3 +
- drivers/media/platform/vsp1/vsp1.h      |   3 +
- drivers/media/platform/vsp1/vsp1_dl.c   | 405 ++++++++++++++++++++++++--------
- drivers/media/platform/vsp1/vsp1_dl.h   |  34 ++-
- drivers/media/platform/vsp1/vsp1_drm.c  |  14 +-
- drivers/media/platform/vsp1/vsp1_drv.c  |  23 +-
- drivers/media/platform/vsp1/vsp1_pipe.c |   3 +-
- drivers/media/platform/vsp1/vsp1_regs.h |   6 +-
- drivers/media/platform/vsp1/vsp1_rpf.c  |  72 +++++-
- drivers/media/platform/vsp1/vsp1_rwpf.h |   1 +
- drivers/media/platform/vsp1/vsp1_wpf.c  |   6 +-
- include/media/vsp1.h                    |   1 +
- 13 files changed, 457 insertions(+), 115 deletions(-)
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index e95f4fb44dc4..ea4bc06c8e8a 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -228,9 +228,9 @@
+ 	};
+ 
+ 	thermal: thermal@e61f0000 {
+-		compatible =	"renesas,thermal-r8a7793",
+-				"renesas,rcar-gen2-thermal",
+-				"renesas,rcar-thermal";
++		compatible = "renesas,thermal-r8a7793",
++			     "renesas,rcar-gen2-thermal",
++			     "renesas,rcar-thermal";
+ 		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_MOD 522>;
+@@ -1174,12 +1174,13 @@
+ 		 * Single DAI : #sound-dai-cells = <0>;         <&rcar_sound>;
+ 		 * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
+ 		 */
+-		compatible =  "renesas,rcar_sound-r8a7793", "renesas,rcar_sound-gen2";
+-		reg =	<0 0xec500000 0 0x1000>, /* SCU */
+-			<0 0xec5a0000 0 0x100>,  /* ADG */
+-			<0 0xec540000 0 0x1000>, /* SSIU */
+-			<0 0xec541000 0 0x280>,  /* SSI */
+-			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
++		compatible = "renesas,rcar_sound-r8a7793",
++			     "renesas,rcar_sound-gen2";
++		reg = <0 0xec500000 0 0x1000>, /* SCU */
++		      <0 0xec5a0000 0 0x100>,  /* ADG */
++		      <0 0xec540000 0 0x1000>, /* SSIU */
++		      <0 0xec541000 0 0x280>,  /* SSI */
++		      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
+ 		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
+ 
+ 		clocks = <&cpg CPG_MOD 1005>,
+-- 
+2.11.0
