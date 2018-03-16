@@ -1,225 +1,534 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:56017 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752532AbeCZVrE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753658AbeCPOwZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:47:04 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 30/33] rcar-vin: extend {start,stop}_streaming to work with media controller
-Date: Mon, 26 Mar 2018 23:44:53 +0200
-Message-Id: <20180326214456.6655-31-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Mar 2018 10:52:25 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 38/69] arm64: dts: renesas: initial R8A77965 SoC device tree
+Date: Fri, 16 Mar 2018 15:51:08 +0100
+Message-Id: <df863d6f95f57dbb4f7c2f5ec2f230809551b17f.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The procedure to start or stop streaming using the non-MC single
-subdevice and the MC graph and multiple subdevices are quite different.
-Create a new function to abstract which method is used based on which
-mode the driver is running in and add logic to start the MC graph.
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Basic support for the Gen 3 R-Car M3-N SoC.
 
+Based on original work from:
+Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Magnus Damm <damm+renesas@opensource.se>
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 490 ++++++++++++++++++++++++++++++
+ 1 file changed, 490 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77965.dtsi
 
-* Changes since v12
-- Rebase to latest media-tree/master changed a 'return ret' to a 'goto
-  out' in rvin_start_streaming().
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 135 +++++++++++++++++++++++++++--
- 1 file changed, 127 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index a93772c10baaa003..00bdc523294f2280 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -997,10 +997,126 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- }
- 
-+static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
-+				   struct media_pad *pad)
-+{
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+new file mode 100644
+index 000000000000..6b6ec653f543
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -0,0 +1,490 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the r8a77965 SoC
++ *
++ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
++ *
++ * Based on r8a7796.dtsi
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ */
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++#define CPG_AUDIO_CLK_I		10
++
++/ {
++	compatible = "renesas,r8a77965";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	psci {
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
++		method = "smc";
 +	};
 +
-+	fmt.pad = pad->index;
-+	if (v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt))
-+		return -EPIPE;
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+	switch (fmt.format.code) {
-+	case MEDIA_BUS_FMT_YUYV8_1X16:
-+	case MEDIA_BUS_FMT_UYVY8_2X8:
-+	case MEDIA_BUS_FMT_UYVY10_2X10:
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+		vin->mbus_code = fmt.format.code;
-+		break;
-+	default:
-+		return -EPIPE;
-+	}
++		a57_0: cpu@0 {
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x0>;
++			device_type = "cpu";
++			power-domains = <&sysc 0>;
++			next-level-cache = <&L2_CA57>;
++			enable-method = "psci";
++		};
 +
-+	switch (fmt.format.field) {
-+	case V4L2_FIELD_TOP:
-+	case V4L2_FIELD_BOTTOM:
-+	case V4L2_FIELD_NONE:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+	case V4L2_FIELD_INTERLACED:
-+	case V4L2_FIELD_SEQ_TB:
-+	case V4L2_FIELD_SEQ_BT:
-+		/* Supported natively */
-+		break;
-+	case V4L2_FIELD_ALTERNATE:
-+		switch (vin->format.field) {
-+		case V4L2_FIELD_TOP:
-+		case V4L2_FIELD_BOTTOM:
-+		case V4L2_FIELD_NONE:
-+			break;
-+		case V4L2_FIELD_INTERLACED_TB:
-+		case V4L2_FIELD_INTERLACED_BT:
-+		case V4L2_FIELD_INTERLACED:
-+		case V4L2_FIELD_SEQ_TB:
-+		case V4L2_FIELD_SEQ_BT:
-+			/* Use VIN hardware to combine the two fields */
-+			fmt.format.height *= 2;
-+			break;
-+		default:
-+			return -EPIPE;
-+		}
-+		break;
-+	default:
-+		return -EPIPE;
-+	}
++		a57_1: cpu@1 {
++			compatible = "arm,cortex-a57","arm,armv8";
++			reg = <0x1>;
++			device_type = "cpu";
++			power-domains = <&sysc 1>;
++			next-level-cache = <&L2_CA57>;
++			enable-method = "psci";
++		};
 +
-+	if (fmt.format.width != vin->format.width ||
-+	    fmt.format.height != vin->format.height ||
-+	    fmt.format.code != vin->mbus_code)
-+		return -EPIPE;
++		L2_CA57: cache-controller-0 {
++			compatible = "cache";
++			reg = <0>;
++			power-domains = <&sysc 12>;
++			cache-unified;
++			cache-level = <2>;
++		};
++	};
 +
-+	return 0;
-+}
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
 +
-+static int rvin_set_stream(struct rvin_dev *vin, int on)
-+{
-+	struct media_pipeline *pipe;
-+	struct media_device *mdev;
-+	struct v4l2_subdev *sd;
-+	struct media_pad *pad;
-+	int ret;
-+
-+	/* No media controller used, simply pass operation to subdevice. */
-+	if (!vin->info->use_mc) {
-+		ret = v4l2_subdev_call(vin->digital->subdev, video, s_stream,
-+				       on);
-+
-+		return ret == -ENOIOCTLCMD ? 0 : ret;
-+	}
-+
-+	pad = media_entity_remote_pad(&vin->pad);
-+	if (!pad)
-+		return -EPIPE;
-+
-+	sd = media_entity_to_v4l2_subdev(pad->entity);
-+
-+	if (!on) {
-+		media_pipeline_stop(&vin->vdev.entity);
-+		return v4l2_subdev_call(sd, video, s_stream, 0);
-+	}
-+
-+	ret = rvin_mc_validate_format(vin, sd, pad);
-+	if (ret)
-+		return ret;
++	extalr_clk: extalr {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
 +
 +	/*
-+	 * The graph lock needs to be taken to protect concurrent
-+	 * starts of multiple VIN instances as they might share
-+	 * a common subdevice down the line and then should use
-+	 * the same pipe.
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
 +	 */
-+	mdev = vin->vdev.entity.graph_obj.mdev;
-+	mutex_lock(&mdev->graph_mutex);
-+	pipe = sd->entity.pipe ? sd->entity.pipe : &vin->vdev.pipe;
-+	ret = __media_pipeline_start(&vin->vdev.entity, pipe);
-+	mutex_unlock(&mdev->graph_mutex);
-+	if (ret)
-+		return ret;
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
 +
-+	ret = v4l2_subdev_call(sd, video, s_stream, 1);
-+	if (ret == -ENOIOCTLCMD)
-+		ret = 0;
-+	if (ret)
-+		media_pipeline_stop(&vin->vdev.entity);
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
 +
-+	return ret;
-+}
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
 +
- static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int ret;
- 
-@@ -1015,8 +1131,13 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 		return -ENOMEM;
- 	}
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 1);
-+	ret = rvin_set_stream(vin, 1);
-+	if (ret) {
-+		spin_lock_irqsave(&vin->qlock, flags);
-+		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
-+		spin_unlock_irqrestore(&vin->qlock, flags);
-+		goto out;
-+	}
- 
- 	spin_lock_irqsave(&vin->qlock, flags);
- 
-@@ -1025,11 +1146,11 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	ret = rvin_capture_start(vin);
- 	if (ret) {
- 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
--		v4l2_subdev_call(sd, video, s_stream, 0);
-+		rvin_set_stream(vin, 0);
- 	}
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
--
-+out:
- 	if (ret)
- 		dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
- 				  vin->scratch_phys);
-@@ -1040,7 +1161,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- static void rvin_stop_streaming(struct vb2_queue *vq)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int retries = 0;
- 
-@@ -1079,8 +1199,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 0);
-+	rvin_set_stream(vin, 0);
- 
- 	/* disable interrupts */
- 	rvin_disable_interrupts(vin);
++	/* External CAN clock - to be overridden by boards that provide it */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock - to be overridden by boards that provide it */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External USB clocks - can be overridden by the board */
++	usb3s0_clk: usb3s0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	pmu_a57 {
++		compatible = "arm,cortex-a57-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a57_0>,
++				     <&a57_1>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		gic: interrupt-controller@f1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x0 0xf1010000 0 0x1000>,
++			      <0x0 0xf1020000 0 0x20000>,
++			      <0x0 0xf1040000 0 0x20000>,
++			      <0x0 0xf1060000 0 0x20000>;
++			interrupts = <GIC_PPI 9
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 408>;
++		};
++
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a77965";
++			reg = <0 0xe6060000 0 0x50c>;
++		};
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a77965-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>, <&extalr_clk>;
++			clock-names = "extal", "extalr";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++			#reset-cells = <1>;
++		};
++
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a77965-rst";
++			reg = <0 0xe6160000 0 0x0200>;
++		};
++
++		prr: chipid@fff00044 {
++			compatible = "renesas,prr";
++			reg = <0 0xfff00044 0 4>;
++		};
++
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a77965-sysc";
++			reg = <0 0xe6180000 0 0x0400>;
++			#power-domain-cells = <1>;
++		};
++
++		gpio0: gpio@e6050000 {
++			/* placeholder */
++		};
++
++		gpio1: gpio@e6051000 {
++			/* placeholder */
++		};
++
++		gpio2: gpio@e6052000 {
++			/* placeholder */
++		};
++
++		gpio3: gpio@e6053000 {
++			/* placeholder */
++		};
++
++		gpio4: gpio@e6054000 {
++			/* placeholder */
++		};
++
++		gpio5: gpio@e6055000 {
++			/* placeholder */
++		};
++
++		gpio6: gpio@e6055400 {
++			/* placeholder */
++		};
++
++		gpio7: gpio@e6055800 {
++			/* placeholder */
++		};
++
++		intc_ex: interrupt-controller@e61c0000 {
++			/* placeholder */
++		};
++
++		dmac0: dma-controller@e6700000 {
++			/* placeholder */
++		};
++
++		dmac1: dma-controller@e7300000 {
++			/* placeholder */
++		};
++
++		dmac2: dma-controller@e7310000 {
++			/* placeholder */
++		};
++
++		scif0: serial@e6e60000 {
++			/* placeholder */
++		};
++
++		scif1: serial@e6e68000 {
++			/* placeholder */
++		};
++
++		scif2: serial@e6e88000 {
++			/* placeholder */
++		};
++
++		scif3: serial@e6c50000 {
++			/* placeholder */
++		};
++
++		scif4: serial@e6c40000 {
++			/* placeholder */
++		};
++
++		scif5: serial@e6f30000 {
++			/* placeholder */
++		};
++
++		avb: ethernet@e6800000 {
++			/* placeholder */
++		};
++
++		csi20: csi2@fea80000 {
++			/* placeholder */
++		};
++
++		csi40: csi2@feaa0000 {
++			/* placeholder */
++		};
++
++		vin0: video@e6ef0000 {
++			/* placeholder */
++		};
++
++		vin1: video@e6ef1000 {
++			/* placeholder */
++		};
++
++		vin2: video@e6ef2000 {
++			/* placeholder */
++		};
++
++		vin3: video@e6ef3000 {
++			/* placeholder */
++		};
++
++		vin4: video@e6ef4000 {
++			/* placeholder */
++		};
++
++		vin5: video@e6ef5000 {
++			/* placeholder */
++		};
++
++		vin6: video@e6ef6000 {
++			/* placeholder */
++		};
++
++		vin7: video@e6ef7000 {
++			/* placeholder */
++		};
++
++		ohci0: usb@ee080000 {
++			/* placeholder */
++		};
++
++		ehci0: usb@ee080100 {
++			/* placeholder */
++		};
++
++		usb2_phy0: usb-phy@ee080200 {
++			/* placeholder */
++		};
++
++		ohci1: usb@ee0a0000 {
++			/* placeholder */
++		};
++
++		ehci1: usb@ee0a0100 {
++			/* placeholder */
++		};
++
++		i2c0: i2c@e6500000 {
++			/* placeholder */
++		};
++
++		i2c1: i2c@e6508000 {
++			/* placeholder */
++		};
++
++		i2c2: i2c@e6510000 {
++			/* placeholder */
++		};
++
++		i2c3: i2c@e66d0000 {
++			/* placeholder */
++		};
++
++		i2c4: i2c@e66d8000 {
++			/* placeholder */
++		};
++
++		i2c5: i2c@e66e0000 {
++			/* placeholder */
++		};
++
++		i2c6: i2c@e66e8000 {
++			/* placeholder */
++		};
++
++		i2c_dvfs: i2c@e60b0000 {
++			/* placeholder */
++		};
++
++		pwm0: pwm@e6e30000 {
++			/* placeholder */
++		};
++
++		pwm1: pwm@e6e31000 {
++			/* placeholder */
++		};
++
++		pwm2: pwm@e6e32000 {
++			/* placeholder */
++		};
++
++		pwm3: pwm@e6e33000 {
++			/* placeholder */
++		};
++
++		pwm4: pwm@e6e34000 {
++			/* placeholder */
++		};
++
++		pwm5: pwm@e6e35000 {
++			/* placeholder */
++		};
++
++		pwm6: pwm@e6e36000 {
++			/* placeholder */
++		};
++
++		du: display@feb00000 {
++			/* placeholder */
++
++			ports {
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++				port@1 {
++					reg = <1>;
++					du_out_hdmi0: endpoint {
++					};
++				};
++				port@2 {
++					reg = <2>;
++					du_out_lvds0: endpoint {
++					};
++				};
++			};
++		};
++
++		hsusb: usb@e6590000 {
++			/* placeholder */
++		};
++
++		pciec0: pcie@fe000000 {
++			/* placeholder */
++		};
++
++		pciec1: pcie@ee800000 {
++			/* placeholder */
++		};
++
++		rcar_sound: sound@ec500000 {
++			/* placeholder */
++
++			rcar_sound,dvc {
++				dvc0: dvc-0 {
++				};
++				dvc1: dvc-1 {
++				};
++			};
++
++			rcar_sound,src {
++				src0: src-0 {
++				};
++				src1: src-1 {
++				};
++			};
++
++			rcar_sound,ssi {
++				ssi0: ssi-0 {
++				};
++				ssi1: ssi-1 {
++				};
++			};
++		};
++
++		usb2_phy1: usb-phy@ee0a0200 {
++			/* placeholder */
++		};
++
++		sdhi0: sd@ee100000 {
++			/* placeholder */
++		};
++
++		sdhi1: sd@ee120000 {
++			/* placeholder */
++		};
++
++		sdhi2: sd@ee140000 {
++			/* placeholder */
++		};
++
++		sdhi3: sd@ee160000 {
++			/* placeholder */
++		};
++
++		usb3_phy0: usb-phy@e65ee000 {
++			/* placeholder */
++		};
++
++		usb3_peri0: usb@ee020000 {
++			/* placeholder */
++		};
++
++		xhci0: usb@ee000000 {
++			/* placeholder */
++		};
++
++		wdt0: watchdog@e6020000 {
++			/* placeholder */
++		};
++	};
++};
 -- 
-2.16.2
+2.11.0
