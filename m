@@ -1,62 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:32858 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966394AbeCHTMu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752917AbeCPQjd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:12:50 -0500
-Received: by mail-lf0-f65.google.com with SMTP id o145-v6so9889037lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Mar 2018 11:12:49 -0800 (PST)
-Subject: [PATCH v2 1/2] pinctrl: sh-pfc: add PORT_GP_CFG_25() helper macro
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-References: <21306a59-8f20-ad08-fdc1-bcc6333c01d4@cogentembedded.com>
-Message-ID: <b00253dc-b398-56fa-635e-e25f0c9a1609@cogentembedded.com>
-Date: Thu, 8 Mar 2018 22:12:47 +0300
-MIME-Version: 1.0
-In-Reply-To: <21306a59-8f20-ad08-fdc1-bcc6333c01d4@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Fri, 16 Mar 2018 12:39:33 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 25/47] ARM: dts: r8a7791: consistently use single space before =
+Date: Fri, 16 Mar 2018 17:38:22 +0100
+Message-Id: <c57c1b7ce8c6743ca745a577e7ac6b81a59a2479.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-They follow the style of the existing PORT_GP_CFG_<n>() macros and
-will be used by a follow-up patch for the R8A77980 SoC.
+Consistently use a single space before a =.
 
-Based on the original (and large) patch by Vladimir Barinov.
+This patch fixes instances where a tab is used instead.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This patch should not introduce any functional change.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
 ---
-Changes in version 2:
-- added Geert's tag.
+ arch/arm/boot/dts/r8a7791.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- drivers/pinctrl/sh-pfc/sh_pfc.h |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-Index: renesas-drivers/drivers/pinctrl/sh-pfc/sh_pfc.h
-===================================================================
---- renesas-drivers.orig/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ renesas-drivers/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -471,9 +471,13 @@ extern const struct sh_pfc_soc_info shx3
- 	PORT_GP_CFG_1(bank, 23, fn, sfx, cfg)
- #define PORT_GP_24(bank, fn, sfx)	PORT_GP_CFG_24(bank, fn, sfx, 0)
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index dc659351472f..f11dab71b03a 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1703,16 +1703,16 @@
  
--#define PORT_GP_CFG_26(bank, fn, sfx, cfg)				\
-+#define PORT_GP_CFG_25(bank, fn, sfx, cfg)				\
- 	PORT_GP_CFG_24(bank, fn, sfx, cfg),				\
--	PORT_GP_CFG_1(bank, 24, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 24, fn, sfx, cfg)
-+#define PORT_GP_25(bank, fn, sfx)	PORT_GP_CFG_25(bank, fn, sfx, 0)
-+
-+#define PORT_GP_CFG_26(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_25(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 25, fn, sfx, cfg)
- #define PORT_GP_26(bank, fn, sfx)	PORT_GP_CFG_26(bank, fn, sfx, 0)
+ 	thermal-zones {
+ 		cpu_thermal: cpu-thermal {
+-			polling-delay-passive	= <0>;
+-			polling-delay		= <0>;
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
  
+ 			thermal-sensors = <&thermal>;
+ 
+ 			trips {
+ 				cpu-crit {
+-					temperature	= <95000>;
+-					hysteresis	= <0>;
+-					type		= "critical";
++					temperature = <95000>;
++					hysteresis = <0>;
++					type = "critical";
+ 				};
+ 			};
+ 			cooling-maps {
+-- 
+2.11.0
