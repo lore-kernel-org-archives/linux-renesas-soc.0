@@ -1,50 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753863AbeCPOxb (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:41320 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753373AbeCPNom (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/8] dt-bindings: arm: document Condor board bindings
-Date: Fri, 16 Mar 2018 15:51:58 +0100
-Message-Id: <8dc09f400a08108984c0bacc4af5cb395a3c5c22.1521206902.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206902.git.horms+renesas@verge.net.au>
-References: <cover.1521206902.git.horms+renesas@verge.net.au>
+        Fri, 16 Mar 2018 09:44:42 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/8] clk: renesas: r8a73a4: Always use readl()/writel()
+Date: Fri, 16 Mar 2018 14:40:17 +0100
+Message-Id: <1521207622-3311-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On arm32, there is no reason to use the (soon deprecated)
+clk_readl()/clk_writel().  Hence use the generic readl()/writel()
+instead.
 
-Document the Condor device tree bindings, listing it as a supported board.
-
-This allows to use checkpatch.pl to validate .dts files referring to the
-Condor board.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/renesas/clk-r8a73a4.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 3ccad353acfa..41d3920aaa5e 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -59,6 +59,8 @@ Boards:
-     compatible = "renesas,blanche", "renesas,r8a7792"
-   - BOCK-W
-     compatible = "renesas,bockw", "renesas,r8a7778"
-+  - Condor (RTP0RC77980SEB0010SS/RTP0RC77980SEB0010SA01)
-+    compatible = "renesas,condor", "renesas,r8a77980"
-   - Draak (RTP0RC77995SEB0010S)
-     compatible = "renesas,draak", "renesas,r8a77995"
-   - Eagle (RTP0RC77970SEB0010S)
+diff --git a/drivers/clk/renesas/clk-r8a73a4.c b/drivers/clk/renesas/clk-r8a73a4.c
+index 28d204bb659e7879..7b903ce4c9015ad7 100644
+--- a/drivers/clk/renesas/clk-r8a73a4.c
++++ b/drivers/clk/renesas/clk-r8a73a4.c
+@@ -71,7 +71,7 @@ r8a73a4_cpg_register_clock(struct device_node *np, struct r8a73a4_cpg *cpg,
+ 
+ 
+ 	if (!strcmp(name, "main")) {
+-		u32 ckscr = clk_readl(cpg->reg + CPG_CKSCR);
++		u32 ckscr = readl(cpg->reg + CPG_CKSCR);
+ 
+ 		switch ((ckscr >> 28) & 3) {
+ 		case 0:	/* extal1 */
+@@ -95,14 +95,14 @@ r8a73a4_cpg_register_clock(struct device_node *np, struct r8a73a4_cpg *cpg,
+ 		 * clock implementation and we currently have no need to change
+ 		 * the multiplier value.
+ 		 */
+-		u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
++		u32 value = readl(cpg->reg + CPG_PLL0CR);
+ 
+ 		parent_name = "main";
+ 		mult = ((value >> 24) & 0x7f) + 1;
+ 		if (value & BIT(20))
+ 			div = 2;
+ 	} else if (!strcmp(name, "pll1")) {
+-		u32 value = clk_readl(cpg->reg + CPG_PLL1CR);
++		u32 value = readl(cpg->reg + CPG_PLL1CR);
+ 
+ 		parent_name = "main";
+ 		/* XXX: enable bit? */
+@@ -125,7 +125,7 @@ r8a73a4_cpg_register_clock(struct device_node *np, struct r8a73a4_cpg *cpg,
+ 		default:
+ 			return ERR_PTR(-EINVAL);
+ 		}
+-		value = clk_readl(cpg->reg + cr);
++		value = readl(cpg->reg + cr);
+ 		switch ((value >> 5) & 7) {
+ 		case 0:
+ 			parent_name = "main";
+@@ -161,8 +161,7 @@ r8a73a4_cpg_register_clock(struct device_node *np, struct r8a73a4_cpg *cpg,
+ 			shift = 0;
+ 		}
+ 		div *= 32;
+-		mult = 0x20 - ((clk_readl(cpg->reg + CPG_FRQCRC) >> shift)
+-		       & 0x1f);
++		mult = 0x20 - ((readl(cpg->reg + CPG_FRQCRC) >> shift) & 0x1f);
+ 	} else {
+ 		struct div4_clk *c;
+ 
 -- 
-2.11.0
+2.7.4
