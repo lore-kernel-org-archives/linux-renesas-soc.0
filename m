@@ -1,52 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41751 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752778AbeCMSFp (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36078 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753418AbeCPOuu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 14:05:45 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 05/11] media: vsp1: Clean up DLM objects on error
-Date: Tue, 13 Mar 2018 19:05:21 +0100
-Message-Id: <0ae9f67a2dfb4e5268a968079def8da66c4b0d24.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 16 Mar 2018 10:50:50 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/3] arm64: defconfig: enable R8A77980 SoC
+Date: Fri, 16 Mar 2018 15:50:39 +0100
+Message-Id: <9ab5977d472b3c63f99c23c2c4ec3a9820c50faf.1521201256.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521201256.git.horms+renesas@verge.net.au>
+References: <cover.1521201256.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If there is an error allocating a display list within a DLM object
-the existing display lists are not free'd, and neither is the DL body
-pool.
+Enable the Renesas R-Car V3H (R8A77980) SoC in the ARM64 defconfig.
 
-Use the existing vsp1_dlm_destroy() function to clean up on error.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/vsp1/vsp1_dl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 310ce81cd724..680eedb6fc9f 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -831,8 +831,10 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 		struct vsp1_dl_list *dl;
- 
- 		dl = vsp1_dl_list_alloc(dlm, dlm->pool);
--		if (!dl)
-+		if (!dl) {
-+			vsp1_dlm_destroy(dlm);
- 			return NULL;
-+		}
- 
- 		list_add_tail(&dl->list, &dlm->free);
- 	}
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 634b373785c4..a850bc5e1af3 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -52,6 +52,7 @@ CONFIG_ARCH_RENESAS=y
+ CONFIG_ARCH_R8A7795=y
+ CONFIG_ARCH_R8A7796=y
+ CONFIG_ARCH_R8A77970=y
++CONFIG_ARCH_R8A77980=y
+ CONFIG_ARCH_R8A77995=y
+ CONFIG_ARCH_STRATIX10=y
+ CONFIG_ARCH_TEGRA=y
 -- 
-git-series 0.9.1
+2.11.0
