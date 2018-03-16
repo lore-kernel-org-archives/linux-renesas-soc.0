@@ -1,67 +1,157 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36078 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753310AbeCPOuv (ORCPT
+        with ESMTP id S1753552AbeCPOvq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:50:51 -0400
+        Fri, 16 Mar 2018 10:51:46 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Dien Pham <dien.pham.ry@rvc.renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] arm64: defconfig: Enable PWM and USB for R-Car
-Date: Fri, 16 Mar 2018 15:50:40 +0100
-Message-Id: <5cb300ce806bfe3273bb94d373d43ca35c33ffdf.1521201256.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521201256.git.horms+renesas@verge.net.au>
-References: <cover.1521201256.git.horms+renesas@verge.net.au>
+Subject: [PATCH 03/69] arm64: dts: renesas: r8a7796: Add OPPs table for cpu devices
+Date: Fri, 16 Mar 2018 15:50:33 +0100
+Message-Id: <da7e3113344fda50b10f1ad2c633abaaaf25d21b.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Dien Pham <dien.pham.ry@rvc.renesas.com>
 
-Enables PWM controller, USB-DMAC that is used by HS-USB, USB 3.0
-peripheral controller and USB 3.0 PHY for R-Car SoCs.
+Define OOP tables for all CPUs.
+This allows CPUFreq to function.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based in part on work by Hien Dang.
+
+Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 62 ++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a850bc5e1af3..ceafd26f0fab 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -445,6 +445,7 @@ CONFIG_NOP_USB_XCEIV=y
- CONFIG_USB_ULPI=y
- CONFIG_USB_GADGET=y
- CONFIG_USB_RENESAS_USBHS_UDC=m
-+CONFIG_USB_RENESAS_USB3=m
- CONFIG_USB_ULPI_BUS=y
- CONFIG_MMC=y
- CONFIG_MMC_BLOCK_MINORS=32
-@@ -501,6 +502,7 @@ CONFIG_QCOM_BAM_DMA=y
- CONFIG_QCOM_HIDMA_MGMT=y
- CONFIG_QCOM_HIDMA=y
- CONFIG_RCAR_DMAC=y
-+CONFIG_RENESAS_USB_DMAC=m
- CONFIG_VFIO=y
- CONFIG_VFIO_PCI=y
- CONFIG_VIRTIO_PCI=y
-@@ -548,10 +550,12 @@ CONFIG_PWM=y
- CONFIG_PWM_BCM2835=m
- CONFIG_PWM_CROS_EC=m
- CONFIG_PWM_MESON=m
-+CONFIG_PWM_RCAR=m
- CONFIG_PWM_ROCKCHIP=y
- CONFIG_PWM_SAMSUNG=y
- CONFIG_PWM_TEGRA=m
- CONFIG_PHY_RCAR_GEN3_USB2=y
-+CONFIG_PHY_RCAR_GEN3_USB3=m
- CONFIG_PHY_HI6220_USB=y
- CONFIG_PHY_QCOM_USB_HS=y
- CONFIG_PHY_SUN4I_USB=y
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index c5192d513d7d..e06bde6e2853 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -71,6 +71,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		a57_1: cpu@1 {
+@@ -80,6 +82,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		a53_0: cpu@100 {
+@@ -89,6 +93,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		a53_1: cpu@101 {
+@@ -98,6 +104,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU1>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		a53_2: cpu@102 {
+@@ -107,6 +115,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU2>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		a53_3: cpu@103 {
+@@ -116,6 +126,8 @@
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU3>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A7796_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		L2_CA57: cache-controller-0 {
+@@ -147,6 +159,56 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1800000000 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <960000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
+ 	/* External PCIe clock - can be overridden by the board */
+ 	pcie_bus_clk: pcie_bus {
+ 		compatible = "fixed-clock";
 -- 
 2.11.0
