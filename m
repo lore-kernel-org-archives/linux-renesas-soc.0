@@ -1,122 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40966 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932530AbeCEWxN (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752742AbeCPQi7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:53:13 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v8 1/4] dt-bindings: display: renesas: Add R-Car LVDS encoder DT bindings
-Date: Tue,  6 Mar 2018 00:54:00 +0200
-Message-Id: <20180305225403.25298-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180305225403.25298-1-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Mar 2018 12:38:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/47] ARM: dts: porter: Fix HDMI output routing
+Date: Fri, 16 Mar 2018 17:38:04 +0100
+Message-Id: <d4b78db6ac3e084e2bdc57d5518bd247c727f396.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R-Car Gen2 and Gen3 SoCs have internal LVDS encoders. Add
-corresponding device tree bindings.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
+The HDMI encoder is connected to the RGB output of the DU, which is
+port@0, not port@1. Fix the incorrect DT description.
+
+Fixes: c5af8a4248d3 ("ARM: dts: porter: add DU DT support")
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes since v6:
+ arch/arm/boot/dts/r8a7791-porter.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Fixed typo in SoC name
-
-Changes since v1:
-
-- Move the SoC name before the IP name in compatible strings
-- Rename parallel input to parallel RGB input
-- Fixed "renesas,r8a7743-lvds" description
-- Document the resets property
-- Fixed typo
----
- .../bindings/display/bridge/renesas,lvds.txt       | 56 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-new file mode 100644
-index 000000000000..af45ba9d8f90
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-@@ -0,0 +1,56 @@
-+Renesas R-Car LVDS Encoder
-+==========================
-+
-+These DT bindings describe the LVDS encoder embedded in the Renesas R-Car
-+Gen2, R-Car Gen3 and RZ/G SoCs.
-+
-+Required properties:
-+
-+- compatible : Shall contain one of
-+  - "renesas,r8a7743-lvds" for R8A7743 (RZ/G1M) compatible LVDS encoders
-+  - "renesas,r8a7790-lvds" for R8A7790 (R-Car H2) compatible LVDS encoders
-+  - "renesas,r8a7791-lvds" for R8A7791 (R-Car M2-W) compatible LVDS encoders
-+  - "renesas,r8a7793-lvds" for R8A7793 (R-Car M2-N) compatible LVDS encoders
-+  - "renesas,r8a7795-lvds" for R8A7795 (R-Car H3) compatible LVDS encoders
-+  - "renesas,r8a7796-lvds" for R8A7796 (R-Car M3-W) compatible LVDS encoders
-+
-+- reg: Base address and length for the memory-mapped registers
-+- clocks: A phandle + clock-specifier pair for the functional clock
-+- resets: A phandle + reset specifier for the module reset
-+
-+Required nodes:
-+
-+The LVDS encoder has two video ports. Their connections are modelled using the
-+OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-+
-+- Video port 0 corresponds to the parallel RGB input
-+- Video port 1 corresponds to the LVDS output
-+
-+Each port shall have a single endpoint.
-+
-+
-+Example:
-+
-+	lvds0: lvds@feb90000 {
-+		compatible = "renesas,r8a7790-lvds";
-+		reg = <0 0xfeb90000 0 0x1c>;
-+		clocks = <&cpg CPG_MOD 726>;
-+		resets = <&cpg 726>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds0_in: endpoint {
-+					remote-endpoint = <&du_out_lvds0>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds0_out: endpoint {
-+				};
-+			};
-+		};
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2afba909724c..13c8ec11135a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4744,6 +4744,7 @@ F:	drivers/gpu/drm/rcar-du/
- F:	drivers/gpu/drm/shmobile/
- F:	include/linux/platform_data/shmob_drm.h
- F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-+F:	Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
- F:	Documentation/devicetree/bindings/display/renesas,du.txt
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index eb374956294f..9a02d03b23c2 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -425,7 +425,7 @@
+ 		      "dclkin.0", "dclkin.1";
  
- DRM DRIVERS FOR ROCKCHIP
+ 	ports {
+-		port@1 {
++		port@0 {
+ 			endpoint {
+ 				remote-endpoint = <&adv7511_in>;
+ 			};
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
