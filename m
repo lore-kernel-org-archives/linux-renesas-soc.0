@@ -1,67 +1,167 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:37111 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933054AbeCEKXn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753616AbeCPOwI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 05:23:43 -0500
-MIME-Version: 1.0
-In-Reply-To: <1519697995-6061-4-git-send-email-gaku.inami.xh@renesas.com>
-References: <1519697995-6061-1-git-send-email-gaku.inami.xh@renesas.com> <1519697995-6061-4-git-send-email-gaku.inami.xh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Mar 2018 11:23:42 +0100
-Message-ID: <CAMuHMdWswL8N3uTCcGmWSfa98_bpz7_11PDs=m+_RC--wBVu6w@mail.gmail.com>
-Subject: Re: [PATCH 3/5] arm64: dts: renesas: r8a7795: Add cpu capacity-dmips-mhz
-To: Gaku Inami <gaku.inami.xh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 16 Mar 2018 10:52:08 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/69] arm64: dts: renesas: initial R8A77980 SoC device tree
+Date: Fri, 16 Mar 2018 15:50:45 +0100
+Message-Id: <f3a54d6c17f5ec826ff81e4f9f35a11e63211c53.1521206129.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
+References: <cover.1521206129.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Inami-san,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On Tue, Feb 27, 2018 at 3:19 AM, Gaku Inami <gaku.inami.xh@renesas.com> wrote:
-> Set the capacity-dmips-mhz for r8a7795, that is based on dhrystone.
->
-> Expected cpu capacity:
-> Cortex-A57@1.5GHz: 1024, Cortex-A53@1.2GHz: 411
+The initial R8A77980 SoC device tree including Cortex-A53 CPU, GIC, timer,
+CPG, RST, and SYSC.
 
-Thanks for your patch!
+Based on the original (and large) patch by Vladimir Barinov.
 
-> Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
-
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 122 ++++++++++++++++++++++++++++++
+ 1 file changed, 122 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77980.dtsi
 
-411 for the A53 cores sounds a bit low to me, though.
-Documentation/devicetree/bindings/arm/cpu-capacity.txt uses 578.
-
-Perhaps you already took into account the maximum clock frequencies?
-According to the binding document, you should not do that (cfr.
-"final capacities are 1024 for cluster0 and 446 for cluster1" in the
-bindings doc).
-
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -123,6 +127,7 @@
->                         enable-method = "psci";
->                         clocks =<&cpg CPG_CORE R8A7795_CLK_Z2>;
->                         operating-points-v2 = <&cluster1_opp>;
-> +                       capacity-dmips-mhz = <411>;
->                 };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+new file mode 100644
+index 000000000000..6a92bbf55013
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -0,0 +1,122 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the r8a77980 SoC
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ */
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/ {
++	compatible = "renesas,r8a77980";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		a53_0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0>;
++			clocks = <&cpg CPG_CORE 0>;
++			power-domains = <&sysc 5>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
++
++		L2_CA53: cache-controller {
++			compatible = "cache";
++			power-domains = <&sysc 21>;
++			cache-unified;
++			cache-level = <2>;
++		};
++	};
++
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	extalr_clk: extalr {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	psci {
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
++		method = "smc";
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a77980-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>, <&extalr_clk>;
++			clock-names = "extal", "extalr";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++			#reset-cells = <1>;
++		};
++
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a77980-rst";
++			reg = <0 0xe6160000 0 0x200>;
++		};
++
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a77980-sysc";
++			reg = <0 0xe6180000 0 0x440>;
++			#power-domain-cells = <1>;
++		};
++
++		gic: interrupt-controller@f1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x0 0xf1010000 0 0x1000>,
++			      <0x0 0xf1020000 0 0x20000>,
++			      <0x0 0xf1040000 0 0x20000>,
++			      <0x0 0xf1060000 0 0x20000>;
++			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
++				      IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 408>;
++		};
++
++		prr: chipid@fff00044 {
++			compatible = "renesas,prr";
++			reg = <0 0xfff00044 0 4>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
++				       IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) |
++				       IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) |
++				       IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) |
++				       IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
+-- 
+2.11.0
