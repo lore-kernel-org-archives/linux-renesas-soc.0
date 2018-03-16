@@ -1,71 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753802AbeCPOxK (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:45082 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753019AbeCPOUY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 67/69] arm64: dts: renesas: r8a7795: Add IPMMU-PV1 device node
-Date: Fri, 16 Mar 2018 15:51:37 +0100
-Message-Id: <9dd660eb1c201304b5d79012695fc6bca57f99a0.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Fri, 16 Mar 2018 10:20:24 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] arm64: dts: renesas: r8a7796: Correct whitespace
+Date: Fri, 16 Mar 2018 15:04:25 +0100
+Message-Id: <1521209066-6831-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521209066-6831-1-git-send-email-geert+renesas@glider.be>
+References: <1521209066-6831-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add r8a7795 IPMMU-PV1 and keep it disabled by default.
+Add missing spaces after commas.
 
-This device is not present in r8a7795 ES1.x and
-is removed from the DT of those SoCs.
-
-This corrects an omission in
-3b7e7848f0e8 ("arm64: dts: renesas: r8a7795: Add IPMMU device nodes")
-
-This does not have any runtime effect.
-
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 9 +++++++++
- 2 files changed, 10 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index f1d5e90503d5..f9acd125d687 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -23,6 +23,7 @@
- 
- 	/delete-node/ mmu@febe0000;
- 	/delete-node/ mmu@fe980000;
-+	/delete-node/ mmu@fd950000;
- 	/delete-node/ mmu@fd960000;
- 	/delete-node/ mmu@fd970000;
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 09953cda3a55..0648fe451d09 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -545,6 +545,15 @@
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 241b455f0080bfa8..fdc63e209298def7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -77,7 +77,7 @@
  		};
  
-+		ipmmu_pv1: mmu@fd950000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfd950000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 7>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		ipmmu_pv2: mmu@fd960000 {
- 			compatible = "renesas,ipmmu-r8a7795";
- 			reg = <0 0xfd960000 0 0x1000>;
+ 		a57_1: cpu@1 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x1>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
+@@ -100,7 +100,7 @@
+ 		};
+ 
+ 		a53_1: cpu@101 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x101>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU1>;
+@@ -111,7 +111,7 @@
+ 		};
+ 
+ 		a53_2: cpu@102 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x102>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU2>;
+@@ -122,7 +122,7 @@
+ 		};
+ 
+ 		a53_3: cpu@103 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x103>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU3>;
 -- 
-2.11.0
+2.7.4
