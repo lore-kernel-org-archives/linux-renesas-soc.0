@@ -1,166 +1,190 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39786 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753778AbeCPOxM (ORCPT
+        with ESMTP id S1752920AbeCPQjc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:12 -0400
+        Fri, 16 Mar 2018 12:39:32 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 68/69] arm64: dts: renesas: r8a7795: Add missing SYS-DMAC2 dmas
-Date: Fri, 16 Mar 2018 15:51:38 +0100
-Message-Id: <eb21089c32054ecd6957d294a7125bbf100ff328.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 37/47] ARM: dts: porter: use demuxer for I2C2
+Date: Fri, 16 Mar 2018 17:38:34 +0100
+Message-Id: <12937bffd64f5b9970589d0b946305d14cc45e6a.1521218085.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On R-Car H3, on-chip peripheral modules that can make use of DMA are
-wired to either SYS-DMAC0 only, or to both SYS-DMAC1 and SYS-DMAC2.
+Create a separate bus for HDMI related I2C2 and provide fallback to GPIO.
 
-Add the missing DMA properties pointing to SYS-DMAC2 for HSCIF[0-2],
-SCIF[0125], and I2C[0-2].  These were initially left out because early
-firmware versions prohibited using SYS-DMAC2.  This restriction has been
-lifted in IPL and Secure Monitor Rev1.0.6 (released on Feb 25, 2016).
+Based on work for the r8a7790/lager by Wolfram Sang.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[wsa: rebased, fixed aliases, switched to named GPIOs]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 50 +++++++++++++++++++-------------
- 1 file changed, 30 insertions(+), 20 deletions(-)
+ arch/arm/boot/dts/r8a7791-porter.dts | 128 ++++++++++++++++++++---------------
+ 1 file changed, 75 insertions(+), 53 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 0648fe451d09..1d5e3ac0231c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1076,8 +1076,9 @@
- 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			dmas = <&dmac1 0x31>, <&dmac1 0x30>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-+			       <&dmac2 0x31>, <&dmac2 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 520>;
- 			status = "disabled";
-@@ -1093,8 +1094,9 @@
- 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			dmas = <&dmac1 0x33>, <&dmac1 0x32>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-+			       <&dmac2 0x33>, <&dmac2 0x32>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 519>;
- 			status = "disabled";
-@@ -1110,8 +1112,9 @@
- 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			dmas = <&dmac1 0x35>, <&dmac1 0x34>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-+			       <&dmac2 0x35>, <&dmac2 0x34>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 518>;
- 			status = "disabled";
-@@ -1222,8 +1225,9 @@
- 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			dmas = <&dmac1 0x51>, <&dmac1 0x50>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-+			       <&dmac2 0x51>, <&dmac2 0x50>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 207>;
- 			status = "disabled";
-@@ -1238,8 +1242,9 @@
- 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			dmas = <&dmac1 0x53>, <&dmac1 0x52>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-+			       <&dmac2 0x53>, <&dmac2 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 206>;
- 			status = "disabled";
-@@ -1254,8 +1259,9 @@
- 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			dmas = <&dmac1 0x13>, <&dmac1 0x12>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x13>, <&dmac1 0x12>,
-+			       <&dmac2 0x13>, <&dmac2 0x12>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
-@@ -1302,8 +1308,9 @@
- 				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
-+			       <&dmac2 0x5b>, <&dmac2 0x5a>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 202>;
- 			status = "disabled";
-@@ -1335,8 +1342,9 @@
- 			clocks = <&cpg CPG_MOD 931>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 931>;
--			dmas = <&dmac1 0x91>, <&dmac1 0x90>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
-+			       <&dmac2 0x91>, <&dmac2 0x90>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 9a02d03b23c2..c14e6fe9e4f6 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -29,6 +29,8 @@
+ 
+ 	aliases {
+ 		serial0 = &scif0;
++		i2c9 = &gpioi2c2;
++		i2c10 = &i2chdmi;
+ 	};
+ 
+ 	chosen {
+@@ -135,6 +137,78 @@
+ 			clocks = <&x14_clk>;
  		};
-@@ -1351,8 +1359,9 @@
- 			clocks = <&cpg CPG_MOD 930>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 930>;
--			dmas = <&dmac1 0x93>, <&dmac1 0x92>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
-+			       <&dmac2 0x93>, <&dmac2 0x92>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
-@@ -1367,8 +1376,9 @@
- 			clocks = <&cpg CPG_MOD 929>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 929>;
--			dmas = <&dmac1 0x95>, <&dmac1 0x94>;
--			dma-names = "tx", "rx";
-+			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
-+			       <&dmac2 0x95>, <&dmac2 0x94>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
+ 	};
++
++	gpioi2c2: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		scl-gpios = <&gpio2 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		sda-gpios = <&gpio2 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C2.
++	 */
++	i2chdmi: i2c-10 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c2>, <&gpioi2c2>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ak4642: codec@12 {
++			compatible = "asahi-kasei,ak4642";
++			#sound-dai-cells = <0>;
++			reg = <0x12>;
++		};
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin0>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin0ep>;
++				};
++			};
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio3>;
++			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_rgb>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con>;
++					};
++				};
++			};
++		};
++	};
+ };
+ 
+ &extal_clk {
+@@ -296,61 +370,9 @@
+ 
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+-	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	ak4642: codec@12 {
+-		compatible = "asahi-kasei,ak4642";
+-		#sound-dai-cells = <0>;
+-		reg = <0x12>;
+-	};
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin0>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio3>;
+-		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_rgb>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
+-				};
+-			};
+-		};
+-	};
+ };
+ 
+ &sata0 {
 -- 
 2.11.0
