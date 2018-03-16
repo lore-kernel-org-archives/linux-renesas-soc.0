@@ -1,55 +1,152 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 11/11] drm: rcar-du: Support interlaced video output through vsp1
-Date: Tue, 13 Mar 2018 19:05:27 +0100
-Message-Id: <334f0b14fde0ddcfd02a12c41878a1b792221e4d.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.89a4a5175efbf31441ba717a99b0e3c31088179f.1520963956.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753959AbeCPOyi (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:54:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 46/52] ARM: dts: r7s72100: sort subnodes of root node
+Date: Fri, 16 Mar 2018 15:53:05 +0100
+Message-Id: <8234641d84ca17e0f6f8cfbb4f34fa56d73a07ab.1521208546.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
+References: <cover.1521208546.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use the newly exposed VSP1 interface to enable interlaced frame support
-through the VSP1 lif pipelines.
+Sort the subnodes of the soc node to improve maintainability.
+The sort has been done alphabetically with the node name as the key.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+This patch should not introduce any functional change.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 1 +
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 3 +++
- 2 files changed, 4 insertions(+)
+ arch/arm/boot/dts/r7s72100.dtsi | 78 +++++++++++++++++++++--------------------
+ 1 file changed, 40 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 5685d5af6998..9854d9deb944 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -248,6 +248,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	/* Signal polarities */
- 	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
- 	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-+	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
- 	      | DSMR_DIPM_DISP | DSMR_CSPM;
- 	rcar_du_crtc_write(rcrtc, DSMR, value);
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 2c260c33840b..5e47daef8bd2 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -178,6 +178,9 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index d69d4810e597..ecf9516bcda8 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -30,43 +30,45 @@
+ 		spi4 = &spi4;
  	};
- 	unsigned int i;
  
-+	cfg.interlaced = !!(plane->plane.state->crtc->mode.flags
-+			    & DRM_MODE_FLAG_INTERLACE);
+-	/* External clocks */
+-	extal_clk: extal {
++	/* Fixed factor clocks */
++	b_clk: b {
+ 		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		/* If clk present, value must be set by board */
+-		clock-frequency = <0>;
++		compatible = "fixed-factor-clock";
++		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
++		clock-mult = <1>;
++		clock-div = <3>;
+ 	};
+ 
+-	usb_x1_clk: usb_x1 {
+-		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		/* If clk present, value must be set by board */
+-		clock-frequency = <0>;
+-	};
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 
+-	rtc_x1_clk: rtc_x1 {
+-		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		/* If clk present, value must be set by board to 32678 */
+-		clock-frequency = <0>;
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <0>;
++			clock-frequency = <400000000>;
++			clocks = <&cpg_clocks R7S72100_CLK_I>;
++			next-level-cache = <&L2>;
++		};
+ 	};
+ 
+-	rtc_x3_clk: rtc_x3 {
++	/* External clocks */
++	extal_clk: extal {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+-		/* If clk present, value must be set by board to 4000000 */
++		/* If clk present, value must be set by board */
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	/* Fixed factor clocks */
+-	b_clk: b {
++	p0_clk: p0 {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-factor-clock";
+ 		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
+ 		clock-mult = <1>;
+-		clock-div = <3>;
++		clock-div = <12>;
+ 	};
 +
- 	cfg.src.left = state->state.src.x1 >> 16;
- 	cfg.src.top = state->state.src.y1 >> 16;
- 	cfg.src.width = drm_rect_width(&state->state.src) >> 16;
+ 	p1_clk: p1 {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-factor-clock";
+@@ -74,26 +76,19 @@
+ 		clock-mult = <1>;
+ 		clock-div = <6>;
+ 	};
+-	p0_clk: p0 {
++
++	rtc_x1_clk: rtc_x1 {
+ 		#clock-cells = <0>;
+-		compatible = "fixed-factor-clock";
+-		clocks = <&cpg_clocks R7S72100_CLK_PLL>;
+-		clock-mult = <1>;
+-		clock-div = <12>;
++		compatible = "fixed-clock";
++		/* If clk present, value must be set by board to 32678 */
++		clock-frequency = <0>;
+ 	};
+ 
+-	cpus {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		cpu@0 {
+-			device_type = "cpu";
+-			compatible = "arm,cortex-a9";
+-			reg = <0>;
+-			clock-frequency = <400000000>;
+-			clocks = <&cpg_clocks R7S72100_CLK_I>;
+-			next-level-cache = <&L2>;
+-		};
++	rtc_x3_clk: rtc_x3 {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		/* If clk present, value must be set by board to 4000000 */
++		clock-frequency = <0>;
+ 	};
+ 
+ 	soc {
+@@ -689,4 +684,11 @@
+ 			status = "disabled";
+ 		};
+ 	};
++
++	usb_x1_clk: usb_x1 {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		/* If clk present, value must be set by board */
++		clock-frequency = <0>;
++	};
+ };
 -- 
-git-series 0.9.1
+2.11.0
