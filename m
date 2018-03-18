@@ -1,93 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44813 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755329AbeCSId6 (ORCPT
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:51555 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754689AbeCRXun (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:33:58 -0400
-Date: Mon, 19 Mar 2018 09:33:55 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
+        Sun, 18 Mar 2018 19:50:43 -0400
+Received: by mail-wm0-f50.google.com with SMTP id h21so12100890wmd.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 18 Mar 2018 16:50:42 -0700 (PDT)
+Subject: Re: [Qemu-devel] [PATCH 3/3] nvram: at24c: use a sane default for
+ "rom-size"
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         qemu-devel@nongnu.org, linux-renesas-soc@vger.kernel.org,
         Michael Davidsaver <mdavidsaver@gmail.com>
-Subject: Re: [Qemu-devel] [PATCH 3/3] nvram: at24c: use a sane default for
- "rom-size"
-Message-ID: <20180319083355.vw5cxkwyb4zihlcz@ninjato>
 References: <20180312214230.17561-1-wsa+renesas@sang-engineering.com>
  <20180312214230.17561-4-wsa+renesas@sang-engineering.com>
  <5108cc9b-9fb9-d202-d4bc-a5c1dd4d4f76@amsat.org>
  <20180313201649.w44jtdbk4bow2f7x@ninjato>
- <f90bfd58-1f51-dc72-a67a-c0021345f9ba@amsat.org>
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
+Message-ID: <f90bfd58-1f51-dc72-a67a-c0021345f9ba@amsat.org>
+Date: Mon, 19 Mar 2018 00:50:30 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tvc27v433gqtec4q"
-Content-Disposition: inline
-In-Reply-To: <f90bfd58-1f51-dc72-a67a-c0021345f9ba@amsat.org>
+In-Reply-To: <20180313201649.w44jtdbk4bow2f7x@ninjato>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="FUyLHEgzR0MXMtDtFfnP6N6h1EN29bNpZ"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--FUyLHEgzR0MXMtDtFfnP6N6h1EN29bNpZ
+Content-Type: multipart/mixed; boundary="7jrvbtmUIGjQxexCa9Wc6Igyo55xros3i";
+ protected-headers="v1"
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, qemu-devel@nongnu.org,
+ linux-renesas-soc@vger.kernel.org, Michael Davidsaver <mdavidsaver@gmail.com>
+Message-ID: <f90bfd58-1f51-dc72-a67a-c0021345f9ba@amsat.org>
+Subject: Re: [Qemu-devel] [PATCH 3/3] nvram: at24c: use a sane default for
+ "rom-size"
+References: <20180312214230.17561-1-wsa+renesas@sang-engineering.com>
+ <20180312214230.17561-4-wsa+renesas@sang-engineering.com>
+ <5108cc9b-9fb9-d202-d4bc-a5c1dd4d4f76@amsat.org>
+ <20180313201649.w44jtdbk4bow2f7x@ninjato>
+In-Reply-To: <20180313201649.w44jtdbk4bow2f7x@ninjato>
 
---tvc27v433gqtec4q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--7jrvbtmUIGjQxexCa9Wc6Igyo55xros3i
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Hi Philippe,
+Hi Wolfram,
 
-> > I don't mind much, but why? My reasoning was "let's first fix the cause
-> > and then the symptom"?
+On 03/13/2018 09:16 PM, Wolfram Sang wrote:
+> Hi Philippe,
 >=20
-> The '0' case is worst than incorrect, it segfaults, so you are right :)
-
-Ok, thanks.
-
-> >> Can you add a #define for this value? Such AT24C_ROMSIZE_MIN.
-> >=20
-> > Can do, of course. But won't that give room for regressions because
-> > people are already using it with lower values?
+>>>  static Property at24c_eeprom_props[] =3D {
+>>> -    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 0),
+>>> +    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 128),
+>>
+>> This patch should goes before your 2/3 in your series.
 >=20
-> Your patch already introduce the regression :)
+> I don't mind much, but why? My reasoning was "let's first fix the cause=
 
-Not really. The current default setting (0) segfaults. This is how I
-discovered it. So, there can't be any active user of that.
+> and then the symptom"?
 
-> I prefer self-explanatory #defines than magic value, but I see your
-> point, so if we can not decide a value, can you add a comment to explain
-> the magic value? I think the clearer is to add a #define with a comment.
+The '0' case is worst than incorrect, it segfaults, so you are right :)
 
-I wouldn't mind a macro AT24C_ROMSIZE_DEFAULT and a comment explaining
-why we chose this value. This is totally fine with me.
+>=20
+>> Can you add a #define for this value? Such AT24C_ROMSIZE_MIN.
+>=20
+> Can do, of course. But won't that give room for regressions because
+> people are already using it with lower values?
 
-It was just the MIN value I saw potential usage regressions with.
+Your patch already introduce the regression :)
 
-> IMO there are too many AT24C eeproms to model, so the "rom-size"
-> variable is the easiest way. Your patch #2 is simple enough to avoid the
-> #DIV/0!
+I prefer self-explanatory #defines than magic value, but I see your
+point, so if we can not decide a value, can you add a comment to explain
+the magic value? I think the clearer is to add a #define with a comment.
 
-Fine with me, too. I will update my series accordingly.
+>=20
+> Ideally, we would have a "model" variable. The model type would define
+> the size of the memory. The "rom-size" variable could then be kept as i=
+s
+> (except for the 0 bugfix) or deprecated?
 
-Thanks,
+IMO there are too many AT24C eeproms to model, so the "rom-size"
+variable is the easiest way. Your patch #2 is simple enough to avoid the
+#DIV/0!
 
-   Wolfram
+>=20
+> Thanks for the review,
+>=20
+>    Wolfram
+>=20
 
---tvc27v433gqtec4q
+
+--7jrvbtmUIGjQxexCa9Wc6Igyo55xros3i--
+
+--FUyLHEgzR0MXMtDtFfnP6N6h1EN29bNpZ
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqvde4ACgkQFA3kzBSg
-KbZOHRAAjBMuJjj3SPYWkhYuHhpVGhOxnUIazf6rkz396XKFf+cuNgqSI4C7vDhN
-xzDUBsDpYkGdxwtTup282x2yQbvuC155Og+B0qzACE/qlIsr1b5xDnFWISQp9DrQ
-qfZjFnd9GYUVVqOz78IpB29oIed4R8vDkOZKv9wbmZxahVN5lpeVqrHm38aIsq4W
-sZLIKbLwLe0KesTwBZjPDPRupstynPav4NLT1KWHW015PYI5wwXZXwHP7qq0D4vs
-M4geyZ8hAhMOiyiPPZ/rIvggVNCicuri7mCyZg5KOLNnAu6wWgaBWfKAM7cozwqU
-boXmyt/m4EJohPYeucqB0bfGqdj9FPNyGtP8iaqI4glE5YjdKA9YfsvQuHmVP2Kk
-GsId0eznimI+Hg1Gce6uCBxocC7wwfp4LTfrQlY60sElCFhJdyOcDmoPS6K+P3Dk
-T44WOH3rtiLUtdaRD2+j2ypzca8Agex4BRCQF2nQGyx1Fu2Bef7ZomI4vURt7j2V
-iF71UsM+7HeQTHAC6r81K/QJd4Eya+aKQwc/XY5NKRw/SqIZ2kG0Tx6ESV/HLnQd
-TUQcs0qKGUyK2HoLFDI85IVNxVK23zthnmrfYsYw8RP0hY/NXvPzCHgjh1x80omd
-+T92dJ9x/Y0QQ3vfrxXAhV49OQVNZYk97oSi4yLzqqTOJ6KA8Ms=
-=596v
+iQIzBAEBCgAdFiEE+qvnXhKRciHc/Wuy4+MsLN6twN4FAlqu+0YACgkQ4+MsLN6t
+wN4WeRAAzJ/q0BunZ2yh+CjOwq0jk6tCRr9YR6OJ+xxx21mMjCBHesxFBNozml0n
+H0YkxymnFAdpRAGMwbmitaa3ltCp8s4etxcCLl0QgF9f7GCv3A+3SAmt9p0kSPka
+FCMkqU86xWwqdO2n5EJhu9WQHOmShH35hITRdQIA0tSzCYlCI5XiuaY4El12Jk+c
+sRIv5ZbjTOkvmpLtksMLJHYOmOjXM6VepmE2ePu7qBq6sHpHCnBxorMYFfcUu2wQ
+o/Ss8u9HvyEx2WuKGG1ebO2OX3zs5a/EV4tzrnlvhN8Ey5aMNJo2wq8puvumMRjc
+PssQBxbkERA1MbVsFGoPsJKSnj9WjWkAvMMRoRbrphJln3ztZ2RUV0O0WRVEyRj/
+Ly/RMoLpMLHOSFwNfrEyUZ8/PMtI9yGONbqsQBbd7qVPodmt01d5CfkSgfXzZyxh
+lIHGeH5astj3EGSxnUyDV+ctttswqGQ3MchPCbmDxipa6PfVHabG5wPIc/QGJPdq
+zlY9oSxP++Y+092HSdtrfVJQJcWwMxCQRMk8PxMoJm5hMVb/zzJ2nDTIVrbRb+xk
+5o6y33S6GPQf9qBW5FhWFX7PzNXqPocScsr9E4ITzq3putMp2kpHzyicvVTZKUht
+PPDPdP31i7VO1sFln+T32Z8oJza/Jmshmg7EgRVi6gIyHBmfdjU=
+=O5lZ
 -----END PGP SIGNATURE-----
 
---tvc27v433gqtec4q--
+--FUyLHEgzR0MXMtDtFfnP6N6h1EN29bNpZ--
