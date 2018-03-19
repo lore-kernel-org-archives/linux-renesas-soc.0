@@ -1,111 +1,131 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36099 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753578AbeCPOyV (ORCPT
+        with ESMTP id S1751276AbeCSKen (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:54:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 36/52] ARM: dts: koelsch: use demuxer for I2C4
-Date: Fri, 16 Mar 2018 15:52:55 +0100
-Message-Id: <be93275c4dade2d089d495f38a09e62712ea4e39.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
+        Mon, 19 Mar 2018 06:34:43 -0400
+Date: Mon, 19 Mar 2018 11:34:39 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-pci@vger.kernel.org,
+        Dien Pham <dien.pham.ry@rvc.renesas.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V4] PCI: rcar: Use runtime PM to control controller clock
+Message-ID: <20180319103439.t6idzboizjtt4sgn@verge.net.au>
+References: <20180318105209.5922-1-marek.vasut+renesas@gmail.com>
+ <20180319084447.ce44arxneqd6i3bj@verge.net.au>
+ <834f8473-3e3b-98b2-56e1-55a3c40aa2dc@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <834f8473-3e3b-98b2-56e1-55a3c40aa2dc@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Mar 19, 2018 at 10:54:47AM +0100, Marek Vasut wrote:
+> On 03/19/2018 09:44 AM, Simon Horman wrote:
+> > On Sun, Mar 18, 2018 at 11:52:09AM +0100, Marek Vasut wrote:
+> >> From: Dien Pham <dien.pham.ry@rvc.renesas.com>
+> >>
+> >> The controller clock can be switched off during suspend/resume,
+> >> let runtime PM take care of that.
+> >>
+> >> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+> >> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> >> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> >> Cc: Simon Horman <horms+renesas@verge.net.au>
+> >> Cc: Wolfram Sang <wsa@the-dreams.de>
+> >> Cc: linux-renesas-soc@vger.kernel.org
+> >> To: linux-pci@vger.kernel.org
+> >> ---
+> >> V2: - Reorder the fail path in rcar_pcie_probe() to cater for the
+> >>       reordering of function calls in probe
+> >>     - Dispose of fail_clk in rcar_pcie_get_resources()
+> >> V3: - Fix up the failpath in probe function
+> >> V4: - Rebase on recent linux-next
+> >> ---
+> >>  drivers/pci/host/pcie-rcar.c | 40 ++++++++++++----------------------------
+> >>  1 file changed, 12 insertions(+), 28 deletions(-)
+> >>
+> >> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> >> index b4c4aad2cf66..93d59f15c589 100644
+> >> --- a/drivers/pci/host/pcie-rcar.c
+> >> +++ b/drivers/pci/host/pcie-rcar.c
+> >> @@ -142,7 +142,6 @@ struct rcar_pcie {
+> >>  	void __iomem		*base;
+> >>  	struct list_head	resources;
+> >>  	int			root_bus_nr;
+> >> -	struct clk		*clk;
+> >>  	struct clk		*bus_clk;
+> >>  	struct			rcar_msi msi;
+> >>  };
+> >> @@ -914,24 +913,14 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
+> >>  	if (IS_ERR(pcie->base))
+> >>  		return PTR_ERR(pcie->base);
+> >>  
+> >> -	pcie->clk = devm_clk_get(dev, "pcie");
+> >> -	if (IS_ERR(pcie->clk)) {
+> >> -		dev_err(dev, "cannot get platform clock\n");
+> >> -		return PTR_ERR(pcie->clk);
+> >> -	}
+> >> -	err = clk_prepare_enable(pcie->clk);
+> >> -	if (err)
+> >> -		return err;
+> >> -
+> >>  	pcie->bus_clk = devm_clk_get(dev, "pcie_bus");
+> >>  	if (IS_ERR(pcie->bus_clk)) {
+> >>  		dev_err(dev, "cannot get pcie bus clock\n");
+> >> -		err = PTR_ERR(pcie->bus_clk);
+> >> -		goto fail_clk;
+> >> +		return PTR_ERR(pcie->bus_clk);
+> >>  	}
+> >>  	err = clk_prepare_enable(pcie->bus_clk);
+> >>  	if (err)
+> >> -		goto fail_clk;
+> >> +		return err;
+> >>  
+> >>  	i = irq_of_parse_and_map(dev->of_node, 0);
+> >>  	if (!i) {
+> >> @@ -953,8 +942,6 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
+> >>  
+> >>  err_map_reg:
+> >>  	clk_disable_unprepare(pcie->bus_clk);
+> >> -fail_clk:
+> >> -	clk_disable_unprepare(pcie->clk);
+> >>  
+> >>  	return err;
+> >>  }
+> >> @@ -1124,22 +1111,22 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+> >>  	if (err)
+> >>  		goto err_free_bridge;
+> > 
+> > This error path now calls pci_free_resource_list() and in this case
+> > the path is taken if rcar_pcie_parse_request_of_pci_ranges() fails.
+> > Is that ok?
+> 
+> I think so, or did I miss something obvious?
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
+I feel that I am the one missing something obvious.
+But here is what I am worried about:
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
+1. rcar_pcie_probe() calls rcar_pcie_parse_request_of_pci_ranges()
+2. rcar_pcie_parse_request_of_pci_ranges() calls
+   devm_request_pci_bus_resources() but that fails so
+   pci_free_resource_list() is called and an error is returned.
+3. rcar_pcie_probe() branches to err_free_bridge and calls
+   pci_free_resource_list() again.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOS, fixed pinmux for I2C4]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 4b20db197de6..f40321a1c917 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -52,8 +52,10 @@
- 		serial1 = &scif1;
- 		i2c9 = &gpioi2c1;
- 		i2c10 = &gpioi2c2;
-+		i2c11 = &gpioi2c4;
- 		i2c12 = &i2cexio1;
- 		i2c13 = &i2chdmi;
-+		i2c14 = &i2cexio4;
- 	};
- 
- 	chosen {
-@@ -329,6 +331,16 @@
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-+	gpioi2c4: i2c-11 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio7 13 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio7 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
- 	/*
- 	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
- 	 * A fallback to GPIO is provided.
-@@ -437,6 +449,18 @@
- 			pagesize = <16>;
- 		};
- 	};
-+
-+	/*
-+	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio4: i2c-14 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -480,6 +504,11 @@
- 		function = "i2c2";
- 	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4_c";
-+		function = "i2c4";
-+	};
-+
- 	du_pins: du {
- 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
- 		function = "du";
-@@ -735,6 +764,11 @@
- 	clock-frequency = <100000>;
- };
- 
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
-+};
-+
- &i2c6 {
- 	status = "okay";
- 	clock-frequency = <100000>;
--- 
-2.11.0
+> 
+> -- 
+> Best regards,
+> Marek Vasut
+> 
