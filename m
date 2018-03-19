@@ -1,47 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751665AbeCPOxi (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:64189 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755126AbeCSM2l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:38 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/52] ARM: dts: r8a7790: Reduce size of thermal registers
-Date: Fri, 16 Mar 2018 15:52:20 +0100
-Message-Id: <61ad2b1ab4b1ce4e495854c4faa75ca95e5e8ecd.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
+        Mon, 19 Mar 2018 08:28:41 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 7/7] arm64: dts: renesas: r8a77965: add USB 3.0 peripheral node
+Date: Mon, 19 Mar 2018 21:28:27 +0900
+Message-Id: <1521462507-23287-8-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reduce size of thermal registers in DT for r8a7790 (R-Car H2) SoC.
+This patch adds USB 3.0 peripheral node for r8a77965.
 
-According to the "User's Manual: Hardware" v2.00 the registers at base
-0xe61f0000 extend to an offset of 0x10, rather than 0x14 which is the case
-on the r8a73a4 (R-Mobile APE6).
-
-This should not have any runtime affect as mapping granularity is PAGE_SIZE.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index ed9a68538a55..13926fc7abfa 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -294,7 +294,7 @@
- 		compatible =	"renesas,thermal-r8a7790",
- 				"renesas,rcar-gen2-thermal",
- 				"renesas,rcar-thermal";
--		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
-+		reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 522>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index a34b80a..6f748e94a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -951,8 +951,14 @@
+ 		};
+ 
+ 		usb3_peri0: usb@ee020000 {
++			compatible = "renesas,r8a77965-usb3-peri",
++				     "renesas,rcar-gen3-usb3-peri";
+ 			reg = <0 0xee020000 0 0x400>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 328>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 328>;
++			status = "disabled";
+ 		};
+ 
+ 		xhci0: usb@ee000000 {
 -- 
-2.11.0
+1.9.1
