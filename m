@@ -1,46 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:17257 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:45415 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750795AbeC2KOr (ORCPT
+        by vger.kernel.org with ESMTP id S1754892AbeCSM2j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 06:14:47 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Vinod Koul <vinod.koul@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] dt-bindings: rcar-dmac: Document r8a77470 support
-Date: Thu, 29 Mar 2018 11:11:06 +0100
-Message-Id: <1522318266-45281-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 19 Mar 2018 08:28:39 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4/7] arm64: dts: renesas: r8a77965: add usb_dmac nodes
+Date: Mon, 19 Mar 2018 21:28:24 +0900
+Message-Id: <1521462507-23287-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas  RZ/G SoC also have the R-Car gen2/3 compatible DMA controllers.
-Document RZ/G1C (also known as R8A77470) SoC bindings.
+This patch adds USB-DMAC nodes for r8a77965.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index 891db41..b5e603c 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -18,6 +18,7 @@ Required Properties:
- 	      Examples with soctypes are:
- 		- "renesas,dmac-r8a7743" (RZ/G1M)
- 		- "renesas,dmac-r8a7745" (RZ/G1E)
-+		- "renesas,dmac-r8a77470" (RZ/G1C)
- 		- "renesas,dmac-r8a7790" (R-Car H2)
- 		- "renesas,dmac-r8a7791" (R-Car M2-W)
- 		- "renesas,dmac-r8a7792" (R-Car V2H)
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index ecc34ce..e5a5dd9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -832,6 +832,34 @@
+ 			};
+ 		};
+ 
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a77965-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a77965-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		hsusb: usb@e6590000 {
+ 			reg = <0 0xe6590000 0 0x100>;
+ 			/* placeholder */
 -- 
-2.7.4
+1.9.1
