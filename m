@@ -1,52 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47723 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S969942AbeCSVbK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35007 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755373AbeCSIgJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Mar 2018 17:31:10 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: qemu-devel@nongnu.org
-Cc: =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 2/3] nvram: at24c: use a sane default for "rom-size"
-Date: Mon, 19 Mar 2018 22:31:00 +0100
-Message-Id: <20180319213101.6100-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180319213101.6100-1-wsa+renesas@sang-engineering.com>
-References: <20180319213101.6100-1-wsa+renesas@sang-engineering.com>
+        Mon, 19 Mar 2018 04:36:09 -0400
+Date: Mon, 19 Mar 2018 09:35:58 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: media: rcar_vin: Use status "okay"
+Message-ID: <20180319083558.b4wr3zha25bj25fh@verge.net.au>
+References: <1520588080-31264-1-git-send-email-geert+renesas@glider.be>
+ <20180317231028.xehdgkpagjs6nerm@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180317231028.xehdgkpagjs6nerm@rob-hp-laptop>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-0 as "rom-size" will lead to an error message. Let's use the size of a
-small 24c01 which has 128 byte.
+On Sun, Mar 18, 2018 at 07:47:57AM -0500, Rob Herring wrote:
+> On Fri, Mar 09, 2018 at 10:34:40AM +0100, Geert Uytterhoeven wrote:
+> > According to the Devicetree Specification, "ok" is not a valid status.
+> 
+> Correct.
+> 
+> > Fixes: 47c71bd61b772cd7 ("[media] rcar_vin: add devicetree support")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > For the checkpatch TODO list?
+> > https://www.devicetree.org/
+> > 
+> >  Documentation/devicetree/bindings/media/rcar_vin.txt | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> > index 68c5c497b7fa5551..a19517e1c669eb35 100644
+> > --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> > +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> > @@ -81,7 +81,7 @@ Board setup example for Gen2 platforms (vin1 composite video input)
+> >  -------------------------------------------------------------------
+> >  
+> >  &i2c2   {
+> > -        status = "ok";
+> > +        status = "okay";
+> 
+> However, I prefer that status not be in examples as it applies to any 
+> node and the SoC/board split is not relevant to binding docs. I'd 
+> cleaned all these up except for the cases with SoC/board split.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- hw/nvram/eeprom_at24c.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Hi Rob,
 
-diff --git a/hw/nvram/eeprom_at24c.c b/hw/nvram/eeprom_at24c.c
-index ccf78b25e4..ab1ef686e2 100644
---- a/hw/nvram/eeprom_at24c.c
-+++ b/hw/nvram/eeprom_at24c.c
-@@ -28,6 +28,9 @@
- #define TYPE_AT24C_EE "at24c-eeprom"
- #define AT24C_EE(obj) OBJECT_CHECK(EEPROMState, (obj), TYPE_AT24C_EE)
- 
-+/* default is the size of a 24c01 EEPROM */
-+#define AT24C_ROMSIZE_DEFAULT 128
-+
- typedef struct EEPROMState {
-     I2CSlave parent_obj;
- 
-@@ -171,7 +174,7 @@ void at24c_eeprom_reset(DeviceState *state)
- }
- 
- static Property at24c_eeprom_props[] = {
--    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 0),
-+    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, AT24C_ROMSIZE_DEFAULT),
-     DEFINE_PROP_BOOL("writable", EEPROMState, writable, true),
-     DEFINE_PROP_DRIVE("drive", EEPROMState, blk),
-     DEFINE_PROP_END_OF_LIST()
--- 
-2.11.0
+I'm a little confused. This example is a board override for
+a node (implicitly) defined in the DT of an SoC. Could you clarify
+when the status should be omitted?
+
+> 
+> >          pinctrl-0 = <&i2c2_pins>;
+> >          pinctrl-names = "default";
+> >  
+> > @@ -104,7 +104,7 @@ Board setup example for Gen2 platforms (vin1 composite video input)
+> >          pinctrl-0 = <&vin1_pins>;
+> >          pinctrl-names = "default";
+> >  
+> > -        status = "ok";
+> > +        status = "okay";
+> >  
+> >          port {
+> >                  #address-cells = <1>;
+> > -- 
+> > 2.7.4
+> > 
+> 
