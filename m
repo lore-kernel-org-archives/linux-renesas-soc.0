@@ -1,59 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:41322 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753372AbeCPNom (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48892 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754230AbeCSBDQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 09:44:42 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/8] clk: renesas: r8a7740: Always use readl()/writel()
-Date: Fri, 16 Mar 2018 14:40:18 +0100
-Message-Id: <1521207622-3311-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
-References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+        Sun, 18 Mar 2018 21:03:16 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rsnd: Document R-Car M3-W support" to the asoc tree
+In-Reply-To: <1521208785-5698-1-git-send-email-geert+renesas@glider.be>
+Message-Id: <20180319010307.3AE6C440079@finisterre.ee.mobilebroadband>
+Date: Mon, 19 Mar 2018 01:03:07 +0000 (GMT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On arm32, there is no reason to use the (soon deprecated)
-clk_readl()/clk_writel().  Hence use the generic readl()/writel()
-instead.
+The patch
+
+   ASoC: rsnd: Document R-Car M3-W support
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From da263026c013412110da464537e1c5532f0714ee Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Fri, 16 Mar 2018 14:59:45 +0100
+Subject: [PATCH] ASoC: rsnd: Document R-Car M3-W support
+
+Document support for the sound modules in the Renesas M3-W (r8a7796)
+SoC.
+
+No driver update is needed.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/renesas/clk-r8a7740.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/clk-r8a7740.c b/drivers/clk/renesas/clk-r8a7740.c
-index 2f7ce6696b6c0f1d..d074f8e982d0851c 100644
---- a/drivers/clk/renesas/clk-r8a7740.c
-+++ b/drivers/clk/renesas/clk-r8a7740.c
-@@ -98,20 +98,20 @@ r8a7740_cpg_register_clock(struct device_node *np, struct r8a7740_cpg *cpg,
- 		 * clock implementation and we currently have no need to change
- 		 * the multiplier value.
- 		 */
--		u32 value = clk_readl(cpg->reg + CPG_FRQCRC);
-+		u32 value = readl(cpg->reg + CPG_FRQCRC);
- 		parent_name = "system";
- 		mult = ((value >> 24) & 0x7f) + 1;
- 	} else if (!strcmp(name, "pllc1")) {
--		u32 value = clk_readl(cpg->reg + CPG_FRQCRA);
-+		u32 value = readl(cpg->reg + CPG_FRQCRA);
- 		parent_name = "system";
- 		mult = ((value >> 24) & 0x7f) + 1;
- 		div = 2;
- 	} else if (!strcmp(name, "pllc2")) {
--		u32 value = clk_readl(cpg->reg + CPG_PLLC2CR);
-+		u32 value = readl(cpg->reg + CPG_PLLC2CR);
- 		parent_name = "system";
- 		mult = ((value >> 24) & 0x3f) + 1;
- 	} else if (!strcmp(name, "usb24s")) {
--		u32 value = clk_readl(cpg->reg + CPG_USBCKCR);
-+		u32 value = readl(cpg->reg + CPG_USBCKCR);
- 		if (value & BIT(7))
- 			/* extal2 */
- 			parent_name = of_clk_get_parent_name(np, 1);
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index 5bed9a595772..b86d790f630f 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -351,6 +351,7 @@ Required properties:
+ 				    - "renesas,rcar_sound-r8a7793" (R-Car M2-N)
+ 				    - "renesas,rcar_sound-r8a7794" (R-Car E2)
+ 				    - "renesas,rcar_sound-r8a7795" (R-Car H3)
++				    - "renesas,rcar_sound-r8a7796" (R-Car M3-W)
+ - reg				: Should contain the register physical address.
+ 				  required register is
+ 				   SRU/ADG/SSI      if generation1
 -- 
-2.7.4
+2.16.2
