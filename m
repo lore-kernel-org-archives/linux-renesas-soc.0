@@ -1,44 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:39444 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752064AbeCUOjX (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54146 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935273AbeCSQh1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Mar 2018 10:39:23 -0400
-Received: by mail-qk0-f195.google.com with SMTP id j73so5640046qke.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Mar 2018 07:39:23 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1521477440-1047-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1521477440-1047-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1521477440-1047-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 21 Mar 2018 15:39:21 +0100
-Message-ID: <CAMuHMdUOsY_Mw_ZRddWSHz=CjLezZ+dz1bRW3HPNv1Vbp3ki-g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: r8a7795: correct VIN4 18-bit pins
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 19 Mar 2018 12:37:27 -0400
+Received: by mail-wm0-f68.google.com with SMTP id e194so16325635wmd.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Mar 2018 09:37:26 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: laurent.pinchart@ideasonboard.com, kbingham@kernel.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 1/3] pinctrl: sh-pfc: r8a7795: correct VIN4 18-bit pins
+Date: Mon, 19 Mar 2018 17:37:18 +0100
+Message-Id: <1521477440-1047-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1521477440-1047-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1521477440-1047-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 5:37 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> RGB666 has a pin assignment that differs from the other formats.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+RGB666 has a pin assignment that differs from the other formats.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.17.
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 706ffe15..a9fd534 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -4053,48 +4053,48 @@ static const unsigned int vin4_data16_b_mux[] = {
+ 	VI4_DATA14_MARK, VI4_DATA15_MARK,
+ };
+ static const unsigned int vin4_data18_a_pins[] = {
+-	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
+ 	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
+ 	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
+ 	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
+-	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
+ 	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
+ 	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
+ 	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
+-	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
++	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
++	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
++	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
+ };
+ static const unsigned int vin4_data18_a_mux[] = {
+-	VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
+ 	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
+ 	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
+ 	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
+-	VI4_DATA8_MARK,  VI4_DATA9_MARK,
+ 	VI4_DATA10_MARK, VI4_DATA11_MARK,
+ 	VI4_DATA12_MARK, VI4_DATA13_MARK,
+ 	VI4_DATA14_MARK, VI4_DATA15_MARK,
+-	VI4_DATA16_MARK, VI4_DATA17_MARK,
++	VI4_DATA18_MARK, VI4_DATA19_MARK,
++	VI4_DATA20_MARK, VI4_DATA21_MARK,
++	VI4_DATA22_MARK, VI4_DATA23_MARK,
+ };
+ static const unsigned int vin4_data18_b_pins[] = {
+-	RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
+ 	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
+ 	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
+ 	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
+-	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
+ 	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
+ 	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
+ 	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
+-	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
++	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
++	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
++	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
+ };
+ static const unsigned int vin4_data18_b_mux[] = {
+-	VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
+ 	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
+ 	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
+ 	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
+-	VI4_DATA8_MARK,  VI4_DATA9_MARK,
+ 	VI4_DATA10_MARK, VI4_DATA11_MARK,
+ 	VI4_DATA12_MARK, VI4_DATA13_MARK,
+ 	VI4_DATA14_MARK, VI4_DATA15_MARK,
+-	VI4_DATA16_MARK, VI4_DATA17_MARK,
++	VI4_DATA18_MARK, VI4_DATA19_MARK,
++	VI4_DATA20_MARK, VI4_DATA21_MARK,
++	VI4_DATA22_MARK, VI4_DATA23_MARK,
+ };
+ static const unsigned int vin4_data20_a_pins[] = {
+ 	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
