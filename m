@@ -1,105 +1,69 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 20/33] rcar-vin: add function to manipulate Gen3 chsel value
-Date: Mon, 26 Mar 2018 23:44:43 +0200
-Message-Id: <20180326214456.6655-21-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sender-of-o51.zoho.com ([135.84.80.216]:21121 "EHLO
+        sender-of-o51.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964857AbeCSVw7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Mar 2018 17:52:59 -0400
+In-Reply-To: <20180319213101.6100-1-wsa+renesas@sang-engineering.com>
+Reply-To: <qemu-devel@nongnu.org>
+Subject: Re: [Qemu-devel] [PATCH v2 0/3] nvram: at24c: fix problems related to "rom-size"
+Message-ID: <152149637617.147.13144022271990330634@71c20359a636>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+From: no-reply@patchew.org
+To: wsa+renesas@sang-engineering.com
+Cc: famz@redhat.com, qemu-devel@nongnu.org,
+        linux-renesas-soc@vger.kernel.org,
+        wsa+renesas@sang-engineering.com, f4bug@amsat.org
+Date: Mon, 19 Mar 2018 14:52:57 -0700 (PDT)
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
-feature of this register is that it's only present in the VIN0 and VIN4
-instances. The register in VIN0 controls the routing for VIN0-3 and the
-register in VIN4 controls routing for VIN4-7.
-
-To be able to control routing from a media device this function is need
-to control runtime PM for the subgroup master (VIN0 and VIN4). The
-subgroup master must be switched on before the register is manipulated,
-once the operation is complete it's safe to switch the master off and
-the new routing will still be in effect.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 38 ++++++++++++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
- 2 files changed, 40 insertions(+)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 696e53af8fc791bd..1809f5c0190eafb6 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-+#include <linux/pm_runtime.h>
- 
- #include <media/videobuf2-dma-contig.h>
- 
-@@ -1158,3 +1159,40 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
- 
- 	return ret;
- }
-+
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CHSEL manipulation
-+ */
-+
-+/*
-+ * There is no need to have locking around changing the routing
-+ * as it's only possible to do so when no VIN in the group is
-+ * streaming so nothing can race with the VNMC register.
-+ */
-+int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
-+{
-+	u32 ifmd, vnmc;
-+	int ret;
-+
-+	ret = pm_runtime_get_sync(vin->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Make register writes take effect immediately. */
-+	vnmc = rvin_read(vin, VNMC_REG);
-+	rvin_write(vin, vnmc & ~VNMC_VUP, VNMC_REG);
-+
-+	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
-+		VNCSI_IFMD_CSI_CHSEL(chsel);
-+
-+	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
-+
-+	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
-+
-+	/* Restore VNMC. */
-+	rvin_write(vin, vnmc, VNMC_REG);
-+
-+	pm_runtime_put(vin->dev);
-+
-+	return ret;
-+}
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 321283f1618ae0b9..c19ddc5e08cbbea4 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -169,4 +169,6 @@ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- /* Cropping, composing and scaling */
- void rvin_crop_scale_comp(struct rvin_dev *vin);
- 
-+int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
-+
- #endif
--- 
-2.16.2
+SGksCgpUaGlzIHNlcmllcyBzZWVtcyB0byBoYXZlIHNvbWUgY29kaW5nIHN0eWxlIHByb2JsZW1z
+LiBTZWUgb3V0cHV0IGJlbG93IGZvcgptb3JlIGluZm9ybWF0aW9uOgoKVHlwZTogc2VyaWVzCk1l
+c3NhZ2UtaWQ6IDIwMTgwMzE5MjEzMTAxLjYxMDAtMS13c2ErcmVuZXNhc0BzYW5nLWVuZ2luZWVy
+aW5nLmNvbQpTdWJqZWN0OiBbUWVtdS1kZXZlbF0gW1BBVENIIHYyIDAvM10gbnZyYW06IGF0MjRj
+OiBmaXggcHJvYmxlbXMgcmVsYXRlZCB0byAicm9tLXNpemUiCgo9PT0gVEVTVCBTQ1JJUFQgQkVH
+SU4gPT09CiMhL2Jpbi9iYXNoCgpCQVNFPWJhc2UKbj0xCnRvdGFsPSQoZ2l0IGxvZyAtLW9uZWxp
+bmUgJEJBU0UuLiB8IHdjIC1sKQpmYWlsZWQ9MAoKZ2l0IGNvbmZpZyAtLWxvY2FsIGRpZmYucmVu
+YW1lbGltaXQgMApnaXQgY29uZmlnIC0tbG9jYWwgZGlmZi5yZW5hbWVzIFRydWUKZ2l0IGNvbmZp
+ZyAtLWxvY2FsIGRpZmYuYWxnb3JpdGhtIGhpc3RvZ3JhbQoKY29tbWl0cz0iJChnaXQgbG9nIC0t
+Zm9ybWF0PSVIIC0tcmV2ZXJzZSAkQkFTRS4uKSIKZm9yIGMgaW4gJGNvbW1pdHM7IGRvCiAgICBl
+Y2hvICJDaGVja2luZyBQQVRDSCAkbi8kdG90YWw6ICQoZ2l0IGxvZyAtbiAxIC0tZm9ybWF0PSVz
+ICRjKS4uLiIKICAgIGlmICEgZ2l0IHNob3cgJGMgLS1mb3JtYXQ9ZW1haWwgfCAuL3NjcmlwdHMv
+Y2hlY2twYXRjaC5wbCAtLW1haWxiYWNrIC07IHRoZW4KICAgICAgICBmYWlsZWQ9MQogICAgICAg
+IGVjaG8KICAgIGZpCiAgICBuPSQoKG4rMSkpCmRvbmUKCmV4aXQgJGZhaWxlZAo9PT0gVEVTVCBT
+Q1JJUFQgRU5EID09PQoKVXBkYXRpbmcgM2M4Y2Y1YTljMjFmZjg3ODIxNjRkMWRlZjdmNDRiZDg4
+ODcxMzM4NApGcm9tIGh0dHBzOi8vZ2l0aHViLmNvbS9wYXRjaGV3LXByb2plY3QvcWVtdQogKiBb
+bmV3IHRhZ10gICAgICAgICAgICAgICBwYXRjaGV3LzIwMTgwMzE5MjEzMTAxLjYxMDAtMS13c2Er
+cmVuZXNhc0BzYW5nLWVuZ2luZWVyaW5nLmNvbSAtPiBwYXRjaGV3LzIwMTgwMzE5MjEzMTAxLjYx
+MDAtMS13c2ErcmVuZXNhc0BzYW5nLWVuZ2luZWVyaW5nLmNvbQpTd2l0Y2hlZCB0byBhIG5ldyBi
+cmFuY2ggJ3Rlc3QnCjAwMmQ3M2E4ZmEgbnZyYW06IGF0MjRjOiB1c2Ugc3RhbmRhcmQgZXJyb3Ig
+cmVwb3J0aW5nCjZjNGRmM2Y5ZTggbnZyYW06IGF0MjRjOiB1c2UgYSBzYW5lIGRlZmF1bHQgZm9y
+ICJyb20tc2l6ZSIKMjI2NDBlYTk4MSBudnJhbTogYXQyNGM6IHByZXZlbnQgc2VnZmF1bHQgYnkg
+Y2hlY2tpbmcgInJvbS1zaXplIgoKPT09IE9VVFBVVCBCRUdJTiA9PT0KQ2hlY2tpbmcgUEFUQ0gg
+MS8zOiBudnJhbTogYXQyNGM6IHByZXZlbnQgc2VnZmF1bHQgYnkgY2hlY2tpbmcgInJvbS1zaXpl
+Ii4uLgpDaGVja2luZyBQQVRDSCAyLzM6IG52cmFtOiBhdDI0YzogdXNlIGEgc2FuZSBkZWZhdWx0
+IGZvciAicm9tLXNpemUiLi4uCkNoZWNraW5nIFBBVENIIDMvMzogbnZyYW06IGF0MjRjOiB1c2Ug
+c3RhbmRhcmQgZXJyb3IgcmVwb3J0aW5nLi4uCkVSUk9SOiBFcnJvciBtZXNzYWdlcyBzaG91bGQg
+bm90IGNvbnRhaW4gbmV3bGluZXMKIzQwOiBGSUxFOiBody9udnJhbS9lZXByb21fYXQyNGMuYzo2
+NDoKKyAgICAgICAgICAgICAgICBlcnJvcl9yZXBvcnQoImZhaWxlZCB0byB3cml0ZSBiYWNraW5n
+IGZpbGVcbiIpOwoKRVJST1I6IEVycm9yIG1lc3NhZ2VzIHNob3VsZCBub3QgY29udGFpbiBuZXds
+aW5lcwojNDk6IEZJTEU6IGh3L252cmFtL2VlcHJvbV9hdDI0Yy5jOjEyNToKKyAgICAgICAgZXJy
+b3JfcmVwb3J0KCJyb20tc2l6ZSBub3QgYWxsb3dlZCB0byBiZSAwXG4iKTsKCkVSUk9SOiBFcnJv
+ciBtZXNzYWdlcyBzaG91bGQgbm90IGNvbnRhaW4gbmV3bGluZXMKIzU4OiBGSUxFOiBody9udnJh
+bS9lZXByb21fYXQyNGMuYzoxMzU6CisgICAgICAgICAgICBlcnJvcl9yZXBvcnQoIkJhY2tpbmcg
+ZmlsZSBzaXplICVsdSAhPSAldVxuIiwKCkVSUk9SOiBFcnJvciBtZXNzYWdlcyBzaG91bGQgbm90
+IGNvbnRhaW4gbmV3bGluZXMKIzY4OiBGSUxFOiBody9udnJhbS9lZXByb21fYXQyNGMuYzoxNDM6
+CisgICAgICAgICAgICBlcnJvcl9yZXBvcnQoIkJhY2tpbmcgZmlsZSBpbmNvcnJlY3QgcGVybWlz
+c2lvblxuIik7CgpFUlJPUjogRXJyb3IgbWVzc2FnZXMgc2hvdWxkIG5vdCBjb250YWluIG5ld2xp
+bmVzCiM3ODogRklMRTogaHcvbnZyYW0vZWVwcm9tX2F0MjRjLmM6MTY1OgorICAgICAgICAgICAg
+ZXJyb3JfcmVwb3J0KCJGYWlsZWQgaW5pdGlhbCBzeW5jIHdpdGggYmFja2luZyBmaWxlXG4iKTsK
+CnRvdGFsOiA1IGVycm9ycywgMCB3YXJuaW5ncywgNTkgbGluZXMgY2hlY2tlZAoKWW91ciBwYXRj
+aCBoYXMgc3R5bGUgcHJvYmxlbXMsIHBsZWFzZSByZXZpZXcuICBJZiBhbnkgb2YgdGhlc2UgZXJy
+b3JzCmFyZSBmYWxzZSBwb3NpdGl2ZXMgcmVwb3J0IHRoZW0gdG8gdGhlIG1haW50YWluZXIsIHNl
+ZQpDSEVDS1BBVENIIGluIE1BSU5UQUlORVJTLgoKPT09IE9VVFBVVCBFTkQgPT09CgpUZXN0IGNv
+bW1hbmQgZXhpdGVkIHdpdGggY29kZTogMQoKCi0tLQpFbWFpbCBnZW5lcmF0ZWQgYXV0b21hdGlj
+YWxseSBieSBQYXRjaGV3IFtodHRwOi8vcGF0Y2hldy5vcmcvXS4KUGxlYXNlIHNlbmQgeW91ciBm
+ZWVkYmFjayB0byBwYXRjaGV3LWRldmVsQGZyZWVsaXN0cy5vcmc=
