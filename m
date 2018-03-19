@@ -1,159 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:35894 "EHLO foss.arm.com"
+Received: from sauhun.de ([88.99.104.3]:44813 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932697AbeCMLU4 (ORCPT
+        id S1755329AbeCSId6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Mar 2018 07:20:56 -0400
-Date: Tue, 13 Mar 2018 11:20:51 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-pci@vger.kernel.org,
-        Dien Pham <dien.pham.ry@rvc.renesas.com>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V3] PCI: rcar: Use runtime PM to control controller clock
-Message-ID: <20180313112051.GB15480@e107981-ln.cambridge.arm.com>
-References: <20171110215411.31912-1-marek.vasut+renesas@gmail.com>
+        Mon, 19 Mar 2018 04:33:58 -0400
+Date: Mon, 19 Mar 2018 09:33:55 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        qemu-devel@nongnu.org, linux-renesas-soc@vger.kernel.org,
+        Michael Davidsaver <mdavidsaver@gmail.com>
+Subject: Re: [Qemu-devel] [PATCH 3/3] nvram: at24c: use a sane default for
+ "rom-size"
+Message-ID: <20180319083355.vw5cxkwyb4zihlcz@ninjato>
+References: <20180312214230.17561-1-wsa+renesas@sang-engineering.com>
+ <20180312214230.17561-4-wsa+renesas@sang-engineering.com>
+ <5108cc9b-9fb9-d202-d4bc-a5c1dd4d4f76@amsat.org>
+ <20180313201649.w44jtdbk4bow2f7x@ninjato>
+ <f90bfd58-1f51-dc72-a67a-c0021345f9ba@amsat.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tvc27v433gqtec4q"
 Content-Disposition: inline
-In-Reply-To: <20171110215411.31912-1-marek.vasut+renesas@gmail.com>
+In-Reply-To: <f90bfd58-1f51-dc72-a67a-c0021345f9ba@amsat.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
 
-On Fri, Nov 10, 2017 at 10:54:11PM +0100, Marek Vasut wrote:
-> From: Dien Pham <dien.pham.ry@rvc.renesas.com>
-> 
-> The controller clock can be switched off during suspend/resume,
-> let runtime PM take care of that.
-> 
-> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
-> To: linux-pci@vger.kernel.org
-> ---
-> V2: - Reorder the fail path in rcar_pcie_probe() to cater for the
->       reordering of function calls in probe
->     - Dispose of fail_clk in rcar_pcie_get_resources()
-> V3: - Fix up the failpath in probe function
-> ---
->  drivers/pci/host/pcie-rcar.c | 40 ++++++++++++----------------------------
->  1 file changed, 12 insertions(+), 28 deletions(-)
+--tvc27v433gqtec4q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I would like to ask you if this patch is still applicable and if so
-whether you want me to apply it stand-alone (ie does it depend on
-other patches ?), please let me know.
+Hi Philippe,
+
+> > I don't mind much, but why? My reasoning was "let's first fix the cause
+> > and then the symptom"?
+>=20
+> The '0' case is worst than incorrect, it segfaults, so you are right :)
+
+Ok, thanks.
+
+> >> Can you add a #define for this value? Such AT24C_ROMSIZE_MIN.
+> >=20
+> > Can do, of course. But won't that give room for regressions because
+> > people are already using it with lower values?
+>=20
+> Your patch already introduce the regression :)
+
+Not really. The current default setting (0) segfaults. This is how I
+discovered it. So, there can't be any active user of that.
+
+> I prefer self-explanatory #defines than magic value, but I see your
+> point, so if we can not decide a value, can you add a comment to explain
+> the magic value? I think the clearer is to add a #define with a comment.
+
+I wouldn't mind a macro AT24C_ROMSIZE_DEFAULT and a comment explaining
+why we chose this value. This is totally fine with me.
+
+It was just the MIN value I saw potential usage regressions with.
+
+> IMO there are too many AT24C eeproms to model, so the "rom-size"
+> variable is the easiest way. Your patch #2 is simple enough to avoid the
+> #DIV/0!
+
+Fine with me, too. I will update my series accordingly.
 
 Thanks,
-Lorenzo
 
-> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-> index 12796eccb2be..e00f865952d5 100644
-> --- a/drivers/pci/host/pcie-rcar.c
-> +++ b/drivers/pci/host/pcie-rcar.c
-> @@ -145,7 +145,6 @@ struct rcar_pcie {
->  	void __iomem		*base;
->  	struct list_head	resources;
->  	int			root_bus_nr;
-> -	struct clk		*clk;
->  	struct clk		*bus_clk;
->  	struct			rcar_msi msi;
->  };
-> @@ -917,24 +916,14 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
->  	if (IS_ERR(pcie->base))
->  		return PTR_ERR(pcie->base);
->  
-> -	pcie->clk = devm_clk_get(dev, "pcie");
-> -	if (IS_ERR(pcie->clk)) {
-> -		dev_err(dev, "cannot get platform clock\n");
-> -		return PTR_ERR(pcie->clk);
-> -	}
-> -	err = clk_prepare_enable(pcie->clk);
-> -	if (err)
-> -		return err;
-> -
->  	pcie->bus_clk = devm_clk_get(dev, "pcie_bus");
->  	if (IS_ERR(pcie->bus_clk)) {
->  		dev_err(dev, "cannot get pcie bus clock\n");
-> -		err = PTR_ERR(pcie->bus_clk);
-> -		goto fail_clk;
-> +		return PTR_ERR(pcie->bus_clk);
->  	}
->  	err = clk_prepare_enable(pcie->bus_clk);
->  	if (err)
-> -		goto fail_clk;
-> +		return err;
->  
->  	i = irq_of_parse_and_map(dev->of_node, 0);
->  	if (!i) {
-> @@ -956,8 +945,6 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
->  
->  err_map_reg:
->  	clk_disable_unprepare(pcie->bus_clk);
-> -fail_clk:
-> -	clk_disable_unprepare(pcie->clk);
->  
->  	return err;
->  }
-> @@ -1125,22 +1112,22 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  
->  	rcar_pcie_parse_request_of_pci_ranges(pcie);
->  
-> +	pm_runtime_enable(pcie->dev);
-> +	err = pm_runtime_get_sync(pcie->dev);
-> +	if (err < 0) {
-> +		dev_err(pcie->dev, "pm_runtime_get_sync failed\n");
-> +		goto err_pm_disable;
-> +	}
-> +
->  	err = rcar_pcie_get_resources(pcie);
->  	if (err < 0) {
->  		dev_err(dev, "failed to request resources: %d\n", err);
-> -		goto err_free_bridge;
-> +		goto err_pm_put;
->  	}
->  
->  	err = rcar_pcie_parse_map_dma_ranges(pcie, dev->of_node);
->  	if (err)
-> -		goto err_free_bridge;
-> -
-> -	pm_runtime_enable(dev);
-> -	err = pm_runtime_get_sync(dev);
-> -	if (err < 0) {
-> -		dev_err(dev, "pm_runtime_get_sync failed\n");
-> -		goto err_pm_disable;
-> -	}
-> +		goto err_pm_put;
->  
->  	/* Failure to get a link might just be that no cards are inserted */
->  	hw_init_fn = of_device_get_match_data(dev);
-> @@ -1172,13 +1159,10 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  
->  err_pm_put:
->  	pm_runtime_put(dev);
-> -
->  err_pm_disable:
->  	pm_runtime_disable(dev);
-> -
-> -err_free_bridge:
-> -	pci_free_host_bridge(bridge);
->  	pci_free_resource_list(&pcie->resources);
-> +	pci_free_host_bridge(bridge);
->  
->  	return err;
->  }
-> -- 
-> 2.11.0
-> 
+   Wolfram
+
+--tvc27v433gqtec4q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqvde4ACgkQFA3kzBSg
+KbZOHRAAjBMuJjj3SPYWkhYuHhpVGhOxnUIazf6rkz396XKFf+cuNgqSI4C7vDhN
+xzDUBsDpYkGdxwtTup282x2yQbvuC155Og+B0qzACE/qlIsr1b5xDnFWISQp9DrQ
+qfZjFnd9GYUVVqOz78IpB29oIed4R8vDkOZKv9wbmZxahVN5lpeVqrHm38aIsq4W
+sZLIKbLwLe0KesTwBZjPDPRupstynPav4NLT1KWHW015PYI5wwXZXwHP7qq0D4vs
+M4geyZ8hAhMOiyiPPZ/rIvggVNCicuri7mCyZg5KOLNnAu6wWgaBWfKAM7cozwqU
+boXmyt/m4EJohPYeucqB0bfGqdj9FPNyGtP8iaqI4glE5YjdKA9YfsvQuHmVP2Kk
+GsId0eznimI+Hg1Gce6uCBxocC7wwfp4LTfrQlY60sElCFhJdyOcDmoPS6K+P3Dk
+T44WOH3rtiLUtdaRD2+j2ypzca8Agex4BRCQF2nQGyx1Fu2Bef7ZomI4vURt7j2V
+iF71UsM+7HeQTHAC6r81K/QJd4Eya+aKQwc/XY5NKRw/SqIZ2kG0Tx6ESV/HLnQd
+TUQcs0qKGUyK2HoLFDI85IVNxVK23zthnmrfYsYw8RP0hY/NXvPzCHgjh1x80omd
++T92dJ9x/Y0QQ3vfrxXAhV49OQVNZYk97oSi4yLzqqTOJ6KA8Ms=
+=596v
+-----END PGP SIGNATURE-----
+
+--tvc27v433gqtec4q--
