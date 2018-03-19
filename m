@@ -1,63 +1,51 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2 2/8] DT: reset: renesas,rzn1-reboot: document RZ/N1 reboot driver
-Date: Thu, 22 Mar 2018 11:44:39 +0000
-Message-Id: <1521719091-25157-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:64189 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754569AbeCSM2i (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Mar 2018 08:28:38 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/7] arm64: dts: renesas: r8a77965: add usb3_phy node
+Date: Mon, 19 Mar 2018 21:28:22 +0900
+Message-Id: <1521462507-23287-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-as part of the sysctrl MFD to handle rebooting the CA7 cores.
-This documents the driver bindings.
+This patch adds usb3_phy node for r8a77965.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- .../bindings/power/renesas,rzn1-reboot.txt         | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-new file mode 100644
-index 0000000..bea46e1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-@@ -0,0 +1,22 @@
-+DT bindings for the Renesas RZ-N1 Reboot Driver
-+
-+== Reboot Driver Node ==
-+
-+The reboot driver is always a subnode of the system controller node, see
-+renesas,rzn1-sysctrl.txt for details.
-+
-+Bindings:
-++ Optional:
-+	compatible = "renesas,r9a06g032-reboot";
-++ Required:
-+	compatible = "renesas,rzn1-reboot";
-+
-+Example:
-+	sysctrl: sysctrl@4000c000 {
-+		compatible = "renesas,r9a06g032-sysctrl", "syscon", "simple-mfd";
-+		reg = <0x4000c000 0x1000>;
-+
-+		reboot {
-+			compatible = "renesas,r9a06g032-reboot";
-+		};
-+	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index d498274..abb4d4d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -868,9 +868,16 @@
+ 		};
+ 
+ 		usb3_phy0: usb-phy@e65ee000 {
++			compatible = "renesas,r8a77965-usb3-phy",
++				     "renesas,rcar-gen3-usb3-phy";
+ 			reg = <0 0xe65ee000 0 0x90>;
++			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
++				 <&usb_extal_clk>;
++			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 328>;
+ 			#phy-cells = <0>;
+-			/* placeholder */
++			status = "disabled";
+ 		};
+ 
+ 		usb3_peri0: usb@ee020000 {
 -- 
-2.7.4
-
+1.9.1
