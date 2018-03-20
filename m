@@ -1,92 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35105 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752201AbeCUPn2 (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38997 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933689AbeCTApo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Mar 2018 11:43:28 -0400
+        Mon, 19 Mar 2018 20:45:44 -0400
+Received: by mail-wr0-f193.google.com with SMTP id c24so8610287wrc.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Mar 2018 17:45:43 -0700 (PDT)
+Subject: Re: [PATCH v2 2/3] nvram: at24c: use a sane default for "rom-size"
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        qemu-devel@nongnu.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <20180319213101.6100-1-wsa+renesas@sang-engineering.com>
+ <20180319213101.6100-3-wsa+renesas@sang-engineering.com>
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>
+Message-ID: <e1c19d1a-0d1b-f4b6-e255-649ab0349e2d@amsat.org>
+Date: Tue, 20 Mar 2018 01:45:41 +0100
 MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 21 Mar 2018 16:43:26 +0100
-Message-ID: <CAMuHMdW+OzGYK7zj+-jWmZwMcve7=C5gGamgH9jmdgqJ7NC7Vg@mail.gmail.com>
-Subject: Use after free with pinctrl_enable() and devm_pinctrl_register_and_init()
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180319213101.6100-3-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus, Tony,
+On 03/19/2018 10:31 PM, Wolfram Sang wrote:
+> 0 as "rom-size" will lead to an error message. Let's use the size of a
+> small 24c01 which has 128 byte.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-If claiming hogs failed, pinctrl_enable() frees the pctldev, and
-destroys its mutex.
+Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
 
-However, if the pin controller is registered using
-devm_pinctrl_register_and_init(), device resource management will call
-pinctrl_unregister() later.  This will access the destroyed pctldev,
-which may crash the system.
-
-With poisoning enabled (CONFIG_DEBUG_SLAB=y), the crash is imminent:
-
-    sh-pfc e6050000.pin-controller: function 'foo' not supported
-    sh-pfc e6050000.pin-controller: invalid function a in map table
-    sh-pfc e6050000.pin-controller: error claiming hogs: -22
-    sh-pfc e6050000.pin-controller: could not claim hogs: -22
-    Unhandled fault: alignment exception (0x001) at 0x6b6b6c2f
-    pgd = 581794e0
-    [6b6b6c2f] *pgd=00000000
-    Internal error: : 1 [#1] SMP ARM
-    Modules linked in:
-    CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-4.16.0-rc5-kzm9g-00484-gb3469948b11d02a0-dirty #1043
-    Hardware name: Generic SH73A0 (Flattened Device Tree)
-    PC is at __lock_acquire+0xd8/0x1bf0
-    LR is at lock_acquire+0x98/0xb8
-    pc : [<c016fc84>]    lr : [<c0171f80>]    psr: 20000093
-    sp : df441be8  ip : df441c80  fp : 00000000
-    r10: 00000000  r9 : 00000001  r8 : 00000000
-    r7 : 00000000  r6 : c1084170  r5 : df5586e8  r4 : df43e040
-    r3 : 6b6b6c2f  r2 : 6b6b6b6b  r1 : 00000000  r0 : 6b6b6b6b
-    Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
-    Control: 10c5387d  Table: 4000404a  DAC: 00000051
-    Process swapper/0 (pid: 1, stack limit = 0x2557051f)
-    Stack: (0xdf441be8 to 0xdf442000)
-    ...
-    [<c016fc84>] (__lock_acquire) from [<c0171f80>] (lock_acquire+0x98/0xb8)
-    [<c0171f80>] (lock_acquire) from [<c0598888>] (__mutex_lock+0x7c/0x9ec)
-    [<c0598888>] (__mutex_lock) from [<c0599210>] (mutex_lock_nested+0x18/0x20)
-    [<c0599210>] (mutex_lock_nested) from [<c034cd18>]
-(pinctrl_unregister+0x48/0x158)
-    [<c034cd18>] (pinctrl_unregister) from [<c03b3f30>]
-(release_nodes+0x218/0x25c)
-    [<c03b3f30>] (release_nodes) from [<c03b08ac>]
-(driver_probe_device+0x200/0x318)
-    [<c03b08ac>] (driver_probe_device) from [<c03aedd8>]
-(bus_for_each_drv+0x90/0xb8)
-
-My first idea was to add a !devres_find(pctldev->dev, devm_pinctrl_dev_release,
-NULL, NULL) check to the error path of pinctrl_enable(), which seems
-to work(TM).
-
-However, that's still not 100% correct and sufficient:
-  - pinctrl_unregister() will do some cleanup (pinctrldev_list and debugfs) that
-    should not be done,
-  - When using pinctrl_register() or devm_pinctrl_register(), and
-    pinctrl_enable() fails, all other cleanup done in pinctrl_unregister()
-    never happens.
-
-Thoughts?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  hw/nvram/eeprom_at24c.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/hw/nvram/eeprom_at24c.c b/hw/nvram/eeprom_at24c.c
+> index ccf78b25e4..ab1ef686e2 100644
+> --- a/hw/nvram/eeprom_at24c.c
+> +++ b/hw/nvram/eeprom_at24c.c
+> @@ -28,6 +28,9 @@
+>  #define TYPE_AT24C_EE "at24c-eeprom"
+>  #define AT24C_EE(obj) OBJECT_CHECK(EEPROMState, (obj), TYPE_AT24C_EE)
+>  
+> +/* default is the size of a 24c01 EEPROM */
+> +#define AT24C_ROMSIZE_DEFAULT 128
+> +
+>  typedef struct EEPROMState {
+>      I2CSlave parent_obj;
+>  
+> @@ -171,7 +174,7 @@ void at24c_eeprom_reset(DeviceState *state)
+>  }
+>  
+>  static Property at24c_eeprom_props[] = {
+> -    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 0),
+> +    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, AT24C_ROMSIZE_DEFAULT),
+>      DEFINE_PROP_BOOL("writable", EEPROMState, writable, true),
+>      DEFINE_PROP_DRIVE("drive", EEPROMState, blk),
+>      DEFINE_PROP_END_OF_LIST()
+> 
