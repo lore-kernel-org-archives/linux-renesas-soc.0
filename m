@@ -1,74 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753584AbeCPOv4 (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:43172 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752401AbeCTJIR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:51:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/69] arm64: dts: renesas: r8a77970: move node which has no reg property out of bus
-Date: Fri, 16 Mar 2018 15:50:37 +0100
-Message-Id: <7569d1ee01c75b8581521bc67e595a575a7eafce.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Tue, 20 Mar 2018 05:08:17 -0400
+Received: by mail-qk0-f195.google.com with SMTP id g184so809753qkd.10
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Mar 2018 02:08:17 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <152153403134.8610.16591493940845260718.sendpatchset@little-apple>
+References: <152153402203.8610.10666108438721508284.sendpatchset@little-apple> <152153403134.8610.16591493940845260718.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Mar 2018 10:08:16 +0100
+Message-ID: <CAMuHMdUAfWi+zgyBywkca5T_Txiw3bMUeCecKMigMN_F90eBxA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm: dts: r8a7778 Bock-W Ethernet has busted IRQs
+To: Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move timer node from soc node to root node.  The node that have been moved
-do not have any register properties and thus shouldn't be placed on the
-bus.
+Hi Magnus, Uli,
 
-This problem is flagged by the compiler as follows:
-$ make W=1
-...
-  DTC     arch/arm64/boot/dts/renesas/r8a77970-eagle.dtb
-arch/arm64/boot/dts/renesas/r8a77970-eagle.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
-  DTC     arch/arm64/boot/dts/renesas/r8a77970-v3msk.dtb
-arch/arm64/boot/dts/renesas/r8a77970-v3msk.dtb: Warning (simple_bus_reg): Node /soc/timer missing or empty reg/ranges property
+On Tue, Mar 20, 2018 at 9:20 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> The on-board ethernet on r8a7778 Bock-W does not work out of the
+> box. Booting with initramfs and trying to do ifconfig up/down will
+> show that something is busted.
+>
+> Judging by the board schematics the IRQ signal from the LAN89218
+> chip gets routed to some magic board-specific FPGA and if the stars
+> happen to be aligned this signal may also reach the r8a7778 SoC.
+>
+> This temporary hack tries to use the on-chip GPIO device in r8a7778 for
+> interrupts however on r8a7778 all the GPIO devices share the same interrupt
+> line in the GIC but I wonder if this really has been tested. I recall
+> writing the GPIO driver on r8a7779 and r8a73a4 and then extending to
+> R-Car Gen2 and Gen3. Not sure if it will work on r8a7778 or not.
+>
+> Most likely the PFC needs to be configured to configure the IRQ0 signal
+> to use the irqpin driver, or the GPIO device may be used in a similar
+> fashion as this patch.
+>
+> Unfortunately more effort is needed to track this down. A perhaps related
+> issue on Bock-W is that it sometimes hangs on boot without output on
+> the serial console. Yum.
+>
+> Not for upstream merge.
+>
+> Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+Is this the issue "[PATCH v3 0/5] r8a7778/bockw: fix SMSC Ethernet for MP"
+(https://marc.info/?l=linux-sh&m=144172695421685&w=2) was meant to fix?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index c35a117fc447..566a7f704830 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -92,18 +92,6 @@
- 			resets = <&cpg 408>;
- 		};
- 
--		timer {
--			compatible = "arm,armv8-timer";
--			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) |
--						  IRQ_TYPE_LEVEL_LOW)>,
--				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) |
--						  IRQ_TYPE_LEVEL_LOW)>;
--		};
--
- 		rwdt: watchdog@e6020000 {
- 			compatible = "renesas,r8a77970-wdt",
- 				     "renesas,rcar-gen3-wdt";
-@@ -442,4 +430,12 @@
- 			#size-cells = <0>;
- 		};
- 	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
- };
+  irqchip: renesas-intc-irqpin: r8a7778 IRLM setup support
+  ARM: shmobile: r8a7778: enable IRLM setup via DT
+  ARM: shmobile: bockw dts: enable SMSC interrupt
+  ARM: shmobile_defconfig: enable PINCTRL_SINGLE
+  ARM: multi_v7_defconfig: enable PINCTRL_SINGLE
+
+Seems like only the first patch in that series ever made it upstream.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
