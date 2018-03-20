@@ -1,48 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:53016 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753631AbeCPOwL (ORCPT
+        with ESMTP id S1751920AbeCTQMK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:52:11 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/69] arm64: dts: renesas: r8a77970: Remove non-existing STBE region
-Date: Fri, 16 Mar 2018 15:50:47 +0100
-Message-Id: <d0d2ad1ff6e379a8ca6c8e814433e54637fb1516.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Tue, 20 Mar 2018 12:12:10 -0400
+Date: Tue, 20 Mar 2018 17:12:04 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/7] arm64: dts: renesas: r8a77965: add usb related nodes
+Message-ID: <20180320161204.7vqsiukgvv7uyn6t@verge.net.au>
+References: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521462507-23287-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, Mar 19, 2018 at 09:28:20PM +0900, Yoshihiro Shimoda wrote:
+> All dt-bindings exist on next-20180319. Since Renesas tree closed for
+> v4.17, this patch set should be for v4.18.
+> 
+> Yoshihiro Shimoda (7):
+>   arm64: dts: renesas: r8a77965: add usb2_phy nodes
+>   arm64: dts: renesas: r8a77965: add usb3_phy node
+>   arm64: dts: renesas: r8a77965: add USB 2.0 host nodes
+>   arm64: dts: renesas: r8a77965: add usb_dmac nodes
+>   arm64: dts: renesas: r8a77965: add HS-USB node
+>   arm64: dts: renesas: r8a77965: add USB 3.0 host node
+>   arm64: dts: renesas: r8a77965: add USB 3.0 peripheral node
+> 
+>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 122 +++++++++++++++++++++++++++---
+>  1 file changed, 112 insertions(+), 10 deletions(-)
 
-R-Car V3M does not have the Stream Buffer for EtherAVB-IF (STBE).
-
-Note that the RAVB driver does not use this region.
-
-Fixes: bea2ab136eaacec2 ("arm64: dts: renesas: r8a77970: add EtherAVB support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 566a7f704830..fc397ccd06b6 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -388,7 +388,7 @@
- 		avb: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a77970",
- 				     "renesas,etheravb-rcar-gen3";
--			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
-+			reg = <0 0xe6800000 0 0x800>;
- 			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.11.0
+Thanks, applied.
