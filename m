@@ -1,63 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60561 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750907AbeC0LML (ORCPT
+Received: from sauhun.de ([88.99.104.3]:51607 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751186AbeCTQTM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Mar 2018 07:12:11 -0400
-Date: Tue, 27 Mar 2018 13:12:07 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3 0/2] mmc: renesas_sdhi: add eMMC HS400 mode support
-Message-ID: <20180327111206.y7azdu355c6cevvi@verge.net.au>
-References: <20180213123358.13212-1-horms+renesas@verge.net.au>
- <CAPDyKFryhg=5G9G3ss3hFSAuri1-_y0uu7ZK=PNGJ0TF=-__DA@mail.gmail.com>
- <20180227090757.wvm6j4sy5nmeecf3@katana>
- <CAPDyKFqMacY1THjO+cTb6Aws3mCnbLogui9T6PjiVcoR89FiLg@mail.gmail.com>
- <20180227130222.zsz73d3upi3s7vjv@ninjato>
+        Tue, 20 Mar 2018 12:19:12 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: qemu-devel@nongnu.org
+Cc: =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 0/3] nvram: at24c: fix problems related to "rom-size"
+Date: Tue, 20 Mar 2018 17:18:47 +0100
+Message-Id: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180227130222.zsz73d3upi3s7vjv@ninjato>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 02:02:23PM +0100, Wolfram Sang wrote:
-> 
-> > Perhaps someone need to explain in more detail what the HW controller
-> > needs to manage tuning for HS400? I don't like that we may end up
-> > getting it magically to work, then it's we better understand the
-> > details and if the current sequence provided by the mmc core can't
-> > fulfill the need for this case, we may instead consider adding an
-> > additional pre/post host ops.
-> 
-> Thanks. Exactly this thinking prevented me from saying "It works, let's
-> ship it" ;)
+I used this driver as a template for a custom one. While hacking on my own, I
+noticed some problems in this driver, too. This series fixes the first set of
+them, related to the "rom-size" parameter. It fixes a segfault.
 
-Thanks, I've dug a little deeper into the history of this code and
-the associated hardware documentation and it seems that the desired
-sequence is as follows:
+I think the first patch is clearly suitable for stable. I think the second one,
+too, but not as clearly. The third one is a cleanup and not for stable. Still,
+I am open for opinions about these thoughts.
 
-1. Reset HS400 mode (currently executed near beginning of tmio_mmc_set_ios())
-2. Set clock for HS200 mode (tmio_mmc_set_ios())
-3. Tune in HS200 mode
-4. Set clock for HS200 mode (tmio_mmc_set_ios())
-5. Set to HS400 mode (currently renesas_sdhi_prepare_hs400_tuning() which
-                      is executed near the end of tmio_mmc_set_ios())
+Thanks,
 
-X. It is also necessary to disable the SCC after setting HS400 mode
-   has occurred before setting to High Speed mode.
-   This is currently executed near the beginning of tmio_mmc_set_ios().
+   Wolfram
 
-The current implementation differs a little from the above and its
-hard to tell if that is because of hardware requirements or as
-an artefact of the implementation of steps 1 and 5 being hooked into
-tmio_mmc_set_ios().
+Changes since v2:
 
-It seems to me that step 1 could use the MMC core prepare_hs400_tuning
-hook. Its less clear to me where steps 5 and X should hook in but perhaps
-tmio_mmc_set_ios() is the right place.
+* removed '\n' from error_report-strings
+* made sure checkpatch is happy
+* added tags from Philippe (thanks!)
+
+Changes since v1:
+
+* reordered patches according to significance for stable
+* use AT24C_ROMSIZE_DEFAULT instead of magic value
+* patch 3 doesn't improve the ERR macro anymore but replaces
+  it completely with error_report().
+
+
+Wolfram Sang (3):
+  nvram: at24c: prevent segfault by checking "rom-size"
+  nvram: at24c: use a sane default for "rom-size"
+  nvram: at24c: use standard error reporting
+
+ hw/nvram/eeprom_at24c.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
+
+-- 
+2.11.0
