@@ -1,163 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:23863 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752387AbeCZVqk (ORCPT
+Received: from 8bytes.org ([81.169.241.247]:34174 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751549AbeCTSg2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:46:40 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 12/33] rcar-vin: fix handling of single field frames (top, bottom and alternate fields)
-Date: Mon, 26 Mar 2018 23:44:35 +0200
-Message-Id: <20180326214456.6655-13-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 20 Mar 2018 14:36:28 -0400
+Date: Tue, 20 Mar 2018 13:36:10 -0500
+From: Joerg Roedel <joro@8bytes.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        iommu@lists.linux-foundation.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH  1/3] dt-bindings: iommu: ipmmu-vmsa: Add device tree
+ support for r8a774[35]
+Message-ID: <20180320183609.3tdbenxkr3lkjbqp@8bytes.org>
+References: <1516808522-17348-1-git-send-email-biju.das@bp.renesas.com>
+ <1516808522-17348-2-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1516808522-17348-2-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There was never proper support in the VIN driver to deliver ALTERNATING
-field format to user-space, remove this field option. The problem is
-that ALTERNATING field order requires the sequence numbers of buffers
-returned to userspace to reflect if fields were dropped or not,
-something which is not possible with the VIN drivers capture logic.
+On Wed, Jan 24, 2018 at 03:42:00PM +0000, Biju Das wrote:
+> Document r8a774[35] specific compatible strings. The Renesas RZ/G1[ME]
+> (r8a774[35]) IPMMU are identical to the R-Car Gen2 family.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-The VIN driver can still capture from a video source which delivers
-frames in ALTERNATING field order, but needs to combine them using the
-VIN hardware into INTERLACED field order. Before this change if a source
-was delivering fields using ALTERNATE the driver would default to
-combining them using this hardware feature. Only if the user explicitly
-requested ALTERNATE field order would incorrect frames be delivered.
+Applied, thanks.
 
-The height should not be cut in half for the format for TOP or BOTTOM
-fields settings. This was a mistake and it was made visible by the
-scaling refactoring. Correct behavior is that the user should request a
-frame size that fits the half height frame reflected in the field
-setting. If not the VIN will do its best to scale the top or bottom to
-the requested format and cropping and scaling do not work as expected.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-
----
-
-* Changes since v12
-- Spelling where -> were.
-- Add review tag from Hans.
----
- drivers/media/platform/rcar-vin/rcar-dma.c  | 15 +----------
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 40 +++++++----------------------
- 2 files changed, 10 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 4f48575f2008fe34..9233924e5b52de5f 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -617,7 +617,6 @@ static int rvin_setup(struct rvin_dev *vin)
- 	case V4L2_FIELD_INTERLACED_BT:
- 		vnmc = VNMC_IM_FULL | VNMC_FOC;
- 		break;
--	case V4L2_FIELD_ALTERNATE:
- 	case V4L2_FIELD_NONE:
- 		vnmc = VNMC_IM_ODD_EVEN;
- 		progressive = true;
-@@ -745,18 +744,6 @@ static bool rvin_capture_active(struct rvin_dev *vin)
- 	return rvin_read(vin, VNMS_REG) & VNMS_CA;
- }
- 
--static enum v4l2_field rvin_get_active_field(struct rvin_dev *vin, u32 vnms)
--{
--	if (vin->format.field == V4L2_FIELD_ALTERNATE) {
--		/* If FS is set it's a Even field */
--		if (vnms & VNMS_FS)
--			return V4L2_FIELD_BOTTOM;
--		return V4L2_FIELD_TOP;
--	}
--
--	return vin->format.field;
--}
--
- static void rvin_set_slot_addr(struct rvin_dev *vin, int slot, dma_addr_t addr)
- {
- 	const struct rvin_video_format *fmt;
-@@ -892,7 +879,7 @@ static irqreturn_t rvin_irq(int irq, void *data)
- 
- 	/* Capture frame */
- 	if (vin->queue_buf[slot]) {
--		vin->queue_buf[slot]->field = rvin_get_active_field(vin, vnms);
-+		vin->queue_buf[slot]->field = vin->format.field;
- 		vin->queue_buf[slot]->sequence = vin->sequence;
- 		vin->queue_buf[slot]->vb2_buf.timestamp = ktime_get_ns();
- 		vb2_buffer_done(&vin->queue_buf[slot]->vb2_buf,
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 16e895657c3f51c5..e956a385cc13f5f3 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -121,33 +121,6 @@ static int rvin_reset_format(struct rvin_dev *vin)
- 	vin->format.colorspace	= mf->colorspace;
- 	vin->format.field	= mf->field;
- 
--	/*
--	 * If the subdevice uses ALTERNATE field mode and G_STD is
--	 * implemented use the VIN HW to combine the two fields to
--	 * one INTERLACED frame. The ALTERNATE field mode can still
--	 * be requested in S_FMT and be respected, this is just the
--	 * default which is applied at probing or when S_STD is called.
--	 */
--	if (vin->format.field == V4L2_FIELD_ALTERNATE &&
--	    v4l2_subdev_has_op(vin_to_source(vin), video, g_std))
--		vin->format.field = V4L2_FIELD_INTERLACED;
--
--	switch (vin->format.field) {
--	case V4L2_FIELD_TOP:
--	case V4L2_FIELD_BOTTOM:
--	case V4L2_FIELD_ALTERNATE:
--		vin->format.height /= 2;
--		break;
--	case V4L2_FIELD_NONE:
--	case V4L2_FIELD_INTERLACED_TB:
--	case V4L2_FIELD_INTERLACED_BT:
--	case V4L2_FIELD_INTERLACED:
--		break;
--	default:
--		vin->format.field = RVIN_DEFAULT_FIELD;
--		break;
--	}
--
- 	rvin_reset_crop_compose(vin);
- 
- 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
-@@ -235,15 +208,20 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	switch (pix->field) {
- 	case V4L2_FIELD_TOP:
- 	case V4L2_FIELD_BOTTOM:
--	case V4L2_FIELD_ALTERNATE:
--		pix->height /= 2;
--		source->height /= 2;
--		break;
- 	case V4L2_FIELD_NONE:
- 	case V4L2_FIELD_INTERLACED_TB:
- 	case V4L2_FIELD_INTERLACED_BT:
- 	case V4L2_FIELD_INTERLACED:
- 		break;
-+	case V4L2_FIELD_ALTERNATE:
-+		/*
-+		 * Driver dose not (yet) support outputting ALTERNATE to a
-+		 * userspace. It does support outputting INTERLACED so use
-+		 * the VIN hardware to combine the two fields.
-+		 */
-+		pix->field = V4L2_FIELD_INTERLACED;
-+		pix->height *= 2;
-+		break;
- 	default:
- 		pix->field = RVIN_DEFAULT_FIELD;
- 		break;
--- 
-2.16.2
+Patches 2 and 3 seems already to be applied to another tree.
