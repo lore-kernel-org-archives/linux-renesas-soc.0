@@ -1,267 +1,69 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH/RFT v2 1/3] thermal: rcar_thermal: add r8a77995 support
-Date: Fri, 30 Mar 2018 12:13:01 +0900
-Message-Id: <1522379583-4503-2-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1522379583-4503-1-git-send-email-ykaneko0929@gmail.com>
-References: <1522379583-4503-1-git-send-email-ykaneko0929@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:50539 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751405AbeCUIhr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 21 Mar 2018 04:37:47 -0400
+Received: by mail-wm0-f42.google.com with SMTP id f19so8132761wmc.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Mar 2018 01:37:46 -0700 (PDT)
+Date: Wed, 21 Mar 2018 09:37:42 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [Intel-gfx] [PATCH igt 0/8] Non-Intel test suite fixes
+Message-ID: <20180321083742.GC14155@phenom.ffwll.local>
+References: <1521125144-28614-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20180316085551.GG14155@phenom.ffwll.local>
+ <CAO3366wA2iUko95gJghTLptZ0HvS6iZzkSKp1NezyH3_kkoEAw@mail.gmail.com>
+ <1868096.KLcM8ItYGk@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1868096.KLcM8ItYGk@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for R-Car D3 (r8a77995) thermal sensor.
+On Tue, Mar 20, 2018 at 01:32:17PM +0200, Laurent Pinchart wrote:
+> Hello,
+> 
+> On Monday, 19 March 2018 18:41:05 EET Ulrich Hecht wrote:
+> > On Fri, Mar 16, 2018 at 9:55 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> > > On Thu, Mar 15, 2018 at 03:45:36PM +0100, Ulrich Hecht wrote:
+> > >> Hi!
+> > >> 
+> > >> I have run the tests on a Renesas R-Car M3-W's DU device, and have found
+> > >> a number of false negatives that mostly stem from use of Intel-specifics
+> > >> without checking if that makes sense first. So here's a bunch of fixes
+> > >> for those, hope they are generic enough for upstreaming.
+> > > 
+> > > Nice, other people using this! Do you plan to maintain this actively going
+> > > forward, or is this more a one-off effort?
+> > 
+> > For now, this is just an attempt at evaluating if this works for us.
+> > It has caught a few things that look like legitimate bugs to me,
+> > though...
+> 
+> That's good news ! (Not that I'm happy that we have bugs, but catching them 
+> shows that igt is useful for us). I hope this will help convincing management 
+> that we should keep contributing to igt going forward.
 
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
- drivers/thermal/rcar_thermal.c | 148 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 116 insertions(+), 32 deletions(-)
+Yeah I'm really hoping other vendors could join the fun, and long-term
+we'd have a real kms validation suite. There's always going to be a need
+for vendor-specific tests (and we're happy to merge them, see e.g. vc4),
+but having a test suite that tries to be generic as much as possible, for
+an uapi that tries to be generic too, seems like a really good idea.
 
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index 73e5fee..a631bff 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -58,10 +58,35 @@ struct rcar_thermal_common {
- 	spinlock_t lock;
- };
- 
-+enum rcar_thermal_type {
-+	RCAR_THERMAL,
-+	RCAR_GEN2_THERMAL,
-+	RCAR_GEN3_THERMAL,
-+};
-+
-+struct rcar_thermal_chip {
-+	int use_of_thermal;
-+	enum rcar_thermal_type type;
-+};
-+
-+static const struct rcar_thermal_chip rcar_thermal = {
-+	.use_of_thermal = 0,
-+	.type = RCAR_THERMAL,
-+};
-+static const struct rcar_thermal_chip rcar_gen2_thermal = {
-+	.use_of_thermal = 1,
-+	.type = RCAR_GEN2_THERMAL,
-+};
-+static const struct rcar_thermal_chip rcar_gen3_thermal = {
-+	.use_of_thermal = 1,
-+	.type = RCAR_GEN3_THERMAL,
-+};
-+
- struct rcar_thermal_priv {
- 	void __iomem *base;
- 	struct rcar_thermal_common *common;
- 	struct thermal_zone_device *zone;
-+	struct rcar_thermal_chip *chip;
- 	struct delayed_work work;
- 	struct mutex lock;
- 	struct list_head list;
-@@ -77,13 +102,20 @@ struct rcar_thermal_priv {
- #define rcar_priv_to_dev(priv)		((priv)->common->dev)
- #define rcar_has_irq_support(priv)	((priv)->common->base)
- #define rcar_id_to_shift(priv)		((priv)->id * 8)
--#define rcar_of_data(dev)		((unsigned long)of_device_get_match_data(dev))
--#define rcar_use_of_thermal(dev)	(rcar_of_data(dev) == USE_OF_THERMAL)
- 
--#define USE_OF_THERMAL	1
- static const struct of_device_id rcar_thermal_dt_ids[] = {
--	{ .compatible = "renesas,rcar-thermal", },
--	{ .compatible = "renesas,rcar-gen2-thermal", .data = (void *)USE_OF_THERMAL },
-+	{
-+		.compatible = "renesas,rcar-thermal",
-+		.data = &rcar_thermal,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen2-thermal",
-+		 .data = &rcar_gen2_thermal,
-+	},
-+	{
-+		.compatible = "renesas,thermal-r8a77995",
-+		.data = &rcar_gen3_thermal,
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rcar_thermal_dt_ids);
-@@ -190,7 +222,8 @@ static int rcar_thermal_update_temp(struct rcar_thermal_priv *priv)
- 	 * enable IRQ
- 	 */
- 	if (rcar_has_irq_support(priv)) {
--		rcar_thermal_write(priv, FILONOFF, 0);
-+		if (priv->chip->type != RCAR_GEN3_THERMAL)
-+			rcar_thermal_write(priv, FILONOFF, 0);
- 
- 		/* enable Rising/Falling edge interrupt */
- 		rcar_thermal_write(priv, POSNEG,  0x1);
-@@ -420,7 +453,7 @@ static int rcar_thermal_remove(struct platform_device *pdev)
- 
- 	rcar_thermal_for_each_priv(priv, common) {
- 		rcar_thermal_irq_disable(priv);
--		if (rcar_use_of_thermal(dev))
-+		if (priv->chip->use_of_thermal)
- 			thermal_remove_hwmon_sysfs(priv->zone);
- 		else
- 			thermal_zone_device_unregister(priv->zone);
-@@ -438,6 +471,9 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 	struct rcar_thermal_priv *priv;
- 	struct device *dev = &pdev->dev;
- 	struct resource *res, *irq;
-+	struct rcar_thermal_chip *chip = ((struct rcar_thermal_chip *)
-+					  of_device_get_match_data(dev));
-+	int nirq = chip->type == RCAR_GEN3_THERMAL ? 2 : 1;
- 	int mres = 0;
- 	int i;
- 	int ret = -ENODEV;
-@@ -457,19 +493,35 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
- 
--	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (irq) {
--		/*
--		 * platform has IRQ support.
--		 * Then, driver uses common registers
--		 * rcar_has_irq_support() will be enabled
--		 */
--		res = platform_get_resource(pdev, IORESOURCE_MEM, mres++);
--		common->base = devm_ioremap_resource(dev, res);
--		if (IS_ERR(common->base))
--			return PTR_ERR(common->base);
-+	for (i = 0; i < nirq; i++) {
-+		irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+		if (!irq)
-+			continue;
-+		if (!common->base) {
-+			/*
-+			 * platform has IRQ support.
-+			 * Then, driver uses common registers
-+			 * rcar_has_irq_support() will be enabled
-+			 */
-+			res = platform_get_resource(pdev, IORESOURCE_MEM,
-+						    mres++);
-+			common->base = devm_ioremap_resource(dev, res);
-+			if (IS_ERR(common->base))
-+				return PTR_ERR(common->base);
-+
-+			idle = 0; /* polling delay is not needed */
-+		}
-+
-+		ret = devm_request_irq(dev, irq->start, rcar_thermal_irq,
-+				       IRQF_SHARED, dev_name(dev), common);
-+		if (ret) {
-+			dev_err(dev, "irq request failed\n ");
-+			goto error_unregister;
-+		}
- 
--		idle = 0; /* polling delay is not needed */
-+		/* update ENR bits */
-+		if (chip->type == RCAR_GEN3_THERMAL)
-+			enr_bits |= 1 << i;
- 	}
- 
- 	for (i = 0;; i++) {
-@@ -491,6 +543,7 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 
- 		priv->common = common;
- 		priv->id = i;
-+		priv->chip = chip;
- 		mutex_init(&priv->lock);
- 		INIT_LIST_HEAD(&priv->list);
- 		INIT_DELAYED_WORK(&priv->work, rcar_thermal_work);
-@@ -498,7 +551,7 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 		if (ret < 0)
- 			goto error_unregister;
- 
--		if (rcar_use_of_thermal(dev))
-+		if (chip->use_of_thermal)
- 			priv->zone = devm_thermal_zone_of_sensor_register(
- 						dev, i, priv,
- 						&rcar_thermal_zone_of_ops);
-@@ -515,7 +568,7 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 			goto error_unregister;
- 		}
- 
--		if (rcar_use_of_thermal(dev)) {
-+		if (chip->use_of_thermal) {
- 			/*
- 			 * thermal_zone doesn't enable hwmon as default,
- 			 * but, enable it here to keep compatible
-@@ -531,20 +584,12 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 		list_move_tail(&priv->list, &common->head);
- 
- 		/* update ENR bits */
--		enr_bits |= 3 << (i * 8);
-+		if (chip->type != RCAR_GEN3_THERMAL)
-+			enr_bits |= 3 << (i * 8);
- 	}
- 
--	/* enable temperature comparation */
--	if (irq) {
--		ret = devm_request_irq(dev, irq->start, rcar_thermal_irq, 0,
--				       dev_name(dev), common);
--		if (ret) {
--			dev_err(dev, "irq request failed\n ");
--			goto error_unregister;
--		}
--
-+	if (enr_bits)
- 		rcar_thermal_common_write(common, ENR, enr_bits);
--	}
- 
- 	dev_info(dev, "%d sensor probed\n", i);
- 
-@@ -556,9 +601,48 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int rcar_thermal_suspend(struct device *dev)
-+{
-+	struct rcar_thermal_common *common = dev_get_drvdata(dev);
-+	struct rcar_thermal_priv *priv = list_first_entry(&common->head,
-+							  typeof(*priv), list);
-+
-+	if (priv->chip->type == RCAR_GEN3_THERMAL) {
-+		rcar_thermal_common_write(common, ENR, 0);
-+		rcar_thermal_irq_disable(priv);
-+		rcar_thermal_bset(priv, THSCR, CPCTL, 0);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rcar_thermal_resume(struct device *dev)
-+{
-+	struct rcar_thermal_common *common = dev_get_drvdata(dev);
-+	struct rcar_thermal_priv *priv = list_first_entry(&common->head,
-+							  typeof(*priv), list);
-+	int ret;
-+
-+	if (priv->chip->type == RCAR_GEN3_THERMAL) {
-+		ret = rcar_thermal_update_temp(priv);
-+		if (ret < 0)
-+			return ret;
-+		rcar_thermal_irq_enable(priv);
-+		rcar_thermal_common_write(common, ENR, 0x03);
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(rcar_thermal_pm_ops, rcar_thermal_suspend,
-+			 rcar_thermal_resume);
-+
- static struct platform_driver rcar_thermal_driver = {
- 	.driver	= {
- 		.name	= "rcar_thermal",
-+		.pm = &rcar_thermal_pm_ops,
- 		.of_match_table = rcar_thermal_dt_ids,
- 	},
- 	.probe		= rcar_thermal_probe,
+Very much welcome on board!
+
+Aside: If there's anything we can do to help convince your management that
+this is good idea (like the rename from intel-gpu-tools to igt gpu tests
+we've done), please bring it up.
+
+Cheers, Daniel
 -- 
-1.9.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
