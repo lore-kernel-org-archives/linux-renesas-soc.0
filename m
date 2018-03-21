@@ -1,56 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51621 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751502AbeCTQTN (ORCPT
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:44229 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751550AbeCUQUH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Mar 2018 12:19:13 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: qemu-devel@nongnu.org
-Cc: =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 2/3] nvram: at24c: use a sane default for "rom-size"
-Date: Tue, 20 Mar 2018 17:18:49 +0100
-Message-Id: <20180320161850.2104-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
-References: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
+        Wed, 21 Mar 2018 12:20:07 -0400
+Received: by mail-qt0-f193.google.com with SMTP id j26so5832040qtl.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Mar 2018 09:20:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521477465-1174-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1521477465-1174-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1521477465-1174-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Mar 2018 17:20:06 +0100
+Message-ID: <CAMuHMdXeyUi4EK1EcOcv1AQCs0YPknaC_TryD5LAQDw25Urreg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: r8a7795: deduplicate VIN4 pin definitions
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-0 as "rom-size" will lead to an error message. Let's use the size of a
-small 24c01 which has 128 byte.
+On Mon, Mar 19, 2018 at 5:37 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Use union vin_data and VIN_DATA_PIN_GROUP() to reduce redundancies
+> in pin definitions.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- hw/nvram/eeprom_at24c.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.17.
 
-diff --git a/hw/nvram/eeprom_at24c.c b/hw/nvram/eeprom_at24c.c
-index ccf78b25e4..ab1ef686e2 100644
---- a/hw/nvram/eeprom_at24c.c
-+++ b/hw/nvram/eeprom_at24c.c
-@@ -28,6 +28,9 @@
- #define TYPE_AT24C_EE "at24c-eeprom"
- #define AT24C_EE(obj) OBJECT_CHECK(EEPROMState, (obj), TYPE_AT24C_EE)
- 
-+/* default is the size of a 24c01 EEPROM */
-+#define AT24C_ROMSIZE_DEFAULT 128
-+
- typedef struct EEPROMState {
-     I2CSlave parent_obj;
- 
-@@ -171,7 +174,7 @@ void at24c_eeprom_reset(DeviceState *state)
- }
- 
- static Property at24c_eeprom_props[] = {
--    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, 0),
-+    DEFINE_PROP_UINT32("rom-size", EEPROMState, rsize, AT24C_ROMSIZE_DEFAULT),
-     DEFINE_PROP_BOOL("writable", EEPROMState, writable, true),
-     DEFINE_PROP_DRIVE("drive", EEPROMState, blk),
-     DEFINE_PROP_END_OF_LIST()
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
