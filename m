@@ -1,75 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:50502 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752359AbeCRCrq (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:39444 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752064AbeCUOjX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 17 Mar 2018 22:47:46 -0400
+        Wed, 21 Mar 2018 10:39:23 -0400
+Received: by mail-qk0-f195.google.com with SMTP id j73so5640046qke.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Mar 2018 07:39:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180207193227.hu6cyh2e27dmrqwt@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-12-git-send-email-yamada.masahiro@socionext.com>
- <CAK7LNAQUJw-fjuJO68Kvskn8BRYW3rZj4YMtbo-Oxfv7c=6Ggg@mail.gmail.com> <20180207193227.hu6cyh2e27dmrqwt@ninjato>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sun, 18 Mar 2018 11:46:48 +0900
-Message-ID: <CAK7LNATy=VzKXS-uZBgYm5A1k6E-87qDGNBTi=zFi9JGa2xrng@mail.gmail.com>
-Subject: Re: [PATCH v3 11/16] mmc: tmio: deprecate "toshiba,mmc-wrprotect-disable"
- DT property
-To: Wolfram Sang <wsa@the-dreams.de>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+In-Reply-To: <1521477440-1047-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1521477440-1047-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1521477440-1047-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Mar 2018 15:39:21 +0100
+Message-ID: <CAMuHMdUOsY_Mw_ZRddWSHz=CjLezZ+dz1bRW3HPNv1Vbp3ki-g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: r8a7795: correct VIN4 18-bit pins
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-2018-02-08 4:32 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
-> On Thu, Jan 18, 2018 at 10:58:36AM +0900, Masahiro Yamada wrote:
->> 2018-01-18 1:28 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->> > This property is equivalent to "disable-wp" defined in
->> > Documentation/devicetree/bindings/mmc/tmio_mmc.txt
->>
->> This is mistake.
->>
->> "disable-wp" is defined in
->>
->> Documentation/devicetree/bindings/mmc/mmc.txt
+On Mon, Mar 19, 2018 at 5:37 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> RGB666 has a pin assignment that differs from the other formats.
 >
-> With that fixed:
->
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-BTW, the subject of the applied version is wrong.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.17.
 
-In my original post:
-https://patchwork.kernel.org/patch/10170007/
-"toshiba,mmc-wrprotect-disable"
-No space after the vendor prefix.
+Gr{oetje,eeting}s,
 
-
-But, applied commit (788778b0d21a6d5cd5)
-I see a space, like
-"toshiba, mmc-wrprotect-disable"
-
-
-I think this is a bug of patchwork.
-
-
-I have seen various bugs that break
-the patch format.
-
-I filed some bug reports for patchwork,
-but not sure what happened.
+                        Geert
 
 -- 
-Best Regards
-Masahiro Yamada
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
