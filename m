@@ -1,103 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51630 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751508AbeCTQTN (ORCPT
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:40256 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbeCUJzp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Mar 2018 12:19:13 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: qemu-devel@nongnu.org
-Cc: =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 3/3] nvram: at24c: use standard error reporting
-Date: Tue, 20 Mar 2018 17:18:50 +0100
-Message-Id: <20180320161850.2104-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
-References: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
+        Wed, 21 Mar 2018 05:55:45 -0400
+Received: by mail-qk0-f175.google.com with SMTP id o64so4759313qkl.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Mar 2018 02:55:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e381eeea-7986-d980-fc02-354a80f8f58b@cogentembedded.com>
+References: <152153161677.8310.9675462405281337962.sendpatchset@little-apple> <e381eeea-7986-d980-fc02-354a80f8f58b@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Mar 2018 10:55:43 +0100
+Message-ID: <CAMuHMdX11Y1pKePrE=YOZyekcZNkPfN4bx6MzYCG8qgWPKp-ug@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Adjust r8a77980 ifdef
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the ERR macro with error_report() because fprintf is deprecated.
-This also fixes the prefix printed out twice.
+On Tue, Mar 20, 2018 at 8:04 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 03/20/2018 10:40 AM, Magnus Damm wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Adjust the R8A77980-specific #ifdefs to use CLK instead of ARCH
+>> to follow same style as other SoCs.
+>
+>    I guess we should add:
+>
+> Fixes: ce15783c510a ("clk: renesas: cpg-mssr: add R8A77980 support")
+>
+>    Hopefully, it would be an immutable SHA1...
+>
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- hw/nvram/eeprom_at24c.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+Thank you, will queue in clk-renesas-for-v4.17.
 
-diff --git a/hw/nvram/eeprom_at24c.c b/hw/nvram/eeprom_at24c.c
-index ab1ef686e2..c35b29e503 100644
---- a/hw/nvram/eeprom_at24c.c
-+++ b/hw/nvram/eeprom_at24c.c
-@@ -13,6 +13,7 @@
- #include "hw/hw.h"
- #include "hw/i2c/i2c.h"
- #include "sysemu/block-backend.h"
-+#include "qemu/error-report.h"
- 
- /* #define DEBUG_AT24C */
- 
-@@ -22,9 +23,6 @@
- #define DPRINTK(FMT, ...) do {} while (0)
- #endif
- 
--#define ERR(FMT, ...) fprintf(stderr, TYPE_AT24C_EE " : " FMT, \
--                            ## __VA_ARGS__)
--
- #define TYPE_AT24C_EE "at24c-eeprom"
- #define AT24C_EE(obj) OBJECT_CHECK(EEPROMState, (obj), TYPE_AT24C_EE)
- 
-@@ -63,8 +61,7 @@ int at24c_eeprom_event(I2CSlave *s, enum i2c_event event)
-         if (ee->blk && ee->changed) {
-             int len = blk_pwrite(ee->blk, 0, ee->mem, ee->rsize, 0);
-             if (len != ee->rsize) {
--                ERR(TYPE_AT24C_EE
--                        " : failed to write backing file\n");
-+                error_report("failed to write backing file");
-             }
-             DPRINTK("Wrote to backing file\n");
-         }
-@@ -125,7 +122,7 @@ int at24c_eeprom_init(I2CSlave *i2c)
-     EEPROMState *ee = AT24C_EE(i2c);
- 
-     if (!ee->rsize) {
--        ERR("rom-size not allowed to be 0\n");
-+        error_report("rom-size not allowed to be 0");
-         exit(1);
-     }
- 
-@@ -135,7 +132,7 @@ int at24c_eeprom_init(I2CSlave *i2c)
-         int64_t len = blk_getlength(ee->blk);
- 
-         if (len != ee->rsize) {
--            ERR(TYPE_AT24C_EE " : Backing file size %lu != %u\n",
-+            error_report("Backing file size %lu != %u",
-                     (unsigned long)len, (unsigned)ee->rsize);
-             exit(1);
-         }
-@@ -143,8 +140,7 @@ int at24c_eeprom_init(I2CSlave *i2c)
-         if (blk_set_perm(ee->blk, BLK_PERM_CONSISTENT_READ | BLK_PERM_WRITE,
-                          BLK_PERM_ALL, &error_fatal) < 0)
-         {
--            ERR(TYPE_AT24C_EE
--                    " : Backing file incorrect permission\n");
-+            error_report("Backing file incorrect permission");
-             exit(1);
-         }
-     }
-@@ -166,8 +162,7 @@ void at24c_eeprom_reset(DeviceState *state)
-         int len = blk_pread(ee->blk, 0, ee->mem, ee->rsize);
- 
-         if (len != ee->rsize) {
--            ERR(TYPE_AT24C_EE
--                    " : Failed initial sync with backing file\n");
-+            error_report("Failed initial sync with backing file");
-         }
-         DPRINTK("Reset read backing file\n");
-     }
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
