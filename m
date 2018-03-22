@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:41669 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752101AbeCWN2G (ORCPT
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:36251 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751416AbeCVRs0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:28:06 -0400
+        Thu, 22 Mar 2018 13:48:26 -0400
 MIME-Version: 1.0
 In-Reply-To: <CAMuHMdUdsH3r7AZMB6NfNyrDdJecXx1JhGZFA=32VYZBtmGP5w@mail.gmail.com>
 References: <20180315153730.3798004-1-arnd@arndb.de> <ED290C750E1B324E972B0017C9D4BAB06479C421@USCULXMSG01.am.sony.com>
  <CAMuHMdULWVXXSXrEBoomONQhF-Af3FGMijMnL6WL6P1XE-e7zA@mail.gmail.com>
  <1806382.Agy9d77yKa@avalon> <CAMuHMdUdsH3r7AZMB6NfNyrDdJecXx1JhGZFA=32VYZBtmGP5w@mail.gmail.com>
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 23 Mar 2018 22:27:15 +0900
-Message-ID: <CAK7LNAQB4q-azLkig1eJKvYvAPHeRgM7sYES0LQT-1AP5McQtw@mail.gmail.com>
+Date: Fri, 23 Mar 2018 02:47:27 +0900
+Message-ID: <CAK7LNARFLuvEGmrD+5Wn6DgCz9EUeGHJmf8CQznG4zOzf4CVNg@mail.gmail.com>
 Subject: Re: [PATCH] [RFC] drm: rcar-du: keep temporary dtb files around
  during build
 To: Geert Uytterhoeven <geert@linux-m68k.org>
@@ -90,28 +90,26 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 >
 >                         Geert
 >
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
 
-I submit the patches.
-I'd like to queue them up for the next merge window,
-so your problems will be fixed if Kbuild pull requests are pulled.
 
-The driver Makefile has two problems.
-
-[1] Objects are always rebuilt due to missing 'targets'
-[2] Intermediate files are removed due to missing .SECONDARY (or .PRECIOUS)
-
-If you want to fix them by yourself, you can.
-
-But, those issues will be taken care of by the core Makefile.
-
-Specifically, [1] will be fixed by
-https://patchwork.kernel.org/patch/10304671/
-
-and [2] by
-https://patchwork.kernel.org/patch/10304651/
+This has been in my TODO list for a while,
+but I have not had time to finish it.
 
 
+Some people use .PRECIOUS to suppress file removal,
+but it is wrong IMO.
+
+.SECONDARY is the right one, but one problem is,
+this does not work with pattern rules.
+
+I will send a patch soon for the core improvement.
 
 
 -- 
