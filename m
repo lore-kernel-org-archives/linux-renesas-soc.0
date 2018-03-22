@@ -1,7 +1,13 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+MIME-Version: 1.0
+In-Reply-To: <1521719091-25157-4-git-send-email-michel.pollet@bp.renesas.com>
+References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com> <1521719091-25157-4-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Mar 2018 13:37:07 +0100
+Message-ID: <CAMuHMdXaRarxors3E-Jv7TLjka-p9XGYCTKyF7jM3p+UemgO+w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/8] DT: arm: renesas,r9a06g032: add the RZ/N1 bindings
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -15,47 +21,54 @@ CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux PM list <linux-pm@vger.kernel.org>
-Subject: RE: [PATCH v2 3/8] DT: arm: renesas,r9a06g032: add the RZ/N1 bindings
-Date: Wed, 28 Mar 2018 07:44:03 +0000
-Message-ID: <OSBPR01MB2054832DF4C7ACB15F49C129D2A30@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
- <1521719091-25157-4-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdXaRarxors3E-Jv7TLjka-p9XGYCTKyF7jM3p+UemgO+w@mail.gmail.com>
-In-Reply-To: <CAMuHMdXaRarxors3E-Jv7TLjka-p9XGYCTKyF7jM3p+UemgO+w@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgeW91ciByZXZpZXchDQoNCk9uICAyMiBNYXJjaCAyMDE4
-IDEyOjM3LCBHZWVydCBzYWlkOg0KPiBIaSBNaWNoZWwsDQo+DQo+IE9uIFRodSwgTWFyIDIyLCAy
-MDE4IGF0IDEyOjQ0IFBNLCBNaWNoZWwgUG9sbGV0DQo+IDxtaWNoZWwucG9sbGV0QGJwLnJlbmVz
-YXMuY29tPiB3cm90ZToNCj4gPiBUaGlzIGRvY3VtZW50cyB0aGUgUlovTjEgYmluZGluZ3MgZm9y
-IGJvdGggdGhlIFJaL04xIGFuZCB0aGUNCj4gPiBSWk4xRDQwMC1EQiBib2FyZC4NCj4gPg0KPiA+
-IFNpZ25lZC1vZmYtYnk6IE1pY2hlbCBQb2xsZXQgPG1pY2hlbC5wb2xsZXRAYnAucmVuZXNhcy5j
-b20+DQo+DQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4NCj4gPiAtLS0gYS9Eb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL3NobW9iaWxlLnR4dA0KPiA+ICsrKyBiL0RvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vc2htb2JpbGUudHh0DQo+ID4gQEAgLTQ3
-LDcgKzQ3LDggQEAgU29DczoNCj4gPiAgICAgIGNvbXBhdGlibGUgPSAicmVuZXNhcyxyOGE3Nzk4
-MCINCj4gPiAgICAtIFItQ2FyIEQzIChSOEE3Nzk5NSkNCj4gPiAgICAgIGNvbXBhdGlibGUgPSAi
-cmVuZXNhcyxyOGE3Nzk5NSINCj4gPiAtDQo+ID4gKyAgLSBSWi9OMUQgKFI5QTA2RzAzMikNCj4g
-PiArICAgIGNvbXBhdGlibGUgPSAicmVuZXNhcyxyOWEwNmcwMzIiDQo+ID4NCj4gPiAgQm9hcmRz
-Og0KPiA+DQo+ID4gQEAgLTEwNCw2ICsxMDUsOCBAQCBCb2FyZHM6DQo+ID4gICAgICBjb21wYXRp
-YmxlID0gInJlbmVzYXMscG9ydGVyIiwgInJlbmVzYXMscjhhNzc5MSINCj4gPiAgICAtIFJTS1Ja
-QTEgKFlSMEs3NzIxMEMwMDBCRSkNCj4gPiAgICAgIGNvbXBhdGlibGUgPSAicmVuZXNhcyxyc2ty
-emExIiwgInJlbmVzYXMscjdzNzIxMDAiDQo+ID4gKyAgLSBSWk4xRC1EQiAoUlovTjFEIERlbW8g
-Qm9hcmQgZm9yIHRoZSBSWi9OMUQgNDAwIHBpbnMgcGFja2FnZSkNCj4NCj4gVGhlIG9mZmljaWFs
-IGJvYXJkIHBhcnQgbnVtYmVyIChiZXR3ZWVuIHBhcmVudGhlc2VzKSBzaG91bGQgYmUNCj4gWUNP
-Tk5FQ1QtSVQtUlpOMUQ/DQoNCkkndmUgY2hlY2tlZCB0aGlzLCBhbmQgdGhlIFlDT05ORUNUIGlz
-IHRoZSAvYmFzZSBib2FyZC8gZm9yIHRoaXMgJ21vZHVsZScsIHRoZSBtb2R1bGUNCmlzIGNhbGxl
-ZCBSWk4xRC1EQi4NCg0KPg0KPiA+ICsgICAgY29tcGF0aWJsZSA9ICJyZW5lc2FzLHJ6bjFkNDAw
-LWRiIiwgInJlbmVzYXMscjlhMDZnMDMyIg0KPiA+ICAgIC0gU2FsdmF0b3ItWCAoUlRQMFJDNzc5
-NVNJUEIwMDEwUykNCj4gPiAgICAgIGNvbXBhdGlibGUgPSAicmVuZXNhcyxzYWx2YXRvci14Iiwg
-InJlbmVzYXMscjhhNzc5NSINCj4gPiAgICAtIFNhbHZhdG9yLVggKFJUUDBSQzc3OTZTSVBCMDAx
-MVMpDQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAg
-ICBHZWVydA0KDQpNaWNoZWwNCg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRk
-LCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hp
-cmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdp
-c3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
+Hi Michel,
+
+On Thu, Mar 22, 2018 at 12:44 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This documents the RZ/N1 bindings for both the RZ/N1 and the RZN1D400-DB
+> board.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> @@ -47,7 +47,8 @@ SoCs:
+>      compatible = "renesas,r8a77980"
+>    - R-Car D3 (R8A77995)
+>      compatible = "renesas,r8a77995"
+> -
+> +  - RZ/N1D (R9A06G032)
+> +    compatible = "renesas,r9a06g032"
+>
+>  Boards:
+>
+> @@ -104,6 +105,8 @@ Boards:
+>      compatible = "renesas,porter", "renesas,r8a7791"
+>    - RSKRZA1 (YR0K77210C000BE)
+>      compatible = "renesas,rskrza1", "renesas,r7s72100"
+> +  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
+
+The official board part number (between parentheses) should be
+YCONNECT-IT-RZN1D?
+
+> +    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032"
+>    - Salvator-X (RTP0RC7795SIPB0010S)
+>      compatible = "renesas,salvator-x", "renesas,r8a7795"
+>    - Salvator-X (RTP0RC7796SIPB0011S)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
