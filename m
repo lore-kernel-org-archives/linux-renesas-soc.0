@@ -1,252 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35265 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754642AbeCWKEW (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:40931 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeCVKUB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Mar 2018 06:04:22 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 3/4] arm64: dts: renesas: r8a7796: sort subnodes of the root node
-Date: Fri, 23 Mar 2018 11:04:07 +0100
-Message-Id: <20180323100408.14448-4-horms+renesas@verge.net.au>
-In-Reply-To: <20180323100408.14448-1-horms+renesas@verge.net.au>
-References: <20180323100408.14448-1-horms+renesas@verge.net.au>
+        Thu, 22 Mar 2018 06:20:01 -0400
+Received: by mail-io0-f195.google.com with SMTP id e79so10289229ioi.7
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Mar 2018 03:20:01 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180320214258.16031-1-wsa+renesas@sang-engineering.com>
+References: <20180320214258.16031-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 22 Mar 2018 11:20:00 +0100
+Message-ID: <CAPDyKFqa5RcT295c0nBc=7gR0CMv3JuzPHsuX7Mroh-54_pX7Q@mail.gmail.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi: replace EXT_ACC with HOST_MODE
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort subnodes of the root node alphanumerically.
+On 20 March 2018 at 22:42, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+>
+> All our documentation says HOST_MODE, we don't really know where EXT_ACC
+> came from. Rename it to reduce the confusion.
+>
+> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This is part of an ongoing effort to provide consistent node
-order in the DT of Renesas SoCs to improve maintainability.
+Thanks, applied for next!
 
-This should not have any run-time effect.
+Kind regards
+Uffe
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3
-* Add review tag from Geert
-* Move clusterX_opp should be before cpus
-* Move thermal_zones should be before timer
-
-v2
-* New patch
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 162 +++++++++++++++----------------
- 1 file changed, 81 insertions(+), 81 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 556eb8e45499..78fbb4fd34bf 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -60,6 +60,72 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1600000000 {
-+			opp-hz = /bits/ 64 <1600000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+		opp-1700000000 {
-+			opp-hz = /bits/ 64 <1700000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+		opp-1800000000 {
-+			opp-hz = /bits/ 64 <1800000000>;
-+			opp-microvolt = <960000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1300000000 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -161,72 +227,6 @@
- 		clock-frequency = <0>;
- 	};
- 
--	cluster0_opp: opp_table0 {
--		compatible = "operating-points-v2";
--		opp-shared;
--
--		opp-500000000 {
--			opp-hz = /bits/ 64 <500000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1000000000 {
--			opp-hz = /bits/ 64 <1000000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1500000000 {
--			opp-hz = /bits/ 64 <1500000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1600000000 {
--			opp-hz = /bits/ 64 <1600000000>;
--			opp-microvolt = <900000>;
--			clock-latency-ns = <300000>;
--			turbo-mode;
--		};
--		opp-1700000000 {
--			opp-hz = /bits/ 64 <1700000000>;
--			opp-microvolt = <900000>;
--			clock-latency-ns = <300000>;
--			turbo-mode;
--		};
--		opp-1800000000 {
--			opp-hz = /bits/ 64 <1800000000>;
--			opp-microvolt = <960000>;
--			clock-latency-ns = <300000>;
--			turbo-mode;
--		};
--	};
--
--	cluster1_opp: opp_table1 {
--		compatible = "operating-points-v2";
--		opp-shared;
--
--		opp-800000000 {
--			opp-hz = /bits/ 64 <800000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1000000000 {
--			opp-hz = /bits/ 64 <1000000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1200000000 {
--			opp-hz = /bits/ 64 <1200000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1300000000 {
--			opp-hz = /bits/ 64 <1300000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--			turbo-mode;
--		};
--	};
--
- 	/* External PCIe clock - can be overridden by the board */
- 	pcie_bus_clk: pcie_bus {
- 		compatible = "fixed-clock";
-@@ -234,13 +234,6 @@
- 		clock-frequency = <0>;
- 	};
- 
--	pmu_a57 {
--		compatible = "arm,cortex-a57-pmu";
--		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
--				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-affinity = <&a57_0>, <&a57_1>;
--	};
--
- 	pmu_a53 {
- 		compatible = "arm,cortex-a53-pmu";
- 		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-@@ -250,6 +243,13 @@
- 		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
- 	};
- 
-+	pmu_a57 {
-+		compatible = "arm,cortex-a57-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a57_0>, <&a57_1>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0", "arm,psci-0.2";
- 		method = "smc";
-@@ -2063,14 +2063,6 @@
- 		};
- 	};
- 
--	timer {
--		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
--	};
--
- 	thermal-zones {
- 		sensor_thermal1: sensor-thermal1 {
- 			polling-delay-passive = <250>;
-@@ -2151,6 +2143,14 @@
- 		};
- 	};
- 
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
- 	/* External USB clocks - can be overridden by the board */
- 	usb3s0_clk: usb3s0 {
- 		compatible = "fixed-clock";
--- 
-2.11.0
+> ---
+>  drivers/mmc/host/renesas_sdhi_core.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index 80943fa07db64b..51e01f03fb995f 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -38,7 +38,7 @@
+>  #include "renesas_sdhi.h"
+>  #include "tmio_mmc.h"
+>
+> -#define EXT_ACC           0xe4
+> +#define HOST_MODE              0xe4
+>
+>  #define SDHI_VER_GEN2_SDR50    0x490c
+>  #define SDHI_VER_RZ_A1         0x820b
+> @@ -76,7 +76,7 @@ static void renesas_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
+>                 return;
+>         }
+>
+> -       sd_ctrl_write16(host, EXT_ACC, val);
+> +       sd_ctrl_write16(host, HOST_MODE, val);
+>  }
+>
+>  static int renesas_sdhi_clk_enable(struct tmio_mmc_host *host)
+> @@ -417,7 +417,7 @@ static int renesas_sdhi_write16_hook(struct tmio_mmc_host *host, int addr)
+>         case CTL_SD_MEM_CARD_OPT:
+>         case CTL_TRANSACTION_CTL:
+>         case CTL_DMA_ENABLE:
+> -       case EXT_ACC:
+> +       case HOST_MODE:
+>                 if (host->pdata->flags & TMIO_MMC_HAVE_CBSY)
+>                         bit = TMIO_STAT_CMD_BUSY;
+>                 /* fallthrough */
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
