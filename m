@@ -1,68 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753864AbeCPOx0 (ORCPT
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:46218 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753796AbeCVMvC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:26 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        Thu, 22 Mar 2018 08:51:02 -0400
+MIME-Version: 1.0
+In-Reply-To: <1521719091-25157-8-git-send-email-michel.pollet@bp.renesas.com>
+References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com> <1521719091-25157-8-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Mar 2018 13:51:01 +0100
+Message-ID: <CAMuHMdUBS2+7UeAD9ZraOKY99o2YmLJgPEcuTGwLXPTj9Cfs_g@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] DT: arm: Add Renesas RZN1D-DB Board base file
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Bindings Updates for v4.17
-Date: Fri, 16 Mar 2018 15:52:02 +0100
-Message-Id: <cover.1521206902.git.horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Michel,
 
-Please consider these Renesas ARM based SoC DT bindings updates for v4.17.
+On Thu, Mar 22, 2018 at 12:44 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This adds a base device tree file for the RZN1-DB board, with only the
+> basic support allowing the system to boot to a prompt. Only one UART is
+> used, with only a single CPU running.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
+Thanks for your patch!
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree Source for the RZN1D-DB Board
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "r9a06g0xx.dtsi"
+> +
+> +/ {
+> +       model = "RZN1D-DB Board";
+> +       compatible = "renesas,rzn1d400-db", "renesas,r9a06g032", "renesas,rzn1";
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+"renesas,rzn1" is not documented.
 
-are available in the git repository at:
+Gr{oetje,eeting}s,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-bindings-for-v4.17
+                        Geert
 
-for you to fetch changes up to 09bea76aad76058d7d1dae8f5804751a017967c1:
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-  dt-bindings: arm: Document Renesas R-Car M3-N-based Salvator-X board (2018-02-28 07:51:32 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Bindings Updates for v4.17
-
-* Document the bindings for:
-  - R-Car V3H (r8a77980) SoC
-  - Condor board with V3H (r8a77980) SoC
-  - Stout (ADAS Starterkit) board with R-Car H2 (r8a7790) SoC
-  - R-Car M3-N (r8a77965) SoC
-  - Salvator-X and Salvator-XS boards with R-Car M3-N (r8a77965) SoC
-* Document that Armadillo-800 is compatibie with R-Mobile A1 (r8a7740) SoC
-* Document part numbers of Wheat and V3MSK boards
-
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      dt-bindings: arm: Document SoC compatible value for Armadillo-800 EVA
-      dt-bindings: arm: Document Renesas V3MSK and Wheat board part numbers
-      dt-bindings: arm: Document Renesas R-Car M3-N-based Salvator-XS board
-      dt-bindings: arm: Document Renesas R-Car M3-N-based Salvator-X board
-
-Jacopo Mondi (1):
-      dt-bindings: arm: Document R-Car M3-N SoC DT bindings
-
-Marek Vasut (1):
-      dt-bindings: arm: Document Renesas H2-based Stout DT bindings
-
-Sergei Shtylyov (2):
-      dt-bindings: arm: document R8A77980 SoC bindings
-      dt-bindings: arm: document Condor board bindings
-
- Documentation/devicetree/bindings/arm/shmobile.txt | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
