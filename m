@@ -1,102 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:51136 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751980AbeC0OvI (ORCPT
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:39981 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbeCVM3x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:51:08 -0400
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: USB2 crash on renesas-drivers
-To: linux-renesas-soc@vger.kernel.org
-Message-ID: <95be06b8-5ed5-e369-bfc9-b35fed0f81f7@ideasonboard.com>
-Date: Tue, 27 Mar 2018 15:51:04 +0100
+        Thu, 22 Mar 2018 08:29:53 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521719091-25157-2-git-send-email-michel.pollet@bp.renesas.com>
+References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com> <1521719091-25157-2-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Mar 2018 13:29:52 +0100
+Message-ID: <CAMuHMdUx7E3dk0S678HOotv3E33ZEjfoEQ=xaRpNLMCKMVnXLA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] DT: mfd: renesas,rzn1-sysctrl: document RZ/N1
+ sysctrl node
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-While playing around with cameras (as I do...) I am finding that I am hitting
-some faults on the USB2 stack on Salvator-XS (H3)
+Hi Michel,
 
-Test: Connect USB 2.0 web cam (UVC) (appears as /dev/video23)
+Thanks for your patch!
 
+On Thu, Mar 22, 2018 at 12:44 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function
+> system controller. This documents the node used to encapsulate
+> it's sub drivers.
 
-gst-launch-1.0 v4l2src device=/dev/video23 '!' image/jpeg, width=640, height=480
-'!' progressreport '!' rtpjpegpay '!' udpsink host=192.168.0.20 port=5000
+its
 
-Result: Almost immediately, and quite repeatably the following page fault - but
-only on the USB2 ports:
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-A USB3 camera works fine on the USB3 port, and the USB2 camera works fine in the
-USB3 port.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+> @@ -0,0 +1,22 @@
+> +DT bindings for the Renesas RZ-N1 System Controller
 
---
-Kieran
+RZ/N1
 
+> +
+> +== System Controller Node ==
+> +
+> +The system controller node currently only hosts a single sub-driver to handle
 
+s/sub-driver/sub-node/
 
-[   78.297440] Unable to handle kernel paging request at virtual address
-ffffc006fc37bcac
-[   78.305478] Mem abort info:
-[   78.308284]   ESR = 0x96000004
-[   78.311352]   Exception class = DABT (current EL), IL = 32 bits
-[   78.317296]   SET = 0, FnV = 0
-[   78.320362]   EA = 0, S1PTW = 0
-[   78.323515] Data abort info:
-[   78.326407]   ISV = 0, ISS = 0x00000004
-[   78.330258]   CM = 0, WnR = 0
-[   78.333240] swapper pgtable: 4k pages, 48-bit VAs, pgdp = 00000000edff4481
-[   78.340143] [ffffc006fc37bcac] pgd=0000000000000000
-[   78.345111] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[   78.350701] Modules linked in:
-[   78.353771] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
-4.16.0-rc7-arm64-renesas #484
-[   78.361450] Hardware name: Renesas Salvator-X 2nd version board based on
-r8a7795 ES2.0+ (DT)
-[   78.369914] pstate: 40000085 (nZcv daIf -PAN -UAO)
-[   78.374730] pc : ehci_work.part.34+0x640/0x8e8
-[   78.379186] lr : ehci_work.part.34+0x71c/0x8e8
-[   78.383640] sp : ffff000008003d20
-[   78.386963] x29: ffff000008003d20 x28: ffff8006fa97f580
-[   78.392294] x27: ffff00000a0050c0 x26: 0000000000000080
-[   78.397626] x25: 00000000000000f3 x24: 00000000000000f6
-[   78.402957] x23: ffff8006f92734c8 x22: ffff8006f9242798
-[   78.408288] x21: 0000000000000000 x20: ffff8006f9273330
-[   78.413619] x19: 0000000000000000 x18: 0000000000000500
-[   78.418950] x17: 00000000000076e8 x16: 00000000000076e7
-[   78.424281] x15: ffff0000098f7ac8 x14: 00000000000076e8
-[   78.429612] x13: 0000000000000001 x12: 00000000000076ea
-[   78.434943] x11: 00000000ffffffb9 x10: 00000000ffffffb5
-[   78.440274] x9 : 00000000ffffffba x8 : 00000000ffffffc1
-[   78.445605] x7 : 0000000000000005 x6 : 0000000096383fc8
-[   78.450935] x5 : ffff00000a0050e4 x4 : 0000000086411f40
-[   78.456266] x3 : ffff000009cf53cc x2 : 0000000000000005
-[   78.461597] x1 : ffffc006fc37bc00 x0 : ffff00000a0050c4
-[   78.466929] Process swapper/0 (pid: 0, stack limit = 0x00000000e653c8e9)
-[   78.473648] Call trace:
-[   78.476101]  ehci_work.part.34+0x640/0x8e8
-[   78.480208]  ehci_irq+0x2d4/0x320
-[   78.483535]  usb_hcd_irq+0x3c/0x60
-[   78.486951]  __handle_irq_event_percpu+0x98/0x468
-[   78.491667]  handle_irq_event_percpu+0x28/0x60
-[   78.496123]  handle_irq_event+0x50/0x80
-[   78.499969]  handle_fasteoi_irq+0xa8/0x188
-[   78.504077]  generic_handle_irq+0x34/0x50
-[   78.508097]  __handle_domain_irq+0x68/0xc0
-[   78.512206]  gic_handle_irq+0x60/0xb8
-[   78.515878]  el1_irq+0xb4/0x130
-[   78.519028]  arch_cpu_idle+0x34/0x228
-[   78.522705]  default_idle_call+0x20/0x38
-[   78.526640]  do_idle+0x16c/0x1e8
-[   78.529876]  cpu_startup_entry+0x2c/0x30
-[   78.533809]  rest_init+0x258/0x268
-[   78.537223]  start_kernel+0x3b0/0x3c4
-[   78.540897] Code: b9408c22 0b040044 b9008c24 17ffff31 (b940ac22)
-[   78.547023] ---[ end trace cdaffda78bbfd46e ]---
-[   78.551653] Kernel panic - not syncing: Fatal exception in interrupt
-[   78.558031] SMP: stopping secondary CPUs
-[   78.561969] Kernel Offset: disabled
-[   78.565468] CPU features: 0x01802000
-[   78.569051] Memory Limit: none
-[   78.572125] ---[ end Kernel panic - not syncing: Fatal exception in interrupt
+> +the rebooting of the CPU. Eventually it will host the clock driver, SMP
+> +start handler, watchdog etc.
+> +
+> +See renesas,rzn1-reboot.txt for further details.
+> +
+> +Bindings:
+> ++ Optional:
+> +       compatible = "renesas,r9a06g032-sysctrl";
+> ++ Required:
+> +       compatible = "renesas,rzn1-sysctrl";
+
+Please mark both the SoC-specific and the family-specific values required.
+Missing "syscon", "simple-mfd".
+
+> +
+> +Example:
+> +       sysctrl: sysctrl@4000c000 {
+> +               compatible = "renesas,r9a06g032-sysctrl",
+> +                       "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
+> +               reg = <0x4000c000 0x1000>;
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
