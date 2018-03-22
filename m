@@ -1,51 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:39243 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753796AbeCVMvY (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:62318 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751891AbeCVLu5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:51:24 -0400
-MIME-Version: 1.0
-In-Reply-To: <1521719091-25157-9-git-send-email-michel.pollet@bp.renesas.com>
-References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com> <1521719091-25157-9-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 Mar 2018 13:51:22 +0100
-Message-ID: <CAMuHMdUjtZnZpVE11-5ECsGs-zuNzwaPR_n+KL3_5tWtq2i+8A@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] DT: arm: Add the RZN1D-DB Board to Renesas
- Makefile target
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
+        Thu, 22 Mar 2018 07:50:57 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Lee Jones <lee.jones@linaro.org>,
         Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v2 8/8] DT: arm: Add the RZN1D-DB Board to Renesas Makefile target
+Date: Thu, 22 Mar 2018 11:44:45 +0000
+Message-Id: <1521719091-25157-9-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 22, 2018 at 12:44 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the newly added board to the Renesas built target
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+This adds the newly added board to the Renesas built target
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ arch/arm/boot/dts/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 3b4cc1b..0f01ada 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -806,6 +806,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
++	r9a06g032-rzn1d400-db.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-evb.dtb \
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
