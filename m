@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54769 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751455AbeCVUvb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 22 Mar 2018 16:51:31 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
@@ -14,10 +19,10 @@ Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS),
         linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT)
-Subject: [PATCH v6] ARM: dts: wheat: Fix ADV7513 address usage
-Date: Thu, 22 Mar 2018 21:30:40 +0000
-Message-Id: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v5] ARM: dts: wheat: Fix ADV7513 address usage
+Date: Thu, 22 Mar 2018 20:51:22 +0000
+Message-Id: <1521751882-7996-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
@@ -47,10 +52,8 @@ v4:
  - Normalise I2C usage
 
 v5:
- - Repost without [RFT] now that it has been tested
+ - No change from v4 except to repost and drop the [RFT] now that it's tested
 
-v6:
- - s/low power power/low power/ correction from Laurent.
 
 Testing on a wheat board shows the addresses correctly assigned, and the
 default addresses (0x38, 0x3e, 0x3f which would otherwise conflict) are
@@ -66,22 +69,23 @@ shown as actively returning data in low power mode during the scan.
 50: -- -- -- -- -- -- -- -- -- UU -- -- -- UU -- --
 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 70: -- -- -- -- -- -- -- --
-
- arch/arm/boot/dts/r8a7792-wheat.dts | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+---
+ arch/arm/boot/dts/r8a7792-wheat.dts | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index 293b9e3b3e70..db01de7a3811 100644
+index 293b9e3b3e70..3e9f70e87a60 100644
 --- a/arch/arm/boot/dts/r8a7792-wheat.dts
 +++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -245,9 +245,15 @@
+@@ -245,9 +245,16 @@
  	status = "okay";
  	clock-frequency = <400000>;
  
 +	/*
-+	 * The adv75xx resets its addresses to defaults during low power mode.
-+	 * Because we have two ADV7513 devices on the same bus, we must change
-+	 * both of them away from the defaults so that they do not conflict.
++	 * The adv75xx resets its addresses to defaults during low power power
++	 * mode. Because we have two ADV7513 devices on the same bus, we must
++	 * change both of them away from the defaults so that they do not
++	 * conflict.
 +	 */
  	hdmi@3d {
  		compatible = "adi,adv7513";
@@ -91,7 +95,7 @@ index 293b9e3b3e70..db01de7a3811 100644
  
  		adi,input-depth = <8>;
  		adi,input-colorspace = "rgb";
-@@ -277,7 +283,8 @@
+@@ -277,7 +284,8 @@
  
  	hdmi@39 {
  		compatible = "adi,adv7513";
@@ -103,4 +107,3 @@ index 293b9e3b3e70..db01de7a3811 100644
  		adi,input-colorspace = "rgb";
 -- 
 2.7.4
-
