@@ -1,45 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47716 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S969549AbeCSVbK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49841 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751964AbeCVKYj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Mar 2018 17:31:10 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: qemu-devel@nongnu.org
-Cc: =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 1/3] nvram: at24c: prevent segfault by checking "rom-size"
-Date: Mon, 19 Mar 2018 22:30:59 +0100
-Message-Id: <20180319213101.6100-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180319213101.6100-1-wsa+renesas@sang-engineering.com>
-References: <20180319213101.6100-1-wsa+renesas@sang-engineering.com>
+        Thu, 22 Mar 2018 06:24:39 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 0/4] arm64: dts: renesas: r8a779[56]: sort nodes
+Date: Thu, 22 Mar 2018 11:24:19 +0100
+Message-Id: <20180322102423.18269-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The value for "rom-size" is used as a divisor, so it must not be 0 or it
-will segfault. A size of 0 wouldn't make sense anyhow.
+Sort nodes of the R-Car H3 (r8a7795) and M3-W (r8a7796) DTs.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- hw/nvram/eeprom_at24c.c | 5 +++++
- 1 file changed, 5 insertions(+)
+This is part of an ongoing effort to provide consistent node
+order in the DT of Renesas SoCs to improve maintainability.
 
-diff --git a/hw/nvram/eeprom_at24c.c b/hw/nvram/eeprom_at24c.c
-index 22183f5360..ccf78b25e4 100644
---- a/hw/nvram/eeprom_at24c.c
-+++ b/hw/nvram/eeprom_at24c.c
-@@ -121,6 +121,11 @@ int at24c_eeprom_init(I2CSlave *i2c)
- {
-     EEPROMState *ee = AT24C_EE(i2c);
- 
-+    if (!ee->rsize) {
-+        ERR("rom-size not allowed to be 0\n");
-+        exit(1);
-+    }
-+
-     ee->mem = g_malloc0(ee->rsize);
- 
-     if (ee->blk) {
+This should not have any run-time effect.
+
+Based on renesas-devel-20180321-v4.16-rc6
+
+
+Changes since v1:
+* Dropped sorting of r8a7795 CPU nodes, they are already sorted
+* Rebase r8a7795 patches
+* Add r8a7796 patches
+
+Simon Horman (4):
+  arm64: dts: renesas: r8a7795: sort subnodes of the root node
+  arm64: dts: renesas: r8a7795: sort subnodes of the soc node
+  arm64: dts: renesas: r8a7796: sort subnodes of the root node
+  arm64: dts: renesas: r8a7796: sort subnodes of the soc node
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1904 +++++++++++++++---------------
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1840 ++++++++++++++---------------
+ 2 files changed, 1872 insertions(+), 1872 deletions(-)
+
 -- 
 2.11.0
