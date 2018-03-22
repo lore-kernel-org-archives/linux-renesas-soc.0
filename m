@@ -1,71 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:26657 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754267AbeCVLus (ORCPT
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:40349 "EHLO
+        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752494AbeCVIHL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Mar 2018 07:50:48 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2 7/8] DT: arm: Add Renesas RZN1D-DB Board base file
-Date: Thu, 22 Mar 2018 11:44:44 +0000
-Message-Id: <1521719091-25157-8-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
+        Thu, 22 Mar 2018 04:07:11 -0400
+Received: by mail-qk0-f169.google.com with SMTP id o64so8276983qkl.7
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Mar 2018 01:07:11 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CANqRtoQjv51xTmqahkiuMcBFWGXGy=dqHDVhRnWyfd6BWTgMPg@mail.gmail.com>
+References: <152153226789.8528.13236911976628814785.sendpatchset@little-apple>
+ <20180321085133.gwc2khtzgny5wnyp@verge.net.au> <20180321095706.k2esdpa4ap4wv2i4@verge.net.au>
+ <CANqRtoQjv51xTmqahkiuMcBFWGXGy=dqHDVhRnWyfd6BWTgMPg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Mar 2018 09:07:10 +0100
+Message-ID: <CAMuHMdVVXY+1YdJOQEOqp1XMFaufWzbmtDDM1r6+hhOKyWJBWw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77970: Update IPMMU DS1 bit number
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds a base device tree file for the RZN1-DB board, with only the
-basic support allowing the system to boot to a prompt. Only one UART is
-used, with only a single CPU running.
+Hi Magnus,
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+On Thu, Mar 22, 2018 at 7:07 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> On Wed, Mar 21, 2018 at 6:57 PM, Simon Horman <horms@verge.net.au> wrote:
+>> On Wed, Mar 21, 2018 at 09:51:33AM +0100, Simon Horman wrote:
+>>> On Tue, Mar 20, 2018 at 04:51:07PM +0900, Magnus Damm wrote:
+>>> > From: Magnus Damm <damm+renesas@opensource.se>
+>>> >
+>>> > Judging by "R-Car-Gen3-rev0.80" IPMMU IMSSTR register documentation
+>>> > for [R-Car V3M] the DS1 bit field should be bit 0.
+>>> >
+>>> > Update the ipmmu-main property to make it match the data sheet.
+>>>
+>>> Thanks, I have confirmed this. Apologies for this error.
+>>>
+>>> AFIK this IP block is currently unused, I wonder if it,
+>>> ipmmu_mm and ipmmu_rt should have status = "disabled" added.
+>>
+>> Sorry, I take that back, I now see the nodes used elsewhere in
+>> the same DT file.
+>
+> Thanks for your help! My opinion is that for R-Car Gen3 we don't
+> really need to keep any IPMMU nodes in disabled state in DT. This
+> since the whitelist code in the IPMMU driver will include software
+> policy handling to during runtime make sure only desired devices get
+> enabled.
 
-diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-new file mode 100644
-index 0000000..a462b1a
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZN1D-DB Board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+/dts-v1/;
-+
-+#include "r9a06g0xx.dtsi"
-+
-+/ {
-+	model = "RZN1D-DB Board";
-+	compatible = "renesas,rzn1d400-db", "renesas,r9a06g032", "renesas,rzn1";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+};
-+&uart0 {
-+	status = "okay";
-+};
+Good, DT == hardware description taking over again.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
