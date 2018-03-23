@@ -1,32 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34862 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751668AbeCWJVw (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:39994 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751668AbeCWJE6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:21:52 -0400
-Date: Fri, 23 Mar 2018 10:21:48 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH] clk: renesas: r8a77965: Add MSIOF controller clocks
-Message-ID: <20180323092148.jji2x4mg2xmrlt5j@verge.net.au>
-References: <1521795895-24033-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521795895-24033-1-git-send-email-geert+renesas@glider.be>
+        Fri, 23 Mar 2018 05:04:58 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a77965: Add MSIOF controller clocks
+Date: Fri, 23 Mar 2018 10:04:54 +0100
+Message-Id: <1521795895-24033-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Mar 23, 2018 at 10:04:54AM +0100, Geert Uytterhoeven wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> This patch adds MSIOF{0,1,2,3} clocks to the R8A77965 SoC.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+This patch adds MSIOF{0,1,2,3} clocks to the R8A77965 SoC.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v4.18.
+
+ drivers/clk/renesas/r8a77965-cpg-mssr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+index b1acfb60351ca35b..8fae5e9c4a77242d 100644
+--- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+@@ -116,6 +116,10 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
+ 	DEF_MOD("scif3",		204,	R8A77965_CLK_S3D4),
+ 	DEF_MOD("scif1",		206,	R8A77965_CLK_S3D4),
+ 	DEF_MOD("scif0",		207,	R8A77965_CLK_S3D4),
++	DEF_MOD("msiof3",		208,	R8A77965_CLK_MSO),
++	DEF_MOD("msiof2",		209,	R8A77965_CLK_MSO),
++	DEF_MOD("msiof1",		210,	R8A77965_CLK_MSO),
++	DEF_MOD("msiof0",		211,	R8A77965_CLK_MSO),
+ 	DEF_MOD("sys-dmac2",		217,	R8A77965_CLK_S0D3),
+ 	DEF_MOD("sys-dmac1",		218,	R8A77965_CLK_S0D3),
+ 	DEF_MOD("sys-dmac0",		219,	R8A77965_CLK_S0D3),
+-- 
+2.7.4
