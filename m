@@ -1,73 +1,64 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties
-Date: Wed, 14 Mar 2018 12:08:39 +0100
-Message-Id: <1521025722-24205-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
-References: <1521025722-24205-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34613 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeCWJFD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:05:03 -0400
+Date: Fri, 23 Mar 2018 10:05:00 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 2/4] arm64: dts: renesas: r8a7795: sort subnodes of
+ the soc node
+Message-ID: <20180323090459.xmzcihmln6bxynzk@verge.net.au>
+References: <20180322102423.18269-1-horms+renesas@verge.net.au>
+ <20180322102423.18269-3-horms+renesas@verge.net.au>
+ <CAMuHMdWz9wr0iVVqJ=abm1LRZ3QcfWTk02bKk-MpkVP=mBX52w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWz9wr0iVVqJ=abm1LRZ3QcfWTk02bKk-MpkVP=mBX52w@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the new optional properties related to DDR Backup Mode and
-toggle/momentary power switches.
+On Fri, Mar 23, 2018 at 09:41:29AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Mar 22, 2018 at 11:24 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Sort subnodes of the soc node.
+> > - The primary key is the bus address.
+> > - The secondary key is the IP block.
+> > - The tertiary key is the node name.
+> >
+> > This is part of an ongoing effort to provide consistent node
+> > order in the DT of Renesas SoCs to improve maintainability.
+> >
+> > This should not have any run-time effect.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> > v2
+> > * Rebase
+> 
+> Thanks for the update!
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> using dtx_diff, and "grep '@.*{', which tells me
+> 
+> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> 
+> >                 pciec0: pcie@fe000000 {
+> > @@ -2097,6 +2090,23 @@
+> >                         status = "disabled";
+> >                 };
+> >
+> > +               gic: interrupt-controller@f1010000 {
+> 
+> Probably gic should be before pciec0.
+> Currently it's after pciec1, which has a lower address than pciec1.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Improve property description,
-  - Add properties for power switch type.
----
- Documentation/devicetree/bindings/mfd/bd9571mwv.txt | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-index 9ab216a851d5619b..8804a214759845c5 100644
---- a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -25,6 +25,25 @@ Required properties:
- 			    Each child node is defined using the standard
- 			    binding for regulators.
- 
-+Optional properties:
-+  - rohm,ddr-backup-power : Value to use for DDR-Backup Power (default 0).
-+			    This is a bitmask that specifies which DDR power
-+			    rails need to be kept powered when backup mode is
-+			    entered, for system suspend:
-+			      - bit 0: DDR0
-+			      - bit 1: DDR1
-+			      - bit 2: DDR0C
-+			      - bit 3: DDR1C
-+			    These bits match the KEEPON_DDR* bits in the
-+			    documentation for the "BKUP Mode Cnt" register.
-+  - rohm,rstbmode-level: The RSTB signal is configured for level mode, to
-+			 accommodate a toggle power switch (the RSTBMODE pin is
-+			 strapped low).
-+  - rohm,rstbmode-pulse: The RSTB signal is configured for pulse mode, to
-+			 accommodate a momentary power switch (the RSTBMODE pin
-+			 is strapped high).
-+			 The two properties above are mutually exclusive.
-+
- Example:
- 
- 	pmic: pmic@30 {
-@@ -36,6 +55,8 @@ Example:
- 		#interrupt-cells = <2>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		rohm,ddr-backup-power = <15>;
-+		rohm,rstbmode-pulse;
- 
- 		regulators {
- 			dvfs: dvfs {
--- 
-2.7.4
-
+Thanks, I will fix this in v3.
