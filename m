@@ -1,49 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56500 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967118AbeCAJy4 (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:45243 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751303AbeCWH3m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:54:56 -0500
-Date: Thu, 1 Mar 2018 10:54:52 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
-Message-ID: <20180301095451.jvsybu5k6pnahfbi@verge.net.au>
-References: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
- <2fd26075-525c-8d86-ef81-f32c73cf3e8b@cogentembedded.com>
- <20180228132707.mgunezg5o4lul7x5@verge.net.au>
- <f9574ea2-d8ee-7c9f-b850-874074eddad2@cogentembedded.com>
+        Fri, 23 Mar 2018 03:29:42 -0400
+Received: by mail-qt0-f196.google.com with SMTP id f8so11607966qtg.12
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Mar 2018 00:29:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9574ea2-d8ee-7c9f-b850-874074eddad2@cogentembedded.com>
+In-Reply-To: <CANqRtoRCurvNXRTKpxfKKC=trAXxN6eTuMAXbWVco2J3_8sDFQ@mail.gmail.com>
+References: <152153402203.8610.10666108438721508284.sendpatchset@little-apple>
+ <152153403990.8610.2910800250912629335.sendpatchset@little-apple>
+ <CAMuHMdWF7Y29o_hA3GNCXJVvDHSmT9=D_KqqKst8Z_gWaNN1mw@mail.gmail.com>
+ <CAMuHMdUSUHYtjK6pJbRvz09RGeF-0Rp4RuL342dPNSkfxdQKyw@mail.gmail.com> <CANqRtoRCurvNXRTKpxfKKC=trAXxN6eTuMAXbWVco2J3_8sDFQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Mar 2018 08:29:40 +0100
+Message-ID: <CAMuHMdX-jRoMYMQMwOuTLhAYT-C2vz5mVah7vRmGHVdRHcBmTg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm: dts: sh73a0 KZM9 as unhandled IRQs on boot
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Feb 28, 2018 at 08:57:18PM +0300, Sergei Shtylyov wrote:
-> On 02/28/2018 04:27 PM, Simon Horman wrote:
-> 
-> >>> Here's the set of 5 patches against Simon Horman's 'renesas.git' repo's
-> >>> 'renesas-devel-20180227-v4.16-rc3' tag. We're adding the R8A77970 FCPVD/VSPD/
-> >>> DU/LVDS device nodes and then describing the HDMI encoder connected to the LVDS
-> >>> output (we're omitting the LVDS decoder for now). These patches depend on
-> >>> the recent R8A77970 DU/LVDS rework patches by Laurent in order to work...	
-> >>
-> >>    Need to mention that the DU driver silently fails to probe now. I do
-> >>    hope that this is not due to my updates. :-)
-> > 
-> > Please test that theory.
-> 
->    Yeah, after sucking in the recent versions of the DU/LVDS patches and uncommenting
-> and fixing rejects in a couple patches here, the graphical console works again. :-)
+Hi Magnus,
 
-Ok, but does this patchset cause a regression? If so it seems
-that we should wait for driver updates before applying it.
+On Fri, Mar 23, 2018 at 5:54 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> On Thu, Mar 22, 2018 at 6:55 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Wed, Mar 21, 2018 at 11:34 AM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> On Tue, Mar 20, 2018 at 9:20 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>>>> From: Magnus Damm <damm+renesas@opensource.se>
+>>>>
+>>>> Booting sh73a0 KZM9G results in the following on the console:
+>>>>
+>>>> [    0.030000] renesas_intc_irqpin e6900000.interrupt-controller: driving 8 irqs
+>>>> [    0.040000] random: crng init done
+>>>> [    0.120000] irq 35: nobody cared (try booting with the "irqpoll" option)
+>>>> [    0.120000] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc5 #4
+>>>> [    0.120000] Hardware name: Generic SH73A0 (Flattened Device Tree)
+>>>> ...
+>>>> [    0.120000] Disabling IRQ #35
+>>>> [    0.120000] renesas_intc_irqpin e6900004.interrupt-controller: driving 8 irqs
+>>>
+>>> Thanks for bringing this to my attention again. I always assumed it was one of
+>>> the IIO devices keeping an IRQ line asserted, but it turns out I was wrong...
+>>>
+>>>> Judging by the friendly board documentation there is nothing hooked up to
+>>>> that IRQ line. I wish we had proper schematics and not a less detailed
+>>>> board manual.
+>>>
+>>> Oh there is: PORT54/IRQ10/FSICCK is driven by the same 11.2896 MHz
+>>> oscillator (OSC4) as FSIACK.
+>>>
+>>>> With this patch I've tried to extend the irqpin driver to mask all interrupts
+>>>> on boot but it does not seem to help. Perhaps the PFC hardware needs to be
+>>>> configured somehow. More effort is needed to solve this issue.
+>>>
+>>> That pin is part of the HDMI interface, cfr. section 5.27.
+>>>
+>>> I've tried the below, but it doesn't work, as the interrupt controller is probed
+>>> before the pfc (it has to, due to dependencies from pfc on irqpin[0-3]).
+
+>>> So probably we need some early quirk in pfc-sh73a0.c, to configure the
+>>> pin as fsicck on kzm9g.
+>>
+>> That's done by switching PORT54 from FN0 to FN6, i.e. changing 0xe6051036
+>> from 0xa0 to 0xa6.
+>>
+>> I did that from U-Boot, and verified it's still that way when the PFC driver
+>> initializes, but it doesn't help, with or without your patch.
+>>
+>> So it seems more likely the intc-irqpin driver is not disabling interrupts that
+>> are not requested?
+>
+> Thanks for checking. Yeah the interrupt disabling poriton in the
+> driver might not work as expected. Also there is that "control-parent"
+> workaround in the driver as well, and perhaps combined with that the
+> PFC is not working as expected might result in spurious interrupts -
+> not sure.
+
+At least the actual disabling ("Disabling IRQ #35") seems to work.
+
+> I wonder if we still get interrupts if we configure the pin as GPIO?
+
+Thanks or the suggesion! I will try, eventually...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
