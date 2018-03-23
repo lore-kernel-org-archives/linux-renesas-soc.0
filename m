@@ -1,92 +1,309 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v12 21/33] rcar-vin: add flag to switch to media controller mode
-Date: Wed,  7 Mar 2018 23:04:59 +0100
-Message-Id: <20180307220511.9826-22-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180307220511.9826-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:35255 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754676AbeCWKES (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Mar 2018 06:04:18 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 1/4] arm64: dts: renesas: r8a7795: sort subnodes of the root node
+Date: Fri, 23 Mar 2018 11:04:05 +0100
+Message-Id: <20180323100408.14448-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180323100408.14448-1-horms+renesas@verge.net.au>
+References: <20180323100408.14448-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 a media controller API needs to be used to allow userspace to
-configure the subdevices in the pipeline instead of directly controlling
-a single source subdevice, which is and will continue to be the mode of
-operation on Gen2.
+Sort subnodes of the root node alphanumerically.
 
-Prepare for these two modes of operation by adding a flag to struct
-rvin_info which will control which mode to use.
+This is part of an ongoing effort to provide consistent node
+order in the DT of Renesas SoCs to improve maintainability.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Also remove excessive line-wrapping of interrupts-extended property of
+timer node.
+
+This should not have any run-time effect.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 6 +++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+v3
+* Add review tag from Geert
+* Move clusterX_opp should be before cpus
+* Move thermal_zones should be before timer
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 7e494b140aaf6b7e..ed370b7fb58c3e8a 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -249,18 +249,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+v2
+* Also sort clock nodes
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 218 +++++++++++++++----------------
+ 1 file changed, 105 insertions(+), 113 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 1d5e3ac0231c..bb96c7e23370 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -30,6 +30,91 @@
+ 		i2c7 = &i2c_dvfs;
+ 	};
  
- static const struct rvin_info rcar_info_h1 = {
- 	.model = RCAR_H1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External CAN clock - to be overridden by boards that provide it */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <830000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++		opp-1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <960000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -155,91 +240,6 @@
+ 		clock-frequency = <0>;
+ 	};
  
- static const struct rvin_info rcar_info_m1 = {
- 	.model = RCAR_M1,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
+-	/*
+-	 * The external audio clocks are configured as 0 Hz fixed frequency
+-	 * clocks by default.
+-	 * Boards that provide audio clocks should override them.
+-	 */
+-	audio_clk_a: audio_clk_a {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	audio_clk_b: audio_clk_b {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	audio_clk_c: audio_clk_c {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	/* External CAN clock - to be overridden by boards that provide it */
+-	can_clk: can {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <0>;
+-	};
+-
+-	cluster0_opp: opp_table0 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-500000000 {
+-			opp-hz = /bits/ 64 <500000000>;
+-			opp-microvolt = <830000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1000000000 {
+-			opp-hz = /bits/ 64 <1000000000>;
+-			opp-microvolt = <830000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1500000000 {
+-			opp-hz = /bits/ 64 <1500000000>;
+-			opp-microvolt = <830000>;
+-			clock-latency-ns = <300000>;
+-			opp-suspend;
+-		};
+-		opp-1600000000 {
+-			opp-hz = /bits/ 64 <1600000000>;
+-			opp-microvolt = <900000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-		opp-1700000000 {
+-			opp-hz = /bits/ 64 <1700000000>;
+-			opp-microvolt = <960000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-	};
+-
+-	cluster1_opp: opp_table1 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-800000000 {
+-			opp-hz = /bits/ 64 <800000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1000000000 {
+-			opp-hz = /bits/ 64 <1000000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1200000000 {
+-			opp-hz = /bits/ 64 <1200000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-	};
+-
+ 	/* External PCIe clock - can be overridden by the board */
+ 	pcie_bus_clk: pcie_bus {
+ 		compatible = "fixed-clock";
+@@ -247,18 +247,6 @@
+ 		clock-frequency = <0>;
+ 	};
  
- static const struct rvin_info rcar_info_gen2 = {
- 	.model = RCAR_GEN2,
-+	.use_mc = false,
- 	.max_width = 2048,
- 	.max_height = 2048,
- };
-@@ -355,7 +358,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
+-	pmu_a57 {
+-		compatible = "arm,cortex-a57-pmu";
+-		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+-		                      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+-				      <&gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+-				      <&gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-affinity = <&a57_0>,
+-				     <&a57_1>,
+-				     <&a57_2>,
+-				     <&a57_3>;
+-	};
+-
+ 	pmu_a53 {
+ 		compatible = "arm,cortex-a53-pmu";
+ 		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
+@@ -271,6 +259,18 @@
+ 				     <&a53_3>;
+ 	};
  
--	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+	if (!vin->info->use_mc)
-+		v4l2_ctrl_handler_free(&vin->ctrl_handler);
++	pmu_a57 {
++		compatible = "arm,cortex-a57-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++		                      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a57_0>,
++				     <&a57_1>,
++				     <&a57_2>,
++				     <&a57_3>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
+@@ -2428,22 +2428,6 @@
+ 		};
+ 	};
  
- 	rvin_dma_unregister(vin);
+-	timer {
+-		compatible = "arm,armv8-timer";
+-		interrupts-extended = <&gic GIC_PPI 13
+-				       (GIC_CPU_MASK_SIMPLE(8) |
+-				       IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 14
+-				       (GIC_CPU_MASK_SIMPLE(8) |
+-				       IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 11
+-				       (GIC_CPU_MASK_SIMPLE(8) |
+-				       IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 10
+-				       (GIC_CPU_MASK_SIMPLE(8) |
+-				       IRQ_TYPE_LEVEL_LOW)>;
+-	};
+-
+ 	thermal-zones {
+ 		sensor_thermal1: sensor-thermal1 {
+ 			polling-delay-passive = <250>;
+@@ -2524,6 +2508,14 @@
+ 		};
+ 	};
  
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 8e20455927fe5224..83feef08367bde30 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -77,11 +77,13 @@ struct rvin_graph_entity {
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @model:		VIN model
-+ * @use_mc:		use media controller instead of controlling subdevice
-  * @max_width:		max input width the VIN supports
-  * @max_height:		max input height the VIN supports
-  */
- struct rvin_info {
- 	enum model_id model;
-+	bool use_mc;
- 
- 	unsigned int max_width;
- 	unsigned int max_height;
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
+ 	/* External USB clocks - can be overridden by the board */
+ 	usb3s0_clk: usb3s0 {
+ 		compatible = "fixed-clock";
 -- 
-2.16.2
+2.11.0
