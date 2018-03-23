@@ -1,43 +1,252 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:27553 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932788AbeCEFcq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35265 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754642AbeCWKEW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 00:32:46 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 1/3] dt-bindings: rcar-gen3-phy-usb2: Add bindings for r8a77965
-Date: Mon,  5 Mar 2018 14:32:43 +0900
-Message-Id: <1520227965-4471-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1520227965-4471-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1520227965-4471-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 23 Mar 2018 06:04:22 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 3/4] arm64: dts: renesas: r8a7796: sort subnodes of the root node
+Date: Fri, 23 Mar 2018 11:04:07 +0100
+Message-Id: <20180323100408.14448-4-horms+renesas@verge.net.au>
+In-Reply-To: <20180323100408.14448-1-horms+renesas@verge.net.au>
+References: <20180323100408.14448-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for r8a77965 (R-Car M3-N).
+Sort subnodes of the root node alphanumerically.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This is part of an ongoing effort to provide consistent node
+order in the DT of Renesas SoCs to improve maintainability.
+
+This should not have any run-time effect.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
- 1 file changed, 2 insertions(+)
+v3
+* Add review tag from Geert
+* Move clusterX_opp should be before cpus
+* Move thermal_zones should be before timer
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-index 99b651b..dbd137c 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-@@ -8,6 +8,8 @@ Required properties:
- 	      SoC.
- 	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
- 	      SoC.
-+	      "renesas,usb2-phy-r8a77965" if the device is a part of an
-+	      R8A77965 SoC.
- 	      "renesas,usb2-phy-r8a77995" if the device is a part of an
- 	      R8A77995 SoC.
- 	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
+v2
+* New patch
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 162 +++++++++++++++----------------
+ 1 file changed, 81 insertions(+), 81 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 556eb8e45499..78fbb4fd34bf 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -60,6 +60,72 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++		opp-1800000000 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <960000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1300000000 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++			turbo-mode;
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -161,72 +227,6 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster0_opp: opp_table0 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-500000000 {
+-			opp-hz = /bits/ 64 <500000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1000000000 {
+-			opp-hz = /bits/ 64 <1000000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1500000000 {
+-			opp-hz = /bits/ 64 <1500000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1600000000 {
+-			opp-hz = /bits/ 64 <1600000000>;
+-			opp-microvolt = <900000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-		opp-1700000000 {
+-			opp-hz = /bits/ 64 <1700000000>;
+-			opp-microvolt = <900000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-		opp-1800000000 {
+-			opp-hz = /bits/ 64 <1800000000>;
+-			opp-microvolt = <960000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-	};
+-
+-	cluster1_opp: opp_table1 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-800000000 {
+-			opp-hz = /bits/ 64 <800000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1000000000 {
+-			opp-hz = /bits/ 64 <1000000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1200000000 {
+-			opp-hz = /bits/ 64 <1200000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-		};
+-		opp-1300000000 {
+-			opp-hz = /bits/ 64 <1300000000>;
+-			opp-microvolt = <820000>;
+-			clock-latency-ns = <300000>;
+-			turbo-mode;
+-		};
+-	};
+-
+ 	/* External PCIe clock - can be overridden by the board */
+ 	pcie_bus_clk: pcie_bus {
+ 		compatible = "fixed-clock";
+@@ -234,13 +234,6 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	pmu_a57 {
+-		compatible = "arm,cortex-a57-pmu";
+-		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+-				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-affinity = <&a57_0>, <&a57_1>;
+-	};
+-
+ 	pmu_a53 {
+ 		compatible = "arm,cortex-a53-pmu";
+ 		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
+@@ -250,6 +243,13 @@
+ 		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
+ 	};
+ 
++	pmu_a57 {
++		compatible = "arm,cortex-a57-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a57_0>, <&a57_1>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0", "arm,psci-0.2";
+ 		method = "smc";
+@@ -2063,14 +2063,6 @@
+ 		};
+ 	};
+ 
+-	timer {
+-		compatible = "arm,armv8-timer";
+-		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
+-	};
+-
+ 	thermal-zones {
+ 		sensor_thermal1: sensor-thermal1 {
+ 			polling-delay-passive = <250>;
+@@ -2151,6 +2143,14 @@
+ 		};
+ 	};
+ 
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
+ 	/* External USB clocks - can be overridden by the board */
+ 	usb3s0_clk: usb3s0 {
+ 		compatible = "fixed-clock";
 -- 
-1.9.1
+2.11.0
