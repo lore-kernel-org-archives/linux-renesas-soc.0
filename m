@@ -1,73 +1,47 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v11 11/32] rcar-vin: set a default field to fallback on
-Date: Fri,  2 Mar 2018 02:57:30 +0100
-Message-Id: <20180302015751.25596-12-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180302015751.25596-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34581 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeCWJCw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:02:52 -0400
+Date: Fri, 23 Mar 2018 10:02:48 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 3/4] arm64: dts: renesas: r8a7796: sort subnodes of
+ the root node
+Message-ID: <20180323090247.7whvhvb2k6fmm63n@verge.net.au>
+References: <20180322102423.18269-1-horms+renesas@verge.net.au>
+ <20180322102423.18269-4-horms+renesas@verge.net.au>
+ <CAMuHMdX51Uqr=2aN+EC8wnEqNoDWYOVdOXA=aWhC-uX1k5p4sg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX51Uqr=2aN+EC8wnEqNoDWYOVdOXA=aWhC-uX1k5p4sg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the field is not supported by the driver it should not try to keep
-the current field. Instead it should set it to a default fallback. Since
-trying a format should always result in the same state regardless of the
-current state of the device.
+On Fri, Mar 23, 2018 at 09:37:41AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Mar 22, 2018 at 11:24 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Sort subnodes of the root node alphanumerically.
+> >
+> > This is part of an ongoing effort to provide consistent node
+> > order in the DT of Renesas SoCs to improve maintainability.
+> >
+> > This should not have any run-time effect.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Thanks for your patch!
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> using "grep '{' | grep -v @", which tells me
+>   - clusterX_opp should be before cpus,
+>   - thermal_zones should be before timer.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index c2265324c7c96308..ebcd78b1bb6e8cb6 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -23,6 +23,7 @@
- #include "rcar-vin.h"
- 
- #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
-+#define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
- 
- /* -----------------------------------------------------------------------------
-  * Format Conversions
-@@ -143,7 +144,7 @@ static int rvin_reset_format(struct rvin_dev *vin)
- 	case V4L2_FIELD_INTERLACED:
- 		break;
- 	default:
--		vin->format.field = V4L2_FIELD_NONE;
-+		vin->format.field = RVIN_DEFAULT_FIELD;
- 		break;
- 	}
- 
-@@ -213,10 +214,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	u32 walign;
- 	int ret;
- 
--	/* Keep current field if no specific one is asked for */
--	if (pix->field == V4L2_FIELD_ANY)
--		pix->field = vin->format.field;
--
- 	/* If requested format is not supported fallback to the default */
- 	if (!rvin_format_from_pixel(pix->pixelformat)) {
- 		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
-@@ -246,7 +243,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	case V4L2_FIELD_INTERLACED:
- 		break;
- 	default:
--		pix->field = V4L2_FIELD_NONE;
-+		pix->field = RVIN_DEFAULT_FIELD;
- 		break;
- 	}
- 
--- 
-2.16.2
+Thanks, I will fix that in v3.
