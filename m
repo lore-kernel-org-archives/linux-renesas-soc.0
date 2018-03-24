@@ -1,63 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:16928 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751398AbeC2Hvw (ORCPT
+Received: from sauhun.de ([88.99.104.3]:41108 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751894AbeCXNFi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:51:52 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v3 3/8] DT: arm: renesas,rzn1: add the RZ/N1 SoC and RZN1D-DB board
-Date: Thu, 29 Mar 2018 08:46:59 +0100
-Message-Id: <1522309629-10152-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
+        Sat, 24 Mar 2018 09:05:38 -0400
+Date: Sat, 24 Mar 2018 14:05:36 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: rcar: fix mask value of prohibited bit
+Message-ID: <20180324130536.56kez4wh72snuzub@ninjato>
+References: <20180320210414.6070-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="22btng45yxyxkfcy"
+Content-Disposition: inline
+In-Reply-To: <20180320210414.6070-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This documents the RZ/N1 bindings for both the RZ/N1 and the RZN1D-DB
-board.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+--22btng45yxyxkfcy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index d3d1df9..52368fc 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -47,7 +47,10 @@ SoCs:
-     compatible = "renesas,r8a77980"
-   - R-Car D3 (R8A77995)
-     compatible = "renesas,r8a77995"
--
-+  - RZ/N1 Family (R9A06G032 & R9A06G033)
-+    compatible = "renesas,rzn1"
-+  - RZ/N1D (R9A06G032)
-+    compatible = "renesas,r9a06g032", "renesas,rzn1"
- 
- Boards:
- 
-@@ -104,6 +107,8 @@ Boards:
-     compatible = "renesas,porter", "renesas,r8a7791"
-   - RSKRZA1 (YR0K77210C000BE)
-     compatible = "renesas,rskrza1", "renesas,r7s72100"
-+  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
-+    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032", "renesas,rzn1"
-   - Salvator-X (RTP0RC7795SIPB0010S)
-     compatible = "renesas,salvator-x", "renesas,r8a7795"
-   - Salvator-X (RTP0RC7796SIPB0011S)
--- 
-2.7.4
+On Tue, Mar 20, 2018 at 10:04:14PM +0100, Wolfram Sang wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>=20
+> According to documentation, Bit 7 of ICMSR is unused and 0 should be
+> written to it. Fix the mask accordingly.
+>=20
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> [wsa: edited commit message]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Applied to for-next, thanks!
+
+
+--22btng45yxyxkfcy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq2TSAACgkQFA3kzBSg
+KbZg0A//R9exMQ6gHSrTC+Q95MDG2wRYLuSacNMqW8pWl7EiWXWHPXLRiCP7eIfo
+4O9NzQTemIB5EYt9YWjqvHOXHUW8KsiDgg8qQJ6JIcpHaG1v8NzOJIWolqx/vMVY
+alPCCNPIp+OulUTOHIeQkynRUrPtFSD5JzKG9hxQdC5y0ZyJ6NBRXb8ir1ITkDzp
+ibkA0HJareSXMx9TAbcOzYPE5DSccQbrRtpwWu1E1Ikh3HBcQBF9a1Ik2wdeVB2f
+DpVYCkX5fhHW0mpuS9kKYHbv2FolUs3y8cJjJATJXofVGw3OY9FkeczWoPQwF6cM
+6U/VxmkyX2ZNwWlhP3PX5L8uNuvRfbKcuP+IjRMFc86CCgc1LRB2xAEGOhinZsZq
+deOIJ3JTFOkCE0MLGneNdh4r6n99VoGEy7SO+DYo2WCVY85ULAX9IEi+Fh3JxeVC
+6jb2Dh8TEJa042TGRm+zT/SZB+HDDtOiZaMCBI5XyxFWnv0Duuv1w+q8S4Vp8Q2B
+C2f2I/qlBb7KrtNUjSqIMBYg2z2JiHnk7PO8pKC2Kg4TK7Wd+ghx58+G59UcVd5b
+iF+jGT/ohzLnC09wUs2KnXjZqUligZPbrrsovhnhZBgRLsPtIM4HWY562r91Qdwl
+OafPOo1Ftz2yOs1zXqYY+/aQ28EJOsE0y6J1gCwaBTBJ7ArH9KU=
+=GWwD
+-----END PGP SIGNATURE-----
+
+--22btng45yxyxkfcy--
