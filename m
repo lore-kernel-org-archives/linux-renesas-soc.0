@@ -1,206 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753405AbeCPOxS (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36848 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753440AbeCXUJ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:53:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 31/69] arm64: dts: renesas: r8a77980: add [H]SCIF support
-Date: Fri, 16 Mar 2018 15:51:01 +0100
-Message-Id: <3601d98ceab56e3d04c9c5e029903bee0337cb94.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Sat, 24 Mar 2018 16:09:58 -0400
+Received: by mail-lf0-f68.google.com with SMTP id z143-v6so22885535lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Mar 2018 13:09:57 -0700 (PDT)
+Subject: [PATCH 3/5] sh_eth: add sh_eth_cpu_data::xdfar_rw flag
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
+References: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
+Message-ID: <84d41287-b2ab-e4f5-5fb4-571820a7118b@cogentembedded.com>
+Date: Sat, 24 Mar 2018 23:09:55 +0300
+MIME-Version: 1.0
+In-Reply-To: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The GEther-like controllers have writeable RDFAR/TDFAR, on the others
+they are read-only or just absent (on R-Car). Currently we are calling
+sh_eth_is_{gether|rz_fast_ether}() in order to check if these registers
+can be written to, however it would be simpler to check the new 'xdfar_rw'
+bitfield in the 'struct sh_eth_cpu_data'...
 
-Describe [H]SCIF ports in the R8A77980 device tree.
-
-Based on the original (and large) patch by Vladimir Barinov.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 151 ++++++++++++++++++++++++++++++
- 1 file changed, 151 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index e5c7cf391334..eaa546f0a91f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -56,6 +56,13 @@
- 		method = "smc";
- 	};
- 
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -85,6 +92,150 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a77980",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6540000 0 0x60>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 520>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
-+			       <&dmac2 0x31>, <&dmac2 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 520>;
-+			status = "disabled";
-+		};
-+
-+		hscif1: serial@e6550000 {
-+			compatible = "renesas,hscif-r8a77980",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6550000 0 0x60>;
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 519>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
-+			       <&dmac2 0x33>, <&dmac2 0x32>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 519>;
-+			status = "disabled";
-+		};
-+
-+		hscif2: serial@e6560000 {
-+			compatible = "renesas,hscif-r8a77980",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6560000 0 0x60>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 518>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
-+			       <&dmac2 0x35>, <&dmac2 0x34>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 518>;
-+			status = "disabled";
-+		};
-+
-+		hscif3: serial@e66a0000 {
-+			compatible = "renesas,hscif-r8a77980",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe66a0000 0 0x60>;
-+			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 517>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
-+			       <&dmac2 0x37>, <&dmac2 0x36>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 517>;
-+			status = "disabled";
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a77980",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6e60000 0 0x40>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-+			       <&dmac2 0x51>, <&dmac2 0x50>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 207>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a77980",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6e68000 0 0x40>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-+			       <&dmac2 0x53>, <&dmac2 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 206>;
-+			status = "disabled";
-+		};
-+
-+		scif3: serial@e6c50000 {
-+			compatible = "renesas,scif-r8a77980",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6c50000 0 0x40>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
-+			       <&dmac2 0x57>, <&dmac2 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 204>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial@e6c40000 {
-+			compatible = "renesas,scif-r8a77980",
-+				     "renesas,rcar-gen3-scif",
-+				     "renesas,scif";
-+			reg = <0 0xe6c40000 0 0x40>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE 19>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
-+			       <&dmac2 0x59>, <&dmac2 0x58>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 203>;
-+			status = "disabled";
-+		};
-+
- 		dmac1: dma-controller@e7300000 {
- 			compatible = "renesas,dmac-r8a77980",
- 				     "renesas,rcar-dmac";
--- 
-2.11.0
+---
+ drivers/net/ethernet/renesas/sh_eth.c |   11 +++++++----
+ drivers/net/ethernet/renesas/sh_eth.h |    1 +
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net-next/drivers/net/ethernet/renesas/sh_eth.c
+@@ -611,6 +611,7 @@ static struct sh_eth_cpu_data r7s72100_d
+ 	.rpadir_value   = 2 << 16,
+ 	.no_trimd	= 1,
+ 	.no_ade		= 1,
++	.xdfar_rw	= 1,
+ 	.hw_checksum	= 1,
+ 	.tsu		= 1,
+ };
+@@ -659,6 +660,7 @@ static struct sh_eth_cpu_data r8a7740_da
+ 	.rpadir_value   = 2 << 16,
+ 	.no_trimd	= 1,
+ 	.no_ade		= 1,
++	.xdfar_rw	= 1,
+ 	.hw_checksum	= 1,
+ 	.tsu		= 1,
+ 	.select_mii	= 1,
+@@ -918,6 +920,7 @@ static struct sh_eth_cpu_data sh7757_dat
+ 	.rpadir_value   = 2 << 16,
+ 	.no_trimd	= 1,
+ 	.no_ade		= 1,
++	.xdfar_rw	= 1,
+ 	.tsu		= 1,
+ 	.dual_port	= 1,
+ };
+@@ -955,6 +958,7 @@ static struct sh_eth_cpu_data sh7734_dat
+ 	.hw_swap	= 1,
+ 	.no_trimd	= 1,
+ 	.no_ade		= 1,
++	.xdfar_rw	= 1,
+ 	.tsu		= 1,
+ 	.hw_checksum	= 1,
+ 	.select_mii	= 1,
+@@ -993,6 +997,7 @@ static struct sh_eth_cpu_data sh7763_dat
+ 	.hw_swap	= 1,
+ 	.no_trimd	= 1,
+ 	.no_ade		= 1,
++	.xdfar_rw	= 1,
+ 	.tsu		= 1,
+ 	.irq_flags	= IRQF_SHARED,
+ 	.magic		= 1,
+@@ -1301,8 +1306,7 @@ static void sh_eth_ring_format(struct ne
+ 		/* Rx descriptor address set */
+ 		if (i == 0) {
+ 			sh_eth_write(ndev, mdp->rx_desc_dma, RDLAR);
+-			if (sh_eth_is_gether(mdp) ||
+-			    sh_eth_is_rz_fast_ether(mdp))
++			if (mdp->cd->xdfar_rw)
+ 				sh_eth_write(ndev, mdp->rx_desc_dma, RDFAR);
+ 		}
+ 	}
+@@ -1324,8 +1328,7 @@ static void sh_eth_ring_format(struct ne
+ 		if (i == 0) {
+ 			/* Tx descriptor address set */
+ 			sh_eth_write(ndev, mdp->tx_desc_dma, TDLAR);
+-			if (sh_eth_is_gether(mdp) ||
+-			    sh_eth_is_rz_fast_ether(mdp))
++			if (mdp->cd->xdfar_rw)
+ 				sh_eth_write(ndev, mdp->tx_desc_dma, TDFAR);
+ 		}
+ 	}
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
++++ net-next/drivers/net/ethernet/renesas/sh_eth.h
+@@ -508,6 +508,7 @@ struct sh_eth_cpu_data {
+ 	unsigned rpadir:1;	/* E-DMAC have RPADIR */
+ 	unsigned no_trimd:1;	/* E-DMAC DO NOT have TRIMD */
+ 	unsigned no_ade:1;	/* E-DMAC DO NOT have ADE bit in EESR */
++	unsigned xdfar_rw:1;	/* E-DMAC has writeable RDFAR/TDFAR */
+ 	unsigned hw_checksum:1;	/* E-DMAC has CSMR */
+ 	unsigned select_mii:1;	/* EtherC have RMII_MII (MII select register) */
+ 	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
