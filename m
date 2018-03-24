@@ -1,37 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:52982 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeCZQet (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:37233 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752788AbeCXUaL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Mar 2018 12:34:49 -0400
-Date: Mon, 26 Mar 2018 12:34:47 -0400 (EDT)
-Message-Id: <20180326.123447.1350791578528691423.davem@davemloft.net>
-To: sergei.shtylyov@cogentembedded.com
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org
+        Sat, 24 Mar 2018 16:30:11 -0400
+Received: by mail-lf0-f49.google.com with SMTP id m16-v6so19170626lfc.4
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Mar 2018 13:30:10 -0700 (PDT)
 Subject: Re: [PATCH 0/2] sh_eth: unify the SoC feature checks
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
 References: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+ <d150c423-8e86-822f-a16b-b0fc0d717543@cogentembedded.com>
+Message-ID: <9ee0af81-b282-f06d-36db-dba43db14486@cogentembedded.com>
+Date: Sat, 24 Mar 2018 23:30:08 +0300
+MIME-Version: 1.0
+In-Reply-To: <d150c423-8e86-822f-a16b-b0fc0d717543@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Sat, 24 Mar 2018 23:04:53 +0300
+On 03/24/2018 11:14 PM, Sergei Shtylyov wrote:
 
-> Here's a set of 5 patches against DaveM's 'net-next.git' repo.
-> 
-> The Ether driver sometimes uses the bit fields in 'struct sh_eth_cpu_data'
-> to check which Ether registers exist in a certain SoC and sometimes it uses
-> sh_eth_is_{gether|rz_fast_ether}() which basically compares 2 pointers (1 of
-> them being constant) -- the latter is definitely not a strongest feature of
-> the RISC CPUs (be it SH or ARM), so I decided to get rid of this type of
-> the feature checks in favour of the bit fields (I've also made use of a
-> 32-bit value and method pointer where appropriate)...
+> Should have been 0/5 in the subject. Sorry. :-)
 
-Series applied with patch #4 subject fixed up.
-
-Thank you.
+   Oh, and I forgot 'net-next' inside [], sorry again! :-)
