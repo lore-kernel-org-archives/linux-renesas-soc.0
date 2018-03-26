@@ -1,95 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38414 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935400AbeCSQh3 (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:19279 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752169AbeCZVqZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:37:29 -0400
-Received: by mail-wr0-f196.google.com with SMTP id l8so19281893wrg.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Mar 2018 09:37:28 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: laurent.pinchart@ideasonboard.com, kbingham@kernel.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 2/3] pinctrl: sh-pfc: r8a7796: correct VIN4 18-bit pins
-Date: Mon, 19 Mar 2018 17:37:19 +0100
-Message-Id: <1521477440-1047-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1521477440-1047-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1521477440-1047-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 26 Mar 2018 17:46:25 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v13 02/33] dt-bindings: media: rcar_vin: add device tree support for r8a774[35]
+Date: Mon, 26 Mar 2018 23:44:25 +0200
+Message-Id: <20180326214456.6655-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RGB666 has a pin assignment that differs from the other formats.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Add compatible strings for r8a7743 and r8a7745. No driver change
+is needed as "renesas,rcar-gen2-vin" will activate the right code.
+However, it is good practice to document compatible strings for the
+specific SoC as this allows SoC specific changes to the driver if
+needed, in addition to document SoC support and therefore allow
+checkpatch.pl to validate compatible string values.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ Documentation/devicetree/bindings/media/rcar_vin.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index e6fff55..7a26392 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -4022,48 +4022,48 @@ static const unsigned int vin4_data16_b_mux[] = {
- 	VI4_DATA14_MARK, VI4_DATA15_MARK,
- };
- static const unsigned int vin4_data18_a_pins[] = {
--	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
- 	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
- 	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
- 	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
- 	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
- 	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
- 	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-+	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-+	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-+	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
- };
- static const unsigned int vin4_data18_a_mux[] = {
--	VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
- 	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
- 	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
- 	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
- 	VI4_DATA10_MARK, VI4_DATA11_MARK,
- 	VI4_DATA12_MARK, VI4_DATA13_MARK,
- 	VI4_DATA14_MARK, VI4_DATA15_MARK,
--	VI4_DATA16_MARK, VI4_DATA17_MARK,
-+	VI4_DATA18_MARK, VI4_DATA19_MARK,
-+	VI4_DATA20_MARK, VI4_DATA21_MARK,
-+	VI4_DATA22_MARK, VI4_DATA23_MARK,
- };
- static const unsigned int vin4_data18_b_pins[] = {
--	RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
- 	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
- 	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
- 	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
--	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
- 	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
- 	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
- 	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-+	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-+	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-+	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
- };
- static const unsigned int vin4_data18_b_mux[] = {
--	VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
- 	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
- 	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
- 	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
- 	VI4_DATA10_MARK, VI4_DATA11_MARK,
- 	VI4_DATA12_MARK, VI4_DATA13_MARK,
- 	VI4_DATA14_MARK, VI4_DATA15_MARK,
--	VI4_DATA16_MARK, VI4_DATA17_MARK,
-+	VI4_DATA18_MARK, VI4_DATA19_MARK,
-+	VI4_DATA20_MARK, VI4_DATA21_MARK,
-+	VI4_DATA22_MARK, VI4_DATA23_MARK,
- };
- static const unsigned int vin4_data20_a_pins[] = {
- 	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index d99b6f5dee418056..4c76d82905c9d3b8 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -6,6 +6,8 @@ family of devices. The current blocks are always slaves and suppot one input
+ channel which can be either RGB, YUYV or BT656.
+ 
+  - compatible: Must be one or more of the following
++   - "renesas,vin-r8a7743" for the R8A7743 device
++   - "renesas,vin-r8a7745" for the R8A7745 device
+    - "renesas,vin-r8a7778" for the R8A7778 device
+    - "renesas,vin-r8a7779" for the R8A7779 device
+    - "renesas,vin-r8a7790" for the R8A7790 device
+@@ -14,7 +16,8 @@ channel which can be either RGB, YUYV or BT656.
+    - "renesas,vin-r8a7793" for the R8A7793 device
+    - "renesas,vin-r8a7794" for the R8A7794 device
+    - "renesas,vin-r8a7795" for the R8A7795 device
+-   - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 compatible device.
++   - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
++     device.
+    - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+ 
+    When compatible with the generic version nodes must list the
 -- 
-2.7.4
+2.16.2
