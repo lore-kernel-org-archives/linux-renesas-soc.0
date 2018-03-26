@@ -1,82 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:41799 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751144AbeCEPaq (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:52982 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752044AbeCZQet (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:30:46 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wim Van Sebroeck <wim@iguana.be>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-watchdog@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v8 3/3] watchdog: renesas_wdt: Add restart handler
-Date: Mon,  5 Mar 2018 15:30:26 +0000
-Message-Id: <1520263826-1937-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1520263826-1937-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1520263826-1937-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 26 Mar 2018 12:34:49 -0400
+Date: Mon, 26 Mar 2018 12:34:47 -0400 (EDT)
+Message-Id: <20180326.123447.1350791578528691423.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Subject: Re: [PATCH 0/2] sh_eth: unify the SoC feature checks
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
+References: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-by means of the watchdog.
-This patch adds a restart handler to rwdt_ops, and also makes sure we
-keep its priority to the lowest level, in order to not override other
-more effective handlers.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Sat, 24 Mar 2018 23:04:53 +0300
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v7->v8:
-* no change
+> Here's a set of 5 patches against DaveM's 'net-next.git' repo.
+> 
+> The Ether driver sometimes uses the bit fields in 'struct sh_eth_cpu_data'
+> to check which Ether registers exist in a certain SoC and sometimes it uses
+> sh_eth_is_{gether|rz_fast_ether}() which basically compares 2 pointers (1 of
+> them being constant) -- the latter is definitely not a strongest feature of
+> the RISC CPUs (be it SH or ARM), so I decided to get rid of this type of
+> the feature checks in favour of the bit fields (I've also made use of a
+> 32-bit value and method pointer where appropriate)...
 
- drivers/watchdog/renesas_wdt.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Series applied with patch #4 subject fixed up.
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 0dede5b..6b8c6dd 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -110,6 +110,16 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
- 	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
- }
- 
-+static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
-+			void *data)
-+{
-+	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	rwdt_start(wdev);
-+	rwdt_write(priv, 0xffff, RWTCNT);
-+	return 0;
-+}
-+
- static const struct watchdog_info rwdt_ident = {
- 	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
- 	.identity = "Renesas WDT Watchdog",
-@@ -121,6 +131,7 @@ static const struct watchdog_ops rwdt_ops = {
- 	.stop = rwdt_stop,
- 	.ping = rwdt_init_timeout,
- 	.get_timeleft = rwdt_get_timeleft,
-+	.restart = rwdt_restart,
- };
- 
- #if defined(CONFIG_ARCH_RCAR_GEN2) && defined(CONFIG_SMP)
-@@ -220,6 +231,7 @@ static int rwdt_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, priv);
- 	watchdog_set_drvdata(&priv->wdev, priv);
- 	watchdog_set_nowayout(&priv->wdev, nowayout);
-+	watchdog_set_restart_priority(&priv->wdev, 0);
- 
- 	/* This overrides the default timeout only if DT configuration was found */
- 	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
--- 
-2.7.4
+Thank you.
