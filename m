@@ -1,6 +1,7 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: renesas: v3msk: add EtherAVB pins
-To: Simon Horman <horms@verge.net.au>
+Date: Mon, 26 Mar 2018 11:01:46 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -8,37 +9,28 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: renesas: v3msk: add EtherAVB pins
+Message-ID: <20180326090146.7f7esysp5uhd5z3i@verge.net.au>
 References: <c42c9e9a-8fe8-5cad-0eeb-0c1fbd09f83c@cogentembedded.com>
- <20180326090146.7f7esysp5uhd5z3i@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <73ffe546-d7c5-ced6-d75b-be36f2457067@cogentembedded.com>
-Date: Mon, 26 Mar 2018 18:27:06 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180326090146.7f7esysp5uhd5z3i@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c42c9e9a-8fe8-5cad-0eeb-0c1fbd09f83c@cogentembedded.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 03/26/2018 12:01 PM, Simon Horman wrote:
-
->> Add the (previously omitted) EtherAVB pin data to the V3M Starter Kit
->> board's device tree.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
->> ---
->> The patch is against the 'renesas-devel-20180314-v4.16-rc5' tag of Simon's
->> 'renesas.git repo. It depends on the R8A77970 PFC driver patch adding EtherAVB
->> pin groups (posted yesterday) in order to work properly...
+On Wed, Mar 14, 2018 at 11:30:34PM +0300, Sergei Shtylyov wrote:
+> Add the (previously omitted) EtherAVB pin data to the V3M Starter Kit
+> board's device tree.
 > 
-> Thanks, I have marked this as deferred, please either:
-> * repost or ping me once the dependency is in an RC release or;
-> * let me know that its safe to apply this change - that is, it won't cause
->   a regression - without the dependency
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> The patch is against the 'renesas-devel-20180314-v4.16-rc5' tag of Simon's
+> 'renesas.git repo. It depends on the R8A77970 PFC driver patch adding EtherAVB
+> pin groups (posted yesterday) in order to work properly...
 
-   I'm seeing this patch merged under the today's devel tag -- please undo the merge
-as the PFC pre-requisite patch haven't hit Linus' repo yet. 
-
-MBR, Sergei
+Thanks, I have marked this as deferred, please either:
+* repost or ping me once the dependency is in an RC release or;
+* let me know that its safe to apply this change - that is, it won't cause
+  a regression - without the dependency
