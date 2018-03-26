@@ -1,318 +1,203 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52113 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755034AbeCHAFp (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 19:05:45 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v7 8/8] media: vsp1: Move video configuration to a cached dlb
-Date: Thu,  8 Mar 2018 00:05:31 +0000
-Message-Id: <397eb3811ec096d0ceefa1dbea2d0ae68feb0587.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 31/33] rcar-vin: enable support for r8a7795
+Date: Mon, 26 Mar 2018 23:44:54 +0200
+Message-Id: <20180326214456.6655-32-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We are now able to configure a pipeline directly into a local display
-list body. Take advantage of this fact, and create a cacheable body to
-store the configuration of the pipeline in the video object.
+Add the SoC specific information for Renesas r8a7795 ES1.x and ES2.0.
 
-vsp1_video_pipeline_run() is now the last user of the pipe->dl object.
-Convert this function to use the cached video->config body and obtain a
-local display list reference.
-
-Attach the video->config body to the display list when needed before
-committing to hardware.
-
-The pipe object is marked as un-configured when resuming from a suspend.
-This ensures that when the hardware is reset - our cached configuration
-will be re-attached to the next committed DL.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
+ drivers/media/platform/rcar-vin/Kconfig     |   2 +-
+ drivers/media/platform/rcar-vin/rcar-core.c | 120 ++++++++++++++++++++++++++++
+ 2 files changed, 121 insertions(+), 1 deletion(-)
 
-v3:
- - 's/fragment/body/', 's/fragments/bodies/'
- - video dlb cache allocation increased from 2 to 3 dlbs
-
-Our video DL usage now looks like the below output:
-
-dl->body0 contains our disposable runtime configuration. Max 41.
-dl_child->body0 is our partition specific configuration. Max 12.
-dl->bodies shows our constant configuration and LUTs.
-
-  These two are LUT/CLU:
-     * dl->bodies[x]->num_entries 256 / max 256
-     * dl->bodies[x]->num_entries 4914 / max 4914
-
-Which shows that our 'constant' configuration cache is currently
-utilised to a maximum of 64 entries.
-
-trace-cmd report | \
-    grep max | sed 's/.*vsp1_dl_list_commit://g' | sort | uniq;
-
-  dl->body0->num_entries 13 / max 128
-  dl->body0->num_entries 14 / max 128
-  dl->body0->num_entries 16 / max 128
-  dl->body0->num_entries 20 / max 128
-  dl->body0->num_entries 27 / max 128
-  dl->body0->num_entries 34 / max 128
-  dl->body0->num_entries 41 / max 128
-  dl_child->body0->num_entries 10 / max 128
-  dl_child->body0->num_entries 12 / max 128
-  dl->bodies[x]->num_entries 15 / max 128
-  dl->bodies[x]->num_entries 16 / max 128
-  dl->bodies[x]->num_entries 17 / max 128
-  dl->bodies[x]->num_entries 18 / max 128
-  dl->bodies[x]->num_entries 20 / max 128
-  dl->bodies[x]->num_entries 21 / max 128
-  dl->bodies[x]->num_entries 256 / max 256
-  dl->bodies[x]->num_entries 31 / max 128
-  dl->bodies[x]->num_entries 32 / max 128
-  dl->bodies[x]->num_entries 39 / max 128
-  dl->bodies[x]->num_entries 40 / max 128
-  dl->bodies[x]->num_entries 47 / max 128
-  dl->bodies[x]->num_entries 48 / max 128
-  dl->bodies[x]->num_entries 4914 / max 4914
-  dl->bodies[x]->num_entries 55 / max 128
-  dl->bodies[x]->num_entries 56 / max 128
-  dl->bodies[x]->num_entries 63 / max 128
-  dl->bodies[x]->num_entries 64 / max 128
-
-v4:
- - Adjust pipe configured flag to be reset on resume rather than suspend
- - rename dl_child, dl_next
-
- drivers/media/platform/vsp1/vsp1_pipe.c  |  7 +++-
- drivers/media/platform/vsp1/vsp1_pipe.h  |  4 +-
- drivers/media/platform/vsp1/vsp1_video.c | 67 ++++++++++++++++---------
- drivers/media/platform/vsp1/vsp1_video.h |  2 +-
- 4 files changed, 54 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-index 5012643583b6..fa445b1a2e38 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.c
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-@@ -249,6 +249,7 @@ void vsp1_pipeline_run(struct vsp1_pipeline *pipe)
- 		vsp1_write(vsp1, VI6_CMD(pipe->output->entity.index),
- 			   VI6_CMD_STRCMD);
- 		pipe->state = VSP1_PIPELINE_RUNNING;
-+		pipe->configured = true;
- 	}
+diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
+index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
+--- a/drivers/media/platform/rcar-vin/Kconfig
++++ b/drivers/media/platform/rcar-vin/Kconfig
+@@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
+ 	select V4L2_FWNODE
+ 	---help---
+ 	  Support for Renesas R-Car Video Input (VIN) driver.
+-	  Supports R-Car Gen2 SoCs.
++	  Supports R-Car Gen2 and Gen3 SoCs.
  
- 	pipe->buffers_ready = 0;
-@@ -470,6 +471,12 @@ void vsp1_pipelines_resume(struct vsp1_device *vsp1)
- 			continue;
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called rcar-vin.
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 0cc76d73115e9277..81119ae4402d0990 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -21,6 +21,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
++#include <linux/sys_soc.h>
  
- 		spin_lock_irqsave(&pipe->irqlock, flags);
-+		/*
-+		 * The hardware may have been reset during a suspend and will
-+		 * need a full reconfiguration
-+		 */
-+		pipe->configured = false;
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-fwnode.h>
+@@ -832,6 +833,104 @@ static const struct rvin_info rcar_info_gen2 = {
+ 	.max_height = 2048,
+ };
+ 
++static const struct rvin_group_route rcar_info_r8a7795_routes[] = {
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 0, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(1) | BIT(3) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 2, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) | BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
++	{ .csi = RVIN_CSI41, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI41, .channel = 1, .vin = 4, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
++	{ .csi = RVIN_CSI41, .channel = 1, .vin = 5, .mask = BIT(1) | BIT(3) },
++	{ .csi = RVIN_CSI41, .channel = 0, .vin = 5, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 6, .mask = BIT(0) },
++	{ .csi = RVIN_CSI41, .channel = 0, .vin = 6, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
++	{ .csi = RVIN_CSI41, .channel = 2, .vin = 6, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
++	{ .csi = RVIN_CSI41, .channel = 1, .vin = 7, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) | BIT(2) },
++	{ .csi = RVIN_CSI41, .channel = 3, .vin = 7, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
++	{ /* Sentinel */ }
++};
 +
- 		if (vsp1_pipeline_ready(pipe))
- 			vsp1_pipeline_run(pipe);
- 		spin_unlock_irqrestore(&pipe->irqlock, flags);
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index 90d29492b9b9..e7ad6211b4d0 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -90,6 +90,7 @@ struct vsp1_partition {
-  * @irqlock: protects the pipeline state
-  * @state: current state
-  * @wq: wait queue to wait for state change completion
-+ * @configured: flag determining if the hardware has run since reset
-  * @frame_end: frame end interrupt handler
-  * @lock: protects the pipeline use count and stream count
-  * @kref: pipeline reference count
-@@ -117,6 +118,7 @@ struct vsp1_pipeline {
- 	spinlock_t irqlock;
- 	enum vsp1_pipeline_state state;
- 	wait_queue_head_t wq;
-+	bool configured;
++static const struct rvin_info rcar_info_r8a7795 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a7795_routes,
++};
++
++static const struct rvin_group_route rcar_info_r8a7795es1_routes[] = {
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI21, .channel = 0, .vin = 0, .mask = BIT(2) | BIT(5) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
++	{ .csi = RVIN_CSI21, .channel = 0, .vin = 1, .mask = BIT(1) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
++	{ .csi = RVIN_CSI21, .channel = 1, .vin = 1, .mask = BIT(5) },
++	{ .csi = RVIN_CSI21, .channel = 0, .vin = 2, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
++	{ .csi = RVIN_CSI21, .channel = 2, .vin = 2, .mask = BIT(5) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) },
++	{ .csi = RVIN_CSI21, .channel = 1, .vin = 3, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
++	{ .csi = RVIN_CSI21, .channel = 3, .vin = 3, .mask = BIT(5) },
++	{ .csi = RVIN_CSI41, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI21, .channel = 0, .vin = 4, .mask = BIT(2) | BIT(5) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
++	{ .csi = RVIN_CSI21, .channel = 0, .vin = 5, .mask = BIT(1) },
++	{ .csi = RVIN_CSI41, .channel = 0, .vin = 5, .mask = BIT(2) },
++	{ .csi = RVIN_CSI41, .channel = 1, .vin = 5, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
++	{ .csi = RVIN_CSI21, .channel = 1, .vin = 5, .mask = BIT(5) },
++	{ .csi = RVIN_CSI21, .channel = 0, .vin = 6, .mask = BIT(0) },
++	{ .csi = RVIN_CSI41, .channel = 0, .vin = 6, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
++	{ .csi = RVIN_CSI41, .channel = 2, .vin = 6, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
++	{ .csi = RVIN_CSI21, .channel = 2, .vin = 6, .mask = BIT(5) },
++	{ .csi = RVIN_CSI41, .channel = 1, .vin = 7, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) },
++	{ .csi = RVIN_CSI21, .channel = 1, .vin = 7, .mask = BIT(2) },
++	{ .csi = RVIN_CSI41, .channel = 3, .vin = 7, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
++	{ .csi = RVIN_CSI21, .channel = 3, .vin = 7, .mask = BIT(5) },
++	{ /* Sentinel */ }
++};
++
++static const struct rvin_info rcar_info_r8a7795es1 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a7795es1_routes,
++};
++
+ static const struct of_device_id rvin_of_id_table[] = {
+ 	{
+ 		.compatible = "renesas,vin-r8a7778",
+@@ -861,12 +960,25 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,rcar-gen2-vin",
+ 		.data = &rcar_info_gen2,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a7795",
++		.data = &rcar_info_r8a7795,
++	},
+ 	{ /* Sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
  
- 	void (*frame_end)(struct vsp1_pipeline *pipe, bool completed);
- 
-@@ -143,8 +145,6 @@ struct vsp1_pipeline {
- 	 */
- 	struct list_head entities;
- 
--	struct vsp1_dl_list *dl;
--
- 	unsigned int partitions;
- 	struct vsp1_partition *partition;
- 	struct vsp1_partition *part_table;
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index b47708660e53..96d9872667d9 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -394,37 +394,43 @@ static void vsp1_video_pipeline_run_partition(struct vsp1_pipeline *pipe,
- static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
++static const struct soc_device_attribute r8a7795es1[] = {
++	{
++		.soc_id = "r8a7795", .revision = "ES1.*",
++		.data = &rcar_info_r8a7795es1,
++	},
++	{ /* Sentinel */ }
++};
++
+ static int rcar_vin_probe(struct platform_device *pdev)
  {
- 	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
-+	struct vsp1_video *video = pipe->output->video;
- 	unsigned int partition;
-+	struct vsp1_dl_list *dl;
-+
-+	dl = vsp1_dl_list_get(pipe->output->dlm);
- 
--	if (!pipe->dl)
--		pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
-+	/* Attach our pipe configuration to fully initialise the hardware */
-+	if (!pipe->configured) {
-+		vsp1_dl_list_add_body(dl, video->pipe_config);
-+		pipe->configured = true;
-+	}
- 
- 	/* Run the first partition */
--	vsp1_video_pipeline_run_partition(pipe, pipe->dl, 0);
-+	vsp1_video_pipeline_run_partition(pipe, dl, 0);
- 
- 	/* Process consecutive partitions as necessary */
- 	for (partition = 1; partition < pipe->partitions; ++partition) {
--		struct vsp1_dl_list *dl;
-+		struct vsp1_dl_list *dl_next;
- 
--		dl = vsp1_dl_list_get(pipe->output->dlm);
-+		dl_next = vsp1_dl_list_get(pipe->output->dlm);
- 
- 		/*
- 		 * An incomplete chain will still function, but output only
- 		 * the partitions that had a dl available. The frame end
- 		 * interrupt will be marked on the last dl in the chain.
- 		 */
--		if (!dl) {
-+		if (!dl_next) {
- 			dev_err(vsp1->dev, "Failed to obtain a dl list. Frame will be incomplete\n");
- 			break;
- 		}
- 
--		vsp1_video_pipeline_run_partition(pipe, dl, partition);
--		vsp1_dl_list_add_chain(pipe->dl, dl);
-+		vsp1_video_pipeline_run_partition(pipe, dl_next, partition);
-+		vsp1_dl_list_add_chain(dl, dl_next);
- 	}
- 
- 	/* Complete, and commit the head display list. */
--	vsp1_dl_list_commit(pipe->dl);
--	pipe->dl = NULL;
-+	vsp1_dl_list_commit(dl);
- 
- 	vsp1_pipeline_run(pipe);
- }
-@@ -790,8 +796,8 @@ static void vsp1_video_buffer_queue(struct vb2_buffer *vb)
- 
- static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
- {
-+	struct vsp1_video *video = pipe->output->video;
- 	struct vsp1_entity *entity;
--	struct vsp1_dl_body *dlb;
- 	int ret;
- 
- 	/* Determine this pipelines sizes for image partitioning support. */
-@@ -799,14 +805,6 @@ static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
- 	if (ret < 0)
- 		return ret;
- 
--	/* Prepare the display list. */
--	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
--	if (!pipe->dl)
--		return -ENOMEM;
--
--	/* Retrieve the default DLB from the list */
--	dlb = vsp1_dl_list_get_body0(pipe->dl);
--
- 	if (pipe->uds) {
- 		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
- 
-@@ -828,11 +826,20 @@ static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
- 		}
- 	}
- 
-+	/* Obtain a clean body from our pool */
-+	video->pipe_config = vsp1_dl_body_get(video->dlbs);
-+	if (!video->pipe_config)
-+		return -ENOMEM;
-+
-+	/* Configure the entities into our cached pipe configuration */
- 	list_for_each_entry(entity, &pipe->entities, list_pipe) {
--		vsp1_entity_route_setup(entity, pipe, dlb);
--		vsp1_entity_configure_stream(entity, pipe, dlb);
-+		vsp1_entity_route_setup(entity, pipe, video->pipe_config);
-+		vsp1_entity_configure_stream(entity, pipe, video->pipe_config);
- 	}
- 
-+	/* Ensure that our cached configuration is updated in the next DL */
-+	pipe->configured = false;
-+
- 	return 0;
- }
- 
-@@ -842,6 +849,9 @@ static void vsp1_video_cleanup_pipeline(struct vsp1_pipeline *pipe)
- 	struct vsp1_vb2_buffer *buffer;
- 	unsigned long flags;
- 
-+	/* Release any cached configuration */
-+	vsp1_dl_body_put(video->pipe_config);
-+
- 	/* Remove all buffers from the IRQ queue. */
- 	spin_lock_irqsave(&video->irqlock, flags);
- 	list_for_each_entry(buffer, &video->irqqueue, queue)
-@@ -918,9 +928,6 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
- 		ret = vsp1_pipeline_stop(pipe);
- 		if (ret == -ETIMEDOUT)
- 			dev_err(video->vsp1->dev, "pipeline stop timeout\n");
--
--		vsp1_dl_list_put(pipe->dl);
--		pipe->dl = NULL;
- 	}
- 	mutex_unlock(&pipe->lock);
- 
-@@ -1240,6 +1247,16 @@ struct vsp1_video *vsp1_video_create(struct vsp1_device *vsp1,
- 		goto error;
- 	}
++	const struct soc_device_attribute *attr;
+ 	struct rvin_dev *vin;
+ 	struct resource *mem;
+ 	int irq, ret;
+@@ -878,6 +990,14 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 	vin->dev = &pdev->dev;
+ 	vin->info = of_device_get_match_data(&pdev->dev);
  
 +	/*
-+	 * Utilise a body pool to cache the constant configuration of the
-+	 * pipeline object.
++	 * Special care is needed on r8a7795 ES1.x since it
++	 * uses different routing than r8a7795 ES2.0.
 +	 */
-+	video->dlbs = vsp1_dl_body_pool_create(vsp1, 3, 128, 0);
-+	if (!video->dlbs) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
++	attr = soc_device_match(r8a7795es1);
++	if (attr)
++		vin->info = attr->data;
 +
- 	return video;
- 
- error:
-@@ -1249,6 +1266,8 @@ struct vsp1_video *vsp1_video_create(struct vsp1_device *vsp1,
- 
- void vsp1_video_cleanup(struct vsp1_video *video)
- {
-+	vsp1_dl_body_pool_destroy(video->dlbs);
-+
- 	if (video_is_registered(&video->video))
- 		video_unregister_device(&video->video);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.h b/drivers/media/platform/vsp1/vsp1_video.h
-index 50ea7f02205f..e84f8ee902c1 100644
---- a/drivers/media/platform/vsp1/vsp1_video.h
-+++ b/drivers/media/platform/vsp1/vsp1_video.h
-@@ -43,6 +43,8 @@ struct vsp1_video {
- 
- 	struct mutex lock;
- 
-+	struct vsp1_dl_body_pool *dlbs;
-+	struct vsp1_dl_body *pipe_config;
- 	unsigned int pipe_index;
- 
- 	struct vb2_queue queue;
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (mem == NULL)
+ 		return -EINVAL;
 -- 
-git-series 0.9.1
+2.16.2
