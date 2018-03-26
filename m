@@ -1,54 +1,112 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:37692 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032488AbeCAQGt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:06:49 -0500
-Received: by mail-io0-f195.google.com with SMTP id d71so7631891iog.4
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Mar 2018 08:06:49 -0800 (PST)
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 27/33] rcar-vin: add chsel information to rvin_info
+Date: Mon, 26 Mar 2018 23:44:50 +0200
+Message-Id: <20180326214456.6655-28-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be> <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 1 Mar 2018 17:06:47 +0100
-Message-ID: <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-pm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+Each Gen3 SoC has a limited set of predefined routing possibilities for
+which CSI-2 device and channel can be routed to which VIN instance.
+Prepare to store this information in the struct rvin_info.
 
-> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
-> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
-> block's module clock (if exists) is manually kept running during system
-> suspend, to make sure the device stays active.
->
-> However, this explicit clock handling is merely a workaround for a
-> failure to properly communicate wakeup information to the device core.
->
-> Instead, set the device's power.wakeup_path field, to indicate this
-> device is part of the wakeup path.  Depending on the PM Domain's
-> active_wakeup configuration, the genpd core code will keep the device
-> enabled (and the clock running) during system suspend when needed.
-> This allows for the removal of all explicit clock handling code from the
-> driver.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Patch applied for v4.16 fixes.
+---
 
-Yours,
-Linus Walleij
+* Changes since v11
+- Fixed spelling.
+- Reorderd filed order in struct rvin_group_route.
+- Renamed chan to channel in struct rvin_group_route.
+---
+ drivers/media/platform/rcar-vin/rcar-vin.h | 42 ++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index cf5c467d45e10847..93eb40856b866117 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -43,6 +43,14 @@ enum model_id {
+ 	RCAR_GEN3,
+ };
+ 
++enum rvin_csi_id {
++	RVIN_CSI20,
++	RVIN_CSI21,
++	RVIN_CSI40,
++	RVIN_CSI41,
++	RVIN_CSI_MAX,
++};
++
+ /**
+  * STOPPED  - No operation in progress
+  * RUNNING  - Operation in progress have buffers
+@@ -79,12 +87,45 @@ struct rvin_graph_entity {
+ 	unsigned int sink_pad;
+ };
+ 
++/**
++ * struct rvin_group_route - describes a route from a channel of a
++ *	CSI-2 receiver to a VIN
++ *
++ * @csi:	CSI-2 receiver ID.
++ * @channel:	Output channel of the CSI-2 receiver.
++ * @vin:	VIN ID.
++ * @mask:	Bitmask of the different CHSEL register values that
++ *		allow for a route from @csi + @chan to @vin.
++ *
++ * .. note::
++ *	Each R-Car CSI-2 receiver has four output channels facing the VIN
++ *	devices, each channel can carry one CSI-2 Virtual Channel (VC).
++ *	There is no correlation between channel number and CSI-2 VC. It's
++ *	up to the CSI-2 receiver driver to configure which VC is output
++ *	on which channel, the VIN devices only care about output channels.
++ *
++ *	There are in some cases multiple CHSEL register settings which would
++ *	allow for the same route from @csi + @channel to @vin. For example
++ *	on R-Car H3 both the CHSEL values 0 and 3 allow for a route from
++ *	CSI40/VC0 to VIN0. All possible CHSEL values for a route need to be
++ *	recorded as a bitmask in @mask, in this example bit 0 and 3 should
++ *	be set.
++ */
++struct rvin_group_route {
++	enum rvin_csi_id csi;
++	unsigned int channel;
++	unsigned int vin;
++	unsigned int mask;
++};
++
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @model:		VIN model
+  * @use_mc:		use media controller instead of controlling subdevice
+  * @max_width:		max input width the VIN supports
+  * @max_height:		max input height the VIN supports
++ * @routes:		list of possible routes from the CSI-2 recivers to
++ *			all VINs. The list mush be NULL terminated.
+  */
+ struct rvin_info {
+ 	enum model_id model;
+@@ -92,6 +133,7 @@ struct rvin_info {
+ 
+ 	unsigned int max_width;
+ 	unsigned int max_height;
++	const struct rvin_group_route *routes;
+ };
+ 
+ /**
+-- 
+2.16.2
