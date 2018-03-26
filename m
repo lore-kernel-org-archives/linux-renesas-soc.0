@@ -1,52 +1,97 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:43438 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751325AbeC2RdO (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 13:33:14 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/5] clk: renesas: r8a7791/r8a7793: Fix LB clock divider
-Date: Thu, 29 Mar 2018 19:33:08 +0200
-Message-Id: <1522344790-20061-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 11/33] rcar-vin: set a default field to fallback on
+Date: Mon, 26 Mar 2018 23:44:34 +0200
+Message-Id: <20180326214456.6655-12-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-the LB clock divider depends on the value of the MD18 pin.
+If the field is not supported by the driver it should not try to keep
+the current field. Instead it should set it to a default fallback. Since
+trying a format should always result in the same state regardless of the
+current state of the device.
 
-On R-Car M2-W and M2-N, the LB clock divider is fixed to 24.  Hence
-model the clock as a fixed factor clock instead.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-index 820b220b09cc6bdb..1b91f03b75980766 100644
---- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-@@ -57,7 +57,6 @@ static struct cpg_core_clk r8a7791_core_clks[] __initdata = {
+* Changes since v12
+- Moved field != V4L2_FIELD_ANY check from a later commit 'rcar-vin:
+  simplify how formats are set and reset' in the series. This is to
+  avoid ignoring the field returned from the sensor if FIELD_ANY was
+  requested by the user. This was only a problem between this change and
+  a few patches later, but better to fix it now. Reported by Hans,
+  thanks for spotting this.
+- Add review tag from Hans.
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index c2265324c7c96308..16e895657c3f51c5 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -23,6 +23,7 @@
+ #include "rcar-vin.h"
  
- 	/* Core Clock Outputs */
- 	DEF_BASE("z",    R8A7791_CLK_Z,    CLK_TYPE_GEN2_Z,    CLK_PLL0),
--	DEF_BASE("lb",   R8A7791_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
- 	DEF_BASE("adsp", R8A7791_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
- 	DEF_BASE("sdh",  R8A7791_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
- 	DEF_BASE("sd0",  R8A7791_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
-@@ -70,6 +69,7 @@ static struct cpg_core_clk r8a7791_core_clks[] __initdata = {
- 	DEF_FIXED("hp",     R8A7791_CLK_HP,    CLK_PLL1,         12, 1),
- 	DEF_FIXED("i",      R8A7791_CLK_I,     CLK_PLL1,          2, 1),
- 	DEF_FIXED("b",      R8A7791_CLK_B,     CLK_PLL1,         12, 1),
-+	DEF_FIXED("lb",     R8A7791_CLK_LB,    CLK_PLL1,         24, 1),
- 	DEF_FIXED("p",      R8A7791_CLK_P,     CLK_PLL1,         24, 1),
- 	DEF_FIXED("cl",     R8A7791_CLK_CL,    CLK_PLL1,         48, 1),
- 	DEF_FIXED("m2",     R8A7791_CLK_M2,    CLK_PLL1,          8, 1),
+ #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
++#define RVIN_DEFAULT_FIELD	V4L2_FIELD_NONE
+ 
+ /* -----------------------------------------------------------------------------
+  * Format Conversions
+@@ -143,7 +144,7 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 	case V4L2_FIELD_INTERLACED:
+ 		break;
+ 	default:
+-		vin->format.field = V4L2_FIELD_NONE;
++		vin->format.field = RVIN_DEFAULT_FIELD;
+ 		break;
+ 	}
+ 
+@@ -193,7 +194,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	source->width = pix->width;
+ 	source->height = pix->height;
+ 
+-	pix->field = field;
++	if (field != V4L2_FIELD_ANY)
++		pix->field = field;
++
+ 	pix->width = width;
+ 	pix->height = height;
+ 
+@@ -213,10 +216,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	u32 walign;
+ 	int ret;
+ 
+-	/* Keep current field if no specific one is asked for */
+-	if (pix->field == V4L2_FIELD_ANY)
+-		pix->field = vin->format.field;
+-
+ 	/* If requested format is not supported fallback to the default */
+ 	if (!rvin_format_from_pixel(pix->pixelformat)) {
+ 		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
+@@ -246,7 +245,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	case V4L2_FIELD_INTERLACED:
+ 		break;
+ 	default:
+-		pix->field = V4L2_FIELD_NONE;
++		pix->field = RVIN_DEFAULT_FIELD;
+ 		break;
+ 	}
+ 
 -- 
-2.7.4
+2.16.2
