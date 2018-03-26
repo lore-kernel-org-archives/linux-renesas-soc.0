@@ -1,58 +1,146 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:60728 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751907AbeC2RdP (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:63237 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752399AbeCZVqo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 13:33:15 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] clk: renesas: r-car gen2: Fix LB clock divider
-Date: Thu, 29 Mar 2018 19:33:05 +0200
-Message-Id: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+        Mon, 26 Mar 2018 17:46:44 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 15/33] rcar-vin: break out format alignment and checking
+Date: Mon, 26 Mar 2018 23:44:38 +0200
+Message-Id: <20180326214456.6655-16-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Part of the format alignment and checking can be shared with the Gen3
+format handling. Break that part out to a separate function.
 
-The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-the LB clock divider depends on the value of the MD18 pin.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 85 ++++++++++++++++-------------
+ 1 file changed, 48 insertions(+), 37 deletions(-)
 
-However, on most RZ/G1 and R-Car Gen2 SoCs, the LB clock divider is
-fixed to 24.  Hence this series corrects the LB clock on affected SoCs
-by modelling it as a fixed factor clock instead.
-
-This doesn't have much impact, as no kernel code relies on the rate of
-the LB clock.
-
-To be queued in clk-renesas-for-v4.18.
-
-Geert Uytterhoeven (5):
-  clk: renesas: r8a7743: Fix LB clock divider
-  clk: renesas: r8a7745: Fix LB clock divider
-  clk: renesas: r8a7791/r8a7793: Fix LB clock divider
-  clk: renesas: r8a7792: Fix LB clock divider
-  clk: renesas: r8a7794: Fix LB clock divider
-
- drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a7792-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a7794-cpg-mssr.c | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 8dbd764883976ad1..c39891386576afb8 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -87,6 +87,53 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
+ 	return pix->bytesperline * pix->height;
+ }
+ 
++static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
++{
++	u32 walign;
++
++	if (!rvin_format_from_pixel(pix->pixelformat) ||
++	    (vin->info->model == RCAR_M1 &&
++	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
++		pix->pixelformat = RVIN_DEFAULT_FORMAT;
++
++	switch (pix->field) {
++	case V4L2_FIELD_TOP:
++	case V4L2_FIELD_BOTTOM:
++	case V4L2_FIELD_NONE:
++	case V4L2_FIELD_INTERLACED_TB:
++	case V4L2_FIELD_INTERLACED_BT:
++	case V4L2_FIELD_INTERLACED:
++		break;
++	case V4L2_FIELD_ALTERNATE:
++		/*
++		 * Driver dose not (yet) support outputting ALTERNATE to a
++		 * userspace. It does support outputting INTERLACED so use
++		 * the VIN hardware to combine the two fields.
++		 */
++		pix->field = V4L2_FIELD_INTERLACED;
++		pix->height *= 2;
++		break;
++	default:
++		pix->field = RVIN_DEFAULT_FIELD;
++		break;
++	}
++
++	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
++	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
++
++	/* Limit to VIN capabilities */
++	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
++			      &pix->height, 4, vin->info->max_height, 2, 0);
++
++	pix->bytesperline = rvin_format_bytesperline(pix);
++	pix->sizeimage = rvin_format_sizeimage(pix);
++
++	vin_dbg(vin, "Format %ux%u bpl: %u size: %u\n",
++		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
++
++	return 0;
++}
++
+ /* -----------------------------------------------------------------------------
+  * V4L2
+  */
+@@ -186,7 +233,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 			     struct v4l2_pix_format *pix,
+ 			     struct rvin_source_fmt *source)
+ {
+-	u32 walign;
+ 	int ret;
+ 
+ 	if (!rvin_format_from_pixel(pix->pixelformat) ||
+@@ -199,42 +245,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	if (ret)
+ 		return ret;
+ 
+-	switch (pix->field) {
+-	case V4L2_FIELD_TOP:
+-	case V4L2_FIELD_BOTTOM:
+-	case V4L2_FIELD_NONE:
+-	case V4L2_FIELD_INTERLACED_TB:
+-	case V4L2_FIELD_INTERLACED_BT:
+-	case V4L2_FIELD_INTERLACED:
+-		break;
+-	case V4L2_FIELD_ALTERNATE:
+-		/*
+-		 * Driver dose not (yet) support outputting ALTERNATE to a
+-		 * userspace. It does support outputting INTERLACED so use
+-		 * the VIN hardware to combine the two fields.
+-		 */
+-		pix->field = V4L2_FIELD_INTERLACED;
+-		pix->height *= 2;
+-		break;
+-	default:
+-		pix->field = RVIN_DEFAULT_FIELD;
+-		break;
+-	}
+-
+-	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
+-	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+-
+-	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
+-			      &pix->height, 4, vin->info->max_height, 2, 0);
+-
+-	pix->bytesperline = rvin_format_bytesperline(pix);
+-	pix->sizeimage = rvin_format_sizeimage(pix);
+-
+-	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
+-		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+-
+-	return 0;
++	return rvin_format_align(vin, pix);
+ }
+ 
+ static int rvin_querycap(struct file *file, void *priv,
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.16.2
