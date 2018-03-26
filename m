@@ -1,201 +1,105 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] drm: bridge: Add LVDS decoder driver
-Date: Fri,  9 Mar 2018 14:51:39 +0100
-Message-Id: <1520603500-15218-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 20/33] rcar-vin: add function to manipulate Gen3 chsel value
+Date: Mon, 26 Mar 2018 23:44:43 +0200
+Message-Id: <20180326214456.6655-21-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add transparent LVDS decoder driver.
+On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
+feature of this register is that it's only present in the VIN0 and VIN4
+instances. The register in VIN0 controls the routing for VIN0-3 and the
+register in VIN4 controls routing for VIN4-7.
 
-A transparent LVDS decoder is a DRM bridge device that does not require
-any configuration and converts LVDS input to digital CMOS/TTL parallel
-data output.
+To be able to control routing from a media device this function is need
+to control runtime PM for the subgroup master (VIN0 and VIN4). The
+subgroup master must be switched on before the register is manipulated,
+once the operation is complete it's safe to switch the master off and
+the new routing will still be in effect.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- drivers/gpu/drm/bridge/Kconfig        |   8 +++
- drivers/gpu/drm/bridge/Makefile       |   1 +
- drivers/gpu/drm/bridge/lvds-decoder.c | 129 ++++++++++++++++++++++++++++++++++
- 3 files changed, 138 insertions(+)
- create mode 100644 drivers/gpu/drm/bridge/lvds-decoder.c
+ drivers/media/platform/rcar-vin/rcar-dma.c | 38 ++++++++++++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
+ 2 files changed, 40 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 3b99d5a..e52a5af 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -32,6 +32,14 @@ config DRM_DUMB_VGA_DAC
- 	help
- 	  Support for RGB to VGA DAC based bridges
-
-+config DRM_LVDS_DECODER
-+	tristate "Transparent LVDS to parallel decoder support"
-+	depends on OF
-+	select DRM_PANEL_BRIDGE
-+	help
-+	  Support for transparent LVDS to parallel decoders that don't require
-+	  any configuration.
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 696e53af8fc791bd..1809f5c0190eafb6 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
++#include <linux/pm_runtime.h>
+ 
+ #include <media/videobuf2-dma-contig.h>
+ 
+@@ -1158,3 +1159,40 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
+ 
+ 	return ret;
+ }
 +
- config DRM_LVDS_ENCODER
- 	tristate "Transparent parallel to LVDS encoder support"
- 	depends on OF
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 373eb28..edc2332 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
- obj-$(CONFIG_DRM_DUMB_VGA_DAC) += dumb-vga-dac.o
-+obj-$(CONFIG_DRM_LVDS_DECODER) += lvds-decoder.o
- obj-$(CONFIG_DRM_LVDS_ENCODER) += lvds-encoder.o
- obj-$(CONFIG_DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW) += megachips-stdpxxxx-ge-b850v3-fw.o
- obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
-diff --git a/drivers/gpu/drm/bridge/lvds-decoder.c b/drivers/gpu/drm/bridge/lvds-decoder.c
-new file mode 100644
-index 0000000..319f4d5
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/lvds-decoder.c
-@@ -0,0 +1,129 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * LVDS to parallel data DRM bridge driver.
-+ *
-+ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
++/* -----------------------------------------------------------------------------
++ * Gen3 CHSEL manipulation
 + */
 +
-+#include <drm/drmP.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_panel.h>
-+
-+#include <linux/of_graph.h>
-+
-+struct lvds_decoder {
-+	struct device *dev;
-+
-+	struct drm_bridge bridge;
-+	struct drm_bridge *next;
-+	struct drm_encoder *bridge_encoder;
-+};
-+
-+static inline struct lvds_decoder *to_lvds_decoder(struct drm_bridge *bridge)
++/*
++ * There is no need to have locking around changing the routing
++ * as it's only possible to do so when no VIN in the group is
++ * streaming so nothing can race with the VNMC register.
++ */
++int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
 +{
-+	return container_of(bridge, struct lvds_decoder, bridge);
-+}
++	u32 ifmd, vnmc;
++	int ret;
 +
-+static int lvds_decoder_attach(struct drm_bridge *bridge)
-+{
-+	struct lvds_decoder *lvds = to_lvds_decoder(bridge);
++	ret = pm_runtime_get_sync(vin->dev);
++	if (ret < 0)
++		return ret;
 +
-+	return drm_bridge_attach(bridge->encoder, lvds->next, bridge);
-+}
++	/* Make register writes take effect immediately. */
++	vnmc = rvin_read(vin, VNMC_REG);
++	rvin_write(vin, vnmc & ~VNMC_VUP, VNMC_REG);
 +
-+struct drm_bridge_funcs lvds_dec_bridge_func = {
-+	.attach	= lvds_decoder_attach,
-+};
++	ifmd = VNCSI_IFMD_DES2 | VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 |
++		VNCSI_IFMD_CSI_CHSEL(chsel);
 +
-+static int lvds_decoder_parse_dt(struct lvds_decoder *lvds)
-+{
-+	struct device_node *lvds_output;
-+	struct device_node *remote;
-+	int ret = 0;
++	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
 +
-+	lvds_output = of_graph_get_endpoint_by_regs(lvds->dev->of_node, 1, -1);
-+	if (!lvds_output) {
-+		dev_err(lvds->dev, "Missing endpoint in Port@1\n");
-+		return -ENODEV;
-+	}
++	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
 +
-+	remote = of_graph_get_remote_port_parent(lvds_output);
-+	if (!remote) {
-+		dev_err(lvds->dev, "Endpoint in Port@1 unconnected\n");
-+		ret = -ENODEV;
-+		goto error_put_lvds_node;
-+	}
++	/* Restore VNMC. */
++	rvin_write(vin, vnmc, VNMC_REG);
 +
-+	if (!of_device_is_available(remote)) {
-+		dev_err(lvds->dev, "Port@1 remote endpoint is disabled\n");
-+		ret = -ENODEV;
-+		goto error_put_remote_node;
-+	}
-+
-+	lvds->next = of_drm_find_bridge(remote);
-+	if (!lvds->next)
-+		ret = -EPROBE_DEFER;
-+
-+error_put_remote_node:
-+	of_node_put(remote);
-+error_put_lvds_node:
-+	of_node_put(lvds_output);
++	pm_runtime_put(vin->dev);
 +
 +	return ret;
 +}
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 321283f1618ae0b9..c19ddc5e08cbbea4 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -169,4 +169,6 @@ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
+ /* Cropping, composing and scaling */
+ void rvin_crop_scale_comp(struct rvin_dev *vin);
+ 
++int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
 +
-+static int lvds_decoder_probe(struct platform_device *pdev)
-+{
-+	struct lvds_decoder *lvds;
-+	int ret;
-+
-+	lvds = devm_kzalloc(&pdev->dev, sizeof(*lvds), GFP_KERNEL);
-+	if (!lvds)
-+		return -ENOMEM;
-+
-+	lvds->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, lvds);
-+
-+	ret = lvds_decoder_parse_dt(lvds);
-+	if (ret)
-+		return ret;
-+
-+	lvds->bridge.driver_private = lvds;
-+	lvds->bridge.of_node = pdev->dev.of_node;
-+	lvds->bridge.funcs = &lvds_dec_bridge_func;
-+
-+	drm_bridge_add(&lvds->bridge);
-+
-+	return 0;
-+}
-+
-+static int lvds_decoder_remove(struct platform_device *pdev)
-+{
-+	struct lvds_decoder *lvds = platform_get_drvdata(pdev);
-+
-+	drm_bridge_remove(&lvds->bridge);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id lvds_decoder_match[] = {
-+	{ .compatible = "lvds-decoder", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, lvds_decoder_match);
-+#endif
-+
-+static struct platform_driver lvds_decoder_driver = {
-+	.probe	= lvds_decoder_probe,
-+	.remove	= lvds_decoder_remove,
-+	.driver	= {
-+		.name		= "lvds_decoder",
-+		.of_match_table	= lvds_decoder_match,
-+	},
-+};
-+module_platform_driver(lvds_decoder_driver);
-+
-+MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
-+MODULE_DESCRIPTION("Transparent LVDS to parallel data decoder");
-+MODULE_LICENSE("GPL v2");
---
-2.7.4
-
+ #endif
+-- 
+2.16.2
