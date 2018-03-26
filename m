@@ -1,76 +1,104 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:36399 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932118AbeCDWj7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 4 Mar 2018 17:39:59 -0500
-Date: Sun, 4 Mar 2018 23:39:57 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-mmc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 16/16] mmc: tmio: remove useless TMIO_MASK_CMD
- handling in tmio_mmc_host_probe()
-Message-ID: <20180304223957.3f3s3lbrerenyula@ninjato>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <1516206496-16612-17-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 24/33] rcar-vin: prepare for media controller mode initialization
+Date: Mon, 26 Mar 2018 23:44:47 +0200
+Message-Id: <20180326214456.6655-25-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nwa4ymbvg2u4kg23"
-Content-Disposition: inline
-In-Reply-To: <1516206496-16612-17-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Prepare for media controller by calling a different initialization then
+when running in device centric mode. Add trivial configuration of
+the mbus and creation of the media pad for the video device entity.
 
---nwa4ymbvg2u4kg23
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+While we are at it clearly mark the digital device centric notifier
+functions with a comment.
 
-On Thu, Jan 18, 2018 at 01:28:16AM +0900, Masahiro Yamada wrote:
-> TMIO_MASK_CMD is properly enabled in tmio_mmc_start_command().
->=20
-> We have no reason to set it up in tmio_mmc_host_probe().  (If we
-> really wanted to set it in the probe, we would have to do likewise
-> when resuming.)
->=20
-> Even worse, the following code is extremely confusing:
->=20
->   _host->sdcard_irq_mask &=3D ~irq_mask;
->=20
-> The logic is opposite between "->sdcard_irq_mask" and "irq_mask".
-> The intention is not clear at a glance.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++--
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
+ 2 files changed, 22 insertions(+), 2 deletions(-)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---nwa4ymbvg2u4kg23
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqcdb0ACgkQFA3kzBSg
-KbYKWQ//elSq8BiTicTAt9UFwRn4RrO5B+DNJ0MT8pu0m/uLRxggydHaHTlbUF26
-UQWmWMoV68fYJI1Y+jZl9eQVWIVig9eJkxt5kiG4wzNEv7V0SvlcySEOLC1bmjf/
-L3uFayil/EgZZ9HQijWqUwfz/EctsWd8OeizryDbBFAOtuNJaxnKC+aJhsYFrkZ2
-B4vh/04WU7Ew9hVdpzdbIfA+rywRm5ObHy720uSZPtbHT+ewqgJdnqeHFQZRXRRw
-tgKsGNPtaXsWKIXnucI9jcVrfw1I7myme+B+wdPd6kcdnk91lgCHfaYNSQTy46P/
-BqVa2nTWHACRZOc1KBjzVLsUdUrs6cl8ObZwK5AE3waFPDoj5pDyO8bleMereT98
-F0Ca3jV1M5bssTdFVeSAg/KMW2ppHnkzWBtOdRotFCt35n2Pg+FZ7L9kIDQwIxnj
-Z/QCteOCYCynXC4bhArd3SYhXZsOO+dgrYetD7L2bl7pV9npxUQ9M9HU25bhD3Oz
-rDMBPFwUofm/5kfbhKW/9VZqZINPVryANznqOBVg7m1bBxJlT8kZZEDhLLWMLgIQ
-it989fN2LCI6PQp6fhqFVTcuvpe6O6YcRoff4teKY9FDpzIJGm+UEJANPHbhoRp6
-lKZJ/u4MldEFLpmAYVA0vfUrKXPNuU+0Jm8oGGdxGrBNoLsIhbI=
-=mJIR
------END PGP SIGNATURE-----
-
---nwa4ymbvg2u4kg23--
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index c0e0412e2ecd9487..e0a33d372c500ccd 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
+ 	return -EINVAL;
+ }
+ 
++/* -----------------------------------------------------------------------------
++ * Digital async notifier
++ */
++
+ /* The vin lock should be held when calling the subdevice attach and detach */
+ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
+ 					 struct v4l2_subdev *subdev)
+@@ -243,6 +247,16 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
+ 	return 0;
+ }
+ 
++static int rvin_mc_init(struct rvin_dev *vin)
++{
++	/* All our sources are CSI-2 */
++	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
++	vin->mbus_cfg.flags = 0;
++
++	vin->pad.flags = MEDIA_PAD_FL_SINK;
++	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
++}
++
+ /* -----------------------------------------------------------------------------
+  * Platform Device Driver
+  */
+@@ -331,8 +345,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	platform_set_drvdata(pdev, vin);
+-
+-	ret = rvin_digital_graph_init(vin);
++	if (vin->info->use_mc)
++		ret = rvin_mc_init(vin);
++	else
++		ret = rvin_digital_graph_init(vin);
+ 	if (ret < 0)
+ 		goto error;
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index e5668c1120a67899..5102ad254bff515b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -99,6 +99,8 @@ struct rvin_info {
+  * @notifier:		V4L2 asynchronous subdevs notifier
+  * @digital:		entity in the DT for local digital subdevice
+  *
++ * @pad:		media pad for the video device entity
++ *
+  * @lock:		protects @queue
+  * @queue:		vb2 buffers queue
+  * @scratch:		cpu address for scratch buffer
+@@ -131,6 +133,8 @@ struct rvin_dev {
+ 	struct v4l2_async_notifier notifier;
+ 	struct rvin_graph_entity *digital;
+ 
++	struct media_pad pad;
++
+ 	struct mutex lock;
+ 	struct vb2_queue queue;
+ 	void *scratch;
+-- 
+2.16.2
