@@ -1,47 +1,54 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 26 Mar 2018 17:22:49 -0500
-From: Rob Herring <robh@kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:46523 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751071AbeCZMIc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 26 Mar 2018 08:08:32 -0400
+Date: Mon, 26 Mar 2018 14:08:27 +0200
+From: jacopo mondi <jacopo@jmondi.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
         a.hajda@samsung.com, airlied@linux.ie, horms@verge.net.au,
         magnus.damm@gmail.com, geert@linux-m68k.org,
         niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v6 1/3] dt-bindings: display: bridge: Document
  THC63LVD1024 LVDS decoder
-Message-ID: <20180326222249.tvjiutyd4amlibpa@rob-hp-laptop>
+Message-ID: <20180326120827.GG27746@w540>
 References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
  <1521213399-31947-2-git-send-email-jacopo+renesas@jmondi.org>
  <4060923.7DxT9ae38L@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <4060923.7DxT9ae38L@avalon>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
+
+Hi Laurent,
 
 On Tue, Mar 20, 2018 at 02:43:33PM +0200, Laurent Pinchart wrote:
 > Hi Jacopo,
-> 
+>
 > (CC'ing Rob)
-> 
+>
 > Thank you for the patch.
-> 
+>
 > On Friday, 16 March 2018 17:16:37 EET Jacopo Mondi wrote:
 > > Document Thine THC63LVD1024 LVDS decoder device tree bindings.
-> > 
+> >
 > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> > Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > > ---
 > >  .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 +++++++++++++++++++
 > >  1 file changed, 66 insertions(+)
 > >  create mode 100644
 > > Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> > 
+> >
 > > diff --git
 > > a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
 > > b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
@@ -73,25 +80,31 @@ On Tue, Mar 20, 2018 at 02:43:33PM +0200, Laurent Pinchart wrote:
 > > +- cvcc-supply: Power supply for TTL CLOCKOUT signal
 > > +- lvcc-supply: Power supply for LVDS inputs
 > > +- pvcc-supply: Power supply for PLL circuitry
-> 
-> As explained in a comment to one of the previous versions of this series, I'm 
-> tempted to make vcc-supply mandatory and drop the three other power supplies 
-> for now, as I believe there's very little chance they will be connected to 
-> separately controllable regulators (all supplies use the same voltage). In the 
-> very unlikely event that this occurs in design we need to support in the 
-> future, the cvcc, lvcc and pvcc supplies can be added later as optional 
+>
+> As explained in a comment to one of the previous versions of this series, I'm
+> tempted to make vcc-supply mandatory and drop the three other power supplies
+> for now, as I believe there's very little chance they will be connected to
+> separately controllable regulators (all supplies use the same voltage). In the
+> very unlikely event that this occurs in design we need to support in the
+> future, the cvcc, lvcc and pvcc supplies can be added later as optional
 > without breaking backward compatibility.
 
-I'm okay with that.
+Fine, you and Andrzej both agree on this, and I actually do, as all
+the supplies have the same voltage.
 
+I'll make vcc the only and mandatory supply.
+
+I'll keep Andrzej Reviwed-by as he suggested it, and add yours.
+
+Thanks
+   j
+
+>
 > Apart from that,
-> 
+>
 > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
+>
 > > +- pdwn-gpios: Power down GPIO signal. Active low
-
-powerdown-gpios is the semi-standard name.
-
 > > +- oe-gpios: Output enable GPIO signal. Active high
 > > +
 > > +The THC63LVD1024 video port connections are modeled according
@@ -101,9 +114,6 @@ powerdown-gpios is the semi-standard name.
 > > +Required video port nodes:
 > > +- Port@0: First LVDS input port
 > > +- Port@2: First digital CMOS/TTL parallel output
-
-s/Port/port/
-
 > > +
 > > +Optional video port nodes:
 > > +- Port@1: Second LVDS input port
@@ -143,9 +153,9 @@ s/Port/port/
 > > +
 > > +		};
 > > +	};
-> 
-> -- 
+>
+> --
 > Regards,
-> 
+>
 > Laurent Pinchart
-> 
+>
