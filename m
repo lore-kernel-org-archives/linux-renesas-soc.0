@@ -1,67 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:33850 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753354AbeCPNom (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:32650 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752362AbeCZVq6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 09:44:42 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/8] clk: renesas: Always use readl()/writel()
-Date: Fri, 16 Mar 2018 14:40:14 +0100
-Message-Id: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+        Mon, 26 Mar 2018 17:46:58 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 26/33] rcar-vin: change name of video device
+Date: Mon, 26 Mar 2018 23:44:49 +0200
+Message-Id: <20180326214456.6655-27-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+The rcar-vin driver needs to be part of a media controller to support
+Gen3. Give each VIN instance a unique name so it can be referenced from
+userspace.
 
-On arm32/arm64, there is no reason to use the (soon deprecated)
-clk_readl()/clk_writel(), and the generic readl()/writel() should be
-used in instead.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Commit 30ad3cf00e94f4a7 ("clk: renesas: rcar-gen3-cpg: Always use
-readl()/writel()") already got rid of them in the R-Car Gen3 clock
-driver, but Stephen noticed that a few new users crept in recently.
-
-Hence this series fixes that, and replaces all other uses in the Renesas
-clock drivers as a bonus.
-
-I plan to queue these up in clk-renesas-for-v4.17.
-
-Thanks!
-
-Geert Uytterhoeven (8):
-  clk: renesas: div6: Always use readl()/writel()
-  clk: renesas: mstp: Always use readl()/writel()
-  clk: renesas: r8a73a4: Always use readl()/writel()
-  clk: renesas: r8a7740: Always use readl()/writel()
-  clk: renesas: rcar-gen2: Always use readl()/writel()
-  clk: renesas: rza1: Always use readl()/writel()
-  clk: renesas: sh73a0: Always use readl()/writel()
-  clk: renesas: rcar-gen3: Always use readl()/writel()
-
- drivers/clk/renesas/clk-div6.c      | 22 +++++++++++-----------
- drivers/clk/renesas/clk-mstp.c      |  4 ++--
- drivers/clk/renesas/clk-r8a73a4.c   | 11 +++++------
- drivers/clk/renesas/clk-r8a7740.c   |  8 ++++----
- drivers/clk/renesas/clk-rcar-gen2.c | 17 ++++++++---------
- drivers/clk/renesas/clk-rz.c        |  4 ++--
- drivers/clk/renesas/clk-sh73a0.c    | 14 +++++++-------
- drivers/clk/renesas/rcar-gen3-cpg.c | 14 +++++++-------
- 8 files changed, 46 insertions(+), 48 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index ea0759a645e49490..7c10557d965ea6ed 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -993,7 +993,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
+ 	/* video node */
+ 	vdev->v4l2_dev = &vin->v4l2_dev;
+ 	vdev->queue = &vin->queue;
+-	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
++	snprintf(vdev->name, sizeof(vdev->name), "VIN%u output", vin->id);
+ 	vdev->release = video_device_release_empty;
+ 	vdev->lock = &vin->lock;
+ 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.16.2
