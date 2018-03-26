@@ -7,9 +7,9 @@ Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 14/33] rcar-vin: align pixelformat check
-Date: Mon, 26 Mar 2018 23:44:37 +0200
-Message-Id: <20180326214456.6655-15-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 05/33] rcar-vin: unregister video device on driver removal
+Date: Mon, 26 Mar 2018 23:44:28 +0200
+Message-Id: <20180326214456.6655-6-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -18,49 +18,46 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the pixelformat is not supported it should not fail but be set to
-something that works. While we are at it move the two different
-checks of the pixelformat to the same statement.
+If the video device was registered by the complete() callback it should
+be unregistered when a device is unbound from the driver. Protect from
+printing an uninitialized video device node name by adding a check in
+rvin_v4l2_unregister() to identify that the video device is registered.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 +++
+ 2 files changed, 5 insertions(+)
 
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 2bedf20abcf3ca07..47f06acde2e698f2 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -272,6 +272,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	rvin_v4l2_unregister(vin);
++
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
+ 
 diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 21d765ec9594f95c..8dbd764883976ad1 100644
+index 178aecc94962abe2..32a658214f48fa49 100644
 --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -189,12 +189,10 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	u32 walign;
- 	int ret;
+@@ -841,6 +841,9 @@ static const struct v4l2_file_operations rvin_fops = {
  
--	/* If requested format is not supported fallback to the default */
--	if (!rvin_format_from_pixel(pix->pixelformat)) {
--		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
--			pix->pixelformat, RVIN_DEFAULT_FORMAT);
-+	if (!rvin_format_from_pixel(pix->pixelformat) ||
-+	    (vin->info->model == RCAR_M1 &&
-+	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
- 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
--	}
- 
- 	/* Limit to source capabilities */
- 	ret = __rvin_try_format_source(vin, which, pix, source);
-@@ -233,12 +231,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	pix->bytesperline = rvin_format_bytesperline(pix);
- 	pix->sizeimage = rvin_format_sizeimage(pix);
- 
--	if (vin->info->model == RCAR_M1 &&
--	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
--		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
--		return -EINVAL;
--	}
--
- 	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
- 		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+ void rvin_v4l2_unregister(struct rvin_dev *vin)
+ {
++	if (!video_is_registered(&vin->vdev))
++		return;
++
+ 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+ 		  video_device_node_name(&vin->vdev));
  
 -- 
 2.16.2
