@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:63237 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752399AbeCZVqo (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:31869 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752168AbeCZVq3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:46:44 -0400
+        Mon, 26 Mar 2018 17:46:29 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -12,9 +12,9 @@ Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 15/33] rcar-vin: break out format alignment and checking
-Date: Mon, 26 Mar 2018 23:44:38 +0200
-Message-Id: <20180326214456.6655-16-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 04/33] rcar-vin: rename poorly named initialize and cleanup functions
+Date: Mon, 26 Mar 2018 23:44:27 +0200
+Message-Id: <20180326214456.6655-5-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -23,124 +23,141 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Part of the format alignment and checking can be shared with the Gen3
-format handling. Break that part out to a separate function.
+The functions to register and unregister the hardware and video device
+where poorly named from the start. Rename them to better describe their
+intended function.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 85 ++++++++++++++++-------------
- 1 file changed, 48 insertions(+), 37 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 10 +++++-----
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  6 +++---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  4 ++--
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  8 ++++----
+ 4 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 8dbd764883976ad1..c39891386576afb8 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -87,6 +87,53 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
- 	return pix->bytesperline * pix->height;
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index f1fc7978d6d1523d..2bedf20abcf3ca07 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -93,7 +93,7 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
+ 		return ret;
+ 	}
+ 
+-	return rvin_v4l2_probe(vin);
++	return rvin_v4l2_register(vin);
  }
  
-+static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
-+{
-+	u32 walign;
-+
-+	if (!rvin_format_from_pixel(pix->pixelformat) ||
-+	    (vin->info->model == RCAR_M1 &&
-+	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
-+		pix->pixelformat = RVIN_DEFAULT_FORMAT;
-+
-+	switch (pix->field) {
-+	case V4L2_FIELD_TOP:
-+	case V4L2_FIELD_BOTTOM:
-+	case V4L2_FIELD_NONE:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+	case V4L2_FIELD_INTERLACED:
-+		break;
-+	case V4L2_FIELD_ALTERNATE:
-+		/*
-+		 * Driver dose not (yet) support outputting ALTERNATE to a
-+		 * userspace. It does support outputting INTERLACED so use
-+		 * the VIN hardware to combine the two fields.
-+		 */
-+		pix->field = V4L2_FIELD_INTERLACED;
-+		pix->height *= 2;
-+		break;
-+	default:
-+		pix->field = RVIN_DEFAULT_FIELD;
-+		break;
-+	}
-+
-+	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
-+	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
-+
-+	/* Limit to VIN capabilities */
-+	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
-+			      &pix->height, 4, vin->info->max_height, 2, 0);
-+
-+	pix->bytesperline = rvin_format_bytesperline(pix);
-+	pix->sizeimage = rvin_format_sizeimage(pix);
-+
-+	vin_dbg(vin, "Format %ux%u bpl: %u size: %u\n",
-+		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
-+
-+	return 0;
-+}
-+
- /* -----------------------------------------------------------------------------
-  * V4L2
-  */
-@@ -186,7 +233,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 			     struct v4l2_pix_format *pix,
- 			     struct rvin_source_fmt *source)
- {
--	u32 walign;
- 	int ret;
+ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
+@@ -103,7 +103,7 @@ static void rvin_digital_notify_unbind(struct v4l2_async_notifier *notifier,
+ 	struct rvin_dev *vin = notifier_to_vin(notifier);
  
- 	if (!rvin_format_from_pixel(pix->pixelformat) ||
-@@ -199,42 +245,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	vin_dbg(vin, "unbind digital subdev %s\n", subdev->name);
+-	rvin_v4l2_remove(vin);
++	rvin_v4l2_unregister(vin);
+ 	vin->digital->subdev = NULL;
+ }
+ 
+@@ -245,7 +245,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 	if (irq < 0)
+ 		return irq;
+ 
+-	ret = rvin_dma_probe(vin, irq);
++	ret = rvin_dma_register(vin, irq);
  	if (ret)
  		return ret;
  
--	switch (pix->field) {
--	case V4L2_FIELD_TOP:
--	case V4L2_FIELD_BOTTOM:
--	case V4L2_FIELD_NONE:
--	case V4L2_FIELD_INTERLACED_TB:
--	case V4L2_FIELD_INTERLACED_BT:
--	case V4L2_FIELD_INTERLACED:
--		break;
--	case V4L2_FIELD_ALTERNATE:
--		/*
--		 * Driver dose not (yet) support outputting ALTERNATE to a
--		 * userspace. It does support outputting INTERLACED so use
--		 * the VIN hardware to combine the two fields.
--		 */
--		pix->field = V4L2_FIELD_INTERLACED;
--		pix->height *= 2;
--		break;
--	default:
--		pix->field = RVIN_DEFAULT_FIELD;
--		break;
--	}
--
--	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
--	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
--
--	/* Limit to VIN capabilities */
--	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
--			      &pix->height, 4, vin->info->max_height, 2, 0);
--
--	pix->bytesperline = rvin_format_bytesperline(pix);
--	pix->sizeimage = rvin_format_sizeimage(pix);
--
--	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
--		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
--
--	return 0;
-+	return rvin_format_align(vin, pix);
+@@ -260,7 +260,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ error:
+-	rvin_dma_remove(vin);
++	rvin_dma_unregister(vin);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
+ 
+ 	return ret;
+@@ -275,7 +275,7 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
+ 
+-	rvin_dma_remove(vin);
++	rvin_dma_unregister(vin);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 4a40e6ad1be7ed95..2aae3ca54eabac01 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -1087,14 +1087,14 @@ static const struct vb2_ops rvin_qops = {
+ 	.wait_finish		= vb2_ops_wait_finish,
+ };
+ 
+-void rvin_dma_remove(struct rvin_dev *vin)
++void rvin_dma_unregister(struct rvin_dev *vin)
+ {
+ 	mutex_destroy(&vin->lock);
+ 
+ 	v4l2_device_unregister(&vin->v4l2_dev);
  }
  
- static int rvin_querycap(struct file *file, void *priv,
+-int rvin_dma_probe(struct rvin_dev *vin, int irq)
++int rvin_dma_register(struct rvin_dev *vin, int irq)
+ {
+ 	struct vb2_queue *q = &vin->queue;
+ 	int i, ret;
+@@ -1142,7 +1142,7 @@ int rvin_dma_probe(struct rvin_dev *vin, int irq)
+ 
+ 	return 0;
+ error:
+-	rvin_dma_remove(vin);
++	rvin_dma_unregister(vin);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index b479b882da12f62d..178aecc94962abe2 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -839,7 +839,7 @@ static const struct v4l2_file_operations rvin_fops = {
+ 	.read		= vb2_fop_read,
+ };
+ 
+-void rvin_v4l2_remove(struct rvin_dev *vin)
++void rvin_v4l2_unregister(struct rvin_dev *vin)
+ {
+ 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+ 		  video_device_node_name(&vin->vdev));
+@@ -866,7 +866,7 @@ static void rvin_notify(struct v4l2_subdev *sd,
+ 	}
+ }
+ 
+-int rvin_v4l2_probe(struct rvin_dev *vin)
++int rvin_v4l2_register(struct rvin_dev *vin)
+ {
+ 	struct video_device *vdev = &vin->vdev;
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 95897127cc410d4f..385243e3d4da130b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -153,11 +153,11 @@ struct rvin_dev {
+ #define vin_warn(d, fmt, arg...)	dev_warn(d->dev, fmt, ##arg)
+ #define vin_err(d, fmt, arg...)		dev_err(d->dev, fmt, ##arg)
+ 
+-int rvin_dma_probe(struct rvin_dev *vin, int irq);
+-void rvin_dma_remove(struct rvin_dev *vin);
++int rvin_dma_register(struct rvin_dev *vin, int irq);
++void rvin_dma_unregister(struct rvin_dev *vin);
+ 
+-int rvin_v4l2_probe(struct rvin_dev *vin);
+-void rvin_v4l2_remove(struct rvin_dev *vin);
++int rvin_v4l2_register(struct rvin_dev *vin);
++void rvin_v4l2_unregister(struct rvin_dev *vin);
+ 
+ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
+ 
 -- 
 2.16.2
