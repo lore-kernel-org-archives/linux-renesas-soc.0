@@ -1,97 +1,163 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:37475 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751488AbeCOQNK (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:23863 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752387AbeCZVqk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Mar 2018 12:13:10 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-Date: Thu, 15 Mar 2018 17:11:56 +0100
-Message-Id: <1521130316-1221-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1521130316-1221-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1521130316-1221-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 26 Mar 2018 17:46:40 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 12/33] rcar-vin: fix handling of single field frames (top, bottom and alternate fields)
+Date: Mon, 26 Mar 2018 23:44:35 +0200
+Message-Id: <20180326214456.6655-13-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
-decoder, connected to the on-chip LVDS encoder output on one side
-and to HDMI encoder ADV7511w on the other one.
+There was never proper support in the VIN driver to deliver ALTERNATING
+field format to user-space, remove this field option. The problem is
+that ALTERNATING field order requires the sequence numbers of buffers
+returned to userspace to reflect if fields were dropped or not,
+something which is not possible with the VIN drivers capture logic.
 
-As the decoder does not need any configuration it has been so-far
-omitted from DTS. Now that a driver is available, describe it in DT
-as well.
+The VIN driver can still capture from a video source which delivers
+frames in ALTERNATING field order, but needs to combine them using the
+VIN hardware into INTERLACED field order. Before this change if a source
+was delivering fields using ALTERNATE the driver would default to
+combining them using this hardware feature. Only if the user explicitly
+requested ALTERNATE field order would incorrect frames be delivered.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+The height should not be cut in half for the format for TOP or BOTTOM
+fields settings. This was a mistake and it was made visible by the
+scaling refactoring. Correct behavior is that the user should request a
+frame size that fits the half height frame reflected in the field
+setting. If not the VIN will do its best to scale the top or bottom to
+the requested format and cropping and scaling do not work as expected.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+
 ---
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 33 +++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index c0fd144..69f43b8 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -42,6 +42,33 @@
- 			};
- 		};
- 	};
-+
-+	thc63lvd1024: lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				thc63lvd1024_in_0: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2{
-+				reg = <2>;
-+
-+				thc63lvd1024_out_2: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+
-+			};
-+
-+		};
-+	};
- };
+* Changes since v12
+- Spelling where -> were.
+- Add review tag from Hans.
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 15 +----------
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 40 +++++++----------------------
+ 2 files changed, 10 insertions(+), 45 deletions(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 4f48575f2008fe34..9233924e5b52de5f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -617,7 +617,6 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	case V4L2_FIELD_INTERLACED_BT:
+ 		vnmc = VNMC_IM_FULL | VNMC_FOC;
+ 		break;
+-	case V4L2_FIELD_ALTERNATE:
+ 	case V4L2_FIELD_NONE:
+ 		vnmc = VNMC_IM_ODD_EVEN;
+ 		progressive = true;
+@@ -745,18 +744,6 @@ static bool rvin_capture_active(struct rvin_dev *vin)
+ 	return rvin_read(vin, VNMS_REG) & VNMS_CA;
+ }
  
- &avb {
-@@ -98,7 +125,7 @@
- 			port@0 {
- 				reg = <0>;
- 				adv7511_in: endpoint {
--					remote-endpoint = <&lvds0_out>;
-+					remote-endpoint = <&thc63lvd1024_out_2>;
- 				};
- 			};
+-static enum v4l2_field rvin_get_active_field(struct rvin_dev *vin, u32 vnms)
+-{
+-	if (vin->format.field == V4L2_FIELD_ALTERNATE) {
+-		/* If FS is set it's a Even field */
+-		if (vnms & VNMS_FS)
+-			return V4L2_FIELD_BOTTOM;
+-		return V4L2_FIELD_TOP;
+-	}
+-
+-	return vin->format.field;
+-}
+-
+ static void rvin_set_slot_addr(struct rvin_dev *vin, int slot, dma_addr_t addr)
+ {
+ 	const struct rvin_video_format *fmt;
+@@ -892,7 +879,7 @@ static irqreturn_t rvin_irq(int irq, void *data)
  
-@@ -152,8 +179,8 @@
+ 	/* Capture frame */
+ 	if (vin->queue_buf[slot]) {
+-		vin->queue_buf[slot]->field = rvin_get_active_field(vin, vnms);
++		vin->queue_buf[slot]->field = vin->format.field;
+ 		vin->queue_buf[slot]->sequence = vin->sequence;
+ 		vin->queue_buf[slot]->vb2_buf.timestamp = ktime_get_ns();
+ 		vb2_buffer_done(&vin->queue_buf[slot]->vb2_buf,
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 16e895657c3f51c5..e956a385cc13f5f3 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -121,33 +121,6 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 	vin->format.colorspace	= mf->colorspace;
+ 	vin->format.field	= mf->field;
  
- 	ports {
- 		port@1 {
--			endpoint {
--				remote-endpoint = <&adv7511_in>;
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in_0>;
- 			};
- 		};
- 	};
+-	/*
+-	 * If the subdevice uses ALTERNATE field mode and G_STD is
+-	 * implemented use the VIN HW to combine the two fields to
+-	 * one INTERLACED frame. The ALTERNATE field mode can still
+-	 * be requested in S_FMT and be respected, this is just the
+-	 * default which is applied at probing or when S_STD is called.
+-	 */
+-	if (vin->format.field == V4L2_FIELD_ALTERNATE &&
+-	    v4l2_subdev_has_op(vin_to_source(vin), video, g_std))
+-		vin->format.field = V4L2_FIELD_INTERLACED;
+-
+-	switch (vin->format.field) {
+-	case V4L2_FIELD_TOP:
+-	case V4L2_FIELD_BOTTOM:
+-	case V4L2_FIELD_ALTERNATE:
+-		vin->format.height /= 2;
+-		break;
+-	case V4L2_FIELD_NONE:
+-	case V4L2_FIELD_INTERLACED_TB:
+-	case V4L2_FIELD_INTERLACED_BT:
+-	case V4L2_FIELD_INTERLACED:
+-		break;
+-	default:
+-		vin->format.field = RVIN_DEFAULT_FIELD;
+-		break;
+-	}
+-
+ 	rvin_reset_crop_compose(vin);
+ 
+ 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
+@@ -235,15 +208,20 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	switch (pix->field) {
+ 	case V4L2_FIELD_TOP:
+ 	case V4L2_FIELD_BOTTOM:
+-	case V4L2_FIELD_ALTERNATE:
+-		pix->height /= 2;
+-		source->height /= 2;
+-		break;
+ 	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 	case V4L2_FIELD_INTERLACED_BT:
+ 	case V4L2_FIELD_INTERLACED:
+ 		break;
++	case V4L2_FIELD_ALTERNATE:
++		/*
++		 * Driver dose not (yet) support outputting ALTERNATE to a
++		 * userspace. It does support outputting INTERLACED so use
++		 * the VIN hardware to combine the two fields.
++		 */
++		pix->field = V4L2_FIELD_INTERLACED;
++		pix->height *= 2;
++		break;
+ 	default:
+ 		pix->field = RVIN_DEFAULT_FIELD;
+ 		break;
 -- 
-2.7.4
+2.16.2
