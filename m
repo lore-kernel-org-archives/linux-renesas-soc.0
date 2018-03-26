@@ -1,141 +1,151 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:36861 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750930AbeC0GPf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:15:35 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 26 Mar 2018 17:22:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        a.hajda@samsung.com, airlied@linux.ie, horms@verge.net.au,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v6 1/3] dt-bindings: display: bridge: Document
  THC63LVD1024 LVDS decoder
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Message-ID: <20180326222249.tvjiutyd4amlibpa@rob-hp-laptop>
 References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
  <1521213399-31947-2-git-send-email-jacopo+renesas@jmondi.org>
- <4060923.7DxT9ae38L@avalon> <20180326222249.tvjiutyd4amlibpa@rob-hp-laptop>
-CC: Rob Herring <robh@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <architt@codeaurora.org>, <a.hajda@samsung.com>,
-        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
-        <sergei.shtylyov@cogentembedded.com>, <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <a1b0e678-38b8-dd29-b441-e2a09b565105@mentor.com>
-Date: Tue, 27 Mar 2018 09:15:24 +0300
+ <4060923.7DxT9ae38L@avalon>
 MIME-Version: 1.0
-In-Reply-To: <20180326222249.tvjiutyd4amlibpa@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <4060923.7DxT9ae38L@avalon>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
-
-On 03/27/2018 01:22 AM, Rob Herring wrote:
-> On Tue, Mar 20, 2018 at 02:43:33PM +0200, Laurent Pinchart wrote:
->> Hi Jacopo,
->>
->> (CC'ing Rob)
->>
->> Thank you for the patch.
->>
->> On Friday, 16 March 2018 17:16:37 EET Jacopo Mondi wrote:
->>> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
->>>
->>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->>> Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
->>> ---
->>>  .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 +++++++++++++++++++
->>>  1 file changed, 66 insertions(+)
->>>  create mode 100644
->>> Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>> new file mode 100644
->>> index 0000000..8225c6a
->>> --- /dev/null
->>> +++
->>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>> @@ -0,0 +1,66 @@
->>> +Thine Electronics THC63LVD1024 LVDS decoder
->>> +-------------------------------------------
->>> +
->>> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS
->>> streams
->>> +to parallel data outputs. The chip supports single/dual input/output modes,
->>> +handling up to two two input LVDS stream and up to two digital CMOS/TTL
->>> outputs.
->>> +
->>> +Single or dual operation modes, output data mapping and DDR output modes
->>> are
->>> +configured through input signals and the chip does not expose any control
->>> bus.
->>> +
->>> +Required properties:
->>> +- compatible: Shall be "thine,thc63lvd1024"
->>> +
->>> +Optional properties:
->>> +- vcc-supply: Power supply for TTL output and digital circuitry
->>> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
->>> +- lvcc-supply: Power supply for LVDS inputs
->>> +- pvcc-supply: Power supply for PLL circuitry
->>
->> As explained in a comment to one of the previous versions of this series, I'm 
->> tempted to make vcc-supply mandatory and drop the three other power supplies 
->> for now, as I believe there's very little chance they will be connected to 
->> separately controllable regulators (all supplies use the same voltage). In the 
->> very unlikely event that this occurs in design we need to support in the 
->> future, the cvcc, lvcc and pvcc supplies can be added later as optional 
->> without breaking backward compatibility.
+On Tue, Mar 20, 2018 at 02:43:33PM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
 > 
-> I'm okay with that.
+> (CC'ing Rob)
 > 
->> Apart from that,
->>
->> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>
->>> +- pdwn-gpios: Power down GPIO signal. Active low
+> Thank you for the patch.
 > 
-> powerdown-gpios is the semi-standard name.
+> On Friday, 16 March 2018 17:16:37 EET Jacopo Mondi wrote:
+> > Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+> > 
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> > Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 +++++++++++++++++++
+> >  1 file changed, 66 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> > 
+> > diff --git
+> > a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> > b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> > new file mode 100644
+> > index 0000000..8225c6a
+> > --- /dev/null
+> > +++
+> > b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> > @@ -0,0 +1,66 @@
+> > +Thine Electronics THC63LVD1024 LVDS decoder
+> > +-------------------------------------------
+> > +
+> > +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS
+> > streams
+> > +to parallel data outputs. The chip supports single/dual input/output modes,
+> > +handling up to two two input LVDS stream and up to two digital CMOS/TTL
+> > outputs.
+> > +
+> > +Single or dual operation modes, output data mapping and DDR output modes
+> > are
+> > +configured through input signals and the chip does not expose any control
+> > bus.
+> > +
+> > +Required properties:
+> > +- compatible: Shall be "thine,thc63lvd1024"
+> > +
+> > +Optional properties:
+> > +- vcc-supply: Power supply for TTL output and digital circuitry
+> > +- cvcc-supply: Power supply for TTL CLOCKOUT signal
+> > +- lvcc-supply: Power supply for LVDS inputs
+> > +- pvcc-supply: Power supply for PLL circuitry
 > 
+> As explained in a comment to one of the previous versions of this series, I'm 
+> tempted to make vcc-supply mandatory and drop the three other power supplies 
+> for now, as I believe there's very little chance they will be connected to 
+> separately controllable regulators (all supplies use the same voltage). In the 
+> very unlikely event that this occurs in design we need to support in the 
+> future, the cvcc, lvcc and pvcc supplies can be added later as optional 
+> without breaking backward compatibility.
 
-right, I've also noticed it. If possible please avoid shortenings in
-property names.
+I'm okay with that.
 
->>> +- oe-gpios: Output enable GPIO signal. Active high
->>> +
+> Apart from that,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> > +- pdwn-gpios: Power down GPIO signal. Active low
 
-And this one is also a not ever met property name, please consider to
-rename it to 'enable-gpios', for instance display panels define it.
+powerdown-gpios is the semi-standard name.
 
->>> +The THC63LVD1024 video port connections are modeled according
->>> +to OF graph bindings specified by
->>> Documentation/devicetree/bindings/graph.txt
+> > +- oe-gpios: Output enable GPIO signal. Active high
+> > +
+> > +The THC63LVD1024 video port connections are modeled according
+> > +to OF graph bindings specified by
+> > Documentation/devicetree/bindings/graph.txt
+> > +
+> > +Required video port nodes:
+> > +- Port@0: First LVDS input port
+> > +- Port@2: First digital CMOS/TTL parallel output
 
-[snip]
+s/Port/port/
 
->>> +
->>> +			port@2{
->>> +				reg = <2>;
->>> +
->>> +				lvds_dec_out_2: endpoint {
->>> +					remote-endpoint = <&adv7511_in>;
->>> +				};
->>> +
-
-Drop a surplus empty line above.
-
->>> +			};
->>> +
-
-Drop a surplus empty line above.
-
->>> +		};
->>> +	};
-
---
-With best wishes,
-Vladimir
+> > +
+> > +Optional video port nodes:
+> > +- Port@1: Second LVDS input port
+> > +- Port@3: Second digital CMOS/TTL parallel output
+> > +
+> > +Example:
+> > +--------
+> > +
+> > +	thc63lvd1024: lvds-decoder {
+> > +		compatible = "thine,thc63lvd1024";
+> > +
+> > +		vcc-supply = <&reg_lvds_vcc>;
+> > +		lvcc-supply = <&reg_lvds_lvcc>;
+> > +
+> > +		pdwn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
+> > +
+> > +		ports {
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +
+> > +			port@0 {
+> > +				reg = <0>;
+> > +
+> > +				lvds_dec_in_0: endpoint {
+> > +					remote-endpoint = <&lvds_out>;
+> > +				};
+> > +			};
+> > +
+> > +			port@2{
+> > +				reg = <2>;
+> > +
+> > +				lvds_dec_out_2: endpoint {
+> > +					remote-endpoint = <&adv7511_in>;
+> > +				};
+> > +
+> > +			};
+> > +
+> > +		};
+> > +	};
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
