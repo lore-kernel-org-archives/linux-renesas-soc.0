@@ -1,42 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40966 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752413AbeCOOqH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:46:07 -0400
-Received: by mail-wr0-f196.google.com with SMTP id f14so8542646wre.8
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Mar 2018 07:46:07 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: intel-gfx@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH igt 2/8] tests/kms_panel_fitting: check for i915 before checking version
-Date: Thu, 15 Mar 2018 15:45:38 +0100
-Message-Id: <1521125144-28614-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1521125144-28614-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1521125144-28614-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 14/33] rcar-vin: align pixelformat check
+Date: Mon, 26 Mar 2018 23:44:37 +0200
+Message-Id: <20180326214456.6655-15-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fixes false negatives on non-i915 platforms.
+If the pixelformat is not supported it should not fail but be set to
+something that works. While we are at it move the two different
+checks of the pixelformat to the same statement.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- tests/kms_panel_fitting.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/tests/kms_panel_fitting.c b/tests/kms_panel_fitting.c
-index b3cee22..6d0be50 100644
---- a/tests/kms_panel_fitting.c
-+++ b/tests/kms_panel_fitting.c
-@@ -243,6 +243,7 @@ static void test_atomic_fastset(igt_display_t *display)
- 		igt_set_module_param_int("fastboot", 1);
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 21d765ec9594f95c..8dbd764883976ad1 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -189,12 +189,10 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	u32 walign;
+ 	int ret;
  
- 	igt_require(display->is_atomic);
-+	igt_require(is_i915_device(display->drm_fd));
- 	igt_require(intel_gen(intel_get_drm_devid(display->drm_fd)) >= 5);
+-	/* If requested format is not supported fallback to the default */
+-	if (!rvin_format_from_pixel(pix->pixelformat)) {
+-		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
+-			pix->pixelformat, RVIN_DEFAULT_FORMAT);
++	if (!rvin_format_from_pixel(pix->pixelformat) ||
++	    (vin->info->model == RCAR_M1 &&
++	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
+ 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
+-	}
  
- 	for_each_pipe_with_valid_output(display, pipe, output) {
+ 	/* Limit to source capabilities */
+ 	ret = __rvin_try_format_source(vin, which, pix, source);
+@@ -233,12 +231,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	pix->bytesperline = rvin_format_bytesperline(pix);
+ 	pix->sizeimage = rvin_format_sizeimage(pix);
+ 
+-	if (vin->info->model == RCAR_M1 &&
+-	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+-		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+-		return -EINVAL;
+-	}
+-
+ 	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
+ 		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+ 
 -- 
-2.7.4
+2.16.2
