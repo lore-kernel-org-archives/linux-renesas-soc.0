@@ -1,145 +1,225 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754011AbeCPOzS (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:56017 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752532AbeCZVrE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:55:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/14] ARM: shmobile: Add watchdog support
-Date: Fri, 16 Mar 2018 15:53:35 +0100
-Message-Id: <58adf1ba0d227754d9bc763c667f10efe0053ce5.1521211738.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521211738.git.horms+renesas@verge.net.au>
-References: <cover.1521211738.git.horms+renesas@verge.net.au>
+        Mon, 26 Mar 2018 17:47:04 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 30/33] rcar-vin: extend {start,stop}_streaming to work with media controller
+Date: Mon, 26 Mar 2018 23:44:53 +0200
+Message-Id: <20180326214456.6655-31-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+The procedure to start or stop streaming using the non-MC single
+subdevice and the MC graph and multiple subdevices are quite different.
+Create a new function to abstract which method is used based on which
+mode the driver is running in and add logic to start the MC graph.
 
-On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
-boot CPUs run a routine designed to bring up SMP and deal with hot plug.
-The value contained in the SBAR registers is not initialized by a WDT
-triggered reset, which means that after a WDT triggered reset we jump
-to the SMP bring up routine, preventing the system from executing the
-bootrom code.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-The purpose of this patch is to jump to the bootrom code in case of a
-WDT triggered reset, and keep the SMP functionality untouched.
-In order to tell if the code had been called due to the WDT overflowing
-we are testing WOVF from register RWTCSRA.
-
-The new function shmobile_boot_vector_gen2 isn't replacing
-shmobile_boot_vector for backward compatibility reasons. The kernel
-will install the best option (either shmobile_boot_vector or
-shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree,
-according to the amount of memory available.
-
-Since shmobile_boot_vector has become bigger, "reg" property of nodes
-compatible with "renesas,smp-sram" now need to be set to a value
-greater or equal to "<0 0x60>".
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[simon: dropped #ifdef from common.h]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/common.h  |  4 +++
- arch/arm/mach-shmobile/headsmp.S | 55 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
-index a8fa4f7e1f60..43c1ac696274 100644
---- a/arch/arm/mach-shmobile/common.h
-+++ b/arch/arm/mach-shmobile/common.h
-@@ -7,6 +7,10 @@ extern void shmobile_init_delay(void);
- extern void shmobile_boot_vector(void);
- extern unsigned long shmobile_boot_fn;
- extern unsigned long shmobile_boot_size;
-+extern void shmobile_boot_vector_gen2(void);
-+extern unsigned long shmobile_boot_fn_gen2;
-+extern unsigned long shmobile_boot_cpu_gen2;
-+extern unsigned long shmobile_boot_size_gen2;
- extern void shmobile_smp_boot(void);
- extern void shmobile_smp_sleep(void);
- extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
-diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
-index 32e0bf6e3ccb..cef8e8c555f8 100644
---- a/arch/arm/mach-shmobile/headsmp.S
-+++ b/arch/arm/mach-shmobile/headsmp.S
-@@ -16,6 +16,11 @@
- #include <asm/assembler.h>
- #include <asm/memory.h>
+* Changes since v12
+- Rebase to latest media-tree/master changed a 'return ret' to a 'goto
+  out' in rvin_start_streaming().
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 135 +++++++++++++++++++++++++++--
+ 1 file changed, 127 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index a93772c10baaa003..00bdc523294f2280 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -997,10 +997,126 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+ }
  
-+#define SCTLR_MMU	0x01
-+#define BOOTROM_ADDRESS	0xE6340000
-+#define RWTCSRA_ADDRESS 0xE6020004
-+#define RWTCSRA_WOVF	0x10
++static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
++				   struct media_pad *pad)
++{
++	struct v4l2_subdev_format fmt = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
 +
- /*
-  * Reset vector for secondary CPUs.
-  * This will be mapped at address 0 by SBAR register.
-@@ -37,6 +42,56 @@ shmobile_boot_fn:
- shmobile_boot_size:
- 	.long	. - shmobile_boot_vector
++	fmt.pad = pad->index;
++	if (v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt))
++		return -EPIPE;
++
++	switch (fmt.format.code) {
++	case MEDIA_BUS_FMT_YUYV8_1X16:
++	case MEDIA_BUS_FMT_UYVY8_2X8:
++	case MEDIA_BUS_FMT_UYVY10_2X10:
++	case MEDIA_BUS_FMT_RGB888_1X24:
++		vin->mbus_code = fmt.format.code;
++		break;
++	default:
++		return -EPIPE;
++	}
++
++	switch (fmt.format.field) {
++	case V4L2_FIELD_TOP:
++	case V4L2_FIELD_BOTTOM:
++	case V4L2_FIELD_NONE:
++	case V4L2_FIELD_INTERLACED_TB:
++	case V4L2_FIELD_INTERLACED_BT:
++	case V4L2_FIELD_INTERLACED:
++	case V4L2_FIELD_SEQ_TB:
++	case V4L2_FIELD_SEQ_BT:
++		/* Supported natively */
++		break;
++	case V4L2_FIELD_ALTERNATE:
++		switch (vin->format.field) {
++		case V4L2_FIELD_TOP:
++		case V4L2_FIELD_BOTTOM:
++		case V4L2_FIELD_NONE:
++			break;
++		case V4L2_FIELD_INTERLACED_TB:
++		case V4L2_FIELD_INTERLACED_BT:
++		case V4L2_FIELD_INTERLACED:
++		case V4L2_FIELD_SEQ_TB:
++		case V4L2_FIELD_SEQ_BT:
++			/* Use VIN hardware to combine the two fields */
++			fmt.format.height *= 2;
++			break;
++		default:
++			return -EPIPE;
++		}
++		break;
++	default:
++		return -EPIPE;
++	}
++
++	if (fmt.format.width != vin->format.width ||
++	    fmt.format.height != vin->format.height ||
++	    fmt.format.code != vin->mbus_code)
++		return -EPIPE;
++
++	return 0;
++}
++
++static int rvin_set_stream(struct rvin_dev *vin, int on)
++{
++	struct media_pipeline *pipe;
++	struct media_device *mdev;
++	struct v4l2_subdev *sd;
++	struct media_pad *pad;
++	int ret;
++
++	/* No media controller used, simply pass operation to subdevice. */
++	if (!vin->info->use_mc) {
++		ret = v4l2_subdev_call(vin->digital->subdev, video, s_stream,
++				       on);
++
++		return ret == -ENOIOCTLCMD ? 0 : ret;
++	}
++
++	pad = media_entity_remote_pad(&vin->pad);
++	if (!pad)
++		return -EPIPE;
++
++	sd = media_entity_to_v4l2_subdev(pad->entity);
++
++	if (!on) {
++		media_pipeline_stop(&vin->vdev.entity);
++		return v4l2_subdev_call(sd, video, s_stream, 0);
++	}
++
++	ret = rvin_mc_validate_format(vin, sd, pad);
++	if (ret)
++		return ret;
++
++	/*
++	 * The graph lock needs to be taken to protect concurrent
++	 * starts of multiple VIN instances as they might share
++	 * a common subdevice down the line and then should use
++	 * the same pipe.
++	 */
++	mdev = vin->vdev.entity.graph_obj.mdev;
++	mutex_lock(&mdev->graph_mutex);
++	pipe = sd->entity.pipe ? sd->entity.pipe : &vin->vdev.pipe;
++	ret = __media_pipeline_start(&vin->vdev.entity, pipe);
++	mutex_unlock(&mdev->graph_mutex);
++	if (ret)
++		return ret;
++
++	ret = v4l2_subdev_call(sd, video, s_stream, 1);
++	if (ret == -ENOIOCTLCMD)
++		ret = 0;
++	if (ret)
++		media_pipeline_stop(&vin->vdev.entity);
++
++	return ret;
++}
++
+ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ {
+ 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
+-	struct v4l2_subdev *sd;
+ 	unsigned long flags;
+ 	int ret;
  
-+#ifdef CONFIG_ARCH_RCAR_GEN2
-+/*
-+ * Reset vector for R-Car Gen2 and RZ/G1 secondary CPUs.
-+ * This will be mapped at address 0 by SBAR register.
-+ */
-+ENTRY(shmobile_boot_vector_gen2)
-+	mrc	p15, 0, r0, c0, c0, 5		@ r0 = MPIDR
-+	ldr	r1, shmobile_boot_cpu_gen2
-+	cmp	r0, r1
-+	bne	shmobile_smp_continue_gen2
-+
-+	mrc	p15, 0, r1, c1, c0, 0		@ r1 = SCTLR
-+	and	r0, r1, #SCTLR_MMU
-+	cmp	r0, #SCTLR_MMU
-+	beq	shmobile_smp_continue_gen2
-+
-+	ldr	r0, rwtcsra
-+	mov	r1, #0
-+	ldrb	r1, [r0]
-+	and	r0, r1, #RWTCSRA_WOVF
-+	cmp	r0, #RWTCSRA_WOVF
-+	bne	shmobile_smp_continue_gen2
-+
-+	ldr	r0, bootrom
-+	bx	r0
-+
-+shmobile_smp_continue_gen2:
-+	ldr     r1, shmobile_boot_fn_gen2
-+	bx	r1
-+
-+ENDPROC(shmobile_boot_vector_gen2)
-+
-+	.align	4
-+rwtcsra:
-+	.word	RWTCSRA_ADDRESS
-+bootrom:
-+	.word	BOOTROM_ADDRESS
-+	.globl	shmobile_boot_cpu_gen2
-+shmobile_boot_cpu_gen2:
-+	.word	0x00000000
-+
-+	.align	2
-+	.globl	shmobile_boot_fn_gen2
-+shmobile_boot_fn_gen2:
-+	.space	4
-+	.globl	shmobile_boot_size_gen2
-+shmobile_boot_size_gen2:
-+	.long	. - shmobile_boot_vector_gen2
-+#endif /* CONFIG_ARCH_RCAR_GEN2 */
-+
- /*
-  * Per-CPU SMP boot function/argument selection code based on MPIDR
-  */
+@@ -1015,8 +1131,13 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 		return -ENOMEM;
+ 	}
+ 
+-	sd = vin_to_source(vin);
+-	v4l2_subdev_call(sd, video, s_stream, 1);
++	ret = rvin_set_stream(vin, 1);
++	if (ret) {
++		spin_lock_irqsave(&vin->qlock, flags);
++		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
++		spin_unlock_irqrestore(&vin->qlock, flags);
++		goto out;
++	}
+ 
+ 	spin_lock_irqsave(&vin->qlock, flags);
+ 
+@@ -1025,11 +1146,11 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	ret = rvin_capture_start(vin);
+ 	if (ret) {
+ 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
+-		v4l2_subdev_call(sd, video, s_stream, 0);
++		rvin_set_stream(vin, 0);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+-
++out:
+ 	if (ret)
+ 		dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
+ 				  vin->scratch_phys);
+@@ -1040,7 +1161,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ static void rvin_stop_streaming(struct vb2_queue *vq)
+ {
+ 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
+-	struct v4l2_subdev *sd;
+ 	unsigned long flags;
+ 	int retries = 0;
+ 
+@@ -1079,8 +1199,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
+ 
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+ 
+-	sd = vin_to_source(vin);
+-	v4l2_subdev_call(sd, video, s_stream, 0);
++	rvin_set_stream(vin, 0);
+ 
+ 	/* disable interrupts */
+ 	rvin_disable_interrupts(vin);
 -- 
-2.11.0
+2.16.2
