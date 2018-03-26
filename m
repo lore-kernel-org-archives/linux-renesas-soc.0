@@ -1,419 +1,233 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52106 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754834AbeCHAFh (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:19877 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752500AbeCZVrD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Mar 2018 19:05:37 -0500
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v7 1/8] media: vsp1: Reword uses of 'fragment' as 'body'
-Date: Thu,  8 Mar 2018 00:05:24 +0000
-Message-Id: <4b6be5632b722a40c634b85fc67b38a9d44b9dbf.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Mon, 26 Mar 2018 17:47:03 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v13 29/33] rcar-vin: add link notify for Gen3
+Date: Mon, 26 Mar 2018 23:44:52 +0200
+Message-Id: <20180326214456.6655-30-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Throughout the codebase, the term 'fragment' is used to represent a
-display list body. This term duplicates the 'body' which is already in
-use.
+Add the ability to process media device link change requests. Link
+enabling is a bit complicated on Gen3, whether or not it's possible to
+enable a link depends on what other links already are enabled. On Gen3
+the 8 VINs are split into two subgroup's (VIN0-3 and VIN4-7) and from a
+routing perspective these two groups are independent of each other.
+Each subgroup's routing is controlled by the subgroup VIN master
+instance (VIN0 and VIN4).
 
-The datasheet references these objects as a body, therefore replace all
-mentions of a fragment with a body, along with the corresponding
-pluralised terms.
+There are a limited number of possible route setups available for each
+subgroup and the configuration of each setup is dictated by the
+hardware. On H3 for example there are 6 possible route setups for each
+subgroup to choose from.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+This leads to the media device link notification code being rather large
+since it will find the best routing configuration to try and accommodate
+as many links as possible. When it's not possible to enable a new link
+due to hardware constrains the link_notifier callback will return
+-EMLINK.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
 ---
-v7
- - Clean up the formatting of the vsp1_dl_list_add_body()
 
- drivers/media/platform/vsp1/vsp1_clu.c |  10 +-
- drivers/media/platform/vsp1/vsp1_dl.c  | 109 ++++++++++++--------------
- drivers/media/platform/vsp1/vsp1_dl.h  |  13 +--
- drivers/media/platform/vsp1/vsp1_lut.c |   8 +-
- 4 files changed, 69 insertions(+), 71 deletions(-)
+* Changes since v11
+- Fixed spelling
+- Updated comment to clarify the intent that no link can be enabled if
+any video node is open.
+- Use container_of() instead of a loop to find struct vin_dev from the
+video device.
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 147 ++++++++++++++++++++++++++++
+ 1 file changed, 147 insertions(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
-index f2fb26e5ab4e..9621afa3658c 100644
---- a/drivers/media/platform/vsp1/vsp1_clu.c
-+++ b/drivers/media/platform/vsp1/vsp1_clu.c
-@@ -47,19 +47,19 @@ static int clu_set_table(struct vsp1_clu *clu, struct v4l2_ctrl *ctrl)
- 	struct vsp1_dl_body *dlb;
- 	unsigned int i;
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 99f6301a778046df..0cc76d73115e9277 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -24,6 +24,7 @@
  
--	dlb = vsp1_dl_fragment_alloc(clu->entity.vsp1, 1 + 17 * 17 * 17);
-+	dlb = vsp1_dl_body_alloc(clu->entity.vsp1, 1 + 17 * 17 * 17);
- 	if (!dlb)
- 		return -ENOMEM;
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-fwnode.h>
++#include <media/v4l2-mc.h>
  
--	vsp1_dl_fragment_write(dlb, VI6_CLU_ADDR, 0);
-+	vsp1_dl_body_write(dlb, VI6_CLU_ADDR, 0);
- 	for (i = 0; i < 17 * 17 * 17; ++i)
--		vsp1_dl_fragment_write(dlb, VI6_CLU_DATA, ctrl->p_new.p_u32[i]);
-+		vsp1_dl_body_write(dlb, VI6_CLU_DATA, ctrl->p_new.p_u32[i]);
+ #include "rcar-vin.h"
  
- 	spin_lock_irq(&clu->lock);
- 	swap(clu->clu, dlb);
- 	spin_unlock_irq(&clu->lock);
- 
--	vsp1_dl_fragment_free(dlb);
-+	vsp1_dl_body_free(dlb);
- 	return 0;
- }
- 
-@@ -256,7 +256,7 @@ static void clu_configure(struct vsp1_entity *entity,
- 		spin_unlock_irqrestore(&clu->lock, flags);
- 
- 		if (dlb)
--			vsp1_dl_list_add_fragment(dl, dlb);
-+			vsp1_dl_list_add_body(dl, dlb);
- 		break;
- 	}
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 0b86ed01e85d..caed441f5f0c 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -69,7 +69,7 @@ struct vsp1_dl_body {
-  * @header: display list header, NULL for headerless lists
-  * @dma: DMA address for the header
-  * @body0: first display list body
-- * @fragments: list of extra display list bodies
-+ * @bodies: list of extra display list bodies
-  * @has_chain: if true, indicates that there's a partition chain
-  * @chain: entry in the display list partition chain
+@@ -44,6 +45,151 @@
   */
-@@ -81,7 +81,7 @@ struct vsp1_dl_list {
- 	dma_addr_t dma;
+ #define rvin_group_id_to_master(vin) ((vin) < 4 ? 0 : 4)
  
- 	struct vsp1_dl_body body0;
--	struct list_head fragments;
-+	struct list_head bodies;
- 
- 	bool has_chain;
- 	struct list_head chain;
-@@ -98,13 +98,13 @@ enum vsp1_dl_mode {
-  * @mode: display list operation mode (header or headerless)
-  * @singleshot: execute the display list in single-shot mode
-  * @vsp1: the VSP1 device
-- * @lock: protects the free, active, queued, pending and gc_fragments lists
-+ * @lock: protects the free, active, queued, pending and gc_bodies lists
-  * @free: array of all free display lists
-  * @active: list currently being processed (loaded) by hardware
-  * @queued: list queued to the hardware (written to the DL registers)
-  * @pending: list waiting to be queued to the hardware
-- * @gc_work: fragments garbage collector work struct
-- * @gc_fragments: array of display list fragments waiting to be freed
-+ * @gc_work: bodies garbage collector work struct
-+ * @gc_bodies: array of display list bodies waiting to be freed
-  */
- struct vsp1_dl_manager {
- 	unsigned int index;
-@@ -119,7 +119,7 @@ struct vsp1_dl_manager {
- 	struct vsp1_dl_list *pending;
- 
- 	struct work_struct gc_work;
--	struct list_head gc_fragments;
-+	struct list_head gc_bodies;
- };
- 
- /* -----------------------------------------------------------------------------
-@@ -157,17 +157,16 @@ static void vsp1_dl_body_cleanup(struct vsp1_dl_body *dlb)
- }
- 
- /**
-- * vsp1_dl_fragment_alloc - Allocate a display list fragment
-+ * vsp1_dl_body_alloc - Allocate a display list body
-  * @vsp1: The VSP1 device
-- * @num_entries: The maximum number of entries that the fragment can contain
-+ * @num_entries: The maximum number of entries that the body can contain
-  *
-- * Allocate a display list fragment with enough memory to contain the requested
-+ * Allocate a display list body with enough memory to contain the requested
-  * number of entries.
-  *
-- * Return a pointer to a fragment on success or NULL if memory can't be
-- * allocated.
-+ * Return a pointer to a body on success or NULL if memory can't be allocated.
-  */
--struct vsp1_dl_body *vsp1_dl_fragment_alloc(struct vsp1_device *vsp1,
-+struct vsp1_dl_body *vsp1_dl_body_alloc(struct vsp1_device *vsp1,
- 					    unsigned int num_entries)
- {
- 	struct vsp1_dl_body *dlb;
-@@ -187,20 +186,20 @@ struct vsp1_dl_body *vsp1_dl_fragment_alloc(struct vsp1_device *vsp1,
- }
- 
- /**
-- * vsp1_dl_fragment_free - Free a display list fragment
-- * @dlb: The fragment
-+ * vsp1_dl_body_free - Free a display list body
-+ * @dlb: The body
-  *
-- * Free the given display list fragment and the associated DMA memory.
-+ * Free the given display list body and the associated DMA memory.
-  *
-- * Fragments must only be freed explicitly if they are not added to a display
-+ * Bodies must only be freed explicitly if they are not added to a display
-  * list, as the display list will take ownership of them and free them
-- * otherwise. Manual free typically happens at cleanup time for fragments that
-+ * otherwise. Manual free typically happens at cleanup time for bodies that
-  * have been allocated but not used.
-  *
-  * Passing a NULL pointer to this function is safe, in that case no operation
-  * will be performed.
-  */
--void vsp1_dl_fragment_free(struct vsp1_dl_body *dlb)
-+void vsp1_dl_body_free(struct vsp1_dl_body *dlb)
- {
- 	if (!dlb)
- 		return;
-@@ -210,16 +209,16 @@ void vsp1_dl_fragment_free(struct vsp1_dl_body *dlb)
- }
- 
- /**
-- * vsp1_dl_fragment_write - Write a register to a display list fragment
-- * @dlb: The fragment
-+ * vsp1_dl_body_write - Write a register to a display list body
-+ * @dlb: The body
-  * @reg: The register address
-  * @data: The register value
-  *
-- * Write the given register and value to the display list fragment. The maximum
-- * number of entries that can be written in a fragment is specified when the
-- * fragment is allocated by vsp1_dl_fragment_alloc().
-+ * Write the given register and value to the display list body. The maximum
-+ * number of entries that can be written in a body is specified when the body is
-+ * allocated by vsp1_dl_body_alloc().
-  */
--void vsp1_dl_fragment_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
-+void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
- {
- 	dlb->entries[dlb->num_entries].addr = reg;
- 	dlb->entries[dlb->num_entries].data = data;
-@@ -240,7 +239,7 @@ static struct vsp1_dl_list *vsp1_dl_list_alloc(struct vsp1_dl_manager *dlm)
- 	if (!dl)
- 		return NULL;
- 
--	INIT_LIST_HEAD(&dl->fragments);
-+	INIT_LIST_HEAD(&dl->bodies);
- 	dl->dlm = dlm;
- 
- 	/*
-@@ -277,7 +276,7 @@ static struct vsp1_dl_list *vsp1_dl_list_alloc(struct vsp1_dl_manager *dlm)
- static void vsp1_dl_list_free(struct vsp1_dl_list *dl)
- {
- 	vsp1_dl_body_cleanup(&dl->body0);
--	list_splice_init(&dl->fragments, &dl->dlm->gc_fragments);
-+	list_splice_init(&dl->bodies, &dl->dlm->gc_bodies);
- 	kfree(dl);
- }
- 
-@@ -332,13 +331,13 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
- 	dl->has_chain = false;
- 
- 	/*
--	 * We can't free fragments here as DMA memory can only be freed in
--	 * interruptible context. Move all fragments to the display list
--	 * manager's list of fragments to be freed, they will be
--	 * garbage-collected by the work queue.
-+	 * We can't free bodies here as DMA memory can only be freed in
-+	 * interruptible context. Move all bodies to the display list manager's
-+	 * list of bodies to be freed, they will be garbage-collected by the
-+	 * work queue.
- 	 */
--	if (!list_empty(&dl->fragments)) {
--		list_splice_init(&dl->fragments, &dl->dlm->gc_fragments);
-+	if (!list_empty(&dl->bodies)) {
-+		list_splice_init(&dl->bodies, &dl->dlm->gc_bodies);
- 		schedule_work(&dl->dlm->gc_work);
- 	}
- 
-@@ -379,33 +378,33 @@ void vsp1_dl_list_put(struct vsp1_dl_list *dl)
-  */
- void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data)
- {
--	vsp1_dl_fragment_write(&dl->body0, reg, data);
-+	vsp1_dl_body_write(&dl->body0, reg, data);
- }
- 
- /**
-- * vsp1_dl_list_add_fragment - Add a fragment to the display list
-+ * vsp1_dl_list_add_body - Add a body to the display list
-  * @dl: The display list
-- * @dlb: The fragment
-+ * @dlb: The body
-  *
-- * Add a display list body as a fragment to a display list. Registers contained
-- * in fragments are processed after registers contained in the main display
-- * list, in the order in which fragments are added.
-+ * Add a display list body as a body to a display list. Registers contained
-+ * in bodies are processed after registers contained in the main display list,
-+ * in the order in which bodies are added.
-  *
-- * Adding a fragment to a display list passes ownership of the fragment to the
-- * list. The caller must not touch the fragment after this call, and must not
-- * free it explicitly with vsp1_dl_fragment_free().
-+ * Adding a body to a display list passes ownership of the body to the list. The
-+ * caller must not touch the body after this call, and must not free it
-+ * explicitly with vsp1_dl_body_free().
-  *
-- * Fragments are only usable for display lists in header mode. Attempt to
-- * add a fragment to a header-less display list will return an error.
-+ * Additional bodies are only usable for display lists in header mode.
-+ * Attempting to add a body to a header-less display list will return an error.
-  */
--int vsp1_dl_list_add_fragment(struct vsp1_dl_list *dl,
--			      struct vsp1_dl_body *dlb)
-+int vsp1_dl_list_add_body(struct vsp1_dl_list *dl, struct vsp1_dl_body *dlb)
- {
- 	/* Multi-body lists are only available in header mode. */
- 	if (dl->dlm->mode != VSP1_DL_MODE_HEADER)
- 		return -EINVAL;
- 
--	list_add_tail(&dlb->list, &dl->fragments);
-+	list_add_tail(&dlb->list, &dl->bodies);
++/* -----------------------------------------------------------------------------
++ * Media Controller link notification
++ */
 +
- 	return 0;
- }
- 
-@@ -454,7 +453,7 @@ static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
- 	hdr->num_bytes = dl->body0.num_entries
- 		       * sizeof(*dl->header->lists);
- 
--	list_for_each_entry(dlb, &dl->fragments, list) {
-+	list_for_each_entry(dlb, &dl->bodies, list) {
- 		num_lists++;
- 		hdr++;
- 
-@@ -711,25 +710,25 @@ void vsp1_dlm_reset(struct vsp1_dl_manager *dlm)
- }
- 
- /*
-- * Free all fragments awaiting to be garbage-collected.
-+ * Free all bodies awaiting to be garbage-collected.
-  *
-  * This function must be called without the display list manager lock held.
++/* group lock should be held when calling this function. */
++static int rvin_group_entity_to_csi_id(struct rvin_group *group,
++				       struct media_entity *entity)
++{
++	struct v4l2_subdev *sd;
++	unsigned int i;
++
++	sd = media_entity_to_v4l2_subdev(entity);
++
++	for (i = 0; i < RVIN_CSI_MAX; i++)
++		if (group->csi[i].subdev == sd)
++			return i;
++
++	return -ENODEV;
++}
++
++static unsigned int rvin_group_get_mask(struct rvin_dev *vin,
++					enum rvin_csi_id csi_id,
++					unsigned char channel)
++{
++	const struct rvin_group_route *route;
++	unsigned int mask = 0;
++
++	for (route = vin->info->routes; route->mask; route++) {
++		if (route->vin == vin->id &&
++		    route->csi == csi_id &&
++		    route->channel == channel) {
++			vin_dbg(vin,
++				"Adding route: vin: %d csi: %d channel: %d\n",
++				route->vin, route->csi, route->channel);
++			mask |= route->mask;
++		}
++	}
++
++	return mask;
++}
++
++/*
++ * Link setup for the links between a VIN and a CSI-2 receiver is a bit
++ * complex. The reason for this is that the register controlling routing
++ * is not present in each VIN instance. There are special VINs which
++ * control routing for themselves and other VINs. There are not many
++ * different possible links combinations that can be enabled at the same
++ * time, therefor all already enabled links which are controlled by a
++ * master VIN need to be taken into account when making the decision
++ * if a new link can be enabled or not.
++ *
++ * 1. Find out which VIN the link the user tries to enable is connected to.
++ * 2. Lookup which master VIN controls the links for this VIN.
++ * 3. Start with a bitmask with all bits set.
++ * 4. For each previously enabled link from the master VIN bitwise AND its
++ *    route mask (see documentation for mask in struct rvin_group_route)
++ *    with the bitmask.
++ * 5. Bitwise AND the mask for the link the user tries to enable to the bitmask.
++ * 6. If the bitmask is not empty at this point the new link can be enabled
++ *    while keeping all previous links enabled. Update the CHSEL value of the
++ *    master VIN and inform the user that the link could be enabled.
++ *
++ * Please note that no link can be enabled if any VIN in the group is
++ * currently open.
++ */
++static int rvin_group_link_notify(struct media_link *link, u32 flags,
++				  unsigned int notification)
++{
++	struct rvin_group *group = container_of(link->graph_obj.mdev,
++						struct rvin_group, mdev);
++	unsigned int master_id, channel, mask_new, i;
++	unsigned int mask = ~0;
++	struct media_entity *entity;
++	struct video_device *vdev;
++	struct media_pad *csi_pad;
++	struct rvin_dev *vin = NULL;
++	int csi_id, ret;
++
++	ret = v4l2_pipeline_link_notify(link, flags, notification);
++	if (ret)
++		return ret;
++
++	/* Only care about link enablement for VIN nodes. */
++	if (!(flags & MEDIA_LNK_FL_ENABLED) ||
++	    !is_media_entity_v4l2_video_device(link->sink->entity))
++		return 0;
++
++	/* If any entity is in use don't allow link changes. */
++	media_device_for_each_entity(entity, &group->mdev)
++		if (entity->use_count)
++			return -EBUSY;
++
++	mutex_lock(&group->lock);
++
++	/* Find the master VIN that controls the routes. */
++	vdev = media_entity_to_video_device(link->sink->entity);
++	vin = container_of(vdev, struct rvin_dev, vdev);
++	master_id = rvin_group_id_to_master(vin->id);
++
++	if (WARN_ON(!group->vin[master_id])) {
++		ret = -ENODEV;
++		goto out;
++	}
++
++	/* Build a mask for already enabled links. */
++	for (i = master_id; i < master_id + 4; i++) {
++		if (!group->vin[i])
++			continue;
++
++		/* Get remote CSI-2, if any. */
++		csi_pad = media_entity_remote_pad(
++				&group->vin[i]->vdev.entity.pads[0]);
++		if (!csi_pad)
++			continue;
++
++		csi_id = rvin_group_entity_to_csi_id(group, csi_pad->entity);
++		channel = rvin_group_csi_pad_to_channel(csi_pad->index);
++
++		mask &= rvin_group_get_mask(group->vin[i], csi_id, channel);
++	}
++
++	/* Add the new link to the existing mask and check if it works. */
++	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
++	channel = rvin_group_csi_pad_to_channel(link->source->index);
++	mask_new = mask & rvin_group_get_mask(vin, csi_id, channel);
++
++	vin_dbg(vin, "Try link change mask: 0x%x new: 0x%x\n", mask, mask_new);
++
++	if (!mask_new) {
++		ret = -EMLINK;
++		goto out;
++	}
++
++	/* New valid CHSEL found, set the new value. */
++	ret = rvin_set_channel_routing(group->vin[master_id], __ffs(mask_new));
++out:
++	mutex_unlock(&group->lock);
++
++	return ret;
++}
++
++static const struct media_device_ops rvin_media_ops = {
++	.link_notify = rvin_group_link_notify,
++};
++
+ /* -----------------------------------------------------------------------------
+  * Gen3 CSI2 Group Allocator
   */
--static void vsp1_dlm_fragments_free(struct vsp1_dl_manager *dlm)
-+static void vsp1_dlm_bodies_free(struct vsp1_dl_manager *dlm)
- {
- 	unsigned long flags;
+@@ -85,6 +231,7 @@ static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
+ 	vin_dbg(vin, "found %u enabled VIN's in DT", group->count);
  
- 	spin_lock_irqsave(&dlm->lock, flags);
+ 	mdev->dev = vin->dev;
++	mdev->ops = &rvin_media_ops;
  
--	while (!list_empty(&dlm->gc_fragments)) {
-+	while (!list_empty(&dlm->gc_bodies)) {
- 		struct vsp1_dl_body *dlb;
- 
--		dlb = list_first_entry(&dlm->gc_fragments, struct vsp1_dl_body,
-+		dlb = list_first_entry(&dlm->gc_bodies, struct vsp1_dl_body,
- 				       list);
- 		list_del(&dlb->list);
- 
- 		spin_unlock_irqrestore(&dlm->lock, flags);
--		vsp1_dl_fragment_free(dlb);
-+		vsp1_dl_body_free(dlb);
- 		spin_lock_irqsave(&dlm->lock, flags);
- 	}
- 
-@@ -741,7 +740,7 @@ static void vsp1_dlm_garbage_collect(struct work_struct *work)
- 	struct vsp1_dl_manager *dlm =
- 		container_of(work, struct vsp1_dl_manager, gc_work);
- 
--	vsp1_dlm_fragments_free(dlm);
-+	vsp1_dlm_bodies_free(dlm);
- }
- 
- struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
-@@ -763,7 +762,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
- 
- 	spin_lock_init(&dlm->lock);
- 	INIT_LIST_HEAD(&dlm->free);
--	INIT_LIST_HEAD(&dlm->gc_fragments);
-+	INIT_LIST_HEAD(&dlm->gc_bodies);
- 	INIT_WORK(&dlm->gc_work, vsp1_dlm_garbage_collect);
- 
- 	for (i = 0; i < prealloc; ++i) {
-@@ -793,5 +792,5 @@ void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm)
- 		vsp1_dl_list_free(dl);
- 	}
- 
--	vsp1_dlm_fragments_free(dlm);
-+	vsp1_dlm_bodies_free(dlm);
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-index ee3508172f0a..cf57f986b69a 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.h
-+++ b/drivers/media/platform/vsp1/vsp1_dl.h
-@@ -16,7 +16,7 @@
- #include <linux/types.h>
- 
- struct vsp1_device;
--struct vsp1_dl_fragment;
-+struct vsp1_dl_body;
- struct vsp1_dl_list;
- struct vsp1_dl_manager;
- 
-@@ -34,12 +34,11 @@ void vsp1_dl_list_put(struct vsp1_dl_list *dl);
- void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data);
- void vsp1_dl_list_commit(struct vsp1_dl_list *dl);
- 
--struct vsp1_dl_body *vsp1_dl_fragment_alloc(struct vsp1_device *vsp1,
--					    unsigned int num_entries);
--void vsp1_dl_fragment_free(struct vsp1_dl_body *dlb);
--void vsp1_dl_fragment_write(struct vsp1_dl_body *dlb, u32 reg, u32 data);
--int vsp1_dl_list_add_fragment(struct vsp1_dl_list *dl,
--			      struct vsp1_dl_body *dlb);
-+struct vsp1_dl_body *vsp1_dl_body_alloc(struct vsp1_device *vsp1,
-+					unsigned int num_entries);
-+void vsp1_dl_body_free(struct vsp1_dl_body *dlb);
-+void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data);
-+int vsp1_dl_list_add_body(struct vsp1_dl_list *dl, struct vsp1_dl_body *dlb);
- int vsp1_dl_list_add_chain(struct vsp1_dl_list *head, struct vsp1_dl_list *dl);
- 
- #endif /* __VSP1_DL_H__ */
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
-index c67cc60db0db..aa2b40327529 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/vsp1/vsp1_lut.c
-@@ -44,19 +44,19 @@ static int lut_set_table(struct vsp1_lut *lut, struct v4l2_ctrl *ctrl)
- 	struct vsp1_dl_body *dlb;
- 	unsigned int i;
- 
--	dlb = vsp1_dl_fragment_alloc(lut->entity.vsp1, 256);
-+	dlb = vsp1_dl_body_alloc(lut->entity.vsp1, 256);
- 	if (!dlb)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < 256; ++i)
--		vsp1_dl_fragment_write(dlb, VI6_LUT_TABLE + 4 * i,
-+		vsp1_dl_body_write(dlb, VI6_LUT_TABLE + 4 * i,
- 				       ctrl->p_new.p_u32[i]);
- 
- 	spin_lock_irq(&lut->lock);
- 	swap(lut->lut, dlb);
- 	spin_unlock_irq(&lut->lock);
- 
--	vsp1_dl_fragment_free(dlb);
-+	vsp1_dl_body_free(dlb);
- 	return 0;
- }
- 
-@@ -212,7 +212,7 @@ static void lut_configure(struct vsp1_entity *entity,
- 		spin_unlock_irqrestore(&lut->lock, flags);
- 
- 		if (dlb)
--			vsp1_dl_list_add_fragment(dl, dlb);
-+			vsp1_dl_list_add_body(dl, dlb);
- 		break;
- 	}
- }
+ 	match = of_match_node(vin->dev->driver->of_match_table,
+ 			      vin->dev->of_node);
 -- 
-git-series 0.9.1
+2.16.2
