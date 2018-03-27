@@ -1,71 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51027 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753069AbeCFJem (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:34:42 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 27 Mar 2018 10:17:16 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: renesas: r8a7795: Add IPMMU-PV1 device node
-Date: Tue,  6 Mar 2018 10:34:30 +0100
-Message-Id: <20180306093430.12486-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/3] arm64: dts: renesas: salvator-common: Configure
+ PMIC for DDR Backup Power
+Message-ID: <20180327081715.rab6rr4xobmgwofl@verge.net.au>
+References: <1521029386-29975-1-git-send-email-geert+renesas@glider.be>
+ <1521029386-29975-3-git-send-email-geert+renesas@glider.be>
+ <9c6289e4-23dd-c79b-bd1f-058d843739d2@cogentembedded.com>
+ <CAMuHMdUO-Op4u44naZJ37VgzN1GJBL33yRWnF11D9a24y8+x1g@mail.gmail.com>
+ <1ae32fee-578e-1091-561a-200a8036b670@cogentembedded.com>
+ <20180326090625.espsuzblp7gy767t@verge.net.au>
+ <CAMuHMdW5ox34+_Z76T+cDyZeuJJE4OZ8=hEpdjbCcg+TwSX61A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW5ox34+_Z76T+cDyZeuJJE4OZ8=hEpdjbCcg+TwSX61A@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add r8a7795 IPMMU-PV1 and keep it disabled by default.
+On Mon, Mar 26, 2018 at 11:13:54AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Mon, Mar 26, 2018 at 11:06 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Fri, Mar 16, 2018 at 03:08:13PM +0300, Sergei Shtylyov wrote:
+> >> On 03/16/2018 03:00 PM, Geert Uytterhoeven wrote:
+> >>
+> >> >>> On Salvator-X(S), all of the DDR0, DDR1, DDR0C, and DDR1C power rails
+> >> >>> need to be kept powered when backup mode is enabled.  Reflect this in
+> >> >>> the "rohm,ddr-backup-power" property for the BD9571MWV PMIC node.
+> >> >>>
+> >> >>> The accessory power switch (SW23) is a toggle switch, hense specify
+> >> >>> "rohm,rstbmode-level".
+> >> >>>
+> >> >>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> >>> ---
+> >> >>> v2:
+> >> >>>   - Add rohm,rstbmode-level.
+> >> >>> ---
+> >> >>>  arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 ++
+> >> >>>  1 file changed, 2 insertions(+)
+> >> >>>
+> >> >>> diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> >> >>> index 2a7f36abd2dd85c6..80794c38c2669d75 100644
+> >> >>> --- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> >> >>> +++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+> >> >>> @@ -376,6 +376,8 @@
+> >> >>>               #interrupt-cells = <2>;
+> >> >>>               gpio-controller;
+> >> >>>               #gpio-cells = <2>;
+> >> >>> +             rohm,ddr-backup-power = <15>;
+> >> >>
+> >> >>   Why not 0xf if those are all bit flags?
+> >> >
+> >> > Because it's a small number?
+> >> > Does it matter?
+> >>
+> >>    I think hex is preferable for the bit flags. Decimal makes one think it's something
+> >> else -- some magnitude, etc...
+> >
+> > Geert, it seems that Rob Herring is of the same opinion.
+> > Would you care to respin this series?
+> 
+> Sure, after the respun driver series has been accepted.
 
-This device is not present in r8a7795 ES1.x and
-is removed from the DT of those SoCs.
-
-This corrects an omission in
-3b7e7848f0e8 ("arm64: dts: renesas: r8a7795: Add IPMMU device nodes")
-
-This does not have any runtime effect.
-
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi     | 9 +++++++++
- 2 files changed, 10 insertions(+)
-
-Based on renesas-devel-20180305-v4.16-rc4
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index f1d5e90503d5..f9acd125d687 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -23,6 +23,7 @@
- 
- 	/delete-node/ mmu@febe0000;
- 	/delete-node/ mmu@fe980000;
-+	/delete-node/ mmu@fd950000;
- 	/delete-node/ mmu@fd960000;
- 	/delete-node/ mmu@fd970000;
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 09953cda3a55..0648fe451d09 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -545,6 +545,15 @@
- 			status = "disabled";
- 		};
- 
-+		ipmmu_pv1: mmu@fd950000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xfd950000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 7>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		ipmmu_pv2: mmu@fd960000 {
- 			compatible = "renesas,ipmmu-r8a7795";
- 			reg = <0 0xfd960000 0 0x1000>;
--- 
-2.11.0
+Perfect, thanks!
