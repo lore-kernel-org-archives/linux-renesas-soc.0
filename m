@@ -1,63 +1,42 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2 1/8] DT: mfd: renesas,rzn1-sysctrl: document RZ/N1 sysctrl node
-Date: Thu, 22 Mar 2018 11:44:38 +0000
-Message-Id: <1521719091-25157-2-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:35599 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeC0LcP (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 27 Mar 2018 07:32:15 -0400
+Received: by mail-qt0-f169.google.com with SMTP id s2so23551639qti.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Mar 2018 04:32:15 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <cover.1521206902.git.horms+renesas@verge.net.au>
+References: <cover.1521206902.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 27 Mar 2018 13:32:14 +0200
+Message-ID: <CAK8P3a2kkwB1iyubRS5R7Vn6+ydbpo0Qm3VR5nQSkPYh=q_ZcQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Bindings Updates for v4.17
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function
-system controller. This documents the node used to encapsulate
-it's sub drivers.
+On Fri, Mar 16, 2018 at 3:52 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Renesas ARM Based SoC DT Bindings Updates for v4.17
+>
+> * Document the bindings for:
+>   - R-Car V3H (r8a77980) SoC
+>   - Condor board with V3H (r8a77980) SoC
+>   - Stout (ADAS Starterkit) board with R-Car H2 (r8a7790) SoC
+>   - R-Car M3-N (r8a77965) SoC
+>   - Salvator-X and Salvator-XS boards with R-Car M3-N (r8a77965) SoC
+> * Document that Armadillo-800 is compatibie with R-Mobile A1 (r8a7740) SoC
+> * Document part numbers of Wheat and V3MSK boards
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- .../bindings/mfd/renesas,rzn1-sysctrl.txt          | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+Pulled into next/dt, thanks!
 
-diff --git a/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
-new file mode 100644
-index 0000000..5aaef43
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
-@@ -0,0 +1,22 @@
-+DT bindings for the Renesas RZ-N1 System Controller
-+
-+== System Controller Node ==
-+
-+The system controller node currently only hosts a single sub-driver to handle
-+the rebooting of the CPU. Eventually it will host the clock driver, SMP
-+start handler, watchdog etc.
-+
-+See renesas,rzn1-reboot.txt for further details.
-+
-+Bindings:
-++ Optional:
-+	compatible = "renesas,r9a06g032-sysctrl";
-++ Required:
-+	compatible = "renesas,rzn1-sysctrl";
-+
-+Example:
-+	sysctrl: sysctrl@4000c000 {
-+		compatible = "renesas,r9a06g032-sysctrl",
-+			"renesas,rzn1-sysctrl", "syscon", "simple-mfd";
-+		reg = <0x4000c000 0x1000>;
-+	};
--- 
-2.7.4
-
+      Arnd
