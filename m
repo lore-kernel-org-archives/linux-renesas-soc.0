@@ -1,190 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753912AbeCPOya (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54659 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752225AbeC0Vwr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:54:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 39/52] ARM: dts: silk: use demuxer for I2C1
-Date: Fri, 16 Mar 2018 15:52:58 +0100
-Message-Id: <d4c1ce2813942407cead7adb86d1dd9dfc46f74c.1521208546.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521208546.git.horms+renesas@verge.net.au>
-References: <cover.1521208546.git.horms+renesas@verge.net.au>
+        Tue, 27 Mar 2018 17:52:47 -0400
+Date: Tue, 27 Mar 2018 23:52:44 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] dt-bindings: pwm: renesas-tpu: Document
+ r8a774[35] support
+Message-ID: <20180327215243.GB28163@mithrandir>
+References: <1513690500-12165-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513690500-12165-5-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="XF85m9dhOBO43t/C"
+Content-Disposition: inline
+In-Reply-To: <1513690500-12165-5-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+--XF85m9dhOBO43t/C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+On Tue, Dec 19, 2017 at 01:34:59PM +0000, Fabrizio Castro wrote:
+> Document r8a774[35] specific compatible strings. No driver change is
+> needed as the fallback compatible string "renesas,tpu" activates the
+> right code in the driver.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2->v3:
+> * No change
+>=20
+>  Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[wsa: rebased, fixed aliases, switched to named GPIOs]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7794-silk.dts | 128 ++++++++++++++++++++++---------------
- 1 file changed, 75 insertions(+), 53 deletions(-)
+Applied, thanks.
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index edfad0e5ac53..f1afe2dda13a 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -31,6 +31,8 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		i2c9 = &gpioi2c1;
-+		i2c10 = &i2chdmi;
- 	};
- 
- 	chosen {
-@@ -153,6 +155,78 @@
- 			clocks = <&x9_clk>;
- 		};
- 	};
-+
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		scl-gpios = <&gpio4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		sda-gpios = <&gpio4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-10 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio5>;
-+			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &extal_clk {
-@@ -268,61 +342,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb0>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con>;
--				};
--			};
--		};
--	};
- };
- 
- &mmcif0 {
--- 
-2.11.0
+Thierry
+
+--XF85m9dhOBO43t/C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6vSsACgkQ3SOs138+
+s6Hy8w//fP7B993jKyPK4fykXDI+UxLy8mEwMrz8r+AMhVF8zteMlqstp3YTb7Gx
+zqY5Z2ZXTr9lpJULgLVeD7vxQ3zU8luLFyed4TwcxPC1lD562nGaoGW1L7POIYEw
+Pet+BtZeN1Mu+gVhEdn2GXU71091grnSG4W3AFve4+IaEkQvyXozqi2djIXB8Cag
+aJ2aEvES9y0/R6zkbxyjBkmQ6Mew7hmQRosyCm71fAeC+2lhgRsBSiO2/O4PsgQ0
+pmuayHiXYpwR9uodRjgLT4gJX3QE1hhkkk2lhanTGTdkzDznxbIFbNZNEqKZNnkg
+bXvYamZBDa87rguAa1dTvXcuJDFg+KJyuJifEBnnXI5Z0GF9DioWk54+jziArGrG
+/xs9iJ+bCYlc+aoVTTIRkp5lxIZnYjxGsD3RnoL795RI3oCzy7vgyJhdwIOb9jDP
+7pUt4bG8WBQs7/9LHg4KdWahN55EwJhISXspRzo6bUwrBA8YJD+eSiTSiHUbYa+5
+QtqeRQSOyRsE/X2WQKlpePL7hEbf23Ld3lv2XHAnXv91DK4qxkx9ZSi+zkTT4HDd
+RpG4B+n7OB4580SgFyMWA+Wf9KW+/cgqTEWiWkK+jWSYfBOtAleTxxWmN+oMjHRE
+NMz8t/8tnjV9wQbHtH63aPRoz6WbSQwJvhOSqybhgPZyV3AYj8U=
+=SZM7
+-----END PGP SIGNATURE-----
+
+--XF85m9dhOBO43t/C--
