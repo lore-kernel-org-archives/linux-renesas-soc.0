@@ -1,112 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36848 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753440AbeCXUJ6 (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35379 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752326AbeC0XVK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:09:58 -0400
-Received: by mail-lf0-f68.google.com with SMTP id z143-v6so22885535lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Mar 2018 13:09:57 -0700 (PDT)
-Subject: [PATCH 3/5] sh_eth: add sh_eth_cpu_data::xdfar_rw flag
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
-References: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
-Message-ID: <84d41287-b2ab-e4f5-5fb4-571820a7118b@cogentembedded.com>
-Date: Sat, 24 Mar 2018 23:09:55 +0300
+        Tue, 27 Mar 2018 19:21:10 -0400
+Date: Wed, 28 Mar 2018 01:21:08 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: ryo.kodama.vz@renesas.com, linux-pwm@vger.kernel.org,
+        stable@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] pwm: rcar: fix a condition to prevent mismatch value
+ setting to duty
+Message-ID: <20180327232107.GD4097@mithrandir>
+References: <1520594661-6897-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="48TaNjbzBVislYPb"
+Content-Disposition: inline
+In-Reply-To: <1520594661-6897-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The GEther-like controllers have writeable RDFAR/TDFAR, on the others
-they are read-only or just absent (on R-Car). Currently we are calling
-sh_eth_is_{gether|rz_fast_ether}() in order to check if these registers
-can be written to, however it would be simpler to check the new 'xdfar_rw'
-bitfield in the 'struct sh_eth_cpu_data'...
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+--48TaNjbzBVislYPb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
- drivers/net/ethernet/renesas/sh_eth.c |   11 +++++++----
- drivers/net/ethernet/renesas/sh_eth.h |    1 +
- 2 files changed, 8 insertions(+), 4 deletions(-)
+On Fri, Mar 09, 2018 at 08:24:21PM +0900, Yoshihiro Shimoda wrote:
+> From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+>=20
+> This patch fixes an issue that is possible to set mismatch value
+> to duty for R-Car PWM if we input the following commands:
+>=20
+>  # cd /sys/class/pwm/<pwmchip>/
+>  # echo 0 > export
+>  # cd pwm0
+>  # echo 30 > period
+>  # echo 30 > duty_cycle
+>  # echo 0 > duty_cycle
+>  # cat duty_cycle
+>  0
+>  # echo 1 > enable
+>  --> Then, the actual duty_cycle is 30, not 0.
+>=20
+> So, this patch adds a condition into rcar_pwm_config() to fix
+> this issue.
+>=20
+> Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
+> [shimoda: revise the commit log and add Fixes and Cc tags]
+> Fixes: ed6c1476bf7f ("pwm: Add support for R-Car PWM Timer")
+> Cc: Cc: <stable@vger.kernel.org> # v4.4+
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/pwm/pwm-rcar.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -611,6 +611,7 @@ static struct sh_eth_cpu_data r7s72100_d
- 	.rpadir_value   = 2 << 16,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
-+	.xdfar_rw	= 1,
- 	.hw_checksum	= 1,
- 	.tsu		= 1,
- };
-@@ -659,6 +660,7 @@ static struct sh_eth_cpu_data r8a7740_da
- 	.rpadir_value   = 2 << 16,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
-+	.xdfar_rw	= 1,
- 	.hw_checksum	= 1,
- 	.tsu		= 1,
- 	.select_mii	= 1,
-@@ -918,6 +920,7 @@ static struct sh_eth_cpu_data sh7757_dat
- 	.rpadir_value   = 2 << 16,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
-+	.xdfar_rw	= 1,
- 	.tsu		= 1,
- 	.dual_port	= 1,
- };
-@@ -955,6 +958,7 @@ static struct sh_eth_cpu_data sh7734_dat
- 	.hw_swap	= 1,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
-+	.xdfar_rw	= 1,
- 	.tsu		= 1,
- 	.hw_checksum	= 1,
- 	.select_mii	= 1,
-@@ -993,6 +997,7 @@ static struct sh_eth_cpu_data sh7763_dat
- 	.hw_swap	= 1,
- 	.no_trimd	= 1,
- 	.no_ade		= 1,
-+	.xdfar_rw	= 1,
- 	.tsu		= 1,
- 	.irq_flags	= IRQF_SHARED,
- 	.magic		= 1,
-@@ -1301,8 +1306,7 @@ static void sh_eth_ring_format(struct ne
- 		/* Rx descriptor address set */
- 		if (i == 0) {
- 			sh_eth_write(ndev, mdp->rx_desc_dma, RDLAR);
--			if (sh_eth_is_gether(mdp) ||
--			    sh_eth_is_rz_fast_ether(mdp))
-+			if (mdp->cd->xdfar_rw)
- 				sh_eth_write(ndev, mdp->rx_desc_dma, RDFAR);
- 		}
- 	}
-@@ -1324,8 +1328,7 @@ static void sh_eth_ring_format(struct ne
- 		if (i == 0) {
- 			/* Tx descriptor address set */
- 			sh_eth_write(ndev, mdp->tx_desc_dma, TDLAR);
--			if (sh_eth_is_gether(mdp) ||
--			    sh_eth_is_rz_fast_ether(mdp))
-+			if (mdp->cd->xdfar_rw)
- 				sh_eth_write(ndev, mdp->tx_desc_dma, TDFAR);
- 		}
- 	}
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -508,6 +508,7 @@ struct sh_eth_cpu_data {
- 	unsigned rpadir:1;	/* E-DMAC have RPADIR */
- 	unsigned no_trimd:1;	/* E-DMAC DO NOT have TRIMD */
- 	unsigned no_ade:1;	/* E-DMAC DO NOT have ADE bit in EESR */
-+	unsigned xdfar_rw:1;	/* E-DMAC has writeable RDFAR/TDFAR */
- 	unsigned hw_checksum:1;	/* E-DMAC has CSMR */
- 	unsigned select_mii:1;	/* EtherC have RMII_MII (MII select register) */
- 	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
+Applied, thanks.
+
+Thierry
+
+--48TaNjbzBVislYPb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq60eMACgkQ3SOs138+
+s6EoBw/8Ci1i8K/d4aBCM0kdtAgaG08yMGzH0j8+z/1s9C6Yhu1QOBOqBqrmUqlT
+TqsHcTNlfBZZ463FLPNMWz7gEaJ0SRCoGJxsmWMGmE8ccEO/YinxDnuD3urG9MvD
+Ty4PMILaYWkgTQbxU4BqDHMpJHOX7fgZSe9TJ12m8c5IpVOxsryMT9+3IhrVhm5n
+XsgRG3+kCFTTGGy5ZwbVsy1vhC2rhHztVIkwIBgUbRosTnBCwQlBKyC0LpEvOqwg
+T0CWsF3A5m80VYzNC1sB3YQujhBqqbWX+xerAV1Cnby8yfWBrQPDCw5fVdWMT9zF
+yCSIMsCpOhbml7dFAQtxexUfUHdP9ZR2YVcrBjITDhEXNvy/kxFWPGEtA6canD5d
+LcsCk4RVz3n4wujal6z1cWHKkHiE+zSyOZeMlOyOhW9Ma54FWSx4GLAKWvsNXaNG
+2ck+KZcPreWkCoCNewxnxyRN6IpSfZ5KoWKqBtMdzvHpPL2mvD0tB+TZyNKeomvL
+M3AACoFZxt22DplAD8Xhd7CNOycnA6M0dGLTgXKfEQdrmjIvsudKmMRHHzxw6iWh
+ch0t5hOuWQHMQpjUohI66NRFt8ik47qCpzYWQsNM7ArrXb301OBCmdWEiFBh9ub+
+O+WRpO3gR4ZRLJ2KlmalwNHzkDD+W4/Y7Iw9AfbkWslsqG8kJAo=
+=Oeqe
+-----END PGP SIGNATURE-----
+
+--48TaNjbzBVislYPb--
