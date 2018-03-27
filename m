@@ -1,12 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:34057 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750944AbeC0LDe (ORCPT
+Received: from relay0.mail.gandi.net ([217.70.178.220]:53109 "EHLO
+        relay0-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751859AbeC0KKN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Mar 2018 07:03:34 -0400
+        Tue, 27 Mar 2018 06:10:13 -0400
+Date: Tue, 27 Mar 2018 12:10:08 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Rob Herring <robh@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        architt@codeaurora.org, airlied@linux.ie, horms@verge.net.au,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v6 1/3] dt-bindings: display: bridge: Document
  THC63LVD1024 LVDS decoder
-To: jacopo mondi <jacopo@jmondi.org>
+Message-ID: <20180327101008.GM27746@w540>
 References: <4060923.7DxT9ae38L@avalon>
  <20180326222249.tvjiutyd4amlibpa@rob-hp-laptop>
  <CGME20180327061536epcas5p40faf6caf0d9825e6c33cd3e6ba9d8378@epcas5p4.samsung.com>
@@ -17,215 +30,234 @@ References: <4060923.7DxT9ae38L@avalon>
  <b7d0e35e-3077-feba-dded-9b8f8422367b@mentor.com>
  <20180327085748.GK27746@w540>
  <871a3805-b20c-3f48-406c-145461837388@mentor.com>
- <20180327101008.GM27746@w540>
-CC: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Rob Herring <robh@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <architt@codeaurora.org>, <airlied@linux.ie>, <horms@verge.net.au>,
-        <magnus.damm@gmail.com>, <geert@linux-m68k.org>,
-        <niklas.soderlund@ragnatech.se>, <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <6353eb46-5a2d-7b75-a60b-c31c59c8636a@mentor.com>
-Date: Tue, 27 Mar 2018 14:03:25 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180327101008.GM27746@w540>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Qz2CZ664xQdCRdPu"
+Content-Disposition: inline
+In-Reply-To: <871a3805-b20c-3f48-406c-145461837388@mentor.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
 
-On 03/27/2018 01:10 PM, jacopo mondi wrote:
-> Hi Vladimir,
-> 
-> On Tue, Mar 27, 2018 at 12:37:31PM +0300, Vladimir Zapolskiy wrote:
->> Hi Jacopo,
->>
->> On 03/27/2018 11:57 AM, jacopo mondi wrote:
->>> Hi Vladimir,
->>>
->>> On Tue, Mar 27, 2018 at 11:30:29AM +0300, Vladimir Zapolskiy wrote:
->>>> Hi Sergei,
->>>>
->>>> On 03/27/2018 11:27 AM, Sergei Shtylyov wrote:
->>>>> Hello!
->>>>>
->>>>> On 3/27/2018 10:33 AM, jacopo mondi wrote:
->>>>> [...]
->>>>>>>>>>> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>>>>>>>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->>>>>>>>>>> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->>>>>>>>>>> ---
->>>>>>>>>>>   .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 +++++++++++++++++++
->>>>>>>>>>>   1 file changed, 66 insertions(+)
->>>>>>>>>>>   create mode 100644
->>>>>>>>>>> Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>>>>>>>>>>
->>>>>>>>>>> diff --git
->>>>>>>>>>> a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>>>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>>>>>>>>>> new file mode 100644
->>>>>>>>>>> index 0000000..8225c6a
->>>>>>>>>>> --- /dev/null
->>>>>>>>>>> +++
->>>>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>>>>>>>>>> @@ -0,0 +1,66 @@
->>>>>>>>>>> +Thine Electronics THC63LVD1024 LVDS decoder
->>>>>>>>>>> +-------------------------------------------
->>>>>>>>>>> +
->>>>>>>>>>> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS
->>>>>>>>>>> streams
->>>>>>>>>>> +to parallel data outputs. The chip supports single/dual input/output modes,
->>>>>>>>>>> +handling up to two two input LVDS stream and up to two digital CMOS/TTL
->>>>>>>>>>> outputs.
->>>>>>>>>>> +
->>>>>>>>>>> +Single or dual operation modes, output data mapping and DDR output modes
->>>>>>>>>>> are
->>>>>>>>>>> +configured through input signals and the chip does not expose any control
->>>>>>>>>>> bus.
->>>>>>>>>>> +
->>>>>>>>>>> +Required properties:
->>>>>>>>>>> +- compatible: Shall be "thine,thc63lvd1024"
->>>>>>>>>>> +
->>>>>>>>>>> +Optional properties:
->>>>>>>>>>> +- vcc-supply: Power supply for TTL output and digital circuitry
->>>>>>>>>>> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
->>>>>>>>>>> +- lvcc-supply: Power supply for LVDS inputs
->>>>>>>>>>> +- pvcc-supply: Power supply for PLL circuitry
->>>>>>>>>> As explained in a comment to one of the previous versions of this series, I'm
->>>>>>>>>> tempted to make vcc-supply mandatory and drop the three other power supplies
->>>>>>>>>> for now, as I believe there's very little chance they will be connected to
->>>>>>>>>> separately controllable regulators (all supplies use the same voltage). In the
->>>>>>>>>> very unlikely event that this occurs in design we need to support in the
->>>>>>>>>> future, the cvcc, lvcc and pvcc supplies can be added later as optional
->>>>>>>>>> without breaking backward compatibility.
->>>>>>>>> I'm okay with that.
->>>>>>>>>
->>>>>>>>>> Apart from that,
->>>>>>>>>>
->>>>>>>>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>>>>>>>>
->>>>>>>>>>> +- pdwn-gpios: Power down GPIO signal. Active low
->>>>>>>>> powerdown-gpios is the semi-standard name.
->>>>>>>>>
->>>>>>>> right, I've also noticed it. If possible please avoid shortenings in
->>>>>>>> property names.
->>>>>>>
->>>>>>> It is not shortening, it just follow pin name from decoder's datasheet.
->>>>>>>
->>>>>>>>
->>>>>>>>>>> +- oe-gpios: Output enable GPIO signal. Active high
->>>>>>>>>>> +
->>>>>>>> And this one is also a not ever met property name, please consider to
->>>>>>>> rename it to 'enable-gpios', for instance display panels define it.
->>>>>>>
->>>>>>>
->>>>>>> Again, it follows datasheet naming scheme. Has something changed in DT
->>>>>>> conventions?
->>>>>>
->>>>>> Seconded. My understanding is that the property name should reflect
->>>>>> what reported in the the chip manual. For THC63LVD1024 the enable and
->>>>>> power down pins are named 'OE' and 'PDWN' respectively.
->>>>>
->>>>>     But don't we need the vendor prefix in the prop names then, like
->>>>> "renesas,oe-gpios" then?
->>>>>
->>>>
->>>> Seconded, with a correction to "thine,oe-gpios".
->>>>
->>>
->>> mmm, okay then...
->>>
->>> A grep for that semi-standard properties names in Documentation/
->>> returns only usage examples and no actual definitions, so I assume this
->>> is why they are semi-standard.
->>
->> Here we have to be specific about a particular property, let it be 'oe-gpios'
->> vs. 'enable-gpios' and let's collect some statistics:
->>
->> % grep -Hr oe-gpios Documentation/devicetree/bindings/* | wc -l
->> 0
->>
->> $ grep -Hr enable-gpios Documentation/devicetree/bindings/* | wc -l
->> 86
->>
->> While 'thine,oe-gpios' would be correct, I see no reason to introduce a vendor
->> specific property to define a pin with a common and well understood purpose.
->>
->> If you go forward with the vendor specific prefix, apparently you can set the name
->> to 'thine,oe-gpio' (single) or even to 'thine,oe', or does the datasheet names
->> the pin as "OE GPIO" or "OE connected to a GPIO"? I guess no.
->>
-> 
-> Let me clarify I don't want to push for a vendor specific name or
-> similar, I'm fine with using 'semi-standard' names, I'm just confused
-> by the 'semi-standard' definition. I guess from your examples, the
-> usage count makes a difference here.
+--Qz2CZ664xQdCRdPu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-yes, in gneneral you can read "semi-standard" as "widely used", thus collecting
-statistics is a good enough method to make a reasoning.
+Hi Vladimir,
 
-Hopefully the next evolutionary step of "widely used" is "described in standard".
+On Tue, Mar 27, 2018 at 12:37:31PM +0300, Vladimir Zapolskiy wrote:
+> Hi Jacopo,
+>
+> On 03/27/2018 11:57 AM, jacopo mondi wrote:
+> > Hi Vladimir,
+> >
+> > On Tue, Mar 27, 2018 at 11:30:29AM +0300, Vladimir Zapolskiy wrote:
+> >> Hi Sergei,
+> >>
+> >> On 03/27/2018 11:27 AM, Sergei Shtylyov wrote:
+> >>> Hello!
+> >>>
+> >>> On 3/27/2018 10:33 AM, jacopo mondi wrote:
+> >>> [...]
+> >>>>>>>>> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+> >>>>>>>>>
+> >>>>>>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>>>>>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> >>>>>>>>> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ra=
+gnatech.se>
+> >>>>>>>>> ---
+> >>>>>>>>>   .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 +++++=
+++++++++++++++
+> >>>>>>>>>   1 file changed, 66 insertions(+)
+> >>>>>>>>>   create mode 100644
+> >>>>>>>>> Documentation/devicetree/bindings/display/bridge/thine,thc63lvd=
+1024.txt
+> >>>>>>>>>
+> >>>>>>>>> diff --git
+> >>>>>>>>> a/Documentation/devicetree/bindings/display/bridge/thine,thc63l=
+vd1024.txt
+> >>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63l=
+vd1024.txt
+> >>>>>>>>> new file mode 100644
+> >>>>>>>>> index 0000000..8225c6a
+> >>>>>>>>> --- /dev/null
+> >>>>>>>>> +++
+> >>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63l=
+vd1024.txt
+> >>>>>>>>> @@ -0,0 +1,66 @@
+> >>>>>>>>> +Thine Electronics THC63LVD1024 LVDS decoder
+> >>>>>>>>> +-------------------------------------------
+> >>>>>>>>> +
+> >>>>>>>>> +The THC63LVD1024 is a dual link LVDS receiver designed to conv=
+ert LVDS
+> >>>>>>>>> streams
+> >>>>>>>>> +to parallel data outputs. The chip supports single/dual input/=
+output modes,
+> >>>>>>>>> +handling up to two two input LVDS stream and up to two digital=
+ CMOS/TTL
+> >>>>>>>>> outputs.
+> >>>>>>>>> +
+> >>>>>>>>> +Single or dual operation modes, output data mapping and DDR ou=
+tput modes
+> >>>>>>>>> are
+> >>>>>>>>> +configured through input signals and the chip does not expose =
+any control
+> >>>>>>>>> bus.
+> >>>>>>>>> +
+> >>>>>>>>> +Required properties:
+> >>>>>>>>> +- compatible: Shall be "thine,thc63lvd1024"
+> >>>>>>>>> +
+> >>>>>>>>> +Optional properties:
+> >>>>>>>>> +- vcc-supply: Power supply for TTL output and digital circuitry
+> >>>>>>>>> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
+> >>>>>>>>> +- lvcc-supply: Power supply for LVDS inputs
+> >>>>>>>>> +- pvcc-supply: Power supply for PLL circuitry
+> >>>>>>>> As explained in a comment to one of the previous versions of thi=
+s series, I'm
+> >>>>>>>> tempted to make vcc-supply mandatory and drop the three other po=
+wer supplies
+> >>>>>>>> for now, as I believe there's very little chance they will be co=
+nnected to
+> >>>>>>>> separately controllable regulators (all supplies use the same vo=
+ltage). In the
+> >>>>>>>> very unlikely event that this occurs in design we need to suppor=
+t in the
+> >>>>>>>> future, the cvcc, lvcc and pvcc supplies can be added later as o=
+ptional
+> >>>>>>>> without breaking backward compatibility.
+> >>>>>>> I'm okay with that.
+> >>>>>>>
+> >>>>>>>> Apart from that,
+> >>>>>>>>
+> >>>>>>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >>>>>>>>
+> >>>>>>>>> +- pdwn-gpios: Power down GPIO signal. Active low
+> >>>>>>> powerdown-gpios is the semi-standard name.
+> >>>>>>>
+> >>>>>> right, I've also noticed it. If possible please avoid shortenings =
+in
+> >>>>>> property names.
+> >>>>>
+> >>>>> It is not shortening, it just follow pin name from decoder's datash=
+eet.
+> >>>>>
+> >>>>>>
+> >>>>>>>>> +- oe-gpios: Output enable GPIO signal. Active high
+> >>>>>>>>> +
+> >>>>>> And this one is also a not ever met property name, please consider=
+ to
+> >>>>>> rename it to 'enable-gpios', for instance display panels define it.
+> >>>>>
+> >>>>>
+> >>>>> Again, it follows datasheet naming scheme. Has something changed in=
+ DT
+> >>>>> conventions?
+> >>>>
+> >>>> Seconded. My understanding is that the property name should reflect
+> >>>> what reported in the the chip manual. For THC63LVD1024 the enable and
+> >>>> power down pins are named 'OE' and 'PDWN' respectively.
+> >>>
+> >>>     But don't we need the vendor prefix in the prop names then, like
+> >>> "renesas,oe-gpios" then?
+> >>>
+> >>
+> >> Seconded, with a correction to "thine,oe-gpios".
+> >>
+> >
+> > mmm, okay then...
+> >
+> > A grep for that semi-standard properties names in Documentation/
+> > returns only usage examples and no actual definitions, so I assume this
+> > is why they are semi-standard.
+>
+> Here we have to be specific about a particular property, let it be 'oe-gp=
+ios'
+> vs. 'enable-gpios' and let's collect some statistics:
+>
+> % grep -Hr oe-gpios Documentation/devicetree/bindings/* | wc -l
+> 0
+>
+> $ grep -Hr enable-gpios Documentation/devicetree/bindings/* | wc -l
+> 86
+>
+> While 'thine,oe-gpios' would be correct, I see no reason to introduce a v=
+endor
+> specific property to define a pin with a common and well understood purpo=
+se.
+>
+> If you go forward with the vendor specific prefix, apparently you can set=
+ the name
+> to 'thine,oe-gpio' (single) or even to 'thine,oe', or does the datasheet =
+names
+> the pin as "OE GPIO" or "OE connected to a GPIO"? I guess no.
+>
 
->> Standards do not define '-gpios' suffix, but partially the description is found
->> in Documentation/bindings/gpio/gpio.txt, still it is not a section in any
->> standard as far as I know.
-> 
->>
->>> Seems like there is some tribal knowledge involved in defining what
->>> is semi-standard and what's not, or are those properties documented somewhere?
->>>
->>
->> The point is that there is no formal standard which describes every IP,
->> every IC and every single their property, some device node names and property
->> names are recommended in ePAPR and Devicetree Specification though.
->>
->> Think of a confusion if 'rst-gpios' (have you seen any ICs with an RST pin?) and
->> 'reset-gpios' are different. Same applies to 'pdwn-gpios' vs. 'powerdown-gpios'.
-> 
-> I see all your points and I agree with most of them. Anyway, if the
-> chip manual describes a pin as 'RST' I would not find it confusing to
-> have a 'rst-gpio' defined in bindings :)
-> 
-> Let me be a bit pesky here: what if a chip defines a reset GPIO, which
-> is definitely a reset, but names it, say "XYZ" ? Would you prefer to
-> see it defined as "reset-gpios" for consistency with other bindings,
-> or "xyz-gpios" for consistency with documentation?
+Let me clarify I don't want to push for a vendor specific name or
+similar, I'm fine with using 'semi-standard' names, I'm just confused
+by the 'semi-standard' definition. I guess from your examples, the
+usage count makes a difference here.
 
-If a pin is definitely an IC reset as you said, then my preference is to see
-it described under 'reset-gpios' property name, plus a comment in the IC
-device tree documentation document about it. I can provide two reasons to
-advocate my position:
+> Standards do not define '-gpios' suffix, but partially the description is=
+ found
+> in Documentation/bindings/gpio/gpio.txt, still it is not a section in any
+> standard as far as I know.
 
-1) developers spend significantly more time reading and editing the actual
-   DTSI/DTS board files rather than reading and editing documentation,
-   it makes sense to use common property names to save time and reduce
-   amount of "what does 'oe' stand for?" type of questions; I suppose
-   that the recommendation to avoid not "widely used" abbreviations in
-   device node and property names arises from the same reasoning,
+>
+> > Seems like there is some tribal knowledge involved in defining what
+> > is semi-standard and what's not, or are those properties documented som=
+ewhere?
+> >
+>
+> The point is that there is no formal standard which describes every IP,
+> every IC and every single their property, some device node names and prop=
+erty
+> names are recommended in ePAPR and Devicetree Specification though.
+>
+> Think of a confusion if 'rst-gpios' (have you seen any ICs with an RST pi=
+n?) and
+> 'reset-gpios' are different. Same applies to 'pdwn-gpios' vs. 'powerdown-=
+gpios'.
 
-2) "widely used" and "standard" properties are excellent candidates for
-   developing (or re-using) generalization wrappers, it happened so many
-   times in the past, and this process shall be supported in my opinion;
-   due to compatibility restrictions it might be problematic to change
-   property names, and every new exception to "widely used" properties
-   makes problematic to develop and maintain these kinds of wrappers, and
-   of course it postpones a desired "described in standard" recognition.
+I see all your points and I agree with most of them. Anyway, if the
+chip manual describes a pin as 'RST' I would not find it confusing to
+have a 'rst-gpio' defined in bindings :)
 
-If my point of view is accepted, I do admit that a developer who
-translates a board schematics to board DTS file may experience a minor
-discomfort, which is mitigated if relevant pin names are found in device
-tree binding documentation in comments to properties, still the overall
-gain is noticeably higher in my personal opinion.
+Let me be a bit pesky here: what if a chip defines a reset GPIO, which
+is definitely a reset, but names it, say "XYZ" ? Would you prefer to
+see it defined as "reset-gpios" for consistency with other bindings,
+or "xyz-gpios" for consistency with documentation?
 
---
-With best wishes,
-Vladimir
+Thanks
+   j
+>
+> >> If vendor agnostic properties are supposed to be used, then please fol=
+low
+> >> the referenced by Rob semi-standard notations.
+>
+> --
+> With best wishes,
+> Vladimir
+
+--Qz2CZ664xQdCRdPu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJauhiAAAoJEHI0Bo8WoVY86+8QAL0/Vfrk1XKEhgJF77qfiW1A
+Th9XqKh0hooywgaL2x7a0edahAj/AGE5carW2xMYvP6MEgQ/DCRTBH6QkJkHYO0U
+3/XlZnwzyYbybOvn6zVdxyfPnjJDMR5+ALYvTSfIvjFa4xYCd4cZS5Ewdgpro33W
+z3eg8Cd+ASBsp6rxYMj7ee+305rG3H7uYafEMq/C8kIunrBra+zqvpLt8nSfrcNc
+XdMRsm65bGvEfqotyaKRVuS1b/IRqm/PJR2nlHDfwku0NtnFl4Hhn8rbjDvhKVGX
+M2Gi/bBE18JxdLGdCPrie4UKzio9b6GrbNpHCELYtJgCqwPHv4NQAg5mwfWgldGv
+VJ5l1zigC/h+nwaHDHUiIz+j5Ip7R1/0DLOc727s3Dt1hHsFAVUBmP7Tmh4FDy8x
+oKpsWy8qAZYl5njL9YxEgCSaBidumhGUy+Bm1ygJV6CJVltCmy/AnE7fP3vY9Gnd
+hthiEJIdhoXbm4FOccZ3FkJHvJyRrfrymjA5S1i465/fOc4fS9XYZWUrPGNhlTxu
+ABPwf6qwCUmKaWqfhG8TqFC1+ShKXsLlBIwhdfjU1NZkJpxlYjIMLor7NKA5+Odb
+ExNHqMwnB+37H4DSd4XOlZblEH341eD1vSJ2pXiLoE5FWCgGngCIVOIXl+bUqVbo
+0/3w8sy53G+mT2iBV23W
+=Ftfk
+-----END PGP SIGNATURE-----
+
+--Qz2CZ664xQdCRdPu--
