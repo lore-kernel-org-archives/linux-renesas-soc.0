@@ -1,74 +1,81 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: Document R-Car M3-N support" to the spi tree
-In-Reply-To: <1521795785-23825-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <20180328022222.120ED44007A@finisterre.ee.mobilebroadband>
-Date: Wed, 28 Mar 2018 03:22:22 +0100 (BST)
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38623 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeC0VwU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:52:20 -0400
+Date: Tue, 27 Mar 2018 23:52:17 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4] dt-bindings: pwm: rcar: Document r8a774[35] PWM
+ bindings
+Message-ID: <20180327215216.GA28163@mithrandir>
+References: <1513768543-7943-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Disposition: inline
+In-Reply-To: <1513768543-7943-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
 
-   spi: sh-msiof: Document R-Car M3-N support
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the spi tree at
+On Wed, Dec 20, 2017 at 11:15:43AM +0000, Fabrizio Castro wrote:
+> This patch adds compatible strings specific to r8a774[35], no driver
+> change is needed as the fallback compatible string will activate the
+> right code.
+>=20
+> Also, this patch replaces the example with a DT snippet used
+> for adding PWM0 support to an r8a7743 based platform as the r8a7743 is
+> now the first platform fully compatible with this driver and its PWM DT
+> nodes refer to up-to-date code.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3->v4:
+> * The changelog now explains why the patch is replacing the example.
+>=20
+>  Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 10 +++++++-=
+--
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Applied, thanks.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Thierry
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6vQ0ACgkQ3SOs138+
+s6F/uA//Y/qN88plLV0PE2FbU34DDMYZv6eReQPVWP3FW/zabZerxtd2Q4B6RNvH
+FW6ahyXVeQ4N7+0qx2JMnZQxPDZW2HsuqIfQatxC1C0faMaAbOX/gEobeEyM4+vD
+HrWn0MuV5XyLAOtyluhRBDnSGizB/kKDpHK0m7Jb9Gt1Z2rIMhacK1AwX0jr2NUD
+NNUSSU1EjhOL22ly6CQzOQqTkws6OcggZCWY7Gvh6Be7IBGMFVR3TSFbBmiSNhZn
+FrGtRy7VCSwYINrQDPtBho6MBDdCow/0B8qwzmpSBAJNxDbjb8Rd3ouKQVp99enL
+l8/gbOYYSLh2yC3xEnCXdVuxX1zexy9aR+oMb65pmx13vuPm3hzSIdl8Bv9ZG3L+
+g0mv2qANImZjHbMIDJLlCPOyIHIKngLqsN92NWFEB92rx9pUQkhH/JJtdzqCbfp5
+XnGda/2ooyEeVux+wPMHZmQXRW2N912LO7sFQUwV0WYhrPQR6Hu2IbvyPxBBMPsb
+D+Cx0fEmcN5PTiX5Lmy02COviEn+sIeEpqw1qZCFC6G2Lz/gVb/u2/rA/m07bAc1
+YwtKHVSF5GLaRJX8I1eD9dFEka7gzJesWsSSunSrFvhrQxPrNSVRIsQviSrS1bAH
+UkK6LS+hne9400xFTT6DPEO2CXRjwbzWvEWwUR7hLwNmQWjngaE=
+=ecM4
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
->From 7bb5e54515dbcef7c390506c1339bff6bf220b1c Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Tue, 27 Mar 2018 15:04:25 +0200
-Subject: [PATCH] spi: sh-msiof: Document R-Car M3-N support
-
-Document support for the MSIOF module in the Renesas M3-N (r8a77965) SoC.
-
-No driver update is needed.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index 80710f0f0448..39806329c193 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -10,6 +10,7 @@ Required properties:
- 			 "renesas,msiof-r8a7794" (R-Car E2)
- 			 "renesas,msiof-r8a7795" (R-Car H3)
- 			 "renesas,msiof-r8a7796" (R-Car M3-W)
-+			 "renesas,msiof-r8a77965" (R-Car M3-N)
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- 			 "renesas,sh-mobile-msiof" (generic SH-Mobile compatibile device)
- 			 "renesas,rcar-gen2-msiof" (generic R-Car Gen2 and RZ/G1 compatible device)
--- 
-2.16.2
-
+--CE+1k2dSO48ffgeK--
