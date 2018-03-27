@@ -1,78 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:39864 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753106AbeC1NHT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:07:19 -0400
-MIME-Version: 1.0
-In-Reply-To: <1522161443-54428-11-git-send-email-biju.das@bp.renesas.com>
-References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com> <1522161443-54428-11-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 Mar 2018 15:07:18 +0200
-Message-ID: <CAMuHMdUWB8=hByJsoZhT1=7QncFexKgZQFiNaUPZrkzGgB-=tg@mail.gmail.com>
-Subject: Re: [PATCH 10/12] ARM: dts: iwg23s-sbc: Add support for iWave
- G23S-SBC based on RZ/G1C
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH  10/12] ARM: dts: iwg23s-sbc: Add support for iWave G23S-SBC based on RZ/G1C
+Date: Tue, 27 Mar 2018 15:37:21 +0100
+Message-Id: <1522161443-54428-11-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Biju,
+Add support for iWave iW-RainboW-G23S single board computer based on
+ RZ/G1C.
 
-On Tue, Mar 27, 2018 at 4:37 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Add support for iWave iW-RainboW-G23S single board computer based on
->  RZ/G1C.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm/boot/dts/Makefile                |  1 +
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
 
-Thanks for your patch!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-One question below.
-
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-> @@ -0,0 +1,30 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for the iWave-RZ/G1C single board computer
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Corp.
-> + */
-> +
-> +/dts-v1/;
-> +#include "r8a77470.dtsi"
-> +/ {
-> +       model = "iWave iW-RainboW-G23S single board computer based on RZ/G1C";
-> +       compatible = "iwave,g23s", "renesas,r8a77470";
-> +
-> +       aliases {
-> +               serial1 = &scif1;
-> +       };
-
-No chosen / stdout-path?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 3b4cc1b..3e4df0d 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -795,6 +795,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7745-iwg22d-sodimm.dtb \
+ 	r8a7745-iwg22d-sodimm-dbhd-ca.dtb \
+ 	r8a7745-sk-rzg1e.dtb \
++	r8a77470-iwg23s-sbc.dtb \
+ 	r8a7778-bockw.dtb \
+ 	r8a7779-marzen.dtb \
+ 	r8a7790-lager.dtb \
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+new file mode 100644
+index 0000000..ebbfb36
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the iWave-RZ/G1C single board computer
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a77470.dtsi"
++/ {
++	model = "iWave iW-RainboW-G23S single board computer based on RZ/G1C";
++	compatible = "iwave,g23s", "renesas,r8a77470";
++
++	aliases {
++		serial1 = &scif1;
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x20000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
++
++&scif1 {
++	status = "okay";
++};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
