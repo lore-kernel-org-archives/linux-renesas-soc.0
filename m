@@ -1,44 +1,199 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49841 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbeCVKYj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:24:39 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 0/4] arm64: dts: renesas: r8a779[56]: sort nodes
-Date: Thu, 22 Mar 2018 11:24:19 +0100
-Message-Id: <20180322102423.18269-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v6 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
+To: Andrzej Hajda <a.hajda@samsung.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        <architt@codeaurora.org>, <Laurent.pinchart@ideasonboard.com>,
+        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
+        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
+        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1521213399-31947-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CGME20180327062437epcas5p3389cb070d15669febeb6f504cff2cf6f@epcas5p3.samsung.com>
+ <30381869-9bc8-b6aa-a37a-598d9c8f280d@mentor.com>
+ <df124c8f-7c71-7941-9969-977dd19c7d1b@samsung.com>
+CC: <dri-devel@lists.freedesktop.org>,
+        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <cac21cde-d3ac-884e-2896-8aebd9df0cb0@mentor.com>
+Date: Tue, 27 Mar 2018 12:57:54 +0300
+MIME-Version: 1.0
+In-Reply-To: <df124c8f-7c71-7941-9969-977dd19c7d1b@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort nodes of the R-Car H3 (r8a7795) and M3-W (r8a7796) DTs.
+Hi Andrzej,
 
-This is part of an ongoing effort to provide consistent node
-order in the DT of Renesas SoCs to improve maintainability.
+On 03/27/2018 10:28 AM, Andrzej Hajda wrote:
+> On 27.03.2018 08:24, Vladimir Zapolskiy wrote:
+>> Hi Jacopo,
+>>
+>> On 03/16/2018 05:16 PM, Jacopo Mondi wrote:
+>>> Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
+>>> output converter.
+>>>
+>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>>> ---
+>>>  drivers/gpu/drm/bridge/Kconfig        |   6 +
+>>>  drivers/gpu/drm/bridge/Makefile       |   1 +
+>>>  drivers/gpu/drm/bridge/thc63lvd1024.c | 255 ++++++++++++++++++++++++++++++++++
+>>>  3 files changed, 262 insertions(+)
+>>>  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+>>> index 3b99d5a..5815a20 100644
+>>> --- a/drivers/gpu/drm/bridge/Kconfig
+>>> +++ b/drivers/gpu/drm/bridge/Kconfig
+>>> @@ -92,6 +92,12 @@ config DRM_SII9234
+>>>  	  It is an I2C driver, that detects connection of MHL bridge
+>>>  	  and starts encapsulation of HDMI signal.
+>>>  
+>>> +config DRM_THINE_THC63LVD1024
+>>> +	tristate "Thine THC63LVD1024 LVDS decoder bridge"
+>>> +	depends on OF
+>>> +	---help---
+>>> +	  Thine THC63LVD1024 LVDS/parallel converter driver.
+>>> +
+>>>  config DRM_TOSHIBA_TC358767
+>>>  	tristate "Toshiba TC358767 eDP bridge"
+>>>  	depends on OF
+>>> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+>>> index 373eb28..fd90b16 100644
+>>> --- a/drivers/gpu/drm/bridge/Makefile
+>>> +++ b/drivers/gpu/drm/bridge/Makefile
+>>> @@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
+>>>  obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
+>>>  obj-$(CONFIG_DRM_SII902X) += sii902x.o
+>>>  obj-$(CONFIG_DRM_SII9234) += sii9234.o
+>>> +obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
+>>>  obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
+>>>  obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
+>>>  obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
+>>> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
+>>> new file mode 100644
+>>> index 0000000..02a54c2
+>>> --- /dev/null
+>>> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+>>> @@ -0,0 +1,255 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * THC63LVD1024 LVDS to parallel data DRM bridge driver.
+>>> + *
+>>> + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>> + */
+>>> +
+>>> +#include <drm/drmP.h>
+>>> +#include <drm/drm_bridge.h>
+>>> +#include <drm/drm_panel.h>
+>>> +
+>>> +#include <linux/gpio/consumer.h>
+>>> +#include <linux/of_graph.h>
+>>> +#include <linux/regulator/consumer.h>
+>>> +
+>>> +enum {
+>>> +	THC63_LVDS_IN0,
+>>> +	THC63_LVDS_IN1,
+>>> +	THC63_DIGITAL_OUT0,
+>>> +	THC63_DIGITAL_OUT1,
+>>> +};
+>>> +
+>>> +static const char * const thc63_reg_names[] = {
+>>> +	"vcc", "lvcc", "pvcc", "cvcc",
+>>> +};
+>>> +
+>>> +struct thc63_dev {
+>>> +	struct device *dev;
+>>> +
+>>> +	struct regulator *vccs[ARRAY_SIZE(thc63_reg_names)];
+>>> +
+>>> +	struct gpio_desc *pdwn;
+>>> +	struct gpio_desc *oe;
+>>> +
+>>> +	struct drm_bridge bridge;
+>>> +	struct drm_bridge *next;
+>>> +};
+>>> +
+>>> +static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
+>>> +{
+>>> +	return container_of(bridge, struct thc63_dev, bridge);
+>>> +}
+>>> +
+>>> +static int thc63_attach(struct drm_bridge *bridge)
+>>> +{
+>>> +	struct thc63_dev *thc63 = to_thc63(bridge);
+>>> +
+>>> +	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
+>>> +}
+>>> +
+>>> +static void thc63_enable(struct drm_bridge *bridge)
+>>> +{
+>>> +	struct thc63_dev *thc63 = to_thc63(bridge);
+>>> +	struct regulator *vcc;
+>>> +	int i;
+>> unsigned int i;
+> 
+> Why? You are introducing silly bug this way, see few lines below.
 
-This should not have any run-time effect.
+You see that the comment was too terse to describe the context in full.
+Thank you for exposing a flaw.
 
-Based on renesas-devel-20180321-v4.16-rc6
+>>
+>>> +
+>>> +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
+>>> +		vcc = thc63->vccs[i];
+>>> +		if (!vcc)
+>>> +			continue;
+>>> +
+>>> +		if (regulator_enable(vcc))
+>>> +			goto error_vcc_enable;
+>>> +	}
+>>> +
+>>> +	if (thc63->pdwn)
+>>> +		gpiod_set_value(thc63->pdwn, 0);
+>>> +
+>>> +	if (thc63->oe)
+>>> +		gpiod_set_value(thc63->oe, 1);
+>>> +
+>>> +	return;
+>>> +
+>>> +error_vcc_enable:
+>>> +	dev_err(thc63->dev, "Failed to enable regulator %s\n",
+>>> +		thc63_reg_names[i]);
+>>> +
+>>> +	for (i = i - 1; i >= 0; i--) {
+> 
+> Here, the loop will not end if you define i unsigned.
+> 
+> I know one can change the loop, to make it working with unsigned. But
+> this clearly shows that using unsigned is more risky.
+> What are advantages of unsigned vs int in this case. Are there some
+> guidelines/discussions about it?
+> 
 
+The reason is pretty simple, like Geert said it might be a personal reason,
+but a code pattern 
 
-Changes since v1:
-* Dropped sorting of r8a7795 CPU nodes, they are already sorted
-* Rebase r8a7795 patches
-* Add r8a7796 patches
+	int i;
+	...
+	for (i = 0; i < ARRAY_SIZE(...); i++)
 
-Simon Horman (4):
-  arm64: dts: renesas: r8a7795: sort subnodes of the root node
-  arm64: dts: renesas: r8a7795: sort subnodes of the soc node
-  arm64: dts: renesas: r8a7796: sort subnodes of the root node
-  arm64: dts: renesas: r8a7796: sort subnodes of the soc node
+is my own red rag, because I've seen the pattern so many times, and every
+time here a compiler produces a W=12 (or -Wsign-compare) warning like
+the next one:
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1904 +++++++++++++++---------------
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1840 ++++++++++++++---------------
- 2 files changed, 1872 insertions(+), 1872 deletions(-)
+drivers/gpu/drm/bridge/thc63lvd1024.c:182:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++, reg++) {
+                ^
 
--- 
-2.11.0
+Usually a conversion from 'int i' to 'unsigned int i' is trivial, and lowering
+of a noise level in compiler's output is seen as beneficial, because it gives
+more chances to people to capture a real problem.
+
+--
+With best wishes,
+Vladimir
