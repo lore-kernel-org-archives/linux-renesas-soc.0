@@ -1,50 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:43377 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932377AbeCLOMf (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35190 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752380AbeC0NPf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:12:35 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
-        sakari.ailus@iki.fi, mchehab@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] media: MAINTAINERS: Add entry for Aptina MT9T112
-Date: Mon, 12 Mar 2018 14:43:05 +0100
-Message-Id: <1520862185-17150-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1520862185-17150-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1520862185-17150-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 27 Mar 2018 09:15:35 -0400
+Received: by mail-io0-f193.google.com with SMTP id e7so27553986iof.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Mar 2018 06:15:34 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a1x9_st4vN7cuMyWk3GrgHYgs8ca5A7ZArM2vEA8ttCgQ@mail.gmail.com>
+References: <cover.1521201256.git.horms+renesas@verge.net.au> <CAK8P3a1x9_st4vN7cuMyWk3GrgHYgs8ca5A7ZArM2vEA8ttCgQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 27 Mar 2018 15:15:33 +0200
+Message-ID: <CAK8P3a0UkYS9B3cerVX3o6fT9i-+=ieO5aNLjxtAd=sLed9=VA@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.17
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add entry for Aptina/Micron MT9T112 camera sensor. The driver is
-maintained by me for "Odd Fixes" only due to lack of suitable hardware
-for testing.
+On Tue, Mar 27, 2018 at 3:13 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Mar 16, 2018 at 3:50 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+>> Renesas ARM64 Based SoC Defconfig Updates for v4.17
+>>
+>> Enable the following to allow them to be more widely exercised:
+>> * Newly added R8A77965 and R8A77980 SoCs
+>> * PWM and USB as used on R-Car Gen3 SoCs
+>>
+>
+> Pulled into next/defconfig, thanks!
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This was actually next/soc of course.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 91ed6ad..ed95cad 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9385,6 +9385,14 @@ S:	Maintained
- F:	drivers/media/i2c/mt9t001.c
- F:	include/media/i2c/mt9t001.h
- 
-+MT9T112 APTINA CAMERA SENSOR
-+M:	Jacopo Mondi <jacopo@jmondi.org>
-+L:	linux-media@vger.kernel.org
-+T:	git git://linuxtv.org/media_tree.git
-+S:	Odd Fixes
-+F:	drivers/media/i2c/mt9t112.c
-+F:	include/media/i2c/mt9t112.h
-+
- MT9V032 APTINA CAMERA SENSOR
- M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
- L:	linux-media@vger.kernel.org
--- 
-2.7.4
+      Arnd
