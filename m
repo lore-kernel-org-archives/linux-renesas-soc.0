@@ -1,86 +1,196 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:37767 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753188AbeC1M5u (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Mar 2018 08:57:50 -0400
-MIME-Version: 1.0
-In-Reply-To: <1522161443-54428-9-git-send-email-biju.das@bp.renesas.com>
-References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com> <1522161443-54428-9-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 Mar 2018 14:57:49 +0200
-Message-ID: <CAMuHMdVdRKpRXhd=0W3hVRt9MD0NVwBpoYa7dsZ+DAEn=sHD-A@mail.gmail.com>
-Subject: Re: [PATCH 08/12] ARM: dts: r8a77470: Initial SoC device tree
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH  08/12] ARM: dts: r8a77470: Initial SoC device tree
+Date: Tue, 27 Mar 2018 15:37:19 +0100
+Message-Id: <1522161443-54428-9-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Biju,
+The initial R8A77470 SoC device tree including CPU0, GIC, timer, SYSC, RST,
+CPG, and the required clock descriptions.
 
-On Tue, Mar 27, 2018 at 4:37 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> The initial R8A77470 SoC device tree including CPU0, GIC, timer, SYSC, RST,
-> CPG, and the required clock descriptions.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a77470.dtsi | 156 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 156 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a77470.dtsi
 
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r8a77470.dtsi
-> @@ -0,0 +1,156 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for the r8a77470 SoC
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Corp.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/r8a7747x-cpg-mssr.h>
-> +#include <dt-bindings/power/r8a7747x-sysc.h>
-
-It is better to use numerical values for the initial submission, as
-the dt-bindings
-headers and the DTS files go upstream through different maintainer paths.
-
-> +/ {
-> +       compatible = "renesas,r8a77470";
-
-> +       soc {
-
-> +               icram2: sram@e6300000 {
-> +                       compatible = "mmio-sram";
-> +                       reg = <0 0xe6300000 0 0x40000>;
-
-Size should be 0x20000 (half of other members in the RZ/G1 family)?
-
-> +               };
-
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+new file mode 100644
+index 0000000..24e3da6
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -0,0 +1,156 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the r8a77470 SoC
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/r8a7747x-cpg-mssr.h>
++#include <dt-bindings/power/r8a7747x-sysc.h>
++/ {
++	compatible = "renesas,r8a77470";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++			clock-frequency = <1000000000>;
++			clocks = <&cpg CPG_CORE R8A77470_CLK_Z2>;
++			power-domains = <&sysc R8A77470_PD_CA7_CPU0>;
++			next-level-cache = <&L2_CA7>;
++		};
++
++
++		L2_CA7: cache-controller-0 {
++			compatible = "cache";
++			cache-unified;
++			cache-level = <2>;
++			power-domains = <&sysc R8A77470_PD_CA7_SCU>;
++		};
++	};
++
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a77470-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>, <&usb_extal_clk>;
++			clock-names = "extal", "usb_extal";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++			#reset-cells = <1>;
++		};
++
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a77470-rst";
++			reg = <0 0xe6160000 0 0x100>;
++		};
++
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a77470-sysc";
++			reg = <0 0xe6180000 0 0x200>;
++			#power-domain-cells = <1>;
++		};
++
++		icram0:	sram@e63a0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63a0000 0 0x12000>;
++		};
++
++		icram1:	sram@e63c0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63c0000 0 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0 0xe63c0000 0x1000>;
++
++			smp-sram@0 {
++				compatible = "renesas,smp-sram";
++				reg = <0 0x100>;
++			};
++		};
++
++		icram2:	sram@e6300000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe6300000 0 0x40000>;
++		};
++
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a77470",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e68000 0 0x40>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&cpg CPG_MOD 720>,
++				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 720>;
++			status = "disabled";
++		};
++
++		gic: interrupt-controller@f1001000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
++			      <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 408>;
++		};
++
++	};
++
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
