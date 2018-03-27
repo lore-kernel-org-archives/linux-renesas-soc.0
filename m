@@ -1,199 +1,112 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH v6 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
-To: Andrzej Hajda <a.hajda@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        <architt@codeaurora.org>, <Laurent.pinchart@ideasonboard.com>,
-        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
-        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
+MIME-Version: 1.0
+In-Reply-To: <8115587a-4925-5602-43db-4285a3de7b0e@samsung.com>
 References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
  <1521213399-31947-3-git-send-email-jacopo+renesas@jmondi.org>
  <CGME20180327062437epcas5p3389cb070d15669febeb6f504cff2cf6f@epcas5p3.samsung.com>
- <30381869-9bc8-b6aa-a37a-598d9c8f280d@mentor.com>
- <df124c8f-7c71-7941-9969-977dd19c7d1b@samsung.com>
-CC: <dri-devel@lists.freedesktop.org>,
-        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <cac21cde-d3ac-884e-2896-8aebd9df0cb0@mentor.com>
-Date: Tue, 27 Mar 2018 12:57:54 +0300
-MIME-Version: 1.0
-In-Reply-To: <df124c8f-7c71-7941-9969-977dd19c7d1b@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+ <30381869-9bc8-b6aa-a37a-598d9c8f280d@mentor.com> <df124c8f-7c71-7941-9969-977dd19c7d1b@samsung.com>
+ <CAMuHMdVWJhmxXS+mvuwjrCOzurArFurqKwQ2PJD-eRCqbLRAng@mail.gmail.com> <8115587a-4925-5602-43db-4285a3de7b0e@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 27 Mar 2018 11:06:03 +0200
+Message-ID: <CAMuHMdVEF-6icsLXd3RU56mzGp6TZYpD1E5ViZvaOa=kWGYPvw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Andrzej,
+Hi Andrezj,
 
-On 03/27/2018 10:28 AM, Andrzej Hajda wrote:
-> On 27.03.2018 08:24, Vladimir Zapolskiy wrote:
->> Hi Jacopo,
->>
->> On 03/16/2018 05:16 PM, Jacopo Mondi wrote:
->>> Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
->>> output converter.
+On Tue, Mar 27, 2018 at 10:36 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+> On 27.03.2018 09:36, Geert Uytterhoeven wrote:
+>> On Tue, Mar 27, 2018 at 9:28 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>>>> --- /dev/null
+>>>>> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+>>>>> +static void thc63_enable(struct drm_bridge *bridge)
+>>>>> +{
+>>>>> +    struct thc63_dev *thc63 = to_thc63(bridge);
+>>>>> +    struct regulator *vcc;
+>>>>> +    int i;
+>>>> unsigned int i;
+>>> Why? You are introducing silly bug this way, see few lines below.
 >>>
->>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->>> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->>> ---
->>>  drivers/gpu/drm/bridge/Kconfig        |   6 +
->>>  drivers/gpu/drm/bridge/Makefile       |   1 +
->>>  drivers/gpu/drm/bridge/thc63lvd1024.c | 255 ++++++++++++++++++++++++++++++++++
->>>  3 files changed, 262 insertions(+)
->>>  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
->>>
->>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
->>> index 3b99d5a..5815a20 100644
->>> --- a/drivers/gpu/drm/bridge/Kconfig
->>> +++ b/drivers/gpu/drm/bridge/Kconfig
->>> @@ -92,6 +92,12 @@ config DRM_SII9234
->>>  	  It is an I2C driver, that detects connection of MHL bridge
->>>  	  and starts encapsulation of HDMI signal.
->>>  
->>> +config DRM_THINE_THC63LVD1024
->>> +	tristate "Thine THC63LVD1024 LVDS decoder bridge"
->>> +	depends on OF
->>> +	---help---
->>> +	  Thine THC63LVD1024 LVDS/parallel converter driver.
->>> +
->>>  config DRM_TOSHIBA_TC358767
->>>  	tristate "Toshiba TC358767 eDP bridge"
->>>  	depends on OF
->>> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
->>> index 373eb28..fd90b16 100644
->>> --- a/drivers/gpu/drm/bridge/Makefile
->>> +++ b/drivers/gpu/drm/bridge/Makefile
->>> @@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
->>>  obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
->>>  obj-$(CONFIG_DRM_SII902X) += sii902x.o
->>>  obj-$(CONFIG_DRM_SII9234) += sii9234.o
->>> +obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
->>>  obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
->>>  obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
->>>  obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
->>> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
->>> new file mode 100644
->>> index 0000000..02a54c2
->>> --- /dev/null
->>> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
->>> @@ -0,0 +1,255 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * THC63LVD1024 LVDS to parallel data DRM bridge driver.
->>> + *
->>> + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
->>> + */
->>> +
->>> +#include <drm/drmP.h>
->>> +#include <drm/drm_bridge.h>
->>> +#include <drm/drm_panel.h>
->>> +
->>> +#include <linux/gpio/consumer.h>
->>> +#include <linux/of_graph.h>
->>> +#include <linux/regulator/consumer.h>
->>> +
->>> +enum {
->>> +	THC63_LVDS_IN0,
->>> +	THC63_LVDS_IN1,
->>> +	THC63_DIGITAL_OUT0,
->>> +	THC63_DIGITAL_OUT1,
->>> +};
->>> +
->>> +static const char * const thc63_reg_names[] = {
->>> +	"vcc", "lvcc", "pvcc", "cvcc",
->>> +};
->>> +
->>> +struct thc63_dev {
->>> +	struct device *dev;
->>> +
->>> +	struct regulator *vccs[ARRAY_SIZE(thc63_reg_names)];
->>> +
->>> +	struct gpio_desc *pdwn;
->>> +	struct gpio_desc *oe;
->>> +
->>> +	struct drm_bridge bridge;
->>> +	struct drm_bridge *next;
->>> +};
->>> +
->>> +static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
->>> +{
->>> +	return container_of(bridge, struct thc63_dev, bridge);
->>> +}
->>> +
->>> +static int thc63_attach(struct drm_bridge *bridge)
->>> +{
->>> +	struct thc63_dev *thc63 = to_thc63(bridge);
->>> +
->>> +	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
->>> +}
->>> +
->>> +static void thc63_enable(struct drm_bridge *bridge)
->>> +{
->>> +	struct thc63_dev *thc63 = to_thc63(bridge);
->>> +	struct regulator *vcc;
->>> +	int i;
->> unsigned int i;
-> 
-> Why? You are introducing silly bug this way, see few lines below.
-
-You see that the comment was too terse to describe the context in full.
-Thank you for exposing a flaw.
-
+>>>>> +
+>>>>> +    for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
+>>>>> +            vcc = thc63->vccs[i];
+>>>>> +            if (!vcc)
+>>>>> +                    continue;
+>>>>> +
+>>>>> +            if (regulator_enable(vcc))
+>>>>> +                    goto error_vcc_enable;
+>>>>> +    }
+>>>>> +
+>>>>> +    if (thc63->pdwn)
+>>>>> +            gpiod_set_value(thc63->pdwn, 0);
+>>>>> +
+>>>>> +    if (thc63->oe)
+>>>>> +            gpiod_set_value(thc63->oe, 1);
+>>>>> +
+>>>>> +    return;
+>>>>> +
+>>>>> +error_vcc_enable:
+>>>>> +    dev_err(thc63->dev, "Failed to enable regulator %s\n",
+>>>>> +            thc63_reg_names[i]);
+>>>>> +
+>>>>> +    for (i = i - 1; i >= 0; i--) {
+>>> Here, the loop will not end if you define i unsigned.
+>> True.
 >>
->>> +
->>> +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
->>> +		vcc = thc63->vccs[i];
->>> +		if (!vcc)
->>> +			continue;
->>> +
->>> +		if (regulator_enable(vcc))
->>> +			goto error_vcc_enable;
->>> +	}
->>> +
->>> +	if (thc63->pdwn)
->>> +		gpiod_set_value(thc63->pdwn, 0);
->>> +
->>> +	if (thc63->oe)
->>> +		gpiod_set_value(thc63->oe, 1);
->>> +
->>> +	return;
->>> +
->>> +error_vcc_enable:
->>> +	dev_err(thc63->dev, "Failed to enable regulator %s\n",
->>> +		thc63_reg_names[i]);
->>> +
->>> +	for (i = i - 1; i >= 0; i--) {
-> 
-> Here, the loop will not end if you define i unsigned.
-> 
-> I know one can change the loop, to make it working with unsigned. But
-> this clearly shows that using unsigned is more risky.
-> What are advantages of unsigned vs int in this case. Are there some
-> guidelines/discussions about it?
-> 
+>>> I know one can change the loop, to make it working with unsigned. But
+>>> this clearly shows that using unsigned is more risky.
+>>> What are advantages of unsigned vs int in this case. Are there some
+>>> guidelines/discussions about it?
+>> Some people consider signed integers harmful, as they may be converted
+>> silently by the compiler to the "larger" unsigned type when needed.
+>
+> Wow, it sounds crazy, shall we expect gigantic patchsets, converting all
+> occurrences of int to "unsigned int" ? :)
 
-The reason is pretty simple, like Geert said it might be a personal reason,
-but a code pattern 
+No we shall not.
 
-	int i;
-	...
-	for (i = 0; i < ARRAY_SIZE(...); i++)
+> I know both types have their pros and cons and can behave unexpectedly
+> in corner cases, but I do not see why unsigned should be preferred over
+> signed in general, or in this particular case.
 
-is my own red rag, because I've seen the pattern so many times, and every
-time here a compiler produces a W=12 (or -Wsign-compare) warning like
-the next one:
+When looping over array indices, and comparing with ARRAY_SIZE (which
+is unsigned), using "unsigned int" is preferred.
 
-drivers/gpu/drm/bridge/thc63lvd1024.c:182:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-  for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++, reg++) {
-                ^
+However, in this case the error code relies on the index becoming negative,
+so a signed integer should be used.
 
-Usually a conversion from 'int i' to 'unsigned int i' is trivial, and lowering
-of a noise level in compiler's output is seen as beneficial, because it gives
-more chances to people to capture a real problem.
+> I guess there were somewhere discussion about it, could you point me to
+> it if possible, to avoid unnecessary noise in this thread.
 
---
-With best wishes,
-Vladimir
+Not here, but Google pointed me to
+http://blog.robertelder.org/signed-or-unsigned/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
