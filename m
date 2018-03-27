@@ -1,46 +1,40 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v3 8/8] DT: arm: Add the RZN1D-DB Board to Renesas Makefile target
-Date: Thu, 29 Mar 2018 08:47:04 +0100
-Message-Id: <1522309629-10152-9-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f170.google.com ([209.85.216.170]:40040 "EHLO
+        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752189AbeC0MKj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 27 Mar 2018 08:10:39 -0400
+Received: by mail-qt0-f170.google.com with SMTP id g5so12618591qth.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Mar 2018 05:10:39 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <cover.1521218085.git.horms+renesas@verge.net.au>
+References: <cover.1521218085.git.horms+renesas@verge.net.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 27 Mar 2018 14:10:37 +0200
+Message-ID: <CAK8P3a1Kc2t1oW11ub4VC5D3XcBN8b0xH1cy=iuWRYi8UD+xog@mail.gmail.com>
+Subject: Re: [GIT PULL v2] Renesas ARM Based SoC DT Updates for v4.17
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds the newly added board to the Renesas built target
+On Fri, Mar 16, 2018 at 5:38 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+>
+> Please consider these Renesas ARM based SoC DT updates for v4.17.
+>
+> Changes since v1
+> * Dropped r7s72100 to avoid conflict, I will see about resubmitting
+>   those still relevant for v4.18
+>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+Pulled into next/dt, thanks!
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 8164c12..1849228 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -806,6 +806,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-+	r9a06g032-rzn1d400-db.dtb \
- 	sh73a0-kzm9g.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += \
- 	rv1108-evb.dtb \
--- 
-2.7.4
-
+       Arnd
