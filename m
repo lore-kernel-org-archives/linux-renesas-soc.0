@@ -1,65 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:13360 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751750AbeC2Hvd (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40054 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751347AbeC0NAE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:51:33 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v3 1/8] DT: mfd: renesas,rzn1-sysctrl: document RZ/N1 sysctrl node
-Date: Thu, 29 Mar 2018 08:46:57 +0100
-Message-Id: <1522309629-10152-2-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
+        Tue, 27 Mar 2018 09:00:04 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1f0oCp-0007hO-2x
+        for linux-renesas-soc@vger.kernel.org; Tue, 27 Mar 2018 15:00:03 +0200
+Received: from geert by ramsan with local (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1f0oCp-00006g-1y
+        for linux-renesas-soc@vger.kernel.org; Tue, 27 Mar 2018 15:00:03 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-03-27-v4.16-rc7
+Date: Tue, 27 Mar 2018 15:00:03 +0200
+Message-Id: <1522155603-370-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function
-system controller. This documents the node used to encapsulate
-it's sub drivers.
+I have pushed renesas-drivers-2018-03-27-v4.16-rc7 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- .../devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt  | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-diff --git a/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
-new file mode 100644
-index 0000000..1dbfdaf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
-@@ -0,0 +1,19 @@
-+DT bindings for the Renesas RZ/N1 System Controller
-+
-+== System Controller Node ==
-+
-+The system controller node currently only hosts a single sub-node to handle
-+the rebooting of the CPU. Eventually it will host the clock driver, SMP
-+start handler, watchdog etc.
-+
-+See renesas,rzn1-reboot.txt for further details.
-+
-+Bindings:
-++ Required:
-+	compatible = "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
-+
-+Example:
-+	sysctrl: sysctrl@4000c000 {
-+		compatible = "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
-+		reg = <0x4000c000 0x1000>;
-+	};
--- 
-2.7.4
+Today's version is based on renesas-devel-20180326v2-v4.16-rc7.
+
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/rcar-genpd-wakeup-v4
+  - topic/rcar-gen2-wdt-v6
+  - topic/bd9571-ddr-backup-mode-driver-v2
+  - topic/bd9571-ddr-backup-mode-dt-v2
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://linuxtv.org/pinchartl/media.git#tags/vsp1-discom-v1-20171215
+  - git://linuxtv.org/pinchartl/media.git#tags/drm-next-colorkey-v1-20171215
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/tlb-optimise/v7
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#d3/i2c-conflict/drm
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#d3/i2c-conflict/media
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/du/interlaced/v2
+
+Included fixes:
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
