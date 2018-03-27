@@ -1,75 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:32769 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754052AbeCHPYZ (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36675 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752123AbeC0XWR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:24:25 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] drm: Add LVDS decoder bridge
-Date: Thu,  8 Mar 2018 16:24:00 +0100
-Message-Id: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 27 Mar 2018 19:22:17 -0400
+Date: Wed, 28 Mar 2018 01:22:14 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pwm: renesas,pwm-rcar: add bindings for
+ R-Car M3N support
+Message-ID: <20180327232213.GE4097@mithrandir>
+References: <1520596397-4716-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nHwqXXcoX0o6fKCv"
+Content-Disposition: inline
+In-Reply-To: <1520596397-4716-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this small series add a driver for transparent LVDS decoders, as
-Thine THC63LVD1024 device.
 
-The R-Car Gen3 V3M Eagle board feature such a converter, that has been so far
-not described as part of the display output pipeline. Now that a driver has
-been added, the Eagle DTS file has been updated to include the transparent
-decoder chip.
+--nHwqXXcoX0o6fKCv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So far so good, but currently the current DRM Bridge API do not provide support
-to query a mode from another bridge as it is possible to do on panel devices.
-In our case the LVDS decoder is connected to the output of R-Car DU lvds encoder
-(drivers/gpu/drm/rcar-du/rcar_lvds.c). As its 'mode_set' function shows, LVDS
-modes cannot be propagated from bridge to another bridge, but are instead
-inferred from the bus_format field of the panel's connector.
+On Fri, Mar 09, 2018 at 08:53:17PM +0900, Yoshihiro Shimoda wrote:
+> This patch adds bindings for R-Car M3N. No driver update is needed.
+>=20
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-It is my intention to propose an API extension to allow formats to be propagated
-through bridges, but knowing the DRM/KMS subsystem very superficially I would
-appreciate any pointer from more experienced developers.
+Applied, thanks.
 
-For Renesas side:
-The series is based on Laurent's drm/next/du branch with patches on top for:
-- Sergei: Enable PFC, I2c, GPIOs for r8a77970
-- Sergei: Add support for r8a77970 in DU and add display device nodes in
-  r8a77970 DTSI
-- Niklas: Connect DU LVDS output to HDMI bridge adv7511w in Eagle DTS
-- Sergei: fix video output on R8A77970
+Thierry
 
-A base branch with these patches applied is available at
-git://jmondi.org/linux v3m/v4.16-rc3/base
+--nHwqXXcoX0o6fKCv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Tested on Eagle board, making sure DU probes and testing all available output
-modes (of which only a few are actually working, I suspect due to faulty mode
-propagation through DRM bridges).
+-----BEGIN PGP SIGNATURE-----
 
-Thanks
-   j
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq60iUACgkQ3SOs138+
+s6EB9RAAvY70JWzl+Ulm6am040DBX3TWGjitJEGeCThXqihDcIQe3SzY1SBSCgoB
+v3Xlkk0+dM84Xli9mWWxoXMEQmef9lEC45yyEU5alEZ0lcLqZvEZUHhSZowL17/J
+tg4sd4SmCveVkLA7yRaYQU/NW3AHUVkzNS0fDJv6HK3+4k39qZ8UJnFk5kYpQCEp
+rVPx4bpehDi7DhANmCIewzua5RopDX4eRytsqExXE5qVHpCXGdVaGvOWaAi9e9Qv
+YdBdONeyhVeCGkfbho6ImEMl5JP7eO91mjygGr0s9WUMqePQO8TKIlHDxTgMe+HX
+bwzQFhIzuU8Uxbxnuw6ZZVPdyLYysERmKh4La8PI/mZogzsyLGfH2rzP8uXZQcpa
+a/CnLEnXzCUSx2X0o1srnlYvsZVwAUH6SXQp5wyrM1atnyBfkCXgcZ0qmTfu1J7s
+0J3WretB2VItfx8yCij4c5cwT69fV431ti9f4OmJUMmT94wM0toVdVHL3JCwwIcA
+H1ZocWeeiWwWZxTZHLNze19K7jwcgOLZyNjzTHdEjLwNjtNDTVdXVuhdyvGq7fe1
+dvVgoZCjghBVfFHg41PtVAr/3ieTfSvlnHNOYpfuWtFv6Y3VK28PwCQR+133f4eg
+Fp4YbhYedkSEsneiqC/+GVJx3Z0KP/xQH+NLdcE1gpyPzn2GOLk=
+=S56V
+-----END PGP SIGNATURE-----
 
-Jacopo Mondi (3):
-  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-  drm: bridge: Add LVDS decoder driver
-  arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-
- .../bindings/display/bridge/thine,thc63lvd1024.txt |  59 +++++
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |  31 ++-
- drivers/gpu/drm/bridge/Kconfig                     |   8 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/lvds-decoder.c              | 239 +++++++++++++++++++++
- 5 files changed, 336 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
- create mode 100644 drivers/gpu/drm/bridge/lvds-decoder.c
-
---
-2.7.4
+--nHwqXXcoX0o6fKCv--
