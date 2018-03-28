@@ -1,76 +1,153 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41064 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932531AbeCEUsu (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:32901 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752308AbeC1TBg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:48:50 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] mmc: renesas_sdhi: fix WP detection
-Date: Mon,  5 Mar 2018 21:48:42 +0100
-Message-Id: <20180305204842.25391-1-wsa+renesas@sang-engineering.com>
+        Wed, 28 Mar 2018 15:01:36 -0400
+Subject: Re: [PATCH 08/15] v4l: vsp1: Setup BRU at atomic commit time
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180226214516.11559-9-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <e5290f90-acdd-b2a1-b709-be88e8801ba8@ideasonboard.com>
+Date: Wed, 28 Mar 2018 20:01:30 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180226214516.11559-9-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit "mmc: renesas_sdhi: use MMC_CAP2_NO_WRITE_PROTECT instead of
-TMIO own flag" activated MMC_CAP2_NO_WRITE_PROTECT for Renesas SDHI
-which incorrectly disabled WP altogether instead of only disabling the
-internal mechanism. Since the whole WP handling has been reworked, we
-can simply disable this capability to re-enable WP GPIOs.
+Hi Laurent,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On 26/02/18 21:45, Laurent Pinchart wrote:
+> To implement fully dynamic plane assignment to pipelines, we need to
+> reassign the BRU and BRS to the DRM pipelines in the atomic commit
+> handler. In preparation for this setup factor out the BRU source pad
+> code and call it both at LIF setup and atomic commit time.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-More testing revealed this. This time, I don't think squashing makes sense but
-I am open to discussion here.
+Oops .. skipped one.
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 -
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 3 ---
- 2 files changed, 4 deletions(-)
+But this looks ok to me.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index a04f31fea72fd1..8e0acd197c43c0 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -75,7 +75,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 4bb46c489d71f8..848e50c1638aa6 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -42,7 +42,6 @@ static const struct renesas_sdhi_of_data of_rz_compatible = {
- static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- };
- 
- /* Definitions for sampling clocks */
-@@ -62,7 +61,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
- 	.dma_rx_offset	= 0x2000,
- 	.scc_offset	= 0x0300,
-@@ -83,7 +81,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
--	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
--- 
-2.11.0
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_drm.c | 56 +++++++++++++++++++++++++++++++++-
+>  drivers/media/platform/vsp1/vsp1_drm.h |  5 +++
+>  2 files changed, 60 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+> index 7bf697ba7969..6ad8aa6c8138 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> @@ -148,12 +148,51 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
+>  	return 0;
+>  }
+>  
+> +/* Setup the BRU source pad. */
+> +static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
+> +				      struct vsp1_pipeline *pipe)
+> +{
+> +	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
+> +	struct v4l2_subdev_format format = {
+> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+> +	};
+> +	int ret;
+> +
+> +	/*
+> +	 * Configure the format on the BRU source and verify that it matches the
+> +	 * requested format. We don't set the media bus code as it is configured
+> +	 * on the BRU sink pad 0 and propagated inside the entity, not on the
+> +	 * source pad.
+> +	 */
+> +	format.pad = pipe->bru->source_pad;
+> +	format.format.width = drm_pipe->width;
+> +	format.format.height = drm_pipe->height;
+> +	format.format.field = V4L2_FIELD_NONE;
+> +
+> +	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
+> +			       &format);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
+> +		__func__, format.format.width, format.format.height,
+> +		format.format.code, BRU_NAME(pipe->bru), pipe->bru->source_pad);
+> +
+> +	if (format.format.width != drm_pipe->width ||
+> +	    format.format.height != drm_pipe->height) {
+> +		dev_dbg(vsp1->dev, "%s: format mismatch\n", __func__);
+> +		return -EPIPE;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static unsigned int rpf_zpos(struct vsp1_device *vsp1, struct vsp1_rwpf *rpf)
+>  {
+>  	return vsp1->drm->inputs[rpf->entity.index].zpos;
+>  }
+>  
+> -/* Setup the input side of the pipeline (RPFs and BRU sink pads). */
+> +/* Setup the input side of the pipeline (RPFs and BRU). */
+>  static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
+>  					struct vsp1_pipeline *pipe)
+>  {
+> @@ -191,6 +230,18 @@ static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
+>  		inputs[j] = rpf;
+>  	}
+>  
+> +	/*
+> +	 * Setup the BRU. This must be done before setting up the RPF input
+> +	 * pipelines as the BRU sink compose rectangles depend on the BRU source
+> +	 * format.
+> +	 */
+> +	ret = vsp1_du_pipeline_setup_bru(vsp1, pipe);
+> +	if (ret < 0) {
+> +		dev_err(vsp1->dev, "%s: failed to setup %s source\n", __func__,
+> +			BRU_NAME(pipe->bru));
+> +		return ret;
+> +	}
+> +
+>  	/* Setup the RPF input pipeline for every enabled input. */
+>  	for (i = 0; i < pipe->bru->source_pad; ++i) {
+>  		struct vsp1_rwpf *rpf = inputs[i];
+> @@ -355,6 +406,9 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+>  		return 0;
+>  	}
+>  
+> +	drm_pipe->width = cfg->width;
+> +	drm_pipe->height = cfg->height;
+> +
+>  	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u\n",
+>  		__func__, pipe_index, cfg->width, cfg->height);
+>  
+> diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
+> index 9aa19325cbe9..c8dd75ba01f6 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drm.h
+> +++ b/drivers/media/platform/vsp1/vsp1_drm.h
+> @@ -20,12 +20,17 @@
+>  /**
+>   * vsp1_drm_pipeline - State for the API exposed to the DRM driver
+>   * @pipe: the VSP1 pipeline used for display
+> + * @width: output display width
+> + * @height: output display height
+>   * @du_complete: frame completion callback for the DU driver (optional)
+>   * @du_private: data to be passed to the du_complete callback
+>   */
+>  struct vsp1_drm_pipeline {
+>  	struct vsp1_pipeline pipe;
+>  
+> +	unsigned int width;
+> +	unsigned int height;
+> +
+>  	/* Frame synchronisation */
+>  	void (*du_complete)(void *, bool);
+>  	void *du_private;
+> 
