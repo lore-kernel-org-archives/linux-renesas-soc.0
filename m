@@ -1,52 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:38122 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751865AbeC2RdO (ORCPT
+Received: from smtp1.de.adit-jv.com ([62.225.105.245]:57889 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752169AbeC1Oug (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 13:33:14 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] clk: renesas: r8a7745: Fix LB clock divider
-Date: Thu, 29 Mar 2018 19:33:07 +0200
-Message-Id: <1522344790-20061-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+        Wed, 28 Mar 2018 10:50:36 -0400
+Date: Wed, 28 Mar 2018 16:40:51 +0200
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: <linux-i2c@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH] i2c: rcar: initialize earlier using subsys_initcall()
+Message-ID: <20180328144051.GA28586@vmlxhi-102.adit-jv.com>
+References: <1521197932-2073-1-git-send-email-vladimir_zapolskiy@mentor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1521197932-2073-1-git-send-email-vladimir_zapolskiy@mentor.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-the LB clock divider depends on the value of the MD18 pin.
+Hello Wolfram and i2c/Renesas contributors,
 
-On RZ/G1E, the LB clock divider is fixed to 24.  Hence model the clock
-as a fixed factor clock instead.
+To give you some background behind this change, it is done in the
+context of rcar3 boot optimization, while trying to put our past
+experience in practice for reaching the "rvc-in-less-than-2s"
+requirement for our customers.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The current commit description should already speak by itself. While
+switching drivers to async probing is hardly suitable with mainline
+(am I wrong?), I believe this small change should be harmless. If
+there are any concerns, we will do our best to properly handle them.
 
-diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-index 87f5a3619e4f9d60..4b0a9243b7481176 100644
---- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-@@ -51,7 +51,6 @@ static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
- 	DEF_FIXED(".pll1_div2",	CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
- 
- 	/* Core Clock Outputs */
--	DEF_BASE("lb",   R8A7745_CLK_LB,   CLK_TYPE_GEN2_LB,	CLK_PLL1),
- 	DEF_BASE("sdh",  R8A7745_CLK_SDH,  CLK_TYPE_GEN2_SDH,	CLK_PLL1),
- 	DEF_BASE("sd0",  R8A7745_CLK_SD0,  CLK_TYPE_GEN2_SD0,	CLK_PLL1),
- 	DEF_BASE("qspi", R8A7745_CLK_QSPI, CLK_TYPE_GEN2_QSPI,	CLK_PLL1_DIV2),
-@@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
- 	DEF_FIXED("zs",    R8A7745_CLK_ZS,	CLK_PLL1,	    6, 1),
- 	DEF_FIXED("hp",    R8A7745_CLK_HP,	CLK_PLL1,	   12, 1),
- 	DEF_FIXED("b",     R8A7745_CLK_B,	CLK_PLL1,	   12, 1),
-+	DEF_FIXED("lb",    R8A7745_CLK_LB,	CLK_PLL1,	   24, 1),
- 	DEF_FIXED("p",     R8A7745_CLK_P,	CLK_PLL1,	   24, 1),
- 	DEF_FIXED("cl",    R8A7745_CLK_CL,	CLK_PLL1,	   48, 1),
- 	DEF_FIXED("cp",    R8A7745_CLK_CP,	CLK_PLL1,	   48, 1),
--- 
-2.7.4
+Special thanks to Vladimir, for reviewing and submitting the patch.
+
+Best regards,
+Eugeniu.
+
+On Fri, Mar 16, 2018 at 12:58:52PM +0200, Vladimir Zapolskiy wrote:
+> From: Eugeniu Rosca <erosca@de.adit-jv.com>
+> 
+> The purpose of this patch looks pretty similar to:
+> 104522806a7d ("i2c: designware: dw_i2c_init_driver as subsys initcall")
+> 74f56c4ad4e4 ("i2c-bfin-twi: move setup to the earlier subsys initcall")
+> b8680784875b ("i2c-gpio: Move initialization code to subsys_initcall()")
+> 5d3f33318a6c ("[PATCH] i2c-imx: make bus available early")
+> ccb3bc16b489 ("i2c-sh_mobile: change module_init() to subsys_initcall()")
+> 18dc83a6ea48 ("i2c: i2c-s3c2410: Initialise Samsung I2C controller early")
+> 2514cca06be9 ("[ARM] 5394/1: Add static bus numbering support to i2c-versatile")
+> 47a9b1379a5e ("i2c-pxa: Initialize early")
+> 
+> However, the story behind it might be a bit different.
+> Experimenting with async probing in various rcar-specific drivers (e.g.
+> rcar-du, vsp1, rcar-fcp, rcar-vin), it was noticed that in most of
+> the cases enabling async probing in one driver introduced some degree of
+> inconsistency in the initialization of other builtin drivers.
+> 
+> To give an example, with pure sequential driver initialization, based
+> on 5 dmesg logs, the builtin kernel initialization deviation is
+> around +/- 5ms, whereas after enabling async probing in e.g. vsp1
+> driver, the variance is increased to sometimes +/- 80ms or more.
+> 
+> This patch fixes it and keeps the startup time consistent after
+> switching certain i2c-dependent drivers to asynchronous probing on
+> H3-es20-Salvator-X target.
+> 
+> Another effect seems to be improving the init time of rcar_i2c_driver
+> itself from ~7ms to ~1ms (assuming CONFIG_I2C_RCAR=y).
+> 
+> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> ---
+>  drivers/i2c/busses/i2c-rcar.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+> index 4159ebcec2bb..502f62052b49 100644
+> --- a/drivers/i2c/busses/i2c-rcar.c
+> +++ b/drivers/i2c/busses/i2c-rcar.c
+> @@ -972,7 +972,18 @@ static struct platform_driver rcar_i2c_driver = {
+>  	.remove		= rcar_i2c_remove,
+>  };
+>  
+> -module_platform_driver(rcar_i2c_driver);
+> +static int __init rcar_i2c_driver_init(void)
+> +{
+> +	return platform_driver_register(&rcar_i2c_driver);
+> +}
+> +
+> +static void __exit rcar_i2c_driver_exit(void)
+> +{
+> +	return platform_driver_unregister(&rcar_i2c_driver);
+> +}
+> +
+> +subsys_initcall(rcar_i2c_driver_init);
+> +module_exit(rcar_i2c_driver_exit);
+>  
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_DESCRIPTION("Renesas R-Car I2C bus driver");
+> -- 
+> 2.8.1
+> 
+
+Best regards,
+Eugeniu.
