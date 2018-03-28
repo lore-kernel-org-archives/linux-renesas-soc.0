@@ -1,20 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:33218 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeC2HPE (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:36548 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752738AbeC1TaT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:15:04 -0400
-Received: by mail-qk0-f196.google.com with SMTP id d206so5060543qkb.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Mar 2018 00:15:04 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1522265176-33226-9-git-send-email-biju.das@bp.renesas.com>
-References: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com> <1522265176-33226-9-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Mar 2018 09:15:03 +0200
-Message-ID: <CAMuHMdXt+HzvD9yigdVozUXVh-Mpnq4NW_1g1R3dTLLOYU_JcA@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] ARM: multi_v7_defconfig: Enable r8a77470 SoC
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Russell King <linux@armlinux.org.uk>,
+        Wed, 28 Mar 2018 15:30:19 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Tony Lindgren <tony@atomide.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -25,30 +17,41 @@ Cc: Russell King <linux@armlinux.org.uk>,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Maxime Ripard <maxime.ripard@free-electrons.com>,
         Borislav Petkov <bp@suse.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-kernel@lists.infradead.org,
         Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 8/8] ARM: multi_v7_defconfig: Enable r8a77470 SoC
+Date: Wed, 28 Mar 2018 20:26:16 +0100
+Message-Id: <1522265176-33226-9-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com>
+References: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Mar 28, 2018 at 9:26 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Enable recently added r8a77470 (RZ/G1C) SoC.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Enable recently added r8a77470 (RZ/G1C) SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+V1->V2:
+* Incorporated Fabrizio's comment
 
-Gr{oetje,eeting}s,
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-                        Geert
-
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index da73876..388af57 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -89,6 +89,7 @@ CONFIG_ARCH_R8A73A4=y
+ CONFIG_ARCH_R8A7740=y
+ CONFIG_ARCH_R8A7743=y
+ CONFIG_ARCH_R8A7745=y
++CONFIG_ARCH_R8A77470=y
+ CONFIG_ARCH_R8A7778=y
+ CONFIG_ARCH_R8A7779=y
+ CONFIG_ARCH_R8A7790=y
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
