@@ -1,58 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:54979 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752001AbeC0OlV (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57515 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752699AbeC1Mbj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:41:21 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH  03/12] soc: renesas: rcar-rst: Add support for RZ/G1C
-Date: Tue, 27 Mar 2018 15:37:14 +0100
-Message-Id: <1522161443-54428-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
-References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 28 Mar 2018 08:31:39 -0400
+Subject: Re: [PATCH 03/15] v4l: vsp1: Remove unused field from
+ vsp1_drm_pipeline structure
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180226214516.11559-4-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <8b3ed86f-03fd-f089-d93c-7bdc842aacec@ideasonboard.com>
+Date: Wed, 28 Mar 2018 13:31:35 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180226214516.11559-4-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
- drivers/soc/renesas/rcar-rst.c                          | 1 +
- 2 files changed, 2 insertions(+)
+Hi Laurent,
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-index 294a0da..7be61ef 100644
---- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -17,6 +17,7 @@ Required properties:
- 		Examples with soctypes are:
- 		  - "renesas,r8a7743-rst" (RZ/G1M)
- 		  - "renesas,r8a7745-rst" (RZ/G1E)
-+		  - "renesas,r8a77470-rst" (RZ/G1C)
- 		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
- 		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
- 		  - "renesas,r8a7790-rst" (R-Car H2)
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index 8e9cb79..66d7dba 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -44,6 +44,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	/* RZ/G is handled like R-Car Gen2 */
- 	{ .compatible = "renesas,r8a7743-rst", .data = &rcar_rst_gen2 },
- 	{ .compatible = "renesas,r8a7745-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a77470-rst", .data = &rcar_rst_gen2 },
- 	/* R-Car Gen1 */
- 	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
- 	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
--- 
-2.7.4
+Thanks for the patch,
+
+On 26/02/18 21:45, Laurent Pinchart wrote:
+> The vsp1_drm_pipeline enabled field is set but never used. Remove it.
+> 
+
+Indeed - not used.
+
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_drm.c | 4 ----
+>  drivers/media/platform/vsp1/vsp1_drm.h | 2 --
+>  2 files changed, 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+> index a1f2ba044092..a267f12f0cc8 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> @@ -273,10 +273,6 @@ EXPORT_SYMBOL_GPL(vsp1_du_setup_lif);
+>   */
+>  void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index)
+>  {
+> -	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+> -	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
+> -
+> -	drm_pipe->enabled = drm_pipe->pipe.num_inputs != 0;
+>  }
+>  EXPORT_SYMBOL_GPL(vsp1_du_atomic_begin);
+>  
+> diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
+> index 1cd9db785bf7..9aa19325cbe9 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drm.h
+> +++ b/drivers/media/platform/vsp1/vsp1_drm.h
+> @@ -20,13 +20,11 @@
+>  /**
+>   * vsp1_drm_pipeline - State for the API exposed to the DRM driver
+>   * @pipe: the VSP1 pipeline used for display
+> - * @enabled: pipeline state at the beginning of an update
+>   * @du_complete: frame completion callback for the DU driver (optional)
+>   * @du_private: data to be passed to the du_complete callback
+>   */
+>  struct vsp1_drm_pipeline {
+>  	struct vsp1_pipeline pipe;
+> -	bool enabled;
+>  
+>  	/* Frame synchronisation */
+>  	void (*du_complete)(void *, bool);
+> 
