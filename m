@@ -1,106 +1,37 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 1/3] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-Date: Fri, 16 Mar 2018 16:16:37 +0100
-Message-Id: <1521213399-31947-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:45402 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750774AbeC1HzA (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 28 Mar 2018 03:55:00 -0400
+Date: Wed, 28 Mar 2018 09:54:56 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 02/12] soc: renesas: Identify RZ/G1C
+Message-ID: <20180328075455.j4rzljv2r4cgu4wl@verge.net.au>
+References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+ <1522161443-54428-3-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdV+uaiv8mPBNBdsYB5kkeK_Nf=P-cYJJFWShDxkQdCizQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV+uaiv8mPBNBdsYB5kkeK_Nf=P-cYJJFWShDxkQdCizQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+On Wed, Mar 28, 2018 at 09:37:06AM +0200, Geert Uytterhoeven wrote:
+> On Tue, Mar 27, 2018 at 4:37 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> > Add support for identifying the RZ/G1C (r8a77470) SoC.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 ++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-
-diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-new file mode 100644
-index 0000000..8225c6a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-@@ -0,0 +1,66 @@
-+Thine Electronics THC63LVD1024 LVDS decoder
-+-------------------------------------------
-+
-+The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
-+to parallel data outputs. The chip supports single/dual input/output modes,
-+handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
-+
-+Single or dual operation modes, output data mapping and DDR output modes are
-+configured through input signals and the chip does not expose any control bus.
-+
-+Required properties:
-+- compatible: Shall be "thine,thc63lvd1024"
-+
-+Optional properties:
-+- vcc-supply: Power supply for TTL output and digital circuitry
-+- cvcc-supply: Power supply for TTL CLOCKOUT signal
-+- lvcc-supply: Power supply for LVDS inputs
-+- pvcc-supply: Power supply for PLL circuitry
-+- pdwn-gpios: Power down GPIO signal. Active low
-+- oe-gpios: Output enable GPIO signal. Active high
-+
-+The THC63LVD1024 video port connections are modeled according
-+to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
-+
-+Required video port nodes:
-+- Port@0: First LVDS input port
-+- Port@2: First digital CMOS/TTL parallel output
-+
-+Optional video port nodes:
-+- Port@1: Second LVDS input port
-+- Port@3: Second digital CMOS/TTL parallel output
-+
-+Example:
-+--------
-+
-+	thc63lvd1024: lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		vcc-supply = <&reg_lvds_vcc>;
-+		lvcc-supply = <&reg_lvds_lvcc>;
-+
-+		pdwn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				lvds_dec_in_0: endpoint {
-+					remote-endpoint = <&lvds_out>;
-+				};
-+			};
-+
-+			port@2{
-+				reg = <2>;
-+
-+				lvds_dec_out_2: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+
-+			};
-+
-+		};
-+	};
--- 
-2.7.4
-
+Thanks, applied.
