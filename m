@@ -1,83 +1,181 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44398 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752920AbeCXULW (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58508 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbeC1OZJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:11:22 -0400
-Received: by mail-lf0-f67.google.com with SMTP id g203-v6so22842342lfg.11
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 24 Mar 2018 13:11:21 -0700 (PDT)
-Subject: [PATCH 4/5] sh_eth: add sh_eth_cpu_data::no_tx_cntr flag
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
-References: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
-Message-ID: <a6ddaada-59fa-3a38-7c69-87891bba9cad@cogentembedded.com>
-Date: Sat, 24 Mar 2018 23:11:19 +0300
+        Wed, 28 Mar 2018 10:25:09 -0400
+Subject: Re: [PATCH 06/15] v4l: vsp1: Share duplicated DRM pipeline
+ configuration code
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180226214516.11559-7-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <a4d25bec-b546-0aed-c0bd-506c8d53af13@ideasonboard.com>
+Date: Wed, 28 Mar 2018 15:25:04 +0100
 MIME-Version: 1.0
-In-Reply-To: <b3706a51-27a4-d78b-998d-9440637ac216@cogentembedded.com>
+In-Reply-To: <20180226214516.11559-7-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/A1H (R7S72100) Ether controller doesn't  seem to have the TX counter
-registers like TROCR/CDCR/LCCR (or at least they are still undocumented
-like some TSU registers), so we bail out of sh_eth_get_stats() early in
-this case.  Currently we are calling sh_eth_is_rz_fast_ether() in order
-to check for this, but it would be simpler to check the new 'no_tx_cntrs'
-bitfield in the 'struct sh_eth_cpu_data'; then we'd be able  to remove
-sh_eth_is_rz_fast_ether() as there would be no callers left...
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
----
- drivers/net/ethernet/renesas/sh_eth.c |    8 ++------
- drivers/net/ethernet/renesas/sh_eth.h |    1 +
- 2 files changed, 3 insertions(+), 6 deletions(-)
+On 26/02/18 21:45, Laurent Pinchart wrote:
+> Move the duplicated DRM pipeline configuration code to a function and
+> call it from vsp1_du_setup_lif() and vsp1_du_atomic_flush().
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -455,11 +455,6 @@ static bool sh_eth_is_gether(struct sh_e
- 	return mdp->reg_offset == sh_eth_offset_gigabit;
- }
- 
--static bool sh_eth_is_rz_fast_ether(struct sh_eth_private *mdp)
--{
--	return mdp->reg_offset == sh_eth_offset_fast_rz;
--}
--
- static void sh_eth_select_mii(struct net_device *ndev)
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
-@@ -614,6 +609,7 @@ static struct sh_eth_cpu_data r7s72100_d
- 	.xdfar_rw	= 1,
- 	.hw_checksum	= 1,
- 	.tsu		= 1,
-+	.no_tx_cntrs	= 1,
- };
- 
- static void sh_eth_chip_reset_r8a7740(struct net_device *ndev)
-@@ -2534,7 +2530,7 @@ static struct net_device_stats *sh_eth_g
- {
- 	struct sh_eth_private *mdp = netdev_priv(ndev);
- 
--	if (sh_eth_is_rz_fast_ether(mdp))
-+	if (mdp->cd->no_tx_cntrs)
- 		return &ndev->stats;
- 
- 	if (!mdp->is_opened)
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -514,6 +514,7 @@ struct sh_eth_cpu_data {
- 	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
- 	unsigned rtrate:1;	/* EtherC has RTRATE register */
- 	unsigned magic:1;	/* EtherC has ECMR.MPDE and ECSR.MPD */
-+	unsigned no_tx_cntrs:1;	/* EtherC DOES NOT have TX error counters */
- 	unsigned dual_port:1;	/* Dual EtherC/E-DMAC */
- };
- 
+LGTM.
+
+I thought I had a bit of deja-vu on this patch ... but I can't seem to find
+anything already posted.
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_drm.c | 95 +++++++++++++++-------------------
+>  1 file changed, 43 insertions(+), 52 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+> index e210917fdc3f..9a043a915c0b 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> @@ -42,6 +42,47 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
+>  		drm_pipe->du_complete(drm_pipe->du_private, completed);
+>  }
+>  
+> +/* -----------------------------------------------------------------------------
+> + * Pipeline Configuration
+> + */
+> +
+> +/* Configure all entities in the pipeline. */
+> +static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
+> +{
+> +	struct vsp1_entity *entity;
+> +	struct vsp1_entity *next;
+> +	struct vsp1_dl_list *dl;
+> +
+> +	dl = vsp1_dl_list_get(pipe->output->dlm);
+> +
+> +	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
+> +		/* Disconnect unused RPFs from the pipeline. */
+> +		if (entity->type == VSP1_ENTITY_RPF &&
+> +		    !pipe->inputs[entity->index]) {
+> +			vsp1_dl_list_write(dl, entity->route->reg,
+> +					   VI6_DPR_NODE_UNUSED);
+> +
+> +			entity->pipe = NULL;
+> +			list_del(&entity->list_pipe);
+> +
+> +			continue;
+> +		}
+> +
+> +		vsp1_entity_route_setup(entity, pipe, dl);
+> +
+> +		if (entity->ops->configure) {
+> +			entity->ops->configure(entity, pipe, dl,
+> +					       VSP1_ENTITY_PARAMS_INIT);
+> +			entity->ops->configure(entity, pipe, dl,
+> +					       VSP1_ENTITY_PARAMS_RUNTIME);
+> +			entity->ops->configure(entity, pipe, dl,
+> +					       VSP1_ENTITY_PARAMS_PARTITION);
+> +		}
+> +	}
+> +
+> +	vsp1_dl_list_commit(dl);
+> +}
+> +
+>  /* -----------------------------------------------------------------------------
+>   * DU Driver API
+>   */
+> @@ -85,9 +126,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+>  	struct vsp1_drm_pipeline *drm_pipe;
+>  	struct vsp1_pipeline *pipe;
+>  	struct vsp1_bru *bru;
+> -	struct vsp1_entity *entity;
+> -	struct vsp1_entity *next;
+> -	struct vsp1_dl_list *dl;
+>  	struct v4l2_subdev_format format;
+>  	unsigned long flags;
+>  	unsigned int i;
+> @@ -239,22 +277,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+>  	vsp1_write(vsp1, VI6_DISP_IRQ_ENB, 0);
+>  
+>  	/* Configure all entities in the pipeline. */
+> -	dl = vsp1_dl_list_get(pipe->output->dlm);
+> -
+> -	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
+> -		vsp1_entity_route_setup(entity, pipe, dl);
+> -
+> -		if (entity->ops->configure) {
+> -			entity->ops->configure(entity, pipe, dl,
+> -					       VSP1_ENTITY_PARAMS_INIT);
+> -			entity->ops->configure(entity, pipe, dl,
+> -					       VSP1_ENTITY_PARAMS_RUNTIME);
+> -			entity->ops->configure(entity, pipe, dl,
+> -					       VSP1_ENTITY_PARAMS_PARTITION);
+> -		}
+> -	}
+> -
+> -	vsp1_dl_list_commit(dl);
+> +	vsp1_du_pipeline_configure(pipe);
+>  
+>  	/* Start the pipeline. */
+>  	spin_lock_irqsave(&pipe->irqlock, flags);
+> @@ -490,15 +513,9 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+>  	struct vsp1_pipeline *pipe = &drm_pipe->pipe;
+>  	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
+>  	struct vsp1_bru *bru = to_bru(&pipe->bru->subdev);
+> -	struct vsp1_entity *entity;
+> -	struct vsp1_entity *next;
+> -	struct vsp1_dl_list *dl;
+>  	unsigned int i;
+>  	int ret;
+>  
+> -	/* Prepare the display list. */
+> -	dl = vsp1_dl_list_get(pipe->output->dlm);
+> -
+>  	/* Count the number of enabled inputs and sort them by Z-order. */
+>  	pipe->num_inputs = 0;
+>  
+> @@ -557,33 +574,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+>  				__func__, rpf->entity.index);
+>  	}
+>  
+> -	/* Configure all entities in the pipeline. */
+> -	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
+> -		/* Disconnect unused RPFs from the pipeline. */
+> -		if (entity->type == VSP1_ENTITY_RPF &&
+> -		    !pipe->inputs[entity->index]) {
+> -			vsp1_dl_list_write(dl, entity->route->reg,
+> -					   VI6_DPR_NODE_UNUSED);
+> -
+> -			entity->pipe = NULL;
+> -			list_del(&entity->list_pipe);
+> -
+> -			continue;
+> -		}
+> -
+> -		vsp1_entity_route_setup(entity, pipe, dl);
+> -
+> -		if (entity->ops->configure) {
+> -			entity->ops->configure(entity, pipe, dl,
+> -					       VSP1_ENTITY_PARAMS_INIT);
+> -			entity->ops->configure(entity, pipe, dl,
+> -					       VSP1_ENTITY_PARAMS_RUNTIME);
+> -			entity->ops->configure(entity, pipe, dl,
+> -					       VSP1_ENTITY_PARAMS_PARTITION);
+> -		}
+> -	}
+> -
+> -	vsp1_dl_list_commit(dl);
+> +	vsp1_du_pipeline_configure(pipe);
+>  }
+>  EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
+>  
+> 
