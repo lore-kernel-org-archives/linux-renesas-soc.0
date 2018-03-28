@@ -1,47 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47708 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965212AbeCSVbJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45727 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751114AbeC1IZV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Mar 2018 17:31:09 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: qemu-devel@nongnu.org
-Cc: =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 0/3] nvram: at24c: fix problems related to "rom-size"
-Date: Mon, 19 Mar 2018 22:30:58 +0100
-Message-Id: <20180319213101.6100-1-wsa+renesas@sang-engineering.com>
+        Wed, 28 Mar 2018 04:25:21 -0400
+Date: Wed, 28 Mar 2018 10:25:17 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 11/12] ARM: shmobile: defconfig: Enable r8a77470 SoC
+Message-ID: <20180328082516.rl7ckobee7efpuyv@verge.net.au>
+References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+ <1522161443-54428-12-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdXNYTkpQ1E-hnMLNJScx8W4CNru5AeU6RcV8d-6fmsN+g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXNYTkpQ1E-hnMLNJScx8W4CNru5AeU6RcV8d-6fmsN+g@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I used this driver as a template for a custom one. While hacking on my own, I
-noticed some problems in this driver, too. This series fixes the first set of
-them, related to the "rom-size" parameter. It fixes a segfault.
+On Wed, Mar 28, 2018 at 09:36:33AM +0200, Geert Uytterhoeven wrote:
+> On Tue, Mar 27, 2018 at 4:37 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> > Enable recently added r8a77470 (RZ/G1C) SoC.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I think the first patch is clearly suitable for stable. I think the second one,
-too, but not as clearly. The third one is a cleanup and not for stable. Still,
-I am open for opinions about these thoughts.
-
-Thanks,
-
-   Wolfram
-
-Changes since v1:
-
-* reordered patches according to significance for stable
-* use AT24C_ROMSIZE_DEFAULT instead of magic value
-* patch 3 doesn't improve the ERR macro anymore but replaces
-  it completely with error_report().
-
-
-Wolfram Sang (3):
-  nvram: at24c: prevent segfault by checking "rom-size"
-  nvram: at24c: use a sane default for "rom-size"
-  nvram: at24c: use standard error reporting
-
- hw/nvram/eeprom_at24c.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
-
--- 
-2.11.0
+Thanks, applied.
