@@ -1,7 +1,19 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:39864 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753106AbeC1NHT (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 28 Mar 2018 09:07:19 -0400
+MIME-Version: 1.0
+In-Reply-To: <1522161443-54428-11-git-send-email-biju.das@bp.renesas.com>
+References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com> <1522161443-54428-11-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Mar 2018 15:07:18 +0200
+Message-ID: <CAMuHMdUWB8=hByJsoZhT1=7QncFexKgZQFiNaUPZrkzGgB-=tg@mail.gmail.com>
+Subject: Re: [PATCH 10/12] ARM: dts: iwg23s-sbc: Add support for iWave
+ G23S-SBC based on RZ/G1C
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         Simon Horman <horms@verge.net.au>,
@@ -13,42 +25,54 @@ CC: Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: RE: [PATCH 10/12] ARM: dts: iwg23s-sbc: Add support for iWave
- G23S-SBC based on RZ/G1C
-Date: Wed, 28 Mar 2018 13:13:53 +0000
-Message-ID: <OSBPR01MB210354AFAFCD7D1AF4FB5EF6B8A30@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
- <1522161443-54428-11-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdUWB8=hByJsoZhT1=7QncFexKgZQFiNaUPZrkzGgB-=tg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUWB8=hByJsoZhT1=7QncFexKgZQFiNaUPZrkzGgB-=tg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IE9uIFR1ZSwgTWFyIDI3
-LCAyMDE4IGF0IDQ6MzcgUE0sIEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4gd3Jv
-dGU6DQo+ID4gQWRkIHN1cHBvcnQgZm9yIGlXYXZlIGlXLVJhaW5ib1ctRzIzUyBzaW5nbGUgYm9h
-cmQgY29tcHV0ZXIgYmFzZWQgb24NCj4gPiBSWi9HMUMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5
-OiBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IEZh
-YnJpemlvIENhc3RybyA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPg0KPiBUaGFu
-a3MgZm9yIHlvdXIgcGF0Y2ghDQo+DQo+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4g
-PGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPg0KPiBPbmUgcXVlc3Rpb24gYmVsb3cuDQo+DQo+
-ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3NDcwLWl3
-ZzIzcy1zYmMuZHRzDQo+ID4gQEAgLTAsMCArMSwzMCBAQA0KPiA+ICsvLyBTUERYLUxpY2Vuc2Ut
-SWRlbnRpZmllcjogR1BMLTIuMA0KPiA+ICsvKg0KPiA+ICsgKiBEZXZpY2UgVHJlZSBTb3VyY2Ug
-Zm9yIHRoZSBpV2F2ZS1SWi9HMUMgc2luZ2xlIGJvYXJkIGNvbXB1dGVyDQo+ID4gKyAqDQo+ID4g
-KyAqIENvcHlyaWdodCAoQykgMjAxOCBSZW5lc2FzIEVsZWN0cm9uaWNzIENvcnAuDQo+ID4gKyAq
-Lw0KPiA+ICsNCj4gPiArL2R0cy12MS87DQo+ID4gKyNpbmNsdWRlICJyOGE3NzQ3MC5kdHNpIg0K
-PiA+ICsvIHsNCj4gPiArICAgICAgIG1vZGVsID0gImlXYXZlIGlXLVJhaW5ib1ctRzIzUyBzaW5n
-bGUgYm9hcmQgY29tcHV0ZXIgYmFzZWQgb24NCj4gUlovRzFDIjsNCj4gPiArICAgICAgIGNvbXBh
-dGlibGUgPSAiaXdhdmUsZzIzcyIsICJyZW5lc2FzLHI4YTc3NDcwIjsNCj4gPiArDQo+ID4gKyAg
-ICAgICBhbGlhc2VzIHsNCj4gPiArICAgICAgICAgICAgICAgc2VyaWFsMSA9ICZzY2lmMTsNCj4g
-PiArICAgICAgIH07DQo+DQo+IE5vIGNob3NlbiAvIHN0ZG91dC1wYXRoPw0KDQpJIGFtIHBsYW5u
-aW5nIHRoaXMgbGF0ZXIgYXMgcGFydCBvZiBldGhlcm5ldCBwYXRjaCBzdWJtaXNzaW9uLg0KDQoN
-Cg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxs
-Ym9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVn
-aXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDku
-DQo=
+Hi Biju,
+
+On Tue, Mar 27, 2018 at 4:37 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Add support for iWave iW-RainboW-G23S single board computer based on
+>  RZ/G1C.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+
+Thanks for your patch!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+One question below.
+
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+> @@ -0,0 +1,30 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree Source for the iWave-RZ/G1C single board computer
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Corp.
+> + */
+> +
+> +/dts-v1/;
+> +#include "r8a77470.dtsi"
+> +/ {
+> +       model = "iWave iW-RainboW-G23S single board computer based on RZ/G1C";
+> +       compatible = "iwave,g23s", "renesas,r8a77470";
+> +
+> +       aliases {
+> +               serial1 = &scif1;
+> +       };
+
+No chosen / stdout-path?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
