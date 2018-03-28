@@ -1,204 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:44057 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752967AbeC1TaM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Mar 2018 15:30:12 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>,
+        Russell King <linux@armlinux.org.uk>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 6/8] ARM: dts: r8a77470: Initial SoC device tree
-Date: Wed, 28 Mar 2018 20:26:14 +0100
-Message-Id: <1522265176-33226-7-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com>
-References: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: RE: [PATCH 08/12] ARM: dts: r8a77470: Initial SoC device tree
+Date: Wed, 28 Mar 2018 13:16:06 +0000
+Message-ID: <OSBPR01MB210391B03FC3FE0A8552547BB8A30@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+ <1522161443-54428-9-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdVdRKpRXhd=0W3hVRt9MD0NVwBpoYa7dsZ+DAEn=sHD-A@mail.gmail.com>
+In-Reply-To: <CAMuHMdVdRKpRXhd=0W3hVRt9MD0NVwBpoYa7dsZ+DAEn=sHD-A@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The initial R8A77470 SoC device tree including CPU0, GIC, timer, SYSC, RST,
-CPG, and the required clock descriptions.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1->V2:
-* Incorporated geert's review comment
-* Moved prr node inside soc node.
-
- arch/arm/boot/dts/r8a77470.dtsi | 155 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 155 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a77470.dtsi
-
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-new file mode 100644
-index 0000000..f096419
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -0,0 +1,155 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the r8a77470 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r8a77470-cpg-mssr.h>
-+#include <dt-bindings/power/r8a77470-sysc.h>
-+/ {
-+	compatible = "renesas,r8a77470";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+			clock-frequency = <1000000000>;
-+			clocks = <&cpg CPG_CORE R8A77470_CLK_Z2>;
-+			power-domains = <&sysc R8A77470_PD_CA7_CPU0>;
-+			next-level-cache = <&L2_CA7>;
-+		};
-+
-+
-+		L2_CA7: cache-controller-0 {
-+			compatible = "cache";
-+			cache-unified;
-+			cache-level = <2>;
-+			power-domains = <&sysc R8A77470_PD_CA7_SCU>;
-+		};
-+	};
-+
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77470-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&usb_extal_clk>;
-+			clock-names = "extal", "usb_extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77470-rst";
-+			reg = <0 0xe6160000 0 0x100>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77470-sysc";
-+			reg = <0 0xe6180000 0 0x200>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		icram0:	sram@e63a0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63a0000 0 0x12000>;
-+		};
-+
-+		icram1:	sram@e63c0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63c0000 0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xe63c0000 0x1000>;
-+
-+			smp-sram@0 {
-+				compatible = "renesas,smp-sram";
-+				reg = <0 0x100>;
-+			};
-+		};
-+
-+		icram2:	sram@e6300000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe6300000 0 0x20000>;
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a77470",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 0x40>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&cpg CPG_MOD 720>,
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 720>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
-+			      <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		prr: chipid@ff000044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xff000044 0 4>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+};
--- 
-2.7.4
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IE9uIFR1ZSwgTWFyIDI3
+LCAyMDE4IGF0IDQ6MzcgUE0sIEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4gd3Jv
+dGU6DQo+ID4gVGhlIGluaXRpYWwgUjhBNzc0NzAgU29DIGRldmljZSB0cmVlIGluY2x1ZGluZyBD
+UFUwLCBHSUMsIHRpbWVyLCBTWVNDLA0KPiA+IFJTVCwgQ1BHLCBhbmQgdGhlIHJlcXVpcmVkIGNs
+b2NrIGRlc2NyaXB0aW9ucy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJpanUgRGFzIDxiaWp1
+LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTogRmFicml6aW8gQ2FzdHJvIDxm
+YWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+DQo+IFRoYW5rcyBmb3IgeW91ciBwYXRj
+aCENCj4NCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvcjhh
+Nzc0NzAuZHRzaQ0KPiA+IEBAIC0wLDAgKzEsMTU2IEBADQo+ID4gKy8vIFNQRFgtTGljZW5zZS1J
+ZGVudGlmaWVyOiBHUEwtMi4wDQo+ID4gKy8qDQo+ID4gKyAqIERldmljZSBUcmVlIFNvdXJjZSBm
+b3IgdGhlIHI4YTc3NDcwIFNvQw0KPiA+ICsgKg0KPiA+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTgg
+UmVuZXNhcyBFbGVjdHJvbmljcyBDb3JwLg0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNpbmNsdWRl
+IDxkdC1iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJvbGxlci9pcnEuaD4NCj4gPiArI2luY2x1ZGUg
+PGR0LWJpbmRpbmdzL2ludGVycnVwdC1jb250cm9sbGVyL2FybS1naWMuaD4NCj4gPiArI2luY2x1
+ZGUgPGR0LWJpbmRpbmdzL2Nsb2NrL3I4YTc3NDd4LWNwZy1tc3NyLmg+DQo+ID4gKyNpbmNsdWRl
+IDxkdC1iaW5kaW5ncy9wb3dlci9yOGE3NzQ3eC1zeXNjLmg+DQo+DQo+IEl0IGlzIGJldHRlciB0
+byB1c2UgbnVtZXJpY2FsIHZhbHVlcyBmb3IgdGhlIGluaXRpYWwgc3VibWlzc2lvbiwgYXMgdGhl
+IGR0LWJpbmRpbmdzDQo+IGhlYWRlcnMgYW5kIHRoZSBEVFMgZmlsZXMgZ28gdXBzdHJlYW0gdGhy
+b3VnaCBkaWZmZXJlbnQgbWFpbnRhaW5lciBwYXRocy4NCj4NCj4gPiArLyB7DQo+ID4gKyAgICAg
+ICBjb21wYXRpYmxlID0gInJlbmVzYXMscjhhNzc0NzAiOw0KPg0KPiA+ICsgICAgICAgc29jIHsN
+Cj4NCj4gPiArICAgICAgICAgICAgICAgaWNyYW0yOiBzcmFtQGU2MzAwMDAwIHsNCj4gPiArICAg
+ICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gIm1taW8tc3JhbSI7DQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgcmVnID0gPDAgMHhlNjMwMDAwMCAwIDB4NDAwMDA+Ow0KPg0KPiBT
+aXplIHNob3VsZCBiZSAweDIwMDAwIChoYWxmIG9mIG90aGVyIG1lbWJlcnMgaW4gdGhlIFJaL0cx
+IGZhbWlseSk/DQoNClllcywgeW91IGFyZSBjb3JyZWN0LiBXaWxsIGJlIGZpeGVkIGluIFYyLg0K
+DQo+IFdpdGggdGhlIGFib3ZlIGZpeGVkOg0KPiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9l
+dmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+
+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRl
+cmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGlu
+dXgtDQo+IG02OGsub3JnDQo+DQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNo
+bmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQgd2hlbg0KPiBJJ20gdGFs
+a2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcg
+bGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRv
+cnZhbGRzDQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRv
+dywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwg
+VUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0
+NTg2NzA5Lg0K
