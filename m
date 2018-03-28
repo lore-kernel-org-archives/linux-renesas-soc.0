@@ -1,56 +1,39 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Date: Wed, 28 Mar 2018 10:14:28 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2 3/8] DT: arm: renesas,r9a06g032: add the RZ/N1 bindings
-Date: Thu, 22 Mar 2018 11:44:40 +0000
-Message-Id: <1521719091-25157-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 04/12] serial: sh-sci: Document r8a77470 bindings
+Message-ID: <20180328081427.icasccquozew4byb@verge.net.au>
+References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+ <1522161443-54428-5-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdVhQP4Hei0xqfcHg+6YiybMAzksvvx_UMWzGsFHnhdYbQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVhQP4Hei0xqfcHg+6YiybMAzksvvx_UMWzGsFHnhdYbQ@mail.gmail.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This documents the RZ/N1 bindings for both the RZ/N1 and the RZN1D400-DB
-board.
+On Wed, Mar 28, 2018 at 10:03:27AM +0200, Geert Uytterhoeven wrote:
+> On Tue, Mar 27, 2018 at 4:37 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> > RZ/G1C (R8A77470) SoC also has the R-Car gen2 compatible SCIF and HSCIF
+> > ports, so document the SoC specific bindings.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index d3d1df9..09bdee3 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -47,7 +47,8 @@ SoCs:
-     compatible = "renesas,r8a77980"
-   - R-Car D3 (R8A77995)
-     compatible = "renesas,r8a77995"
--
-+  - RZ/N1D (R9A06G032)
-+    compatible = "renesas,r9a06g032"
- 
- Boards:
- 
-@@ -104,6 +105,8 @@ Boards:
-     compatible = "renesas,porter", "renesas,r8a7791"
-   - RSKRZA1 (YR0K77210C000BE)
-     compatible = "renesas,rskrza1", "renesas,r7s72100"
-+  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
-+    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032"
-   - Salvator-X (RTP0RC7795SIPB0010S)
-     compatible = "renesas,salvator-x", "renesas,r8a7795"
-   - Salvator-X (RTP0RC7796SIPB0011S)
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
