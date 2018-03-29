@@ -1,128 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:63943 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753507AbeCFQuF (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:43438 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751325AbeC2RdO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:50:05 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Chris Paterson" <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v4] dt-bindings: pwm: rcar: Document r8a774[35] PWM
- bindings
-Date: Tue, 6 Mar 2018 16:49:54 +0000
-Message-ID: <TY1PR01MB1770084635548C8981CF8C83C0D90@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1513768543-7943-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <SG2PR06MB0886D203D3F529D4AD3B07B6C0E20@SG2PR06MB0886.apcprd06.prod.outlook.com>
-In-Reply-To: <SG2PR06MB0886D203D3F529D4AD3B07B6C0E20@SG2PR06MB0886.apcprd06.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Thu, 29 Mar 2018 13:33:14 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/5] clk: renesas: r8a7791/r8a7793: Fix LB clock divider
+Date: Thu, 29 Mar 2018 19:33:08 +0200
+Message-Id: <1522344790-20061-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+the LB clock divider depends on the value of the MD18 pin.
 
-I am very sorry to bother you, just wondering if someone can take this patc=
-h?
+On R-Car M2-W and M2-N, the LB clock divider is fixed to 24.  Hence
+model the clock as a fixed factor clock instead.
 
-Thanks,
-Fab
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> -----Original Message-----
-> From: Fabrizio Castro
-> Sent: 24 January 2018 17:14
-> To: Thierry Reding <thierry.reding@gmail.com>
-> Cc: linux-pwm@vger.kernel.org; devicetree@vger.kernel.org; Simon Horman <=
-horms@verge.net.au>; Geert Uytterhoeven
-> <geert+renesas@glider.be>; Chris Paterson <Chris.Paterson2@renesas.com>; =
-Biju Das <biju.das@bp.renesas.com>; linux-renesas-
-> soc@vger.kernel.org; Fabrizio Castro <fabrizio.castro@bp.renesas.com>; Ro=
-b Herring <robh+dt@kernel.org>; Mark Rutland
-> <mark.rutland@arm.com>
-> Subject: RE: [PATCH v4] dt-bindings: pwm: rcar: Document r8a774[35] PWM b=
-indings
->
-> Hello Thierry,
->
-> I am sorry to bother you,  just wondering if this patch has any chance to=
- end up in v4.16?
->
-> Thanks,
-> Fabrizio
->
-> > Subject: [PATCH v4] dt-bindings: pwm: rcar: Document r8a774[35] PWM bin=
-dings
-> >
-> > This patch adds compatible strings specific to r8a774[35], no driver
-> > change is needed as the fallback compatible string will activate the
-> > right code.
-> >
-> > Also, this patch replaces the example with a DT snippet used
-> > for adding PWM0 support to an r8a7743 based platform as the r8a7743 is
-> > now the first platform fully compatible with this driver and its PWM DT
-> > nodes refer to up-to-date code.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > v3->v4:
-> > * The changelog now explains why the patch is replacing the example.
-> >
-> >  Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 10 ++++++=
-+---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-> > b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-> > index 74c1180..f3bba59 100644
-> > --- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-> > +++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-> > @@ -2,6 +2,8 @@
-> >
-> >  Required Properties:
-> >  - compatible: should be "renesas,pwm-rcar" and one of the following.
-> > + - "renesas,pwm-r8a7743": for RZ/G1M
-> > + - "renesas,pwm-r8a7745": for RZ/G1E
-> >   - "renesas,pwm-r8a7778": for R-Car M1A
-> >   - "renesas,pwm-r8a7779": for R-Car H1
-> >   - "renesas,pwm-r8a7790": for R-Car H2
-> > @@ -17,13 +19,15 @@ Required Properties:
-> >  - pinctrl-0: phandle, referring to a default pin configuration node.
-> >  - pinctrl-names: Set to "default".
-> >
-> > -Example: R8A7790 (R-Car H2) PWM Timer node
-> > +Example: R8A7743 (RZ/G1M) PWM Timer node
-> >
-> >  pwm0: pwm@e6e30000 {
-> > -compatible =3D "renesas,pwm-r8a7790", "renesas,pwm-rcar";
-> > +compatible =3D "renesas,pwm-r8a7743", "renesas,pwm-rcar";
-> >  reg =3D <0 0xe6e30000 0 0x8>;
-> > +clocks =3D <&cpg CPG_MOD 523>;
-> > +power-domains =3D <&sysc R8A7743_PD_ALWAYS_ON>;
-> > +resets =3D <&cpg 523>;
-> >  #pwm-cells =3D <2>;
-> > -clocks =3D <&mstp5_clks R8A7790_CLK_PWM>;
-> >  pinctrl-0 =3D <&pwm0_pins>;
-> >  pinctrl-names =3D "default";
-> >  };
-> > --
-> > 2.7.4
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
+index 820b220b09cc6bdb..1b91f03b75980766 100644
+--- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
+@@ -57,7 +57,6 @@ static struct cpg_core_clk r8a7791_core_clks[] __initdata = {
+ 
+ 	/* Core Clock Outputs */
+ 	DEF_BASE("z",    R8A7791_CLK_Z,    CLK_TYPE_GEN2_Z,    CLK_PLL0),
+-	DEF_BASE("lb",   R8A7791_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
+ 	DEF_BASE("adsp", R8A7791_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
+ 	DEF_BASE("sdh",  R8A7791_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
+ 	DEF_BASE("sd0",  R8A7791_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
+@@ -70,6 +69,7 @@ static struct cpg_core_clk r8a7791_core_clks[] __initdata = {
+ 	DEF_FIXED("hp",     R8A7791_CLK_HP,    CLK_PLL1,         12, 1),
+ 	DEF_FIXED("i",      R8A7791_CLK_I,     CLK_PLL1,          2, 1),
+ 	DEF_FIXED("b",      R8A7791_CLK_B,     CLK_PLL1,         12, 1),
++	DEF_FIXED("lb",     R8A7791_CLK_LB,    CLK_PLL1,         24, 1),
+ 	DEF_FIXED("p",      R8A7791_CLK_P,     CLK_PLL1,         24, 1),
+ 	DEF_FIXED("cl",     R8A7791_CLK_CL,    CLK_PLL1,         48, 1),
+ 	DEF_FIXED("m2",     R8A7791_CLK_M2,    CLK_PLL1,          8, 1),
+-- 
+2.7.4
