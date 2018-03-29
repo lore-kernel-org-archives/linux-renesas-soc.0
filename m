@@ -1,76 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:13201 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753630AbeCFQVW (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:36114 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751235AbeC2RdO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:21:22 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Chris Paterson" <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: RE: [PATCH v2 1/3] dt-bindings: timer: renesas, cmt: Document
- r8a774[35] CMT support
-Date: Tue, 6 Mar 2018 16:21:16 +0000
-Message-ID: <TY1PR01MB17702E7EB6DBDDC6CF3176A8C0D90@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1513618743-4773-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1513618743-4773-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <SG2PR06MB088625944BCD8F4307315520C0E20@SG2PR06MB0886.apcprd06.prod.outlook.com>
- <1acdad3b-c2fd-df1d-f25b-cf80b79a9842@linaro.org>
- <CAMuHMdUX8D6c_ehNJAS8nWprvY60bkoxwTekEEqT5oJcz4QGPA@mail.gmail.com>
- <bf1b052d-c8e1-49dc-9e62-13d564d223a4@linaro.org>
-In-Reply-To: <bf1b052d-c8e1-49dc-9e62-13d564d223a4@linaro.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Thu, 29 Mar 2018 13:33:14 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/5] clk: renesas: r8a7794: Fix LB clock divider
+Date: Thu, 29 Mar 2018 19:33:10 +0200
+Message-Id: <1522344790-20061-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gVGhvbWFzLA0KDQpkbyB5b3UgdGhpbmsgeW91IGNhbiB0YWtlIHRoaXMgcGF0Y2g/DQoN
-ClRoYW5rcywNCkZhYg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGRl
-dmljZXRyZWUtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86ZGV2aWNldHJlZS1vd25lckB2
-Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBEYW5pZWwgTGV6Y2Fubw0KPiBTZW50OiAyNSBK
-YW51YXJ5IDIwMTggMDg6MzUNCj4gVG86IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgt
-bTY4ay5vcmc+DQo+IENjOiBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5l
-c2FzLmNvbT47IFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPjsgZGV2aWNldHJl
-ZUB2Z2VyLmtlcm5lbC5vcmc7IFNpbW9uDQo+IEhvcm1hbiA8aG9ybXNAdmVyZ2UubmV0LmF1Pjsg
-R2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IENocmlzIFBhdGVy
-c29uIDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+Ow0KPiBCaWp1IERhcyA8YmlqdS5kYXNA
-YnAucmVuZXNhcy5jb20+OyBsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmc7IFJvYiBI
-ZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJrIFJ1dGxhbmQNCj4gPG1hcmsucnV0bGFu
-ZEBhcm0uY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDEvM10gZHQtYmluZGluZ3M6IHRp
-bWVyOiByZW5lc2FzLCBjbXQ6IERvY3VtZW50IHI4YTc3NFszNV0gQ01UIHN1cHBvcnQNCj4NCj4g
-T24gMjUvMDEvMjAxOCAwOToyMSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiA+IEhpIERh
-bmllbCwNCj4gPg0KPiA+IE9uIFRodSwgSmFuIDI1LCAyMDE4IGF0IDk6MDkgQU0sIERhbmllbCBM
-ZXpjYW5vDQo+ID4gPGRhbmllbC5sZXpjYW5vQGxpbmFyby5vcmc+IHdyb3RlOg0KPiA+PiBPbiAy
-NC8wMS8yMDE4IDE3OjQ5LCBGYWJyaXppbyBDYXN0cm8gd3JvdGU6DQo+ID4+PiBJIGFtIHNvcnJ5
-IHRvIGJvdGhlciB5b3UsIGp1c3Qgd29uZGVyaW5nIGlmIHlvdSB0aGluayB0aGVyZSBhcmUgYW55
-IGNoYW5jZXMgZm9yIHRoaXMgcGF0Y2ggdG8gYXBwbGllZCBvbiB0b3Agb2YgdjQuMTY/DQo+ID4+
-DQo+ID4+IFlvdSBjYW4gdGFrZSBpdCB0aHJvdWdoIHRoZSByZW5lc2FzIHRyZWUuDQo+ID4+DQo+
-ID4+IEFja2VkLWJ5OiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz4N
-Cj4gPg0KPiA+IFRoYW5rIHlvdSENCj4gPg0KPiA+IFVuZm9ydHVuYXRlbHkgaXQncyBhIGJpdCBs
-YXRlIHRvIGdldCBub24tYnVnZml4ZXMgaW4gdjQuMTYgdGhyb3VnaCB0aGUgcmVuZXNhcw0KPiA+
-IHRyZWUgYW5kIGFybS1zb2MuDQo+DQo+IEkgdGhvdWdodCB0aGV5IHdlcmUgZ29pbmcgdGhyb3Vn
-aCB0aGUgcmVuZXNhcyB0cmVlLCBzbyBJIGRpc2NhcmRlZCB0aGVtIDovDQo+DQo+IE1heSBiZSBU
-aG9tYXMgY2FuIHRha2UgdGhlbSBpbiB0aGUgdGlwL3RpbWVycyB0cmVlID8NCj4NCj4gVGhvbWFz
-ID8NCj4NCj4NCj4gLS0NCj4gIDxodHRwOi8vd3d3LmxpbmFyby5vcmcvPiBMaW5hcm8ub3JnIOKU
-giBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MNCj4NCj4gRm9sbG93IExpbmFybzog
-IDxodHRwOi8vd3d3LmZhY2Vib29rLmNvbS9wYWdlcy9MaW5hcm8+IEZhY2Vib29rIHwNCj4gPGh0
-dHA6Ly90d2l0dGVyLmNvbS8jIS9saW5hcm9vcmc+IFR3aXR0ZXIgfA0KPiA8aHR0cDovL3d3dy5s
-aW5hcm8ub3JnL2xpbmFyby1ibG9nLz4gQmxvZw0KPg0KPiAtLQ0KPiBUbyB1bnN1YnNjcmliZSBm
-cm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgZGV2aWNldHJlZSIgaW4N
-Cj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4g
-TW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8t
-aW5mby5odG1sDQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1l
-YWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVG
-SCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8u
-IDA0NTg2NzA5Lg0K
+The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+the LB clock divider depends on the value of the MD18 pin.
+
+On R-Car E2, the LB clock divider is fixed to 24.  Hence model the clock
+as a fixed factor clock instead.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7794-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/r8a7794-cpg-mssr.c b/drivers/clk/renesas/r8a7794-cpg-mssr.c
+index 2a40bbeaeeafc2a4..3ce74f063fa86b19 100644
+--- a/drivers/clk/renesas/r8a7794-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7794-cpg-mssr.c
+@@ -55,7 +55,6 @@ static const struct cpg_core_clk r8a7794_core_clks[] __initconst = {
+ 	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
+ 
+ 	/* Core Clock Outputs */
+-	DEF_BASE("lb",   R8A7794_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
+ 	DEF_BASE("adsp", R8A7794_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
+ 	DEF_BASE("sdh",  R8A7794_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
+ 	DEF_BASE("sd0",  R8A7794_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
+@@ -69,6 +68,7 @@ static const struct cpg_core_clk r8a7794_core_clks[] __initconst = {
+ 	DEF_FIXED("hp",     R8A7794_CLK_HP,    CLK_PLL1,         12, 1),
+ 	DEF_FIXED("i",      R8A7794_CLK_I,     CLK_PLL1,          2, 1),
+ 	DEF_FIXED("b",      R8A7794_CLK_B,     CLK_PLL1,         12, 1),
++	DEF_FIXED("lb",     R8A7794_CLK_B,     CLK_PLL1,         24, 1),
+ 	DEF_FIXED("p",      R8A7794_CLK_P,     CLK_PLL1,         24, 1),
+ 	DEF_FIXED("cl",     R8A7794_CLK_CL,    CLK_PLL1,         48, 1),
+ 	DEF_FIXED("cp",     R8A7794_CLK_CP,    CLK_PLL1,         48, 1),
+-- 
+2.7.4
