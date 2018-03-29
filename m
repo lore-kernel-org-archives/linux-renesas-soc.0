@@ -1,323 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:3571 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752478AbeCZVq6 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42502 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752392AbeC2LhO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:46:58 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v13 25/33] rcar-vin: add group allocator functions
-Date: Mon, 26 Mar 2018 23:44:48 +0200
-Message-Id: <20180326214456.6655-26-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 29 Mar 2018 07:37:14 -0400
+Subject: Re: [PATCH 12/15] v4l: vsp1: Generalize detection of entity removal
+ from DRM pipeline
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180226214516.11559-13-laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <4841fc82-0201-2a53-53ce-6da7c144a75e@ideasonboard.com>
+Date: Thu, 29 Mar 2018 12:37:07 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180226214516.11559-13-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In media controller mode all VIN instances needs to be part of the same
-media graph. There is also a need for each VIN instance to know about
-and in some cases be able to communicate with other VIN instances.
+Hi Laurent,
 
-Add an allocator framework where the first VIN instance to be probed
-creates a shared data structure and registers a media device.
-Consecutive VINs insert themself into the global group.
+Thank you for the patch,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 174 +++++++++++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  31 +++++
- 2 files changed, 203 insertions(+), 2 deletions(-)
+On 26/02/18 21:45, Laurent Pinchart wrote:
+> When disabling a DRM plane, the corresponding RPF is only marked as
+> removed from the pipeline in the atomic update handler, with the actual
+> removal happening when configuring the pipeline at atomic commit time.
+> This is required as the RPF has to be disabled in the hardware, which
+> can't be done from the atomic update handler.
+> 
+> The current implementation is RPF-specific. Make it independent of the
+> entity type by using the entity's pipe pointer to mark removal from the
+> pipeline. This will allow using the mechanism to remove BRU instances.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index e0a33d372c500ccd..38eaa246e4c0a7b5 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -20,12 +20,174 @@
- #include <linux/of_graph.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/slab.h>
- 
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
- 
- #include "rcar-vin.h"
- 
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CSI2 Group Allocator
-+ */
-+
-+/* FIXME:  This should if we find a system that supports more
-+ * than one group for the whole system be replaced with a linked
-+ * list of groups. And eventually all of this should be replaced
-+ * with a global device allocator API.
-+ *
-+ * But for now this works as on all supported systems there will
-+ * be only one group for all instances.
-+ */
-+
-+static DEFINE_MUTEX(rvin_group_lock);
-+static struct rvin_group *rvin_group_data;
-+
-+static void rvin_group_cleanup(struct rvin_group *group)
-+{
-+	media_device_unregister(&group->mdev);
-+	media_device_cleanup(&group->mdev);
-+	mutex_destroy(&group->lock);
-+}
-+
-+static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
-+{
-+	struct media_device *mdev = &group->mdev;
-+	const struct of_device_id *match;
-+	struct device_node *np;
-+	int ret;
-+
-+	mutex_init(&group->lock);
-+
-+	/* Count number of VINs in the system */
-+	group->count = 0;
-+	for_each_matching_node(np, vin->dev->driver->of_match_table)
-+		if (of_device_is_available(np))
-+			group->count++;
-+
-+	vin_dbg(vin, "found %u enabled VIN's in DT", group->count);
-+
-+	mdev->dev = vin->dev;
-+
-+	match = of_match_node(vin->dev->driver->of_match_table,
-+			      vin->dev->of_node);
-+
-+	strlcpy(mdev->driver_name, KBUILD_MODNAME, sizeof(mdev->driver_name));
-+	strlcpy(mdev->model, match->compatible, sizeof(mdev->model));
-+	snprintf(mdev->bus_info, sizeof(mdev->bus_info), "platform:%s",
-+		 dev_name(mdev->dev));
-+
-+	media_device_init(mdev);
-+
-+	ret = media_device_register(&group->mdev);
-+	if (ret)
-+		rvin_group_cleanup(group);
-+
-+	return ret;
-+}
-+
-+static void rvin_group_release(struct kref *kref)
-+{
-+	struct rvin_group *group =
-+		container_of(kref, struct rvin_group, refcount);
-+
-+	mutex_lock(&rvin_group_lock);
-+
-+	rvin_group_data = NULL;
-+
-+	rvin_group_cleanup(group);
-+
-+	kfree(group);
-+
-+	mutex_unlock(&rvin_group_lock);
-+}
-+
-+static int rvin_group_get(struct rvin_dev *vin)
-+{
-+	struct rvin_group *group;
-+	u32 id;
-+	int ret;
-+
-+	/* Make sure VIN id is present and sane */
-+	ret = of_property_read_u32(vin->dev->of_node, "renesas,id", &id);
-+	if (ret) {
-+		vin_err(vin, "%pOF: No renesas,id property found\n",
-+			vin->dev->of_node);
-+		return -EINVAL;
-+	}
-+
-+	if (id >= RCAR_VIN_NUM) {
-+		vin_err(vin, "%pOF: Invalid renesas,id '%u'\n",
-+			vin->dev->of_node, id);
-+		return -EINVAL;
-+	}
-+
-+	/* Join or create a VIN group */
-+	mutex_lock(&rvin_group_lock);
-+	if (rvin_group_data) {
-+		group = rvin_group_data;
-+		kref_get(&group->refcount);
-+	} else {
-+		group = kzalloc(sizeof(*group), GFP_KERNEL);
-+		if (!group) {
-+			ret = -ENOMEM;
-+			goto err_group;
-+		}
-+
-+		ret = rvin_group_init(group, vin);
-+		if (ret) {
-+			kfree(group);
-+			vin_err(vin, "Failed to initialize group\n");
-+			goto err_group;
-+		}
-+
-+		kref_init(&group->refcount);
-+
-+		rvin_group_data = group;
-+	}
-+	mutex_unlock(&rvin_group_lock);
-+
-+	/* Add VIN to group */
-+	mutex_lock(&group->lock);
-+
-+	if (group->vin[id]) {
-+		vin_err(vin, "Duplicate renesas,id property value %u\n", id);
-+		mutex_unlock(&group->lock);
-+		kref_put(&group->refcount, rvin_group_release);
-+		return -EINVAL;
-+	}
-+
-+	group->vin[id] = vin;
-+
-+	vin->id = id;
-+	vin->group = group;
-+	vin->v4l2_dev.mdev = &group->mdev;
-+
-+	mutex_unlock(&group->lock);
-+
-+	return 0;
-+err_group:
-+	mutex_unlock(&rvin_group_lock);
-+	return ret;
-+}
-+
-+static void rvin_group_put(struct rvin_dev *vin)
-+{
-+	mutex_lock(&vin->group->lock);
-+
-+	vin->group = NULL;
-+	vin->v4l2_dev.mdev = NULL;
-+
-+	if (WARN_ON(vin->group->vin[vin->id] != vin))
-+		goto out;
-+
-+	vin->group->vin[vin->id] = NULL;
-+out:
-+	mutex_unlock(&vin->group->lock);
-+
-+	kref_put(&vin->group->refcount, rvin_group_release);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Async notifier
-  */
-@@ -249,12 +411,18 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static int rvin_mc_init(struct rvin_dev *vin)
- {
-+	int ret;
-+
- 	/* All our sources are CSI-2 */
- 	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
- 	vin->mbus_cfg.flags = 0;
- 
- 	vin->pad.flags = MEDIA_PAD_FL_SINK;
--	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+	ret = media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+	if (ret)
-+		return ret;
-+
-+	return rvin_group_get(vin);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -374,7 +542,9 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
--	if (!vin->info->use_mc)
-+	if (vin->info->use_mc)
-+		rvin_group_put(vin);
-+	else
- 		v4l2_ctrl_handler_free(&vin->ctrl_handler);
- 
- 	rvin_dma_unregister(vin);
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 5102ad254bff515b..cf5c467d45e10847 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -17,6 +17,8 @@
- #ifndef __RCAR_VIN__
- #define __RCAR_VIN__
- 
-+#include <linux/kref.h>
-+
- #include <media/v4l2-async.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-dev.h>
-@@ -29,6 +31,11 @@
- /* Address alignment mask for HW buffers */
- #define HW_BUFFER_MASK 0x7f
- 
-+/* Max number on VIN instances that can be in a system */
-+#define RCAR_VIN_NUM 8
-+
-+struct rvin_group;
-+
- enum model_id {
- 	RCAR_H1,
- 	RCAR_M1,
-@@ -99,6 +106,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @group:		Gen3 CSI group
-+ * @id:			Gen3 group id for this VIN
-  * @pad:		media pad for the video device entity
-  *
-  * @lock:		protects @queue
-@@ -133,6 +142,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct rvin_group *group;
-+	unsigned int id;
- 	struct media_pad pad;
- 
- 	struct mutex lock;
-@@ -164,6 +175,26 @@ struct rvin_dev {
- #define vin_warn(d, fmt, arg...)	dev_warn(d->dev, fmt, ##arg)
- #define vin_err(d, fmt, arg...)		dev_err(d->dev, fmt, ##arg)
- 
-+/**
-+ * struct rvin_group - VIN CSI2 group information
-+ * @refcount:		number of VIN instances using the group
-+ *
-+ * @mdev:		media device which represents the group
-+ *
-+ * @lock:		protects the count and vin members
-+ * @count:		number of enabled VIN instances found in DT
-+ * @vin:		VIN instances which are part of the group
-+ */
-+struct rvin_group {
-+	struct kref refcount;
-+
-+	struct media_device mdev;
-+
-+	struct mutex lock;
-+	unsigned int count;
-+	struct rvin_dev *vin[RCAR_VIN_NUM];
-+};
-+
- int rvin_dma_register(struct rvin_dev *vin, int irq);
- void rvin_dma_unregister(struct rvin_dev *vin);
- 
--- 
-2.16.2
+Nice improvement ...
+
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/vsp1/vsp1_drm.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+> index d705a6e9fa1d..6c60b72b6f50 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> @@ -346,13 +346,12 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
+>  	dl = vsp1_dl_list_get(pipe->output->dlm);
+>  
+>  	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
+> -		/* Disconnect unused RPFs from the pipeline. */
+> -		if (entity->type == VSP1_ENTITY_RPF &&
+> -		    !pipe->inputs[entity->index]) {
+> +		/* Disconnect unused entities from the pipeline. */
+> +		if (!entity->pipe) {
+>  			vsp1_dl_list_write(dl, entity->route->reg,
+>  					   VI6_DPR_NODE_UNUSED);
+
+I don't think it's a problem, as we don't unset the entity->pipe for arbitrary
+entities, but what happens if we set an HGO/HGT entity to NULL (these currently
+have 0 as the route->reg. This would risk writing VI6_DPR_NODE_UNUSED to the
+VI6_CMD(0) register?
+
+In fact any entity in the pipeline with a null pipe pointer could cause this...
+so we'd best be sure that they are right. Otherwise this could cause some crazy
+bugs manifesting with the hardware doing something unexpected.
+
+Assuming that won't be a problem,
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+>  
+> -			entity->pipe = NULL;
+> +			entity->sink = NULL;
+>  			list_del(&entity->list_pipe);
+>  
+>  			continue;
+> @@ -569,10 +568,11 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+>  			rpf_index);
+>  
+>  		/*
+> -		 * Remove the RPF from the pipe's inputs. The atomic flush
+> -		 * handler will disable the input and remove the entity from the
+> -		 * pipe's entities list.
+> +		 * Remove the RPF from the pipeline's inputs. Keep it in the
+> +		 * pipeline's entity list to let vsp1_du_pipeline_configure()
+> +		 * remove it from the hardware pipeline.
+>  		 */
+> +		rpf->entity.pipe = NULL;
+>  		drm_pipe->pipe.inputs[rpf_index] = NULL;
+>  		return 0;
+>  	}
+> 
