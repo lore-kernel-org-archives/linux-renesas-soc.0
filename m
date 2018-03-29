@@ -1,56 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:51607 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751186AbeCTQTM (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:38122 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751865AbeC2RdO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Mar 2018 12:19:12 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: qemu-devel@nongnu.org
-Cc: =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 0/3] nvram: at24c: fix problems related to "rom-size"
-Date: Tue, 20 Mar 2018 17:18:47 +0100
-Message-Id: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 29 Mar 2018 13:33:14 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/5] clk: renesas: r8a7745: Fix LB clock divider
+Date: Thu, 29 Mar 2018 19:33:07 +0200
+Message-Id: <1522344790-20061-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I used this driver as a template for a custom one. While hacking on my own, I
-noticed some problems in this driver, too. This series fixes the first set of
-them, related to the "rom-size" parameter. It fixes a segfault.
+The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+the LB clock divider depends on the value of the MD18 pin.
 
-I think the first patch is clearly suitable for stable. I think the second one,
-too, but not as clearly. The third one is a cleanup and not for stable. Still,
-I am open for opinions about these thoughts.
+On RZ/G1E, the LB clock divider is fixed to 24.  Hence model the clock
+as a fixed factor clock instead.
 
-Thanks,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   Wolfram
-
-Changes since v2:
-
-* removed '\n' from error_report-strings
-* made sure checkpatch is happy
-* added tags from Philippe (thanks!)
-
-Changes since v1:
-
-* reordered patches according to significance for stable
-* use AT24C_ROMSIZE_DEFAULT instead of magic value
-* patch 3 doesn't improve the ERR macro anymore but replaces
-  it completely with error_report().
-
-
-Wolfram Sang (3):
-  nvram: at24c: prevent segfault by checking "rom-size"
-  nvram: at24c: use a sane default for "rom-size"
-  nvram: at24c: use standard error reporting
-
- hw/nvram/eeprom_at24c.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+index 87f5a3619e4f9d60..4b0a9243b7481176 100644
+--- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -51,7 +51,6 @@ static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
+ 	DEF_FIXED(".pll1_div2",	CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
+ 
+ 	/* Core Clock Outputs */
+-	DEF_BASE("lb",   R8A7745_CLK_LB,   CLK_TYPE_GEN2_LB,	CLK_PLL1),
+ 	DEF_BASE("sdh",  R8A7745_CLK_SDH,  CLK_TYPE_GEN2_SDH,	CLK_PLL1),
+ 	DEF_BASE("sd0",  R8A7745_CLK_SD0,  CLK_TYPE_GEN2_SD0,	CLK_PLL1),
+ 	DEF_BASE("qspi", R8A7745_CLK_QSPI, CLK_TYPE_GEN2_QSPI,	CLK_PLL1_DIV2),
+@@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
+ 	DEF_FIXED("zs",    R8A7745_CLK_ZS,	CLK_PLL1,	    6, 1),
+ 	DEF_FIXED("hp",    R8A7745_CLK_HP,	CLK_PLL1,	   12, 1),
+ 	DEF_FIXED("b",     R8A7745_CLK_B,	CLK_PLL1,	   12, 1),
++	DEF_FIXED("lb",    R8A7745_CLK_LB,	CLK_PLL1,	   24, 1),
+ 	DEF_FIXED("p",     R8A7745_CLK_P,	CLK_PLL1,	   24, 1),
+ 	DEF_FIXED("cl",    R8A7745_CLK_CL,	CLK_PLL1,	   48, 1),
+ 	DEF_FIXED("cp",    R8A7745_CLK_CP,	CLK_PLL1,	   48, 1),
 -- 
-2.11.0
+2.7.4
