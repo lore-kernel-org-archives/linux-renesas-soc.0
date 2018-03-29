@@ -1,83 +1,79 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH  10/12] ARM: dts: iwg23s-sbc: Add support for iWave G23S-SBC based on RZ/G1C
-Date: Tue, 27 Mar 2018 15:37:21 +0100
-Message-Id: <1522161443-54428-11-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
-References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v3 0/8] arm: Base support for Renesas RZN1D-DB Board
+Date: Thu, 29 Mar 2018 08:46:56 +0100
+Message-Id: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for iWave iW-RainboW-G23S single board computer based on
- RZ/G1C.
+This series adds the plain basic support for booting a bare
+kernel on the RZ/N1D-DB Board. It's been trimmed to the strict
+minimum as a 'base', further patches that will add the
+rest of the support, pinctrl, clock architecture and quite
+a few others.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/boot/dts/Makefile                |  1 +
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 30 ++++++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+Thanks for the comments on the previous version!
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 3b4cc1b..3e4df0d 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -795,6 +795,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a7745-iwg22d-sodimm.dtb \
- 	r8a7745-iwg22d-sodimm-dbhd-ca.dtb \
- 	r8a7745-sk-rzg1e.dtb \
-+	r8a77470-iwg23s-sbc.dtb \
- 	r8a7778-bockw.dtb \
- 	r8a7779-marzen.dtb \
- 	r8a7790-lager.dtb \
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-new file mode 100644
-index 0000000..ebbfb36
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the iWave-RZ/G1C single board computer
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77470.dtsi"
-+/ {
-+	model = "iWave iW-RainboW-G23S single board computer based on RZ/G1C";
-+	compatible = "iwave,g23s", "renesas,r8a77470";
-+
-+	aliases {
-+		serial1 = &scif1;
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x20000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif1 {
-+	status = "okay";
-+};
+v3:
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed SoC Specific renesas,r9a06g032-xxx, as it's not needed for now.
+ + Kept renesas,rzn1 as a family/generic for this family.
+ + Fixed a couple of the commit messages.
+ + Added Geert's Reviewed-By where appropriate.
+v2: 
+ + Fixes for suggestions by Simon Horman
+ + Fixes for suggestions by Rob Herring
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed the mach file
+ + Added a MFD base for the sysctrl block
+ + Added a regmap based sub driver for the reboot handler
+ + Renamed the files to match shmobile conventions
+ + Adapted the compatible= strings to reflect 'family' vs 'part'
+   distinction.
+ + Removed the sysctrl.h file entirelly. 
+ + Fixed every warnings from the DTC compiler on W=12 mode.
+ + Split the device-tree patches from the code.
+
+Michel Pollet (8):
+  DT: mfd: renesas,rzn1-sysctrl: document RZ/N1 sysctrl node
+  DT: reset: renesas,rzn1-reboot: document RZ/N1 reboot driver
+  DT: arm: renesas,rzn1: add the RZ/N1 SoC and RZN1D-DB board
+  reset: Renesas RZ/N1 reboot driver
+  arm: shmobile: Add the RZ/N1 arch to the shmobile Kconfig
+  DT: arm: Add Renesas RZ/N1 SoC base device tree file
+  DT: arm: Add Renesas RZN1D-DB Board base file
+  DT: arm: Add the RZN1D-DB Board to Renesas Makefile target
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |   7 +-
+ .../bindings/mfd/renesas,rzn1-sysctrl.txt          |  19 ++++
+ .../bindings/power/renesas,rzn1-reboot.txt         |  20 ++++
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts        |  26 +++++
+ arch/arm/boot/dts/r9a06g0xx.dtsi                   |  96 +++++++++++++++++++
+ arch/arm/mach-shmobile/Kconfig                     |   5 +
+ drivers/power/reset/Kconfig                        |   7 ++
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/rzn1-reboot.c                  | 105 +++++++++++++++++++++
+ 10 files changed, 286 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+ create mode 100644 arch/arm/boot/dts/r9a06g0xx.dtsi
+ create mode 100644 drivers/power/reset/rzn1-reboot.c
+
 -- 
 2.7.4
 
