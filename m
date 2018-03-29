@@ -1,96 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46097 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751480AbeCOL2U (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40797 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750858AbeC2Gvy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Mar 2018 07:28:20 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-Date: Thu, 15 Mar 2018 11:56:31 +0100
-Message-Id: <1521111391-3515-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1521111391-3515-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 29 Mar 2018 02:51:54 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 02/15] v4l: vsp1: Remove outdated comment
+Date: Thu, 29 Mar 2018 09:51:55 +0300
+Message-ID: <253721395.BpiYOE76Q7@avalon>
+In-Reply-To: <0829c7b9-e05b-fe27-b632-005074c86de3@ideasonboard.com>
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com> <0a055333-78b0-a64b-ef97-c1706b7b56b9@ideasonboard.com> <0829c7b9-e05b-fe27-b632-005074c86de3@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car V3M Eagle board includes a transparent THC63LVD1024 LVDS
-decoder, connected to the on-chip LVDS encoder output on one side
-and to HDMI encoder ADV7511w on the other one.
+Hi Kieran,
 
-As the decoder does not need any configuration it has been so-far
-omitted from DTS. Now that a driver is available, describe it in DT
-as well.
+On Wednesday, 28 March 2018 22:04:49 EEST Kieran Bingham wrote:
+> On 28/03/18 13:27, Kieran Bingham wrote:
+> > On 26/02/18 21:45, Laurent Pinchart wrote:
+> >> The entities in the pipeline are all started when the LIF is setup.
+> >> Remove the outdated comment that state otherwise.
+> >> 
+> >> Signed-off-by: Laurent Pinchart
+> >> <laurent.pinchart+renesas@ideasonboard.com>
+> > 
+> > I'll start with the easy ones :-)
+> 
+> In fact, couldn't this patch be squashed into [PATCH 01/15] in this series ?
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 33 +++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+I suppose it could, I'll do so.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index c0fd144..69f43b8 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -42,6 +42,33 @@
- 			};
- 		};
- 	};
-+
-+	thc63lvd1024: lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				thc63lvd1024_in_0: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2{
-+				reg = <2>;
-+
-+				thc63lvd1024_out_2: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+
-+			};
-+
-+		};
-+	};
- };
- 
- &avb {
-@@ -98,7 +125,7 @@
- 			port@0 {
- 				reg = <0>;
- 				adv7511_in: endpoint {
--					remote-endpoint = <&lvds0_out>;
-+					remote-endpoint = <&thc63lvd1024_out_2>;
- 				};
- 			};
- 
-@@ -152,8 +179,8 @@
- 
- 	ports {
- 		port@1 {
--			endpoint {
--				remote-endpoint = <&adv7511_in>;
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in_0>;
- 			};
- 		};
- 	};
+> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 
+> >> ---
+> >> 
+> >>  drivers/media/platform/vsp1/vsp1_drm.c | 6 +-----
+> >>  1 file changed, 1 insertion(+), 5 deletions(-)
+> >> 
+> >> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
+> >> b/drivers/media/platform/vsp1/vsp1_drm.c index
+> >> e31fb371eaf9..a1f2ba044092 100644
+> >> --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> >> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> >> @@ -221,11 +221,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned
+> >> int pipe_index,>> 
+> >>  		return -EPIPE;
+> >>  	
+> >>  	}
+> >> 
+> >> -	/*
+> >> -	 * Enable the VSP1. We don't start the entities themselves right at
+> >> this
+> >> -	 * point as there's no plane configured yet, so we can't start
+> >> -	 * processing buffers.
+> >> -	 */
+> >> +	/* Enable the VSP1. */
+> >> 
+> >>  	ret = vsp1_device_get(vsp1);
+> >>  	if (ret < 0)
+> >>  	
+> >>  		return ret;
+
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
