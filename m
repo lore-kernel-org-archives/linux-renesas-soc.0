@@ -1,38 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45924 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750738AbeC3Hlm (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:60728 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeC2RdP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Mar 2018 03:41:42 -0400
-Date: Fri, 30 Mar 2018 09:41:37 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/5] clk: renesas: r-car gen2: Fix LB clock divider
-Message-ID: <20180330074136.sirwfohz3tnraf5r@verge.net.au>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+        Thu, 29 Mar 2018 13:33:15 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/5] clk: renesas: r-car gen2: Fix LB clock divider
+Date: Thu, 29 Mar 2018 19:33:05 +0200
+Message-Id: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 07:33:05PM +0200, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-> the LB clock divider depends on the value of the MD18 pin.
-> 
-> However, on most RZ/G1 and R-Car Gen2 SoCs, the LB clock divider is
-> fixed to 24.  Hence this series corrects the LB clock on affected SoCs
-> by modelling it as a fixed factor clock instead.
-> 
-> This doesn't have much impact, as no kernel code relies on the rate of
-> the LB clock.
-> 
-> To be queued in clk-renesas-for-v4.18.
+	Hi all,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+the LB clock divider depends on the value of the MD18 pin.
+
+However, on most RZ/G1 and R-Car Gen2 SoCs, the LB clock divider is
+fixed to 24.  Hence this series corrects the LB clock on affected SoCs
+by modelling it as a fixed factor clock instead.
+
+This doesn't have much impact, as no kernel code relies on the rate of
+the LB clock.
+
+To be queued in clk-renesas-for-v4.18.
+
+Geert Uytterhoeven (5):
+  clk: renesas: r8a7743: Fix LB clock divider
+  clk: renesas: r8a7745: Fix LB clock divider
+  clk: renesas: r8a7791/r8a7793: Fix LB clock divider
+  clk: renesas: r8a7792: Fix LB clock divider
+  clk: renesas: r8a7794: Fix LB clock divider
+
+ drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/r8a7792-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/r8a7794-cpg-mssr.c | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
