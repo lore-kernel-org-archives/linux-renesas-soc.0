@@ -1,43 +1,44 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH net-next] dt-bindings: net: renesas-ravb: Add support for
- r8a77470 SoC
-To: Biju Das <biju.das@bp.renesas.com>,
-        "David S . Miller" <davem@davemloft.net>,
+From: Biju Das <biju.das@bp.renesas.com>
+To: "David S . Miller" <davem@davemloft.net>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Russell King <linux@armlinux.org.uk>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Chris Paterson <chris.paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
-References: <1522317775-35671-1-git-send-email-biju.das@bp.renesas.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <312f1f35-74ab-3874-fc14-4b28eaaf4498@cogentembedded.com>
-Date: Thu, 29 Mar 2018 17:51:28 +0300
-MIME-Version: 1.0
-In-Reply-To: <1522317775-35671-1-git-send-email-biju.das@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH net-next] dt-bindings: net: renesas-ravb: Add support for r8a77470 SoC
+Date: Thu, 29 Mar 2018 11:02:55 +0100
+Message-Id: <1522317775-35671-1-git-send-email-biju.das@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Add a new compatible string for the RZ/G1C (R8A77470) SoC.
 
-On 03/29/2018 01:02 PM, Biju Das wrote:
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Add a new compatible string for the RZ/G1C (R8A77470) SoC.
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index b4dc455..c306f55 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -7,6 +7,7 @@ Required properties:
+ - compatible: Must contain one or more of the following:
+       - "renesas,etheravb-r8a7743" for the R8A7743 SoC.
+       - "renesas,etheravb-r8a7745" for the R8A7745 SoC.
++      - "renesas,etheravb-r8a77470" for the R8A77470 SoC.
+       - "renesas,etheravb-r8a7790" for the R8A7790 SoC.
+       - "renesas,etheravb-r8a7791" for the R8A7791 SoC.
+       - "renesas,etheravb-r8a7792" for the R8A7792 SoC.
+-- 
+2.7.4
 
-   Needed solely to please checkpatch.pl. :-)
-
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-[...]
-
-MBR, Sergei
