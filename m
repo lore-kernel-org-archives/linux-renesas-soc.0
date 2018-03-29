@@ -1,109 +1,101 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58633 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752876AbeC1PBY (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:01:24 -0400
-Subject: Re: [PATCH 09/15] v4l: vsp1: Replace manual DRM pipeline input setup
- in vsp1_du_setup_lif
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180226214516.11559-10-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <52699ae7-c093-1f2a-5ae1-b6b847952294@ideasonboard.com>
-Date: Wed, 28 Mar 2018 16:01:20 +0100
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: Michel Pollet <michel.pollet@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+CC: Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "Sebastian Reichel" <sre@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: RE: [PATCH v3 4/8] reset: Renesas RZ/N1 reboot driver
+Date: Thu, 29 Mar 2018 11:12:45 +0000
+Message-ID: <OSBPR01MB205430EB7EE4F338829135EDD2A20@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1522309629-10152-5-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1522309629-10152-5-git-send-email-michel.pollet@bp.renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20180226214516.11559-10-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
 
-On 26/02/18 21:45, Laurent Pinchart wrote:
-> The vsp1_du_setup_lif() function setups the DRM pipeline input manually.
-
-s/ setups the / sets up the /
-
-> This duplicates the code from the vsp1_du_pipeline_setup_input()
-> function. Replace the manual implementation by a call to the function.
-> 
-> As the pipeline has no enabled input in vsp1_du_setup_lif(), the
-> vsp1_du_pipeline_setup_input() function will not setup any RPF, and will
-> thus not setup formats on the BRU sink pads. This isn't a problem as all
-> inputs are disabled, and the BRU sink pads will be reconfigured from the
-> atomic commit handler when inputs will be enabled.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-Aside from the above,
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
+On 29 March 2018 08:47, I messed up:
+[snip]
+>
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) needs a small driver to reboot
+> the Cortex-A7 cores. This driver is a sub driver of the sysctrl MFD.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 > ---
->  drivers/media/platform/vsp1/vsp1_drm.c | 40 +++++-----------------------------
->  1 file changed, 6 insertions(+), 34 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-> index 6ad8aa6c8138..00ce99bd1605 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -412,47 +412,19 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
->  	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u\n",
->  		__func__, pipe_index, cfg->width, cfg->height);
->  
-> -	/*
-> -	 * Configure the format at the BRU sinks and propagate it through the
-> -	 * pipeline.
-> -	 */
-> +	/* Setup formats through the pipeline. */
-> +	ret = vsp1_du_pipeline_setup_input(vsp1, pipe);
-> +	if (ret < 0)
-> +		return ret;
+>  drivers/power/reset/Kconfig       |   7 +++
+>  drivers/power/reset/Makefile      |   1 +
+>  drivers/power/reset/rzn1-reboot.c | 105
+[snip]
 > +
->  	memset(&format, 0, sizeof(format));
->  	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
-> -
-> -	for (i = 0; i < pipe->bru->source_pad; ++i) {
-> -		format.pad = i;
-> -
-> -		format.format.width = cfg->width;
-> -		format.format.height = cfg->height;
-> -		format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
-> -		format.format.field = V4L2_FIELD_NONE;
-> -
-> -		ret = v4l2_subdev_call(&pipe->bru->subdev, pad,
-> -				       set_fmt, NULL, &format);
-> -		if (ret < 0)
-> -			return ret;
-> -
-> -		dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
-> -			__func__, format.format.width, format.format.height,
-> -			format.format.code, BRU_NAME(pipe->bru), i);
-> -	}
-> -
-> -	format.pad = pipe->bru->source_pad;
-> +	format.pad = RWPF_PAD_SINK;
->  	format.format.width = cfg->width;
->  	format.format.height = cfg->height;
->  	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
->  	format.format.field = V4L2_FIELD_NONE;
->  
-> -	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
-> -			       &format);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
-> -		__func__, format.format.width, format.format.height,
-> -		format.format.code, BRU_NAME(pipe->bru), i);
-> -
-> -	format.pad = RWPF_PAD_SINK;
->  	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, NULL,
->  			       &format);
->  	if (ret < 0)
-> 
+> +parent =3D pdev->dev.parent;
+> +if (!parent || !parent->of_node)
+
+Not sure what went on when I had all the patches loaded in the editor befor=
+e sending, but I've deleted a brace here. Will be fixed in v4... :/
+
+Michel
+
+
+> +dev_err(&pdev->dev, "couldn't find sysctrl node\n");
+> +return -ENODEV;
+> +}
+> +sysctrl =3D syscon_node_to_regmap(parent->of_node);
+> +if (IS_ERR(sysctrl)) {
+> +dev_err(&pdev->dev, "couldn't find find regmap\n");
+> +return PTR_ERR(sysctrl);
+> +}
+> +err =3D register_restart_handler(&rzn1_reboot_nb);
+> +if (err) {
+> +dev_err(&pdev->dev, "register restart handler
+> failed(err=3D%d)\n",
+> +err);
+> +}
+> +
+> +return err;
+> +}
+> +
+> +static const struct of_device_id rzn1_reboot_of_match[] =3D {
+> +{ .compatible =3D "renesas,rzn1-reboot" },
+> +{}
+> +};
+> +MODULE_DEVICE_TABLE(of, rzn1_reboot_of_match);
+> +
+> +static struct platform_driver rzn1_reboot_driver =3D {
+> +.probe =3D rzn1_reboot_probe,
+> +.driver =3D {
+> +.name =3D "rzn1-reboot",
+> +.of_match_table =3D rzn1_reboot_of_match,
+> +},
+> +};
+> +module_platform_driver(rzn1_reboot_driver);
+> +
+> +MODULE_DESCRIPTION("RZ/N1 reboot driver");
+> MODULE_AUTHOR("Michel Pollet
+> +<michel.pollet@bp.renesas.com>, <buserror@gmail.com>");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
