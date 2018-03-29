@@ -1,66 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:33876 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751328AbeCTIUZ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40827 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750709AbeC2HAU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Mar 2018 04:20:25 -0400
-Received: by mail-pf0-f194.google.com with SMTP id j20so363648pfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Mar 2018 01:20:25 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 20 Mar 2018 17:20:39 +0900
-Message-Id: <152153403990.8610.2910800250912629335.sendpatchset@little-apple>
-In-Reply-To: <152153402203.8610.10666108438721508284.sendpatchset@little-apple>
-References: <152153402203.8610.10666108438721508284.sendpatchset@little-apple>
-Subject: [PATCH 2/2] arm: dts: sh73a0 KZM9 as unhandled IRQs on boot
+        Thu, 29 Mar 2018 03:00:20 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 05/15] v4l: vsp1: Use vsp1_entity.pipe to check if entity belongs to a pipeline
+Date: Thu, 29 Mar 2018 10:00:20 +0300
+Message-ID: <2041570.l3A1qxLKyO@avalon>
+In-Reply-To: <7198a828-35da-6080-7987-ee0370cbba3c@ideasonboard.com>
+References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com> <20180226214516.11559-6-laurent.pinchart+renesas@ideasonboard.com> <7198a828-35da-6080-7987-ee0370cbba3c@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Kieran,
 
-Booting sh73a0 KZM9G results in the following on the console:
+On Wednesday, 28 March 2018 17:10:10 EEST Kieran Bingham wrote:
+> On 26/02/18 21:45, Laurent Pinchart wrote:
+> > The DRM pipeline handling code uses the entity's pipe list head to check
+> > whether the entity is already included in a pipeline. This method is a
+> > bit fragile in the sense that it uses list_empty() on a list_head that
+> > is a list member. Replace it by a simpler check for the entity pipe
+> > pointer.
+> 
+> Yes, excellent.
+> 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> > ---
+> > 
+> >  drivers/media/platform/vsp1/vsp1_drm.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
+> > b/drivers/media/platform/vsp1/vsp1_drm.c index a7ad85ab0b08..e210917fdc3f
+> > 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> > +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> > @@ -119,9 +119,9 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int
+> > pipe_index,> 
+> >  			 * Remove the RPF from the pipe and the list of BRU
+> >  			 * inputs.
+> >  			 */
+> > 
+> > -			WARN_ON(list_empty(&rpf->entity.list_pipe));
+> > +			WARN_ON(!rpf->entity.pipe);
+> 
+> Does this WARN_ON() have much value any more ?
+> 
+> I think it could probably be removed... unless there is a race between
+> potential calls through vsp1_du_atomic_flush() and vsp1_du_setup_lif() -
+> but I would be very surprised if that wasn't protected at the DRM levels.
 
-[    0.030000] renesas_intc_irqpin e6900000.interrupt-controller: driving 8 irqs
-[    0.040000] random: crng init done
-[    0.120000] irq 35: nobody cared (try booting with the "irqpoll" option)
-[    0.120000] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc5 #4
-[    0.120000] Hardware name: Generic SH73A0 (Flattened Device Tree)
-...
-[    0.120000] Disabling IRQ #35
-[    0.120000] renesas_intc_irqpin e6900004.interrupt-controller: driving 8 irqs
+It should indeed be protected at the DRM level. The purpose of the WARN_ON() 
+is twofold, it catches both bugs in the VSP1 driver (but I don't expect any 
+bug here, so from that point of view the WARN_ON isn't needed), but also 
+misbehaviours in the callers. There hasn't been any so far though, so maybe we 
+could indeed remove the WARN_ON(). It just makes me feel a bit safer but 
+probably not in any rational way :-)
 
-Judging by the friendly board documentation there is nothing hooked up to
-that IRQ line. I wish we had proper schematics and not a less detailed
-board manual.
+>  (Removing it if chosen doesn't need to be in this patch though)
+> 
+> >  			rpf->entity.pipe = NULL;
+> > 
+> > -			list_del_init(&rpf->entity.list_pipe);
+> > +			list_del(&rpf->entity.list_pipe);
+> > 
+> >  			pipe->inputs[i] = NULL;
+> >  			
+> >  			bru->inputs[rpf->bru_input].rpf = NULL;
+> > 
+> > @@ -537,7 +537,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned
+> > int pipe_index)> 
+> >  			continue;
+> >  		
+> >  		}
+> > 
+> > -		if (list_empty(&rpf->entity.list_pipe)) {
+> > +		if (!rpf->entity.pipe) {
+> > 
+> >  			rpf->entity.pipe = pipe;
+> >  			list_add_tail(&rpf->entity.list_pipe, &pipe->entities);
+> >  		
+> >  		}
+> > 
+> > @@ -566,7 +566,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned
+> > int pipe_index)> 
+> >  					   VI6_DPR_NODE_UNUSED);
+> >  			
+> >  			entity->pipe = NULL;
+> > 
+> > -			list_del_init(&entity->list_pipe);
+> > +			list_del(&entity->list_pipe);
+> > 
+> >  			continue;
+> >  		
+> >  		}
 
-With this patch I've tried to extend the irqpin driver to mask all interrupts
-on boot but it does not seem to help. Perhaps the PFC hardware needs to be
-configured somehow. More effort is needed to solve this issue.
+-- 
+Regards,
 
-Not for upstream merge.
-
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Developed on top of renesas-drivers-2018-03-13-v4.16-rc5
- 
- drivers/irqchip/irq-renesas-intc-irqpin.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- 0001/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ work/drivers/irqchip/irq-renesas-intc-irqpin.c	2018-03-20 14:31:02.420607110 +0900
-@@ -558,11 +558,11 @@ static int intc_irqpin_probe(struct plat
- 			}
- 		}
- 	}
--
-+#if 0
- 	/* unmask all interrupts on prio level */
- 	for (k = 0; k < nirqs; k++)
- 		intc_irqpin_mask_unmask_prio(p, k, 0);
--
-+#endif
- 	dev_info(dev, "driving %d irqs\n", nirqs);
- 
- 	return 0;
+Laurent Pinchart
