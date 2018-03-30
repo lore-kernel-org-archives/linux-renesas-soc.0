@@ -1,89 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:50057 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752634AbeC1TaI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45392 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbeC3Gqy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Mar 2018 15:30:08 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
+        Fri, 30 Mar 2018 02:46:54 -0400
+Date: Fri, 30 Mar 2018 08:46:50 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 5/8] ARM: shmobile: r8a77470: basic SoC support
-Date: Wed, 28 Mar 2018 20:26:13 +0100
-Message-Id: <1522265176-33226-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH v2 1/8] soc: renesas: rcar-sysc: Add r8a77470 support
+Message-ID: <20180330064649.t5e5qmiir3xw3lwr@verge.net.au>
 References: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com>
+ <1522265176-33226-2-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522265176-33226-2-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add minimal support for the RZ/G1C (R8A77470) SoC.
+On Wed, Mar 28, 2018 at 08:26:09PM +0100, Biju Das wrote:
+> Add support for RZ/G1C (R8A77470) SoC power areas to the R-Car SYSC
+> driver.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
-V1->V2:
-* No change
-
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- arch/arm/mach-shmobile/Kconfig                     | 4 ++++
- arch/arm/mach-shmobile/setup-rcar-gen2.c           | 2 ++
- 3 files changed, 8 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 29093ba..4401369 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -21,6 +21,8 @@ SoCs:
-     compatible = "renesas,r8a7744"
-   - RZ/G1E (R8A77450)
-     compatible = "renesas,r8a7745"
-+  - RZ/G1C (R8A77470)
-+    compatible = "renesas,r8a77470"
-   - R-Car M1A (R8A77781)
-     compatible = "renesas,r8a7778"
-   - R-Car H1 (R8A77790)
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 280e731..6b91114 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -75,6 +75,10 @@ config ARCH_R8A7745
- 	bool "RZ/G1E (R8A77450)"
- 	select ARCH_RCAR_GEN2
- 
-+config ARCH_R8A77470
-+	bool "RZ/G1C (R8A77470)"
-+	select ARCH_RCAR_GEN2
-+
- config ARCH_R8A7778
- 	bool "R-Car M1A (R8A77781)"
- 	select ARCH_RCAR_GEN1
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 5561dbe..80de6be 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -73,6 +73,7 @@ void __init rcar_gen2_timer_init(void)
- 	shmobile_init_cntvoff();
- 
- 	if (of_machine_is_compatible("renesas,r8a7745") ||
-+	    of_machine_is_compatible("renesas,r8a77470") ||
- 	    of_machine_is_compatible("renesas,r8a7792") ||
- 	    of_machine_is_compatible("renesas,r8a7794")) {
- 		freq = 260000000 / 8;	/* ZS / 8 */
-@@ -205,6 +206,7 @@ MACHINE_END
- static const char * const rz_g1_boards_compat_dt[] __initconst = {
- 	"renesas,r8a7743",
- 	"renesas,r8a7745",
-+	"renesas,r8a77470",
- 	NULL,
- };
- 
--- 
-2.7.4
+Thanks, applied.
