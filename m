@@ -1,36 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49120 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752087AbeC3Ntv (ORCPT
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46654 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751906AbeC3DOQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Mar 2018 09:49:51 -0400
-Date: Fri, 30 Mar 2018 15:49:47 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Thu, 29 Mar 2018 23:14:16 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH/RFT v2 0/3] thermal: add support for r8a77995
-Message-ID: <20180330134946.pa3565f2cbtucgja@verge.net.au>
-References: <1522379583-4503-1-git-send-email-ykaneko0929@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522379583-4503-1-git-send-email-ykaneko0929@gmail.com>
+Subject: [PATCH/RFT v2 0/3] thermal: add support for r8a77995
+Date: Fri, 30 Mar 2018 12:13:00 +0900
+Message-Id: <1522379583-4503-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 12:13:00PM +0900, Yoshihiro Kaneko wrote:
-> This series adds thermal support for r8a77995.
-> R-Car D3 (r8a77995) have a thermal sensor module which is similar to Gen2.
-> Therefore this series adds r8a77995 support to rcar_thermal driver not
-> rcar_gen3_thermal driver.
-> 
-> This series is based on the next branch of Zhang Rui's linux tree.
+This series adds thermal support for r8a77995.
+R-Car D3 (r8a77995) have a thermal sensor module which is similar to Gen2.
+Therefore this series adds r8a77995 support to rcar_thermal driver not
+rcar_gen3_thermal driver.
 
-I have very lightly tested this as follows after enabling
-CONFIG_RCAR_THERMAL in the kernel .config.
+This series is based on the next branch of Zhang Rui's linux tree.
 
-# cat /sys/devices/virtual/thermal/thermal_zone0/temp
-40000
+v2 [Yoshihiro Kaneko]
+* As suggested by Geert Uytterhoeven
+rcar_thermal.c:
+- remove rcar_of_data macro
+- store a pointer to rcar_thermal_chip in rcar_thermal_priv
+- remove unnecessary cast in rcar_thermal_dt_ids
+
+rcar-thermal.txt:
+- drop the fallback for D3
+- update the paragraph about interrupts
+
+r8a77995.dtsi:
+- fix the base address and the register addresses
+- drop the fallback
+
+
+Yoshihiro Kaneko (3):
+  thermal: rcar_thermal: add r8a77995 support
+  dt-bindings: thermal: rcar-thermal: add R8A77995 support
+  arm64: dts: renesas: r8a77995: add thermal device support
+
+ .../devicetree/bindings/thermal/rcar-thermal.txt   |   7 +-
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi          |  30 +++++
+ drivers/thermal/rcar_thermal.c                     | 148 ++++++++++++++++-----
+ 3 files changed, 151 insertions(+), 34 deletions(-)
+
+-- 
+1.9.1
