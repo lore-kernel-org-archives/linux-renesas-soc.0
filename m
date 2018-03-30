@@ -1,77 +1,80 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57515 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752699AbeC1Mbj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Mar 2018 08:31:39 -0400
-Subject: Re: [PATCH 03/15] v4l: vsp1: Remove unused field from
- vsp1_drm_pipeline structure
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180226214516.11559-4-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <8b3ed86f-03fd-f089-d93c-7bdc842aacec@ideasonboard.com>
-Date: Wed, 28 Mar 2018 13:31:35 +0100
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180226214516.11559-4-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1522309629-10152-2-git-send-email-michel.pollet@bp.renesas.com>
+References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com> <1522309629-10152-2-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Mar 2018 09:58:31 +0200
+Message-ID: <CAMuHMdXeLNBfBaW32-UK9gx_HFrqEA7ChDPp8mtQCHD0PiJ8Ag@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] DT: mfd: renesas,rzn1-sysctrl: document RZ/N1
+ sysctrl node
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Michel,
 
-Thanks for the patch,
+On Thu, Mar 29, 2018 at 9:46 AM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function
+> system controller. This documents the node used to encapsulate
+> it's sub drivers.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-On 26/02/18 21:45, Laurent Pinchart wrote:
-> The vsp1_drm_pipeline enabled field is set but never used. Remove it.
-> 
+Thanks for your patch!
 
-Indeed - not used.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+> @@ -0,0 +1,19 @@
+> +DT bindings for the Renesas RZ/N1 System Controller
+> +
+> +== System Controller Node ==
+> +
+> +The system controller node currently only hosts a single sub-node to handle
+> +the rebooting of the CPU. Eventually it will host the clock driver, SMP
+> +start handler, watchdog etc.
+> +
+> +See renesas,rzn1-reboot.txt for further details.
+> +
+> +Bindings:
+> ++ Required:
+> +       compatible = "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+You should list the supported SoC-specific compatible values here.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> +
+> +Example:
+> +       sysctrl: sysctrl@4000c000 {
+> +               compatible = "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
 
-> ---
->  drivers/media/platform/vsp1/vsp1_drm.c | 4 ----
->  drivers/media/platform/vsp1/vsp1_drm.h | 2 --
->  2 files changed, 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-> index a1f2ba044092..a267f12f0cc8 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -273,10 +273,6 @@ EXPORT_SYMBOL_GPL(vsp1_du_setup_lif);
->   */
->  void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index)
->  {
-> -	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
-> -	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
-> -
-> -	drm_pipe->enabled = drm_pipe->pipe.num_inputs != 0;
->  }
->  EXPORT_SYMBOL_GPL(vsp1_du_atomic_begin);
->  
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
-> index 1cd9db785bf7..9aa19325cbe9 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.h
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.h
-> @@ -20,13 +20,11 @@
->  /**
->   * vsp1_drm_pipeline - State for the API exposed to the DRM driver
->   * @pipe: the VSP1 pipeline used for display
-> - * @enabled: pipeline state at the beginning of an update
->   * @du_complete: frame completion callback for the DU driver (optional)
->   * @du_private: data to be passed to the du_complete callback
->   */
->  struct vsp1_drm_pipeline {
->  	struct vsp1_pipeline pipe;
-> -	bool enabled;
->  
->  	/* Frame synchronisation */
->  	void (*du_complete)(void *, bool);
-> 
+Missing SoC-specific compatible value.
+
+> +               reg = <0x4000c000 0x1000>;
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
