@@ -1,58 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37909 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752271AbeCOOqG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45833 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752384AbeC3H1i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:46:06 -0400
-Received: by mail-wr0-f196.google.com with SMTP id l8so8577487wrg.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Mar 2018 07:46:05 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: intel-gfx@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH igt 1/8] tests/kms_addfb_basic: skip i915-specific tests on other platforms
-Date: Thu, 15 Mar 2018 15:45:37 +0100
-Message-Id: <1521125144-28614-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1521125144-28614-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1521125144-28614-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 30 Mar 2018 03:27:38 -0400
+Date: Fri, 30 Mar 2018 09:27:33 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 8/8] DT: arm: Add the RZN1D-DB Board to Renesas
+ Makefile target
+Message-ID: <20180330072733.z7lffttcqb6adfnu@verge.net.au>
+References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1522309629-10152-9-git-send-email-michel.pollet@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522309629-10152-9-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add is_i915_device() requirement to tests using Intel-specific APIs.
+On Thu, Mar 29, 2018 at 08:47:04AM +0100, Michel Pollet wrote:
+> This adds the newly added board to the Renesas built target
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  arch/arm/boot/dts/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 8164c12..1849228 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -806,6 +806,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+>  	r8a7793-gose.dtb \
+>  	r8a7794-alt.dtb \
+>  	r8a7794-silk.dtb \
+> +	r9a06g032-rzn1d400-db.dtb \
+>  	sh73a0-kzm9g.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+>  	rv1108-evb.dtb \
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- tests/kms_addfb_basic.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tests/kms_addfb_basic.c b/tests/kms_addfb_basic.c
-index 7d8852f..cf9ba37 100644
---- a/tests/kms_addfb_basic.c
-+++ b/tests/kms_addfb_basic.c
-@@ -104,6 +104,7 @@ static void invalid_tests(int fd)
- 	}
- 
- 	igt_subtest("clobberred-modifier") {
-+		igt_require(is_i915_device(fd));
- 		f.flags = 0;
- 		f.modifier[0] = 0;
- 		gem_set_tiling(fd, gem_bo, I915_TILING_X, 512*4);
-@@ -318,6 +319,7 @@ static void size_tests(int fd)
- 	}
- 
- 	igt_subtest("bo-too-small-due-to-tiling") {
-+		igt_require(is_i915_device(fd));
- 		gem_set_tiling(fd, gem_bo_small, I915_TILING_X, 1024*4);
- 		igt_assert(drmIoctl(fd, DRM_IOCTL_MODE_ADDFB2, &f) == -1 &&
- 			   errno == EINVAL);
-@@ -369,6 +371,7 @@ static void addfb25_tests(int fd)
- 
- 	igt_subtest_group {
- 		igt_fixture {
-+			igt_require(is_i915_device(fd));
- 			gem_set_tiling(fd, gem_bo, I915_TILING_X, 1024*4);
- 			igt_require_fb_modifiers(fd);
- 		}
--- 
-2.7.4
+I think you can squash this patch into the one that adds the corresponding
+dts file.
