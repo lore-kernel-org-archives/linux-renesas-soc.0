@@ -1,59 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36128 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753756AbeCPOww (ORCPT
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:41450 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750741AbeC3IBP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:52:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 30 Mar 2018 04:01:15 -0400
+MIME-Version: 1.0
+In-Reply-To: <1522309629-10152-3-git-send-email-michel.pollet@bp.renesas.com>
+References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com> <1522309629-10152-3-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Mar 2018 10:01:14 +0200
+Message-ID: <CAMuHMdXo4wVD-b+_2WT+JUq6mpDpZoDvqMaLrs0yyjfe=Af4Dg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/8] DT: reset: renesas,rzn1-reboot: document RZ/N1
+ reboot driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 52/69] arm64: dts: renesas: r8a77965: Add INTC-EX device node
-Date: Fri, 16 Mar 2018 15:51:22 +0100
-Message-Id: <ba03b432f56e29a8ee639d9e9787da283b2ed09c.1521206129.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1521206129.git.horms+renesas@verge.net.au>
-References: <cover.1521206129.git.horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Michel,
 
-Populate the device node for the Interrupt Controller for External
-Devices (INTC-EX) on R-Car M3-N, which serves external IRQ pins
-IRQ[0-5].
+On Thu, Mar 29, 2018 at 9:46 AM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
+> as part of the sysctrl MFD to handle rebooting the CA7 cores.
+> This documents the driver bindings.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Thanks for your patch!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index c1ecc1b8385f..b9aa0e7eaabf 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -320,10 +320,19 @@
- 		};
- 
- 		intc_ex: interrupt-controller@e61c0000 {
-+			compatible = "renesas,intc-ex-r8a77965", "renesas,irqc";
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			reg = <0 0xe61c0000 0 0x200>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 407>;
- 		};
- 
- 		dmac0: dma-controller@e6700000 {
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+> @@ -0,0 +1,20 @@
+> +DT bindings for the Renesas RZ/N1 Reboot Driver
+> +
+> +== Reboot Driver Node ==
+> +
+> +The reboot driver is always a subnode of the system controller node, see
+> +renesas,rzn1-sysctrl.txt for details.
+> +
+> +Bindings:
+> ++ Required:
+> +       compatible = "renesas,rzn1-reboot";
+
+You should list the supported SoC-specific compatible values here.
+
+Quoting what I said on IRC:
+1) DT bindings. These should list all compatible values possible/used.
+2) DTS: These should list all applicable compatible values,
+                from most-specific to least-specific (SoC-specific,
+                family-specific (if exists), generic (if exists))
+3 Driver: These should list only the least specific that is
+                sufficient to get the job done. So usually we have the
+                family-specific only, except if an SoC needs to be handled
+                specially, or for historical reasons (DTB backeards
+                compatibility)
+
+> +
+> +Example:
+> +       sysctrl: sysctrl@4000c000 {
+> +               compatible = "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
+
+Missing SoC-specific compatible value.
+
+> +               reg = <0x4000c000 0x1000>;
+> +
+> +               reboot {
+> +                       compatible = "renesas,rzn1-reboot";
+
+Missing SoC-specific compatible value.
+
+> +               };
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
