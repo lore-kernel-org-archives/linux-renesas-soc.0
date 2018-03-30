@@ -1,47 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:44572 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750716AbeC2KUs (ORCPT
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39347 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751284AbeC3JZq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Mar 2018 06:20:48 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        Fri, 30 Mar 2018 05:25:46 -0400
+MIME-Version: 1.0
+In-Reply-To: <1522379583-4503-2-git-send-email-ykaneko0929@gmail.com>
+References: <1522379583-4503-1-git-send-email-ykaneko0929@gmail.com> <1522379583-4503-2-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Mar 2018 11:25:44 +0200
+Message-ID: <CAMuHMdX7t9eZQ+3rhzZBKBjETqC7EUgZ4D+dxwhrwiMxvF3Wdw@mail.gmail.com>
+Subject: Re: [PATCH/RFT v2 1/3] thermal: rcar_thermal: add r8a77995 support
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a77470 support
-Date: Thu, 29 Mar 2018 11:17:08 +0100
-Message-Id: <1522318628-52821-1-git-send-email-biju.das@bp.renesas.com>
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas RZ/G SoC have the R-Car gen2 compatible IRQC interrupt
-controllers. Document RZ/G1C (also known as R8A77470) SoC bindings.
+Hi Kaneko-san,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, Mar 30, 2018 at 5:13 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> Add support for R-Car D3 (r8a77995) thermal sensor.
+>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-index 20f121d..1d5891a 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-@@ -7,6 +7,7 @@ Required properties:
-     - "renesas,irqc-r8a73a4" (R-Mobile APE6)
-     - "renesas,irqc-r8a7743" (RZ/G1M)
-     - "renesas,irqc-r8a7745" (RZ/G1E)
-+    - "renesas,irqc-r8a77470" (RZ/G1C)
-     - "renesas,irqc-r8a7790" (R-Car H2)
-     - "renesas,irqc-r8a7791" (R-Car M2-W)
-     - "renesas,irqc-r8a7792" (R-Car V2H)
+Thanks for your patch!
+
+> --- a/drivers/thermal/rcar_thermal.c
+> +++ b/drivers/thermal/rcar_thermal.c
+> @@ -58,10 +58,35 @@ struct rcar_thermal_common {
+>         spinlock_t lock;
+>  };
+>
+> +enum rcar_thermal_type {
+> +       RCAR_THERMAL,
+> +       RCAR_GEN2_THERMAL,
+> +       RCAR_GEN3_THERMAL,
+> +};
+> +
+> +struct rcar_thermal_chip {
+> +       int use_of_thermal;
+
+This can be a single bit:
+
+    unsigned int use_of_thermal : 1;
+
+> +       enum rcar_thermal_type type;
+
+If you would add feature bits, you can get rid of rcar_thermal_type:
+
+    unsigned int has_filonoff : 1;
+    unsigned int has_enr : 1;
+    unsigned int needs_suspend_resume : 1;
+
+The number of interrupts can be stored here, too.
+
+> +};
+> +
+> +static const struct rcar_thermal_chip rcar_thermal = {
+> +       .use_of_thermal = 0,
+> +       .type = RCAR_THERMAL,
+
+.has_filonoff = 1,
+.has_enr = 0,
+...
+.nirqs = 1,
+
+> @@ -190,7 +222,8 @@ static int rcar_thermal_update_temp(struct rcar_thermal_priv *priv)
+>          * enable IRQ
+>          */
+>         if (rcar_has_irq_support(priv)) {
+> -               rcar_thermal_write(priv, FILONOFF, 0);
+> +               if (priv->chip->type != RCAR_GEN3_THERMAL)
+
+if (priv->chip->has_filonoff)
+
+> @@ -438,6 +471,9 @@ static int rcar_thermal_probe(struct platform_device *pdev)
+>         struct rcar_thermal_priv *priv;
+>         struct device *dev = &pdev->dev;
+>         struct resource *res, *irq;
+> +       struct rcar_thermal_chip *chip = ((struct rcar_thermal_chip *)
+
+I don't think the cast is needed.
+
+> @@ -457,19 +493,35 @@ static int rcar_thermal_probe(struct platform_device *pdev)
+>         pm_runtime_enable(dev);
+>         pm_runtime_get_sync(dev);
+>
+> -       irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> -       if (irq) {
+> -               /*
+> -                * platform has IRQ support.
+> -                * Then, driver uses common registers
+> -                * rcar_has_irq_support() will be enabled
+> -                */
+> -               res = platform_get_resource(pdev, IORESOURCE_MEM, mres++);
+> -               common->base = devm_ioremap_resource(dev, res);
+> -               if (IS_ERR(common->base))
+> -                       return PTR_ERR(common->base);
+> +       for (i = 0; i < nirq; i++) {
+
+for (i = 0; i < priv->nirqs; i++) {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
