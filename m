@@ -1,39 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46268 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162122AbeCAVvo (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39050 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751271AbeCaV2X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:51:44 -0500
-Date: Thu, 1 Mar 2018 15:51:42 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 15/19] dt-bindings: gpio: Add support for r8a77965
-Message-ID: <20180301215142.fr3s5ycsuoq7jvbb@rob-hp-laptop>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519139541-18783-16-git-send-email-jacopo+renesas@jmondi.org>
+        Sat, 31 Mar 2018 17:28:23 -0400
+Received: by mail-lf0-f66.google.com with SMTP id p142-v6so16362816lfd.6
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 31 Mar 2018 14:28:23 -0700 (PDT)
+Subject: Re: [PATCH net-next 1/2] sh_eth: add sh_eth_cpu_data::no_xdfar flag
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
+References: <998029b4-9400-ebc3-51c1-623c3f72b6cc@cogentembedded.com>
+ <233e32d1-947b-2377-3d1f-39d5d83bd3f7@cogentembedded.com>
+Message-ID: <f2d1b237-fa73-0aab-ef2e-e7cccdfa89f7@cogentembedded.com>
+Date: Sun, 1 Apr 2018 00:28:20 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519139541-18783-16-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <233e32d1-947b-2377-3d1f-39d5d83bd3f7@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 04:12:17PM +0100, Jacopo Mondi wrote:
-> Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> ---
-> v1 -> v2:
-> - Drop SoC-specific compatible string from drivers/gpio/gpio-rcar.c
-> - Change patch subject to reflect it only changes dt bindings
-> ---
->  Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
->  1 file changed, 1 insertion(+)
+On 04/01/2018 12:22 AM, Sergei Shtylyov wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> The commit 6ded286555c2 ("sh_eth: Fix RX recovery on R-Car in case of RX
+> ring underrun") added a check for an bad RDFAR offset in sh_eth_rx(), so
+> that the code could work on the R-Car Ether controllers which don't have
+> this register (and TDFAR), then the commit 3365711df02 ("sh_eth: WARN on
+
+   Oops, only 11 digits! Should have been 3365711df024. :-)
+
+> access to a register not implemented in a particular chip") replaced
+> offset 0 with 0xffff. Adding/checking the 'no_xdfar' bit field in the
+> 'struct sh_eth_cpu_data' instead results in less object code...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+[...]
+
+MBR, Sergei
