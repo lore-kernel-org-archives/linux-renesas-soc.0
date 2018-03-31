@@ -1,51 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:35004 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1031915AbeCAPo2 (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43362 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751271AbeCaVXy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:44:28 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Wim Van Sebroeck <wim@iguana.be>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 0/3] Add Gen2 support to rwdt driver
-Date: Thu,  1 Mar 2018 15:44:05 +0000
-Message-Id: <1519919048-21884-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Sat, 31 Mar 2018 17:23:54 -0400
+Received: by mail-lf0-f66.google.com with SMTP id v207-v6so16343181lfa.10
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 31 Mar 2018 14:23:54 -0700 (PDT)
+Subject: [PATCH net-next 2/2] sh_eth: kill useless check in
+ __sh_eth_get_regs()
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
+References: <998029b4-9400-ebc3-51c1-623c3f72b6cc@cogentembedded.com>
+Message-ID: <47af0c2c-bba9-a346-1925-06c99142cbb2@cogentembedded.com>
+Date: Sun, 1 Apr 2018 00:23:51 +0300
+MIME-Version: 1.0
+In-Reply-To: <998029b4-9400-ebc3-51c1-623c3f72b6cc@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Iff TSU registers exist on a given [G]Ether controller, they always include
+the CAM entry table registers (TSU_ADR{H|L}<n>), thus the check for invalid
+TSU_ADRH0 offset in __sh_eth_get_regs() is useless...
 
-Dear All,
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-the changes from this series originally come from another series:
-"Fix watchdog on Renesas R-Car Gen2 and RZ/G1"
-However, the watchdog driver related changes are the only changes
-still under open discussion, that's why I am moving on with a
-smaller series now.
+---
+ drivers/net/ethernet/renesas/sh_eth.c |   23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
-Geert highlighted problems on R-Car Gen3, and he also preferred
-splitting commit "watchdog: renesas_wdt: Add R-Car Gen2 support"
-into two commits, one for adding suspend/resume support, and
-another one for adding the R-Car Gen2 compatible string.
-This version of the series tackles those two open points.
-
-Thanks,
-
-Fabrizio Castro (3):
-  watchdog: renesas_wdt: Add suspend/resume support
-  watchdog: renesas_wdt: Add R-Car Gen2 support
-  watchdog: renesas_wdt: Add restart handler
-
- drivers/watchdog/renesas_wdt.c | 52 ++++++++++++++++++++++++++++++++++++------
- 1 file changed, 45 insertions(+), 7 deletions(-)
-
--- 
-2.7.4
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net-next/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2153,22 +2153,17 @@ static size_t __sh_eth_get_regs(struct n
+ 		add_tsu_reg(TSU_POST2);
+ 		add_tsu_reg(TSU_POST3);
+ 		add_tsu_reg(TSU_POST4);
+-		if (mdp->reg_offset[TSU_ADRH0] != SH_ETH_OFFSET_INVALID) {
+-			/* This is the start of a table, not just a single
+-			 * register.
+-			 */
+-			if (buf) {
+-				unsigned int i;
++		/* This is the start of a table, not just a single register. */
++		if (buf) {
++			unsigned int i;
+ 
+-				mark_reg_valid(TSU_ADRH0);
+-				for (i = 0; i < SH_ETH_TSU_CAM_ENTRIES * 2; i++)
+-					*buf++ = ioread32(
+-						mdp->tsu_addr +
+-						mdp->reg_offset[TSU_ADRH0] +
+-						i * 4);
+-			}
+-			len += SH_ETH_TSU_CAM_ENTRIES * 2;
++			mark_reg_valid(TSU_ADRH0);
++			for (i = 0; i < SH_ETH_TSU_CAM_ENTRIES * 2; i++)
++				*buf++ = ioread32(mdp->tsu_addr +
++						  mdp->reg_offset[TSU_ADRH0] +
++						  i * 4);
+ 		}
++		len += SH_ETH_TSU_CAM_ENTRIES * 2;
+ 	}
+ 
+ #undef mark_reg_valid
