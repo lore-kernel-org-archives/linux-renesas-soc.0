@@ -1,102 +1,79 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        vladimir_zapolskiy@mentor.com, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 1/2] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-Date: Fri,  6 Apr 2018 14:41:56 +0200
-Message-Id: <1523018517-24121-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1523018517-24121-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523018517-24121-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34195 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755300AbeDCLtU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:49:20 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <TY1PR01MB1770B77B715CF949AC551EE9C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+ <1522344790-20061-5-git-send-email-geert+renesas@glider.be> <TY1PR01MB1770B77B715CF949AC551EE9C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 3 Apr 2018 13:49:19 +0200
+Message-ID: <CAMuHMdWSVh5EKwivGth=C=YkXObg_N8wNZ0VTBWgZ3k8Dmtveg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+Hi Fabrizio,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- .../bindings/display/bridge/thine,thc63lvd1024.txt | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+On Tue, Apr 3, 2018 at 12:17 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+>> Subject: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
+>>
+>> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+>> the LB clock divider depends on the value of the MD18 pin.
+>>
+>> On R-Car V2H, the LB clock divider is fixed to 24.  Hence model the
+>> clock as a fixed factor clock instead.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>>  drivers/clk/renesas/r8a7792-cpg-mssr.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/renesas/r8a7792-cpg-mssr.c b/drivers/clk/renesas/r8a7792-cpg-mssr.c
+>> index 609a540804965c40..8b66e6f4b4584de1 100644
+>> --- a/drivers/clk/renesas/r8a7792-cpg-mssr.c
+>> +++ b/drivers/clk/renesas/r8a7792-cpg-mssr.c
+>> @@ -53,7 +53,6 @@ static const struct cpg_core_clk r8a7792_core_clks[] __initconst = {
+>>  DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
+>>
+>>  /* Core Clock Outputs */
+>> -DEF_BASE("lb",   R8A7792_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
+>>  DEF_BASE("qspi", R8A7792_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
+>>
+>>  DEF_FIXED("z",      R8A7792_CLK_Z,     CLK_PLL0,          1, 1),
+>> @@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7792_core_clks[] __initconst = {
+>>  DEF_FIXED("hp",     R8A7792_CLK_HP,    CLK_PLL1,         12, 1),
+>>  DEF_FIXED("i",      R8A7792_CLK_I,     CLK_PLL1,          3, 1),
+>>  DEF_FIXED("b",      R8A7792_CLK_B,     CLK_PLL1,         12, 1),
+>> +DEF_FIXED("lb",     R8A7792_CLK_B,     CLK_PLL1,         24, 1),
+>
+> s/ R8A7792_CLK_B/ R8A7792_CLK_LB/
+>
+> With that fixed:
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-new file mode 100644
-index 0000000..1191f17
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-@@ -0,0 +1,60 @@
-+Thine Electronics THC63LVD1024 LVDS decoder
-+-------------------------------------------
-+
-+The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
-+to parallel data outputs. The chip supports single/dual input/output modes,
-+handling up to two two input LVDS stream and up to two digital CMOS/TTL outputs.
-+
-+Single or dual operation modes, output data mapping and DDR output modes are
-+configured through input signals and the chip does not expose any control bus.
-+
-+Required properties:
-+- compatible: Shall be "thine,thc63lvd1024"
-+
-+Optional properties:
-+- vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS input,
-+  PPL and digital circuitry
-+- powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
-+- enable-gpios: Output enable GPIO signal, pin name "OE". Active high
-+
-+The THC63LVD1024 video port connections are modeled according
-+to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
-+
-+Required video port nodes:
-+- port@0: First LVDS input port
-+- port@2: First digital CMOS/TTL parallel output
-+
-+Optional video port nodes:
-+- port@1: Second LVDS input port
-+- port@3: Second digital CMOS/TTL parallel output
-+
-+Example:
-+--------
-+
-+	thc63lvd1024: lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		vcc-supply = <&reg_lvds_vcc>;
-+		powerdown-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				lvds_dec_in_0: endpoint {
-+					remote-endpoint = <&lvds_out>;
-+				};
-+			};
-+
-+			port@2{
-+				reg = <2>;
-+
-+				lvds_dec_out_2: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
---
-2.7.4
+Thanks, nice catch. Fixing up (also for r8a7794).
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
