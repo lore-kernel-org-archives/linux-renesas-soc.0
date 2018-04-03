@@ -1,147 +1,186 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45301 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbeDHNJq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Apr 2018 09:09:46 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2] PCI: rcar: Clean up the macros
-Date: Sun,  8 Apr 2018 15:09:42 +0200
-Message-Id: <20180408130942.19148-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v13 12/33] rcar-vin: fix handling of single field frames (top, bottom and alternate fields)
+Date: Wed, 04 Apr 2018 00:50:47 +0300
+Message-ID: <2629167.170sX6DQK2@avalon>
+In-Reply-To: <20180326214456.6655-13-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se> <20180326214456.6655-13-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch replaces the (1 << n) with BIT(n) and cleans up whitespace,
-no functional change.
+Hi Niklas,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Reword the commit message
----
- drivers/pci/host/pcie-rcar.c | 52 ++++++++++++++++++++++----------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 25f68305322c..5ab7bf6a8de0 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -30,9 +30,9 @@
- 
- #define PCIECAR			0x000010
- #define PCIECCTLR		0x000018
--#define  CONFIG_SEND_ENABLE	(1 << 31)
-+#define  CONFIG_SEND_ENABLE	BIT(31)
- #define  TYPE0			(0 << 8)
--#define  TYPE1			(1 << 8)
-+#define  TYPE1			BIT(8)
- #define PCIECDR			0x000020
- #define PCIEMSR			0x000028
- #define PCIEINTXR		0x000400
-@@ -44,7 +44,7 @@
- #define PCIETSTR		0x02004
- #define  DATA_LINK_ACTIVE	1
- #define PCIEERRFR		0x02020
--#define  UNSUPPORTED_REQUEST	(1 << 4)
-+#define  UNSUPPORTED_REQUEST	BIT(4)
- #define PCIEMSIFR		0x02044
- #define PCIEMSIALR		0x02048
- #define  MSIFE			1
-@@ -57,17 +57,17 @@
- /* local address reg & mask */
- #define PCIELAR(x)		(0x02200 + ((x) * 0x20))
- #define PCIELAMR(x)		(0x02208 + ((x) * 0x20))
--#define  LAM_PREFETCH		(1 << 3)
--#define  LAM_64BIT		(1 << 2)
--#define  LAR_ENABLE		(1 << 1)
-+#define  LAM_PREFETCH		BIT(3)
-+#define  LAM_64BIT		BIT(2)
-+#define  LAR_ENABLE		BIT(1)
- 
- /* PCIe address reg & mask */
- #define PCIEPALR(x)		(0x03400 + ((x) * 0x20))
- #define PCIEPAUR(x)		(0x03404 + ((x) * 0x20))
- #define PCIEPAMR(x)		(0x03408 + ((x) * 0x20))
- #define PCIEPTCTLR(x)		(0x0340c + ((x) * 0x20))
--#define  PAR_ENABLE		(1 << 31)
--#define  IO_SPACE		(1 << 8)
-+#define  PAR_ENABLE		BIT(31)
-+#define  IO_SPACE		BIT(8)
- 
- /* Configuration */
- #define PCICONF(x)		(0x010000 + ((x) * 0x4))
-@@ -79,23 +79,23 @@
- #define IDSETR1			0x011004
- #define TLCTLR			0x011048
- #define MACSR			0x011054
--#define  SPCHGFIN		(1 << 4)
--#define  SPCHGFAIL		(1 << 6)
--#define  SPCHGSUC		(1 << 7)
-+#define  SPCHGFIN		BIT(4)
-+#define  SPCHGFAIL		BIT(6)
-+#define  SPCHGSUC		BIT(7)
- #define  LINK_SPEED		(0xf << 16)
- #define  LINK_SPEED_2_5GTS	(1 << 16)
- #define  LINK_SPEED_5_0GTS	(2 << 16)
- #define MACCTLR			0x011058
--#define  SPEED_CHANGE		(1 << 24)
--#define  SCRAMBLE_DISABLE	(1 << 27)
-+#define  SPEED_CHANGE		BIT(24)
-+#define  SCRAMBLE_DISABLE	BIT(27)
- #define MACS2R			0x011078
- #define MACCGSPSETR		0x011084
--#define  SPCNGRSN		(1 << 31)
-+#define  SPCNGRSN		BIT(31)
- 
- /* R-Car H1 PHY */
- #define H1_PCIEPHYADRR		0x04000c
--#define  WRITE_CMD		(1 << 16)
--#define  PHY_ACK		(1 << 24)
-+#define  WRITE_CMD		BIT(16)
-+#define  PHY_ACK		BIT(24)
- #define  RATE_POS		12
- #define  LANE_POS		8
- #define  ADR_POS		0
-@@ -107,19 +107,19 @@
- #define GEN2_PCIEPHYDATA	0x784
- #define GEN2_PCIEPHYCTRL	0x78c
- 
--#define INT_PCI_MSI_NR	32
-+#define INT_PCI_MSI_NR		32
- 
--#define RCONF(x)	(PCICONF(0)+(x))
--#define RPMCAP(x)	(PMCAP(0)+(x))
--#define REXPCAP(x)	(EXPCAP(0)+(x))
--#define RVCCAP(x)	(VCCAP(0)+(x))
-+#define RCONF(x)		(PCICONF(0) + (x))
-+#define RPMCAP(x)		(PMCAP(0) + (x))
-+#define REXPCAP(x)		(EXPCAP(0) + (x))
-+#define RVCCAP(x)		(VCCAP(0) + (x))
- 
--#define  PCIE_CONF_BUS(b)	(((b) & 0xff) << 24)
--#define  PCIE_CONF_DEV(d)	(((d) & 0x1f) << 19)
--#define  PCIE_CONF_FUNC(f)	(((f) & 0x7) << 16)
-+#define PCIE_CONF_BUS(b)	(((b) & 0xff) << 24)
-+#define PCIE_CONF_DEV(d)	(((d) & 0x1f) << 19)
-+#define PCIE_CONF_FUNC(f)	(((f) & 0x7) << 16)
- 
--#define RCAR_PCI_MAX_RESOURCES 4
--#define MAX_NR_INBOUND_MAPS 6
-+#define RCAR_PCI_MAX_RESOURCES	4
-+#define MAX_NR_INBOUND_MAPS	6
- 
- struct rcar_msi {
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
--- 
-2.16.2
+On Tuesday, 27 March 2018 00:44:35 EEST Niklas S=F6derlund wrote:
+> There was never proper support in the VIN driver to deliver ALTERNATING
+> field format to user-space, remove this field option. The problem is
+> that ALTERNATING field order requires the sequence numbers of buffers
+> returned to userspace to reflect if fields were dropped or not,
+> something which is not possible with the VIN drivers capture logic.
+>=20
+> The VIN driver can still capture from a video source which delivers
+> frames in ALTERNATING field order, but needs to combine them using the
+> VIN hardware into INTERLACED field order. Before this change if a source
+> was delivering fields using ALTERNATE the driver would default to
+> combining them using this hardware feature. Only if the user explicitly
+> requested ALTERNATE field order would incorrect frames be delivered.
+>=20
+> The height should not be cut in half for the format for TOP or BOTTOM
+> fields settings. This was a mistake and it was made visible by the
+> scaling refactoring. Correct behavior is that the user should request a
+> frame size that fits the half height frame reflected in the field
+> setting. If not the VIN will do its best to scale the top or bottom to
+> the requested format and cropping and scaling do not work as expected.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+>=20
+> ---
+>=20
+> * Changes since v12
+> - Spelling where -> were.
+> - Add review tag from Hans.
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c  | 15 +----------
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 40 +++++++----------------=
+=2D--
+>  2 files changed, 10 insertions(+), 45 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> b/drivers/media/platform/rcar-vin/rcar-dma.c index
+> 4f48575f2008fe34..9233924e5b52de5f 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -617,7 +617,6 @@ static int rvin_setup(struct rvin_dev *vin)
+>  	case V4L2_FIELD_INTERLACED_BT:
+>  		vnmc =3D VNMC_IM_FULL | VNMC_FOC;
+>  		break;
+> -	case V4L2_FIELD_ALTERNATE:
+>  	case V4L2_FIELD_NONE:
+>  		vnmc =3D VNMC_IM_ODD_EVEN;
+>  		progressive =3D true;
+> @@ -745,18 +744,6 @@ static bool rvin_capture_active(struct rvin_dev *vin)
+>  	return rvin_read(vin, VNMS_REG) & VNMS_CA;
+>  }
+>=20
+> -static enum v4l2_field rvin_get_active_field(struct rvin_dev *vin, u32
+> vnms)
+> -{
+> -	if (vin->format.field =3D=3D V4L2_FIELD_ALTERNATE) {
+> -		/* If FS is set it's a Even field */
+> -		if (vnms & VNMS_FS)
+> -			return V4L2_FIELD_BOTTOM;
+> -		return V4L2_FIELD_TOP;
+> -	}
+> -
+> -	return vin->format.field;
+> -}
+> -
+>  static void rvin_set_slot_addr(struct rvin_dev *vin, int slot, dma_addr_t
+> addr) {
+>  	const struct rvin_video_format *fmt;
+> @@ -892,7 +879,7 @@ static irqreturn_t rvin_irq(int irq, void *data)
+>=20
+>  	/* Capture frame */
+>  	if (vin->queue_buf[slot]) {
+> -		vin->queue_buf[slot]->field =3D rvin_get_active_field(vin, vnms);
+> +		vin->queue_buf[slot]->field =3D vin->format.field;
+>  		vin->queue_buf[slot]->sequence =3D vin->sequence;
+>  		vin->queue_buf[slot]->vb2_buf.timestamp =3D ktime_get_ns();
+>  		vb2_buffer_done(&vin->queue_buf[slot]->vb2_buf,
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> 16e895657c3f51c5..e956a385cc13f5f3 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -121,33 +121,6 @@ static int rvin_reset_format(struct rvin_dev *vin)
+>  	vin->format.colorspace	=3D mf->colorspace;
+>  	vin->format.field	=3D mf->field;
+>=20
+> -	/*
+> -	 * If the subdevice uses ALTERNATE field mode and G_STD is
+> -	 * implemented use the VIN HW to combine the two fields to
+> -	 * one INTERLACED frame. The ALTERNATE field mode can still
+> -	 * be requested in S_FMT and be respected, this is just the
+> -	 * default which is applied at probing or when S_STD is called.
+> -	 */
+> -	if (vin->format.field =3D=3D V4L2_FIELD_ALTERNATE &&
+> -	    v4l2_subdev_has_op(vin_to_source(vin), video, g_std))
+> -		vin->format.field =3D V4L2_FIELD_INTERLACED;
+> -
+> -	switch (vin->format.field) {
+> -	case V4L2_FIELD_TOP:
+> -	case V4L2_FIELD_BOTTOM:
+> -	case V4L2_FIELD_ALTERNATE:
+> -		vin->format.height /=3D 2;
+> -		break;
+> -	case V4L2_FIELD_NONE:
+> -	case V4L2_FIELD_INTERLACED_TB:
+> -	case V4L2_FIELD_INTERLACED_BT:
+> -	case V4L2_FIELD_INTERLACED:
+> -		break;
+> -	default:
+> -		vin->format.field =3D RVIN_DEFAULT_FIELD;
+> -		break;
+> -	}
+> -
+>  	rvin_reset_crop_compose(vin);
+>=20
+>  	vin->format.bytesperline =3D rvin_format_bytesperline(&vin->format);
+> @@ -235,15 +208,20 @@ static int __rvin_try_format(struct rvin_dev *vin,
+>  	switch (pix->field) {
+>  	case V4L2_FIELD_TOP:
+>  	case V4L2_FIELD_BOTTOM:
+> -	case V4L2_FIELD_ALTERNATE:
+> -		pix->height /=3D 2;
+> -		source->height /=3D 2;
+> -		break;
+>  	case V4L2_FIELD_NONE:
+>  	case V4L2_FIELD_INTERLACED_TB:
+>  	case V4L2_FIELD_INTERLACED_BT:
+>  	case V4L2_FIELD_INTERLACED:
+>  		break;
+> +	case V4L2_FIELD_ALTERNATE:
+> +		/*
+> +		 * Driver dose not (yet) support outputting ALTERNATE to a
+
+s/dose/does/
+
+Apart from that, I'll overlook the fact that if rvin_reset_format() functio=
+n=20
+is called from S_STD or S_DV_TIMINGS and userspace calls G_FMT immediately=
+=20
+after that, the field will be set to V4L2_FIELD_ALTERNATE (assuming that's=
+=20
+what the sensor produces of course) as noted in my review of v11. As you've=
+=20
+replied there, V4L2_FIELD_ALTERNATE is broken already, and patches further=
+=20
+down this series fix this problem, so
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +		 * userspace. It does support outputting INTERLACED so use
+> +		 * the VIN hardware to combine the two fields.
+> +		 */
+> +		pix->field =3D V4L2_FIELD_INTERLACED;
+> +		pix->height *=3D 2;
+> +		break;
+>  	default:
+>  		pix->field =3D RVIN_DEFAULT_FIELD;
+>  		break;
+
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
