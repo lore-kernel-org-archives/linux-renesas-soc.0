@@ -1,38 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:33498 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755517AbeDTPao (ORCPT
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44190 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932101AbeDCMpA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:30:44 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/4] Add SYS-DMAC, IRQC and SCIF to SoC dtsi
-Date: Fri, 20 Apr 2018 16:27:05 +0100
-Message-Id: <1524238029-55315-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 3 Apr 2018 08:45:00 -0400
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH/RFT v3 3/3] arm64: dts: renesas: r8a77995: add thermal device support
+Date: Tue,  3 Apr 2018 21:43:05 +0900
+Message-Id: <1522759385-17661-4-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1522759385-17661-1-git-send-email-ykaneko0929@gmail.com>
+References: <1522759385-17661-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series add support for SYS-DMAC, External interrupt
-Controller(IRQC) and SCIF wth DMA support to the r8a77470 SoC dtsi
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-This patch series tested against renesas-dev branch 
-tag "renesas-dev-20180420-v4.17-rc1"
-
-Biju Das (4):
-  ARM: dts: r8a77470: Add SYS-DMAC support
-  ARM: dts: r8a77470: Add IRQC support
-  ARM: dts: r8a77470: Add SCIF support
-  ARM: dts: r8a77470: Add SCIF DMA support
-
- arch/arm/boot/dts/r8a77470.dtsi | 173 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 171 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index cff42cd..9a52b41 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -636,5 +636,35 @@
+ 			#phy-cells = <0>;
+ 			status = "disabled";
+ 		};
++
++		thermal: thermal@e6190000 {
++			compatible = "renesas,thermal-r8a77995";
++			reg = <0 0xe6190000 0 0x10>, <0 0xe6190100 0 0x38>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			resets = <&cpg 522>;
++			#thermal-sensor-cells = <0>;
++		};
++	};
++
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&thermal>;
++
++			trips {
++				cpu-crit {
++					temperature = <120000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++			cooling-maps {
++			};
++		};
+ 	};
+ };
 -- 
-2.7.4
+1.9.1
