@@ -1,92 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:43912 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752390AbeDCRIb (ORCPT
+Received: from relay1.mentorg.com ([192.94.38.131]:35975 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751270AbeDCQkn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 13:08:31 -0400
-Date: Tue, 3 Apr 2018 19:08:30 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
+        Tue, 3 Apr 2018 12:40:43 -0400
 Subject: Re: [PATCH] i2c: rcar: initialize earlier using subsys_initcall()
-Message-ID: <20180403170829.iaieac5wk4hkleme@ninjato>
+To: Wolfram Sang <wsa@the-dreams.de>
 References: <1521197932-2073-1-git-send-email-vladimir_zapolskiy@mentor.com>
  <20180403155524.f7bjynyrr2uaxbvb@ninjato>
- <a3d7b5d2-3a1c-7bc6-dc5c-4dc4d658ba40@mentor.com>
+CC: <linux-i2c@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <a3d7b5d2-3a1c-7bc6-dc5c-4dc4d658ba40@mentor.com>
+Date: Tue, 3 Apr 2018 19:40:37 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ltan6phs2qwud2my"
-Content-Disposition: inline
-In-Reply-To: <a3d7b5d2-3a1c-7bc6-dc5c-4dc4d658ba40@mentor.com>
+In-Reply-To: <20180403155524.f7bjynyrr2uaxbvb@ninjato>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---ltan6phs2qwud2my
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04/03/2018 06:55 PM, Wolfram Sang wrote:
+> Hi Vladimir and Eugeniu,
+> 
+>> The purpose of this patch looks pretty similar to:
+>> 104522806a7d ("i2c: designware: dw_i2c_init_driver as subsys initcall")
+>> 74f56c4ad4e4 ("i2c-bfin-twi: move setup to the earlier subsys initcall")
+>> b8680784875b ("i2c-gpio: Move initialization code to subsys_initcall()")
+>> 5d3f33318a6c ("[PATCH] i2c-imx: make bus available early")
+>> ccb3bc16b489 ("i2c-sh_mobile: change module_init() to subsys_initcall()")
+>> 18dc83a6ea48 ("i2c: i2c-s3c2410: Initialise Samsung I2C controller early")
+>> 2514cca06be9 ("[ARM] 5394/1: Add static bus numbering support to i2c-versatile")
+>> 47a9b1379a5e ("i2c-pxa: Initialize early")
+>>
+>> However, the story behind it might be a bit different.
+> 
+> It definately is. The above drivers are very old, from the days where
+> -EPROBE_DEFER was non-existant. They needed subsys_initcall to be able
+> to boot. The reason they still have it is simple: reverting to
+> module_initcall could cause regressions.
+> 
+> This patch is about boot-time. Very different.
+> 
+>> Experimenting with async probing in various rcar-specific drivers (e.g.
+>> rcar-du, vsp1, rcar-fcp, rcar-vin), it was noticed that in most of
+>> the cases enabling async probing in one driver introduced some degree of
+>> inconsistency in the initialization of other builtin drivers.
+> 
+> I have to admit I never played with async probing...
+> 
+>> To give an example, with pure sequential driver initialization, based
+>> on 5 dmesg logs, the builtin kernel initialization deviation is
+>> around +/- 5ms, whereas after enabling async probing in e.g. vsp1
+>> driver, the variance is increased to sometimes +/- 80ms or more.
+> 
+> ... so I can't tell if there is something which can be fixed on the
+> async probe side. I would naively think so.
+> 
+>> This patch fixes it and keeps the startup time consistent after
+>> switching certain i2c-dependent drivers to asynchronous probing on
+>> H3-es20-Salvator-X target.
+> 
+> I am not convinced "fix" is the right word here. Why is it not just a
+> workaround? Are there no other possibilities? I know other solutions are
+> usually complicated, but playing with init levels is fragile and caused
+> circular dependencies in the past, so I really don't like them.
 
+in summary (and according to my understanding, Eugeniu please feel free
+to correct me) the actual product boards have multitude of I2C devices
+connected to the master controller. It requires to read EDID to enable
+video output or init sensors to get video input and so on, and normally
+device drivers of endpoint devices are executed on module_init() level.
 
-> Thus putting an I2C master controller device driver to the same late
-> init level means that due to the concurrency there will be lots of
-> probe defers of endpoint device drivers, and making "heavy" device
-> drivers like rcar-vin to be run in asyncronous probe increases boot
-> time dispersion (rcar-vin is already probed, it's time to probe a
-> sensor, but I2C controller is not yet ready to operate, defer).
+Thus putting an I2C master controller device driver to the same late
+init level means that due to the concurrency there will be lots of
+probe defers of endpoint device drivers, and making "heavy" device
+drivers like rcar-vin to be run in asyncronous probe increases boot
+time dispersion (rcar-vin is already probed, it's time to probe a
+sensor, but I2C controller is not yet ready to operate, defer).
 
-I do understand the problem. Yet, the root casue is that deferred
-probing is only an interim solution not well suited for such cases.
+I don't suppose that the proposed change has any single negative
+side effect, well, right, probe/remove code becomes more awkward,
+but in general the expected effect to boot time improvement should
+cover it, I hope.
 
-> I don't suppose that the proposed change has any single negative
-> side effect, well, right, probe/remove code becomes more awkward,
-> but in general the expected effect to boot time improvement should
-> cover it, I hope.
+>> Another effect seems to be improving the init time of rcar_i2c_driver
+>> itself from ~7ms to ~1ms (assuming CONFIG_I2C_RCAR=y).
+> 
+> That doesn't help the patch much ;), but still interesting because I didn't
+> expect that. Do you have an idea why?
+> 
 
-We once had a discussion where one guy needed subsys_initcall and the
-other one needed module_init because of different use cases. That was
-not great.
-
-I am fully aware some probe ordering solution in Linux is much desired.
-But fine-tuning init levels is a workaround. Even worse, it will
-reduce the pressure for a proper solution. And if we ever get that
-solution, different init levels will likely make the conversion harder.
-
-So, I do understand your customers want such a patch for their use case.
-But I don't think it is a good idea for the upstream kernel.
-
-I'd think this is an out-of-tree patch for now. I'll talk with some
-other people about their view, but I remain very sceptic.
-
-> >> Another effect seems to be improving the init time of rcar_i2c_driver
-> >> itself from ~7ms to ~1ms (assuming CONFIG_I2C_RCAR=3Dy).
-> >=20
-> > That doesn't help the patch much ;), but still interesting because I di=
-dn't
-> > expect that. Do you have an idea why?
-
-Still interested.
-
-
---ltan6phs2qwud2my
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrDtQ0ACgkQFA3kzBSg
-KbYjaw//dGYIGhk0wWCCFxkUgvP53/GVC0qN3bAUrWDUoTc+WAwfrT5e4kkoUHMs
-kqGbJxbfGTJ+AP9T4KF7czt5AxKZ7VmMr4rG5p1nsVcophWcP/Kh3mwzRevu8yqC
-eImw3qQVXIRXIxHc5fwIJEfcgqvN+UkDQt4hsdQBmUQ4AOfFyx6PXH3Qr+X5X1WH
-Wi8iEK+HqJ++qtWzjrTD2KHvxlvCK+2KDEJsNrQ0LGq2c50l3rumSV3TNcco9bTx
-4fS3umiTrd84nLxUhYsy2dKeC0sgxNnxZmKycKnAc5qDGHpnZbk2j/umjtrigv0D
-a3wYQVw16cOypGrJngqgzGB4goXm6yHuakGsQhDaBhmj23iJxzn4DQuwDrwAxK4y
-7Qnc6ZqS7RZGi4MQjXD3uTWl+2d2Il3KKWazaoi7Ft/nZrMX9F/aUUamkBw3QETI
-L6etSiBpt1KLw5/ILhJkfDQ5DtbK86cXGYeVqxdD8DSGDJTWikWIMHT9PH2iQb4V
-2fS9osKEQs2tJ37x146W+2PoUCeMYgjiINprVeEnT3tRlPZPs4wZSmiGoqd6BZM1
-giQl3Lz3ML4UJxAIHpIKp7OsnBw2psJgNXQBsuxxpiqYeyclBb5G1d9GJhnVM3Bb
-Rn8LGWC0J9la7MiKwd35yQLA65VqntmfQvQavQdfqqi3LeeSmyk=
-=yiwT
------END PGP SIGNATURE-----
-
---ltan6phs2qwud2my--
+--
+With best wishes,
+Vladimir
