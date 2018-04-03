@@ -1,76 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755422AbeDZKaN (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:57838 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932087AbeDCLXk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:30:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 3 Apr 2018 07:23:40 -0400
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/10] arm64: dts: renesas: r8a7795: Add address properties to rcar_sound port nodes
-Date: Thu, 26 Apr 2018 12:29:49 +0200
-Message-Id: <20180426102951.8683-9-horms+renesas@verge.net.au>
-In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
-References: <20180426102951.8683-1-horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Borislav Petkov <bp@suse.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: [PATCH v3 0/3] Add r8a77470/iW-RainboW-G23S single board computer support
+Date: Tue,  3 Apr 2018 12:19:36 +0100
+Message-Id: <1522754379-64116-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar_sound port nodes have unit names and thus should have register
-properties.
+Hello, 
 
-This is flagged by dtc as follows:
- # make dtbs W=1
- ...
- DTC     arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@1: node has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@2: node has a unit name, but no reg property
-  ...
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@1: node has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@2: node has a unit name, but no reg property
-  DTC     arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@1: node has a unit name, but no reg property
-arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@2: node has a unit name, but no reg property
+This series adds support for Rensas RZ/G1C (r8a77470) SoC and
+RZ/G1C based iW-RainboW-G23S single board computer.
 
-Prior to this patch the port nodes only defined in board DTS files.
-As the register properties are common this patch defines the port nodes
-and provides register properties in the SoC DTS file.
+The series introduces a cpg-mssr clock/power gating module, a power/reset
+controller for the SoC.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+power areas for RZ/G1C are similar to RZ/G1E.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index b1c52dae4d49..9b080a864ea1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1711,6 +1711,20 @@
- 					dma-names = "rx", "tx", "rxu", "txu";
- 				};
- 			};
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+				port@2 {
-+					reg = <2>;
-+				};
-+			};
- 		};
- 
- 		audma0: dma-controller@ec700000 {
+Few functionalities have currently been enabled in DTS and tested: serial
+boot console.
+
+This patch series tested against renesas-dev branch 
+tag "renesas-dev-20180328-v4.16-rc7
+
+V1-->V2
+	Incorporated geert's review comments.
+V2-->V3
+        Incorporated simon and geert's review comments.
+
+Biju Das (3):
+  serial: sh-sci: Document r8a77470 bindings
+  ARM: dts: r8a77470: Initial SoC device tree
+  ARM: dts: iwg23s-sbc: Add support for iWave G23S-SBC based on RZ/G1C
+
+ .../bindings/serial/renesas,sci-serial.txt         |   2 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  35 +++++
+ arch/arm/boot/dts/r8a77470.dtsi                    | 154 +++++++++++++++++++++
+ 4 files changed, 192 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+ create mode 100644 arch/arm/boot/dts/r8a77470.dtsi
+
 -- 
-2.11.0
+2.7.4
