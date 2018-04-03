@@ -1,109 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:33597 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750954AbeDNMB6 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:27443 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754927AbeDCKOa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:01:58 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 24/33] rcar-vin: prepare for media controller mode initialization
-Date: Sat, 14 Apr 2018 13:57:17 +0200
-Message-Id: <20180414115726.5075-25-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 3 Apr 2018 06:14:30 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH 1/5] clk: renesas: r8a7743: Fix LB clock divider
+Date: Tue, 3 Apr 2018 10:14:25 +0000
+Message-ID: <TY1PR01MB1770350AFC4BA351D2A19B87C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+ <1522344790-20061-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1522344790-20061-2-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Prepare for media controller by calling a different initialization then
-when running in device centric mode. Add trivial configuration of
-the mbus and creation of the media pad for the video device entity.
 
-While we are at it clearly mark the digital device centric notifier
-functions with a comment.
+> Subject: [PATCH 1/5] clk: renesas: r8a7743: Fix LB clock divider
+>
+> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+> the LB clock divider depends on the value of the MD18 pin.
+>
+> On RZ/G1M, the LB clock divider is fixed to 24.  Hence model the clock
+> as a fixed factor clock instead.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 20 ++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  4 ++++
- 2 files changed, 22 insertions(+), 2 deletions(-)
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index c0e0412e2ecd9487..e0a33d372c500ccd 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -46,6 +46,10 @@ static int rvin_find_pad(struct v4l2_subdev *sd, int direction)
- 	return -EINVAL;
- }
- 
-+/* -----------------------------------------------------------------------------
-+ * Digital async notifier
-+ */
-+
- /* The vin lock should be held when calling the subdevice attach and detach */
- static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
- 					 struct v4l2_subdev *subdev)
-@@ -243,6 +247,16 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 	return 0;
- }
- 
-+static int rvin_mc_init(struct rvin_dev *vin)
-+{
-+	/* All our sources are CSI-2 */
-+	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-+	vin->mbus_cfg.flags = 0;
-+
-+	vin->pad.flags = MEDIA_PAD_FL_SINK;
-+	return media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -331,8 +345,10 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	platform_set_drvdata(pdev, vin);
--
--	ret = rvin_digital_graph_init(vin);
-+	if (vin->info->use_mc)
-+		ret = rvin_mc_init(vin);
-+	else
-+		ret = rvin_digital_graph_init(vin);
- 	if (ret < 0)
- 		goto error;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index e5668c1120a67899..5102ad254bff515b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -99,6 +99,8 @@ struct rvin_info {
-  * @notifier:		V4L2 asynchronous subdevs notifier
-  * @digital:		entity in the DT for local digital subdevice
-  *
-+ * @pad:		media pad for the video device entity
-+ *
-  * @lock:		protects @queue
-  * @queue:		vb2 buffers queue
-  * @scratch:		cpu address for scratch buffer
-@@ -131,6 +133,8 @@ struct rvin_dev {
- 	struct v4l2_async_notifier notifier;
- 	struct rvin_graph_entity *digital;
- 
-+	struct media_pad pad;
-+
- 	struct mutex lock;
- 	struct vb2_queue queue;
- 	void *scratch;
--- 
-2.16.2
+> ---
+>  drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/renesas/r8a7743-cpg-mssr.c b/drivers/clk/renesas=
+/r8a7743-cpg-mssr.c
+> index d3c8b1e2969fd305..011c170ec3f95d65 100644
+> --- a/drivers/clk/renesas/r8a7743-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7743-cpg-mssr.c
+> @@ -52,7 +52,6 @@ static const struct cpg_core_clk r8a7743_core_clks[] __=
+initconst =3D {
+>
+>  /* Core Clock Outputs */
+>  DEF_BASE("z",    R8A7743_CLK_Z,    CLK_TYPE_GEN2_Z,CLK_PLL0),
+> -DEF_BASE("lb",   R8A7743_CLK_LB,   CLK_TYPE_GEN2_LB,CLK_PLL1),
+>  DEF_BASE("sdh",  R8A7743_CLK_SDH,  CLK_TYPE_GEN2_SDH,CLK_PLL1),
+>  DEF_BASE("sd0",  R8A7743_CLK_SD0,  CLK_TYPE_GEN2_SD0,CLK_PLL1),
+>  DEF_BASE("qspi", R8A7743_CLK_QSPI, CLK_TYPE_GEN2_QSPI,CLK_PLL1_DIV2),
+> @@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7743_core_clks[] __=
+initconst =3D {
+>  DEF_FIXED("zs",    R8A7743_CLK_ZS,CLK_PLL1,    6, 1),
+>  DEF_FIXED("hp",    R8A7743_CLK_HP,CLK_PLL1,   12, 1),
+>  DEF_FIXED("b",     R8A7743_CLK_B,CLK_PLL1,   12, 1),
+> +DEF_FIXED("lb",    R8A7743_CLK_LB,CLK_PLL1,   24, 1),
+>  DEF_FIXED("p",     R8A7743_CLK_P,CLK_PLL1,   24, 1),
+>  DEF_FIXED("cl",    R8A7743_CLK_CL,CLK_PLL1,   48, 1),
+>  DEF_FIXED("m2",    R8A7743_CLK_M2,CLK_PLL1,    8, 1),
+> --
+> 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
