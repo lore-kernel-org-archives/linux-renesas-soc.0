@@ -1,101 +1,147 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v6 10/11] ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
-Date: Mon, 16 Apr 2018 23:50:31 +0200
-Message-Id: <20180416215032.5023-11-mylene.josserand@bootlin.com>
-In-Reply-To: <20180416215032.5023-1-mylene.josserand@bootlin.com>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42757 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753824AbeDCWLd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 3 Apr 2018 18:11:33 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v13 17/33] rcar-vin: cache video standard
+Date: Wed, 04 Apr 2018 01:11:41 +0300
+Message-ID: <2169799.4QuVgQcVPN@avalon>
+In-Reply-To: <20180326214456.6655-18-niklas.soderlund+renesas@ragnatech.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se> <20180326214456.6655-18-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the use of enable-method property for SMP support which allows
-to handle the SMP support for this specific SoC.
+Hi Niklas,
 
-This commit adds enable-method properties to all CPU nodes.
+Thank you for the patch.
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Tuesday, 27 March 2018 00:44:40 EEST Niklas S=F6derlund wrote:
+> At stream on time the driver should not query the subdevice for which
+> standard are used. Instead it should be cached when userspace sets the
+> standard and used at stream on time.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 42539267e329..c9b60047b0b8 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -67,6 +67,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0>;
- 		};
- 
-@@ -75,6 +76,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <1>;
- 		};
- 
-@@ -83,6 +85,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <2>;
- 		};
- 
-@@ -91,6 +94,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <3>;
- 		};
- 
-@@ -101,6 +105,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x100>;
- 		};
- 
-@@ -109,6 +114,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x101>;
- 		};
- 
-@@ -117,6 +123,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x102>;
- 		};
- 
-@@ -125,6 +132,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x103>;
- 		};
- 	};
--- 
-2.11.0
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c |  6 ++++++
+>  drivers/media/platform/rcar-vin/rcar-dma.c  |  7 ++-----
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
+>  drivers/media/platform/rcar-vin/rcar-vin.h  |  2 ++
+>  4 files changed, 18 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> b/drivers/media/platform/rcar-vin/rcar-core.c index
+> be49d8968f0a0cef..8c251687e81b345b 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -96,6 +96,12 @@ static int rvin_digital_subdevice_attach(struct rvin_d=
+ev
+> *vin, if (ret < 0 && ret !=3D -ENOIOCTLCMD && ret !=3D -ENODEV)
+>  		return ret;
+>=20
+> +	/* Read standard */
+> +	vin->std =3D V4L2_STD_UNKNOWN;
+> +	ret =3D v4l2_subdev_call(subdev, video, g_std, &vin->std);
+> +	if (ret < 0 && ret !=3D -ENOIOCTLCMD)
+> +		return ret;
+> +
+>  	/* Add the controls */
+>  	ret =3D v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
+>  	if (ret < 0)
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> b/drivers/media/platform/rcar-vin/rcar-dma.c index
+> 9233924e5b52de5f..79f4074b931b5aeb 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -592,7 +592,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+>  static int rvin_setup(struct rvin_dev *vin)
+>  {
+>  	u32 vnmc, dmr, dmr2, interrupts;
+> -	v4l2_std_id std;
+>  	bool progressive =3D false, output_is_yuv =3D false, input_is_yuv =3D f=
+alse;
+>=20
+>  	switch (vin->format.field) {
+> @@ -606,10 +605,8 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		/* Default to TB */
+>  		vnmc =3D VNMC_IM_FULL;
+>  		/* Use BT if video standard can be read and is 60 Hz format */
+> -		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+> -			if (std & V4L2_STD_525_60)
+> -				vnmc =3D VNMC_IM_FULL | VNMC_FOC;
+> -		}
+> +		if (vin->std & V4L2_STD_525_60)
+> +			vnmc =3D VNMC_IM_FULL | VNMC_FOC;
+>  		break;
+>  	case V4L2_FIELD_INTERLACED_TB:
+>  		vnmc =3D VNMC_IM_FULL;
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
+> c4be0bcb8b16f941..43370c57d4b6239a 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -477,6 +477,8 @@ static int rvin_s_std(struct file *file, void *priv,
+> v4l2_std_id a) if (ret < 0)
+>  		return ret;
+>=20
+> +	vin->std =3D a;
+> +
+>  	/* Changing the standard will change the width/height */
+>  	return rvin_reset_format(vin);
+>  }
+> @@ -484,9 +486,13 @@ static int rvin_s_std(struct file *file, void *priv,
+> v4l2_std_id a) static int rvin_g_std(struct file *file, void *priv,
+> v4l2_std_id *a) {
+>  	struct rvin_dev *vin =3D video_drvdata(file);
+> -	struct v4l2_subdev *sd =3D vin_to_source(vin);
+>=20
+> -	return v4l2_subdev_call(sd, video, g_std, a);
+> +	if (v4l2_subdev_has_op(vin_to_source(vin), pad, dv_timings_cap))
+> +		return -ENOIOCTLCMD;
+> +
+> +	*a =3D vin->std;
+> +
+> +	return 0;
+>  }
+>=20
+>  static int rvin_subscribe_event(struct v4l2_fh *fh,
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
+> b/drivers/media/platform/rcar-vin/rcar-vin.h index
+> e940366d7e8d0e76..06cec4f8e5ffaf2b 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -118,6 +118,7 @@ struct rvin_info {
+>   * @crop:		active cropping
+>   * @compose:		active composing
+>   * @source:		active size of the video source
+> + * @std:		active video standard of the video source
+>   */
+>  struct rvin_dev {
+>  	struct device *dev;
+> @@ -146,6 +147,7 @@ struct rvin_dev {
+>  	struct v4l2_rect crop;
+>  	struct v4l2_rect compose;
+>  	struct v4l2_rect source;
+> +	v4l2_std_id std;
+>  };
+>=20
+>  #define vin_to_source(vin)		((vin)->digital->subdev)
+
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
