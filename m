@@ -1,59 +1,53 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 02/15] v4l: vsp1: Remove unused field from vsp1_drm_pipeline structure
-Date: Thu,  5 Apr 2018 12:18:27 +0300
-Message-Id: <20180405091840.30728-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from m176117.mail.qiye.163.com ([59.111.176.117]:12930 "EHLO
+        m176117.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751223AbeDCOt5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 3 Apr 2018 10:49:57 -0400
+Received: from ykcwsv (unknown [113.81.15.130])
+        by m176117.mail.qiye.163.com (HMail) with ESMTPA id 73A667818FC
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  3 Apr 2018 22:42:12 +0800 (CST)
+Reply-To: <admin@plcsupplier.net>
+Message-ID: <20180403224215350068@plcsupplier.net>
+From: "SIMATIC" <henry@plcsupplier.net>
+To: <linux-renesas-soc@vger.kernel.org>
+Subject: RE:Siemens touch panel                                     linux-renesas-soc                                                       xzzhzwytzjenp7nsfssx
+Date: Tue, 3 Apr 2018 22:42:04 +0800
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: base64
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vsp1_drm_pipeline enabled field is set but never used. Remove it.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drm.c | 4 ----
- drivers/media/platform/vsp1/vsp1_drm.h | 2 --
- 2 files changed, 6 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index a1f2ba044092..a267f12f0cc8 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -273,10 +273,6 @@ EXPORT_SYMBOL_GPL(vsp1_du_setup_lif);
-  */
- void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index)
- {
--	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
--	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
--
--	drm_pipe->enabled = drm_pipe->pipe.num_inputs != 0;
- }
- EXPORT_SYMBOL_GPL(vsp1_du_atomic_begin);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
-index 1cd9db785bf7..9aa19325cbe9 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.h
-+++ b/drivers/media/platform/vsp1/vsp1_drm.h
-@@ -20,13 +20,11 @@
- /**
-  * vsp1_drm_pipeline - State for the API exposed to the DRM driver
-  * @pipe: the VSP1 pipeline used for display
-- * @enabled: pipeline state at the beginning of an update
-  * @du_complete: frame completion callback for the DU driver (optional)
-  * @du_private: data to be passed to the du_complete callback
-  */
- struct vsp1_drm_pipeline {
- 	struct vsp1_pipeline pipe;
--	bool enabled;
- 
- 	/* Frame synchronisation */
- 	void (*du_complete)(void *, bool);
--- 
-Regards,
-
-Laurent Pinchart
+RGVhciBTaXIvTWFkYW3vvJrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgDQrCoMKgwqDCoMKgDQpI
+b3cgYXJlIHlvdSB0b2RheT8gVGhpcyBpcyBDaHJpcyBmcm9tIEtlcm5hbCBBdXRvbWF0aW9uIGNv
+bXBhbnksIHNlbmRpbmcgdGhlIGJlc3Qgd2lzaCB0byB5b3UgYW5kIHdpc2hpbmcgeW91IGFsbCB0
+aGUgYmVzdC4gDQpXZSBhcmUgYSBwcm9mZXNzaW9uYWwgaW5kdXN0cnkgY29udHJvbGxlciByZWxh
+dGVkIGNvbXBhbnkgZnJvbSBIdWl6aG91IENoaW5hLCByZXNlbGxpbmcgd2VsbCBrbm93biBicmFu
+ZCBvcmlnaW5hbCBQTEMsIEhNSSwgSW52ZXJ0ZXIsIFNlcnZvLCBTZW5zb3IgYW5kIGV0Yywgc3Vj
+aCBhc1NpZW1lbnMsTWl0c3ViaXNoaSxPbXJvbixLb3lvLEFsbGVuLUJyYWRsZXksUHJvZmFjZSxX
+ZWludmlldyBhbmQgZXRjLg0KSGVyZSBhcmUgc29tZSBob3Qtc2FsZSBpdGVtcyBmb3IgeW91ciBy
+ZWZlcmVuY2U6DQpTZXJpZXMJTW9kZWwJRGVzY3JpcHRpb24JTmV3IFByaWNlKCQpDQpTSU1BVElD
+IEhNSSBCYXNpYyBQYW5lbHMNCigybmQgR2VuZXJhdGlvbikJNkFWMjEyMy0yREIwMy0wQVgwCUtU
+UDQwMCBCQVNJQywgS0VZIEFORCBUT1VDSCBPUEVSQVRJT04sIDQiIAkkMTY5LjM1DQoJNkFWMjEy
+My0yR0EwMy0wQVgwCUtUUDcwMCBCQVNJQyBEUCwgS0VZIEFORCBUT1VDSCBPUEVSQVRJT04sIDci
+CSQzNjAuMTYNCgk2QVYyMTIzLTJHQjAzLTBBWDAJS1RQNzAwIEJBU0lDLCBLRVkgQU5EIFRPVUNI
+IE9QRVJBVElPTiwgNyIJJDM2MC4xNg0KCTZBVjIxMjMtMkpCMDMtMEFYMAlLVFA5MDAgQkFTSUMs
+IEtFWSBBTkQgVE9VQ0ggT1BFUkFUSU9OLCA5IgkkNTU4Ljg3DQoJNkFWMjEyMy0yTUEwMy0wQVgw
+CUtUUDEyMDAgQkFTSUMgRFAsIEtFWSBBTkQgVE9VQ0ggT1BFUkFUSU9OLCAxMiIJJDcxOC41NQ0K
+CTZBVjIxMjMtMk1CMDMtMEFYMAlLVFAxMjAwIEJBU0lDLCBLRVkgQU5EIFRPVUNIIE9QRVJBVElP
+TiwgMTIiIAkkNzE4LjU1DQpTaWVtZW5zIENvbWZvcnQgUGFuZWwJNkFWMjEyNC0yREMwMS0wQVgw
+IAlLVFA0MDAgQ09NRk9SVCxUT1VDSCBBTkQgS0VZIE9QRVJBVElPTiw0IgkkMzkwLjMyDQoJNkFW
+MjEyNC0xREMwMS0wQVgwCUtQNDAwIENPTUZPUlQsS0VZIE9QRVJBVElPTiw0IgkkMzkwLjMyDQoJ
+NkFWMjEyNC0wR0MwMS0wQVgwCVRQNzAwIENPTUZPUlQsVE9VQ0ggT1BFUkFUSU9OLDciCSQ2MzEu
+NjENCgk2QVYyMTI0LTFHQzAxLTBBWDAJS1A3MDAgQ09NRk9SVCxLRVkgT1BFUkFUSU9OLDciCSQ3
+NDUuMTYNCgk2QVYyMTI0LTBKQzAxLTBBWDAJVFA5MDAgQ09NRk9SVCxUT1VDSCBPUEVSQVRJT04s
+OSIJJDEsMzQ4LjM5DQoJNkFWMjEyNC0xSkMwMS0wQVgwCUtQOTAwIENPTUZPUlQsS0VZIE9QRVJB
+VElPTiw5IiAJJDEsNTA4LjA2DQoJNkFWMjEyNC0wTUMwMS0wQVgwCVRQMTIwMCBDT01GT1JULFRP
+VUNIIE9QRVJBVElPTiwxMiIJJDEsNTc5LjAzDQoJNkFWMjEyNC0xTUMwMS0wQVgwCUtQMTIwMCBD
+T01GT1JULEtFWSBPUEVSQVRJT04sMTIiCSQxLDY1MC4wMA0KCTZBVjIxMjQtMFFDMDItMEFYMAlU
+UDE1MDAgQ09NRk9SVCxUT1VDSCBPUEVSQVRJT04sMTUiCSQyLDY2MS4yOQ0KDQpUaGFua3MgZm9y
+IHZpZXdpbmchIA0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoN
+Cg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0K
+DQoNCg0KDQoNCg0KDQoNCg0K
