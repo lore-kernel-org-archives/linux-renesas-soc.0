@@ -1,17 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:46794 "EHLO
+Received: from smtp1.de.adit-jv.com ([62.225.105.245]:46768 "EHLO
         smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751994AbeDDV10 (ORCPT
+        with ESMTP id S1751749AbeDDVUc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Apr 2018 17:27:26 -0400
-Date: Wed, 4 Apr 2018 23:27:18 +0200
+        Wed, 4 Apr 2018 17:20:32 -0400
+Date: Wed, 4 Apr 2018 23:20:18 +0200
 From: Eugeniu Rosca <erosca@de.adit-jv.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        <linux-i2c@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+CC: <linux-i2c@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
         Eugeniu Rosca <erosca@de.adit-jv.com>
 Subject: Re: [PATCH] i2c: rcar: initialize earlier using subsys_initcall()
-Message-ID: <20180404212718.GB29865@vmlxhi-102.adit-jv.com>
+Message-ID: <20180404212018.GA29865@vmlxhi-102.adit-jv.com>
 References: <1521197932-2073-1-git-send-email-vladimir_zapolskiy@mentor.com>
  <20180403155524.f7bjynyrr2uaxbvb@ninjato>
  <a3d7b5d2-3a1c-7bc6-dc5c-4dc4d658ba40@mentor.com>
@@ -20,10 +18,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 In-Reply-To: <20180403170829.iaieac5wk4hkleme@ninjato>
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
-
-[re-sending due to lost To: field]
 
 Hello Wolfram, Vladimir,
 
