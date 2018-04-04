@@ -1,142 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54331 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751414AbeDEJSl (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36410 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751419AbeDDMqf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:18:41 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 07/15] v4l: vsp1: Setup BRU at atomic commit time
-Date: Thu,  5 Apr 2018 12:18:32 +0300
-Message-Id: <20180405091840.30728-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 4 Apr 2018 08:46:35 -0400
+Received: by mail-io0-f193.google.com with SMTP id o4so26201068iod.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Apr 2018 05:46:35 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180403215703.12110-1-wsa@the-dreams.de>
+References: <20180403215703.12110-1-wsa@the-dreams.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 4 Apr 2018 14:46:34 +0200
+Message-ID: <CAPDyKFoYz3Gqh2jBkYAx_D0eSjfFacRHmMCGyKBxP6W=zMcatA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tmio: Fix error handling when issuing CMD23
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To implement fully dynamic plane assignment to pipelines, we need to
-reassign the BRU and BRS to the DRM pipelines in the atomic commit
-handler. In preparation for this setup factor out the BRU source pad
-code and call it both at LIF setup and atomic commit time.
+On 3 April 2018 at 23:57, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+>
+> If an error was detected when CMD23 was issued, command sequence should
+> be terminated with errors and CMD23 should be issued after retuning.
+>
+> Fixes: 8b22c3c18be5 ("mmc: tmio: add CMD23 support")
+> Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drm.c | 56 +++++++++++++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_drm.h |  5 +++
- 2 files changed, 60 insertions(+), 1 deletion(-)
+Applied for fixes, thanks!
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 7bf697ba7969..6ad8aa6c8138 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -148,12 +148,51 @@ static int vsp1_du_pipeline_setup_rpf(struct vsp1_device *vsp1,
- 	return 0;
- }
- 
-+/* Setup the BRU source pad. */
-+static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
-+				      struct vsp1_pipeline *pipe)
-+{
-+	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
-+	struct v4l2_subdev_format format = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	int ret;
-+
-+	/*
-+	 * Configure the format on the BRU source and verify that it matches the
-+	 * requested format. We don't set the media bus code as it is configured
-+	 * on the BRU sink pad 0 and propagated inside the entity, not on the
-+	 * source pad.
-+	 */
-+	format.pad = pipe->bru->source_pad;
-+	format.format.width = drm_pipe->width;
-+	format.format.height = drm_pipe->height;
-+	format.format.field = V4L2_FIELD_NONE;
-+
-+	ret = v4l2_subdev_call(&pipe->bru->subdev, pad, set_fmt, NULL,
-+			       &format);
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on %s pad %u\n",
-+		__func__, format.format.width, format.format.height,
-+		format.format.code, BRU_NAME(pipe->bru), pipe->bru->source_pad);
-+
-+	if (format.format.width != drm_pipe->width ||
-+	    format.format.height != drm_pipe->height) {
-+		dev_dbg(vsp1->dev, "%s: format mismatch\n", __func__);
-+		return -EPIPE;
-+	}
-+
-+	return 0;
-+}
-+
- static unsigned int rpf_zpos(struct vsp1_device *vsp1, struct vsp1_rwpf *rpf)
- {
- 	return vsp1->drm->inputs[rpf->entity.index].zpos;
- }
- 
--/* Setup the input side of the pipeline (RPFs and BRU sink pads). */
-+/* Setup the input side of the pipeline (RPFs and BRU). */
- static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
- 					struct vsp1_pipeline *pipe)
- {
-@@ -191,6 +230,18 @@ static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
- 		inputs[j] = rpf;
- 	}
- 
-+	/*
-+	 * Setup the BRU. This must be done before setting up the RPF input
-+	 * pipelines as the BRU sink compose rectangles depend on the BRU source
-+	 * format.
-+	 */
-+	ret = vsp1_du_pipeline_setup_bru(vsp1, pipe);
-+	if (ret < 0) {
-+		dev_err(vsp1->dev, "%s: failed to setup %s source\n", __func__,
-+			BRU_NAME(pipe->bru));
-+		return ret;
-+	}
-+
- 	/* Setup the RPF input pipeline for every enabled input. */
- 	for (i = 0; i < pipe->bru->source_pad; ++i) {
- 		struct vsp1_rwpf *rpf = inputs[i];
-@@ -355,6 +406,9 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
- 		return 0;
- 	}
- 
-+	drm_pipe->width = cfg->width;
-+	drm_pipe->height = cfg->height;
-+
- 	dev_dbg(vsp1->dev, "%s: configuring LIF%u with format %ux%u\n",
- 		__func__, pipe_index, cfg->width, cfg->height);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
-index 9aa19325cbe9..c8dd75ba01f6 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.h
-+++ b/drivers/media/platform/vsp1/vsp1_drm.h
-@@ -20,12 +20,17 @@
- /**
-  * vsp1_drm_pipeline - State for the API exposed to the DRM driver
-  * @pipe: the VSP1 pipeline used for display
-+ * @width: output display width
-+ * @height: output display height
-  * @du_complete: frame completion callback for the DU driver (optional)
-  * @du_private: data to be passed to the du_complete callback
-  */
- struct vsp1_drm_pipeline {
- 	struct vsp1_pipeline pipe;
- 
-+	unsigned int width;
-+	unsigned int height;
-+
- 	/* Frame synchronisation */
- 	void (*du_complete)(void *, bool);
- 	void *du_private;
--- 
-Regards,
+Kind regards
+Uffe
 
-Laurent Pinchart
+> ---
+>
+> Ulf: I'd think this is suitable for stable...
+>
+>  drivers/mmc/host/tmio_mmc_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+> index e30df9ad8197..308029930304 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -913,7 +913,7 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+>                 host->check_scc_error(host);
+>
+>         /* If SET_BLOCK_COUNT, continue with main command */
+> -       if (host->mrq) {
+> +       if (host->mrq && !mrq->cmd->error) {
+>                 tmio_process_mrq(host, mrq);
+>                 return;
+>         }
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
