@@ -1,93 +1,145 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f176.google.com ([209.85.220.176]:33116 "EHLO
-        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeDEHd5 (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60468 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751516AbeDDUOB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Apr 2018 03:33:57 -0400
-MIME-Version: 1.0
-In-Reply-To: <2180075.m4Wkig6IL5@avalon>
+        Wed, 4 Apr 2018 16:14:01 -0400
+Date: Wed, 4 Apr 2018 23:13:57 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v13 2/2] rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver
+ driver
+Message-ID: <20180404201357.kx7e4dbqurn5zx2r@valkosipuli.retiisi.org.uk>
 References: <20180212230132.5402-1-niklas.soderlund+renesas@ragnatech.se>
  <20180212230132.5402-3-niklas.soderlund+renesas@ragnatech.se>
- <20180329113039.4v5whquyrtgf5yaa@flea> <2180075.m4Wkig6IL5@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 5 Apr 2018 09:33:55 +0200
-Message-ID: <CAMuHMdXoprxZNP6KuYjcYW5EYjzAAFqNn6orK24pv7k_fO+i4A@mail.gmail.com>
-Subject: Re: [PATCH v13 2/2] rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Fukawa <tomoharu.fukawa.eb@renesas.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <20180329113039.4v5whquyrtgf5yaa@flea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180329113039.4v5whquyrtgf5yaa@flea>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 4, 2018 at 5:26 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Thursday, 29 March 2018 14:30:39 EEST Maxime Ripard wrote:
->> On Tue, Feb 13, 2018 at 12:01:32AM +0100, Niklas S=C3=B6derlund wrote:
->> > +   switch (priv->lanes) {
->> > +   case 1:
->> > +           phycnt =3D PHYCNT_ENABLECLK | PHYCNT_ENABLE_0;
->> > +           break;
->> > +   case 2:
->> > +           phycnt =3D PHYCNT_ENABLECLK | PHYCNT_ENABLE_1 | PHYCNT_ENA=
-BLE_0;
->> > +           break;
->> > +   case 4:
->> > +           phycnt =3D PHYCNT_ENABLECLK | PHYCNT_ENABLE_3 | PHYCNT_ENA=
-BLE_2 |
->> > +                   PHYCNT_ENABLE_1 | PHYCNT_ENABLE_0;
->> > +           break;
->> > +   default:
->> > +           return -EINVAL;
->> > +   }
->>
->> I guess you could have a simpler construct here using this:
->>
->> phycnt =3D PHYCNT_ENABLECLK;
->>
->> switch (priv->lanes) {
->> case 4:
->>       phycnt |=3D PHYCNT_ENABLE_3 | PHYCNT_ENABLE_2;
->> case 2:
->>       phycnt |=3D PHYCNT_ENABLE_1;
->> case 1:
->>       phycnt |=3D PHYCNT_ENABLE_0;
->>       break;
->>
->> default:
->>       return -EINVAL;
->> }
->>
->> But that's really up to you.
->
-> Wouldn't Niklas' version generate simpler code as it uses direct assignme=
-nts ?
+Hi Maxime and Niklas,
 
-Alternatively, you could check for a valid number of lanes, and use knowled=
-ge
-about the internal lane bits:
+On Thu, Mar 29, 2018 at 01:30:39PM +0200, Maxime Ripard wrote:
+> Hi Niklas,
+> 
+> On Tue, Feb 13, 2018 at 12:01:32AM +0100, Niklas S�derlund wrote:
+> > +	switch (priv->lanes) {
+> > +	case 1:
+> > +		phycnt = PHYCNT_ENABLECLK | PHYCNT_ENABLE_0;
+> > +		break;
+> > +	case 2:
+> > +		phycnt = PHYCNT_ENABLECLK | PHYCNT_ENABLE_1 | PHYCNT_ENABLE_0;
+> > +		break;
+> > +	case 4:
+> > +		phycnt = PHYCNT_ENABLECLK | PHYCNT_ENABLE_3 | PHYCNT_ENABLE_2 |
+> > +			PHYCNT_ENABLE_1 | PHYCNT_ENABLE_0;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> 
+> I guess you could have a simpler construct here using this:
+> 
+> phycnt = PHYCNT_ENABLECLK;
+> 
+> switch (priv->lanes) {
+> case 4:
+> 	phycnt |= PHYCNT_ENABLE_3 | PHYCNT_ENABLE_2;
+> case 2:
+> 	phycnt |= PHYCNT_ENABLE_1;
+> case 1:
+> 	phycnt |= PHYCNT_ENABLE_0;
+> 	break;
+> 
+> default:
+> 	return -EINVAL;
+> }
+> 
+> But that's really up to you.
+> 
+> > +static int rcar_csi2_probe(struct platform_device *pdev)
+> > +{
+> > +	const struct soc_device_attribute *attr;
+> > +	struct rcar_csi2 *priv;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv)
+> > +		return -ENOMEM;
+> > +
+> > +	priv->info = of_device_get_match_data(&pdev->dev);
+> > +
+> > +	/* r8a7795 ES1.x behaves different then ES2.0+ but no own compat */
+> > +	attr = soc_device_match(r8a7795es1);
+> > +	if (attr)
+> > +		priv->info = attr->data;
+> > +
+> > +	priv->dev = &pdev->dev;
+> > +
+> > +	mutex_init(&priv->lock);
+> > +	priv->stream_count = 0;
+> > +
+> > +	ret = rcar_csi2_probe_resources(priv, pdev);
+> > +	if (ret) {
+> > +		dev_err(priv->dev, "Failed to get resources\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	platform_set_drvdata(pdev, priv);
+> > +
+> > +	ret = rcar_csi2_parse_dt(priv);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	priv->subdev.owner = THIS_MODULE;
+> > +	priv->subdev.dev = &pdev->dev;
+> > +	v4l2_subdev_init(&priv->subdev, &rcar_csi2_subdev_ops);
+> > +	v4l2_set_subdevdata(&priv->subdev, &pdev->dev);
+> > +	snprintf(priv->subdev.name, V4L2_SUBDEV_NAME_SIZE, "%s %s",
+> > +		 KBUILD_MODNAME, dev_name(&pdev->dev));
+> > +	priv->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+> > +
+> > +	priv->subdev.entity.function = MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER;
+> > +	priv->subdev.entity.ops = &rcar_csi2_entity_ops;
+> > +
+> > +	priv->pads[RCAR_CSI2_SINK].flags = MEDIA_PAD_FL_SINK;
+> > +	for (i = RCAR_CSI2_SOURCE_VC0; i < NR_OF_RCAR_CSI2_PAD; i++)
+> > +		priv->pads[i].flags = MEDIA_PAD_FL_SOURCE;
+> > +
+> > +	ret = media_entity_pads_init(&priv->subdev.entity, NR_OF_RCAR_CSI2_PAD,
+> > +				     priv->pads);
+> > +	if (ret)
+> > +		goto error;
+> > +
+> > +	pm_runtime_enable(&pdev->dev);
+> 
+> Is CONFIG_PM mandatory on Renesas SoCs? If not, you end up with the
+> device uninitialised at probe, and pm_runtime_get_sync will not
+> initialise it either if CONFIG_PM is not enabled. I guess you could
+> call your runtime_resume function unconditionally, and mark the device
+> as active in runtime_pm using pm_runtime_set_active.
 
-    phycnt =3D PHYCNT_ENABLECLK;
-    phycnt |=3D (1 << priv->lanes) - 1;
+There doesn't seem to be any runtime_resume function. Was there supposed
+to be one?
 
-Gr{oetje,eeting}s,
+Assuming runtime PM would actually do something here, you might add
+pm_runtime_idle() to power the device off after probing.
 
-                        Geert
+I guess pm_runtime_set_active() should precede pm_runtime_enable().
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
