@@ -1,68 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:19423 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751888AbeDJIgG (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54335 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751971AbeDEJSq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:36:06 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v4 3/8] dt-bindings: mfd: renesas,rzn1-sysctrl: document RZ/N1 sysctrl node
-Date: Tue, 10 Apr 2018 09:30:03 +0100
-Message-Id: <1523349015-37985-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+        Thu, 5 Apr 2018 05:18:46 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v2 14/15] v4l: vsp1: Add BRx dynamic assignment debugging messages
+Date: Thu,  5 Apr 2018 12:18:39 +0300
+Message-Id: <20180405091840.30728-15-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function
-system controller. This documents the node used to encapsulate
-it's sub drivers.
+Dynamic assignment of the BRU and BRS to pipelines is prone to
+regressions, add messages to make debugging easier. Keep it as a
+separate commit to ease removal of those messages once the code will
+deem to be completely stable.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- .../bindings/mfd/renesas,rzn1-sysctrl.txt          | 23 ++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+ drivers/media/platform/vsp1/vsp1_drm.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
-new file mode 100644
-index 0000000..9897f8f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
-@@ -0,0 +1,23 @@
-+DT bindings for the Renesas RZ/N1 System Controller
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index f82f83b6d4ff..b43d6dc0d5f5 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -190,6 +190,10 @@ static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
+ 
+ 		/* Release our BRU if we have one. */
+ 		if (pipe->bru) {
++			dev_dbg(vsp1->dev, "%s: pipe %u: releasing %s\n",
++				__func__, pipe->lif->index,
++				BRU_NAME(pipe->bru));
 +
-+== System Controller Node ==
+ 			/*
+ 			 * The BRU might be acquired by the other pipeline in
+ 			 * the next step. We must thus remove it from the list
+@@ -219,6 +223,9 @@ static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
+ 		if (bru->pipe) {
+ 			struct vsp1_drm_pipeline *owner_pipe;
+ 
++			dev_dbg(vsp1->dev, "%s: pipe %u: waiting for %s\n",
++				__func__, pipe->lif->index, BRU_NAME(bru));
 +
-+The system controller node currently only hosts a single sub-node to handle
-+the rebooting of the CPU. Eventually it will host the clock driver, SMP
-+start handler, watchdog etc.
+ 			owner_pipe = to_vsp1_drm_pipeline(bru->pipe);
+ 			owner_pipe->force_bru_release = true;
+ 
+@@ -245,6 +252,9 @@ static int vsp1_du_pipeline_setup_bru(struct vsp1_device *vsp1,
+ 				      &pipe->entities);
+ 
+ 		/* Add the BRU to the pipeline. */
++		dev_dbg(vsp1->dev, "%s: pipe %u: acquired %s\n",
++			__func__, pipe->lif->index, BRU_NAME(bru));
 +
-+See renesas,rzn1-reboot.txt for further details.
+ 		pipe->bru = bru;
+ 		pipe->bru->pipe = pipe;
+ 		pipe->bru->sink = &pipe->output->entity;
+@@ -548,6 +558,10 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 		drm_pipe->du_complete = NULL;
+ 		pipe->num_inputs = 0;
+ 
++		dev_dbg(vsp1->dev, "%s: pipe %u: releasing %s\n",
++			__func__, pipe->lif->index,
++			BRU_NAME(pipe->bru));
 +
-+Bindings:
-++ Required:
-+	compatible = "renesas,r9a06g032-sysctrl",
-+			"renesas,rzn1-sysctrl",
-+			"syscon", "simple-mfd";
-+
-+Example:
-+	sysctrl: sysctrl@4000c000 {
-+		compatible = "renesas,r9a06g032-sysctrl",
-+				"renesas,rzn1-sysctrl",
-+				"syscon", "simple-mfd";
-+		reg = <0x4000c000 0x1000>;
-+	};
+ 		list_del(&pipe->bru->list_pipe);
+ 		pipe->bru->pipe = NULL;
+ 		pipe->bru = NULL;
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
