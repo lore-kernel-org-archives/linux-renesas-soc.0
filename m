@@ -1,50 +1,114 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53484 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751635AbeDHSKq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Apr 2018 14:10:46 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 66so7155487wmd.3
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 08 Apr 2018 11:10:45 -0700 (PDT)
-Subject: [PATCH v2 5/5] DT: pci: rcar-pci: document R8A77980 bindings
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Message-ID: <461a6029-1e03-a292-62d2-aca7de274de6@cogentembedded.com>
-Date: Sun, 8 Apr 2018 21:10:43 +0300
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Thu, 5 Apr 2018 23:18:26 +0200
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v13 16/33] rcar-vin: simplify how formats are set and
+ reset
+Message-ID: <20180405211826.GF15406@bigcity.dyn.berto.se>
+References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180326214456.6655-17-niklas.soderlund+renesas@ragnatech.se>
+ <1544952.AcMr2TBica@avalon>
 MIME-Version: 1.0
-In-Reply-To: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544952.AcMr2TBica@avalon>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the R-Car V3H (R8A77980) SoC in the R-Car PCIe bindings.
+Hi Laurent,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thanks for your feedback.
 
----
-Changes in version 2:
-- new patch.
+I have incorporated your suggestions for the next and hopefully last 
+version of this patch-set, a few followups on your review bellow.
 
- Documentation/devicetree/bindings/pci/rcar-pci.txt |    1 +
- 1 file changed, 1 insertion(+)
+On 2018-04-04 01:09:29 +0300, Laurent Pinchart wrote:
+> Hi Niklas,
+> 
+> Thank you for the patch.
+> 
+> On Tuesday, 27 March 2018 00:44:39 EEST Niklas S�derlund wrote:
+> > With the recent cleanup of the format code to prepare for Gen3 it's
+> > possible to simplify the Gen2 format code path as well. Clean up the
+> > process by defining two functions to handle the set format and reset of
+> > format when the standard is changed.
+> > 
+> > While at it replace the driver local struct rvin_source_fmt with a
+> > struct v4l2_rect as all it's used for is keep track of the source
+> > dimensions.
+> 
+> I wonder whether we should introduce v4l2_size (or <insert your preferred name 
+> here>) when all we need is width and height, as v4l2_rect stores the top and 
+> left offsets too. This doesn't have to be fixed here though.
 
-Index: pci/Documentation/devicetree/bindings/pci/rcar-pci.txt
-===================================================================
---- pci.orig/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ pci/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -8,6 +8,7 @@ compatible: "renesas,pcie-r8a7743" for t
- 	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
- 	    "renesas,pcie-r8a7795" for the R8A7795 SoC;
- 	    "renesas,pcie-r8a7796" for the R8A7796 SoC;
-+	    "renesas,pcie-r8a77980" for the R8A77980 SoC;
- 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
- 				     RZ/G1 compatible device.
- 	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
+Yes that would have been useful for this change. I have added this to my 
+ever growing TODO list :-)
+
+[snip]
+
+> 
+> > -	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
+> > -	vin->format.sizeimage = rvin_format_sizeimage(&vin->format);
+> > +	vin->source.top = vin->crop.top = 0;
+> > +	vin->source.left = vin->crop.left = 0;
+> > +	vin->source.width = vin->crop.width = vin->format.width;
+> > +	vin->source.height = vin->crop.height = vin->format.height;
+> 
+> I find multiple assignations on the same line hard to read. How about
+> 
+> 	vin->source.top = 0;
+> 	vin->source.left = 0;
+> 	vin->source.width = vin->format.width;
+> 	vin->source.height = vin->format.height;
+> 
+> 	vin->crop = vin->source;
+> 	vin->compose = vin->source;
+
+This looks much better and I will use it, thanks !
+
+[snip]
+
+> 
+> > +	/*
+> > +	 * If source is ALTERNATE the driver will use the VIN hardware
+> > +	 * to INTERLACE it. The crop height then needs to be doubled.
+> > +	 */
+> > +	if (pix->field == V4L2_FIELD_ALTERNATE)
+> > +		crop->height *= 2;
+> 
+> You're duplicating this logic in rvin_format_align() so it makes me feel that 
+> there's still room for some simplification, but that can be done in a separate 
+> patch (or I could simply be wrong).
+
+I'm sure someone more clever then me can simplify this more. In this 
+particular case rvin_format_align() deals with the video device format 
+while here we deal with the crop rectangle. I will keep this in mind for 
+future work and see if this can be unified in simpler way.
+
+[snip]
+
+> > -	return __rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, 
+> > &f->fmt.pix,
+> > -				 &source);
+> > +	return rvin_try_format(vin, V4L2_SUBDEV_FORMAT_TRY, &f->fmt.pix, &crop,
+> > +			       &compose);
+> 
+> How about making crop and compose optional in rvin_try_format() to avoid a 
+> need for the two local variables here ?
+
+Great suggestion, I have incorporated this for the next version.
+
+> 
+> Apart from these small issues, I think this is a nice simplification,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Thanks!
+
+-- 
+Regards,
+Niklas S�derlund
