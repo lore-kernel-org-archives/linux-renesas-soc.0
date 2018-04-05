@@ -1,55 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:47387 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751940AbeDSJb3 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54335 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751967AbeDEJSo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 05:31:29 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, daniel@ffwll.ch,
-        peda@axentia.se, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] dt-bindings: display: bridge: thc63lvd1024: Add lvds map property
-Date: Thu, 19 Apr 2018 11:31:03 +0200
-Message-Id: <1524130269-32688-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 5 Apr 2018 05:18:44 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v2 12/15] v4l: vsp1: Generalize detection of entity removal from DRM pipeline
+Date: Thu,  5 Apr 2018 12:18:37 +0300
+Message-Id: <20180405091840.30728-13-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The THC63LVD1024 LVDS to RGB bridge supports two different input mapping
-modes, selectable by means of an external pin.
+When disabling a DRM plane, the corresponding RPF is only marked as
+removed from the pipeline in the atomic update handler, with the actual
+removal happening when configuring the pipeline at atomic commit time.
+This is required as the RPF has to be disabled in the hardware, which
+can't be done from the atomic update handler.
 
-Describe the LVDS mode map through a newly defined mandatory property in
-device tree bindings.
+The current implementation is RPF-specific. Make it independent of the
+entity type by using the entity's pipe pointer to mark removal from the
+pipeline. This will allow using the mechanism to remove BRU instances.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- .../devicetree/bindings/display/bridge/thine,thc63lvd1024.txt          | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/platform/vsp1/vsp1_drm.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-index 37f0c04..0937595 100644
---- a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-@@ -12,6 +12,8 @@ Required properties:
- - compatible: Shall be "thine,thc63lvd1024"
- - vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS input,
-   PPL and digital circuitry
-+- thine,map: LVDS mapping mode selection signal, pin name "MAP". Shall be <1>
-+  for mapping mode 1, <0> for mapping mode 2
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 68b126044ea1..a9c53892a9ea 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -346,13 +346,12 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
+ 	dl = vsp1_dl_list_get(pipe->output->dlm);
  
- Optional properties:
- - powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
-@@ -36,6 +38,7 @@ Example:
+ 	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
+-		/* Disconnect unused RPFs from the pipeline. */
+-		if (entity->type == VSP1_ENTITY_RPF &&
+-		    !pipe->inputs[entity->index]) {
++		/* Disconnect unused entities from the pipeline. */
++		if (!entity->pipe) {
+ 			vsp1_dl_list_write(dl, entity->route->reg,
+ 					   VI6_DPR_NODE_UNUSED);
  
- 		vcc-supply = <&reg_lvds_vcc>;
- 		powerdown-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
-+		thine,map = <1>;
+-			entity->pipe = NULL;
++			entity->sink = NULL;
+ 			list_del(&entity->list_pipe);
  
- 		ports {
- 			#address-cells = <1>;
+ 			continue;
+@@ -569,10 +568,11 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 			rpf_index);
+ 
+ 		/*
+-		 * Remove the RPF from the pipe's inputs. The atomic flush
+-		 * handler will disable the input and remove the entity from the
+-		 * pipe's entities list.
++		 * Remove the RPF from the pipeline's inputs. Keep it in the
++		 * pipeline's entity list to let vsp1_du_pipeline_configure()
++		 * remove it from the hardware pipeline.
+ 		 */
++		rpf->entity.pipe = NULL;
+ 		drm_pipe->pipe.inputs[rpf_index] = NULL;
+ 		return 0;
+ 	}
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
