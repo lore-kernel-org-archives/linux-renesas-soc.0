@@ -1,67 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:6310 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752693AbeDJMOO (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54331 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751414AbeDEJSh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:14:14 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] usb: gadget: udc: renesas_usb3: add devm_of_platform_populate()
-Date: Tue, 10 Apr 2018 21:13:54 +0900
-Message-Id: <1523362434-17808-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523362434-17808-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523362434-17808-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 5 Apr 2018 05:18:37 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v2 04/15] v4l: vsp1: Use vsp1_entity.pipe to check if entity belongs to a pipeline
+Date: Thu,  5 Apr 2018 12:18:29 +0300
+Message-Id: <20180405091840.30728-5-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds devm_of_platform_populate() calling to populate
-the rcar-usb3-role-switch driver.
+The DRM pipeline handling code uses the entity's pipe list head to check
+whether the entity is already included in a pipeline. This method is a
+bit fragile in the sense that it uses list_empty() on a list_head that
+is a list member. Replace it by a simpler check for the entity pipe
+pointer.
 
-For now, this renesas_usb3 driver doesn't use any APIs of
-the usb role switch framework because the usb_role_switch_get()
-API depends on the device_connection framework and this framework
-is not good match on device tree environment. However, the select
-USB_ROLE_SWITCH needs to enable the rcar-usb3-role-switch driver.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/usb/gadget/udc/Kconfig        | 1 +
- drivers/usb/gadget/udc/renesas_usb3.c | 6 ++++++
- 2 files changed, 7 insertions(+)
+ drivers/media/platform/vsp1/vsp1_drm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index 0875d38..7e4a5dd 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -193,6 +193,7 @@ config USB_RENESAS_USB3
- 	tristate 'Renesas USB3.0 Peripheral controller'
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	depends on EXTCON && HAS_DMA
-+	select USB_ROLE_SWITCH
- 	help
- 	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
- 	   that supports super, high, and full speed USB 3.0 data transfers.
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 59e1485..fd593b2 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2639,6 +2639,12 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_add_udc;
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index a7ad85ab0b08..e210917fdc3f 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -119,9 +119,9 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 			 * Remove the RPF from the pipe and the list of BRU
+ 			 * inputs.
+ 			 */
+-			WARN_ON(list_empty(&rpf->entity.list_pipe));
++			WARN_ON(!rpf->entity.pipe);
+ 			rpf->entity.pipe = NULL;
+-			list_del_init(&rpf->entity.list_pipe);
++			list_del(&rpf->entity.list_pipe);
+ 			pipe->inputs[i] = NULL;
  
-+	ret = devm_of_platform_populate(&pdev->dev);
-+	if (ret < 0)
-+		goto err_dev_create;
-+
-+	/* TODO: Get role switch and use usb_role_switch_{set,get}_role APIs */
-+
- 	if (of_property_read_bool(pdev->dev.of_node, "renesas,no-id"))
- 		usb3->ignore_id = true;
+ 			bru->inputs[rpf->bru_input].rpf = NULL;
+@@ -537,7 +537,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 			continue;
+ 		}
  
+-		if (list_empty(&rpf->entity.list_pipe)) {
++		if (!rpf->entity.pipe) {
+ 			rpf->entity.pipe = pipe;
+ 			list_add_tail(&rpf->entity.list_pipe, &pipe->entities);
+ 		}
+@@ -566,7 +566,7 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index)
+ 					   VI6_DPR_NODE_UNUSED);
+ 
+ 			entity->pipe = NULL;
+-			list_del_init(&entity->list_pipe);
++			list_del(&entity->list_pipe);
+ 
+ 			continue;
+ 		}
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
