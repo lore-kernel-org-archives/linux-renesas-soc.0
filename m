@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35876 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54335 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751679AbeDFT7Q (ORCPT
+        with ESMTP id S1751933AbeDEJSk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 15:59:16 -0400
+        Thu, 5 Apr 2018 05:18:40 -0400
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-media@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2.1 06/15] v4l: vsp1: Move DRM atomic commit pipeline setup to separate function
-Date: Fri,  6 Apr 2018 22:59:09 +0300
-Message-Id: <20180406195909.12029-1-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180405091840.30728-7-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180405091840.30728-7-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v2 06/15] v4l: vsp1: Move DRM atomic commit pipeline setup to separate function
+Date: Thu,  5 Apr 2018 12:18:31 +0300
+Message-Id: <20180405091840.30728-7-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -23,16 +23,11 @@ function in order to share it.
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-Changes since v2:
-
-- Rename vsp1_du_pipeline_setup_input() to
-  vsp1_du_pipeline_setup_inputs()
----
  drivers/media/platform/vsp1/vsp1_drm.c | 347 +++++++++++++++++----------------
  1 file changed, 180 insertions(+), 167 deletions(-)
 
 diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 9a043a915c0b..d99278f45bd8 100644
+index 9a043a915c0b..7bf697ba7969 100644
 --- a/drivers/media/platform/vsp1/vsp1_drm.c
 +++ b/drivers/media/platform/vsp1/vsp1_drm.c
 @@ -46,6 +46,185 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
@@ -147,8 +142,8 @@ index 9a043a915c0b..d99278f45bd8 100644
 +}
 +
 +/* Setup the input side of the pipeline (RPFs and BRU sink pads). */
-+static int vsp1_du_pipeline_setup_inputs(struct vsp1_device *vsp1,
-+					 struct vsp1_pipeline *pipe)
++static int vsp1_du_pipeline_setup_input(struct vsp1_device *vsp1,
++					struct vsp1_pipeline *pipe)
 +{
 +	struct vsp1_rwpf *inputs[VSP1_MAX_RPF] = { NULL, };
 +	struct vsp1_bru *bru = to_bru(&pipe->bru->subdev);
@@ -400,7 +395,7 @@ index 9a043a915c0b..d99278f45bd8 100644
 -				__func__, rpf->entity.index);
 -	}
  
-+	vsp1_du_pipeline_setup_inputs(vsp1, pipe);
++	vsp1_du_pipeline_setup_input(vsp1, pipe);
  	vsp1_du_pipeline_configure(pipe);
  }
  EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
