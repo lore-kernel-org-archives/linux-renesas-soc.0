@@ -1,76 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:13531 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754937AbeDCKTA (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54322 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751928AbeDEJSe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:19:00 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 3/5] clk: renesas: r8a7791/r8a7793: Fix LB clock divider
-Date: Tue, 3 Apr 2018 10:18:55 +0000
-Message-ID: <TY1PR01MB177020A5C1391AF629FA66BDC0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
- <1522344790-20061-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-4-git-send-email-geert+renesas@glider.be>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Thu, 5 Apr 2018 05:18:34 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v2 01/15] v4l: vsp1: Don't start/stop media pipeline for DRM
+Date: Thu,  5 Apr 2018 12:18:26 +0300
+Message-Id: <20180405091840.30728-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-> Subject: [PATCH 3/5] clk: renesas: r8a7791/r8a7793: Fix LB clock divider
->
-> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-> the LB clock divider depends on the value of the MD18 pin.
->
-> On R-Car M2-W and M2-N, the LB clock divider is fixed to 24.  Hence
-> model the clock as a fixed factor clock instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The DRM support code manages a pipeline of VSP entities, each backed by
+a media entity. When starting or stopping the pipeline, it starts and
+stops the media pipeline through the media API in order to store the
+pipeline pointer in every entity.
 
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+The driver doesn't use the pipe pointer in media entities, neither does
+it rely on the other effects of the media_pipeline_start() and
+media_pipeline_stop() functions. Furthermore, as the media links for the
+DRM pipeline are never set up correctly, and as the pipeline can be
+modified dynamically when enabling or disabling planes, the current
+implementation is not correct. Remove the incorrect and unneeded code.
 
-> ---
->  drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas=
-/r8a7791-cpg-mssr.c
-> index 820b220b09cc6bdb..1b91f03b75980766 100644
-> --- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-> @@ -57,7 +57,6 @@ static struct cpg_core_clk r8a7791_core_clks[] __initda=
-ta =3D {
->
->  /* Core Clock Outputs */
->  DEF_BASE("z",    R8A7791_CLK_Z,    CLK_TYPE_GEN2_Z,    CLK_PLL0),
-> -DEF_BASE("lb",   R8A7791_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
->  DEF_BASE("adsp", R8A7791_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
->  DEF_BASE("sdh",  R8A7791_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
->  DEF_BASE("sd0",  R8A7791_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
-> @@ -70,6 +69,7 @@ static struct cpg_core_clk r8a7791_core_clks[] __initda=
-ta =3D {
->  DEF_FIXED("hp",     R8A7791_CLK_HP,    CLK_PLL1,         12, 1),
->  DEF_FIXED("i",      R8A7791_CLK_I,     CLK_PLL1,          2, 1),
->  DEF_FIXED("b",      R8A7791_CLK_B,     CLK_PLL1,         12, 1),
-> +DEF_FIXED("lb",     R8A7791_CLK_LB,    CLK_PLL1,         24, 1),
->  DEF_FIXED("p",      R8A7791_CLK_P,     CLK_PLL1,         24, 1),
->  DEF_FIXED("cl",     R8A7791_CLK_CL,    CLK_PLL1,         48, 1),
->  DEF_FIXED("m2",     R8A7791_CLK_M2,    CLK_PLL1,          8, 1),
-> --
-> 2.7.4
+While at it remove the outdated comment that states that entities are
+not started when the LIF is setup, as they now are.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+--
+Changes since v1:
 
+- Remove outdated comment
+---
+ drivers/media/platform/vsp1/vsp1_drm.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index b8fee1834253..a1f2ba044092 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -109,8 +109,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 		if (ret == -ETIMEDOUT)
+ 			dev_err(vsp1->dev, "DRM pipeline stop timeout\n");
+ 
+-		media_pipeline_stop(&pipe->output->entity.subdev.entity);
+-
+ 		for (i = 0; i < ARRAY_SIZE(pipe->inputs); ++i) {
+ 			struct vsp1_rwpf *rpf = pipe->inputs[i];
+ 
+@@ -223,13 +221,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 		return -EPIPE;
+ 	}
+ 
+-	/*
+-	 * Mark the pipeline as streaming and enable the VSP1. This will store
+-	 * the pipeline pointer in all entities, which the s_stream handlers
+-	 * will need. We don't start the entities themselves right at this point
+-	 * as there's no plane configured yet, so we can't start processing
+-	 * buffers.
+-	 */
++	/* Enable the VSP1. */
+ 	ret = vsp1_device_get(vsp1);
+ 	if (ret < 0)
+ 		return ret;
+@@ -241,14 +233,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ 	drm_pipe->du_complete = cfg->callback;
+ 	drm_pipe->du_private = cfg->callback_data;
+ 
+-	ret = media_pipeline_start(&pipe->output->entity.subdev.entity,
+-					  &pipe->pipe);
+-	if (ret < 0) {
+-		dev_dbg(vsp1->dev, "%s: pipeline start failed\n", __func__);
+-		vsp1_device_put(vsp1);
+-		return ret;
+-	}
+-
+ 	/* Disable the display interrupts. */
+ 	vsp1_write(vsp1, VI6_DISP_IRQ_STA, 0);
+ 	vsp1_write(vsp1, VI6_DISP_IRQ_ENB, 0);
+-- 
+Regards,
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+Laurent Pinchart
