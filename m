@@ -1,64 +1,93 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34502 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751874AbeDFJ5U (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 05:57:20 -0400
-MIME-Version: 1.0
-In-Reply-To: <TY1PR01MB1769064C77AE3E5ABA4993DAF5BB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
- <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com> <TY1PR01MB1769064C77AE3E5ABA4993DAF5BB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Apr 2018 11:57:19 +0200
-Message-ID: <CAMuHMdX34f1pDCVqNV43_qtzqZ-fruOcUsUN_Ysz4ihJwe-56A@mail.gmail.com>
-Subject: Re: [PATCH] gpio: dwapb: Add support for 32 interrupts
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Hoan Tran <hotran@apm.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Hoan Tran <hotran@apm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "Michel Pollet" <michel.pollet@bp.renesas.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: RE: [PATCH] gpio: dwapb: Add support for 32 interrupts
+Date: Thu, 5 Apr 2018 09:42:46 +0000
+Message-ID: <TY1PR01MB1769064C77AE3E5ABA4993DAF5BB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+ <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
+In-Reply-To: <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Phil,
-
-On Thu, Apr 5, 2018 at 11:42 AM, Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> On 30 March 2018 22:26 Andy Shevchenko wrote:
->> On Wed, Mar 28, 2018 at 5:22 PM, Phil Edworthy wrote:
->> > The DesignWare GPIO IP can be configured for either 1 or 32
->> > interrupts,
->>
->> 1 to 32, or just a choice between two?
-> Just a choice of 1 or 32.
-> Note that by 'configured' I am talking about the hardware being configured in
-> RTL prior to manufacturing a device. Once made, you cannot change it.
-> This configuration affects the number of output interrupt signals from the GPIO
-> Controller block that are connected to an interrupt controller.
-
-Differentiating between different versions of an IP block using DT properties
-is usually a bad idea, for several reasons:
-  - What if you discover another difference later?
-  - You cannot add differentiating properties retroactively, because
-of backwards
-     compatibility with old DTBS.
-
-Hence I think you should introduce a new compatible value instead.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgQW5keSwNCg0KT24gMzAgTWFyY2ggMjAxOCAyMjoyNiBBbmR5IFNoZXZjaGVua28gd3JvdGU6
+DQo+IE9uIFdlZCwgTWFyIDI4LCAyMDE4IGF0IDU6MjIgUE0sIFBoaWwgRWR3b3J0aHkgd3JvdGU6
+DQo+ID4gVGhlIERlc2lnbldhcmUgR1BJTyBJUCBjYW4gYmUgY29uZmlndXJlZCBmb3IgZWl0aGVy
+IDEgb3IgMzINCj4gPiBpbnRlcnJ1cHRzLA0KPiANCj4gMSB0byAzMiwgb3IganVzdCBhIGNob2lj
+ZSBiZXR3ZWVuIHR3bz8NCkp1c3QgYSBjaG9pY2Ugb2YgMSBvciAzMi4NCk5vdGUgdGhhdCBieSAn
+Y29uZmlndXJlZCcgSSBhbSB0YWxraW5nIGFib3V0IHRoZSBoYXJkd2FyZSBiZWluZyBjb25maWd1
+cmVkIGluDQpSVEwgcHJpb3IgdG8gbWFudWZhY3R1cmluZyBhIGRldmljZS4gT25jZSBtYWRlLCB5
+b3UgY2Fubm90IGNoYW5nZSBpdC4NClRoaXMgY29uZmlndXJhdGlvbiBhZmZlY3RzIHRoZSBudW1i
+ZXIgb2Ygb3V0cHV0IGludGVycnVwdCBzaWduYWxzIGZyb20gdGhlIEdQSU8NCkNvbnRyb2xsZXIg
+YmxvY2sgdGhhdCBhcmUgY29ubmVjdGVkIHRvIGFuIGludGVycnVwdCBjb250cm9sbGVyLg0KDQo+
+ID4gYnV0IHRoZSBkcml2ZXIgY3VycmVudGx5IG9ubHkgc3VwcG9ydHMgMSBpbnRlcnJ1cHQuIFNl
+ZSB0aGUgRGVzaWduV2FyZQ0KPiA+IERXX2FwYl9ncGlvIERhdGFib29rIGRlc2NyaXB0aW9uIG9m
+IHRoZSAnR1BJT19JTlRSX0lPJyBwYXJhbWV0ZXIuDQo+IA0KPiBXaWxsIHNlZSBhZnRlciBob2xp
+ZGF5IGFuZCBwZXJoYXBzIG1ha2UgbW9yZSBjb21tZW50cy4gSGVyZSBpcyBqdXN0IGEgYnJpZWYN
+Cj4gcmV2aWV3Lg0KPiANCj4gPiArLSBpbnRlcnJ1cHRzIDogVGhlIGludGVycnVwdHMgdG8gdGhl
+IHBhcmVudCBjb250cm9sbGVyIHJhaXNlZCB3aGVuDQo+ID4gK0dQSU9zDQo+ID4gKyAgZ2VuZXJh
+dGUgdGhlIGludGVycnVwdHMuIElmIHRoZSBjb250cm9sbGVyIHByb3ZpZGVzIG9uZSBjb21iaW5l
+ZA0KPiA+ICtpbnRlcnJ1cHQNCj4gPiArICBmb3IgYWxsIEdQSU9zLCBzcGVjaWZ5IGEgc2luZ2xl
+IGludGVycnVwdC4gSWYgdGhlIGNvbnRyb2xsZXINCj4gPiArcHJvdmlkZXMgb25lDQo+ID4gKyAg
+aW50ZXJydXB0IGZvciBlYWNoIEdQSU8sIHByb3ZpZGUgYSBsaXN0IG9mIGludGVycnVwdHMgdGhh
+dA0KPiA+ICtjb3JyZXNwb25kIHRvIGVhY2gNCj4gPiArICBvZiB0aGUgR1BJTyBwaW5zLiBXaGVu
+IHNwZWNpZnlpbmcgbXVsdGlwbGUgaW50ZXJydXB0cywgaWYgYW55IG9mDQo+ID4gK3RoZSBHUElP
+cyBhcmUNCj4gPiArICBub3QgY29ubmVjdGVkIHRvIGFuIGludGVycnVwdCwgdXNlIHRoZSBpbnRl
+cnJ1cHQtbWFzayBwcm9wZXJ0eS4NCj4gPiArLSBpbnRlcnJ1cHQtbWFzayA6IGEgMzItYml0IGJp
+dCBtYXNrIHRoYXQgc3BlY2lmaWVzIHdoaWNoIGludGVycnVwdHMNCj4gPiAraW4gdGhlIGxpc3QN
+Cj4gPiArICBvZiBpbnRlcnJ1cHRzIGlzIHZhbGlkLCBiaXQgaXMgMSBmb3IgYSB2YWxpZCBpcnEu
+DQo+IA0KPiBTbywgYnV0IHdoeSBvbmUgd2lsbCBuZWVkIHRoYXQgaW4gcHJhY3RpY2U/IEdQSU8g
+ZHJpdmVyIHVzdWFsbHkgcHJvdmlkZXMgYSBwaW4NCj4gYmFzZWQgSVJRIGNoaXAgd2hpY2ggbWFw
+cyBlYWNoIHBpbiB0byB0aGUgY29ycmVzcG9uZGluZyBvZmZzZXQgaW5zaWRlDQo+IHNwZWNpZmlj
+IElSUSBkb21haW4uDQpPbiBhbiBBUk0gZGV2aWNlIHdlIGhhdmUgdGhpcyBHUElPIGJsb2NrIGNv
+bm5lY3RlZCB0byB0aGUgR0lDIGludGVycnVwdA0KY29udHJvbGxlciwgaS5lLiB0aGUgU3lub3Bz
+eXMgR1BJTyBjb250cm9sbGVyIGludGVycnVwdHMgY2FuKiBoYXZlIGEgMSB0byAxDQptYXBwaW5n
+IHRvIHRoZSBHSUMgaW50ZXJydXB0cy4gQXQgdGhlIG1vbWVudCwgdGhlIEdQSU8gZHJpdmVyIG9u
+bHkgYWxsb3dzIGENCnNpbmdsZSBpcnEgc2lnbmFsIHRvIHNwZWNpZmllZC4NCiogdGhpcyBpcyBu
+b3Qgc3RyaWN0bHkgYWNjdXJhdGUgb24gdGhlIGRldmljZSBJIGFtIHdvcmtpbmcgb24sIHRoZXJl
+IGlzIGFub3RoZXINCmJsb2NrIG9mIElQIGJldHdlZW4gdGhlIHR3bywgYnV0IHRoYXQgZG9lc24n
+dCBtYXR0ZXIgaW4gdGhpcyBjYXNlLg0KDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgc3Ry
+dWN0IGRldmljZV9ub2RlICpucCA9IHRvX29mX25vZGUoZndub2RlKTsNCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICB1MzIgaXJxX21hc2sgPSAweEZGRkZGRkZGOw0KPiANCj4gV2h5PyBTaG91
+bGRuJ3QgaXQgYmUgZGVwZW5kZW50IHRvIHRoZSBhbW91bnQgb2YgYWN0dWFsIHBpbnMgLyBwb3J0
+cz8NCj4gSW50ZWwgUXVhcmsgaGFzIG9ubHkgOCBBRkFJUi4NCkl0J3MganVzdCBhIGRlZmF1bHQg
+d2hpY2ggY2FuIGJlIG92ZXJyaWRkZW4gdmlhIGRldmljZSB0cmVlLg0KRm9yIFF1YXJrLCBzaW5j
+ZSB5b3UgY3VycmVudGx5IG9ubHkgdXNlIGEgc2luZ2xlIGlycSwgSSBndWVzcyB0aGUgSFcgd2Fz
+DQpjb25maWd1cmVkIHRoYXQgd2F5LiBJbiB3aGljaCBjYXNlLCB5b3Ugd291bGRuJ3QgdXNlIGFu
+eSBvZiB0aGlzLg0KDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgaW50IGo7DQo+ID4gKw0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIC8qIE9wdGlvbmFsIGlycSBtYXNrICovDQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgZndub2RlX3Byb3BlcnR5X3JlYWRfdTMyKGZ3bm9kZSwN
+Cj4gPiArICJpbnRlcnJ1cHQtbWFzayIsICZpcnFfbWFzayk7DQo+ID4gKw0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIC8qDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICogVGhlIElQ
+IGhhcyBjb25maWd1cmF0aW9uIG9wdGlvbnMgdG8gYWxsb3cgYSBzaW5nbGUNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgKiBjb21iaW5lZCBpbnRlcnJ1cHQgb3Igb25lIHBlciBncGlvLiBJ
+ZiBvbmUgcGVyIGdwaW8sDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICogc29tZSBtaWdo
+dCBub3QgYmUgdXNlZC4NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgKi8NCj4gDQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgZm9yIChqID0gMDsgaiA8IHBwLT5uZ3BpbzsgaisrKSB7
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoaXJxX21hc2sgJiBCSVQo
+aikpIHsNCj4gDQo+IGZvcl9lYWNoX3NldF9iaXQoKSBpcyBpbiBrZXJuZWwgZm9yIGFnZXMhDQpU
+aGVyZSdzIGxvdCBvZiBzdHVmZiBpbiB0aGUga2VybmVsIGZvciBhZ2VzIHRoYXQgSSBjYW4ndCBy
+ZW1lbWJlciENCkknbGwgZml4IHRoaXMgOikNCg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBwcC0+aXJxW2pdID0gaXJxX29mX3BhcnNlX2FuZF9tYXAobnAsIGop
+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAocHAtPmly
+cVtqXSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBwcC0+aGFzX2lycSA9IHRydWU7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICB9DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiANCj4gDQo+IFNvLCBvbiB0aGUg
+Zmlyc3QgZ2xhbmNlIHRoZSBwYXRjaCBsb29rcyBlaXRoZXIgc3VwZXJmbHVvdXMgb3IgdGFraW5n
+IHdyb25nDQo+IGFwcHJvYWNoLiBQbGVhc2UsIGVsYWJvcmF0ZSBtb3JlIHdoeSBpdCdzIGRvbmUg
+aW4gdGhpcyB3YXkgYW5kIHdoYXQgdGhlDQo+IGNhc2UgZm9yIGFsbCB0aGlzIGluIHByYWN0aWNl
+Lg0KSG9wZWZ1bGx5IEkgaGF2ZSBleHBsYWluZWQgaXQgYSBiaXQgYmV0dGVyIGFib3ZlLg0KDQpU
+aGFua3MgZm9yIHlvdXIgY29tbWVudHMNClBoaWwNCg==
