@@ -1,74 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:64130 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756321AbeDFOH6 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:40420 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751525AbeDEQVh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 10:07:58 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
+        Thu, 5 Apr 2018 12:21:37 -0400
+Date: Thu, 5 Apr 2018 18:21:35 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: RE: [RFC PATCH] mmc: renesas_sdhi_internal_dmac: fall back to PIO if
+Subject: Re: [RFC PATCH] mmc: renesas_sdhi_internal_dmac: fall back to PIO if
  scatterlist doesn't match
-Date: Fri, 6 Apr 2018 14:07:52 +0000
-Message-ID: <TY1PR06MB09927F9647E55AD4B6D565C0D8BA0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Message-ID: <20180405162135.cw3y7ycubzbfem24@ninjato>
 References: <20180404170035.5507-1-wsa@the-dreams.de>
-In-Reply-To: <20180404170035.5507-1-wsa@the-dreams.de>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ <CAPDyKFoFehR8PD_tdFa4gubvbFXUgm-ig25Jn6nC4jz1ffqJTw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="frqc4ouezyosng3r"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFoFehR8PD_tdFa4gubvbFXUgm-ig25Jn6nC4jz1ffqJTw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram-san,
 
-Thank you for the patch!
+--frqc4ouezyosng3r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Wolfram Sang, Sent: Thursday, April 5, 2018 2:01 AM
->=20
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> If we detect an incompatible scatterlist, we should fall back to PIO,
-> too.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->=20
-> I found this while working on the RX DMA issue. I don't see a reason why =
-we
-> shouldn't fall back in this case as well. But maybe I am missing somethin=
-g.
->=20
-> Shimoda-san: what do you think?
->=20
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->=20
-> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/=
-host/renesas_sdhi_internal_dmac.c
-> index 380570a26a09..561e90755a3b 100644
-> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> @@ -161,11 +161,7 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc=
-_host *host,
->  	enum dma_data_direction dir;
->  	int ret;
->=20
-> -	/* This DMAC cannot handle if sg_len is not 1 */
 
-I would like to keep this comment.
+> > -       /* This DMAC cannot handle if sg_len is not 1 */
+> > -       WARN_ON(host->sg_len > 1);
+> > -
+> > -       /* This DMAC cannot handle if buffer is not 8-bytes alignment */
+> > -       if (!IS_ALIGNED(sg->offset, 8))
+> > +       if (WARN_ON(host->sg_len > 1) || !IS_ALIGNED(sg->offset, 8))
+>=20
+> The WARN_ON becomes a bit misleading being a part of the if statement,
+> as it should never happen when the driver has set ->max_segs =3D 1.
 
-> -	WARN_ON(host->sg_len > 1);
-> -
-> -	/* This DMAC cannot handle if buffer is not 8-bytes alignment */
-> -	if (!IS_ALIGNED(sg->offset, 8))
-> +	if (WARN_ON(host->sg_len > 1) || !IS_ALIGNED(sg->offset, 8))
+Uh, yeah, right. So, we could simply drop the WARN_ON?
 
-As Ulf-san said on other thread about this WARN_ON(),
-I think dropping the WARN_ON() is better.
 
-Best regards,
-Yoshihiro Shimoda
+--frqc4ouezyosng3r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrGTQ8ACgkQFA3kzBSg
+KbYZDQ//UWffOetnDMiugez6bx3H2vcW2OWcpFA71WFYZMbnX6QvrqjRoYXgPRrs
+IqNZak7f0fjK4PSvPo3dtkm3NF0pS1CIzhAaviHWEQxMDKA2gFp11GKE06tH3D74
+YSR+6gZEqwbWqVgE5K4n+/H9+t7yFBPuB3x4FXs/yBWH9FcX9pTA9TSSzPUM0vf1
+lfn2RNZ0F0BYqJ1TkbywBtBiwFBI6II0QG4+3sttwd2LrwKm0ZFYme7ZQSZfYvnm
+ZnH8OrKv8AmOJiKctHcx68T1AnmZWlXS5FyjZx0sM2tP1u4LckO1dceWlkItaJI0
+8OYdWjQIGb6wRDYysuhuwGJrFuqGzbw43Mc/rM66QRy+hxXxwDRh+efrg1z9cxDM
+xDE4iy00w4z8cEZaO4/M+e6mTbXnbiL9L98EhbTbo9sfPMedKOjSlZwHIm+qKM3O
+lBA8T7DlXSSEPvTm9ROAKlp1eesDrl0hupgtDvbk7pq2+Kh0JkvcR3af855c/D2s
+QR6xM+xYs2X37ARZ5VTZTXNJ2q0yvakQYqmI+o2iEYefAF91hukzrjj6+3zOCYVx
+xy3zoY/4PuX6FUFslxlBtphHghXpy/hc7J700Mtsi8Sq5Me6OEJJN2wBydi0/jMK
+6fKAUu+LsJxWELM+sV31RPu7HjY3quUOxPfRpOKJrL/GS0ukfMI=
+=QMNj
+-----END PGP SIGNATURE-----
+
+--frqc4ouezyosng3r--
