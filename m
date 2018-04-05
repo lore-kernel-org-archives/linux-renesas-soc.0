@@ -1,13 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54206 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751307AbeDEI0g (ORCPT
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:33116 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDEHd5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Apr 2018 04:26:36 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Thu, 5 Apr 2018 03:33:57 -0400
+MIME-Version: 1.0
+In-Reply-To: <2180075.m4Wkig6IL5@avalon>
+References: <20180212230132.5402-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180212230132.5402-3-niklas.soderlund+renesas@ragnatech.se>
+ <20180329113039.4v5whquyrtgf5yaa@flea> <2180075.m4Wkig6IL5@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 5 Apr 2018 09:33:55 +0200
+Message-ID: <CAMuHMdXoprxZNP6KuYjcYW5EYjzAAFqNn6orK24pv7k_fO+i4A@mail.gmail.com>
+Subject: Re: [PATCH v13 2/2] rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>,
         Hans Verkuil <hverkuil@xs4all.nl>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
@@ -15,74 +23,71 @@ Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Fukawa <tomoharu.fukawa.eb@renesas.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v13 2/2] rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver
-Date: Thu, 05 Apr 2018 11:26:45 +0300
-Message-ID: <1571834.H8Xd6h4YlB@avalon>
-In-Reply-To: <CAMuHMdXoprxZNP6KuYjcYW5EYjzAAFqNn6orK24pv7k_fO+i4A@mail.gmail.com>
-References: <20180212230132.5402-1-niklas.soderlund+renesas@ragnatech.se> <2180075.m4Wkig6IL5@avalon> <CAMuHMdXoprxZNP6KuYjcYW5EYjzAAFqNn6orK24pv7k_fO+i4A@mail.gmail.com>
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Wed, Apr 4, 2018 at 5:26 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Thursday, 29 March 2018 14:30:39 EEST Maxime Ripard wrote:
+>> On Tue, Feb 13, 2018 at 12:01:32AM +0100, Niklas S=C3=B6derlund wrote:
+>> > +   switch (priv->lanes) {
+>> > +   case 1:
+>> > +           phycnt =3D PHYCNT_ENABLECLK | PHYCNT_ENABLE_0;
+>> > +           break;
+>> > +   case 2:
+>> > +           phycnt =3D PHYCNT_ENABLECLK | PHYCNT_ENABLE_1 | PHYCNT_ENA=
+BLE_0;
+>> > +           break;
+>> > +   case 4:
+>> > +           phycnt =3D PHYCNT_ENABLECLK | PHYCNT_ENABLE_3 | PHYCNT_ENA=
+BLE_2 |
+>> > +                   PHYCNT_ENABLE_1 | PHYCNT_ENABLE_0;
+>> > +           break;
+>> > +   default:
+>> > +           return -EINVAL;
+>> > +   }
+>>
+>> I guess you could have a simpler construct here using this:
+>>
+>> phycnt =3D PHYCNT_ENABLECLK;
+>>
+>> switch (priv->lanes) {
+>> case 4:
+>>       phycnt |=3D PHYCNT_ENABLE_3 | PHYCNT_ENABLE_2;
+>> case 2:
+>>       phycnt |=3D PHYCNT_ENABLE_1;
+>> case 1:
+>>       phycnt |=3D PHYCNT_ENABLE_0;
+>>       break;
+>>
+>> default:
+>>       return -EINVAL;
+>> }
+>>
+>> But that's really up to you.
+>
+> Wouldn't Niklas' version generate simpler code as it uses direct assignme=
+nts ?
 
-On Thursday, 5 April 2018 10:33:55 EEST Geert Uytterhoeven wrote:
-> On Wed, Apr 4, 2018 at 5:26 PM, Laurent Pinchart wrote:
-> > On Thursday, 29 March 2018 14:30:39 EEST Maxime Ripard wrote:
-> >> On Tue, Feb 13, 2018 at 12:01:32AM +0100, Niklas S=F6derlund wrote:
-> >> > +   switch (priv->lanes) {
-> >> > +   case 1:
-> >> > +           phycnt =3D PHYCNT_ENABLECLK | PHYCNT_ENABLE_0;
-> >> > +           break;
-> >> > +   case 2:
-> >> > +           phycnt =3D PHYCNT_ENABLECLK | PHYCNT_ENABLE_1 |
-> >> > PHYCNT_ENABLE_0;
-> >> > +           break;
-> >> > +   case 4:
-> >> > +           phycnt =3D PHYCNT_ENABLECLK | PHYCNT_ENABLE_3 |
-> >> > PHYCNT_ENABLE_2 |
-> >> > +                   PHYCNT_ENABLE_1 | PHYCNT_ENABLE_0;
-> >> > +           break;
-> >> > +   default:
-> >> > +           return -EINVAL;
-> >> > +   }
-> >>=20
-> >> I guess you could have a simpler construct here using this:
-> >>=20
-> >> phycnt =3D PHYCNT_ENABLECLK;
-> >>=20
-> >> switch (priv->lanes) {
-> >>=20
-> >> case 4:
-> >>       phycnt |=3D PHYCNT_ENABLE_3 | PHYCNT_ENABLE_2;
-> >>=20
-> >> case 2:
-> >>       phycnt |=3D PHYCNT_ENABLE_1;
-> >>=20
-> >> case 1:
-> >>       phycnt |=3D PHYCNT_ENABLE_0;
-> >>       break;
-> >>=20
-> >> default:
-> >>       return -EINVAL;
-> >>=20
-> >> }
-> >>=20
-> >> But that's really up to you.
-> >=20
-> > Wouldn't Niklas' version generate simpler code as it uses direct
-> > assignments ?
-> Alternatively, you could check for a valid number of lanes, and use
-> knowledge about the internal lane bits:
->=20
->     phycnt =3D PHYCNT_ENABLECLK;
->     phycnt |=3D (1 << priv->lanes) - 1;
+Alternatively, you could check for a valid number of lanes, and use knowled=
+ge
+about the internal lane bits:
 
-If Niklas is fine with that, I like it too.
+    phycnt =3D PHYCNT_ENABLECLK;
+    phycnt |=3D (1 << priv->lanes) - 1;
 
-=2D-=20
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
