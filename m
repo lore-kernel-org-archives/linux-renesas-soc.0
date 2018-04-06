@@ -1,81 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:44655 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755064AbeDCKVE (ORCPT
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:34729 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752944AbeDFOOF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:21:04 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 5/5] clk: renesas: r8a7794: Fix LB clock divider
-Date: Tue, 3 Apr 2018 10:20:59 +0000
-Message-ID: <TY1PR01MB177024C408EE1AE2AFCE6D16C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
- <1522344790-20061-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-6-git-send-email-geert+renesas@glider.be>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 6 Apr 2018 10:14:05 -0400
+Date: Fri, 6 Apr 2018 16:13:57 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge
+Message-ID: <20180406141357.GN20945@w540>
+References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
+ <6903975.GkMFuzh9fq@avalon>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="JB7KW7Ey7eB5HOHs"
+Content-Disposition: inline
+In-Reply-To: <6903975.GkMFuzh9fq@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Geert,
 
-> Subject: [PATCH 5/5] clk: renesas: r8a7794: Fix LB clock divider
->
-> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-> the LB clock divider depends on the value of the MD18 pin.
->
-> On R-Car E2, the LB clock divider is fixed to 24.  Hence model the clock
-> as a fixed factor clock instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/clk/renesas/r8a7794-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/r8a7794-cpg-mssr.c b/drivers/clk/renesas=
-/r8a7794-cpg-mssr.c
-> index 2a40bbeaeeafc2a4..3ce74f063fa86b19 100644
-> --- a/drivers/clk/renesas/r8a7794-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7794-cpg-mssr.c
-> @@ -55,7 +55,6 @@ static const struct cpg_core_clk r8a7794_core_clks[] __=
-initconst =3D {
->  DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
->
->  /* Core Clock Outputs */
-> -DEF_BASE("lb",   R8A7794_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
->  DEF_BASE("adsp", R8A7794_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
->  DEF_BASE("sdh",  R8A7794_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
->  DEF_BASE("sd0",  R8A7794_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
-> @@ -69,6 +68,7 @@ static const struct cpg_core_clk r8a7794_core_clks[] __=
-initconst =3D {
->  DEF_FIXED("hp",     R8A7794_CLK_HP,    CLK_PLL1,         12, 1),
->  DEF_FIXED("i",      R8A7794_CLK_I,     CLK_PLL1,          2, 1),
->  DEF_FIXED("b",      R8A7794_CLK_B,     CLK_PLL1,         12, 1),
-> +DEF_FIXED("lb",     R8A7794_CLK_B,     CLK_PLL1,         24, 1),
+--JB7KW7Ey7eB5HOHs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-s/R8A7794_CLK_B/R8A7794_CLK_LB/
+Hi Laurent,
 
-With that fixed:
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Fri, Apr 06, 2018 at 04:53:43PM +0300, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> On Friday, 6 April 2018 16:08:05 EEST Jacopo Mondi wrote:
+> > Hello,
+> >    this series enables HDMI display on V3M Eagle board.
+> >
+> > The series is based on Geert's "renesas-drivers-2018-04-03-v4.16" with
+> > THC63LVD1024 driver on top (cfr. my in review series:
+> > "[PATCH v7 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge")
+>
+> This isn't a good base for development, as you would pull way too many
+> dependencies in. Could you please base v8 on top of v4.17-rc1 (or if you =
+get
+> to post it before v4.17-rc1 gets merged, you can use Linus' master, as the
+> ARM64 DT pull requests for v4.17-rc1 have been merged) ? It will then be =
+ready
+> for Simon to pull in his v4.18 branch.
 
->  DEF_FIXED("p",      R8A7794_CLK_P,     CLK_PLL1,         24, 1),
->  DEF_FIXED("cl",     R8A7794_CLK_CL,    CLK_PLL1,         48, 1),
->  DEF_FIXED("cp",     R8A7794_CLK_CP,    CLK_PLL1,         48, 1),
+I used renesas-drivers as it already contains partial r8a77970 support which
+is not there in v4.16 (PFC, GPIO, SCIF...)
+
+I should wait for v4.17-rc1 to come out and re-propose on top of that
+probably.
+
+>
+> > This series includes some preliminary work from Sergei and Niklas. I ha=
+ve
+> > reworked the two final patches from Niklas to enable DU first, add the =
+LVDS
+> > decoder node, and finally add the ADV7511W chip and enable HDMI output.
+> >
+> > A branch for testing is available at:
+> > git://jmondi.org/linux v3m/renesas-drivers-2018-04-03-v4.16/v7-eagle-dts
+> >
+> > Thanks
+> >    j
+> >
+> > Jacopo Mondi (2):
+> >   arm64: dts: renesas: eagle: Enable DU
+> >   arm64: dts: renesas: eagle: Add LVDS decoder
+> >
+> > Niklas S=C3=B6derlund (2):
+> >   arm64: dts: renesas: r8a77970: add the LVDS instance
+> >   arm64: dts: renesas: eagle: Add ADV7511W and HDMI output
+> >
+> > Sergei Shtylyov (3):
+> >   arm64: dts: renesas: r8a77970: add FCPVD support
+> >   arm64: dts: renesas: r8a77970: add VSPD support
+> >   arm64: dts: renesas: r8a77970: add DU support
+> >
+> >  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 89 ++++++++++++++++++=
++++++
+> >  arch/arm64/boot/dts/renesas/r8a77970.dtsi      | 73 ++++++++++++++++++=
++++
+> >  2 files changed, 162 insertions(+)
+> >
+>
 > --
-> 2.7.4
+> Regards,
+>
+> Laurent Pinchart
+>
+>
+>
 
+--JB7KW7Ey7eB5HOHs
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
+iQIcBAEBAgAGBQJax4ClAAoJEHI0Bo8WoVY8ZqkP/0ImMs0Vp/w8mucupnP0kyYY
+uQ4Fb29BGuBM7Ofz67bSbH/EI9y50X+4Z6IG+l0M+y7piSn8JB3ciRJ9uOdGgisl
+EYUCMCdM6P8JesJPk1KMUbPDJTrQAdkkT11C+9daXWa2rykzpEt+ACF9ykCxDf4+
+4AM0RstwzKQhWE78/z19memKsc20FZAPPkoMx4URuQSRAZ8wT0uVAMEsuKW1qfPE
+zl72DJuW8CC7I1mQ7E0xIr+KR7WiQVXIRLtnwfhvTu2j/9EgOtpPy+sqFNJ8Ju3Y
+rUs8z1l3Jtu4YYDr35sY7LGtMNplQJczvAgYuB78YaUNVYXvw5Tl/c3+ZRKYyXRd
+XB99ppriFK0i5OadmIhqw6tco9Bxf7x1kXO8g+l0lmYptInbSOZJe7aX8FgN2YG9
+OZQ/lYK9Zs0uy7IG3CDrHFsuybzfsccad7x00LE62YK2DglquA2u6jQxe1zMYKtN
+DSN/Pwd81QB3/IYYkkztgjjj9dYcjmbt9A5iNuvHnUgzCYAB+di2TXVe8xXVv7N4
+JU51W1wqBx8aonh1FolaIY2d5Fi7Vs7j8WYuhdB6NfeGVnmKCCi1icnV8uUf92tw
++eKoyfyShmfypOfmrW7SrarYb0TG5tZAf5TQI86E+EEgbFVa4gvHw5ORdvNFqKyL
+8FENS+DLpedr573avO0r
+=YkYS
+-----END PGP SIGNATURE-----
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+--JB7KW7Ey7eB5HOHs--
