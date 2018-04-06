@@ -1,138 +1,177 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36704 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753582AbeDAPaz (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36151 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751956AbeDFXGY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 1 Apr 2018 11:30:55 -0400
-Subject: Re: [PATCH V4] PCI: rcar: Use runtime PM to control controller clock
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-pci@vger.kernel.org,
-        Dien Pham <dien.pham.ry@rvc.renesas.com>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-References: <20180318105209.5922-1-marek.vasut+renesas@gmail.com>
- <20180319084447.ce44arxneqd6i3bj@verge.net.au>
- <834f8473-3e3b-98b2-56e1-55a3c40aa2dc@gmail.com>
- <20180319103439.t6idzboizjtt4sgn@verge.net.au>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <d41fdb81-7d46-97d3-364d-b5565c0d8186@gmail.com>
-Date: Sun, 1 Apr 2018 17:02:07 +0200
+        Fri, 6 Apr 2018 19:06:24 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v7 5/8] media: vsp1: Use reference counting for bodies
+Date: Sat, 07 Apr 2018 02:06:22 +0300
+Message-ID: <2209998.jqIQsl8Mgr@avalon>
+In-Reply-To: <0715289430f60017f1ea6e6043ee78cfedab7b6c.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com> <0715289430f60017f1ea6e6043ee78cfedab7b6c.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <20180319103439.t6idzboizjtt4sgn@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 03/19/2018 11:34 AM, Simon Horman wrote:
-> On Mon, Mar 19, 2018 at 10:54:47AM +0100, Marek Vasut wrote:
->> On 03/19/2018 09:44 AM, Simon Horman wrote:
->>> On Sun, Mar 18, 2018 at 11:52:09AM +0100, Marek Vasut wrote:
->>>> From: Dien Pham <dien.pham.ry@rvc.renesas.com>
->>>>
->>>> The controller clock can be switched off during suspend/resume,
->>>> let runtime PM take care of that.
->>>>
->>>> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
->>>> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
->>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->>>> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->>>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
->>>> Cc: Simon Horman <horms+renesas@verge.net.au>
->>>> Cc: Wolfram Sang <wsa@the-dreams.de>
->>>> Cc: linux-renesas-soc@vger.kernel.org
->>>> To: linux-pci@vger.kernel.org
->>>> ---
->>>> V2: - Reorder the fail path in rcar_pcie_probe() to cater for the
->>>>       reordering of function calls in probe
->>>>     - Dispose of fail_clk in rcar_pcie_get_resources()
->>>> V3: - Fix up the failpath in probe function
->>>> V4: - Rebase on recent linux-next
->>>> ---
->>>>  drivers/pci/host/pcie-rcar.c | 40 ++++++++++++----------------------------
->>>>  1 file changed, 12 insertions(+), 28 deletions(-)
->>>>
->>>> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
->>>> index b4c4aad2cf66..93d59f15c589 100644
->>>> --- a/drivers/pci/host/pcie-rcar.c
->>>> +++ b/drivers/pci/host/pcie-rcar.c
->>>> @@ -142,7 +142,6 @@ struct rcar_pcie {
->>>>  	void __iomem		*base;
->>>>  	struct list_head	resources;
->>>>  	int			root_bus_nr;
->>>> -	struct clk		*clk;
->>>>  	struct clk		*bus_clk;
->>>>  	struct			rcar_msi msi;
->>>>  };
->>>> @@ -914,24 +913,14 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
->>>>  	if (IS_ERR(pcie->base))
->>>>  		return PTR_ERR(pcie->base);
->>>>  
->>>> -	pcie->clk = devm_clk_get(dev, "pcie");
->>>> -	if (IS_ERR(pcie->clk)) {
->>>> -		dev_err(dev, "cannot get platform clock\n");
->>>> -		return PTR_ERR(pcie->clk);
->>>> -	}
->>>> -	err = clk_prepare_enable(pcie->clk);
->>>> -	if (err)
->>>> -		return err;
->>>> -
->>>>  	pcie->bus_clk = devm_clk_get(dev, "pcie_bus");
->>>>  	if (IS_ERR(pcie->bus_clk)) {
->>>>  		dev_err(dev, "cannot get pcie bus clock\n");
->>>> -		err = PTR_ERR(pcie->bus_clk);
->>>> -		goto fail_clk;
->>>> +		return PTR_ERR(pcie->bus_clk);
->>>>  	}
->>>>  	err = clk_prepare_enable(pcie->bus_clk);
->>>>  	if (err)
->>>> -		goto fail_clk;
->>>> +		return err;
->>>>  
->>>>  	i = irq_of_parse_and_map(dev->of_node, 0);
->>>>  	if (!i) {
->>>> @@ -953,8 +942,6 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
->>>>  
->>>>  err_map_reg:
->>>>  	clk_disable_unprepare(pcie->bus_clk);
->>>> -fail_clk:
->>>> -	clk_disable_unprepare(pcie->clk);
->>>>  
->>>>  	return err;
->>>>  }
->>>> @@ -1124,22 +1111,22 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->>>>  	if (err)
->>>>  		goto err_free_bridge;
->>>
->>> This error path now calls pci_free_resource_list() and in this case
->>> the path is taken if rcar_pcie_parse_request_of_pci_ranges() fails.
->>> Is that ok?
->>
->> I think so, or did I miss something obvious?
-> 
-> I feel that I am the one missing something obvious.
-> But here is what I am worried about:
-> 
-> 1. rcar_pcie_probe() calls rcar_pcie_parse_request_of_pci_ranges()
-> 2. rcar_pcie_parse_request_of_pci_ranges() calls
->    devm_request_pci_bus_resources() but that fails so
->    pci_free_resource_list() is called and an error is returned.
-> 3. rcar_pcie_probe() branches to err_free_bridge and calls
->    pci_free_resource_list() again.
+Hi Kieran,
 
-I see what you mean now, thanks for the details explanation.
+Thank you for the patch.
 
-So the change needed here is to move
-pci_free_resource_list(&pcie->resources); above err_free_bridge, so it's
-not called twice, right ?
+On Thursday, 8 March 2018 02:05:28 EEST Kieran Bingham wrote:
+> Extend the display list body with a reference count, allowing bodies to
+> be kept as long as a reference is maintained. This provides the ability
+> to keep a cached copy of bodies which will not change, so that they can
+> be re-applied to multiple display lists.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> ---
+> This could be squashed into the body update code, but it's not a
+> straightforward squash as the refcounts will affect both:
+>   v4l: vsp1: Provide a body pool
+> and
+>   v4l: vsp1: Convert display lists to use new body pool
+> therefore, I have kept this separate to prevent breaking bisectability
+> of the vsp-tests.
+> 
+> v3:
+>  - 's/fragment/body/'
+> 
+> v4:
+>  - Fix up reference handling comments.
+> 
+>  drivers/media/platform/vsp1/vsp1_clu.c |  7 ++++++-
+>  drivers/media/platform/vsp1/vsp1_dl.c  | 15 ++++++++++++++-
+>  drivers/media/platform/vsp1/vsp1_lut.c |  7 ++++++-
+>  3 files changed, 26 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_clu.c
+> b/drivers/media/platform/vsp1/vsp1_clu.c index 2018144470c5..b2a39a6ef7e4
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_clu.c
+> +++ b/drivers/media/platform/vsp1/vsp1_clu.c
+> @@ -257,8 +257,13 @@ static void clu_configure(struct vsp1_entity *entity,
+>  		clu->clu = NULL;
+>  		spin_unlock_irqrestore(&clu->lock, flags);
+> 
+> -		if (dlb)
+> +		if (dlb) {
+>  			vsp1_dl_list_add_body(dl, dlb);
+> +
+> +			/* release our local reference */
+
+s/release/Release/
+s/reference/reference./
+
+> +			vsp1_dl_body_put(dlb);
+> +		}
+> +
+>  		break;
+>  	}
+>  }
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
+> b/drivers/media/platform/vsp1/vsp1_dl.c index 74476726451c..134865287c02
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/device.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/gfp.h>
+> +#include <linux/refcount.h>
+>  #include <linux/slab.h>
+>  #include <linux/workqueue.h>
+> 
+> @@ -58,6 +59,8 @@ struct vsp1_dl_body {
+>  	struct list_head list;
+>  	struct list_head free;
+> 
+> +	refcount_t refcnt;
+> +
+>  	struct vsp1_dl_body_pool *pool;
+>  	struct vsp1_device *vsp1;
+> 
+> @@ -259,6 +262,7 @@ struct vsp1_dl_body *vsp1_dl_body_get(struct
+> vsp1_dl_body_pool *pool)
+>  	if (!list_empty(&pool->free)) {
+>  		dlb = list_first_entry(&pool->free, struct vsp1_dl_body, free);
+>  		list_del(&dlb->free);
+> +		refcount_set(&dlb->refcnt, 1);
+>  	}
+> 
+>  	spin_unlock_irqrestore(&pool->lock, flags);
+> @@ -279,6 +283,9 @@ void vsp1_dl_body_put(struct vsp1_dl_body *dlb)
+>  	if (!dlb)
+>  		return;
+> 
+> +	if (!refcount_dec_and_test(&dlb->refcnt))
+> +		return;
+> +
+>  	dlb->num_entries = 0;
+> 
+>  	spin_lock_irqsave(&dlb->pool->lock, flags);
+> @@ -465,7 +472,11 @@ void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32
+> reg, u32 data) * in the order in which bodies are added.
+>   *
+>   * Adding a body to a display list passes ownership of the body to the
+> list. The
+> - * caller must not touch the body after this call.
+> + * caller retains its reference to the fragment when adding it to the
+> display
+> + * list, but is not allowed to add new entries to the body.
+> + *
+> + * The reference must be explicitly released by a call to
+> vsp1_dl_body_put()
+> + * when the body isn't needed anymore.
+>   *
+>   * Additional bodies are only usable for display lists in header mode.
+>   * Attempting to add a body to a header-less display list will return an
+> error. @@ -476,6 +487,8 @@ int vsp1_dl_list_add_body(struct vsp1_dl_list
+> *dl, struct vsp1_dl_body *dlb)
+>  	if (dl->dlm->mode != VSP1_DL_MODE_HEADER)
+>  		return -EINVAL;
+> 
+> +	refcount_inc(&dlb->refcnt);
+> +
+>  	list_add_tail(&dlb->list, &dl->bodies);
+> 
+>  	return 0;
+> diff --git a/drivers/media/platform/vsp1/vsp1_lut.c
+> b/drivers/media/platform/vsp1/vsp1_lut.c index 262cb72139d6..77cf7137a0f2
+> 100644
+> --- a/drivers/media/platform/vsp1/vsp1_lut.c
+> +++ b/drivers/media/platform/vsp1/vsp1_lut.c
+> @@ -213,8 +213,13 @@ static void lut_configure(struct vsp1_entity *entity,
+>  		lut->lut = NULL;
+>  		spin_unlock_irqrestore(&lut->lock, flags);
+> 
+> -		if (dlb)
+> +		if (dlb) {
+>  			vsp1_dl_list_add_body(dl, dlb);
+> +
+> +			/* release our local reference */
+
+s/release/Release/
+s/reference/reference./
+
+With these small issues fixed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +			vsp1_dl_body_put(dlb);
+> +		}
+> +
+>  		break;
+>  	}
+>  }
 
 -- 
-Best regards,
-Marek Vasut
+Regards,
+
+Laurent Pinchart
