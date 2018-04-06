@@ -1,82 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33045 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752065AbeDITUQ (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:45855 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751802AbeDFKUy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Apr 2018 15:20:16 -0400
-Date: Mon, 9 Apr 2018 14:20:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Hoan Tran <hotran@apm.com>,
+        Fri, 6 Apr 2018 06:20:54 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Hoan Tran <hotran@apm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: dwapb: Add support for 32 interrupts
-Message-ID: <20180409192013.5rytwgoixtyraow3@rob-hp-laptop>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] gpio: dwapb: Add support for 32 interrupts
+Date: Fri, 6 Apr 2018 10:20:46 +0000
+Message-ID: <TY1PR01MB17693CFDF889498956107783F5BA0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+ <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
+ <TY1PR01MB1769064C77AE3E5ABA4993DAF5BB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdX34f1pDCVqNV43_qtzqZ-fruOcUsUN_Ysz4ihJwe-56A@mail.gmail.com>
+In-Reply-To: <CAMuHMdX34f1pDCVqNV43_qtzqZ-fruOcUsUN_Ysz4ihJwe-56A@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Mar 28, 2018 at 03:22:30PM +0100, Phil Edworthy wrote:
-> The DesignWare GPIO IP can be configured for either 1 or 32 interrupts,
-> but the driver currently only supports 1 interrupt. See the DesignWare
-> DW_apb_gpio Databook description of the 'GPIO_INTR_IO' parameter.
-
-Someday h/w designers will realize this does nothing to optimize 
-interrupt handling...
-
-> This change allows the driver to work with up to 32 interrupts, it will
-> get as many interrupts as specified in the DT 'interrupts' property.
-> It doesn't do anything clever with the different interrupts, it just calls
-> the same handler used for single interrupt hardware.
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
-> Note: There are a few lines over 80 chars, but this is just guidance, right?
->       Especially as there are already some lines over 80 chars.
-
-Code, yes, but not for paragraphs of text in DT bindings.
-
-> ---
->  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   | 10 ++++-
->  drivers/gpio/gpio-dwapb.c                          | 44 +++++++++++++++++-----
->  include/linux/platform_data/gpio-dwapb.h           |  3 +-
->  3 files changed, 45 insertions(+), 12 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> index 4a75da7..e343581 100644
-> --- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> @@ -26,8 +26,14 @@ controller.
->    the second encodes the triger flags encoded as described in
->    Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
->  - interrupt-parent : The parent interrupt controller.
-> -- interrupts : The interrupt to the parent controller raised when GPIOs
-> -  generate the interrupts.
-> +- interrupts : The interrupts to the parent controller raised when GPIOs
-> +  generate the interrupts. If the controller provides one combined interrupt
-> +  for all GPIOs, specify a single interrupt. If the controller provides one
-> +  interrupt for each GPIO, provide a list of interrupts that correspond to each
-> +  of the GPIO pins. When specifying multiple interrupts, if any of the GPIOs are
-> +  not connected to an interrupt, use the interrupt-mask property.
-> +- interrupt-mask : a 32-bit bit mask that specifies which interrupts in the list
-> +  of interrupts is valid, bit is 1 for a valid irq.
-
-This is not a standard property and would need a vendor prefix. However, 
-I'd prefer you just skip any not connected interrupts with an invalid 
-interrupt number. Then the GPIO number is the index into "interrupts".
-
->  - snps,nr-gpios : The number of pins in the port, a single cell.
-
-This BTW should be deprecated to use "nr-gpios" instead, but that's 
-another patch.
-
->  - resets : Reset line for the controller.
->  
+SGkgR2VlcnQsDQoNCk9uIDA2IEFwcmlsIDIwMTggMTA6NTcgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
+b3RlOg0KPiBPbiBUaHUsIEFwciA1LCAyMDE4IGF0IDExOjQyIEFNLCBQaGlsIEVkd29ydGh5IHdy
+b3RlOg0KPiA+IE9uIDMwIE1hcmNoIDIwMTggMjI6MjYgQW5keSBTaGV2Y2hlbmtvIHdyb3RlOg0K
+PiA+PiBPbiBXZWQsIE1hciAyOCwgMjAxOCBhdCA1OjIyIFBNLCBQaGlsIEVkd29ydGh5IHdyb3Rl
+Og0KPiA+PiA+IFRoZSBEZXNpZ25XYXJlIEdQSU8gSVAgY2FuIGJlIGNvbmZpZ3VyZWQgZm9yIGVp
+dGhlciAxIG9yIDMyDQo+ID4+ID4gaW50ZXJydXB0cywNCj4gPj4NCj4gPj4gMSB0byAzMiwgb3Ig
+anVzdCBhIGNob2ljZSBiZXR3ZWVuIHR3bz8NCj4gPiBKdXN0IGEgY2hvaWNlIG9mIDEgb3IgMzIu
+DQo+ID4gTm90ZSB0aGF0IGJ5ICdjb25maWd1cmVkJyBJIGFtIHRhbGtpbmcgYWJvdXQgdGhlIGhh
+cmR3YXJlIGJlaW5nDQo+ID4gY29uZmlndXJlZCBpbiBSVEwgcHJpb3IgdG8gbWFudWZhY3R1cmlu
+ZyBhIGRldmljZS4gT25jZSBtYWRlLCB5b3UgY2Fubm90DQo+IGNoYW5nZSBpdC4NCj4gPiBUaGlz
+IGNvbmZpZ3VyYXRpb24gYWZmZWN0cyB0aGUgbnVtYmVyIG9mIG91dHB1dCBpbnRlcnJ1cHQgc2ln
+bmFscyBmcm9tDQo+ID4gdGhlIEdQSU8gQ29udHJvbGxlciBibG9jayB0aGF0IGFyZSBjb25uZWN0
+ZWQgdG8gYW4gaW50ZXJydXB0IGNvbnRyb2xsZXIuDQo+IA0KPiBEaWZmZXJlbnRpYXRpbmcgYmV0
+d2VlbiBkaWZmZXJlbnQgdmVyc2lvbnMgb2YgYW4gSVAgYmxvY2sgdXNpbmcgRFQgcHJvcGVydGll
+cw0KPiBpcyB1c3VhbGx5IGEgYmFkIGlkZWEsIGZvciBzZXZlcmFsIHJlYXNvbnM6DQo+ICAgLSBX
+aGF0IGlmIHlvdSBkaXNjb3ZlciBhbm90aGVyIGRpZmZlcmVuY2UgbGF0ZXI/DQo+ICAgLSBZb3Ug
+Y2Fubm90IGFkZCBkaWZmZXJlbnRpYXRpbmcgcHJvcGVydGllcyByZXRyb2FjdGl2ZWx5LCBiZWNh
+dXNlIG9mDQo+IGJhY2t3YXJkcw0KPiAgICAgIGNvbXBhdGliaWxpdHkgd2l0aCBvbGQgRFRCUy4N
+Cj4gDQo+IEhlbmNlIEkgdGhpbmsgeW91IHNob3VsZCBpbnRyb2R1Y2UgYSBuZXcgY29tcGF0aWJs
+ZSB2YWx1ZSBpbnN0ZWFkLg0KDQpUaGlzIGlzIG5vdCBhIGRpZmZlcmVudCB2ZXJzaW9uIG9mIHRo
+ZSBJUCwganVzdCBhIGRpZmZlcmVudCBjb25maWd1cmF0aW9uIG9wdGlvbi4NCk1vc3QgSVAgYmxv
+Y2tzIGhhdmUgYSBodWdlIG51bWJlciBvZiBrbm9icyB0aGF0IGNhbiBiZSB0d2lkZGxlZCBieSB0
+aGUgSFcNCnBlb3BsZSwgc3VjaCBhcyBjYWNoZSBzaXplLCBVQVJUIGZpZm8gZGVwdGguIEkgdGhp
+bmsgdGhpcyBpcyBubyBkaWZmZXJlbnQuDQoNClRoYW5rcw0KUGhpbA0KDQo=
