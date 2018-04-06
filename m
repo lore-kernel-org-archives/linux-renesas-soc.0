@@ -1,34 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36668 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751494AbeDFLYM (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52581 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751492AbeDFK6u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 07:24:12 -0400
-Received: by mail-lf0-f68.google.com with SMTP id z143-v6so48847lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Apr 2018 04:24:11 -0700 (PDT)
-Subject: Re: [PATCH 0/4] Add R8A77980 PCIe support & some driver cleanups
+        Fri, 6 Apr 2018 06:58:50 -0400
+Received: by mail-wm0-f66.google.com with SMTP id g8so2654572wmd.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Apr 2018 03:58:50 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/4] Add R8A77980 PCIe support & some driver cleanups
 To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <23335d95-63ca-b107-e43d-f4c2621adc2c@cogentembedded.com>
-Message-ID: <04f23976-3763-a0c6-7336-922efbf49e5e@cogentembedded.com>
-Date: Fri, 6 Apr 2018 14:24:09 +0300
+Message-ID: <23335d95-63ca-b107-e43d-f4c2621adc2c@cogentembedded.com>
+Date: Fri, 6 Apr 2018 13:58:47 +0300
 MIME-Version: 1.0
-In-Reply-To: <23335d95-63ca-b107-e43d-f4c2621adc2c@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/06/2018 01:58 PM, Sergei Shtylyov wrote:
-> Hello!
-> 
-> Here's a set of 4 patches against the 'pci.rcar' branch of Lorenzo Pieralisi's
+Hello!
 
-   I meant to type 'pci/rcar'. :-)
+Here's a set of 4 patches against the 'pci.rcar' branch of Lorenzo Pieralisi's
+'pci.git' repo. These are the changes needed for better R-Car gen3 support
+(namely for R8A77980 support) plus some PCIe driver re-factoring done in
+the process...
 
-[...]
+[1/4] pcie-rcar: poll PHYRDY in rcar_pcie_hw_init()
+[2/4] pcie-rcar: remove PHYRDY polling from rcar_pcie_hw_init_h1()
+[3/4] pcie-rcar: add R-Car gen3 PHY support
+[4/4] pcie-rcar: factor out rcar_pcie_hw_init() call
 
-MBR, Sergei 
+MBR, Sergei
