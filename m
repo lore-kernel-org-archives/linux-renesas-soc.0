@@ -1,131 +1,186 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:48419 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751987AbeDJJgo (ORCPT
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:33275 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752711AbeDFOQj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:36:44 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: RE: [PATCH v2 1/3] dt-bindings: timer: renesas, cmt: Document
- r8a774[35] CMT support
-Date: Tue, 10 Apr 2018 09:36:39 +0000
-Message-ID: <TY1PR01MB1770621EC40038C4237B1BAAC0BE0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1513618743-4773-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1513618743-4773-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1513618743-4773-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 6 Apr 2018 10:16:39 -0400
+Date: Fri, 6 Apr 2018 16:16:32 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH 7/7] arm64: dts: renesas: eagle: Add ADV7511W and HDMI
+ output
+Message-ID: <20180406141632.GO20945@w540>
+References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1523020092-25540-8-git-send-email-jacopo+renesas@jmondi.org>
+ <2235860.8H9ojNphtF@avalon>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="R0KbGFzrRdaLlFh/"
+Content-Disposition: inline
+In-Reply-To: <2235860.8H9ojNphtF@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Good morning gentlemen,
 
-I am very sorry to bother you again, but it seems this patch has no master.=
- Is anybody willing to take it?
+--R0KbGFzrRdaLlFh/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Fab
+Hi Laurent,
 
-> -----Original Message-----
-> From: Fabrizio Castro [mailto:fabrizio.castro@bp.renesas.com]
-> Sent: 18 December 2017 17:39
-> To: Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>
-> Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>; Daniel Lezcano <dan=
-iel.lezcano@linaro.org>; Thomas Gleixner
-> <tglx@linutronix.de>; devicetree@vger.kernel.org; Simon Horman <horms@ver=
-ge.net.au>; Geert Uytterhoeven
-> <geert+renesas@glider.be>; Chris Paterson <Chris.Paterson2@renesas.com>; =
-Biju Das <biju.das@bp.renesas.com>; linux-renesas-
-> soc@vger.kernel.org
-> Subject: [PATCH v2 1/3] dt-bindings: timer: renesas, cmt: Document r8a774=
-[35] CMT support
+On Fri, Apr 06, 2018 at 04:51:11PM +0300, Laurent Pinchart wrote:
+> Hi Jacopo,
 >
-> Document SoC specific compatible strings for r8a7743 and r8a7745.
-> No driver change is needed as the fallback strings will activate
-> the right code.
+> Thank you for the patch.
 >
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Simon Horman <horms@verge.net.au>
-> ---
-> v1->v2:
-> * "R-Car Gen2 or RZ/G1." -> "R-Car Gen2 and RZ/G1."
-> * "all the R-Car" -> "R-Car"
+> On Friday, 6 April 2018 16:08:12 EEST Jacopo Mondi wrote:
+> > From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+> >
+> > Enable HDMI output adding the HDMI connector and the ADV7511W, connected
+> > to THC63LVD1024 LVDS decoder output.
+> >
+> > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatec=
+h.se>
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 51 ++++++++++++++++++=
+++++-
+> >  1 file changed, 50 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> > b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts index 9d0e65d..e9f7b83
+> > 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> > @@ -32,6 +32,17 @@
+> >  		reg =3D <0x0 0x48000000 0x0 0x38000000>;
+> >  	};
+> >
+> > +	hdmi-out {
+> > +		compatible =3D "hdmi-connector";
+> > +		type =3D "a";
+> > +
+> > +		port {
+> > +			hdmi_con_out: endpoint {
+> > +				remote-endpoint =3D <&adv7511_out>;
+> > +			};
+> > +		};
+> > +	};
+> > +
+> >  	thc63lvd1024: lvds-decoder {
+> >  		compatible =3D "thine,thc63lvd1024";
+> >
+> > @@ -41,11 +52,17 @@
+> >
+> >  			port@0 {
+> >  				reg =3D <0>;
+> > -
 >
->  Documentation/devicetree/bindings/timer/renesas,cmt.txt | 14 ++++++++++-=
----
->  1 file changed, 10 insertions(+), 4 deletions(-)
+> This is unrelated, if you don't want a blank line here remove it from pat=
+ch
+> 6/7 :-)
+
+No, you're right, this is a leftover from me splitting a single a
+patch in 3. According to your comments on other patches in the series
+I shouldn't have done that to begin with :)
+
+Thanks
+  j
+
 >
-> diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Do=
-cumentation/devicetree/bindings/timer/renesas,cmt.txt
-> index d740989..b40add2 100644
-> --- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-> +++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-> @@ -22,6 +22,10 @@ Required Properties:
+> >  				thc63lvd1024_in: endpoint {
+> >  					remote-endpoint =3D <&lvds0_out>;
+> >  				};
+> >  			};
+> > +
+> > +			port@2 {
+> > +				reg =3D <2>;
+> > +				thc63lvd1024_out: endpoint {
+> > +					remote-endpoint =3D <&adv7511_in>;
+> > +				};
+> > +			};
+> >  		};
+> >  	};
+> >  };
+> > @@ -85,6 +102,38 @@
+> >  		gpio-controller;
+> >  		#gpio-cells =3D <2>;
+> >  	};
+> > +
+> > +	hdmi@39 {
+> > +		compatible =3D "adi,adv7511w";
+> > +		reg =3D <0x39>;
+> > +		interrupt-parent =3D <&gpio1>;
+> > +		interrupts =3D <20 IRQ_TYPE_LEVEL_LOW>;
+> > +
+> > +		adi,input-depth =3D <8>;
+> > +		adi,input-colorspace =3D "rgb";
+> > +		adi,input-clock =3D "1x";
+> > +		adi,input-style =3D <1>;
+> > +		adi,input-justification =3D "evenly";
+> > +
+> > +		ports {
+> > +			#address-cells =3D <1>;
+> > +			#size-cells =3D <0>;
+> > +
+> > +			port@0 {
+> > +				reg =3D <0>;
+> > +				adv7511_in: endpoint {
+> > +					remote-endpoint =3D <&thc63lvd1024_out>;
+> > +				};
+> > +			};
+> > +
+> > +			port@1 {
+> > +				reg =3D <1>;
+> > +				adv7511_out: endpoint {
+> > +					remote-endpoint =3D <&hdmi_con_out>;
+> > +				};
+> > +			};
+> > +		};
+> > +	};
+> >  };
+> >
+> >  &pfc {
 >
->      - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8a7=
-3a4.
->      - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8a7=
-3a4.
-> +    - "renesas,r8a7743-cmt0" for the 32-bit CMT0 device included in r8a7=
-743.
-> +    - "renesas,r8a7743-cmt1" for the 48-bit CMT1 device included in r8a7=
-743.
-> +    - "renesas,r8a7745-cmt0" for the 32-bit CMT0 device included in r8a7=
-745.
-> +    - "renesas,r8a7745-cmt1" for the 48-bit CMT1 device included in r8a7=
-745.
->      - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7=
-790.
->      - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7=
-790.
->      - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7=
-791.
-> @@ -31,10 +35,12 @@ Required Properties:
->      - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7=
-794.
->      - "renesas,r8a7794-cmt1" for the 48-bit CMT1 device included in r8a7=
-794.
+> With patches 5/7, 6/7 and 7/7 merged together and the pinmux removed,
 >
-> -    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car=
- Gen2.
-> -    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car=
- Gen2.
-> -These are fallbacks for r8a73a4 and all the R-Car Gen2
-> -entrieslisted above.
-> +    - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car=
- Gen2
-> +and RZ/G1.
-> +    - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car=
- Gen2
-> +and RZ/G1.
-> +These are fallbacks for r8a73a4, R-Car Gen2 and RZ/G1 entries
-> +listed above.
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 >
->    - reg: base address and length of the registers block for the timer mo=
-dule.
->    - interrupts: interrupt-specifier for the timer, one per channel.
 > --
-> 2.7.4
+> Regards,
+>
+> Laurent Pinchart
+>
+>
+>
 
+--R0KbGFzrRdaLlFh/
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
+iQIcBAEBAgAGBQJax4FAAAoJEHI0Bo8WoVY8yBIP/0LBBYLyRQhzgOQ6hD31wVZs
+EmbPi+Yj+chIKUl1acF6klnPCO4dV46Ilz96yDS6CzeyPH/MUkmy2LJxEnj9Kim2
+FE+8C61WSA9+8wMbAWvGToEdQNlnnLbY5GwypZqZXuZ+/2i3yiq4zWUza1aP3Dzu
+NEGCU98eGD0uHs9+9yuT1OOr3CyVY8oTCe7TgtJ+w8roH3ldx+0fdBkw3Mh859CV
+AGDPV+WwMxUQMRRRVqWtyIuWSg9mxT/fuuM9wzOUntY8ib17hKjVUugg+BIjx/bP
+RbUCfQHf/dydLXg8iBBXmebiJJUQH89dpAVQ7aGlzQac98yKr0rYP6LV72Q/sikn
+jiQnnoGgT+XauerEvbOBkE1wx3ha/2YPkpznzNpRXyqKdMQAwxZ8WgizgaPnGw9D
+BHeG055XsIuTcV9n26q39xs8Yb79qawkCtK2cWdrUcHBLLIV3EBOldayNtsRus9X
+H3S1pD2AnrFk+oCxu13xmmDoGNHDdjphHdlZdCQih/SV4jTw0sTvxWi/MksgVSqM
+l9dEEz0GAnkRUWrAKi3OhXNhTsDyRbpDG4YnJwytTD2/poWok6XgqfIWLzaN9Qm/
+6CHjfFbSCjuTylIHZTFMy13cQlHOtswjNUFdgsVbMtXYDk4TtrDhdSY0GKPj/R6M
+sGs0PBnZKrd15wGKoZBX
+=ydXF
+-----END PGP SIGNATURE-----
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+--R0KbGFzrRdaLlFh/--
