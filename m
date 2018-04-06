@@ -1,91 +1,80 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35031 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752941AbeDFNIj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 6 Apr 2018 09:08:39 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 4/7] arm64: dts: renesas: r8a77970: add the LVDS instance
-Date: Fri, 06 Apr 2018 16:38:17 +0300
-Message-ID: <3587638.6pi5kZKTO5@avalon>
-In-Reply-To: <1523020092-25540-5-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org> <1523020092-25540-5-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 4/7] arm64: dts: renesas: r8a77970: add the LVDS instance
+Date: Fri,  6 Apr 2018 15:08:09 +0200
+Message-Id: <1523020092-25540-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Thank you for the patch.
+Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
+the it to the LVDS output of the DU. While at it align the endpoint name
+of the du to du_out_lvds0 which is used in other Renesas DTS files to
+describe this link.
 
-On Friday, 6 April 2018 16:08:09 EEST Jacopo Mondi wrote:
-> From: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
->=20
-> Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
-> the it to the LVDS output of the DU. While at it align the endpoint name
-> of the du to du_out_lvds0 which is used in other Renesas DTS files to
-> describe this link.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-The endpoint could be renamed in patch 3/7, but it's not a big deal.
-
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 29 +++++++++++++++++++++++++=
-++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a77970.dtsi index e649e86..b48d62c 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> @@ -658,7 +658,34 @@
->=20
->  				port@1 {
->  					reg =3D <1>;
-> -					du_out_lvds: endpoint {
-> +					du_out_lvds0: endpoint {
-> +						remote-endpoint =3D <&lvds0_in>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		lvds0: lvds@feb90000 {
-> +			compatible =3D "renesas,r8a77970-lvds";
-> +			reg =3D <0 0xfeb90000 0 0x14>;
-> +			clocks =3D <&cpg CPG_MOD 727>;
-> +			power-domains =3D <&sysc R8A77970_PD_ALWAYS_ON>;
-> +			resets =3D <&cpg 727>;
-> +			status =3D "disabled";
-> +
-> +			ports {
-> +				#address-cells =3D <1>;
-> +				#size-cells =3D <0>;
-> +
-> +				port@0 {
-> +					reg =3D <0>;
-> +					lvds0_in: endpoint {
-> +						remote-endpoint =3D <&du_out_lvds0>;
-> +					};
-> +				};
-> +				port@1 {
-> +					reg =3D <1>;
-> +					lvds0_out: endpoint {
->  					};
->  				};
->  			};
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
-
-
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index e649e86..b48d62c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -658,7 +658,34 @@
+ 
+ 				port@1 {
+ 					reg = <1>;
+-					du_out_lvds: endpoint {
++					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
++					};
++				};
++			};
++		};
++
++		lvds0: lvds@feb90000 {
++			compatible = "renesas,r8a77970-lvds";
++			reg = <0 0xfeb90000 0 0x14>;
++			clocks = <&cpg CPG_MOD 727>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 727>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
+ 					};
+ 				};
+ 			};
+-- 
+2.7.4
