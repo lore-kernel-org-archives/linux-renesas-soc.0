@@ -1,265 +1,347 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36636 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36246 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbeDBNgu (ORCPT
+        with ESMTP id S1751488AbeDGAan (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Apr 2018 09:36:50 -0400
+        Fri, 6 Apr 2018 20:30:43 -0400
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: jacopo mondi <jacopo@jmondi.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Rob Herring <robh@kernel.org>, architt@codeaurora.org,
-        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
-        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-Date: Mon, 02 Apr 2018 16:36:55 +0300
-Message-ID: <4549018.sA3EWz2jVz@avalon>
-In-Reply-To: <6353eb46-5a2d-7b75-a60b-c31c59c8636a@mentor.com>
-References: <4060923.7DxT9ae38L@avalon> <20180327101008.GM27746@w540> <6353eb46-5a2d-7b75-a60b-c31c59c8636a@mentor.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v7 0/8] vsp1: TLB optimisation and DL caching
+Date: Sat, 07 Apr 2018 03:30:42 +0300
+Message-ID: <1706399.6jG5Itdsid@avalon>
+In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Vladimir,
+Hi Kieran,
 
-On Tuesday, 27 March 2018 14:03:25 EEST Vladimir Zapolskiy wrote:
-> On 03/27/2018 01:10 PM, jacopo mondi wrote:
-> > On Tue, Mar 27, 2018 at 12:37:31PM +0300, Vladimir Zapolskiy wrote:
-> >> On 03/27/2018 11:57 AM, jacopo mondi wrote:
-> >>> On Tue, Mar 27, 2018 at 11:30:29AM +0300, Vladimir Zapolskiy wrote:
-> >>>> On 03/27/2018 11:27 AM, Sergei Shtylyov wrote:
-> >>>>> On 3/27/2018 10:33 AM, jacopo mondi wrote:
-> >>>>> [...]
-> >>>>>=20
-> >>>>>>>>>>> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
-> >>>>>>>>>>>=20
-> >>>>>>>>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >>>>>>>>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> >>>>>>>>>>> Reviewed-by: Niklas S=F6derlund
-> >>>>>>>>>>> <niklas.soderlund+renesas@ragnatech.se>
-> >>>>>>>>>>> ---
-> >>>>>>>>>>>=20
-> >>>>>>>>>>>   .../bindings/display/bridge/thine,thc63lvd1024.txt | 66
-> >>>>>>>>>>>   +++++++++++++++++++
-> >>>>>>>>>>>   1 file changed, 66 insertions(+)
-> >>>>>>>>>>>   create mode 100644
-> >>>>>>>>>>>=20
-> >>>>>>>>>>> Documentation/devicetree/bindings/display/bridge/thine,thc63l=
-vd1
-> >>>>>>>>>>> 024.txt
-> >>>>>>>>>>>=20
-> >>>>>>>>>>> diff --git
-> >>>>>>>>>>> a/Documentation/devicetree/bindings/display/bridge/thine,thc6=
-3lv
-> >>>>>>>>>>> d1024.txt
-> >>>>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc6=
-3lv
-> >>>>>>>>>>> d1024.txt
-> >>>>>>>>>>> new file mode 100644
-> >>>>>>>>>>> index 0000000..8225c6a
-> >>>>>>>>>>> --- /dev/null
-> >>>>>>>>>>> +++
-> >>>>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc6=
-3lv
-> >>>>>>>>>>> d1024.txt
-> >>>>>>>>>>> @@ -0,0 +1,66 @@
-> >>>>>>>>>>> +Thine Electronics THC63LVD1024 LVDS decoder
-> >>>>>>>>>>> +-------------------------------------------
-> >>>>>>>>>>> +
-> >>>>>>>>>>> +The THC63LVD1024 is a dual link LVDS receiver designed to
-> >>>>>>>>>>> convert LVDS streams
-> >>>>>>>>>>> +to parallel data outputs. The chip supports single/dual
-> >>>>>>>>>>> input/output modes, +handling up to two two input LVDS stream
-> >>>>>>>>>>> and up to two digital CMOS/TTL outputs.
-> >>>>>>>>>>> +
-> >>>>>>>>>>> +Single or dual operation modes, output data mapping and DDR
-> >>>>>>>>>>> output modes are
-> >>>>>>>>>>> +configured through input signals and the chip does not expose
-> >>>>>>>>>>> any control bus.
-> >>>>>>>>>>> +
-> >>>>>>>>>>> +Required properties:
-> >>>>>>>>>>> +- compatible: Shall be "thine,thc63lvd1024"
-> >>>>>>>>>>> +
-> >>>>>>>>>>> +Optional properties:
-> >>>>>>>>>>> +- vcc-supply: Power supply for TTL output and digital circui=
-try
-> >>>>>>>>>>> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
-> >>>>>>>>>>> +- lvcc-supply: Power supply for LVDS inputs
-> >>>>>>>>>>> +- pvcc-supply: Power supply for PLL circuitry
-> >>>>>>>>>>=20
-> >>>>>>>>>> As explained in a comment to one of the previous versions of t=
-his
-> >>>>>>>>>> series, I'm tempted to make vcc-supply mandatory and drop the
-> >>>>>>>>>> three other power supplies for now, as I believe there's very
-> >>>>>>>>>> little chance they will be connected to separately controllable
-> >>>>>>>>>> regulators (all supplies use the same voltage). In the very
-> >>>>>>>>>> unlikely event that this occurs in design we need to support in
-> >>>>>>>>>> the future, the cvcc, lvcc and pvcc supplies can be added later
-> >>>>>>>>>> as optional without breaking backward compatibility.
-> >>>>>>>>>=20
-> >>>>>>>>> I'm okay with that.
-> >>>>>>>>>=20
-> >>>>>>>>>> Apart from that,
-> >>>>>>>>>>=20
-> >>>>>>>>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.c=
-om>
-> >>>>>>>>>>=20
-> >>>>>>>>>>> +- pdwn-gpios: Power down GPIO signal. Active low
-> >>>>>>>>>=20
-> >>>>>>>>> powerdown-gpios is the semi-standard name.
-> >>>>>>>>=20
-> >>>>>>>> right, I've also noticed it. If possible please avoid shortenings
-> >>>>>>>> in property names.
-> >>>>>>>=20
-> >>>>>>> It is not shortening, it just follow pin name from decoder's
-> >>>>>>> datasheet.
-> >>>>>>>=20
-> >>>>>>>>>>> +- oe-gpios: Output enable GPIO signal. Active high
-> >>>>>>>>>>> +
-> >>>>>>>>=20
-> >>>>>>>> And this one is also a not ever met property name, please consid=
-er
-> >>>>>>>> to rename it to 'enable-gpios', for instance display panels defi=
-ne
-> >>>>>>>> it.
-> >>>>>>>=20
-> >>>>>>> Again, it follows datasheet naming scheme. Has something changed =
-in
-> >>>>>>> DT conventions?
-> >>>>>>=20
-> >>>>>> Seconded. My understanding is that the property name should reflect
-> >>>>>> what reported in the the chip manual. For THC63LVD1024 the enable =
-and
-> >>>>>> power down pins are named 'OE' and 'PDWN' respectively.
-> >>>>>>=20
-> >>>>> But don't we need the vendor prefix in the prop names then, like
-> >>>>> "renesas,oe-gpios" then?
-> >>>>=20
-> >>>> Seconded, with a correction to "thine,oe-gpios".
-> >>>=20
-> >>> mmm, okay then...
-> >>>=20
-> >>> A grep for that semi-standard properties names in Documentation/
-> >>> returns only usage examples and no actual definitions, so I assume th=
-is
-> >>> is why they are semi-standard.
-> >>=20
-> >> Here we have to be specific about a particular property, let it be
-> >> 'oe-gpios' vs. 'enable-gpios' and let's collect some statistics:
-> >>=20
-> >> % grep -Hr oe-gpios Documentation/devicetree/bindings/* | wc -l
-> >> 0
-> >>=20
-> >> $ grep -Hr enable-gpios Documentation/devicetree/bindings/* | wc -l
-> >> 86
-> >>=20
-> >> While 'thine,oe-gpios' would be correct, I see no reason to introduce a
-> >> vendor specific property to define a pin with a common and well
-> >> understood purpose.
-> >>=20
-> >> If you go forward with the vendor specific prefix, apparently you can =
-set
-> >> the name to 'thine,oe-gpio' (single) or even to 'thine,oe', or does the
-> >> datasheet names the pin as "OE GPIO" or "OE connected to a GPIO"? I
-> >> guess no.
-> >=20
-> > Let me clarify I don't want to push for a vendor specific name or
-> > similar, I'm fine with using 'semi-standard' names, I'm just confused
-> > by the 'semi-standard' definition. I guess from your examples, the
-> > usage count makes a difference here.
->=20
-> yes, in gneneral you can read "semi-standard" as "widely used", thus
-> collecting statistics is a good enough method to make a reasoning.
->=20
-> Hopefully the next evolutionary step of "widely used" is "described in
-> standard".
->=20
-> >> Standards do not define '-gpios' suffix, but partially the description=
- is
-> >> found in Documentation/bindings/gpio/gpio.txt, still it is not a secti=
-on
-> >> in any standard as far as I know.
-> >>=20
-> >>> Seems like there is some tribal knowledge involved in defining what
-> >>> is semi-standard and what's not, or are those properties documented
-> >>> somewhere?
-> >>=20
-> >> The point is that there is no formal standard which describes every IP,
-> >> every IC and every single their property, some device node names and
-> >> property names are recommended in ePAPR and Devicetree Specification
-> >> though.
-> >>=20
-> >> Think of a confusion if 'rst-gpios' (have you seen any ICs with an RST
-> >> pin?) and 'reset-gpios' are different. Same applies to 'pdwn-gpios' vs.
-> >> 'powerdown-gpios'.
-> >=20
-> > I see all your points and I agree with most of them. Anyway, if the
-> > chip manual describes a pin as 'RST' I would not find it confusing to
-> > have a 'rst-gpio' defined in bindings :)
-> >=20
-> > Let me be a bit pesky here: what if a chip defines a reset GPIO, which
-> > is definitely a reset, but names it, say "XYZ" ? Would you prefer to
-> > see it defined as "reset-gpios" for consistency with other bindings,
-> > or "xyz-gpios" for consistency with documentation?
->=20
-> If a pin is definitely an IC reset as you said, then my preference is to =
-see
-> it described under 'reset-gpios' property name, plus a comment in the IC
-> device tree documentation document about it. I can provide two reasons to
-> advocate my position:
->=20
-> 1) developers spend significantly more time reading and editing the actual
->    DTSI/DTS board files rather than reading and editing documentation,
->    it makes sense to use common property names to save time and reduce
->    amount of "what does 'oe' stand for?" type of questions; I suppose
->    that the recommendation to avoid not "widely used" abbreviations in
->    device node and property names arises from the same reasoning,
->=20
-> 2) "widely used" and "standard" properties are excellent candidates for
->    developing (or re-using) generalization wrappers, it happened so many
->    times in the past, and this process shall be supported in my opinion;
->    due to compatibility restrictions it might be problematic to change
->    property names, and every new exception to "widely used" properties
->    makes problematic to develop and maintain these kinds of wrappers, and
->    of course it postpones a desired "described in standard" recognition.
->=20
-> If my point of view is accepted, I do admit that a developer who
-> translates a board schematics to board DTS file may experience a minor
-> discomfort, which is mitigated if relevant pin names are found in device
-> tree binding documentation in comments to properties, still the overall
-> gain is noticeably higher in my personal opinion.
+I've finished reviewing the series. For your convenience, I've rebased it on 
+top of the BRU/BRS dynamic allocation patches, and pushed the result to
 
-I have to disagree with this. When using a property name that doesn't=20
-correspond to the hardware documentation, developers will need to refer to =
-the=20
-DT bindings documentation to confirm the property name. "Widely used" prope=
-rty=20
-names will not save time, they will use more time. This is of course margin=
-al=20
-and I don't think it would have any noticeable impact, but I don't think yo=
-ur=20
-argument holds.
+	git://linuxtv.org/pinchartl/media.git v4l2/vsp1/tlb-optimise
 
-I'm all for standardizing properties across DT bindings for multiple=20
-components, but doing so in a semi-random fashion will in my opinion not=20
-result in any gain. We can decide that power-down or output-enable GPIOS=20
-should have common property names (and I'm not even sure that would be usef=
-ul,=20
-but we can certainly discuss it), but in that case someone should make a=20
-proposal and get the names standardized. Unless we do so, no matter what=20
-property name gets picked for a particular binding, it won't become=20
-universally used by magic.
+(Please note it has been compile-tested only)
 
-I'd like to hear the DT bindings maintainers position on this matter.
+I have also taken the liberty to incorporate both my review comments and my 
+Reviewed-by line for the patches that have received a conditional Reviewed-by, 
+that is patches 1/8, 5/8 and 7/8. Patches 3/8, 4/8, 6/8 and 8/8 have open 
+questions so I haven't touched them.
 
-=2D-=20
+Please don't despair, v8 might well be the last version we will need :-)
+
+On Thursday, 8 March 2018 02:05:23 EEST Kieran Bingham wrote:
+> Each display list currently allocates an area of DMA memory to store
+> register settings for the VSP1 to process. Each of these allocations adds
+> pressure to the IPMMU TLB entries.
+> 
+> We can reduce the pressure by pre-allocating larger areas and dividing the
+> area across multiple bodies represented as a pool.
+> 
+> With this reconfiguration of bodies, we can adapt the configuration code to
+> separate out constant hardware configuration and cache it for re-use.
+> 
+> The patches provided in this series can be found at:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git 
+> tags/vsp1/tlb-optimise/v7
+> 
+> I hope that this series is at a stage where it could be integrated now.  It
+> has had some thorough testing and is already integrated in both
+> renesas-drivers and renesas-bsp. (except for the minor changes in v7 that
+> is...)
+> 
+> Please note that checkpatch complains on patch 6/8 in this series:
+> 
+> v7-0006-media-vsp1-Refactor-display-list-configure-operations.patch
+> ----------------------------------------------------------------------------
+> -------------------------- WARNING: function definition argument 'struct
+> vsp1_entity *' should also have an identifier name #290: FILE:
+> drivers/media/platform/vsp1/vsp1_entity.h:82:
+> +       void (*configure_stream)(struct vsp1_entity *, struct vsp1_pipeline
+> *,
+> 
+> However - this complaint is regarding pre-existing code. I have only renamed
+> the function pointers.  I do also disagree with checkpatch here - as there
+> is no need to provide an identifier name, and it does not improve
+> readability in this instance to state:
+> 	...(vsp1_entity *entity, struct vsp1_pipeline *pipe)
+> 
+> Thus - I have ignored these warnings.
+> 
+> 
+> Changelog:
+> ----------
+> 
+> v7:
+>  - Rebased on to linux-media/master (v4.16-rc4)
+>  - Clean up the formatting of the vsp1_dl_list_add_body()
+>  - Fix formatting and white space
+>  -  s/prepare/configure_stream/
+>  -  s/configure/configure_frame/
+> 
+> v6:
+>  - Rebased on to linux-media/master (v4.16-rc1)
+>  - Removed DRM/UIF (DISCOM/ColorKey) updates
+> 
+> v5:
+>  - Rebased on to renesas-drivers-2018-01-09-v4.15-rc7 to fix conflicts
+>    with DRM and UIF updates on VSP1 driver
+> 
+> v4:
+>  - Rebased to v4.14
+>  * v4l: vsp1: Use reference counting for bodies
+>    - Fix up reference handling comments
+> 
+>  * v4l: vsp1: Provide a body pool
+>    - Provide comment explaining extra allocation on body pool
+>      highlighting area for optimisation later.
+> 
+>  * v4l: vsp1: Refactor display list configure operations
+>    - Fix up comment to describe yuv_mode caching rather than format
+> 
+>  * vsp1: Adapt entities to configure into a body
+>    - Rename vsp1_dl_list_get_body() to vsp1_dl_list_get_body0()
+> 
+>  * v4l: vsp1: Move video configuration to a cached dlb
+>    - Adjust pipe configured flag to be reset on resume rather than suspend
+>    - rename dl_child, dl_next
+> 
+> Testing:
+> --------
+> The VSP unit tests have been run on this patch set with the following
+> results:
+> 
+> --- Test loop 1 ---
+> - vsp-unit-test-0000.sh
+> Test Conditions:
+>   Platform          Renesas Salvator-X 2nd version board based on r8a7795
+> ES2.0+ Kernel release    4.16.0-rc4-arm64-renesas-01067-g397eb3811ec0
+>   convert           /usr/bin/convert
+>   compare           /usr/bin/compare
+>   killall           /usr/bin/killall
+>   raw2rgbpnm        /usr/bin/raw2rgbpnm
+>   stress            /usr/bin/stress
+>   yavta             /usr/bin/yavta
+> - vsp-unit-test-0001.sh
+> Testing WPF packing in RGB332: pass
+> Testing WPF packing in ARGB555: pass
+> Testing WPF packing in XRGB555: pass
+> Testing WPF packing in RGB565: pass
+> Testing WPF packing in BGR24: pass
+> Testing WPF packing in RGB24: pass
+> Testing WPF packing in ABGR32: pass
+> Testing WPF packing in ARGB32: pass
+> Testing WPF packing in XBGR32: pass
+> Testing WPF packing in XRGB32: pass
+> - vsp-unit-test-0002.sh
+> Testing WPF packing in NV12M: pass
+> Testing WPF packing in NV16M: pass
+> Testing WPF packing in NV21M: pass
+> Testing WPF packing in NV61M: pass
+> Testing WPF packing in UYVY: pass
+> Testing WPF packing in VYUY: skip
+> Testing WPF packing in YUV420M: pass
+> Testing WPF packing in YUV422M: pass
+> Testing WPF packing in YUV444M: pass
+> Testing WPF packing in YVU420M: pass
+> Testing WPF packing in YVU422M: pass
+> Testing WPF packing in YVU444M: pass
+> Testing WPF packing in YUYV: pass
+> Testing WPF packing in YVYU: pass
+> - vsp-unit-test-0003.sh
+> Testing scaling from 640x640 to 640x480 in RGB24: pass
+> Testing scaling from 1024x768 to 640x480 in RGB24: pass
+> Testing scaling from 640x480 to 1024x768 in RGB24: pass
+> Testing scaling from 640x640 to 640x480 in YUV444M: pass
+> Testing scaling from 1024x768 to 640x480 in YUV444M: pass
+> Testing scaling from 640x480 to 1024x768 in YUV444M: pass
+> - vsp-unit-test-0004.sh
+> Testing histogram in RGB24: pass
+> Testing histogram in YUV444M: pass
+> - vsp-unit-test-0005.sh
+> Testing RPF.0: pass
+> Testing RPF.1: pass
+> Testing RPF.2: pass
+> Testing RPF.3: pass
+> Testing RPF.4: pass
+> - vsp-unit-test-0006.sh
+> Testing invalid pipeline with no RPF: pass
+> Testing invalid pipeline with no WPF: pass
+> - vsp-unit-test-0007.sh
+> Testing BRU in RGB24 with 1 inputs: pass
+> Testing BRU in RGB24 with 2 inputs: pass
+> Testing BRU in RGB24 with 3 inputs: pass
+> Testing BRU in RGB24 with 4 inputs: pass
+> Testing BRU in RGB24 with 5 inputs: pass
+> Testing BRU in YUV444M with 1 inputs: pass
+> Testing BRU in YUV444M with 2 inputs: pass
+> Testing BRU in YUV444M with 3 inputs: pass
+> Testing BRU in YUV444M with 4 inputs: pass
+> Testing BRU in YUV444M with 5 inputs: pass
+> - vsp-unit-test-0008.sh
+> Test requires unavailable feature set `bru rpf.0 uds wpf.0': skipped
+> - vsp-unit-test-0009.sh
+> Test requires unavailable feature set `rpf.0 wpf.0 wpf.1': skipped
+> - vsp-unit-test-0010.sh
+> Testing CLU in RGB24 with zero configuration: pass
+> Testing CLU in RGB24 with identity configuration: pass
+> Testing CLU in RGB24 with wave configuration: pass
+> Testing CLU in YUV444M with zero configuration: pass
+> Testing CLU in YUV444M with identity configuration: pass
+> Testing CLU in YUV444M with wave configuration: pass
+> Testing LUT in RGB24 with zero configuration: pass
+> Testing LUT in RGB24 with identity configuration: pass
+> Testing LUT in RGB24 with gamma configuration: pass
+> Testing LUT in YUV444M with zero configuration: pass
+> Testing LUT in YUV444M with identity configuration: pass
+> Testing LUT in YUV444M with gamma configuration: pass
+> - vsp-unit-test-0011.sh
+> Testing  hflip=0 vflip=0 rotate=0: pass
+> Testing  hflip=1 vflip=0 rotate=0: pass
+> Testing  hflip=0 vflip=1 rotate=0: pass
+> Testing  hflip=1 vflip=1 rotate=0: pass
+> Testing  hflip=0 vflip=0 rotate=90: pass
+> Testing  hflip=1 vflip=0 rotate=90: pass
+> Testing  hflip=0 vflip=1 rotate=90: pass
+> Testing  hflip=1 vflip=1 rotate=90: pass
+> - vsp-unit-test-0012.sh
+> Testing hflip: pass
+> Testing vflip: pass
+> - vsp-unit-test-0013.sh
+> Testing RPF unpacking in RGB332: pass
+> Testing RPF unpacking in ARGB555: pass
+> Testing RPF unpacking in XRGB555: pass
+> Testing RPF unpacking in RGB565: pass
+> Testing RPF unpacking in BGR24: pass
+> Testing RPF unpacking in RGB24: pass
+> Testing RPF unpacking in ABGR32: pass
+> Testing RPF unpacking in ARGB32: pass
+> Testing RPF unpacking in XBGR32: pass
+> Testing RPF unpacking in XRGB32: pass
+> - vsp-unit-test-0014.sh
+> Testing RPF unpacking in NV12M: pass
+> Testing RPF unpacking in NV16M: pass
+> Testing RPF unpacking in NV21M: pass
+> Testing RPF unpacking in NV61M: pass
+> Testing RPF unpacking in UYVY: pass
+> Testing RPF unpacking in VYUY: skip
+> Testing RPF unpacking in YUV420M: pass
+> Testing RPF unpacking in YUV422M: pass
+> Testing RPF unpacking in YUV444M: pass
+> Testing RPF unpacking in YVU420M: pass
+> Testing RPF unpacking in YVU422M: pass
+> Testing RPF unpacking in YVU444M: pass
+> Testing RPF unpacking in YUYV: pass
+> Testing RPF unpacking in YVYU: pass
+> - vsp-unit-test-0015.sh
+> Testing SRU scaling from 1024x768 to 1024x768 in RGB24: pass
+> Testing SRU scaling from 1024x768 to 2048x1536 in RGB24: pass
+> Testing SRU scaling from 1024x768 to 1024x768 in YUV444M: pass
+> Testing SRU scaling from 1024x768 to 2048x1536 in YUV444M: pass
+> - vsp-unit-test-0016.sh
+> Testing  hflip=0 vflip=0 rotate=0 640x480 -> 640x480: pass
+> Testing  hflip=0 vflip=0 rotate=0 640x480 -> 1024x768: pass
+> Testing  hflip=0 vflip=0 rotate=0 1024x768 -> 640x480: pass
+> Testing  hflip=1 vflip=0 rotate=0 640x480 -> 640x480: pass
+> Testing  hflip=1 vflip=0 rotate=0 640x480 -> 1024x768: pass
+> Testing  hflip=1 vflip=0 rotate=0 1024x768 -> 640x480: pass
+> Testing  hflip=0 vflip=1 rotate=0 640x480 -> 640x480: pass
+> Testing  hflip=0 vflip=1 rotate=0 640x480 -> 1024x768: pass
+> Testing  hflip=0 vflip=1 rotate=0 1024x768 -> 640x480: pass
+> Testing  hflip=1 vflip=1 rotate=0 640x480 -> 640x480: pass
+> Testing  hflip=1 vflip=1 rotate=0 640x480 -> 1024x768: pass
+> Testing  hflip=1 vflip=1 rotate=0 1024x768 -> 640x480: pass
+> Testing  hflip=0 vflip=0 rotate=90 640x480 -> 640x480: pass
+> Testing  hflip=0 vflip=0 rotate=90 640x480 -> 1024x768: pass
+> Testing  hflip=0 vflip=0 rotate=90 1024x768 -> 640x480: pass
+> Testing  hflip=1 vflip=0 rotate=90 640x480 -> 640x480: pass
+> Testing  hflip=1 vflip=0 rotate=90 640x480 -> 1024x768: pass
+> Testing  hflip=1 vflip=0 rotate=90 1024x768 -> 640x480: pass
+> Testing  hflip=0 vflip=1 rotate=90 640x480 -> 640x480: pass
+> Testing  hflip=0 vflip=1 rotate=90 640x480 -> 1024x768: pass
+> Testing  hflip=0 vflip=1 rotate=90 1024x768 -> 640x480: pass
+> Testing  hflip=1 vflip=1 rotate=90 640x480 -> 640x480: pass
+> Testing  hflip=1 vflip=1 rotate=90 640x480 -> 1024x768: pass
+> Testing  hflip=1 vflip=1 rotate=90 1024x768 -> 640x480: pass
+> - vsp-unit-test-0017.sh
+> - vsp-unit-test-0018.sh
+> Testing RPF crop from (0,0)/512x384: pass
+> Testing RPF crop from (32,32)/512x384: pass
+> Testing RPF crop from (32,64)/512x384: pass
+> Testing RPF crop from (64,32)/512x384: pass
+> - vsp-unit-test-0019.sh
+> - vsp-unit-test-0020.sh
+> - vsp-unit-test-0021.sh
+> Testing WPF packing in RGB332 during stress testing: pass
+> Testing WPF packing in ARGB555 during stress testing: pass
+> Testing WPF packing in XRGB555 during stress testing: pass
+> Testing WPF packing in RGB565 during stress testing: pass
+> Testing WPF packing in BGR24 during stress testing: pass
+> Testing WPF packing in RGB24 during stress testing: pass
+> Testing WPF packing in ABGR32 during stress testing: pass
+> Testing WPF packing in ARGB32 during stress testing: pass
+> Testing WPF packing in XBGR32 during stress testing: pass
+> Testing WPF packing in XRGB32 during stress testing: pass
+> ./vsp-unit-test-0021.sh: line 34:  4489 Killed                  stress --cpu
+> 8 --io 4 --vm 2 --vm-bytes 128M - vsp-unit-test-0022.sh
+> Testing long duration pipelines under stress: pass
+> ./vsp-unit-test-0022.sh: line 38:  6457 Killed                  stress --cpu
+> 8 --io 4 --vm 2 --vm-bytes 128M - vsp-unit-test-0023.sh
+> Testing histogram HGT with hue areas
+> 0,255,255,255,255,255,255,255,255,255,255,255: pass Testing histogram HGT
+> with hue areas 0,40,40,80,80,120,120,160,160,200,200,255: pass Testing
+> histogram HGT with hue areas 220,40,40,80,80,120,120,160,160,200,200,220:
+> pass Testing histogram HGT with hue areas
+> 0,10,50,60,100,110,150,160,200,210,250,255: pass Testing histogram HGT with
+> hue areas 10,20,50,60,100,110,150,160,200,210,230,240: pass Testing
+> histogram HGT with hue areas 240,20,60,80,100,120,140,160,180,200,210,220:
+> pass - vsp-unit-test-0024.sh
+> Test requires unavailable feature set `rpf.0 rpf.1 brs wpf.0': skipped
+> 158 tests: 142 passed, 0 failed, 3 skipped
+> 
+> Kieran Bingham (8):
+>   media: vsp1: Reword uses of 'fragment' as 'body'
+>   media: vsp1: Protect bodies against overflow
+>   media: vsp1: Provide a body pool
+>   media: vsp1: Convert display lists to use new body pool
+>   media: vsp1: Use reference counting for bodies
+>   media: vsp1: Refactor display list configure operations
+>   media: vsp1: Adapt entities to configure into a body
+>   media: vsp1: Move video configuration to a cached dlb
+> 
+>  drivers/media/platform/vsp1/vsp1_bru.c    |  32 +--
+>  drivers/media/platform/vsp1/vsp1_clu.c    | 102 +++---
+>  drivers/media/platform/vsp1/vsp1_clu.h    |   1 +-
+>  drivers/media/platform/vsp1/vsp1_dl.c     | 393 +++++++++++++----------
+>  drivers/media/platform/vsp1/vsp1_dl.h     |  19 +-
+>  drivers/media/platform/vsp1/vsp1_drm.c    |  35 +--
+>  drivers/media/platform/vsp1/vsp1_entity.c |  26 +-
+>  drivers/media/platform/vsp1/vsp1_entity.h |  38 +-
+>  drivers/media/platform/vsp1/vsp1_hgo.c    |  26 +--
+>  drivers/media/platform/vsp1/vsp1_hgt.c    |  28 +--
+>  drivers/media/platform/vsp1/vsp1_hsit.c   |  20 +-
+>  drivers/media/platform/vsp1/vsp1_lif.c    |  25 +-
+>  drivers/media/platform/vsp1/vsp1_lut.c    |  77 +++--
+>  drivers/media/platform/vsp1/vsp1_lut.h    |   1 +-
+>  drivers/media/platform/vsp1/vsp1_pipe.c   |  11 +-
+>  drivers/media/platform/vsp1/vsp1_pipe.h   |   7 +-
+>  drivers/media/platform/vsp1/vsp1_rpf.c    | 183 +++++------
+>  drivers/media/platform/vsp1/vsp1_sru.c    |  24 +-
+>  drivers/media/platform/vsp1/vsp1_uds.c    |  75 ++--
+>  drivers/media/platform/vsp1/vsp1_uds.h    |   2 +-
+>  drivers/media/platform/vsp1/vsp1_video.c  |  82 ++---
+>  drivers/media/platform/vsp1/vsp1_video.h  |   2 +-
+>  drivers/media/platform/vsp1/vsp1_wpf.c    | 327 +++++++++----------
+>  23 files changed, 845 insertions(+), 691 deletions(-)
+> 
+> base-commit: 8514509ba5933f4e4ade0d5d81be117f18c1ebd2
+
+-- 
 Regards,
 
 Laurent Pinchart
