@@ -1,436 +1,239 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60446 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753181AbeD3RsJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Apr 2018 13:48:09 -0400
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v7 8/8] media: vsp1: Move video configuration to a cached
- dlb
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
- <397eb3811ec096d0ceefa1dbea2d0ae68feb0587.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
- <10234110.l0SE7yvkH2@avalon>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <066d4c14-5b92-bc99-d82a-d44df4a32726@ideasonboard.com>
-Date: Mon, 30 Apr 2018 18:48:03 +0100
+Subject: Re: [PATCH v7 8/8] media: vsp1: Move video configuration to a cached dlb
+Date: Sat, 07 Apr 2018 03:23:52 +0300
+Message-ID: <10234110.l0SE7yvkH2@avalon>
+In-Reply-To: <397eb3811ec096d0ceefa1dbea2d0ae68feb0587.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com> <397eb3811ec096d0ceefa1dbea2d0ae68feb0587.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <10234110.l0SE7yvkH2@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
-
-On 07/04/18 01:23, Laurent Pinchart wrote:
-> Hi Kieran,
-> 
-> Thank you for the patch.
-> 
-> On Thursday, 8 March 2018 02:05:31 EEST Kieran Bingham wrote:
->> We are now able to configure a pipeline directly into a local display
->> list body. Take advantage of this fact, and create a cacheable body to
->> store the configuration of the pipeline in the video object.
->>
->> vsp1_video_pipeline_run() is now the last user of the pipe->dl object.
->> Convert this function to use the cached video->config body and obtain a
->> local display list reference.
->>
->> Attach the video->config body to the display list when needed before
->> committing to hardware.
->>
->> The pipe object is marked as un-configured when resuming from a suspend.
->> This ensures that when the hardware is reset - our cached configuration
->> will be re-attached to the next committed DL.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>
->> v3:
->>  - 's/fragment/body/', 's/fragments/bodies/'
->>  - video dlb cache allocation increased from 2 to 3 dlbs
->>
->> Our video DL usage now looks like the below output:
->>
->> dl->body0 contains our disposable runtime configuration. Max 41.
->> dl_child->body0 is our partition specific configuration. Max 12.
->> dl->bodies shows our constant configuration and LUTs.
->>
->>   These two are LUT/CLU:
->>      * dl->bodies[x]->num_entries 256 / max 256
->>      * dl->bodies[x]->num_entries 4914 / max 4914
->>
->> Which shows that our 'constant' configuration cache is currently
->> utilised to a maximum of 64 entries.
->>
->> trace-cmd report | \
->>     grep max | sed 's/.*vsp1_dl_list_commit://g' | sort | uniq;
->>
->>   dl->body0->num_entries 13 / max 128
->>   dl->body0->num_entries 14 / max 128
->>   dl->body0->num_entries 16 / max 128
->>   dl->body0->num_entries 20 / max 128
->>   dl->body0->num_entries 27 / max 128
->>   dl->body0->num_entries 34 / max 128
->>   dl->body0->num_entries 41 / max 128
->>   dl_child->body0->num_entries 10 / max 128
->>   dl_child->body0->num_entries 12 / max 128
->>   dl->bodies[x]->num_entries 15 / max 128
->>   dl->bodies[x]->num_entries 16 / max 128
->>   dl->bodies[x]->num_entries 17 / max 128
->>   dl->bodies[x]->num_entries 18 / max 128
->>   dl->bodies[x]->num_entries 20 / max 128
->>   dl->bodies[x]->num_entries 21 / max 128
->>   dl->bodies[x]->num_entries 256 / max 256
->>   dl->bodies[x]->num_entries 31 / max 128
->>   dl->bodies[x]->num_entries 32 / max 128
->>   dl->bodies[x]->num_entries 39 / max 128
->>   dl->bodies[x]->num_entries 40 / max 128
->>   dl->bodies[x]->num_entries 47 / max 128
->>   dl->bodies[x]->num_entries 48 / max 128
->>   dl->bodies[x]->num_entries 4914 / max 4914
->>   dl->bodies[x]->num_entries 55 / max 128
->>   dl->bodies[x]->num_entries 56 / max 128
->>   dl->bodies[x]->num_entries 63 / max 128
->>   dl->bodies[x]->num_entries 64 / max 128
-> 
-> This might be useful to capture in the main part of the commit message.
-> 
->> v4:
->>  - Adjust pipe configured flag to be reset on resume rather than suspend
->>  - rename dl_child, dl_next
->>
->>  drivers/media/platform/vsp1/vsp1_pipe.c  |  7 +++-
->>  drivers/media/platform/vsp1/vsp1_pipe.h  |  4 +-
->>  drivers/media/platform/vsp1/vsp1_video.c | 67 ++++++++++++++++---------
->>  drivers/media/platform/vsp1/vsp1_video.h |  2 +-
->>  4 files changed, 54 insertions(+), 26 deletions(-)
->>
->> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c
->> b/drivers/media/platform/vsp1/vsp1_pipe.c index 5012643583b6..fa445b1a2e38
->> 100644
->> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
->> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
->> @@ -249,6 +249,7 @@ void vsp1_pipeline_run(struct vsp1_pipeline *pipe)
->>  		vsp1_write(vsp1, VI6_CMD(pipe->output->entity.index),
->>  			   VI6_CMD_STRCMD);
->>  		pipe->state = VSP1_PIPELINE_RUNNING;
->> +		pipe->configured = true;
->>  	}
->>
->>  	pipe->buffers_ready = 0;
->> @@ -470,6 +471,12 @@ void vsp1_pipelines_resume(struct vsp1_device *vsp1)
->>  			continue;
->>
->>  		spin_lock_irqsave(&pipe->irqlock, flags);
->> +		/*
->> +		 * The hardware may have been reset during a suspend and will
->> +		 * need a full reconfiguration
->> +		 */
-> 
-> s/reconfiguration/reconfiguration./
-> 
->> +		pipe->configured = false;
->> +
-> 
-> Where does that full reconfiguration occur, given that the vsp1_pipeline_run() 
-> right below sets pipe->configured to true without performing reconfiguration ?
-
-It's magic isn't it :D
-
-If the pipe->configured flag gets set to false, the next execution of
-vsp1_pipeline_run() attaches the video->pipe_config (the cached configuration,
-containing the route_setup() and the configure_stream() entries) to the display
-list before configuring for the next frame.
-
-This means that the hardware gets a full configuration written to it after a
-suspend/resume action.
-
-Perhaps the comment should say "The video object will write out it's cached pipe
-configuration on the next display list commit"
-
-
-> 
->>  		if (vsp1_pipeline_ready(pipe))
->>  			vsp1_pipeline_run(pipe);
->>  		spin_unlock_irqrestore(&pipe->irqlock, flags);
->> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h
->> b/drivers/media/platform/vsp1/vsp1_pipe.h index 90d29492b9b9..e7ad6211b4d0
->> 100644
->> --- a/drivers/media/platform/vsp1/vsp1_pipe.h
->> +++ b/drivers/media/platform/vsp1/vsp1_pipe.h
->> @@ -90,6 +90,7 @@ struct vsp1_partition {
->>   * @irqlock: protects the pipeline state
->>   * @state: current state
->>   * @wq: wait queue to wait for state change completion
->> + * @configured: flag determining if the hardware has run since reset
->>   * @frame_end: frame end interrupt handler
->>   * @lock: protects the pipeline use count and stream count
->>   * @kref: pipeline reference count
->> @@ -117,6 +118,7 @@ struct vsp1_pipeline {
->>  	spinlock_t irqlock;
->>  	enum vsp1_pipeline_state state;
->>  	wait_queue_head_t wq;
->> +	bool configured;
->>
->>  	void (*frame_end)(struct vsp1_pipeline *pipe, bool completed);
->>
->> @@ -143,8 +145,6 @@ struct vsp1_pipeline {
->>  	 */
->>  	struct list_head entities;
->>
->> -	struct vsp1_dl_list *dl;
->> -
-> 
-> You should remove the corresponding line from the structure documentation.
-
-Done.
-
-> 
->>  	unsigned int partitions;
->>  	struct vsp1_partition *partition;
->>  	struct vsp1_partition *part_table;
->> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
->> b/drivers/media/platform/vsp1/vsp1_video.c index b47708660e53..96d9872667d9
->> 100644
->> --- a/drivers/media/platform/vsp1/vsp1_video.c
->> +++ b/drivers/media/platform/vsp1/vsp1_video.c
->> @@ -394,37 +394,43 @@ static void vsp1_video_pipeline_run_partition(struct
->> vsp1_pipeline *pipe, static void vsp1_video_pipeline_run(struct
->> vsp1_pipeline *pipe)
->>  {
->>  	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
->> +	struct vsp1_video *video = pipe->output->video;
->>  	unsigned int partition;
->> +	struct vsp1_dl_list *dl;
->> +
->> +	dl = vsp1_dl_list_get(pipe->output->dlm);
->>
->> -	if (!pipe->dl)
->> -		pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
->> +	/* Attach our pipe configuration to fully initialise the hardware */
-> 
-> s/hardware/hardware./
-> 
-> There are other similar comments in this patch.
-> 
->> +	if (!pipe->configured) {
->> +		vsp1_dl_list_add_body(dl, video->pipe_config);
->> +		pipe->configured = true;
->> +	}
->>
->>  	/* Run the first partition */
->> -	vsp1_video_pipeline_run_partition(pipe, pipe->dl, 0);
->> +	vsp1_video_pipeline_run_partition(pipe, dl, 0);
->>
->>  	/* Process consecutive partitions as necessary */
->>  	for (partition = 1; partition < pipe->partitions; ++partition) {
->> -		struct vsp1_dl_list *dl;
->> +		struct vsp1_dl_list *dl_next;
->>
->> -		dl = vsp1_dl_list_get(pipe->output->dlm);
->> +		dl_next = vsp1_dl_list_get(pipe->output->dlm);
->>
->>  		/*
->>  		 * An incomplete chain will still function, but output only
->>  		 * the partitions that had a dl available. The frame end
->>  		 * interrupt will be marked on the last dl in the chain.
->>  		 */
->> -		if (!dl) {
->> +		if (!dl_next) {
->>  			dev_err(vsp1->dev, "Failed to obtain a dl list. Frame will be
->> incomplete\n"); break;
->>  		}
->>
->> -		vsp1_video_pipeline_run_partition(pipe, dl, partition);
->> -		vsp1_dl_list_add_chain(pipe->dl, dl);
->> +		vsp1_video_pipeline_run_partition(pipe, dl_next, partition);
->> +		vsp1_dl_list_add_chain(dl, dl_next);
->>  	}
->>
->>  	/* Complete, and commit the head display list. */
->> -	vsp1_dl_list_commit(pipe->dl);
->> -	pipe->dl = NULL;
->> +	vsp1_dl_list_commit(dl);
->>
->>  	vsp1_pipeline_run(pipe);
->>  }
->> @@ -790,8 +796,8 @@ static void vsp1_video_buffer_queue(struct vb2_buffer
->> *vb)
->>
->>  static int vsp1_video_setup_pipeline(struct vsp1_pipeline *pipe)
->>  {
->> +	struct vsp1_video *video = pipe->output->video;
->>  	struct vsp1_entity *entity;
->> -	struct vsp1_dl_body *dlb;
->>  	int ret;
->>
->>  	/* Determine this pipelines sizes for image partitioning support. */
->> @@ -799,14 +805,6 @@ static int vsp1_video_setup_pipeline(struct
->> vsp1_pipeline *pipe) if (ret < 0)
->>  		return ret;
->>
->> -	/* Prepare the display list. */
->> -	pipe->dl = vsp1_dl_list_get(pipe->output->dlm);
->> -	if (!pipe->dl)
->> -		return -ENOMEM;
->> -
->> -	/* Retrieve the default DLB from the list */
->> -	dlb = vsp1_dl_list_get_body0(pipe->dl);
->> -
->>  	if (pipe->uds) {
->>  		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
->>
->> @@ -828,11 +826,20 @@ static int vsp1_video_setup_pipeline(struct
->> vsp1_pipeline *pipe) }
->>  	}
->>
->> +	/* Obtain a clean body from our pool */
->> +	video->pipe_config = vsp1_dl_body_get(video->dlbs);
->> +	if (!video->pipe_config)
->> +		return -ENOMEM;
->> +
->> +	/* Configure the entities into our cached pipe configuration */
->>  	list_for_each_entry(entity, &pipe->entities, list_pipe) {
->> -		vsp1_entity_route_setup(entity, pipe, dlb);
->> -		vsp1_entity_configure_stream(entity, pipe, dlb);
->> +		vsp1_entity_route_setup(entity, pipe, video->pipe_config);
->> +		vsp1_entity_configure_stream(entity, pipe, video->pipe_config);
->>  	}
->>
->> +	/* Ensure that our cached configuration is updated in the next DL */
->> +	pipe->configured = false;
-> 
-> Quoting my comment to a previous version, and your reply to it which I have 
-> failed to answer,
-> 
->>> I'm tempted to move this at pipeline stop time (either to
->>> vsp1_video_stop_streaming() right after the vsp1_pipeline_stop() call, or
->>> in vsp1_pipeline_stop() itself), possibly with a WARN_ON() here to catch
->>> bugs in the driver.
->>
->> Do you mean just setting the flag? or the pipe_configuration? This is a
->> setup task - not a stop task ... ? We are doing this as part of
->> vsp1_video_start_streaming().
-> 
-> I meant just setting the configured flag back to false.
-
-The point at this line in the code is to ensure that the flag is set false,
-because all of that stream configuration isn't included in the display list -
-unless the flag is false.
-
-If the flag is initialised false in object creation, and stream stop - then
-that's fine. I felt like setting it false here was appropriate because as soon
-as the video->pipe_config cache is populated - that's the time it also needs to
-be 'flushed' to the hardware through the next dl_commit()
-
-> 
->> IMO, The flag should only be updated after the configuration has been
->> updated to signal that the new configuration should be written out to the
->> hardware.
->>
->> Unless you mean to mark the pipe->configured = false; at
->> vsp1_pipeline_stop() time because we reset the pipe to halt it ?
-> 
-> That's the idea, yes. And now that I think about it again, we could also set 
-> pipe->configured to false in vsp1_video_cleanup_pipeline() right after the 
-> vsp1_dl_body_put() call.
-> 
-> What bothers me here is that the pipe->configured flag is handled both in 
-> vsp1_pipe.c and vsp1_video.c. Coupled with my above comment about the full 
-> reconfiguration at resume time, 
-
-Which comment - the one saying it doesn't happen? (It does... it uses the cached
-configuration)
-
-> I think we might not be abstracting this as we 
-> should. I wonder whether it would be possible to either make the flag local to 
-> vsp1_pipe.c, or local to vsp1_video.c and move it from the pipeline object to 
-> the video object. My gut feeling right now (and it might be too late to trust 
-> it) is that, as the pipe_config object is stored in vsp1_video, so should the 
-> configured flag.
-> 
-> Please feel free to challenge this.
-
-The flag is in the pipe because that's accessible at resume time. I could
-provide accessors so that it's not modified directly from the vsp_video object?
-
-But the configuration cache is specific to the video object - which is why it's
-in there...
-
-I'm not sure that the pipeline vsp1_pipelines_resume() can modify flags in the
-video object at resume time though ... which would be the other direction of
-approaching this ...
-
-
-> 
->> +
->>  	return 0;
->>  }
->>
->> @@ -842,6 +849,9 @@ static void vsp1_video_cleanup_pipeline(struct
->> vsp1_pipeline *pipe) struct vsp1_vb2_buffer *buffer;
->>  	unsigned long flags;
->>
->> +	/* Release any cached configuration */
->> +	vsp1_dl_body_put(video->pipe_config);
->> +
->>  	/* Remove all buffers from the IRQ queue. */
->>  	spin_lock_irqsave(&video->irqlock, flags);
->>  	list_for_each_entry(buffer, &video->irqqueue, queue)
->> @@ -918,9 +928,6 @@ static void vsp1_video_stop_streaming(struct vb2_queue
->> *vq) ret = vsp1_pipeline_stop(pipe);
->>  		if (ret == -ETIMEDOUT)
->>  			dev_err(video->vsp1->dev, "pipeline stop timeout\n");
->> -
->> -		vsp1_dl_list_put(pipe->dl);
->> -		pipe->dl = NULL;
->>  	}
->>  	mutex_unlock(&pipe->lock);
->>
->> @@ -1240,6 +1247,16 @@ struct vsp1_video *vsp1_video_create(struct
->> vsp1_device *vsp1, goto error;
->>  	}
->>
->> +	/*
->> +	 * Utilise a body pool to cache the constant configuration of the
->> +	 * pipeline object.
->> +	 */
->> +	video->dlbs = vsp1_dl_body_pool_create(vsp1, 3, 128, 0);
->> +	if (!video->dlbs) {
->> +		ret = -ENOMEM;
->> +		goto error;
->> +	}
->> +
->>  	return video;
->>
->>  error:
->> @@ -1249,6 +1266,8 @@ struct vsp1_video *vsp1_video_create(struct
->> vsp1_device *vsp1,
->>
->>  void vsp1_video_cleanup(struct vsp1_video *video)
->>  {
->> +	vsp1_dl_body_pool_destroy(video->dlbs);
->> +
->>  	if (video_is_registered(&video->video))
->>  		video_unregister_device(&video->video);
->>
->> diff --git a/drivers/media/platform/vsp1/vsp1_video.h
->> b/drivers/media/platform/vsp1/vsp1_video.h index 50ea7f02205f..e84f8ee902c1
->> 100644
->> --- a/drivers/media/platform/vsp1/vsp1_video.h
->> +++ b/drivers/media/platform/vsp1/vsp1_video.h
->> @@ -43,6 +43,8 @@ struct vsp1_video {
->>
->>  	struct mutex lock;
->>
->> +	struct vsp1_dl_body_pool *dlbs;
->> +	struct vsp1_dl_body *pipe_config;
->>  	unsigned int pipe_index;
->>
->>  	struct vb2_queue queue;
-> 
+SGkgS2llcmFuLAoKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2guCgpPbiBUaHVyc2RheSwgOCBNYXJj
+aCAyMDE4IDAyOjA1OjMxIEVFU1QgS2llcmFuIEJpbmdoYW0gd3JvdGU6Cj4gV2UgYXJlIG5vdyBh
+YmxlIHRvIGNvbmZpZ3VyZSBhIHBpcGVsaW5lIGRpcmVjdGx5IGludG8gYSBsb2NhbCBkaXNwbGF5
+Cj4gbGlzdCBib2R5LiBUYWtlIGFkdmFudGFnZSBvZiB0aGlzIGZhY3QsIGFuZCBjcmVhdGUgYSBj
+YWNoZWFibGUgYm9keSB0bwo+IHN0b3JlIHRoZSBjb25maWd1cmF0aW9uIG9mIHRoZSBwaXBlbGlu
+ZSBpbiB0aGUgdmlkZW8gb2JqZWN0Lgo+IAo+IHZzcDFfdmlkZW9fcGlwZWxpbmVfcnVuKCkgaXMg
+bm93IHRoZSBsYXN0IHVzZXIgb2YgdGhlIHBpcGUtPmRsIG9iamVjdC4KPiBDb252ZXJ0IHRoaXMg
+ZnVuY3Rpb24gdG8gdXNlIHRoZSBjYWNoZWQgdmlkZW8tPmNvbmZpZyBib2R5IGFuZCBvYnRhaW4g
+YQo+IGxvY2FsIGRpc3BsYXkgbGlzdCByZWZlcmVuY2UuCj4gCj4gQXR0YWNoIHRoZSB2aWRlby0+
+Y29uZmlnIGJvZHkgdG8gdGhlIGRpc3BsYXkgbGlzdCB3aGVuIG5lZWRlZCBiZWZvcmUKPiBjb21t
+aXR0aW5nIHRvIGhhcmR3YXJlLgo+IAo+IFRoZSBwaXBlIG9iamVjdCBpcyBtYXJrZWQgYXMgdW4t
+Y29uZmlndXJlZCB3aGVuIHJlc3VtaW5nIGZyb20gYSBzdXNwZW5kLgo+IFRoaXMgZW5zdXJlcyB0
+aGF0IHdoZW4gdGhlIGhhcmR3YXJlIGlzIHJlc2V0IC0gb3VyIGNhY2hlZCBjb25maWd1cmF0aW9u
+Cj4gd2lsbCBiZSByZS1hdHRhY2hlZCB0byB0aGUgbmV4dCBjb21taXR0ZWQgREwuCj4gCj4gU2ln
+bmVkLW9mZi1ieTogS2llcmFuIEJpbmdoYW0gPGtpZXJhbi5iaW5naGFtK3JlbmVzYXNAaWRlYXNv
+bmJvYXJkLmNvbT4KPiAtLS0KPiAKPiB2MzoKPiAgLSAncy9mcmFnbWVudC9ib2R5LycsICdzL2Zy
+YWdtZW50cy9ib2RpZXMvJwo+ICAtIHZpZGVvIGRsYiBjYWNoZSBhbGxvY2F0aW9uIGluY3JlYXNl
+ZCBmcm9tIDIgdG8gMyBkbGJzCj4gCj4gT3VyIHZpZGVvIERMIHVzYWdlIG5vdyBsb29rcyBsaWtl
+IHRoZSBiZWxvdyBvdXRwdXQ6Cj4gCj4gZGwtPmJvZHkwIGNvbnRhaW5zIG91ciBkaXNwb3NhYmxl
+IHJ1bnRpbWUgY29uZmlndXJhdGlvbi4gTWF4IDQxLgo+IGRsX2NoaWxkLT5ib2R5MCBpcyBvdXIg
+cGFydGl0aW9uIHNwZWNpZmljIGNvbmZpZ3VyYXRpb24uIE1heCAxMi4KPiBkbC0+Ym9kaWVzIHNo
+b3dzIG91ciBjb25zdGFudCBjb25maWd1cmF0aW9uIGFuZCBMVVRzLgo+IAo+ICAgVGhlc2UgdHdv
+IGFyZSBMVVQvQ0xVOgo+ICAgICAgKiBkbC0+Ym9kaWVzW3hdLT5udW1fZW50cmllcyAyNTYgLyBt
+YXggMjU2Cj4gICAgICAqIGRsLT5ib2RpZXNbeF0tPm51bV9lbnRyaWVzIDQ5MTQgLyBtYXggNDkx
+NAo+IAo+IFdoaWNoIHNob3dzIHRoYXQgb3VyICdjb25zdGFudCcgY29uZmlndXJhdGlvbiBjYWNo
+ZSBpcyBjdXJyZW50bHkKPiB1dGlsaXNlZCB0byBhIG1heGltdW0gb2YgNjQgZW50cmllcy4KPiAK
+PiB0cmFjZS1jbWQgcmVwb3J0IHwgXAo+ICAgICBncmVwIG1heCB8IHNlZCAncy8uKnZzcDFfZGxf
+bGlzdF9jb21taXQ6Ly9nJyB8IHNvcnQgfCB1bmlxOwo+IAo+ICAgZGwtPmJvZHkwLT5udW1fZW50
+cmllcyAxMyAvIG1heCAxMjgKPiAgIGRsLT5ib2R5MC0+bnVtX2VudHJpZXMgMTQgLyBtYXggMTI4
+Cj4gICBkbC0+Ym9keTAtPm51bV9lbnRyaWVzIDE2IC8gbWF4IDEyOAo+ICAgZGwtPmJvZHkwLT5u
+dW1fZW50cmllcyAyMCAvIG1heCAxMjgKPiAgIGRsLT5ib2R5MC0+bnVtX2VudHJpZXMgMjcgLyBt
+YXggMTI4Cj4gICBkbC0+Ym9keTAtPm51bV9lbnRyaWVzIDM0IC8gbWF4IDEyOAo+ICAgZGwtPmJv
+ZHkwLT5udW1fZW50cmllcyA0MSAvIG1heCAxMjgKPiAgIGRsX2NoaWxkLT5ib2R5MC0+bnVtX2Vu
+dHJpZXMgMTAgLyBtYXggMTI4Cj4gICBkbF9jaGlsZC0+Ym9keTAtPm51bV9lbnRyaWVzIDEyIC8g
+bWF4IDEyOAo+ICAgZGwtPmJvZGllc1t4XS0+bnVtX2VudHJpZXMgMTUgLyBtYXggMTI4Cj4gICBk
+bC0+Ym9kaWVzW3hdLT5udW1fZW50cmllcyAxNiAvIG1heCAxMjgKPiAgIGRsLT5ib2RpZXNbeF0t
+Pm51bV9lbnRyaWVzIDE3IC8gbWF4IDEyOAo+ICAgZGwtPmJvZGllc1t4XS0+bnVtX2VudHJpZXMg
+MTggLyBtYXggMTI4Cj4gICBkbC0+Ym9kaWVzW3hdLT5udW1fZW50cmllcyAyMCAvIG1heCAxMjgK
+PiAgIGRsLT5ib2RpZXNbeF0tPm51bV9lbnRyaWVzIDIxIC8gbWF4IDEyOAo+ICAgZGwtPmJvZGll
+c1t4XS0+bnVtX2VudHJpZXMgMjU2IC8gbWF4IDI1Ngo+ICAgZGwtPmJvZGllc1t4XS0+bnVtX2Vu
+dHJpZXMgMzEgLyBtYXggMTI4Cj4gICBkbC0+Ym9kaWVzW3hdLT5udW1fZW50cmllcyAzMiAvIG1h
+eCAxMjgKPiAgIGRsLT5ib2RpZXNbeF0tPm51bV9lbnRyaWVzIDM5IC8gbWF4IDEyOAo+ICAgZGwt
+PmJvZGllc1t4XS0+bnVtX2VudHJpZXMgNDAgLyBtYXggMTI4Cj4gICBkbC0+Ym9kaWVzW3hdLT5u
+dW1fZW50cmllcyA0NyAvIG1heCAxMjgKPiAgIGRsLT5ib2RpZXNbeF0tPm51bV9lbnRyaWVzIDQ4
+IC8gbWF4IDEyOAo+ICAgZGwtPmJvZGllc1t4XS0+bnVtX2VudHJpZXMgNDkxNCAvIG1heCA0OTE0
+Cj4gICBkbC0+Ym9kaWVzW3hdLT5udW1fZW50cmllcyA1NSAvIG1heCAxMjgKPiAgIGRsLT5ib2Rp
+ZXNbeF0tPm51bV9lbnRyaWVzIDU2IC8gbWF4IDEyOAo+ICAgZGwtPmJvZGllc1t4XS0+bnVtX2Vu
+dHJpZXMgNjMgLyBtYXggMTI4Cj4gICBkbC0+Ym9kaWVzW3hdLT5udW1fZW50cmllcyA2NCAvIG1h
+eCAxMjgKClRoaXMgbWlnaHQgYmUgdXNlZnVsIHRvIGNhcHR1cmUgaW4gdGhlIG1haW4gcGFydCBv
+ZiB0aGUgY29tbWl0IG1lc3NhZ2UuCgo+IHY0Ogo+ICAtIEFkanVzdCBwaXBlIGNvbmZpZ3VyZWQg
+ZmxhZyB0byBiZSByZXNldCBvbiByZXN1bWUgcmF0aGVyIHRoYW4gc3VzcGVuZAo+ICAtIHJlbmFt
+ZSBkbF9jaGlsZCwgZGxfbmV4dAo+IAo+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3ZzcDEvdnNw
+MV9waXBlLmMgIHwgIDcgKysrLQo+ICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3ZzcDEvdnNwMV9w
+aXBlLmggIHwgIDQgKy0KPiAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS92c3AxL3ZzcDFfdmlkZW8u
+YyB8IDY3ICsrKysrKysrKysrKysrKystLS0tLS0tLS0KPiAgZHJpdmVycy9tZWRpYS9wbGF0Zm9y
+bS92c3AxL3ZzcDFfdmlkZW8uaCB8ICAyICstCj4gIDQgZmlsZXMgY2hhbmdlZCwgNTQgaW5zZXJ0
+aW9ucygrKSwgMjYgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEv
+cGxhdGZvcm0vdnNwMS92c3AxX3BpcGUuYwo+IGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS92c3Ax
+L3ZzcDFfcGlwZS5jIGluZGV4IDUwMTI2NDM1ODNiNi4uZmE0NDViMWEyZTM4Cj4gMTAwNjQ0Cj4g
+LS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS92c3AxL3ZzcDFfcGlwZS5jCj4gKysrIGIvZHJp
+dmVycy9tZWRpYS9wbGF0Zm9ybS92c3AxL3ZzcDFfcGlwZS5jCj4gQEAgLTI0OSw2ICsyNDksNyBA
+QCB2b2lkIHZzcDFfcGlwZWxpbmVfcnVuKHN0cnVjdCB2c3AxX3BpcGVsaW5lICpwaXBlKQo+ICAJ
+CXZzcDFfd3JpdGUodnNwMSwgVkk2X0NNRChwaXBlLT5vdXRwdXQtPmVudGl0eS5pbmRleCksCj4g
+IAkJCSAgIFZJNl9DTURfU1RSQ01EKTsKPiAgCQlwaXBlLT5zdGF0ZSA9IFZTUDFfUElQRUxJTkVf
+UlVOTklORzsKPiArCQlwaXBlLT5jb25maWd1cmVkID0gdHJ1ZTsKPiAgCX0KPiAKPiAgCXBpcGUt
+PmJ1ZmZlcnNfcmVhZHkgPSAwOwo+IEBAIC00NzAsNiArNDcxLDEyIEBAIHZvaWQgdnNwMV9waXBl
+bGluZXNfcmVzdW1lKHN0cnVjdCB2c3AxX2RldmljZSAqdnNwMSkKPiAgCQkJY29udGludWU7Cj4g
+Cj4gIAkJc3Bpbl9sb2NrX2lycXNhdmUoJnBpcGUtPmlycWxvY2ssIGZsYWdzKTsKPiArCQkvKgo+
+ICsJCSAqIFRoZSBoYXJkd2FyZSBtYXkgaGF2ZSBiZWVuIHJlc2V0IGR1cmluZyBhIHN1c3BlbmQg
+YW5kIHdpbGwKPiArCQkgKiBuZWVkIGEgZnVsbCByZWNvbmZpZ3VyYXRpb24KPiArCQkgKi8KCnMv
+cmVjb25maWd1cmF0aW9uL3JlY29uZmlndXJhdGlvbi4vCgo+ICsJCXBpcGUtPmNvbmZpZ3VyZWQg
+PSBmYWxzZTsKPiArCgpXaGVyZSBkb2VzIHRoYXQgZnVsbCByZWNvbmZpZ3VyYXRpb24gb2NjdXIs
+IGdpdmVuIHRoYXQgdGhlIHZzcDFfcGlwZWxpbmVfcnVuKCkgCnJpZ2h0IGJlbG93IHNldHMgcGlw
+ZS0+Y29uZmlndXJlZCB0byB0cnVlIHdpdGhvdXQgcGVyZm9ybWluZyByZWNvbmZpZ3VyYXRpb24g
+PwoKPiAgCQlpZiAodnNwMV9waXBlbGluZV9yZWFkeShwaXBlKSkKPiAgCQkJdnNwMV9waXBlbGlu
+ZV9ydW4ocGlwZSk7Cj4gIAkJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcGlwZS0+aXJxbG9jaywg
+ZmxhZ3MpOwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3ZzcDEvdnNwMV9w
+aXBlLmgKPiBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vdnNwMS92c3AxX3BpcGUuaCBpbmRleCA5
+MGQyOTQ5MmI5YjkuLmU3YWQ2MjExYjRkMAo+IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvbWVkaWEv
+cGxhdGZvcm0vdnNwMS92c3AxX3BpcGUuaAo+ICsrKyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0v
+dnNwMS92c3AxX3BpcGUuaAo+IEBAIC05MCw2ICs5MCw3IEBAIHN0cnVjdCB2c3AxX3BhcnRpdGlv
+biB7Cj4gICAqIEBpcnFsb2NrOiBwcm90ZWN0cyB0aGUgcGlwZWxpbmUgc3RhdGUKPiAgICogQHN0
+YXRlOiBjdXJyZW50IHN0YXRlCj4gICAqIEB3cTogd2FpdCBxdWV1ZSB0byB3YWl0IGZvciBzdGF0
+ZSBjaGFuZ2UgY29tcGxldGlvbgo+ICsgKiBAY29uZmlndXJlZDogZmxhZyBkZXRlcm1pbmluZyBp
+ZiB0aGUgaGFyZHdhcmUgaGFzIHJ1biBzaW5jZSByZXNldAo+ICAgKiBAZnJhbWVfZW5kOiBmcmFt
+ZSBlbmQgaW50ZXJydXB0IGhhbmRsZXIKPiAgICogQGxvY2s6IHByb3RlY3RzIHRoZSBwaXBlbGlu
+ZSB1c2UgY291bnQgYW5kIHN0cmVhbSBjb3VudAo+ICAgKiBAa3JlZjogcGlwZWxpbmUgcmVmZXJl
+bmNlIGNvdW50Cj4gQEAgLTExNyw2ICsxMTgsNyBAQCBzdHJ1Y3QgdnNwMV9waXBlbGluZSB7Cj4g
+IAlzcGlubG9ja190IGlycWxvY2s7Cj4gIAllbnVtIHZzcDFfcGlwZWxpbmVfc3RhdGUgc3RhdGU7
+Cj4gIAl3YWl0X3F1ZXVlX2hlYWRfdCB3cTsKPiArCWJvb2wgY29uZmlndXJlZDsKPiAKPiAgCXZv
+aWQgKCpmcmFtZV9lbmQpKHN0cnVjdCB2c3AxX3BpcGVsaW5lICpwaXBlLCBib29sIGNvbXBsZXRl
+ZCk7Cj4gCj4gQEAgLTE0Myw4ICsxNDUsNiBAQCBzdHJ1Y3QgdnNwMV9waXBlbGluZSB7Cj4gIAkg
+Ki8KPiAgCXN0cnVjdCBsaXN0X2hlYWQgZW50aXRpZXM7Cj4gCj4gLQlzdHJ1Y3QgdnNwMV9kbF9s
+aXN0ICpkbDsKPiAtCgpZb3Ugc2hvdWxkIHJlbW92ZSB0aGUgY29ycmVzcG9uZGluZyBsaW5lIGZy
+b20gdGhlIHN0cnVjdHVyZSBkb2N1bWVudGF0aW9uLgoKPiAgCXVuc2lnbmVkIGludCBwYXJ0aXRp
+b25zOwo+ICAJc3RydWN0IHZzcDFfcGFydGl0aW9uICpwYXJ0aXRpb247Cj4gIAlzdHJ1Y3QgdnNw
+MV9wYXJ0aXRpb24gKnBhcnRfdGFibGU7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxh
+dGZvcm0vdnNwMS92c3AxX3ZpZGVvLmMKPiBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vdnNwMS92
+c3AxX3ZpZGVvLmMgaW5kZXggYjQ3NzA4NjYwZTUzLi45NmQ5ODcyNjY3ZDkKPiAxMDA2NDQKPiAt
+LS0gYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL3ZzcDEvdnNwMV92aWRlby5jCj4gKysrIGIvZHJp
+dmVycy9tZWRpYS9wbGF0Zm9ybS92c3AxL3ZzcDFfdmlkZW8uYwo+IEBAIC0zOTQsMzcgKzM5NCw0
+MyBAQCBzdGF0aWMgdm9pZCB2c3AxX3ZpZGVvX3BpcGVsaW5lX3J1bl9wYXJ0aXRpb24oc3RydWN0
+Cj4gdnNwMV9waXBlbGluZSAqcGlwZSwgc3RhdGljIHZvaWQgdnNwMV92aWRlb19waXBlbGluZV9y
+dW4oc3RydWN0Cj4gdnNwMV9waXBlbGluZSAqcGlwZSkKPiAgewo+ICAJc3RydWN0IHZzcDFfZGV2
+aWNlICp2c3AxID0gcGlwZS0+b3V0cHV0LT5lbnRpdHkudnNwMTsKPiArCXN0cnVjdCB2c3AxX3Zp
+ZGVvICp2aWRlbyA9IHBpcGUtPm91dHB1dC0+dmlkZW87Cj4gIAl1bnNpZ25lZCBpbnQgcGFydGl0
+aW9uOwo+ICsJc3RydWN0IHZzcDFfZGxfbGlzdCAqZGw7Cj4gKwo+ICsJZGwgPSB2c3AxX2RsX2xp
+c3RfZ2V0KHBpcGUtPm91dHB1dC0+ZGxtKTsKPiAKPiAtCWlmICghcGlwZS0+ZGwpCj4gLQkJcGlw
+ZS0+ZGwgPSB2c3AxX2RsX2xpc3RfZ2V0KHBpcGUtPm91dHB1dC0+ZGxtKTsKPiArCS8qIEF0dGFj
+aCBvdXIgcGlwZSBjb25maWd1cmF0aW9uIHRvIGZ1bGx5IGluaXRpYWxpc2UgdGhlIGhhcmR3YXJl
+ICovCgpzL2hhcmR3YXJlL2hhcmR3YXJlLi8KClRoZXJlIGFyZSBvdGhlciBzaW1pbGFyIGNvbW1l
+bnRzIGluIHRoaXMgcGF0Y2guCgo+ICsJaWYgKCFwaXBlLT5jb25maWd1cmVkKSB7Cj4gKwkJdnNw
+MV9kbF9saXN0X2FkZF9ib2R5KGRsLCB2aWRlby0+cGlwZV9jb25maWcpOwo+ICsJCXBpcGUtPmNv
+bmZpZ3VyZWQgPSB0cnVlOwo+ICsJfQo+IAo+ICAJLyogUnVuIHRoZSBmaXJzdCBwYXJ0aXRpb24g
+Ki8KPiAtCXZzcDFfdmlkZW9fcGlwZWxpbmVfcnVuX3BhcnRpdGlvbihwaXBlLCBwaXBlLT5kbCwg
+MCk7Cj4gKwl2c3AxX3ZpZGVvX3BpcGVsaW5lX3J1bl9wYXJ0aXRpb24ocGlwZSwgZGwsIDApOwo+
+IAo+ICAJLyogUHJvY2VzcyBjb25zZWN1dGl2ZSBwYXJ0aXRpb25zIGFzIG5lY2Vzc2FyeSAqLwo+
+ICAJZm9yIChwYXJ0aXRpb24gPSAxOyBwYXJ0aXRpb24gPCBwaXBlLT5wYXJ0aXRpb25zOyArK3Bh
+cnRpdGlvbikgewo+IC0JCXN0cnVjdCB2c3AxX2RsX2xpc3QgKmRsOwo+ICsJCXN0cnVjdCB2c3Ax
+X2RsX2xpc3QgKmRsX25leHQ7Cj4gCj4gLQkJZGwgPSB2c3AxX2RsX2xpc3RfZ2V0KHBpcGUtPm91
+dHB1dC0+ZGxtKTsKPiArCQlkbF9uZXh0ID0gdnNwMV9kbF9saXN0X2dldChwaXBlLT5vdXRwdXQt
+PmRsbSk7Cj4gCj4gIAkJLyoKPiAgCQkgKiBBbiBpbmNvbXBsZXRlIGNoYWluIHdpbGwgc3RpbGwg
+ZnVuY3Rpb24sIGJ1dCBvdXRwdXQgb25seQo+ICAJCSAqIHRoZSBwYXJ0aXRpb25zIHRoYXQgaGFk
+IGEgZGwgYXZhaWxhYmxlLiBUaGUgZnJhbWUgZW5kCj4gIAkJICogaW50ZXJydXB0IHdpbGwgYmUg
+bWFya2VkIG9uIHRoZSBsYXN0IGRsIGluIHRoZSBjaGFpbi4KPiAgCQkgKi8KPiAtCQlpZiAoIWRs
+KSB7Cj4gKwkJaWYgKCFkbF9uZXh0KSB7Cj4gIAkJCWRldl9lcnIodnNwMS0+ZGV2LCAiRmFpbGVk
+IHRvIG9idGFpbiBhIGRsIGxpc3QuIEZyYW1lIHdpbGwgYmUKPiBpbmNvbXBsZXRlXG4iKTsgYnJl
+YWs7Cj4gIAkJfQo+IAo+IC0JCXZzcDFfdmlkZW9fcGlwZWxpbmVfcnVuX3BhcnRpdGlvbihwaXBl
+LCBkbCwgcGFydGl0aW9uKTsKPiAtCQl2c3AxX2RsX2xpc3RfYWRkX2NoYWluKHBpcGUtPmRsLCBk
+bCk7Cj4gKwkJdnNwMV92aWRlb19waXBlbGluZV9ydW5fcGFydGl0aW9uKHBpcGUsIGRsX25leHQs
+IHBhcnRpdGlvbik7Cj4gKwkJdnNwMV9kbF9saXN0X2FkZF9jaGFpbihkbCwgZGxfbmV4dCk7Cj4g
+IAl9Cj4gCj4gIAkvKiBDb21wbGV0ZSwgYW5kIGNvbW1pdCB0aGUgaGVhZCBkaXNwbGF5IGxpc3Qu
+ICovCj4gLQl2c3AxX2RsX2xpc3RfY29tbWl0KHBpcGUtPmRsKTsKPiAtCXBpcGUtPmRsID0gTlVM
+TDsKPiArCXZzcDFfZGxfbGlzdF9jb21taXQoZGwpOwo+IAo+ICAJdnNwMV9waXBlbGluZV9ydW4o
+cGlwZSk7Cj4gIH0KPiBAQCAtNzkwLDggKzc5Niw4IEBAIHN0YXRpYyB2b2lkIHZzcDFfdmlkZW9f
+YnVmZmVyX3F1ZXVlKHN0cnVjdCB2YjJfYnVmZmVyCj4gKnZiKQo+IAo+ICBzdGF0aWMgaW50IHZz
+cDFfdmlkZW9fc2V0dXBfcGlwZWxpbmUoc3RydWN0IHZzcDFfcGlwZWxpbmUgKnBpcGUpCj4gIHsK
+PiArCXN0cnVjdCB2c3AxX3ZpZGVvICp2aWRlbyA9IHBpcGUtPm91dHB1dC0+dmlkZW87Cj4gIAlz
+dHJ1Y3QgdnNwMV9lbnRpdHkgKmVudGl0eTsKPiAtCXN0cnVjdCB2c3AxX2RsX2JvZHkgKmRsYjsK
+PiAgCWludCByZXQ7Cj4gCj4gIAkvKiBEZXRlcm1pbmUgdGhpcyBwaXBlbGluZXMgc2l6ZXMgZm9y
+IGltYWdlIHBhcnRpdGlvbmluZyBzdXBwb3J0LiAqLwo+IEBAIC03OTksMTQgKzgwNSw2IEBAIHN0
+YXRpYyBpbnQgdnNwMV92aWRlb19zZXR1cF9waXBlbGluZShzdHJ1Y3QKPiB2c3AxX3BpcGVsaW5l
+ICpwaXBlKSBpZiAocmV0IDwgMCkKPiAgCQlyZXR1cm4gcmV0Owo+IAo+IC0JLyogUHJlcGFyZSB0
+aGUgZGlzcGxheSBsaXN0LiAqLwo+IC0JcGlwZS0+ZGwgPSB2c3AxX2RsX2xpc3RfZ2V0KHBpcGUt
+Pm91dHB1dC0+ZGxtKTsKPiAtCWlmICghcGlwZS0+ZGwpCj4gLQkJcmV0dXJuIC1FTk9NRU07Cj4g
+LQo+IC0JLyogUmV0cmlldmUgdGhlIGRlZmF1bHQgRExCIGZyb20gdGhlIGxpc3QgKi8KPiAtCWRs
+YiA9IHZzcDFfZGxfbGlzdF9nZXRfYm9keTAocGlwZS0+ZGwpOwo+IC0KPiAgCWlmIChwaXBlLT51
+ZHMpIHsKPiAgCQlzdHJ1Y3QgdnNwMV91ZHMgKnVkcyA9IHRvX3VkcygmcGlwZS0+dWRzLT5zdWJk
+ZXYpOwo+IAo+IEBAIC04MjgsMTEgKzgyNiwyMCBAQCBzdGF0aWMgaW50IHZzcDFfdmlkZW9fc2V0
+dXBfcGlwZWxpbmUoc3RydWN0Cj4gdnNwMV9waXBlbGluZSAqcGlwZSkgfQo+ICAJfQo+IAo+ICsJ
+LyogT2J0YWluIGEgY2xlYW4gYm9keSBmcm9tIG91ciBwb29sICovCj4gKwl2aWRlby0+cGlwZV9j
+b25maWcgPSB2c3AxX2RsX2JvZHlfZ2V0KHZpZGVvLT5kbGJzKTsKPiArCWlmICghdmlkZW8tPnBp
+cGVfY29uZmlnKQo+ICsJCXJldHVybiAtRU5PTUVNOwo+ICsKPiArCS8qIENvbmZpZ3VyZSB0aGUg
+ZW50aXRpZXMgaW50byBvdXIgY2FjaGVkIHBpcGUgY29uZmlndXJhdGlvbiAqLwo+ICAJbGlzdF9m
+b3JfZWFjaF9lbnRyeShlbnRpdHksICZwaXBlLT5lbnRpdGllcywgbGlzdF9waXBlKSB7Cj4gLQkJ
+dnNwMV9lbnRpdHlfcm91dGVfc2V0dXAoZW50aXR5LCBwaXBlLCBkbGIpOwo+IC0JCXZzcDFfZW50
+aXR5X2NvbmZpZ3VyZV9zdHJlYW0oZW50aXR5LCBwaXBlLCBkbGIpOwo+ICsJCXZzcDFfZW50aXR5
+X3JvdXRlX3NldHVwKGVudGl0eSwgcGlwZSwgdmlkZW8tPnBpcGVfY29uZmlnKTsKPiArCQl2c3Ax
+X2VudGl0eV9jb25maWd1cmVfc3RyZWFtKGVudGl0eSwgcGlwZSwgdmlkZW8tPnBpcGVfY29uZmln
+KTsKPiAgCX0KPiAKPiArCS8qIEVuc3VyZSB0aGF0IG91ciBjYWNoZWQgY29uZmlndXJhdGlvbiBp
+cyB1cGRhdGVkIGluIHRoZSBuZXh0IERMICovCj4gKwlwaXBlLT5jb25maWd1cmVkID0gZmFsc2U7
+CgpRdW90aW5nIG15IGNvbW1lbnQgdG8gYSBwcmV2aW91cyB2ZXJzaW9uLCBhbmQgeW91ciByZXBs
+eSB0byBpdCB3aGljaCBJIGhhdmUgCmZhaWxlZCB0byBhbnN3ZXIsCgo+ID4gSSdtIHRlbXB0ZWQg
+dG8gbW92ZSB0aGlzIGF0IHBpcGVsaW5lIHN0b3AgdGltZSAoZWl0aGVyIHRvCj4gPiB2c3AxX3Zp
+ZGVvX3N0b3Bfc3RyZWFtaW5nKCkgcmlnaHQgYWZ0ZXIgdGhlIHZzcDFfcGlwZWxpbmVfc3RvcCgp
+IGNhbGwsIG9yCj4gPiBpbiB2c3AxX3BpcGVsaW5lX3N0b3AoKSBpdHNlbGYpLCBwb3NzaWJseSB3
+aXRoIGEgV0FSTl9PTigpIGhlcmUgdG8gY2F0Y2gKPiA+IGJ1Z3MgaW4gdGhlIGRyaXZlci4KPiAK
+PiBEbyB5b3UgbWVhbiBqdXN0IHNldHRpbmcgdGhlIGZsYWc/IG9yIHRoZSBwaXBlX2NvbmZpZ3Vy
+YXRpb24/IFRoaXMgaXMgYQo+IHNldHVwIHRhc2sgLSBub3QgYSBzdG9wIHRhc2sgLi4uID8gV2Ug
+YXJlIGRvaW5nIHRoaXMgYXMgcGFydCBvZgo+IHZzcDFfdmlkZW9fc3RhcnRfc3RyZWFtaW5nKCku
+CgpJIG1lYW50IGp1c3Qgc2V0dGluZyB0aGUgY29uZmlndXJlZCBmbGFnIGJhY2sgdG8gZmFsc2Uu
+Cgo+IElNTywgVGhlIGZsYWcgc2hvdWxkIG9ubHkgYmUgdXBkYXRlZCBhZnRlciB0aGUgY29uZmln
+dXJhdGlvbiBoYXMgYmVlbgo+IHVwZGF0ZWQgdG8gc2lnbmFsIHRoYXQgdGhlIG5ldyBjb25maWd1
+cmF0aW9uIHNob3VsZCBiZSB3cml0dGVuIG91dCB0byB0aGUKPiBoYXJkd2FyZS4KPiAKPiBVbmxl
+c3MgeW91IG1lYW4gdG8gbWFyayB0aGUgcGlwZS0+Y29uZmlndXJlZCA9IGZhbHNlOyBhdAo+IHZz
+cDFfcGlwZWxpbmVfc3RvcCgpIHRpbWUgYmVjYXVzZSB3ZSByZXNldCB0aGUgcGlwZSB0byBoYWx0
+IGl0ID8ACgpUaGF0J3MgdGhlIGlkZWEsIHllcy4gQW5kIG5vdyB0aGF0IEkgdGhpbmsgYWJvdXQg
+aXQgYWdhaW4sIHdlIGNvdWxkIGFsc28gc2V0IApwaXBlLT5jb25maWd1cmVkIHRvIGZhbHNlIGlu
+IHZzcDFfdmlkZW9fY2xlYW51cF9waXBlbGluZSgpIHJpZ2h0IGFmdGVyIHRoZSAKdnNwMV9kbF9i
+b2R5X3B1dCgpIGNhbGwuCgpXaGF0IGJvdGhlcnMgbWUgaGVyZSBpcyB0aGF0IHRoZSBwaXBlLT5j
+b25maWd1cmVkIGZsYWcgaXMgaGFuZGxlZCBib3RoIGluIAp2c3AxX3BpcGUuYyBhbmQgdnNwMV92
+aWRlby5jLiBDb3VwbGVkIHdpdGggbXkgYWJvdmUgY29tbWVudCBhYm91dCB0aGUgZnVsbCAKcmVj
+b25maWd1cmF0aW9uIGF0IHJlc3VtZSB0aW1lLCBJIHRoaW5rIHdlIG1pZ2h0IG5vdCBiZSBhYnN0
+cmFjdGluZyB0aGlzIGFzIHdlIApzaG91bGQuIEkgd29uZGVyIHdoZXRoZXIgaXQgd291bGQgYmUg
+cG9zc2libGUgdG8gZWl0aGVyIG1ha2UgdGhlIGZsYWcgbG9jYWwgdG8gCnZzcDFfcGlwZS5jLCBv
+ciBsb2NhbCB0byB2c3AxX3ZpZGVvLmMgYW5kIG1vdmUgaXQgZnJvbSB0aGUgcGlwZWxpbmUgb2Jq
+ZWN0IHRvIAp0aGUgdmlkZW8gb2JqZWN0LiBNeSBndXQgZmVlbGluZyByaWdodCBub3cgKGFuZCBp
+dCBtaWdodCBiZSB0b28gbGF0ZSB0byB0cnVzdCAKaXQpIGlzIHRoYXQsIGFzIHRoZSBwaXBlX2Nv
+bmZpZyBvYmplY3QgaXMgc3RvcmVkIGluIHZzcDFfdmlkZW8sIHNvIHNob3VsZCB0aGUgCmNvbmZp
+Z3VyZWQgZmxhZy4KClBsZWFzZSBmZWVsIGZyZWUgdG8gY2hhbGxlbmdlIHRoaXMuCgo+ICsKPiAg
+CXJldHVybiAwOwo+ICB9Cj4gCj4gQEAgLTg0Miw2ICs4NDksOSBAQCBzdGF0aWMgdm9pZCB2c3Ax
+X3ZpZGVvX2NsZWFudXBfcGlwZWxpbmUoc3RydWN0Cj4gdnNwMV9waXBlbGluZSAqcGlwZSkgc3Ry
+dWN0IHZzcDFfdmIyX2J1ZmZlciAqYnVmZmVyOwo+ICAJdW5zaWduZWQgbG9uZyBmbGFnczsKPiAK
+PiArCS8qIFJlbGVhc2UgYW55IGNhY2hlZCBjb25maWd1cmF0aW9uICovCj4gKwl2c3AxX2RsX2Jv
+ZHlfcHV0KHZpZGVvLT5waXBlX2NvbmZpZyk7Cj4gKwo+ICAJLyogUmVtb3ZlIGFsbCBidWZmZXJz
+IGZyb20gdGhlIElSUSBxdWV1ZS4gKi8KPiAgCXNwaW5fbG9ja19pcnFzYXZlKCZ2aWRlby0+aXJx
+bG9jaywgZmxhZ3MpOwo+ICAJbGlzdF9mb3JfZWFjaF9lbnRyeShidWZmZXIsICZ2aWRlby0+aXJx
+cXVldWUsIHF1ZXVlKQo+IEBAIC05MTgsOSArOTI4LDYgQEAgc3RhdGljIHZvaWQgdnNwMV92aWRl
+b19zdG9wX3N0cmVhbWluZyhzdHJ1Y3QgdmIyX3F1ZXVlCj4gKnZxKSByZXQgPSB2c3AxX3BpcGVs
+aW5lX3N0b3AocGlwZSk7Cj4gIAkJaWYgKHJldCA9PSAtRVRJTUVET1VUKQo+ICAJCQlkZXZfZXJy
+KHZpZGVvLT52c3AxLT5kZXYsICJwaXBlbGluZSBzdG9wIHRpbWVvdXRcbiIpOwo+IC0KPiAtCQl2
+c3AxX2RsX2xpc3RfcHV0KHBpcGUtPmRsKTsKPiAtCQlwaXBlLT5kbCA9IE5VTEw7Cj4gIAl9Cj4g
+IAltdXRleF91bmxvY2soJnBpcGUtPmxvY2spOwo+IAo+IEBAIC0xMjQwLDYgKzEyNDcsMTYgQEAg
+c3RydWN0IHZzcDFfdmlkZW8gKnZzcDFfdmlkZW9fY3JlYXRlKHN0cnVjdAo+IHZzcDFfZGV2aWNl
+ICp2c3AxLCBnb3RvIGVycm9yOwo+ICAJfQo+IAo+ICsJLyoKPiArCSAqIFV0aWxpc2UgYSBib2R5
+IHBvb2wgdG8gY2FjaGUgdGhlIGNvbnN0YW50IGNvbmZpZ3VyYXRpb24gb2YgdGhlCj4gKwkgKiBw
+aXBlbGluZSBvYmplY3QuCj4gKwkgKi8KPiArCXZpZGVvLT5kbGJzID0gdnNwMV9kbF9ib2R5X3Bv
+b2xfY3JlYXRlKHZzcDEsIDMsIDEyOCwgMCk7Cj4gKwlpZiAoIXZpZGVvLT5kbGJzKSB7Cj4gKwkJ
+cmV0ID0gLUVOT01FTTsKPiArCQlnb3RvIGVycm9yOwo+ICsJfQo+ICsKPiAgCXJldHVybiB2aWRl
+bzsKPiAKPiAgZXJyb3I6Cj4gQEAgLTEyNDksNiArMTI2Niw4IEBAIHN0cnVjdCB2c3AxX3ZpZGVv
+ICp2c3AxX3ZpZGVvX2NyZWF0ZShzdHJ1Y3QKPiB2c3AxX2RldmljZSAqdnNwMSwKPiAKPiAgdm9p
+ZCB2c3AxX3ZpZGVvX2NsZWFudXAoc3RydWN0IHZzcDFfdmlkZW8gKnZpZGVvKQo+ICB7Cj4gKwl2
+c3AxX2RsX2JvZHlfcG9vbF9kZXN0cm95KHZpZGVvLT5kbGJzKTsKPiArCj4gIAlpZiAodmlkZW9f
+aXNfcmVnaXN0ZXJlZCgmdmlkZW8tPnZpZGVvKSkKPiAgCQl2aWRlb191bnJlZ2lzdGVyX2Rldmlj
+ZSgmdmlkZW8tPnZpZGVvKTsKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9y
+bS92c3AxL3ZzcDFfdmlkZW8uaAo+IGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS92c3AxL3ZzcDFf
+dmlkZW8uaCBpbmRleCA1MGVhN2YwMjIwNWYuLmU4NGY4ZWU5MDJjMQo+IDEwMDY0NAo+IC0tLSBh
+L2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vdnNwMS92c3AxX3ZpZGVvLmgKPiArKysgYi9kcml2ZXJz
+L21lZGlhL3BsYXRmb3JtL3ZzcDEvdnNwMV92aWRlby5oCj4gQEAgLTQzLDYgKzQzLDggQEAgc3Ry
+dWN0IHZzcDFfdmlkZW8gewo+IAo+ICAJc3RydWN0IG11dGV4IGxvY2s7Cj4gCj4gKwlzdHJ1Y3Qg
+dnNwMV9kbF9ib2R5X3Bvb2wgKmRsYnM7Cj4gKwlzdHJ1Y3QgdnNwMV9kbF9ib2R5ICpwaXBlX2Nv
+bmZpZzsKPiAgCXVuc2lnbmVkIGludCBwaXBlX2luZGV4Owo+IAo+ICAJc3RydWN0IHZiMl9xdWV1
+ZSBxdWV1ZTsKCi0tIApSZWdhcmRzLAoKTGF1cmVudCBQaW5jaGFydAo=
