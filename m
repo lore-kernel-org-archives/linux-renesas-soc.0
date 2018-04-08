@@ -1,84 +1,173 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.133]:53924 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751919AbeDHSDi (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51192 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752412AbeDHR0X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Apr 2018 14:03:38 -0400
-Subject: Re: [PATCH V2] PCI: rcar: Clean up the macros
-To: Marek Vasut <marek.vasut@gmail.com>, linux-pci@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sun, 8 Apr 2018 13:26:23 -0400
+Received: by mail-wm0-f68.google.com with SMTP id t67so13336411wmt.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 08 Apr 2018 10:26:23 -0700 (PDT)
+Date: Sun, 8 Apr 2018 19:26:21 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V2] PCI: rcar: Clean up the macros
+Message-ID: <20180408172621.GG12256@bigcity.dyn.berto.se>
 References: <20180408130942.19148-1-marek.vasut+renesas@gmail.com>
- <7f63726a-fb96-a329-cce4-d1dd64b33de7@infradead.org>
- <710bfa56-09a6-5017-e493-fce7cd09e788@gmail.com>
- <21dff119-07a4-e7b0-f3c0-b21721124232@infradead.org>
- <1043a359-7440-826b-5146-7dea494214b8@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <06dedbd6-13df-3d7a-5244-c4e92df0a009@infradead.org>
-Date: Sun, 8 Apr 2018 11:03:36 -0700
 MIME-Version: 1.0
-In-Reply-To: <1043a359-7440-826b-5146-7dea494214b8@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180408130942.19148-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/08/2018 09:53 AM, Marek Vasut wrote:
-> On 04/08/2018 06:51 PM, Randy Dunlap wrote:
->> On 04/08/2018 09:34 AM, Marek Vasut wrote:
->>> On 04/08/2018 05:27 PM, Randy Dunlap wrote:
->>>> On 04/08/2018 06:09 AM, Marek Vasut wrote:
->>>>> This patch replaces the (1 << n) with BIT(n) and cleans up whitespace,
->>>>> no functional change.
->>>>>
->>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->>>>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
->>>>> Cc: Simon Horman <horms+renesas@verge.net.au>
->>>>> Cc: Wolfram Sang <wsa@the-dreams.de>
->>>>> Cc: linux-renesas-soc@vger.kernel.org
->>>>> ---
->>>>> V2: Reword the commit message
->>>>> ---
->>>>>  drivers/pci/host/pcie-rcar.c | 52 ++++++++++++++++++++++----------------------
->>>>>  1 file changed, 26 insertions(+), 26 deletions(-)
->>>>>
->>>>> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
->>>>> index 25f68305322c..5ab7bf6a8de0 100644
->>>>> --- a/drivers/pci/host/pcie-rcar.c
->>>>> +++ b/drivers/pci/host/pcie-rcar.c
->>>>> @@ -30,9 +30,9 @@
->>>>
->>>> missing this:
->>>>
->>>> #include <linux/bitops.h>
->>>
->>> This compiles just fine without it though, which means it's probably
->>> pulled in through some of the other includes already present.
->>>
->>
->> I suspected that. However, please see rule #1 in
->> Documentation/process/submit-checklist.rst:
->>
->> 1) If you use a facility then #include the file that defines/declares
->>    that facility.  Don't depend on other header files pulling in ones
->>    that you use.
+Hi Marek,
+
+Thanks for your work.
+
+On 2018-04-08 15:09:42 +0200, Marek Vasut wrote:
+> This patch replaces the (1 << n) with BIT(n) and cleans up whitespace,
+> no functional change.
 > 
-> If I was to include every single header from which I use something,
-> wouldn't that make the list real long then ? Is that really worth it?
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
 
-The length of the list of headers is not an issue.
-And if you are "cleaning up," you might as well do a full job of it.
+I like this cleanup! I have no input on Randy's comment about if you 
+should include bitops.h or not. But for the macro changes themselves.
 
-Just because it builds on one $ARCH (with various pulled-in headers) does
-not mean that it will build on another $ARCH (with different pulled-in headers).
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Or did you build it on all linux/arch/* ?
+> ---
+> V2: Reword the commit message
+> ---
+>  drivers/pci/host/pcie-rcar.c | 52 ++++++++++++++++++++++----------------------
+>  1 file changed, 26 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index 25f68305322c..5ab7bf6a8de0 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -30,9 +30,9 @@
+>  
+>  #define PCIECAR			0x000010
+>  #define PCIECCTLR		0x000018
+> -#define  CONFIG_SEND_ENABLE	(1 << 31)
+> +#define  CONFIG_SEND_ENABLE	BIT(31)
+>  #define  TYPE0			(0 << 8)
+> -#define  TYPE1			(1 << 8)
+> +#define  TYPE1			BIT(8)
+>  #define PCIECDR			0x000020
+>  #define PCIEMSR			0x000028
+>  #define PCIEINTXR		0x000400
+> @@ -44,7 +44,7 @@
+>  #define PCIETSTR		0x02004
+>  #define  DATA_LINK_ACTIVE	1
+>  #define PCIEERRFR		0x02020
+> -#define  UNSUPPORTED_REQUEST	(1 << 4)
+> +#define  UNSUPPORTED_REQUEST	BIT(4)
+>  #define PCIEMSIFR		0x02044
+>  #define PCIEMSIALR		0x02048
+>  #define  MSIFE			1
+> @@ -57,17 +57,17 @@
+>  /* local address reg & mask */
+>  #define PCIELAR(x)		(0x02200 + ((x) * 0x20))
+>  #define PCIELAMR(x)		(0x02208 + ((x) * 0x20))
+> -#define  LAM_PREFETCH		(1 << 3)
+> -#define  LAM_64BIT		(1 << 2)
+> -#define  LAR_ENABLE		(1 << 1)
+> +#define  LAM_PREFETCH		BIT(3)
+> +#define  LAM_64BIT		BIT(2)
+> +#define  LAR_ENABLE		BIT(1)
+>  
+>  /* PCIe address reg & mask */
+>  #define PCIEPALR(x)		(0x03400 + ((x) * 0x20))
+>  #define PCIEPAUR(x)		(0x03404 + ((x) * 0x20))
+>  #define PCIEPAMR(x)		(0x03408 + ((x) * 0x20))
+>  #define PCIEPTCTLR(x)		(0x0340c + ((x) * 0x20))
+> -#define  PAR_ENABLE		(1 << 31)
+> -#define  IO_SPACE		(1 << 8)
+> +#define  PAR_ENABLE		BIT(31)
+> +#define  IO_SPACE		BIT(8)
+>  
+>  /* Configuration */
+>  #define PCICONF(x)		(0x010000 + ((x) * 0x4))
+> @@ -79,23 +79,23 @@
+>  #define IDSETR1			0x011004
+>  #define TLCTLR			0x011048
+>  #define MACSR			0x011054
+> -#define  SPCHGFIN		(1 << 4)
+> -#define  SPCHGFAIL		(1 << 6)
+> -#define  SPCHGSUC		(1 << 7)
+> +#define  SPCHGFIN		BIT(4)
+> +#define  SPCHGFAIL		BIT(6)
+> +#define  SPCHGSUC		BIT(7)
+>  #define  LINK_SPEED		(0xf << 16)
+>  #define  LINK_SPEED_2_5GTS	(1 << 16)
+>  #define  LINK_SPEED_5_0GTS	(2 << 16)
+>  #define MACCTLR			0x011058
+> -#define  SPEED_CHANGE		(1 << 24)
+> -#define  SCRAMBLE_DISABLE	(1 << 27)
+> +#define  SPEED_CHANGE		BIT(24)
+> +#define  SCRAMBLE_DISABLE	BIT(27)
+>  #define MACS2R			0x011078
+>  #define MACCGSPSETR		0x011084
+> -#define  SPCNGRSN		(1 << 31)
+> +#define  SPCNGRSN		BIT(31)
+>  
+>  /* R-Car H1 PHY */
+>  #define H1_PCIEPHYADRR		0x04000c
+> -#define  WRITE_CMD		(1 << 16)
+> -#define  PHY_ACK		(1 << 24)
+> +#define  WRITE_CMD		BIT(16)
+> +#define  PHY_ACK		BIT(24)
+>  #define  RATE_POS		12
+>  #define  LANE_POS		8
+>  #define  ADR_POS		0
+> @@ -107,19 +107,19 @@
+>  #define GEN2_PCIEPHYDATA	0x784
+>  #define GEN2_PCIEPHYCTRL	0x78c
+>  
+> -#define INT_PCI_MSI_NR	32
+> +#define INT_PCI_MSI_NR		32
+>  
+> -#define RCONF(x)	(PCICONF(0)+(x))
+> -#define RPMCAP(x)	(PMCAP(0)+(x))
+> -#define REXPCAP(x)	(EXPCAP(0)+(x))
+> -#define RVCCAP(x)	(VCCAP(0)+(x))
+> +#define RCONF(x)		(PCICONF(0) + (x))
+> +#define RPMCAP(x)		(PMCAP(0) + (x))
+> +#define REXPCAP(x)		(EXPCAP(0) + (x))
+> +#define RVCCAP(x)		(VCCAP(0) + (x))
+>  
+> -#define  PCIE_CONF_BUS(b)	(((b) & 0xff) << 24)
+> -#define  PCIE_CONF_DEV(d)	(((d) & 0x1f) << 19)
+> -#define  PCIE_CONF_FUNC(f)	(((f) & 0x7) << 16)
+> +#define PCIE_CONF_BUS(b)	(((b) & 0xff) << 24)
+> +#define PCIE_CONF_DEV(d)	(((d) & 0x1f) << 19)
+> +#define PCIE_CONF_FUNC(f)	(((f) & 0x7) << 16)
+>  
+> -#define RCAR_PCI_MAX_RESOURCES 4
+> -#define MAX_NR_INBOUND_MAPS 6
+> +#define RCAR_PCI_MAX_RESOURCES	4
+> +#define MAX_NR_INBOUND_MAPS	6
+>  
+>  struct rcar_msi {
+>  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+> -- 
+> 2.16.2
+> 
 
-thanks,
 -- 
-~Randy
+Regards,
+Niklas S�derlund
