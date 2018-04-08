@@ -1,143 +1,211 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36061 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751869AbeDFVia (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46714 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752383AbeDHQiX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 17:38:30 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v7 1/8] media: vsp1: Reword uses of 'fragment' as 'body'
-Date: Sat, 07 Apr 2018 00:38:28 +0300
-Message-ID: <5759588.aAmm6SK8br@avalon>
-In-Reply-To: <4b6be5632b722a40c634b85fc67b38a9d44b9dbf.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com> <4b6be5632b722a40c634b85fc67b38a9d44b9dbf.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Sun, 8 Apr 2018 12:38:23 -0400
+Received: by mail-wr0-f195.google.com with SMTP id d1so6156068wrj.13
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 08 Apr 2018 09:38:22 -0700 (PDT)
+Date: Sun, 8 Apr 2018 18:38:20 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH v5 1/3] ARM: dts: r8a7790: Convert to new LVDS DT bindings
+Message-ID: <20180408163820.GC12256@bigcity.dyn.berto.se>
+References: <20180406191438.3630-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180406191438.3630-2-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180406191438.3630-2-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+Hi Laurent,
 
-Thank you for the patch.
+Thanks for your patch.
 
-On Thursday, 8 March 2018 02:05:24 EEST Kieran Bingham wrote:
-> Throughout the codebase, the term 'fragment' is used to represent a
-> display list body. This term duplicates the 'body' which is already in
-> use.
+On 2018-04-06 22:14:36 +0300, Laurent Pinchart wrote:
+> The internal LVDS encoder now has DT bindings separate from the DU. Port
+> the device tree over to the new model.
 > 
-> The datasheet references these objects as a body, therefore replace all
-> mentions of a fragment with a body, along with the corresponding
-> pluralised terms.
+> Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driver")
+> Fixes: 4bdb7aa7dcd0 ("ARM: dts: r8a7790: add soc node")
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-I like this, the code seems less confusing to me this way. Please see below 
-for a few minor comments.
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
 > ---
-> v7
->  - Clean up the formatting of the vsp1_dl_list_add_body()
+> Changes since v3:
 > 
->  drivers/media/platform/vsp1/vsp1_clu.c |  10 +-
->  drivers/media/platform/vsp1/vsp1_dl.c  | 109 ++++++++++++--------------
->  drivers/media/platform/vsp1/vsp1_dl.h  |  13 +--
->  drivers/media/platform/vsp1/vsp1_lut.c |   8 +-
->  4 files changed, 69 insertions(+), 71 deletions(-)
-
-[snip]
-
-> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
-> b/drivers/media/platform/vsp1/vsp1_dl.c index 0b86ed01e85d..caed441f5f0c
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_dl.c
-> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-
-[snip]
-
-> @@ -157,17 +157,16 @@ static void vsp1_dl_body_cleanup(struct
-> vsp1_dl_body *dlb) }
+> - Added power-domains and resets properties to LVDS nodes
 > 
->  /**
-> - * vsp1_dl_fragment_alloc - Allocate a display list fragment
-> + * vsp1_dl_body_alloc - Allocate a display list body
->   * @vsp1: The VSP1 device
-> - * @num_entries: The maximum number of entries that the fragment can
-> contain
-> + * @num_entries: The maximum number of entries that the body can contain
->   *
-> - * Allocate a display list fragment with enough memory to contain the
-> requested
-> + * Allocate a display list body with enough memory to contain the requested
->   * number of entries.
->   *
-> - * Return a pointer to a fragment on success or NULL if memory can't be
-> - * allocated.
-> + * Return a pointer to a body on success or NULL if memory can't be
-> allocated.
->   */
-> -struct vsp1_dl_body *vsp1_dl_fragment_alloc(struct vsp1_device *vsp1,
-> +struct vsp1_dl_body *vsp1_dl_body_alloc(struct vsp1_device *vsp1,
->  					    unsigned int num_entries)
-
-The indentation of the second line now looks wrong.
-
-[snip]
-
-> @@ -379,33 +378,33 @@ void vsp1_dl_list_put(struct vsp1_dl_list *dl)
->   */
->  void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data)
->  {
-> -	vsp1_dl_fragment_write(&dl->body0, reg, data);
-> +	vsp1_dl_body_write(&dl->body0, reg, data);
->  }
+> Changes since v2:
 > 
->  /**
-> - * vsp1_dl_list_add_fragment - Add a fragment to the display list
-> + * vsp1_dl_list_add_body - Add a body to the display list
->   * @dl: The display list
-> - * @dlb: The fragment
-> + * @dlb: The body
->   *
-> - * Add a display list body as a fragment to a display list. Registers
-> contained
-> - * in fragments are processed after registers contained in the main display
-> - * list, in the order in which fragments are added.
-> + * Add a display list body as a body to a display list. Registers contained
-
-"body as a body" sounds strange. How about just "Add a display list body to 
-the display list." ?
-
-> + * in bodies are processed after registers contained in the main display
-> list,
-> + * in the order in which bodies are added.
->   *
-> - * Adding a fragment to a display list passes ownership of the fragment to
-> the
-> - * list. The caller must not touch the fragment after this call, and
-> must not
-> - * free it explicitly with vsp1_dl_fragment_free().
-> + * Adding a body to a display list passes ownership of the body to the
-> list. The
-> + * caller must not touch the body after this call, and must not free it
-> + * explicitly with vsp1_dl_body_free().
->   *
-> - * Fragments are only usable for display lists in header mode. Attempt to
-> - * add a fragment to a header-less display list will return an error.
-> + * Additional bodies are only usable for display lists in header mode.
-> + * Attempting to add a body to a header-less display list will return an
-> error.
->   */
-
-[snip]
-
-With those two small issues fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> - Fixed LVDS compatible string
+> 
+> Changes since v1:
+> 
+> - Remove the DU reg-names property
+> ---
+>  arch/arm/boot/dts/r8a7790-lager.dts | 22 ++++++++++---
+>  arch/arm/boot/dts/r8a7790.dtsi      | 65 ++++++++++++++++++++++++++++++++-----
+>  2 files changed, 74 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+> index 063fdb65dc60..f07f9018c3e7 100644
+> --- a/arch/arm/boot/dts/r8a7790-lager.dts
+> +++ b/arch/arm/boot/dts/r8a7790-lager.dts
+> @@ -379,7 +379,7 @@
+>  				port@0 {
+>  					reg = <0>;
+>  					adv7511_in: endpoint {
+> -						remote-endpoint = <&du_out_lvds0>;
+> +						remote-endpoint = <&lvds0_out>;
+>  					};
+>  				};
+>  
+> @@ -467,10 +467,8 @@
+>  	status = "okay";
+>  
+>  	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 722>,
+> -		 <&cpg CPG_MOD 726>, <&cpg CPG_MOD 725>,
+>  		 <&x13_clk>, <&x2_clk>;
+> -	clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1",
+> -		      "dclkin.0", "dclkin.1";
+> +	clock-names = "du.0", "du.1", "du.2", "dclkin.0", "dclkin.1";
+>  
+>  	ports {
+>  		port@0 {
+> @@ -478,12 +476,26 @@
+>  				remote-endpoint = <&adv7123_in>;
+>  			};
+>  		};
+> +	};
+> +};
+> +
+> +&lvds0 {
+> +	status = "okay";
+> +
+> +	ports {
+>  		port@1 {
+>  			endpoint {
+>  				remote-endpoint = <&adv7511_in>;
+>  			};
+>  		};
+> -		port@2 {
+> +	};
+> +};
+> +
+> +&lvds1 {
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@1 {
+>  			lvds_connector: endpoint {
+>  			};
+>  		};
+> diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+> index e4367cecad18..05a0fc23ac88 100644
+> --- a/arch/arm/boot/dts/r8a7790.dtsi
+> +++ b/arch/arm/boot/dts/r8a7790.dtsi
+> @@ -1627,18 +1627,13 @@
+>  
+>  		du: display@feb00000 {
+>  			compatible = "renesas,du-r8a7790";
+> -			reg = <0 0xfeb00000 0 0x70000>,
+> -			      <0 0xfeb90000 0 0x1c>,
+> -			      <0 0xfeb94000 0 0x1c>;
+> -			reg-names = "du", "lvds.0", "lvds.1";
+> +			reg = <0 0xfeb00000 0 0x70000>;
+>  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
+> -				 <&cpg CPG_MOD 722>, <&cpg CPG_MOD 726>,
+> -				 <&cpg CPG_MOD 725>;
+> -			clock-names = "du.0", "du.1", "du.2", "lvds.0",
+> -				      "lvds.1";
+> +				 <&cpg CPG_MOD 722>;
+> +			clock-names = "du.0", "du.1", "du.2";
+>  			status = "disabled";
+>  
+>  			ports {
+> @@ -1653,11 +1648,65 @@
+>  				port@1 {
+>  					reg = <1>;
+>  					du_out_lvds0: endpoint {
+> +						remote-endpoint = <&lvds0_in>;
+>  					};
+>  				};
+>  				port@2 {
+>  					reg = <2>;
+>  					du_out_lvds1: endpoint {
+> +						remote-endpoint = <&lvds1_in>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		lvds0: lvds@feb90000 {
+> +			compatible = "renesas,r8a7790-lvds";
+> +			reg = <0 0xfeb90000 0 0x1c>;
+> +			clocks = <&cpg CPG_MOD 726>;
+> +			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+> +			resets = <&cpg 726>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +					lvds0_in: endpoint {
+> +						remote-endpoint = <&du_out_lvds0>;
+> +					};
+> +				};
+> +				port@1 {
+> +					reg = <1>;
+> +					lvds0_out: endpoint {
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		lvds1: lvds@feb94000 {
+> +			compatible = "renesas,r8a7790-lvds";
+> +			reg = <0 0xfeb94000 0 0x1c>;
+> +			clocks = <&cpg CPG_MOD 725>;
+> +			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+> +			resets = <&cpg 725>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +					lvds1_in: endpoint {
+> +						remote-endpoint = <&du_out_lvds1>;
+> +					};
+> +				};
+> +				port@1 {
+> +					reg = <1>;
+> +					lvds1_out: endpoint {
+>  					};
+>  				};
+>  			};
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
 
 -- 
 Regards,
-
-Laurent Pinchart
+Niklas S�derlund
