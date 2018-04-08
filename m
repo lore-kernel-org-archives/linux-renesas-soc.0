@@ -1,70 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-he1eur01on0132.outbound.protection.outlook.com ([104.47.0.132]:61408
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756177AbeDZWdM (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50262 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751845AbeDHS1C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:33:12 -0400
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Peter Senna Tschudin <peter.senna@collabora.com>,
-        Martin Donnelly <martin.donnelly@ge.com>,
-        Martyn Welch <martyn.welch@collabora.co.uk>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Jyri Sarha <jsarha@ti.com>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 23/24] drm/bridge: require the .owner to be filled in on drm_bridge_attach
-Date: Fri, 27 Apr 2018 00:31:38 +0200
-Message-Id: <20180426223139.16740-24-peda@axentia.se>
-In-Reply-To: <20180426223139.16740-1-peda@axentia.se>
-References: <20180426223139.16740-1-peda@axentia.se>
+        Sun, 8 Apr 2018 14:27:02 -0400
+Subject: Re: [PATCH V2] PCI: rcar: Clean up the macros
+To: Randy Dunlap <rdunlap@infradead.org>, linux-pci@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+References: <20180408130942.19148-1-marek.vasut+renesas@gmail.com>
+ <7f63726a-fb96-a329-cce4-d1dd64b33de7@infradead.org>
+ <710bfa56-09a6-5017-e493-fce7cd09e788@gmail.com>
+ <21dff119-07a4-e7b0-f3c0-b21721124232@infradead.org>
+ <1043a359-7440-826b-5146-7dea494214b8@gmail.com>
+ <06dedbd6-13df-3d7a-5244-c4e92df0a009@infradead.org>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <309a7ed8-1fdb-f739-8489-7b0edd68a6bd@gmail.com>
+Date: Sun, 8 Apr 2018 20:26:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <06dedbd6-13df-3d7a-5244-c4e92df0a009@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The .owner will be handy to have around.
+On 04/08/2018 08:03 PM, Randy Dunlap wrote:
+> On 04/08/2018 09:53 AM, Marek Vasut wrote:
+>> On 04/08/2018 06:51 PM, Randy Dunlap wrote:
+>>> On 04/08/2018 09:34 AM, Marek Vasut wrote:
+>>>> On 04/08/2018 05:27 PM, Randy Dunlap wrote:
+>>>>> On 04/08/2018 06:09 AM, Marek Vasut wrote:
+>>>>>> This patch replaces the (1 << n) with BIT(n) and cleans up whitespace,
+>>>>>> no functional change.
+>>>>>>
+>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>>>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+>>>>>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>>>>>> Cc: Wolfram Sang <wsa@the-dreams.de>
+>>>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>>>> ---
+>>>>>> V2: Reword the commit message
+>>>>>> ---
+>>>>>>  drivers/pci/host/pcie-rcar.c | 52 ++++++++++++++++++++++----------------------
+>>>>>>  1 file changed, 26 insertions(+), 26 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+>>>>>> index 25f68305322c..5ab7bf6a8de0 100644
+>>>>>> --- a/drivers/pci/host/pcie-rcar.c
+>>>>>> +++ b/drivers/pci/host/pcie-rcar.c
+>>>>>> @@ -30,9 +30,9 @@
+>>>>>
+>>>>> missing this:
+>>>>>
+>>>>> #include <linux/bitops.h>
+>>>>
+>>>> This compiles just fine without it though, which means it's probably
+>>>> pulled in through some of the other includes already present.
+>>>>
+>>>
+>>> I suspected that. However, please see rule #1 in
+>>> Documentation/process/submit-checklist.rst:
+>>>
+>>> 1) If you use a facility then #include the file that defines/declares
+>>>    that facility.  Don't depend on other header files pulling in ones
+>>>    that you use.
+>>
+>> If I was to include every single header from which I use something,
+>> wouldn't that make the list real long then ? Is that really worth it?
+> 
+> The length of the list of headers is not an issue.
+> And if you are "cleaning up," you might as well do a full job of it.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/gpu/drm/drm_bridge.c | 3 +++
- 1 file changed, 3 insertions(+)
+I sent a V3 of this "clean up".
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 9f023bd84d56..a038da696802 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -115,6 +115,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 	if (!encoder || !bridge)
- 		return -EINVAL;
- 
-+	if (WARN_ON(!bridge->owner))
-+		return -EINVAL;
-+
- 	if (previous && (!previous->dev || previous->encoder != encoder))
- 		return -EINVAL;
- 
+> Just because it builds on one $ARCH (with various pulled-in headers) does
+> not mean that it will build on another $ARCH (with different pulled-in headers).
+> 
+> Or did you build it on all linux/arch/* ?
+
+No, since it is limited in Kconfig:
+        depends on ARCH_RENESAS || (ARM && COMPILE_TEST)
+
 -- 
-2.11.0
+Best regards,
+Marek Vasut
