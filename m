@@ -1,106 +1,97 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, geert+renesas@glider.be,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] clk: renesas: Add r8a77990 CPG Core Clock Definitions
-Date: Wed, 11 Apr 2018 18:37:26 +0900
-Message-Id: <1523439447-1084-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from www.zeus03.de ([194.117.254.33]:39444 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750892AbeDHHjo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 8 Apr 2018 03:39:44 -0400
+Date: Sun, 8 Apr 2018 09:39:42 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: qemu-devel@nongnu.org,
+        Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] nvram: at24c: fix problems related to "rom-size"
+Message-ID: <20180408073942.lktkq4gqn6ofvjwf@katana>
+References: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="buikjcctq7qeoo2h"
+Content-Disposition: inline
+In-Reply-To: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch adds all R-Car E3 Clock Pulse Generator Core Clock Outputs.
+--buikjcctq7qeoo2h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note that internal CPG clocks (S0, S1, S2, S3, SDSRC) are not included,
-as they are used as internal clock sources only, and never referenced
-from DT.
+On Tue, Mar 20, 2018 at 05:18:47PM +0100, Wolfram Sang wrote:
+> I used this driver as a template for a custom one. While hacking on my ow=
+n, I
+> noticed some problems in this driver, too. This series fixes the first se=
+t of
+> them, related to the "rom-size" parameter. It fixes a segfault.
+>=20
+> I think the first patch is clearly suitable for stable. I think the secon=
+d one,
+> too, but not as clearly. The third one is a cleanup and not for stable. S=
+till,
+> I am open for opinions about these thoughts.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[shimoda: add SPDX-License-Identifier]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- include/dt-bindings/clock/r8a77990-cpg-mssr.h | 63 +++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a77990-cpg-mssr.h
+Through which tree should these patches go? get_maintainer doesn't list
+a person specifically. Anything else I could do?
 
-diff --git a/include/dt-bindings/clock/r8a77990-cpg-mssr.h b/include/dt-bindings/clock/r8a77990-cpg-mssr.h
-new file mode 100644
-index 0000000..c806fce
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a77990-cpg-mssr.h
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a77990 CPG Core Clocks */
-+#define R8A77990_CLK_Z2			0
-+#define R8A77990_CLK_ZR			1
-+#define R8A77990_CLK_ZG			2
-+#define R8A77990_CLK_ZTR		3
-+#define R8A77990_CLK_ZT			4
-+#define R8A77990_CLK_ZX			5
-+#define R8A77990_CLK_S0D1		6
-+#define R8A77990_CLK_S0D3		7
-+#define R8A77990_CLK_S0D6		8
-+#define R8A77990_CLK_S0D12		9
-+#define R8A77990_CLK_S0D24		10
-+#define R8A77990_CLK_S1D1		11
-+#define R8A77990_CLK_S1D2		12
-+#define R8A77990_CLK_S1D4		13
-+#define R8A77990_CLK_S2D1		14
-+#define R8A77990_CLK_S2D2		15
-+#define R8A77990_CLK_S2D4		16
-+#define R8A77990_CLK_S3D1		17
-+#define R8A77990_CLK_S3D2		18
-+#define R8A77990_CLK_S3D4		19
-+#define R8A77990_CLK_S0D6C		20
-+#define R8A77990_CLK_S3D1C		21
-+#define R8A77990_CLK_S3D2C		22
-+#define R8A77990_CLK_S3D4C		23
-+#define R8A77990_CLK_LB			24
-+#define R8A77990_CLK_CL			25
-+#define R8A77990_CLK_ZB3		26
-+#define R8A77990_CLK_ZB3D2		27
-+#define R8A77990_CLK_CR			28
-+#define R8A77990_CLK_CRD2		29
-+#define R8A77990_CLK_SD0H		30
-+#define R8A77990_CLK_SD0		31
-+#define R8A77990_CLK_SD1H		32
-+#define R8A77990_CLK_SD1		33
-+#define R8A77990_CLK_SD3H		34
-+#define R8A77990_CLK_SD3		35
-+#define R8A77990_CLK_RPC		36
-+#define R8A77990_CLK_RPCD2		37
-+#define R8A77990_CLK_ZA2		38
-+#define R8A77990_CLK_ZA8		39
-+#define R8A77990_CLK_Z2D		40
-+#define R8A77990_CLK_CANFD		41
-+#define R8A77990_CLK_MSO		42
-+#define R8A77990_CLK_R			43
-+#define R8A77990_CLK_OSC		44
-+#define R8A77990_CLK_LV0		45
-+#define R8A77990_CLK_LV1		46
-+#define R8A77990_CLK_CSI0		47
-+#define R8A77990_CLK_POST3		48
-+#define R8A77990_CLK_CP			49
-+#define R8A77990_CLK_CPEX		50
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__ */
--- 
-1.9.1
+>=20
+> Thanks,
+>=20
+>    Wolfram
+>=20
+> Changes since v2:
+>=20
+> * removed '\n' from error_report-strings
+> * made sure checkpatch is happy
+> * added tags from Philippe (thanks!)
+>=20
+> Changes since v1:
+>=20
+> * reordered patches according to significance for stable
+> * use AT24C_ROMSIZE_DEFAULT instead of magic value
+> * patch 3 doesn't improve the ERR macro anymore but replaces
+>   it completely with error_report().
+>=20
+>=20
+> Wolfram Sang (3):
+>   nvram: at24c: prevent segfault by checking "rom-size"
+>   nvram: at24c: use a sane default for "rom-size"
+>   nvram: at24c: use standard error reporting
+>=20
+>  hw/nvram/eeprom_at24c.c | 25 ++++++++++++++-----------
+>  1 file changed, 14 insertions(+), 11 deletions(-)
+>=20
+> --=20
+> 2.11.0
+>=20
 
+--buikjcctq7qeoo2h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrJxz4ACgkQFA3kzBSg
+KbZHyQ//ZkGZuVhmHH7+iPHMtlL66tg3bF3DImVFKQgHwq7dhgsCx3cJFSs/ixtI
+fezPy4dqF9xSD46K2maueLLbW8QGIa+ukEwe74OP8j07yMjCiPtmtvB2Lj6G89da
+QyfxBsxOkUuicx1MrUUN42MTHCFa2gvoZgdHD6hgs4mXqWiAHCIX3LMigkHZ327b
+K92bJhGvZmAu6MUhMp+vJ8x7QLnreADATItZATp1NBQH4OGZ+Kp1Vo9fKDwTwMDm
+N7xuEqNEPmg5bGnVa3de0XUY6/au4Ywu5oECwr6bH0yDVLueegOONzw7VaFKl7Ao
+Vcxk2rheo2is/RKPcgGCnZBwyG3mxP2pxSUv0o4tEl9VbChc7HGNIRZcMLXWGTCg
+A/lJASUs10CcGXNaAtnZ4ObrRsWkAZdp1MswilSnh0xzNAJw+04nXRPuqGimrcv8
+UnY4hpYIWdfHxQKVdH9sDU6DXB/n2K/pCm5u/4xCtfrK+R/zIXrxJvz+cbSmhee7
+ZZu3Gxnk+WwAIHMYaSoq7mrILz3a4WqrNZahfmkO3CYOb/ufUvztQQyxdXuUnR2H
+VyY+VEioZyl3NMJm4+Sig19Mx1G/SJxH0/a/f0XaVLUNtgxwv427uu+rKHBELCua
+YWqLYg0qF5pYF3ebwIhmwEAfWbhn3xhDF7iCmnxBAl36MX5xFbk=
+=bYzH
+-----END PGP SIGNATURE-----
+
+--buikjcctq7qeoo2h--
