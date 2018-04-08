@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50262 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751845AbeDHS1C (ORCPT
+Received: from bombadil.infradead.org ([198.137.202.133]:53924 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751919AbeDHSDi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Apr 2018 14:27:02 -0400
+        Sun, 8 Apr 2018 14:03:38 -0400
 Subject: Re: [PATCH V2] PCI: rcar: Clean up the macros
-To: Randy Dunlap <rdunlap@infradead.org>, linux-pci@vger.kernel.org
+To: Marek Vasut <marek.vasut@gmail.com>, linux-pci@vger.kernel.org
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
@@ -16,76 +16,69 @@ References: <20180408130942.19148-1-marek.vasut+renesas@gmail.com>
  <710bfa56-09a6-5017-e493-fce7cd09e788@gmail.com>
  <21dff119-07a4-e7b0-f3c0-b21721124232@infradead.org>
  <1043a359-7440-826b-5146-7dea494214b8@gmail.com>
- <06dedbd6-13df-3d7a-5244-c4e92df0a009@infradead.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <309a7ed8-1fdb-f739-8489-7b0edd68a6bd@gmail.com>
-Date: Sun, 8 Apr 2018 20:26:59 +0200
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <06dedbd6-13df-3d7a-5244-c4e92df0a009@infradead.org>
+Date: Sun, 8 Apr 2018 11:03:36 -0700
 MIME-Version: 1.0
-In-Reply-To: <06dedbd6-13df-3d7a-5244-c4e92df0a009@infradead.org>
+In-Reply-To: <1043a359-7440-826b-5146-7dea494214b8@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/08/2018 08:03 PM, Randy Dunlap wrote:
-> On 04/08/2018 09:53 AM, Marek Vasut wrote:
->> On 04/08/2018 06:51 PM, Randy Dunlap wrote:
->>> On 04/08/2018 09:34 AM, Marek Vasut wrote:
->>>> On 04/08/2018 05:27 PM, Randy Dunlap wrote:
->>>>> On 04/08/2018 06:09 AM, Marek Vasut wrote:
->>>>>> This patch replaces the (1 << n) with BIT(n) and cleans up whitespace,
->>>>>> no functional change.
->>>>>>
->>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->>>>>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
->>>>>> Cc: Simon Horman <horms+renesas@verge.net.au>
->>>>>> Cc: Wolfram Sang <wsa@the-dreams.de>
->>>>>> Cc: linux-renesas-soc@vger.kernel.org
->>>>>> ---
->>>>>> V2: Reword the commit message
->>>>>> ---
->>>>>>  drivers/pci/host/pcie-rcar.c | 52 ++++++++++++++++++++++----------------------
->>>>>>  1 file changed, 26 insertions(+), 26 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
->>>>>> index 25f68305322c..5ab7bf6a8de0 100644
->>>>>> --- a/drivers/pci/host/pcie-rcar.c
->>>>>> +++ b/drivers/pci/host/pcie-rcar.c
->>>>>> @@ -30,9 +30,9 @@
+On 04/08/2018 09:53 AM, Marek Vasut wrote:
+> On 04/08/2018 06:51 PM, Randy Dunlap wrote:
+>> On 04/08/2018 09:34 AM, Marek Vasut wrote:
+>>> On 04/08/2018 05:27 PM, Randy Dunlap wrote:
+>>>> On 04/08/2018 06:09 AM, Marek Vasut wrote:
+>>>>> This patch replaces the (1 << n) with BIT(n) and cleans up whitespace,
+>>>>> no functional change.
 >>>>>
->>>>> missing this:
+>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+>>>>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>>>>> Cc: Wolfram Sang <wsa@the-dreams.de>
+>>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>>> ---
+>>>>> V2: Reword the commit message
+>>>>> ---
+>>>>>  drivers/pci/host/pcie-rcar.c | 52 ++++++++++++++++++++++----------------------
+>>>>>  1 file changed, 26 insertions(+), 26 deletions(-)
 >>>>>
->>>>> #include <linux/bitops.h>
+>>>>> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+>>>>> index 25f68305322c..5ab7bf6a8de0 100644
+>>>>> --- a/drivers/pci/host/pcie-rcar.c
+>>>>> +++ b/drivers/pci/host/pcie-rcar.c
+>>>>> @@ -30,9 +30,9 @@
 >>>>
->>>> This compiles just fine without it though, which means it's probably
->>>> pulled in through some of the other includes already present.
+>>>> missing this:
 >>>>
+>>>> #include <linux/bitops.h>
 >>>
->>> I suspected that. However, please see rule #1 in
->>> Documentation/process/submit-checklist.rst:
+>>> This compiles just fine without it though, which means it's probably
+>>> pulled in through some of the other includes already present.
 >>>
->>> 1) If you use a facility then #include the file that defines/declares
->>>    that facility.  Don't depend on other header files pulling in ones
->>>    that you use.
 >>
->> If I was to include every single header from which I use something,
->> wouldn't that make the list real long then ? Is that really worth it?
+>> I suspected that. However, please see rule #1 in
+>> Documentation/process/submit-checklist.rst:
+>>
+>> 1) If you use a facility then #include the file that defines/declares
+>>    that facility.  Don't depend on other header files pulling in ones
+>>    that you use.
 > 
-> The length of the list of headers is not an issue.
-> And if you are "cleaning up," you might as well do a full job of it.
+> If I was to include every single header from which I use something,
+> wouldn't that make the list real long then ? Is that really worth it?
 
-I sent a V3 of this "clean up".
+The length of the list of headers is not an issue.
+And if you are "cleaning up," you might as well do a full job of it.
 
-> Just because it builds on one $ARCH (with various pulled-in headers) does
-> not mean that it will build on another $ARCH (with different pulled-in headers).
-> 
-> Or did you build it on all linux/arch/* ?
+Just because it builds on one $ARCH (with various pulled-in headers) does
+not mean that it will build on another $ARCH (with different pulled-in headers).
 
-No, since it is limited in Kconfig:
-        depends on ARCH_RENESAS || (ARM && COMPILE_TEST)
+Or did you build it on all linux/arch/* ?
 
+thanks,
 -- 
-Best regards,
-Marek Vasut
+~Randy
