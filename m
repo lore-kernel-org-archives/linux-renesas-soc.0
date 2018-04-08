@@ -1,83 +1,141 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45350 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753002AbeDSOHK (ORCPT
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41636 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752234AbeDHSID (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:10 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 46/61] spi: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:16 +0200
-Message-Id: <20180419140641.27926-47-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Sun, 8 Apr 2018 14:08:03 -0400
+Received: by mail-wr0-f194.google.com with SMTP id s12so6367802wrc.8
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 08 Apr 2018 11:08:02 -0700 (PDT)
+Subject: [PATCH v2 4/5] pcie-rcar: factor out rcar_pcie_hw_init() call
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
+Message-ID: <fdb3e7ef-bb78-ad7c-8482-f6586f405f07@cogentembedded.com>
+Date: Sun, 8 Apr 2018 21:07:59 +0300
+MIME-Version: 1.0
+In-Reply-To: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+We now have rcar_pcie_hw_init_{h1|gen2|gen3}() differing only in the PCIe
+PHY init code and all ending with a call to rcar_pcie_hw_init(), thus it
+makes  sense to move that call into the driver's probe() method and then
+rename those functions to rcar_pcie_phy_init_{h1|gen2|gen3}() -- doing
+this saves 48 bytes of object code (AArch64 gcc 4.8.5)...
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
+ drivers/pci/host/pcie-rcar.c |   42 ++++++++++++++++++++++--------------------
+ 1 file changed, 22 insertions(+), 20 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/spi/spi-cadence.c      | 6 ++----
- drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
-index 5c9516ae4942..de394422b611 100644
---- a/drivers/spi/spi-cadence.c
-+++ b/drivers/spi/spi-cadence.c
-@@ -686,8 +686,7 @@ static int cdns_spi_remove(struct platform_device *pdev)
-  */
- static int __maybe_unused cdns_spi_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 
- 	return spi_master_suspend(master);
+Index: pci/drivers/pci/host/pcie-rcar.c
+===================================================================
+--- pci.orig/drivers/pci/host/pcie-rcar.c
++++ pci/drivers/pci/host/pcie-rcar.c
+@@ -626,7 +626,7 @@ static int rcar_pcie_hw_init(struct rcar
+ 	return 0;
  }
-@@ -702,8 +701,7 @@ static int __maybe_unused cdns_spi_suspend(struct device *dev)
-  */
- static int __maybe_unused cdns_spi_resume(struct device *dev)
+ 
+-static int rcar_pcie_hw_init_h1(struct rcar_pcie *pcie)
++static int rcar_pcie_phy_init_h1(struct rcar_pcie *pcie)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct cdns_spi *xspi = spi_master_get_devdata(master);
+ 	/* Initialize the phy */
+ 	phy_write_reg(pcie, 0, 0x42, 0x1, 0x0EC34191);
+@@ -646,10 +646,10 @@ static int rcar_pcie_hw_init_h1(struct r
+ 	phy_write_reg(pcie, 0, 0x64, 0x1, 0x3F0F1F0F);
+ 	phy_write_reg(pcie, 0, 0x66, 0x1, 0x00008000);
  
- 	cdns_spi_init_hw(xspi);
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index 18aeaceee286..3608db4ff368 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -918,8 +918,7 @@ static int zynqmp_qspi_start_transfer(struct spi_master *master,
-  */
- static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
+-	return rcar_pcie_hw_init(pcie);
++	return 0;
+ }
+ 
+-static int rcar_pcie_hw_init_gen2(struct rcar_pcie *pcie)
++static int rcar_pcie_phy_init_gen2(struct rcar_pcie *pcie)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
+ 	/*
+ 	 * These settings come from the R-Car Series, 2nd Generation User's
+@@ -666,10 +666,10 @@ static int rcar_pcie_hw_init_gen2(struct
+ 	rcar_pci_write_reg(pcie, 0x00000001, GEN2_PCIEPHYCTRL);
+ 	rcar_pci_write_reg(pcie, 0x00000006, GEN2_PCIEPHYCTRL);
  
- 	spi_master_suspend(master);
+-	return rcar_pcie_hw_init(pcie);
++	return 0;
+ }
  
-@@ -939,8 +938,7 @@ static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
-  */
- static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
+-static int rcar_pcie_hw_init_gen3(struct rcar_pcie *pcie)
++static int rcar_pcie_phy_init_gen3(struct rcar_pcie *pcie)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
- 	int ret = 0;
+ 	int err;
  
--- 
-2.11.0
+@@ -677,11 +677,7 @@ static int rcar_pcie_hw_init_gen3(struct
+ 	if (err)
+ 		return err;
+ 
+-	err = phy_power_on(pcie->phy);
+-	if (err)
+-		return err;
+-
+-	return rcar_pcie_hw_init(pcie);
++	return phy_power_on(pcie->phy);
+ }
+ 
+ static int rcar_msi_alloc(struct rcar_msi *chip)
+@@ -1082,17 +1078,18 @@ static int rcar_pcie_parse_map_dma_range
+ }
+ 
+ static const struct of_device_id rcar_pcie_of_match[] = {
+-	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
++	{ .compatible = "renesas,pcie-r8a7779",
++	  .data = rcar_pcie_phy_init_h1 },
+ 	{ .compatible = "renesas,pcie-r8a7790",
+-	  .data = rcar_pcie_hw_init_gen2 },
++	  .data = rcar_pcie_phy_init_gen2 },
+ 	{ .compatible = "renesas,pcie-r8a7791",
+-	  .data = rcar_pcie_hw_init_gen2 },
++	  .data = rcar_pcie_phy_init_gen2 },
+ 	{ .compatible = "renesas,pcie-rcar-gen2",
+-	  .data = rcar_pcie_hw_init_gen2 },
++	  .data = rcar_pcie_phy_init_gen2 },
+ 	{ .compatible = "renesas,pcie-r8a7795",
+-	  .data = rcar_pcie_hw_init_gen3 },
++	  .data = rcar_pcie_phy_init_gen3 },
+ 	{ .compatible = "renesas,pcie-rcar-gen3",
+-	  .data = rcar_pcie_hw_init_gen3 },
++	  .data = rcar_pcie_phy_init_gen3 },
+ 	{},
+ };
+ 
+@@ -1140,7 +1137,7 @@ static int rcar_pcie_probe(struct platfo
+ 	struct rcar_pcie *pcie;
+ 	unsigned int data;
+ 	int err;
+-	int (*hw_init_fn)(struct rcar_pcie *);
++	int (*phy_init_fn)(struct rcar_pcie *);
+ 	struct pci_host_bridge *bridge;
+ 
+ 	bridge = pci_alloc_host_bridge(sizeof(*pcie));
+@@ -1174,10 +1171,15 @@ static int rcar_pcie_probe(struct platfo
+ 		goto err_pm_disable;
+ 	}
+ 
+-	/* Failure to get a link might just be that no cards are inserted */
+-	hw_init_fn = of_device_get_match_data(dev);
+-	err = hw_init_fn(pcie);
++	phy_init_fn = of_device_get_match_data(dev);
++	err = phy_init_fn(pcie);
+ 	if (err) {
++		dev_err(dev, "failed to init PCIe PHY\n");
++		goto err_pm_put;
++	}
++
++	/* Failure to get a link might just be that no cards are inserted */
++	if (rcar_pcie_hw_init(pcie)) {
+ 		dev_info(dev, "PCIe link down\n");
+ 		err = -ENODEV;
+ 		goto err_pm_put;
