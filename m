@@ -1,124 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38870 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752181AbeDJJir (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42191 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751673AbeDIPV6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:38:47 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Mon, 9 Apr 2018 11:21:58 -0400
+Received: by mail-lf0-f68.google.com with SMTP id q9-v6so7130622lfk.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Apr 2018 08:21:58 -0700 (PDT)
+Subject: Re: [PATCH 4/4] pcie-rcar: factor out rcar_pcie_hw_init() call
+To: Simon Horman <horms@verge.net.au>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
-Subject: [PATCH 1/5] mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs
-Date: Tue, 10 Apr 2018 11:38:27 +0200
-Message-Id: <20180410093831.1759-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
-References: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <23335d95-63ca-b107-e43d-f4c2621adc2c@cogentembedded.com>
+ <4462b4d1-1e56-d6d2-ad38-8f02405d1d96@cogentembedded.com>
+ <20180409110404.5qjnvaig7ng2cyzt@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <0abaa14d-08fb-6c41-1479-220250ae0048@cogentembedded.com>
+Date: Mon, 9 Apr 2018 18:21:55 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180409110404.5qjnvaig7ng2cyzt@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Early revisions of certain SoCs cannot do multiple DMA RX streams in
-parallel. To avoid data corruption, only allow one DMA RX channel and
-fall back to PIO, if needed.
+On 04/09/2018 02:04 PM, Simon Horman wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 35 ++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
+>> We now have rcar_pcie_hw_init_{h1|gen2|gen3}() differing only in the PCIe
+>> PHY init code and all ending with a call to rcar_pcie_hw_init(), thus it
+>> makes  sense to move that call into the driver's probe() method and then
+>> rename those functions to rcar_pcie_phy_init_{h1|gen2|gen3}() -- doing
+>> this saves 48 bytes of object code (AArch64 gcc 4.8.5)...
+> 
+> I'm not sure the churn is worth it, but if you do then that is find by me.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 8e0acd197c43..9c50d64cd10c 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -9,6 +9,7 @@
-  * published by the Free Software Foundation.
-  */
- 
-+#include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
- #include <linux/io-64-nonatomic-hi-lo.h>
-@@ -62,6 +63,17 @@
-  *   need a custom accessor.
-  */
- 
-+static unsigned long global_flags;
-+/*
-+ * Workaround for avoiding to use RX DMAC by multiple channels.
-+ * On R-Car H3 ES1.* and M3-W ES1.0, when multiple SDHI channels use
-+ * RX DMAC simultaneously, sometimes hundreds of bytes data are not
-+ * stored into the system memory even if the DMAC interrupt happened.
-+ * So, this driver then uses one RX DMAC channel only.
-+ */
-+#define SDHI_INTERNAL_DMAC_ONE_RX_ONLY	0
-+#define SDHI_INTERNAL_DMAC_RX_IN_USE	1
-+
- /* Definitions for sampling clocks */
- static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	{
-@@ -126,6 +138,10 @@ renesas_sdhi_internal_dmac_abort_dma(struct tmio_mmc_host *host) {
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_RST,
- 					    RST_RESERVED_BITS | val);
- 
-+
-+	if (host->data && host->data->flags & MMC_DATA_READ)
-+		clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
-+
- 	renesas_sdhi_internal_dmac_enable_dma(host, true);
- }
- 
-@@ -155,6 +171,9 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
- 		dir = DMA_FROM_DEVICE;
-+		if (test_bit(SDHI_INTERNAL_DMAC_ONE_RX_ONLY, &global_flags) &&
-+		    test_and_set_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags))
-+			goto force_pio;
- 	} else {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
- 		dir = DMA_TO_DEVICE;
-@@ -208,6 +227,9 @@ static void renesas_sdhi_internal_dmac_complete_tasklet_fn(unsigned long arg)
- 	renesas_sdhi_internal_dmac_enable_dma(host, false);
- 	dma_unmap_sg(&host->pdev->dev, host->sg_ptr, host->sg_len, dir);
- 
-+	if (dir == DMA_FROM_DEVICE)
-+		clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
-+
- 	tmio_mmc_do_data_irq(host);
- out:
- 	spin_unlock_irq(&host->lock);
-@@ -251,18 +273,25 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
-  * implementation as others may use a different implementation.
-  */
- static const struct soc_device_attribute gen3_soc_whitelist[] = {
--        { .soc_id = "r8a7795", .revision = "ES1.*" },
-+        { .soc_id = "r8a7795", .revision = "ES1.*",
-+	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
-         { .soc_id = "r8a7795", .revision = "ES2.0" },
--        { .soc_id = "r8a7796", .revision = "ES1.0" },
-+        { .soc_id = "r8a7796", .revision = "ES1.0",
-+	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
-         { .soc_id = "r8a77995", .revision = "ES1.0" },
-         { /* sentinel */ }
- };
- 
- static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
- {
--	if (!soc_device_match(gen3_soc_whitelist))
-+	const struct soc_device_attribute *soc = soc_device_match(gen3_soc_whitelist);
-+
-+	if (!soc)
- 		return -ENODEV;
- 
-+	if (soc->data)
-+		global_flags |= (unsigned long)soc->data;
-+
- 	return renesas_sdhi_probe(pdev, &renesas_sdhi_internal_dmac_dma_ops);
- }
- 
--- 
-2.11.0
+   s/find/fine/? :-)
+   I think it's worth it -- makes the code follow more closely the manuals
+where the only gen1/2/3 specific init is PHY related.
+
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>>  drivers/pci/host/pcie-rcar.c |   42 ++++++++++++++++++++++--------------------
+>>  1 file changed, 22 insertions(+), 20 deletions(-)
+>>
+>> Index: pci/drivers/pci/host/pcie-rcar.c
+>> ===================================================================
+>> --- pci.orig/drivers/pci/host/pcie-rcar.c
+>> +++ pci/drivers/pci/host/pcie-rcar.c
+[...]
+>> @@ -1082,17 +1078,18 @@ static int rcar_pcie_parse_map_dma_range
+>>  }
+>>  
+>>  static const struct of_device_id rcar_pcie_of_match[] = {
+>> -	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
+>> +	{ .compatible = "renesas,pcie-r8a7779",
+>> +	  .data = rcar_pcie_phy_init_h1 },
+>>  	{ .compatible = "renesas,pcie-r8a7790",
+>> -	  .data = rcar_pcie_hw_init_gen2 },
+>> +	  .data = rcar_pcie_phy_init_gen2 },
+>>  	{ .compatible = "renesas,pcie-r8a7791",
+>> -	  .data = rcar_pcie_hw_init_gen2 },
+>> +	  .data = rcar_pcie_phy_init_gen2 },
+>>  	{ .compatible = "renesas,pcie-rcar-gen2",
+>> -	  .data = rcar_pcie_hw_init_gen2 },
+>> +	  .data = rcar_pcie_phy_init_gen2 },
+>>  	{ .compatible = "renesas,pcie-r8a7795",
+>> -	  .data = rcar_pcie_hw_init_gen3 },
+>> +	  .data = rcar_pcie_phy_init_gen3 },
+>>  	{ .compatible = "renesas,pcie-rcar-gen3",
+>> -	  .data = rcar_pcie_hw_init_gen3 },
+>> +	  .data = rcar_pcie_phy_init_gen3 },
+>>  	{},
+> 
+> I would avoid the line wrapping here, but its up to you.
+
+   I didn't want to break the 80-colums limit; and then again, wanted to keep the initializers alike... 
+
+>> @@ -1140,7 +1137,7 @@ static int rcar_pcie_probe(struct platfo
+>>  	struct rcar_pcie *pcie;
+>>  	unsigned int data;
+>>  	int err;
+>> -	int (*hw_init_fn)(struct rcar_pcie *);
+>> +	int (*phy_init_fn)(struct rcar_pcie *);
+> 
+> Looking at this I wonder if we also need a phy_cleanup() code or
+> similar.
+
+   Makes sense -- iff we start supporting PM?..
+
+[...]
+
+MBR, Sergei
