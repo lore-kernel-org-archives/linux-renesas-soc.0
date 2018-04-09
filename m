@@ -1,124 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47480 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754291AbeDMOKb (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38084 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752909AbeDIPpT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:10:31 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
-Subject: [PATCH v2 1/5] mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs
-Date: Fri, 13 Apr 2018 16:10:17 +0200
-Message-Id: <20180413141021.8680-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
-References: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
+        Mon, 9 Apr 2018 11:45:19 -0400
+Received: by mail-lf0-f66.google.com with SMTP id u3-v6so7257715lff.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Apr 2018 08:45:18 -0700 (PDT)
+Subject: Re: [PATCH 1/4] pcie-rcar: poll PHYRDY in rcar_pcie_hw_init()
+To: Simon Horman <horms@verge.net.au>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <23335d95-63ca-b107-e43d-f4c2621adc2c@cogentembedded.com>
+ <35e8fb4a-4b43-dac9-7a6f-cc7083c06453@cogentembedded.com>
+ <20180409105415.h4rstrzzan4k6neq@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <410d8ca9-8efa-8c41-a8ac-cad77e7bd2da@cogentembedded.com>
+Date: Mon, 9 Apr 2018 18:45:15 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180409105415.h4rstrzzan4k6neq@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Early revisions of certain SoCs cannot do multiple DMA RX streams in
-parallel. To avoid data corruption, only allow one DMA RX channel and
-fall back to PIO, if needed.
+On 04/09/2018 01:54 PM, Simon Horman wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 34 ++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
+>> In  all the R-Car gen1/2/3 manuals, we are instructed to poll PCIEPHYSR
+>> for PHYRDY=1  at  an early stage of the PCIEC initialization -- while
+>> the driver only does this on R-Car H1 (polling a PHY specific register).
+> 
+> Is the R-Car H1 specific code still needed with this patch in place?
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 8e0acd197c43..c8d479375fb6 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -9,6 +9,7 @@
-  * published by the Free Software Foundation.
-  */
- 
-+#include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
- #include <linux/io-64-nonatomic-hi-lo.h>
-@@ -62,6 +63,17 @@
-  *   need a custom accessor.
-  */
- 
-+static unsigned long global_flags;
-+/*
-+ * Workaround for avoiding to use RX DMAC by multiple channels.
-+ * On R-Car H3 ES1.* and M3-W ES1.0, when multiple SDHI channels use
-+ * RX DMAC simultaneously, sometimes hundreds of bytes data are not
-+ * stored into the system memory even if the DMAC interrupt happened.
-+ * So, this driver then uses one RX DMAC channel only.
-+ */
-+#define SDHI_INTERNAL_DMAC_ONE_RX_ONLY	0
-+#define SDHI_INTERNAL_DMAC_RX_IN_USE	1
-+
- /* Definitions for sampling clocks */
- static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	{
-@@ -126,6 +138,10 @@ renesas_sdhi_internal_dmac_abort_dma(struct tmio_mmc_host *host) {
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_RST,
- 					    RST_RESERVED_BITS | val);
- 
-+
-+	if (host->data && host->data->flags & MMC_DATA_READ)
-+		clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
-+
- 	renesas_sdhi_internal_dmac_enable_dma(host, true);
- }
- 
-@@ -155,6 +171,9 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
- 		dir = DMA_FROM_DEVICE;
-+		if (test_bit(SDHI_INTERNAL_DMAC_ONE_RX_ONLY, &global_flags) &&
-+		    test_and_set_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags))
-+			goto force_pio;
- 	} else {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
- 		dir = DMA_TO_DEVICE;
-@@ -208,6 +227,9 @@ static void renesas_sdhi_internal_dmac_complete_tasklet_fn(unsigned long arg)
- 	renesas_sdhi_internal_dmac_enable_dma(host, false);
- 	dma_unmap_sg(&host->pdev->dev, host->sg_ptr, host->sg_len, dir);
- 
-+	if (dir == DMA_FROM_DEVICE)
-+		clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
-+
- 	tmio_mmc_do_data_irq(host);
- out:
- 	spin_unlock_irq(&host->lock);
-@@ -251,18 +273,24 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
-  * implementation as others may use a different implementation.
-  */
- static const struct soc_device_attribute gen3_soc_whitelist[] = {
--        { .soc_id = "r8a7795", .revision = "ES1.*" },
-+        { .soc_id = "r8a7795", .revision = "ES1.*",
-+	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
-         { .soc_id = "r8a7795", .revision = "ES2.0" },
--        { .soc_id = "r8a7796", .revision = "ES1.0" },
-+        { .soc_id = "r8a7796", .revision = "ES1.0",
-+	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
-         { .soc_id = "r8a77995", .revision = "ES1.0" },
-         { /* sentinel */ }
- };
- 
- static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
- {
--	if (!soc_device_match(gen3_soc_whitelist))
-+	const struct soc_device_attribute *soc = soc_device_match(gen3_soc_whitelist);
-+
-+	if (!soc)
- 		return -ENODEV;
- 
-+	global_flags |= (unsigned long)soc->data;
-+
- 	return renesas_sdhi_probe(pdev, &renesas_sdhi_internal_dmac_dma_ops);
- }
- 
--- 
-2.11.0
+   No, it's removed in the next patch.
+
+[...]
+>> Add the PHYRDY polling to rcar_pcie_hw_init(). Note that without the
+>> special PHY driver on the R-Car V3H the PCIEC initialization just freezes
+>> the kernel --  adding the PHYRDY polling allows the init code to exit
+>> gracefully on timeout (PHY starts powered down after reset on this SoC).
+> 
+> How widely has this been exercised? I assume it affects Rcar Gen 1, 2 and 3.
+
+   Tested on R8A7791/Porter (unfortunately, I have no spare PCIe card) and
+R8A77980/Condor (tried couple PCIe cards).
+
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>>  drivers/pci/host/pcie-rcar.c |   20 ++++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
+>>
+>> Index: pci/drivers/pci/host/pcie-rcar.c
+>> ===================================================================
+>> --- pci.orig/drivers/pci/host/pcie-rcar.c
+>> +++ pci/drivers/pci/host/pcie-rcar.c
+>> @@ -36,6 +36,8 @@
+>>  #define PCIECDR			0x000020
+>>  #define PCIEMSR			0x000028
+>>  #define PCIEINTXR		0x000400
+>> +#define PCIEPHYSR		0x0007f0
+>> +#define  PHYRDY			1
+> 
+> Can we start using the BIT() macro in this driver?
+
+   Done by Marek for the other regs... not sure whose patch would hit the kernel
+first tho...
+
+[...]
+
+MBR, Sergei
