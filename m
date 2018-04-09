@@ -1,131 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35738 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752128AbeDFTOo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55569 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751701AbeDILma (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 15:14:44 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>
-Subject: [PATCH v5 3/3] ARM: dts: r8a7793: Convert to new LVDS DT bindings
-Date: Fri,  6 Apr 2018 22:14:38 +0300
-Message-Id: <20180406191438.3630-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180406191438.3630-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180406191438.3630-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 9 Apr 2018 07:42:30 -0400
+Date: Mon, 9 Apr 2018 13:42:26 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-pci@vger.kernel.org,
+        Dien Pham <dien.pham.ry@rvc.renesas.com>,
+        Hien Dang <hien.dang.eb@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V4] PCI: rcar: Use runtime PM to control controller clock
+Message-ID: <20180409114226.ppkmu3jlpftc6f7w@verge.net.au>
+References: <20180318105209.5922-1-marek.vasut+renesas@gmail.com>
+ <20180319084447.ce44arxneqd6i3bj@verge.net.au>
+ <834f8473-3e3b-98b2-56e1-55a3c40aa2dc@gmail.com>
+ <20180319103439.t6idzboizjtt4sgn@verge.net.au>
+ <d41fdb81-7d46-97d3-364d-b5565c0d8186@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d41fdb81-7d46-97d3-364d-b5565c0d8186@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+On Sun, Apr 01, 2018 at 05:02:07PM +0200, Marek Vasut wrote:
+> On 03/19/2018 11:34 AM, Simon Horman wrote:
+> > On Mon, Mar 19, 2018 at 10:54:47AM +0100, Marek Vasut wrote:
+> >> On 03/19/2018 09:44 AM, Simon Horman wrote:
+> >>> On Sun, Mar 18, 2018 at 11:52:09AM +0100, Marek Vasut wrote:
+> >>>> From: Dien Pham <dien.pham.ry@rvc.renesas.com>
+> >>>>
+> >>>> The controller clock can be switched off during suspend/resume,
+> >>>> let runtime PM take care of that.
+> >>>>
+> >>>> Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+> >>>> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+> >>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>>> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> >>>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> >>>> Cc: Simon Horman <horms+renesas@verge.net.au>
+> >>>> Cc: Wolfram Sang <wsa@the-dreams.de>
+> >>>> Cc: linux-renesas-soc@vger.kernel.org
+> >>>> To: linux-pci@vger.kernel.org
+> >>>> ---
+> >>>> V2: - Reorder the fail path in rcar_pcie_probe() to cater for the
+> >>>>       reordering of function calls in probe
+> >>>>     - Dispose of fail_clk in rcar_pcie_get_resources()
+> >>>> V3: - Fix up the failpath in probe function
+> >>>> V4: - Rebase on recent linux-next
+> >>>> ---
+> >>>>  drivers/pci/host/pcie-rcar.c | 40 ++++++++++++----------------------------
+> >>>>  1 file changed, 12 insertions(+), 28 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> >>>> index b4c4aad2cf66..93d59f15c589 100644
+> >>>> --- a/drivers/pci/host/pcie-rcar.c
+> >>>> +++ b/drivers/pci/host/pcie-rcar.c
+> >>>> @@ -142,7 +142,6 @@ struct rcar_pcie {
+> >>>>  	void __iomem		*base;
+> >>>>  	struct list_head	resources;
+> >>>>  	int			root_bus_nr;
+> >>>> -	struct clk		*clk;
+> >>>>  	struct clk		*bus_clk;
+> >>>>  	struct			rcar_msi msi;
+> >>>>  };
+> >>>> @@ -914,24 +913,14 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
+> >>>>  	if (IS_ERR(pcie->base))
+> >>>>  		return PTR_ERR(pcie->base);
+> >>>>  
+> >>>> -	pcie->clk = devm_clk_get(dev, "pcie");
+> >>>> -	if (IS_ERR(pcie->clk)) {
+> >>>> -		dev_err(dev, "cannot get platform clock\n");
+> >>>> -		return PTR_ERR(pcie->clk);
+> >>>> -	}
+> >>>> -	err = clk_prepare_enable(pcie->clk);
+> >>>> -	if (err)
+> >>>> -		return err;
+> >>>> -
+> >>>>  	pcie->bus_clk = devm_clk_get(dev, "pcie_bus");
+> >>>>  	if (IS_ERR(pcie->bus_clk)) {
+> >>>>  		dev_err(dev, "cannot get pcie bus clock\n");
+> >>>> -		err = PTR_ERR(pcie->bus_clk);
+> >>>> -		goto fail_clk;
+> >>>> +		return PTR_ERR(pcie->bus_clk);
+> >>>>  	}
+> >>>>  	err = clk_prepare_enable(pcie->bus_clk);
+> >>>>  	if (err)
+> >>>> -		goto fail_clk;
+> >>>> +		return err;
+> >>>>  
+> >>>>  	i = irq_of_parse_and_map(dev->of_node, 0);
+> >>>>  	if (!i) {
+> >>>> @@ -953,8 +942,6 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
+> >>>>  
+> >>>>  err_map_reg:
+> >>>>  	clk_disable_unprepare(pcie->bus_clk);
+> >>>> -fail_clk:
+> >>>> -	clk_disable_unprepare(pcie->clk);
+> >>>>  
+> >>>>  	return err;
+> >>>>  }
+> >>>> @@ -1124,22 +1111,22 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+> >>>>  	if (err)
+> >>>>  		goto err_free_bridge;
+> >>>
+> >>> This error path now calls pci_free_resource_list() and in this case
+> >>> the path is taken if rcar_pcie_parse_request_of_pci_ranges() fails.
+> >>> Is that ok?
+> >>
+> >> I think so, or did I miss something obvious?
+> > 
+> > I feel that I am the one missing something obvious.
+> > But here is what I am worried about:
+> > 
+> > 1. rcar_pcie_probe() calls rcar_pcie_parse_request_of_pci_ranges()
+> > 2. rcar_pcie_parse_request_of_pci_ranges() calls
+> >    devm_request_pci_bus_resources() but that fails so
+> >    pci_free_resource_list() is called and an error is returned.
+> > 3. rcar_pcie_probe() branches to err_free_bridge and calls
+> >    pci_free_resource_list() again.
+> 
+> I see what you mean now, thanks for the details explanation.
+> 
+> So the change needed here is to move
+> pci_free_resource_list(&pcie->resources); above err_free_bridge, so it's
+> not called twice, right ?
 
-Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driver")
-Fixes: bff8f8c2feb7 ("ARM: dts: r8a7793: add soc node")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v3:
-
-- Added power-domains and resets properties to LVDS nodes
-
-Changes since v2:
-
-- Fixed LVDS compatible string
-
-Changes since v1:
-
-- Remove the DU reg-names property
----
- arch/arm/boot/dts/r8a7793-gose.dts | 10 +++++++---
- arch/arm/boot/dts/r8a7793.dtsi     | 37 +++++++++++++++++++++++++++++++------
- 2 files changed, 38 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 9ed6961f2d9a..96e117d8b2cc 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -447,10 +447,9 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- 
--	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
-+	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 		 <&x13_clk>, <&x2_clk>;
--	clock-names = "du.0", "du.1", "lvds.0",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
- 
- 	ports {
- 		port@0 {
-@@ -458,6 +457,11 @@
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
-+	};
-+};
-+
-+&lvds0 {
-+	ports {
- 		port@1 {
- 			lvds_connector: endpoint {
- 			};
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index f9c5a557107d..4f526030dc7c 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1292,15 +1292,12 @@
- 
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7793";
--			reg = <0 0xfeb00000 0 0x40000>,
--			      <0 0xfeb90000 0 0x1c>;
--			reg-names = "du", "lvds.0";
-+			reg = <0 0xfeb00000 0 0x40000>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>,
--				 <&cpg CPG_MOD 723>,
--				 <&cpg CPG_MOD 726>;
--			clock-names = "du.0", "du.1", "lvds.0";
-+				 <&cpg CPG_MOD 723>;
-+			clock-names = "du.0", "du.1";
- 			status = "disabled";
- 
- 			ports {
-@@ -1315,6 +1312,34 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a7793-lvds";
-+			reg = <0 0xfeb90000 0 0x1c>;
-+			clocks = <&cpg CPG_MOD 726>;
-+			power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+			resets = <&cpg 726>;
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
--- 
-Regards,
-
-Laurent Pinchart
+Yes, I think so.
