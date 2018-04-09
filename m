@@ -1,84 +1,32 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/4] arm64: dts: renesas: r8a77970: add DU support
-Date: Tue, 10 Apr 2018 12:54:04 +0200
-Message-Id: <1523357646-3946-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56490 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750759AbeDIMz4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 9 Apr 2018 08:55:56 -0400
+Date: Mon, 9 Apr 2018 14:55:51 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a77980: Correct parent clock of PCIEC0
+Message-ID: <20180409125549.5iwnenyhzil66lyn@verge.net.au>
+References: <1523276962-5465-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523276962-5465-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Mon, Apr 09, 2018 at 02:29:22PM +0200, Geert Uytterhoeven wrote:
+> According to the R-Car Gen3 Hardware Manual Errata for Rev 0.80 of
+> December 22, 2017, the parent clock of the PCIe module clock on R-Car
+> V3H is S2D2.
+> 
+> Fixes: ce15783c510a9905 ("clk: renesas: cpg-mssr: add R8A77980 support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Define the generic R8A77970 part of the DU device node.
-
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
----
-v1 -> v2:
-- Rename the du_out_lvds endpoint to comply with the name used in other
-  Renesas board DTS files
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index a3ef3bd..ae5797d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -635,6 +635,34 @@
- 			resets = <&cpg 623>;
- 			renesas,fcp = <&fcpvd0>;
- 		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77970";
-+			reg = <0 0xfeb00000 0 0x80000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>;
-+			clock-names = "du.0";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			vsps = <&vspd0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	timer {
--- 
-2.7.4
-
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
