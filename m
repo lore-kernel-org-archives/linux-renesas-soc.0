@@ -1,38 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34162 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750916AbeDVKHV (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55713 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751589AbeDILwr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Apr 2018 06:07:21 -0400
-Received: by mail-pg0-f67.google.com with SMTP id p10so6356429pgn.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 22 Apr 2018 03:07:21 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>
-Date: Sun, 22 Apr 2018 19:08:06 +0900
-Message-Id: <152439168688.19829.5853068596124565316.sendpatchset@little-apple>
-Subject: [PATCH 00/04] arm64: dts: renesas: Enable IPMMU devices
+        Mon, 9 Apr 2018 07:52:47 -0400
+Date: Mon, 9 Apr 2018 13:52:44 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 3/4] usb: gadget: udc: renesas_usb3: should call
+ pm_runtime_enable() before add udc
+Message-ID: <20180409115243.l3hwgczjthezen62@verge.net.au>
+References: <1522671694-10229-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1522671694-10229-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522671694-10229-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-arm64: dts: renesas: Enable IPMMU devices
+On Mon, Apr 02, 2018 at 09:21:33PM +0900, Yoshihiro Shimoda wrote:
+> This patch fixes an issue that this driver causes panic if a gadget
+> driver is already loaded because usb_add_gadget_udc() might call
+> renesas_usb3_start() via .udc_start, and then pm_runtime_get_sync()
+> in renesas_usb3_start() doesn't work correctly.
+> Note that the usb3_to_dev() macro should not be called at this timing
+> because the macro uses the gadget structure.
+> 
+> Fixes: cf06df3fae28 ("usb: gadget: udc: renesas_usb3: move pm_runtime_{en,dis}able()")
+> Cc: <stable@vger.kernel.org> # v4.15+
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-[PATCH 01/04] arm64: dts: renesas: r8a7795: Enable IPMMU devices
-[PATCH 02/04] arm64: dts: renesas: r8a7796: Enable IPMMU devices
-[PATCH 03/04] arm64: dts: renesas: r8a77970: Enable IPMMU devices
-[PATCH 04/04] arm64: dts: renesas: r8a77995: Enable IPMMU devices
-
-Following the policy of using DT to describe the hardware and not software
-support state, this series makes sure all IPMMU devices are enabled in DT
-for SoCs such as r8a7795, r8a7796, r8a77970 and r8a77995. 
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Developed on top of renesas-devel-20180420-v4.17-rc1
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi  |   12 ------------
- arch/arm64/boot/dts/renesas/r8a7796.dtsi  |    5 -----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |    2 --
- arch/arm64/boot/dts/renesas/r8a77995.dtsi |   10 ----------
- 4 files changed, 29 deletions(-)
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
