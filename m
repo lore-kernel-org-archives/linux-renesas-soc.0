@@ -1,165 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:43029 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752793AbeDJK4h (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:42294 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751774AbeDIInd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:56:37 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 4/4] arm64: dts: renesas: eagle: Enable HDMI output
-Date: Tue, 10 Apr 2018 12:54:06 +0200
-Message-Id: <1523357646-3946-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 9 Apr 2018 04:43:33 -0400
+Received: by mail-qt0-f196.google.com with SMTP id j3so8290576qtn.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Apr 2018 01:43:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180408164035.GD12256@bigcity.dyn.berto.se>
+References: <20180406191438.3630-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180406191438.3630-3-laurent.pinchart+renesas@ideasonboard.com> <20180408164035.GD12256@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Apr 2018 10:43:31 +0200
+Message-ID: <CAMuHMdXEUWsBqiut-ghs+U4Q3MF=B68_1koLyxFy3MWXWZujkQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] ARM: dts: r8a7791: Convert to new LVDS DT bindings
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable HDMI output on Renesas R-Car V3M Eagle board.
+On Sun, Apr 8, 2018 at 6:40 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> On 2018-04-06 22:14:37 +0300, Laurent Pinchart wrote:
+>> --- a/arch/arm/boot/dts/r8a7791-koelsch.dts
+>> +++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+>> @@ -470,8 +470,7 @@
+>>
+>>       clocks =3D <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 7=
+26>,
+>>                <&x13_clk>, <&x2_clk>;
+>
+> I think you forgot to delete <&cpg CPG_MOD 726> from the clocks, with
+> that fixed:
+>
+> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se=
+>
+>
+>> -     clock-names =3D "du.0", "du.1", "lvds.0",
+>> -                   "dclkin.0", "dclkin.1";
+>> +     clock-names =3D "du.0", "du.1", "dclkin.0", "dclkin.1";
 
-The HDMI output is enabled connecting the DU LVDS output to the
-transparent LVDS converter THC63LVD1024, and successively routing its
-RGB output to the ADV7511W HDMI encoder.
+Obviously we need a check in dtc for matching the lengths of the clocks and
+clock-names (etc.) properties.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-[for THC63LVD1024: ]
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Gr{oetje,eeting}s,
 
----
-v1 -> v2:
-- Squash patches [5/7], [6/7] and [7/7] of v1 in a single patch as
-  suggested by Laurent
-- Remove DU pinmuxing as it is used for DU parallel RGB output only used
-  by Eagle's display expander board not enabled by this series.
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 93 ++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
+                        Geert
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index 3c5f598..1e2191d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -31,6 +31,51 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	d3p3: regulator-fixed {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	thc63lvd1024: lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		vcc-supply = <&d3p3>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
- };
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
- &avb {
-@@ -68,6 +113,38 @@
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
-+
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
- };
-
- &pfc {
-@@ -93,3 +170,19 @@
-
- 	status = "okay";
- };
-+
-+&du {
-+	status = "okay";
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
---
-2.7.4
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
