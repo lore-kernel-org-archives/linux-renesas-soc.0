@@ -1,60 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.133]:49326 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751942AbeDIRxE (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46341 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753097AbeDIQ7a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:53:04 -0400
-Date: Mon, 9 Apr 2018 10:52:51 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: laurent.pinchart@ideasonboard.com, robin.murphy@arm.com,
-        dalias@libc.org, ysato@users.sourceforge.jp,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: Re: [PATCH] base: dma-mapping: Postpone cpu addr translation on
- mmap()
-Message-ID: <20180409175251.GA5426@infradead.org>
-References: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 9 Apr 2018 12:59:30 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: laurent.pinchart@ideasonboard.com, robin.murphy@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        ysato@users.sourceforge.jp, dalias@libc.org,
+        iommu@lists.linux-foundation.org, linux-sh@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] base: dma-mapping: Postpone cpu addr translation on mmap()
+Date: Mon,  9 Apr 2018 18:59:08 +0200
+Message-Id: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Apr 09, 2018 at 06:59:08PM +0200, Jacopo Mondi wrote:
-> I'm still a bit puzzled on what happens if dma_mmap_from_dev_coherent() fails.
-> Does a dma_mmap_from_dev_coherent() failure guarantee anyhow that the
-> successive virt_to_page() isn't problematic as it is today?
-> Or is it the
->  	if (off < count && user_count <= (count - off))
-> check that makes the translation safe?
+Postpone calling virt_to_page() translation on memory locations not
+guaranteed to be backed by a struct page.
 
-It doesn't.  I think one major issue is that we should not simply fall
-to dma_common_mmap if no method is required, but need every instance of
-dma_map_ops to explicitly opt into an mmap method that is known to work.
+This patch fixes a specific issue of SH architecture configured with
+SPARSEMEM memory model, when mapping buffers allocated with the memblock
+APIs at system initialization time, and thus not backed by the page
+infrastructure.
 
->  #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
->  	unsigned long user_count = vma_pages(vma);
->  	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> -	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
->  	unsigned long off = vma->vm_pgoff;
-> +	unsigned long pfn;
-> 
->  	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-> 
-> @@ -235,6 +235,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
->  		return ret;
-> 
->  	if (off < count && user_count <= (count - off)) {
-> +		pfn = page_to_pfn(virt_to_page(cpu_addr));
->  		ret = remap_pfn_range(vma, vma->vm_start,
->  				      pfn + off,
->  				      user_count << PAGE_SHIFT,
+It does apply to the general case though, as an early translation is anyhow
+incorrect and shall be postponed after trying to map memory from the device
+coherent memory pool first.
 
-Why not:
+Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-		ret = remap_pfn_range(vma, vma->vm_start,
-				page_to_pfn(virt_to_page(cpu_addr)) + off,
+---
+Compared to the RFC version I have tried to generalize the commit message,
+please suggest any improvement to that.
 
-and save the temp variable?
+I'm still a bit puzzled on what happens if dma_mmap_from_dev_coherent() fails.
+Does a dma_mmap_from_dev_coherent() failure guarantee anyhow that the
+successive virt_to_page() isn't problematic as it is today?
+Or is it the
+ 	if (off < count && user_count <= (count - off))
+check that makes the translation safe?
+
+Thanks
+   j
+
+---
+ drivers/base/dma-mapping.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
+index 3b11835..8b4ec34 100644
+--- a/drivers/base/dma-mapping.c
++++ b/drivers/base/dma-mapping.c
+@@ -226,8 +226,8 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+ #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
+ 	unsigned long user_count = vma_pages(vma);
+ 	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
+ 	unsigned long off = vma->vm_pgoff;
++	unsigned long pfn;
+
+ 	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+
+@@ -235,6 +235,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
+ 		return ret;
+
+ 	if (off < count && user_count <= (count - off)) {
++		pfn = page_to_pfn(virt_to_page(cpu_addr));
+ 		ret = remap_pfn_range(vma, vma->vm_start,
+ 				      pfn + off,
+ 				      user_count << PAGE_SHIFT,
+--
+2.7.4
