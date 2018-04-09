@@ -1,46 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53483 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754834AbeDPN4Y (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56244 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751270AbeDIM1m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:56:24 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: vinod.koul@intel.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: dmaengine: rcar-dmac: document R8A77965 support
-Date: Mon, 16 Apr 2018 15:56:08 +0200
-Message-Id: <1523886968-14644-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 9 Apr 2018 08:27:42 -0400
+Date: Mon, 9 Apr 2018 14:27:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] R-Car DU: Fix LVDS output on Gen2 boards
+Message-ID: <20180409122737.ec2ylrw6mrjt3xwn@verge.net.au>
+References: <20180406191438.3630-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180409111714.rdfji4ub6cj332jc@verge.net.au>
+ <2417530.tJNIET5ZDx@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2417530.tJNIET5ZDx@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add documentation for r8a77965 compatible string to rcar-dmac device
-tree bindings documentation.
+On Mon, Apr 09, 2018 at 03:16:03PM +0300, Laurent Pinchart wrote:
+> Hi Simon,
+> 
+> On Monday, 9 April 2018 14:17:15 EEST Simon Horman wrote:
+> > On Fri, Apr 06, 2018 at 10:14:35PM +0300, Laurent Pinchart wrote:
+> > > Hello,
+> > > 
+> > > This patch series fixes LVDS output support on the Lager, Koelsh, Porter
+> > > and Gose boards that broke in v4.17-rc1 due to the combination of the
+> > > R-Car DU LVDS driver rework and the DT move of all on-SoC peripherals to
+> > > a /soc node.
+> > > 
+> > > We could handle the problem in the R-Car DU LVDS DT backward compatibility
+> > > code, but that fix would only be used for v4.17 as in v4.18 the Gen2 DT
+> > > will move to the new LVDS DT bindings. I thus propose merging these three
+> > > patches in v4.17 already to fix the problem as this is the simplest
+> > > solution.
+> > > 
+> > > The patches are based on top of Linus' master that includes both the R-Car
+> > > DU changes and the ARM DT changes for v4.17-rc1. I can rebase them on top
+> > > of v4.17-rc1 when it will be released, but I don't expect any change.
+> > 
+> > Thanks, I think this should be fine. Please ping me once v4.17-rc1 has
+> > been released.
+> 
+> I'll send a v6 on top of v4.17-rc1 to fix the issue pointed out by Niklas in 
+> patch 2/3.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-
-Renesas R-Car M3-N support has been merged for v4.17.
-Document the missing device tree bindings.
-
----
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index aadfb23..61315ea 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -26,6 +26,7 @@ Required Properties:
- 		- "renesas,dmac-r8a7794" (R-Car E2)
- 		- "renesas,dmac-r8a7795" (R-Car H3)
- 		- "renesas,dmac-r8a7796" (R-Car M3-W)
-+		- "renesas,dmac-r8a77965" (R-Car M3-N)
- 		- "renesas,dmac-r8a77970" (R-Car V3M)
- 		- "renesas,dmac-r8a77980" (R-Car V3H)
-
---
-2.7.4
+Great, thanks!
