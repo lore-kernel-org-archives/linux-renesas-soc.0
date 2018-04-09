@@ -1,35 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52581 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751492AbeDFK6u (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56160 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751633AbeDIMV3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 06:58:50 -0400
-Received: by mail-wm0-f66.google.com with SMTP id g8so2654572wmd.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Apr 2018 03:58:50 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/4] Add R8A77980 PCIe support & some driver cleanups
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Message-ID: <23335d95-63ca-b107-e43d-f4c2621adc2c@cogentembedded.com>
-Date: Fri, 6 Apr 2018 13:58:47 +0300
+        Mon, 9 Apr 2018 08:21:29 -0400
+Date: Mon, 9 Apr 2018 14:21:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH 2/7] arm64: dts: renesas: r8a77970: add VSPD support
+Message-ID: <20180409122124.qlzzuf5p6cp4jyf2@verge.net.au>
+References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1523020092-25540-3-git-send-email-jacopo+renesas@jmondi.org>
+ <3172265.bfWcyC1uqx@avalon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3172265.bfWcyC1uqx@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On Fri, Apr 06, 2018 at 04:33:21PM +0300, Laurent Pinchart wrote:
+> On Friday, 6 April 2018 16:08:07 EEST Jacopo Mondi wrote:
+> > From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
+> > the next patch...
+> > 
+> > Based on the original (and large) patch by Daisuke Matsushita
+> > <daisuke.matsushita.ns@hitachi.com>.
+> > 
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> > b/arch/arm64/boot/dts/renesas/r8a77970.dtsi index 71f466d..db06c94 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+> > @@ -625,6 +625,16 @@
+> >  			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+> >  			resets = <&cpg 603>;
+> >  		};
+> > +
+> > +		vspd0: vsp@fea20000 {
+> > +			compatible = "renesas,vsp2";
+> > +			reg = <0 0xfea20000 0 0x4000>;
+> 
+> You need to extend the memory region to include the V6_CLUTn_TBL* registers. I 
+> would recommend simply extending it to 0x8000 as all other VSP instances, even 
+> if the registers at 0x7000-0x7fff are not implemented.
+> 
+> Apart from that,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Here's a set of 4 patches against the 'pci.rcar' branch of Lorenzo Pieralisi's
-'pci.git' repo. These are the changes needed for better R-Car gen3 support
-(namely for R8A77980 support) plus some PCIe driver re-factoring done in
-the process...
+I applied the first patch of this series. Please update this,
+and any subsequent patches as appropriate and then repost the series
+without the first patch.
 
-[1/4] pcie-rcar: poll PHYRDY in rcar_pcie_hw_init()
-[2/4] pcie-rcar: remove PHYRDY polling from rcar_pcie_hw_init_h1()
-[3/4] pcie-rcar: add R-Car gen3 PHY support
-[4/4] pcie-rcar: factor out rcar_pcie_hw_init() call
-
-MBR, Sergei
+Thanks
