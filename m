@@ -1,32 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56490 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750759AbeDIMz4 (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:51774 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbeDIM3Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:55:56 -0400
-Date: Mon, 9 Apr 2018 14:55:51 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+        Mon, 9 Apr 2018 08:29:25 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a77980: Correct parent clock of PCIEC0
-Message-ID: <20180409125549.5iwnenyhzil66lyn@verge.net.au>
-References: <1523276962-5465-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523276962-5465-1-git-send-email-geert+renesas@glider.be>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a77980: Correct parent clock of PCIEC0
+Date: Mon,  9 Apr 2018 14:29:22 +0200
+Message-Id: <1523276962-5465-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Apr 09, 2018 at 02:29:22PM +0200, Geert Uytterhoeven wrote:
-> According to the R-Car Gen3 Hardware Manual Errata for Rev 0.80 of
-> December 22, 2017, the parent clock of the PCIe module clock on R-Car
-> V3H is S2D2.
-> 
-> Fixes: ce15783c510a9905 ("clk: renesas: cpg-mssr: add R8A77980 support")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+According to the R-Car Gen3 Hardware Manual Errata for Rev 0.80 of
+December 22, 2017, the parent clock of the PCIe module clock on R-Car
+V3H is S2D2.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: ce15783c510a9905 ("clk: renesas: cpg-mssr: add R8A77980 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v4.18.
+
+ drivers/clk/renesas/r8a77980-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+index 7aaae73a321a216f..d7ebd9ec00594fc8 100644
+--- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+@@ -116,7 +116,7 @@ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+ 	DEF_MOD("sys-dmac1",		 218,	R8A77980_CLK_S0D3),
+ 	DEF_MOD("tpu0",			 304,	R8A77980_CLK_S3D4),
+ 	DEF_MOD("sdif",			 314,	R8A77980_CLK_SD0),
+-	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S3D1),
++	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S2D2),
+ 	DEF_MOD("intc-ex",		 407,	R8A77980_CLK_CP),
+ 	DEF_MOD("intc-ap",		 408,	R8A77980_CLK_S0D3),
+ 	DEF_MOD("hscif3",		 517,	R8A77980_CLK_S3D1),
+-- 
+2.7.4
