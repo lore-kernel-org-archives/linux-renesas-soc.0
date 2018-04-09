@@ -1,60 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35309 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751590AbeDNT1I (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55657 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeDILrk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 15:27:08 -0400
-Received: by mail-lf0-f66.google.com with SMTP id r125-v6so91551lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 14 Apr 2018 12:27:07 -0700 (PDT)
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a77980: add MMC support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <611daf1f-42a2-d463-0814-ebf762871018@cogentembedded.com>
-Message-ID: <aaa58189-2c27-e51f-1f97-3671c50a1479@cogentembedded.com>
-Date: Sat, 14 Apr 2018 22:27:04 +0300
+        Mon, 9 Apr 2018 07:47:40 -0400
+Date: Mon, 9 Apr 2018 13:47:36 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH] pwm: rcar: simplify getting .drvdata
+Message-ID: <20180409114736.krzyciz2gyotbm72@verge.net.au>
+References: <20180405172552.8720-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <611daf1f-42a2-d463-0814-ebf762871018@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405172552.8720-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77980 part of the MMC0 (SDHI2) device node.
+On Thu, Apr 05, 2018 at 07:25:51PM +0200, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Only build tested. Fixed numerous times in other drivers, however...
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -371,6 +371,18 @@
- 			dma-channels = <16>;
- 		};
- 
-+		mmc0: mmc@ee140000 {
-+			compatible = "renesas,sdhi-r8a77980",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 314>;
-+			max-frequency = <200000000>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
