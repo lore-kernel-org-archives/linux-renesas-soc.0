@@ -1,58 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45378 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753330AbeDSOG4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55081 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751738AbeDILAX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:06:56 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH 13/61] gpu: drm: msm: disp: mdp5: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:43 +0200
-Message-Id: <20180419140641.27926-14-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Mon, 9 Apr 2018 07:00:23 -0400
+Date: Mon, 9 Apr 2018 13:00:19 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH 3/4] pcie-rcar: add R-Car gen3 PHY support
+Message-ID: <20180409110019.72enypppkcalfv5y@verge.net.au>
+References: <23335d95-63ca-b107-e43d-f4c2621adc2c@cogentembedded.com>
+ <d8dde257-814f-142c-d58b-91eaf78a7d10@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d8dde257-814f-142c-d58b-91eaf78a7d10@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Fri, Apr 06, 2018 at 02:08:12PM +0300, Sergei Shtylyov wrote:
+> On R-Car gen3 SoCs the PCIe PHY has its own register region -- and I have
+> written  a generic PHY driver for it, thus we need to add the corresponding
+> code in  rcar_pcie_hw_init_gen3() and call devm_phy_optional_get() at the
+> driver's probing time,  so that the existing R-Car gen3 device trees (not
+> having a PHY node) would still work (we only need  to power up the PHY on
+> R-Car V3H).
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-index 6d8e3a9a6fc0..d50927f00c6f 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-@@ -1014,8 +1014,7 @@ static int mdp5_dev_remove(struct platform_device *pdev)
- 
- static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
-+	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
- 
- 	DBG("");
- 
-@@ -1024,8 +1023,7 @@ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
- 
- static __maybe_unused int mdp5_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
-+	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
- 
- 	DBG("");
- 
--- 
-2.11.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
