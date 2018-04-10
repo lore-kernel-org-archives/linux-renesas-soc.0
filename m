@@ -1,19 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:42957 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753562AbeDJOrE (ORCPT
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46761 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752898AbeDJOhn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:47:04 -0400
-MIME-Version: 1.0
-In-Reply-To: <87feac02-e955-1897-d4a4-d6d6d1082e45@gmail.com>
-References: <1523276721-4982-1-git-send-email-geert+renesas@glider.be>
- <9bea3ad8-7e84-87c2-9963-de81ad4cb3bf@gmail.com> <CAMuHMdWHoxrq-tj=QznAhuZ8eC22gTTgWFi9HgyqT9pNfJFJyw@mail.gmail.com>
- <87feac02-e955-1897-d4a4-d6d6d1082e45@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Apr 2018 16:47:02 +0200
-Message-ID: <CAMuHMdWm96dPSx8bms0esFaDhCri9daon0UT4x=qEqeK2XFnTA@mail.gmail.com>
-Subject: Re: [PATCH] mtd: partitions: Handle add_mtd_device() failures gracefully
-To: Marek Vasut <marek.vasut@gmail.com>
+        Tue, 10 Apr 2018 10:37:43 -0400
+Subject: Re: [PATCH] mtd: partitions: Handle add_mtd_device() failures
+ gracefully
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         David Woodhouse <dwmw2@infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -22,65 +15,65 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         MTD Maling List <linux-mtd@lists.infradead.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <1523276721-4982-1-git-send-email-geert+renesas@glider.be>
+ <9bea3ad8-7e84-87c2-9963-de81ad4cb3bf@gmail.com>
+ <CAMuHMdWHoxrq-tj=QznAhuZ8eC22gTTgWFi9HgyqT9pNfJFJyw@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <87feac02-e955-1897-d4a4-d6d6d1082e45@gmail.com>
+Date: Tue, 10 Apr 2018 16:37:40 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWHoxrq-tj=QznAhuZ8eC22gTTgWFi9HgyqT9pNfJFJyw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Marek,
-
-On Tue, Apr 10, 2018 at 4:37 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> On 04/10/2018 03:26 PM, Geert Uytterhoeven wrote:
->> On Mon, Apr 9, 2018 at 11:59 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
->>> On 04/09/2018 02:25 PM, Geert Uytterhoeven wrote:
->>>> Currently add_mtd_device() failures are plainly ignored, which may lead
->>>> to kernel crashes later.
->>
->>>> Fix this by ignoring and freeing partitions that failed to add in
->>>> add_mtd_partitions().  The same issue is present in mtd_add_partition(),
->>>> so fix that as well.
->>>>
->>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>>> ---
->>>> I don't know if it is worthwhile factoring out the common handling.
->>>>
->>>> Should allocate_partition() fail instead?  There's a comment saying
->>>> "let's register it anyway to preserve ordering".
->>
->>>> --- a/drivers/mtd/mtdpart.c
->>>> +++ b/drivers/mtd/mtdpart.c
->>
->>>> @@ -746,7 +753,15 @@ int add_mtd_partitions(struct mtd_info *master,
->>>>               list_add(&slave->list, &mtd_partitions);
->>>>               mutex_unlock(&mtd_partitions_mutex);
->>>>
->>>> -             add_mtd_device(&slave->mtd);
->>>> +             ret = add_mtd_device(&slave->mtd);
->>>> +             if (ret) {
->>>> +                     mutex_lock(&mtd_partitions_mutex);
->>>> +                     list_del(&slave->list);
->>>> +                     mutex_unlock(&mtd_partitions_mutex);
->>>> +                     free_partition(slave);
->>>> +                     continue;
->>>> +             }
+On 04/10/2018 03:26 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
+> 
+> On Mon, Apr 9, 2018 at 11:59 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 04/09/2018 02:25 PM, Geert Uytterhoeven wrote:
+>>> Currently add_mtd_device() failures are plainly ignored, which may lead
+>>> to kernel crashes later.
+> 
+>>> Fix this by ignoring and freeing partitions that failed to add in
+>>> add_mtd_partitions().  The same issue is present in mtd_add_partition(),
+>>> so fix that as well.
 >>>
->>> Why is the partition even in the list in the first place ? Can we avoid
->>> adding it rather than adding and removing it ?
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> ---
+>>> I don't know if it is worthwhile factoring out the common handling.
+>>>
+>>> Should allocate_partition() fail instead?  There's a comment saying
+>>> "let's register it anyway to preserve ordering".
+> 
+>>> --- a/drivers/mtd/mtdpart.c
+>>> +++ b/drivers/mtd/mtdpart.c
+> 
+>>> @@ -746,7 +753,15 @@ int add_mtd_partitions(struct mtd_info *master,
+>>>               list_add(&slave->list, &mtd_partitions);
+>>>               mutex_unlock(&mtd_partitions_mutex);
+>>>
+>>> -             add_mtd_device(&slave->mtd);
+>>> +             ret = add_mtd_device(&slave->mtd);
+>>> +             if (ret) {
+>>> +                     mutex_lock(&mtd_partitions_mutex);
+>>> +                     list_del(&slave->list);
+>>> +                     mutex_unlock(&mtd_partitions_mutex);
+>>> +                     free_partition(slave);
+>>> +                     continue;
+>>> +             }
 >>
->> Hence my question "Should allocate_partition() fail instead?".
->> Note that if we go that route, it should be a "soft" failure, as we
->> probably don't
->> want to drop all other partitions on the device.
-> Is the number of partitions ie. in /proc/mtdparts an ABI ?
-
-I don't know.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+>> Why is the partition even in the list in the first place ? Can we avoid
+>> adding it rather than adding and removing it ?
+> 
+> Hence my question "Should allocate_partition() fail instead?".
+> Note that if we go that route, it should be a "soft" failure, as we
+> probably don't
+> want to drop all other partitions on the device.
+Is the number of partitions ie. in /proc/mtdparts an ABI ?
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Marek Vasut
