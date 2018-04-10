@@ -1,47 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:10043 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752745AbeDKJgO (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:54924 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751940AbeDJPx6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:36:14 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/3] arm64: renesas: Add Renesas R8A77990 Kconfig support
-Date: Wed, 11 Apr 2018 18:35:53 +0900
-Message-Id: <1523439353-980-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523439353-980-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523439353-980-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 10 Apr 2018 11:53:58 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/2] vfio: platform: Improve reset support
+Date: Tue, 10 Apr 2018 17:53:45 +0200
+Message-Id: <1523375627-23746-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add configuration option for the R-Car E3 (R8A77990) SoC.
+	Hi all,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/Kconfig.platforms | 6 ++++++
- 1 file changed, 6 insertions(+)
+This patch series improves reset support for vfio-platform:
+  - The first patch fixes a bug I ran into while working on this.
+  - The second patch implements generic DT reset controller support, for
+    devices that are connected to an SoC-internal reset controller and
+    can be reset in a generic way.  This avoids having to write/change a
+    vfio-specific reset driver for each and every device to be
+    passed-through to a guest.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 2b1535c..d5aeac3 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -208,6 +208,12 @@ config ARCH_R8A77980
- 	help
- 	  This enables support for the Renesas R-Car V3H SoC.
- 
-+config ARCH_R8A77990
-+	bool "Renesas R-Car E3 SoC Platform"
-+	depends on ARCH_RENESAS
-+	help
-+	  This enables support for the Renesas R-Car E3 SoC.
-+
- config ARCH_R8A77995
- 	bool "Renesas R-Car D3 SoC Platform"
- 	depends on ARCH_RENESAS
+Changes compared to v1:
+  - Add Reviewed-by,
+  - Don't store error values in vdev->reset_control,
+  - Use of_reset_control_get_exclusive() instead of
+    __of_reset_control_get(),
+  - Improve description.
+
+This has been tested on R-Car H3/Salvator-XS by exporting a GPIO module
+to a QEMU+KWM guest: the GPIO module is reset before QEMU opens the vfio
+device, and reset again after QEMU has released it, as can be witnessed
+by the LEDs connected to the GPIOs.
+
+Thanks!
+
+Geert Uytterhoeven (2):
+  vfio: platform: Fix reset module leak in error path
+  vfio: platform: Add generic DT reset controller support
+
+ drivers/vfio/platform/vfio_platform_common.c  | 41 ++++++++++++++++++++++-----
+ drivers/vfio/platform/vfio_platform_private.h |  1 +
+ 2 files changed, 35 insertions(+), 7 deletions(-)
+
 -- 
-1.9.1
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
