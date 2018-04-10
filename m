@@ -1,98 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:57304 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932089AbeDCLXt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:23:49 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v3 3/3] ARM: dts: iwg23s-sbc: Add support for iWave G23S-SBC based on RZ/G1C
-Date: Tue,  3 Apr 2018 12:19:39 +0100
-Message-Id: <1522754379-64116-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1522754379-64116-1-git-send-email-biju.das@bp.renesas.com>
-References: <1522754379-64116-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4 2/8] arm: shmobile: Add the RZ/N1D (R9A06G032) to the shmobile Kconfig
+Date: Tue, 10 Apr 2018 09:30:02 +0100
+Message-Id: <1523349015-37985-3-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for iWave iW-RainboW-G23S single board computer based on
- RZ/G1C.
+Add the RZ/N1D SoC to the reset of the Renesas SoC Collection.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
-V1->V2:
-* Incorporated review comments
-V2->V3:
-* No Change
+ arch/arm/mach-shmobile/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- arch/arm/boot/dts/Makefile                |  1 +
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 35 +++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 2b6dfee..4291638 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -781,6 +781,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a7745-iwg22d-sodimm.dtb \
- 	r8a7745-iwg22d-sodimm-dbhd-ca.dtb \
- 	r8a7745-sk-rzg1e.dtb \
-+	r8a77470-iwg23s-sbc.dtb \
- 	r8a7778-bockw.dtb \
- 	r8a7779-marzen.dtb \
- 	r8a7790-lager.dtb \
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-new file mode 100644
-index 0000000..d21baad
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -0,0 +1,35 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the iWave-RZ/G1C single board computer
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 221fbcb..a80c0ed 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -110,6 +110,10 @@ config ARCH_R8A7794
+ 	bool "R-Car E2 (R8A77940)"
+ 	select ARCH_RCAR_GEN2
+ 
++config ARCH_R9A06G032
++	bool "RZ/N1D (R9A06G032)"
++	select ARCH_RZN1
 +
-+/dts-v1/;
-+#include "r8a77470.dtsi"
-+/ {
-+	model = "iWave iW-RainboW-G23S single board computer based on RZ/G1C";
-+	compatible = "iwave,g23s", "renesas,r8a77470";
-+
-+	aliases {
-+		serial1 = &scif1;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial1:115200n8";
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x20000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif1 {
-+	status = "okay";
-+};
+ config ARCH_RZN1
+ 	bool "RZ/N1 (R9A06G0xx) Family"
+ 	select ARM_AMBA
 -- 
 2.7.4
+
