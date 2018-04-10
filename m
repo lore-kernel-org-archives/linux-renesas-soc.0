@@ -1,55 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:25807 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754043AbeDJPAh (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:00:37 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh@kernel.org>, Hoan Tran <hotran@apm.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <TY1PR01MB17691846E8DFA86DA831B8B9F5BE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+ <20180409192013.5rytwgoixtyraow3@rob-hp-laptop> <TY1PR01MB1769EC6963CFB3D720D1B9EEF5BE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <TY1PR01MB17691846E8DFA86DA831B8B9F5BE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Apr 2018 16:29:11 +0200
+Message-ID: <CAMuHMdUjYT466uPAHSoAWwQL2KaRUfM1njwpBkHwSK9fbGZTag@mail.gmail.com>
+Subject: Re: [PATCH] gpio: dwapb: Add support for 32 interrupts
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Rob Herring <robh@kernel.org>, Hoan Tran <hotran@apm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Michel Pollet <michel.pollet@bp.renesas.com>,
         "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] gpio: dwapb: Add support for 32 interrupts
-Date: Tue, 10 Apr 2018 15:00:31 +0000
-Message-ID: <TY1PR01MB17693D030D9B4BEC6D4C58BFF5BE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
- <20180409192013.5rytwgoixtyraow3@rob-hp-laptop>
- <TY1PR01MB1769EC6963CFB3D720D1B9EEF5BE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <TY1PR01MB17691846E8DFA86DA831B8B9F5BE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdUjYT466uPAHSoAWwQL2KaRUfM1njwpBkHwSK9fbGZTag@mail.gmail.com>
-In-Reply-To: <CAMuHMdUjYT466uPAHSoAWwQL2KaRUfM1njwpBkHwSK9fbGZTag@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDEwIEFwcmlsIDIwMTggMTU6MjkgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
-b3RlOg0KPiBPbiBUdWUsIEFwciAxMCwgMjAxOCBhdCA0OjIzIFBNLCBQaGlsIEVkd29ydGh5IHdy
-b3RlOg0KPiA+IE9uIDEwIEFwcmlsIDIwMTggMDc6MjQgUGhpbCBFZHdvcnRoeSB3cm90ZToNCj4g
-Pj4gT24gMDkgQXByaWwgMjAxOCAyMDoyMCBSb2IgSGVycmluZyB3cm90ZToNCj4gPj4gPiBPbiBX
-ZWQsIE1hciAyOCwgMjAxOCBhdCAwMzoyMjozMFBNICswMTAwLCBQaGlsIEVkd29ydGh5IHdyb3Rl
-Og0KPiA+IFsuLi5dDQo+ID4+ID4gPiArLSBpbnRlcnJ1cHQtbWFzayA6IGEgMzItYml0IGJpdCBt
-YXNrIHRoYXQgc3BlY2lmaWVzIHdoaWNoDQo+ID4+ID4gPiAraW50ZXJydXB0cyBpbiB0aGUgbGlz
-dA0KPiA+PiA+ID4gKyAgb2YgaW50ZXJydXB0cyBpcyB2YWxpZCwgYml0IGlzIDEgZm9yIGEgdmFs
-aWQgaXJxLg0KPiA+PiA+DQo+ID4+ID4gVGhpcyBpcyBub3QgYSBzdGFuZGFyZCBwcm9wZXJ0eSBh
-bmQgd291bGQgbmVlZCBhIHZlbmRvciBwcmVmaXguDQo+ID4+ID4gSG93ZXZlciwNCj4gPj4gSSdk
-DQo+ID4+ID4gcHJlZmVyIHlvdSBqdXN0IHNraXAgYW55IG5vdCBjb25uZWN0ZWQgaW50ZXJydXB0
-cyB3aXRoIGFuIGludmFsaWQNCj4gPj4gPiBpbnRlcnJ1cHQgbnVtYmVyLiBUaGVuIHRoZSBHUElP
-IG51bWJlciBpcyB0aGUgaW5kZXggaW50byAiaW50ZXJydXB0cyIuDQo+ID4+IE1ha2VzIHNlbnNl
-LCBJJ2xsIHJld29yayBpdCB0byBkbyB0aGlzLg0KPiA+IEVyciwgd2hhdCB3b3VsZCBhbiBpbnZh
-bGlkIGludGVycnVwdCBudW1iZXIgYmU/DQo+ID4gSWYgSSB1c2UgLTEsIEkgZ2V0IGEgRFQgcGFy
-c2luZyBlcnJvciBhbmQgMCBpcyBjZXJ0YWlubHkgdmFsaWQuIElmIHRoZQ0KPiA+IG51bWJlciBp
-cyBsYXJnZXIgdGhhbiB0aGUgdmFsaWQgaW50ZXJydXB0IHJhbmdlIEkgZ2V0IGVycm9ycyBkdXJp
-bmcgcHJvYmUuDQo+IA0KPiBQZXJoYXBzIHVzaW5nIGludGVycnVwdHMtZXh0ZW5kZWQgaW5zdGVh
-ZCBvZiBpbnRlcnJ1cHRzPw0KPiANCj4gRS5nLg0KPiANCj4gICAgIGludGVycnVwdHMtZXh0ZW5k
-ZWQgPSA8JmludGMxIDUgMT4sIDwwPiwgPCZpbnRjMiAxIDA+Ow0KDQpUaGFua3MgZm9yIHRoZSBw
-b2ludGVyLCBJJ2xsIGhhdmUgYSBsb29rLg0KUGhpbA0K
+Hi Phil,
+
+On Tue, Apr 10, 2018 at 4:23 PM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> On 10 April 2018 07:24 Phil Edworthy wrote:
+>> On 09 April 2018 20:20 Rob Herring wrote:
+>> > On Wed, Mar 28, 2018 at 03:22:30PM +0100, Phil Edworthy wrote:
+> [...]
+>> > > +- interrupt-mask : a 32-bit bit mask that specifies which interrupts
+>> > > +in the list
+>> > > +  of interrupts is valid, bit is 1 for a valid irq.
+>> >
+>> > This is not a standard property and would need a vendor prefix. However,
+>> I'd
+>> > prefer you just skip any not connected interrupts with an invalid interrupt
+>> > number. Then the GPIO number is the index into "interrupts".
+>> Makes sense, I'll rework it to do this.
+> Err, what would an invalid interrupt number be?
+> If I use -1, I get a DT parsing error and 0 is certainly valid. If the number is
+> larger than the valid interrupt range I get errors during probe.
+
+Perhaps using interrupts-extended instead of interrupts?
+
+E.g.
+
+    interrupts-extended = <&intc1 5 1>, <0>, <&intc2 1 0>;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
