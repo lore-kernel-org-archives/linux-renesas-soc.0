@@ -1,81 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38880 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752234AbeDJJis (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:32005 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752147AbeDJIg7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:38:48 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/5] mmc: renesas_sdhi: use helpers to access struct scatterlist members
-Date: Tue, 10 Apr 2018 11:38:28 +0200
-Message-Id: <20180410093831.1759-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
-References: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 10 Apr 2018 04:36:59 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4 7/8] ARM: dts: Renesas RZN1D-DB Board base file
+Date: Tue, 10 Apr 2018 09:30:07 +0100
+Message-Id: <1523349015-37985-8-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This adds a base device tree file for the RZN1-DB board, with only the
+basic support allowing the system to boot to a prompt. Only one UART is
+used, with only a single CPU running.
 
-Instead of directly accessing the members of struct scatterlist use the
-helpers mmc_get_dma_dir() and sg_dma_address() in
-renesas_sdhi_internal_dmac_start_dma(). Based on previous work by
-Masaharu Hayakawa.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[rebased to mmc/next]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 9c50d64cd10c..6c2f3ae01de9 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -158,7 +158,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- {
- 	struct scatterlist *sg = host->sg_ptr;
- 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
--	enum dma_data_direction dir;
- 	int ret;
- 
- 	/* This DMAC cannot handle if sg_len is not 1 */
-@@ -170,16 +169,15 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
--		dir = DMA_FROM_DEVICE;
- 		if (test_bit(SDHI_INTERNAL_DMAC_ONE_RX_ONLY, &global_flags) &&
- 		    test_and_set_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags))
- 			goto force_pio;
- 	} else {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
--		dir = DMA_TO_DEVICE;
- 	}
- 
--	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len, dir);
-+	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len,
-+			 mmc_get_dma_dir(data));
- 	if (ret == 0)
- 		goto force_pio;
- 
-@@ -189,7 +187,7 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_DTRAN_MODE,
- 					    dtran_mode);
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_DTRAN_ADDR,
--					    sg->dma_address);
-+					    sg_dma_address(sg));
- 
- 	return;
- 
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 7e24249..53c9bf4 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -806,6 +806,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
++	r9a06g032-rzn1d400-db.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-evb.dtb \
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+new file mode 100644
+index 0000000..5fc2c40
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -0,0 +1,29 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZN1D-DB Board
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++/dts-v1/;
++
++#include "r9a06g032.dtsi"
++
++/ {
++	model = "RZN1D-DB Board";
++	compatible = "renesas,rzn1d400-db",
++			"renesas,r9a06g032", "renesas,rzn1";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	aliases {
++		serial0 = &uart0;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
 -- 
-2.11.0
+2.7.4
