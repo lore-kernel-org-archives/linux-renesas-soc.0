@@ -1,32 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51200 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750825AbeDKHXd (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38912 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751991AbeDJJit (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Apr 2018 03:23:33 -0400
-Date: Wed, 11 Apr 2018 09:23:29 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-mmc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Tue, 10 Apr 2018 05:38:49 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH 5/5] mmc: renesas_sdhi_internal_dmac: remove superfluous
- WARN
-Message-ID: <20180411072329.evuodswwh3kfdbgz@verge.net.au>
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 5/5] mmc: renesas_sdhi_internal_dmac: remove superfluous WARN
+Date: Tue, 10 Apr 2018 11:38:31 +0200
+Message-Id: <20180410093831.1759-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
 References: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
- <20180410093831.1759-6-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410093831.1759-6-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 10, 2018 at 11:38:31AM +0200, Wolfram Sang wrote:
-> The WARN can never trigger because we limited the max_seg number in
-> renesas_sdhi_of_data already. Remove it and update the comment.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The WARN can never trigger because we limited the max_seg number in
+renesas_sdhi_of_data already. Remove it and update the comment.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 06b4e0004ca4..9be1780d9970 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -91,7 +91,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ 	.scc_offset	= 0x1000,
+ 	.taps		= rcar_gen3_scc_taps,
+ 	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
+-	/* Gen3 SDHI DMAC can handle 0xffffffff blk count, but seg = 1 */
++	/* DMAC can handle 0xffffffff blk count but only 1 segment */
+ 	.max_blk_count	= 0xffffffff,
+ 	.max_segs	= 1,
+ };
+@@ -159,9 +159,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
+ 	struct scatterlist *sg = host->sg_ptr;
+ 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
+ 
+-	/* This DMAC cannot handle if sg_len is not 1 */
+-	WARN_ON(host->sg_len > 1);
+-
+ 	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
+ 			mmc_get_dma_dir(data)))
+ 		goto force_pio;
+-- 
+2.11.0
