@@ -1,139 +1,177 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, frowand.list@gmail.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, p.zabel@pengutronix.de,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 09/11] usb: gadget: udc: renesas_usb3: add support for a usb role switch
-Date: Wed, 18 Apr 2018 17:10:03 +0900
-Message-Id: <1524039005-30618-10-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v2 4/4] arm64: dts: renesas: eagle: Enable HDMI output
+Date: Tue, 10 Apr 2018 15:39:26 +0300
+Message-ID: <3323439.zBQ8E5gyW2@avalon>
+In-Reply-To: <1523357646-3946-5-git-send-email-jacopo+renesas@jmondi.org>
+References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org> <1523357646-3946-5-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for a usb role switch driver. And then,
-this driver uses the usb role switch APIs instead of hardware
-access to initialize usb host side at specific timings.
+Hi Jacopo,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/gadget/udc/Kconfig        |  1 +
- drivers/usb/gadget/udc/renesas_usb3.c | 34 ++++++++++++++++++++++++++++------
- 2 files changed, 29 insertions(+), 6 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index 0875d38..7e4a5dd 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -193,6 +193,7 @@ config USB_RENESAS_USB3
- 	tristate 'Renesas USB3.0 Peripheral controller'
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	depends on EXTCON && HAS_DMA
-+	select USB_ROLE_SWITCH
- 	help
- 	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
- 	   that supports super, high, and full speed USB 3.0 data transfers.
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 409cde4..38dd759 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -23,6 +23,7 @@
- #include <linux/uaccess.h>
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
-+#include <linux/usb/role.h>
- 
- /* register definitions */
- #define USB3_AXI_INT_STA	0x008
-@@ -330,6 +331,7 @@ struct renesas_usb3 {
- 
- 	struct usb_gadget gadget;
- 	struct usb_gadget_driver *driver;
-+	struct usb_role_switch *role_sw;	/* Optional */
- 	struct extcon_dev *extcon;
- 	struct work_struct extcon_work;
- 	struct phy *phy;
-@@ -454,7 +456,11 @@ static void usb3_disable_pipe_irq(struct renesas_usb3 *usb3, int num)
- 
- static bool usb3_is_host(struct renesas_usb3 *usb3)
- {
--	return !(usb3_read(usb3, USB3_DRD_CON) & DRD_CON_PERI_CON);
-+	if (usb3->role_sw)
-+		return usb_role_switch_get_role(usb3->role_sw) ==
-+						USB_ROLE_HOST ? true : false;
-+	else
-+		return !(usb3_read(usb3, USB3_DRD_CON) & DRD_CON_PERI_CON);
- }
- 
- static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
-@@ -645,10 +651,16 @@ static void usb3_check_vbus(struct renesas_usb3 *usb3)
- 
- static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
- {
--	if (host)
--		usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
--	else
--		usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	if (usb3->role_sw) {
-+		enum usb_role role = host ? USB_ROLE_HOST : USB_ROLE_DEVICE;
-+
-+		usb_role_switch_set_role(usb3->role_sw, role);
-+	} else {
-+		if (host)
-+			usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+		else
-+			usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	}
- }
- 
- static void usb3_vbus_out(struct renesas_usb3 *usb3, bool enable)
-@@ -663,8 +675,8 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
- {
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&usb3->lock, flags);
- 	usb3_set_mode(usb3, host);
-+	spin_lock_irqsave(&usb3->lock, flags);
- 	usb3_vbus_out(usb3, a_dev);
- 	/* for A-Peripheral or forced B-device mode */
- 	if ((!host && a_dev) ||
-@@ -2238,6 +2250,10 @@ static int renesas_usb3_start(struct usb_gadget *gadget,
- 	/* hook up the driver */
- 	usb3->driver = driver;
- 
-+	usb3->role_sw = usb_role_switch_get(usb3_to_dev(usb3));
-+	if (IS_ERR_OR_NULL(usb3->role_sw))
-+		usb3->role_sw = NULL;
-+
- 	if (usb3->phy)
- 		phy_init(usb3->phy);
- 
-@@ -2260,6 +2276,8 @@ static int renesas_usb3_stop(struct usb_gadget *gadget)
- 	if (usb3->phy)
- 		phy_exit(usb3->phy);
- 
-+	usb_role_switch_put(usb3->role_sw);
-+
- 	pm_runtime_put(usb3_to_dev(usb3));
- 
- 	return 0;
-@@ -2632,6 +2650,10 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_add_udc;
- 
-+	ret = devm_of_platform_populate(&pdev->dev);
-+	if (ret < 0)
-+		goto err_dev_create;
-+
- 	ret = device_create_file(&pdev->dev, &dev_attr_role);
- 	if (ret < 0)
- 		goto err_dev_create;
--- 
-1.9.1
+On Tuesday, 10 April 2018 13:54:06 EEST Jacopo Mondi wrote:
+> Enable HDMI output on Renesas R-Car V3M Eagle board.
+>=20
+> The HDMI output is enabled connecting the DU LVDS output to the
+> transparent LVDS converter THC63LVD1024, and successively routing its
+> RGB output to the ADV7511W HDMI encoder.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> [for THC63LVD1024: ]
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>=20
+> ---
+> v1 -> v2:
+> - Squash patches [5/7], [6/7] and [7/7] of v1 in a single patch as
+>   suggested by Laurent
+> - Remove DU pinmuxing as it is used for DU parallel RGB output only used
+>   by Eagle's display expander board not enabled by this series.
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 93 ++++++++++++++++++++=
++++
+>  1 file changed, 93 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts index 3c5f598..1e2191d
+> 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> @@ -31,6 +31,51 @@
+>  		/* first 128MB is reserved for secure area. */
+>  		reg =3D <0x0 0x48000000 0x0 0x38000000>;
+>  	};
+> +
+> +	hdmi-out {
+> +		compatible =3D "hdmi-connector";
+> +		type =3D "a";
+> +
+> +		port {
+> +			hdmi_con_out: endpoint {
+> +				remote-endpoint =3D <&adv7511_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	d3p3: regulator-fixed {
+> +		compatible =3D "regulator-fixed";
+> +		regulator-name =3D "fixed-3.3V";
+> +		regulator-min-microvolt =3D <3300000>;
+> +		regulator-max-microvolt =3D <3300000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +	};
+> +
+> +	thc63lvd1024: lvds-decoder {
+
+Nitpicking, no need for a label, you never reference it.
+
+Apart from that, you can keep my Reviewed-by.
+
+> +		compatible =3D "thine,thc63lvd1024";
+> +
+> +		vcc-supply =3D <&d3p3>;
+> +
+> +		ports {
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +
+> +			port@0 {
+> +				reg =3D <0>;
+> +				thc63lvd1024_in: endpoint {
+> +					remote-endpoint =3D <&lvds0_out>;
+> +				};
+> +			};
+> +
+> +			port@2 {
+> +				reg =3D <2>;
+> +				thc63lvd1024_out: endpoint {
+> +					remote-endpoint =3D <&adv7511_in>;
+> +				};
+> +			};
+> +		};
+> +	};
+>  };
+>=20
+>  &avb {
+> @@ -68,6 +113,38 @@
+>  		gpio-controller;
+>  		#gpio-cells =3D <2>;
+>  	};
+> +
+> +	hdmi@39 {
+> +		compatible =3D "adi,adv7511w";
+> +		reg =3D <0x39>;
+> +		interrupt-parent =3D <&gpio1>;
+> +		interrupts =3D <20 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +		adi,input-depth =3D <8>;
+> +		adi,input-colorspace =3D "rgb";
+> +		adi,input-clock =3D "1x";
+> +		adi,input-style =3D <1>;
+> +		adi,input-justification =3D "evenly";
+> +
+> +		ports {
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +
+> +			port@0 {
+> +				reg =3D <0>;
+> +				adv7511_in: endpoint {
+> +					remote-endpoint =3D <&thc63lvd1024_out>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				reg =3D <1>;
+> +				adv7511_out: endpoint {
+> +					remote-endpoint =3D <&hdmi_con_out>;
+> +				};
+> +			};
+> +		};
+> +	};
+>  };
+>=20
+>  &pfc {
+> @@ -93,3 +170,19 @@
+>=20
+>  	status =3D "okay";
+>  };
+> +
+> +&du {
+> +	status =3D "okay";
+> +};
+> +
+> +&lvds0 {
+> +	status =3D "okay";
+> +
+> +	ports {
+> +		port@1 {
+> +			lvds0_out: endpoint {
+> +				remote-endpoint =3D <&thc63lvd1024_in>;
+> +			};
+> +		};
+> +	};
+> +};
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
+
+
 
