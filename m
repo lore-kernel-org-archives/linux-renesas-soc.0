@@ -1,87 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:50801 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751230AbeDQLKN (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:47510 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751796AbeDJFjK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Apr 2018 07:10:13 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v5 5/6] ARM: dts: Renesas RZN1D-DB Board base file
-Date: Tue, 17 Apr 2018 12:04:20 +0100
-Message-Id: <1523963101-56725-6-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
+        Tue, 10 Apr 2018 01:39:10 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 1/6] usb: gadget: udc: renesas_usb3: fix double phy_put()
+Date: Tue, 10 Apr 2018 14:38:49 +0900
+Message-Id: <1523338734-20474-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds a base device tree file for the RZN1-DB board, with only the
-basic support allowing the system to boot to a prompt. Only one UART is
-used, with only a single CPU running.
+This patch fixes an issue that this driver cause double phy_put()
+calling. This driver must not call phy_put() in the remove because
+the driver calls devm_phy_get() in the probe.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Fixes: 279d4bc64060 ("usb: gadget: udc: renesas_usb3: add support for generic phy")
+Cc: <stable@vger.kernel.org> # v4.15+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/Makefile                  |  1 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 29 +++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+Changes from v1:
+ - Add Reviewed-by.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 052aaf0..a53a677 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -809,6 +809,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-+	r9a06g032-rzn1d400-db.dtb \
- 	sh73a0-kzm9g.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += \
- 	rv1108-evb.dtb \
-diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-new file mode 100644
-index 0000000..5fc2c40
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZN1D-DB Board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+/dts-v1/;
-+
-+#include "r9a06g032.dtsi"
-+
-+/ {
-+	model = "RZN1D-DB Board";
-+	compatible = "renesas,rzn1d400-db",
-+			"renesas,r9a06g032", "renesas,rzn1";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
+ drivers/usb/gadget/udc/renesas_usb3.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index 409cde4..78a12a5 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2408,8 +2408,6 @@ static int renesas_usb3_remove(struct platform_device *pdev)
+ 	renesas_usb3_dma_free_prd(usb3, &pdev->dev);
+ 
+ 	__renesas_usb3_ep_free_request(usb3->ep0_req);
+-	if (usb3->phy)
+-		phy_put(usb3->phy);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	return 0;
 -- 
-2.7.4
+1.9.1
