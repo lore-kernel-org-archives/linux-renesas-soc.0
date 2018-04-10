@@ -1,42 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44966 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754078AbeDWKqp (ORCPT
+Received: from sauhun.de ([88.99.104.3]:38860 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751991AbeDJJir (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:46:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: renesas_defconfig: enable R8A77980 SoC
-Date: Mon, 23 Apr 2018 12:46:35 +0200
-Message-Id: <20180423104635.18129-1-horms+renesas@verge.net.au>
+        Tue, 10 Apr 2018 05:38:47 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/5] mmc: renesas_sdhi_internal_dmac: DMA handling fixes
+Date: Tue, 10 Apr 2018 11:38:26 +0200
+Message-Id: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the Renesas R-Car V3H (R8A77980) SoC in the ARM64 renesas_defconfig.
+Ulf,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-Based on renesas-devel-20180420-v4.17-rc1
+I have collected the patches floating around for renesas_sdhi_internal_dmac
+(also previously internal ones) and grouped them to avoid dependency issues. I
+think it would be good to give Shimoda-san some time to look at the new patches
+(2,3,5), too.
 
-Not for upstream merge
----
- arch/arm64/configs/renesas_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Regarding stable: I think patch 1 is clearly for stable. Patch 3 maybe, but it
+needs patch 2 which is not. Not sure if it is worth the hazzle. Maybe
+Shimoda-san has an opinion, too? Patches 4 & 5 are not for stable.
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 03fb7c982314..ffc9e864cd82 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -36,6 +36,7 @@ CONFIG_ARCH_R8A7796=y
- CONFIG_ARCH_R8A77965=y
- CONFIG_ARCH_R8A77970=y
- CONFIG_ARCH_R8A77980=y
-+CONFIG_ARCH_R8A77990=y
- CONFIG_ARCH_R8A77995=y
- CONFIG_PCI=y
- CONFIG_PCIEPORTBUS=y
+Changes since last time:
+	* patch 1: added tags, don't initialize static var to 0
+	* patches 2,3,5: new
+	* patch 4: added tags
+
+Kind regards,
+
+   Wolfram
+
+
+Masaharu Hayakawa (1):
+  mmc: renesas_sdhi: Fix alignment check of sg buffer
+
+Niklas Söderlund (1):
+  mmc: renesas_sdhi: use helpers to access struct scatterlist members
+
+Wolfram Sang (3):
+  mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs
+  mmc: renesas_sdhi_internal_dmac: use more generic whitelisting
+  mmc: renesas_sdhi_internal_dmac: remove superfluous WARN
+
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 64 +++++++++++++++++++--------
+ 1 file changed, 46 insertions(+), 18 deletions(-)
+
 -- 
 2.11.0
