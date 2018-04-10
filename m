@@ -1,53 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38912 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751991AbeDJJit (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34706 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752908AbeDJNcj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:38:49 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 5/5] mmc: renesas_sdhi_internal_dmac: remove superfluous WARN
-Date: Tue, 10 Apr 2018 11:38:31 +0200
-Message-Id: <20180410093831.1759-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
-References: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
+        Tue, 10 Apr 2018 09:32:39 -0400
+Received: by mail-lf0-f66.google.com with SMTP id x125-v6so757992lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Apr 2018 06:32:38 -0700 (PDT)
+Date: Tue, 10 Apr 2018 15:32:36 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: rcar-gen2: Centralize quirks handling
+Message-ID: <20180410133236.GU12256@bigcity.dyn.berto.se>
+References: <1523365498-16789-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523365498-16789-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The WARN can never trigger because we limited the max_seg number in
-renesas_sdhi_of_data already. Remove it and update the comment.
+Hi Geert,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Thanks for your patch.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 06b4e0004ca4..9be1780d9970 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -91,7 +91,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
- 	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--	/* Gen3 SDHI DMAC can handle 0xffffffff blk count, but seg = 1 */
-+	/* DMAC can handle 0xffffffff blk count but only 1 segment */
- 	.max_blk_count	= 0xffffffff,
- 	.max_segs	= 1,
- };
-@@ -159,9 +159,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	struct scatterlist *sg = host->sg_ptr;
- 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
- 
--	/* This DMAC cannot handle if sg_len is not 1 */
--	WARN_ON(host->sg_len > 1);
--
- 	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
- 			mmc_get_dma_dir(data)))
- 		goto force_pio;
+On 2018-04-10 15:04:58 +0200, Geert Uytterhoeven wrote:
+> Introduce centralized quirks handling like on R-Car Gen3, and convert
+> the RZ/G1C SD clock table handling over to it.
+> 
+> This makes it easier to add more quirks later, if/when needed.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+> To be queued in clk-renesas-for-v4.18.
+> 
+>  drivers/clk/renesas/rcar-gen2-cpg.c | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rcar-gen2-cpg.c
+> index 0c49f59d5074b1c4..daf88bc2cdae177b 100644
+> --- a/drivers/clk/renesas/rcar-gen2-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen2-cpg.c
+> @@ -261,9 +261,15 @@ static const struct clk_div_table cpg_sd01_div_table[] = {
+>  static const struct rcar_gen2_cpg_pll_config *cpg_pll_config __initdata;
+>  static unsigned int cpg_pll0_div __initdata;
+>  static u32 cpg_mode __initdata;
+> +static u32 cpg_quirks __initdata;
+>  
+> -static const struct soc_device_attribute soc_r8a77470[] = {
+> -	{ .soc_id = "r8a77470" },
+> +#define SD_SKIP_FIRST	BIT(0)		/* Skip first clock in SD table */
+> +
+> +static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
+> +	{
+> +		.soc_id = "r8a77470",
+> +		.data = (void *)SD_SKIP_FIRST,
+> +	},
+>  	{ /* sentinel */ }
+>  };
+>  
+> @@ -333,7 +339,7 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+>  
+>  	case CLK_TYPE_GEN2_SD0:
+>  		table = cpg_sd01_div_table;
+> -		if (soc_device_match(soc_r8a77470))
+> +		if (cpg_quirks & SD_SKIP_FIRST)
+>  			table++;
+>  
+>  		shift = 4;
+> @@ -341,7 +347,7 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+>  
+>  	case CLK_TYPE_GEN2_SD1:
+>  		table = cpg_sd01_div_table;
+> -		if (soc_device_match(soc_r8a77470))
+> +		if (cpg_quirks & SD_SKIP_FIRST)
+>  			table++;
+>  
+>  		shift = 0;
+> @@ -372,9 +378,15 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+>  int __init rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
+>  			      unsigned int pll0_div, u32 mode)
+>  {
+> +	const struct soc_device_attribute *attr;
+> +
+>  	cpg_pll_config = config;
+>  	cpg_pll0_div = pll0_div;
+>  	cpg_mode = mode;
+> +	attr = soc_device_match(cpg_quirks_match);
+> +	if (attr)
+> +		cpg_quirks = (uintptr_t)attr->data;
+> +	pr_debug("%s: mode = 0x%x quirks = 0x%x\n", __func__, mode, cpg_quirks);
+>  
+>  	spin_lock_init(&cpg_lock);
+>  
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
