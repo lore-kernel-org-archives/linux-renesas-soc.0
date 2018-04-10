@@ -1,228 +1,139 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36555 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751237AbeDBMfs (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Apr 2018 08:35:48 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 10/15] v4l: vsp1: Move DRM pipeline output setup code to a function
-Date: Mon, 02 Apr 2018 15:35:54 +0300
-Message-ID: <3938270.yYcQyIxAEm@avalon>
-In-Reply-To: <daa6e220-0e20-d8cc-717a-dc9083ca8baf@ideasonboard.com>
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com> <20180226214516.11559-11-laurent.pinchart+renesas@ideasonboard.com> <daa6e220-0e20-d8cc-717a-dc9083ca8baf@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4 6/8] ARM: dts: Renesas RZ/N1 SoC base device tree file
+Date: Tue, 10 Apr 2018 09:30:06 +0100
+Message-Id: <1523349015-37985-7-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
+bone support.
 
-On Thursday, 29 March 2018 14:49:12 EEST Kieran Bingham wrote:
-> Hi Laurent,
-> 
-> Thank you for another patch :D
+This currently only handles generic parts (gic, architected timer)
+and a UART.
+For simplicity sake, this also relies on the bootloader to set the
+pinctrl and clocks.
 
-You're welcome, there will be more ;-)
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ arch/arm/boot/dts/r9a06g032.dtsi | 94 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
 
-> On 26/02/18 21:45, Laurent Pinchart wrote:
-> > In order to make the vsp1_du_setup_lif() easier to read, and for
-> > symmetry with the DRM pipeline input setup, move the pipeline output
-> > setup code to a separate function.
-> > 
-> > Signed-off-by: Laurent Pinchart
-> > <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> Just an easy code move. And I agree it improves things.
-> 
-> Small question below, but otherwise:
-> 
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> > ---
-> > 
-> >  drivers/media/platform/vsp1/vsp1_drm.c | 107 ++++++++++++++++------------
-> >  1 file changed, 61 insertions(+), 46 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
-> > b/drivers/media/platform/vsp1/vsp1_drm.c index 00ce99bd1605..1c8adda47440
-> > 100644
-> > --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> > +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> > @@ -276,6 +276,66 @@ static int vsp1_du_pipeline_setup_input(struct
-> > vsp1_device *vsp1,
-> >  	return 0;
-> >  
-> >  }
-> > 
-> > +/* Setup the output side of the pipeline (WPF and LIF). */
-> > +static int vsp1_du_pipeline_setup_output(struct vsp1_device *vsp1,
-> > +					 struct vsp1_pipeline *pipe)
-> > +{
-> > +	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
-> > +	struct v4l2_subdev_format format = {
-> > +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> 
-> Why do you initialise this .which here, but all the other member variables
-> below.
-> 
-> Wouldn't it make more sense to group all of this initialisation together? or
-> is there a distinction in keeping the .which separate.
-> 
-> (Perhaps this is just a way to initialise the rest of the structure to 0,
-> without using the memset?)
-
-The initialization of the .which field is indeed there to avoid the memset, 
-but other than that there's no particular reason. I find it clearer to keep 
-the initialization of the structure close to the code that makes use of it 
-(the next v4l2_subdev_call in this case).
-
-As initializing all members when declaring the variable doesn't make a change 
-in code size (gcc 6.4.0) but increases .rodata by 18 bytes and decreases 
-__modver by the same amount, I'm tempted to leave it as-is unless you think it 
-should be changed.
-
-> > +	};
-> > +	int ret;
-> > +
-> > +	format.pad = RWPF_PAD_SINK;
-> > +	format.format.width = drm_pipe->width;
-> > +	format.format.height = drm_pipe->height;
-> > +	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
-> > +	format.format.field = V4L2_FIELD_NONE;
-> > +
-> > +	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, 
-NULL,
-> > +			       &format);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on WPF%u sink\n",
-> > +		__func__, format.format.width, format.format.height,
-> > +		format.format.code, pipe->output->entity.index);
-> > +
-> > +	format.pad = RWPF_PAD_SOURCE;
-> > +	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, get_fmt, 
-NULL,
-> > +			       &format);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	dev_dbg(vsp1->dev, "%s: got format %ux%u (%x) on WPF%u source\n",
-> > +		__func__, format.format.width, format.format.height,
-> > +		format.format.code, pipe->output->entity.index);
-> > +
-> > +	format.pad = LIF_PAD_SINK;
-> > +	ret = v4l2_subdev_call(&pipe->lif->subdev, pad, set_fmt, NULL,
-> > +			       &format);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on LIF%u sink\n",
-> > +		__func__, format.format.width, format.format.height,
-> > +		format.format.code, pipe->lif->index);
-> > +
-> > +	/*
-> > +	 * Verify that the format at the output of the pipeline matches the
-> > +	 * requested frame size and media bus code.
-> > +	 */
-> > +	if (format.format.width != drm_pipe->width ||
-> > +	    format.format.height != drm_pipe->height ||
-> > +	    format.format.code != MEDIA_BUS_FMT_ARGB8888_1X32) {
-> > +		dev_dbg(vsp1->dev, "%s: format mismatch on LIF%u\n", __func__,
-> > +			pipe->lif->index);
-> > +		return -EPIPE;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > 
-> >  /* Configure all entities in the pipeline. */
-> >  static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
-> >  {
-> > 
-> > @@ -356,7 +416,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int
-> > pipe_index,> 
-> >  	struct vsp1_drm_pipeline *drm_pipe;
-> >  	struct vsp1_pipeline *pipe;
-> >  	struct vsp1_bru *bru;
-> > 
-> > -	struct v4l2_subdev_format format;
-> > 
-> >  	unsigned long flags;
-> >  	unsigned int i;
-> >  	int ret;
-> > 
-> > @@ -417,54 +476,10 @@ int vsp1_du_setup_lif(struct device *dev, unsigned
-> > int pipe_index,> 
-> >  	if (ret < 0)
-> >  	
-> >  		return ret;
-> > 
-> > -	memset(&format, 0, sizeof(format));
-> > -	format.which = V4L2_SUBDEV_FORMAT_ACTIVE;
-> > -	format.pad = RWPF_PAD_SINK;
-> > -	format.format.width = cfg->width;
-> > -	format.format.height = cfg->height;
-> > -	format.format.code = MEDIA_BUS_FMT_ARGB8888_1X32;
-> > -	format.format.field = V4L2_FIELD_NONE;
-> > -
-> > -	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, set_fmt, 
-NULL,
-> > -			       &format);
-> > +	ret = vsp1_du_pipeline_setup_output(vsp1, pipe);
-> > 
-> >  	if (ret < 0)
-> >  	
-> >  		return ret;
-> > 
-> > -	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on WPF%u sink\n",
-> > -		__func__, format.format.width, format.format.height,
-> > -		format.format.code, pipe->output->entity.index);
-> > -
-> > -	format.pad = RWPF_PAD_SOURCE;
-> > -	ret = v4l2_subdev_call(&pipe->output->entity.subdev, pad, get_fmt, 
-NULL,
-> > -			       &format);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	dev_dbg(vsp1->dev, "%s: got format %ux%u (%x) on WPF%u source\n",
-> > -		__func__, format.format.width, format.format.height,
-> > -		format.format.code, pipe->output->entity.index);
-> > -
-> > -	format.pad = LIF_PAD_SINK;
-> > -	ret = v4l2_subdev_call(&pipe->lif->subdev, pad, set_fmt, NULL,
-> > -			       &format);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	dev_dbg(vsp1->dev, "%s: set format %ux%u (%x) on LIF%u sink\n",
-> > -		__func__, format.format.width, format.format.height,
-> > -		format.format.code, pipe_index);
-> > -
-> > -	/*
-> > -	 * Verify that the format at the output of the pipeline matches the
-> > -	 * requested frame size and media bus code.
-> > -	 */
-> > -	if (format.format.width != cfg->width ||
-> > -	    format.format.height != cfg->height ||
-> > -	    format.format.code != MEDIA_BUS_FMT_ARGB8888_1X32) {
-> > -		dev_dbg(vsp1->dev, "%s: format mismatch\n", __func__);
-> > -		return -EPIPE;
-> > -	}
-> > -
-> > 
-> >  	/* Enable the VSP1. */
-> >  	ret = vsp1_device_get(vsp1);
-> >  	if (ret < 0)
-
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+new file mode 100644
+index 0000000..7d84b38
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "renesas,r9a06g032", "renesas,rzn1";
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	clkuarts: clkuarts {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <47619047>;
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&gic>;
++		ranges;
++
++		sysctrl: sysctrl@4000c000 {
++			compatible = "renesas,r9a06g032-sysctrl",
++					"renesas,rzn1-sysctrl",
++					"syscon", "simple-mfd";
++			reg = <0x4000c000 0x1000>;
++
++			reboot {
++				compatible = "renesas,r9a06g032-reboot",
++						"renesas,rzn1-reboot";
++			};
++		};
++
++		uart0: serial@40060000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x40060000 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&clkuarts>;
++			clock-names = "baudclk";
++			status = "disabled";
++		};
++
++		gic: gic@44101000 {
++			compatible = "arm,cortex-a7-gic", "arm,gic-400";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x44101000 0x1000>, /* Distributer */
++			      <0x44102000 0x2000>, /* CPU interface */
++			      <0x44104000 0x2000>, /* Virt interface control */
++			      <0x44106000 0x2000>; /* Virt CPU interface */
++			interrupts =
++				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++	};
++
++	timer {
++		compatible = "arm,cortex-a7-timer",
++			     "arm,armv7-timer";
++		interrupt-parent = <&gic>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++		interrupts =
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
 -- 
-Regards,
+2.7.4
 
-Laurent Pinchart
