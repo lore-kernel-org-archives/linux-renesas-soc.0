@@ -1,49 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:41180 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752408AbeDJMCm (ORCPT
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:60111 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752402AbeDJK4f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:02:42 -0400
-Received: by mail-lf0-f65.google.com with SMTP id o102-v6so11275639lfg.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Apr 2018 05:02:41 -0700 (PDT)
-Subject: Re: [PATCH v2 3/4] arm64: dts: renesas: r8a77970: add LVDS support
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Tue, 10 Apr 2018 06:56:35 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 3/4] arm64: dts: renesas: r8a77970: add LVDS support
+Date: Tue, 10 Apr 2018 12:54:05 +0200
+Message-Id: <1523357646-3946-4-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
- <1523357646-3946-4-git-send-email-jacopo+renesas@jmondi.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <0baa0f6e-f275-4a27-c76b-e4f8aec0b5f6@cogentembedded.com>
-Date: Tue, 10 Apr 2018 15:02:39 +0300
 MIME-Version: 1.0
-In-Reply-To: <1523357646-3946-4-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/10/2018 01:54 PM, Jacopo Mondi wrote:
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
-> the it to the LVDS output of the DU.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> ---
-> v1 -> v2:
-> - Rebased on the modified endpoint name and changed patch subject to
->   comply with other patches in the series from Sergei.
+Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
+the it to the LVDS output of the DU.
 
-   Stop, what was wrong with my R8A77970 LVDS patch, reposted on the popular
-demand? :-)
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-MBR, Sergei
+---
+v1 -> v2:
+- Rebased on the modified endpoint name and changed patch subject to
+  comply with other patches in the series from Sergei.
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index ae5797d..ae15355 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -659,6 +659,33 @@
+ 				port@1 {
+ 					reg = <1>;
+ 					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
++					};
++				};
++			};
++		};
++
++		lvds0: lvds@feb90000 {
++			compatible = "renesas,r8a77970-lvds";
++			reg = <0 0xfeb90000 0 0x14>;
++			clocks = <&cpg CPG_MOD 727>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 727>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
+ 					};
+ 				};
+ 			};
+-- 
+2.7.4
