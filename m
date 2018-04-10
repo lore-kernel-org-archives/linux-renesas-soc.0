@@ -1,45 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f175.google.com ([209.85.216.175]:37766 "EHLO
-        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752167AbeDKHJw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Apr 2018 03:09:52 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180410194914.7268-2-wsa@the-dreams.de>
-References: <20180410194914.7268-1-wsa@the-dreams.de> <20180410194914.7268-2-wsa@the-dreams.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Apr 2018 09:09:50 +0200
-Message-ID: <CAMuHMdUv2obJHjEZO0d+P=mM8GtGi3g4YCCjxoGBwKeHyXxNLA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] MAINTAINERS: add maintainer for Renesas I2C
- related drivers
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Peter Rosin <peda@axentia.se>, Joe Perches <joe@perches.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v2 2/2] MAINTAINERS: add maintainer for Renesas I2C related drivers
+Date: Tue, 10 Apr 2018 21:49:14 +0200
+Message-Id: <20180410194914.7268-2-wsa@the-dreams.de>
+In-Reply-To: <20180410194914.7268-1-wsa@the-dreams.de>
+References: <20180410194914.7268-1-wsa@the-dreams.de>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Tue, Apr 10, 2018 at 9:49 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Intentionally missing i2c-riic here, Chris Brandt will add himself for
-> that one later.
+Intentionally missing i2c-riic here, Chris Brandt will add himself for
+that one later.
 
-I guess that's why you're not adding a catch-all "RENESAS I2C DRIVERS"
-section?
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Gr{oetje,eeting}s,
+Changes since v1:
+* add EMEV2 and PINCTRL DEMUX drivers
 
-                        Geert
+ MAINTAINERS | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1fe9149fa062..e53d40028e03 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5906,6 +5906,11 @@ S:	Supported
+ F:	drivers/phy/
+ F:	include/linux/phy/
+ 
++GENERIC PINCTRL I2C DEMULTIPLEXER DRIVER
++M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
++S:	Supported
++F:	drivers/i2c/muxes/i2c-demux-pinctrl.c
++
+ GENERIC PM DOMAINS
+ M:	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+ M:	Kevin Hilman <khilman@kernel.org>
+@@ -11884,6 +11889,11 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git c
+ S:	Supported
+ F:	drivers/clk/renesas/
+ 
++RENESAS EMEV2 I2C DRIVER
++M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
++S:	Supported
++F:	drivers/i2c/busses/i2c-emev2.c
++
+ RENESAS ETHERNET DRIVERS
+ R:	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+ L:	netdev@vger.kernel.org
+@@ -11899,6 +11909,12 @@ L:	linux-iio@vger.kernel.org
+ S:	Supported
+ F:	drivers/iio/adc/rcar_gyro_adc.c
+ 
++RENESAS R-CAR I2C DRIVERS
++M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
++S:	Supported
++F:	drivers/i2c/busses/i2c-rcar.c
++F:	drivers/i2c/busses/i2c-sh_mobile.c
++
+ RENESAS USB PHY DRIVER
+ M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+ L:	linux-renesas-soc@vger.kernel.org
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
