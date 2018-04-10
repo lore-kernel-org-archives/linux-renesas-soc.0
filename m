@@ -1,101 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:38794 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753296AbeDRN3i (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:44354 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751812AbeDJHIv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:29:38 -0400
+        Tue, 10 Apr 2018 03:08:51 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "Sebastian Reichel" <sre@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: RE: [PATCH v3 2/8] DT: reset: renesas,rzn1-reboot: document RZ/N1
+ reboot driver
+Date: Tue, 10 Apr 2018 07:08:45 +0000
+Message-ID: <OSBPR01MB2054DA948D0301F20AB9F1EDD2BE0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1522309629-10152-3-git-send-email-michel.pollet@bp.renesas.com>
+ <20180409201027.ydlvyx72mrt5fphh@rob-hp-laptop>
+In-Reply-To: <20180409201027.ydlvyx72mrt5fphh@rob-hp-laptop>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
-References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 18 Apr 2018 15:29:36 +0200
-Message-ID: <CAMuHMdXyWs1v_D4EUd-H75Q3cpQv6yD2V_MptjJP7FjYhu5c3g@mail.gmail.com>
-Subject: Re: [PATCH/RFC 0/2] regulator: bd9571mwv: Add support for toggle
- power switches
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi all,
+Hi Rob,
 
-On Wed, Mar 14, 2018 at 12:26 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
-> development boards supports DDR Backup Power, which means that the DDR
-> power rails can be kept powered while the main SoC is powered down.
+On 09 April 2018 21:10,  Rob Herring wrote:
+> On Thu, Mar 29, 2018 at 08:46:58AM +0100, Michel Pollet wrote:
+> > The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver as part
+> > of the sysctrl MFD to handle rebooting the CA7 cores.
+> > This documents the driver bindings.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > ---
+> >  .../bindings/power/renesas,rzn1-reboot.txt           | 20
+> ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+> > b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+> > new file mode 100644
+> > index 0000000..f592769
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/power/renesas,rzn1-
+> reboot.txt
+> > @@ -0,0 +1,20 @@
+> > +DT bindings for the Renesas RZ/N1 Reboot Driver
+> > +
+> > +=3D=3D Reboot Driver Node =3D=3D
+> > +
+> > +The reboot driver is always a subnode of the system controller node,
+> > +see renesas,rzn1-sysctrl.txt for details.
+> > +
+> > +Bindings:
+> > ++ Required:
+> > +compatible =3D "renesas,rzn1-reboot";
+> > +
+> > +Example:
+> > +sysctrl: sysctrl@4000c000 {
+> > +compatible =3D "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
 >
-> This patch series extends the support for DDR backup mode[1] to systems
-> with toggle instead of momentary power switches.
->
-> With a toggle power switch (or level signal), the following steps must
-> be followed exactly:
->    1. Configure PMIC for backup mode, which changes the role of the
->       power switch to a wake-up switch,
->    2. Switch accessory power switch off, to prepare for system suspend,
->       which is a manual step not controlled by software,
->    3. Suspend system,
->    4. Switch accessory power switch on, to resume.
->
-> Unlike on systems with a momentary toggle switch, an additional step 2
-> must be performed in between step 1 and step 3.  Hence step 1 can no
-> longer be handled in the PMIC's suspend callback.
->
-> This patch series proposes a new callback for wake-up change
-> notification, which allows performing step 1 when the user writes
-> "enabled" to the PMIC's "wakeup" virtual file in sysfs, e.g.
->
->     echo enabled > /sys/devices/platform/soc/e60b0000.i2c/i2c-7/7-0030/bd9571mwv-regulator.2.auto/power/wakeup
->
-> Conversely, writing "disabled" reverts the role of the accessory switch
-> to a power switch.
-> Note that unlike with momentary switches, backup mode is not enabled by
-> default, as enabling it prevents the board from being powered off using
-> the power switch, which may confuse the user.
->
-> This has been tested on M3ULCB (thanks Jacopo!), and on Salvator-X(S).
->
-> For testing, driver and DTS patches are available in the
-> topic/bd9571-ddr-backup-mode-driver-v2 and
-> topic/bd9571-ddr-backup-mode-dt-v2 branches of my renesas-drivers git
-> repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
->
-> Thanks for your comments!
->
-> [1] https://lkml.org/lkml/2018/3/14/302
->
-> Geert Uytterhoeven (2):
->   PM / wakeup: Add callback for wake-up change notification
->   regulator: bd9571mwv: Add support for toggle power switches
->
->  drivers/base/power/wakeup.c             |  4 ++++
->  drivers/regulator/bd9571mwv-regulator.c | 24 ++++++++++++++++++++++++
->  include/linux/pm.h                      |  1 +
->  3 files changed, 29 insertions(+)
+> Are there other functions for this block? If so, please define a complete
+> binding for the block.
 
-Any comments/suggestions?
+There are indeed multiple functions for this particular IP block. It's pret=
+ty much a
+kitchen sink of clocks, pinmux, reboot, watchdog, SMP and probably a couple
+more I forgot about!
 
-In case you lost the patches from the thread:
-https://www.spinics.net/lists/linux-renesas-soc/msg24955.html
+We've discussed this MFD structure with Geert, we picked that because if I
+were to add all these callbacks/drivers to a 'sysctrl' driver, it'd end up =
+looking
+like ... a mach-xx.c file in the end!
+So the current version is just a placeholder for a single driver for now, b=
+ut it
+won't last, there's already a SMP core enable driver lined up next...
 
-Thanks!
+>
+> > +reg =3D <0x4000c000 0x1000>;
+> > +
+> > +reboot {
+> > +compatible =3D "renesas,rzn1-reboot";
+>
+> Why is this node needed? The driver for "renesas,rzn1-sysctrl" should be
+> able to register as a reboot handler/driver/provider.
 
-Gr{oetje,eeting}s,
+Please see above...
 
-                        Geert
+>
+> Rob
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Thanks for your input!
+Michel
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
