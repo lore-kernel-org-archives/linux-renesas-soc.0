@@ -1,25 +1,24 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55395 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753786AbeDMMsY (ORCPT
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:54375 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDJQSB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 08:48:24 -0400
-Date: Fri, 13 Apr 2018 14:48:19 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Tue, 10 Apr 2018 12:18:01 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH V5] PCI: rcar: Use runtime PM to control controller clock
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>,
         linux-pci <linux-pci@vger.kernel.org>,
         Dien Pham <dien.pham.ry@rvc.renesas.com>,
         Hien Dang <hien.dang.eb@renesas.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH V5] PCI: rcar: Use runtime PM to control controller clock
-Message-ID: <20180413124819.tw5436lolpn5eqhw@verge.net.au>
-References: <CAMuHMdVGBkEY2kE7auUwXBn2QSfX+yhxkFH--4tTw+XJ3WCk0w@mail.gmail.com>
+References: <20180408130925.19088-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdVGBkEY2kE7auUwXBn2QSfX+yhxkFH--4tTw+XJ3WCk0w@mail.gmail.com>
  <3973dcdf-c6d7-5622-0c19-ea6f77899261@gmail.com>
  <20180409114159.azxeehjkeuinwrwe@verge.net.au>
  <CAMuHMdUF0oG+fdWv2CissD9tviHiVCg3ofW3oR3vY+=Km41tAg@mail.gmail.com>
@@ -28,46 +27,83 @@ References: <CAMuHMdVGBkEY2kE7auUwXBn2QSfX+yhxkFH--4tTw+XJ3WCk0w@mail.gmail.com>
  <CAMuHMdWTTaJF8+GJdLmM_4J+gMaHPzT2rpO=B2kWYb_2bNbQNg@mail.gmail.com>
  <a5a0d78d-627b-6277-ee75-44e204cbd390@gmail.com>
  <CAMuHMdX9d29JYVDsghd3Koyg8Aeuv0D2Fx5Lnn0bBZSb9RntDw@mail.gmail.com>
- <cdc1b25a-e87d-144b-50c1-4abe31bcf5d0@gmail.com>
+Message-ID: <cdc1b25a-e87d-144b-50c1-4abe31bcf5d0@gmail.com>
+Date: Tue, 10 Apr 2018 18:17:04 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cdc1b25a-e87d-144b-50c1-4abe31bcf5d0@gmail.com>
+In-Reply-To: <CAMuHMdX9d29JYVDsghd3Koyg8Aeuv0D2Fx5Lnn0bBZSb9RntDw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 10, 2018 at 06:17:04PM +0200, Marek Vasut wrote:
-> On 04/10/2018 05:28 PM, Geert Uytterhoeven wrote:
-
-...
-
-> >>> rcar_pcie_get_resources() is called while the device is
-> >>> runtime-enabled/resumed,
-> >>> pci_free_resource_list() is called while the device is runtime-disabled.
-> 
-> rcar_pcie_get_resources() is NOT a pair function for
-> pci_free_resource_list() . rcar_pcie_parse_request_of_pci_ranges() is a
-> pair function for pci_free_resource_list().
-> 
-> rcar_pcie_parse_request_of_pci_ranges() calls
-> of_pci_get_host_bridge_resources() internally, so every single function
-> called after successful call of rcar_pcie_parse_request_of_pci_ranges()
-> must call pci_free_resource_list().
-> 
-> Both of_pci_get_host_bridge_resources() and pci_free_resource_list() are
-> called with runtime PM disabled.
-> 
-> The naming of the functions is confusing though.
+On 04/10/2018 05:28 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
 
 Hi,
 
-thanks everyone for their efforts in preparing/reviewing this patch.
+[...]
 
-It seems there are some differences of opinion on how best to handle the
-error paths but unlike earlier versions this one seems correct to me. If
-that turns out to be false we can address it. But I don't think its likely
-things will be enhanced by continuing this review.
+>>>> The pairing looks as follows:
+>>>>
+>>>> .- rcar_pcie_parse_request_of_pci_ranges()
+>>>> |  (pm_runtime_enable is here)
+>>>> | .- pm_runtime_get_sync()
+>>>> | | .- rcar_pcie_get_resources()
+>>>
+>>> rcar_pcie_get_resources() is called  while the device is runtime-enabled/resumed
+>>
+>> Because something may access the device, yes.
+>>
+>>>> | | |
+>>>> | | '- pm_runtime_put()
+>>>> | '- pm_runtime_disable() + pci_free_resource_list()
+>>>
+>>> pci_free_resource_list() is called while the device is runtime-disabled.
+>>
+>> Because nothing will access the device.
+>>
+>>>> '- pci_free_host_bridge()
+>>>>
+>>>> It looks symmetric to me ...
+>>>
+>>> rcar_pcie_get_resources() is called while the device is
+>>> runtime-enabled/resumed,
+>>> pci_free_resource_list() is called while the device is runtime-disabled.
+>>
+>> At this point, I think I'd rather see a diff of changes which you have
+>> in mind rather than this endless discussion. Can you provide one against
+>> this patch ?
+> 
+> My final comment:
+> 
+> If the steps during probing are A..Z, cleanup and removal should undo them
+> in reverse order (Z..A), unless there's a very good reason not to do so.
 
-Lorenzo, please consider taking this patch in its current form.
+I spent extra time going through the probe function and I just don't see
+how it is not done in the exact reverse, I checked every single goto
+statement in probe.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+I noticed this though:
+
+>>> rcar_pcie_get_resources() is called while the device is
+>>> runtime-enabled/resumed,
+>>> pci_free_resource_list() is called while the device is runtime-disabled.
+
+rcar_pcie_get_resources() is NOT a pair function for
+pci_free_resource_list() . rcar_pcie_parse_request_of_pci_ranges() is a
+pair function for pci_free_resource_list().
+
+rcar_pcie_parse_request_of_pci_ranges() calls
+of_pci_get_host_bridge_resources() internally, so every single function
+called after successful call of rcar_pcie_parse_request_of_pci_ranges()
+must call pci_free_resource_list().
+
+Both of_pci_get_host_bridge_resources() and pci_free_resource_list() are
+called with runtime PM disabled.
+
+The naming of the functions is confusing though.
+
+-- 
+Best regards,
+Marek Vasut
