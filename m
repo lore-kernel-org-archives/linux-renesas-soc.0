@@ -1,98 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:37447 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:60244 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752831AbeDXI7s (ORCPT
+        by vger.kernel.org with ESMTP id S1751966AbeDJIfY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:59:48 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 10 Apr 2018 04:35:24 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 2/2] ARM: dts: r8a77470: Add SCIF DMA support
-Date: Tue, 24 Apr 2018 09:56:04 +0100
-Message-Id: <1524560164-30040-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1524560164-30040-1-git-send-email-biju.das@bp.renesas.com>
-References: <1524560164-30040-1-git-send-email-biju.das@bp.renesas.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4 0/8] arm: Base support for Renesas RZN1D-DB Board
+Date: Tue, 10 Apr 2018 09:30:00 +0100
+Message-Id: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SCIF DMA support for R8A77470 SoC.
+This series adds the plain basic support for booting a bare
+kernel on the RZ/N1D-DB Board. It's been trimmed to the strict
+minimum as a 'base', further patches that will add the
+rest of the support, pinctrl, clock architecture and quite
+a few others.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/boot/dts/r8a77470.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Thanks for the comments on the previous versions!
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 39549f2..baec3ca 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -198,6 +198,9 @@
- 			clocks = <&cpg CPG_MOD 721>,
- 				 <&cpg CPG_CORE 5>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-+			       <&dmac1 0x29>, <&dmac1 0x2a>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 721>;
- 			status = "disabled";
-@@ -211,6 +214,9 @@
- 			clocks = <&cpg CPG_MOD 720>,
- 				 <&cpg CPG_CORE 5>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-+			       <&dmac1 0x2d>, <&dmac1 0x2e>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 720>;
- 			status = "disabled";
-@@ -224,6 +230,9 @@
- 			clocks = <&cpg CPG_MOD 719>,
- 				 <&cpg CPG_CORE 5>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-+			       <&dmac1 0x2b>, <&dmac1 0x2c>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 719>;
- 			status = "disabled";
-@@ -237,6 +246,9 @@
- 			clocks = <&cpg CPG_MOD 718>,
- 				 <&cpg CPG_CORE 5>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
-+			       <&dmac1 0x2f>, <&dmac1 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 718>;
- 			status = "disabled";
-@@ -250,6 +262,9 @@
- 			clocks = <&cpg CPG_MOD 715>,
- 				 <&cpg CPG_CORE 5>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
-+			       <&dmac1 0xfb>, <&dmac1 0xfc>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 715>;
- 			status = "disabled";
-@@ -263,6 +278,9 @@
- 			clocks = <&cpg CPG_MOD 714>,
- 				 <&cpg CPG_CORE 5>, <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
-+			       <&dmac1 0xfd>, <&dmac1 0xfe>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 714>;
- 			status = "disabled";
+v4:
+ + Fixes for suggestions by Simon Horman
+ + Fixes for suggestions by Jacopo Mondi
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Renamed the r9a06g0xx.dtsi file, given up on trying to get a family
+   common file in, so dropped potential RZ/N1S support and now only
+   focus on RZ/N1D for this patchset.
+ + Added 'always-on' to the architected timer node, because it is.
+ + Added ARCH_R9A06G032, to match others patterns like RCAR
+ + Sorted the .dts files, added empty lines as required.
+ + Fixed patch prefixes to match git-log for bindings&dts
+ + Merged board .dts & Makefile changes together
+ + Rebased on next-20180410
+v3:
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed SoC Specific renesas,r9a06g032-xxx, as it's not needed for now.
+ + Kept renesas,rzn1 as a family/generic for this family.
+ + Fixed a couple of the commit messages.
+ + Added Geert's Reviewed-By where appropriate.
+v2:
+ + Fixes for suggestions by Simon Horman
+ + Fixes for suggestions by Rob Herring
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed the mach file
+ + Added a MFD base for the sysctrl block
+ + Added a regmap based sub driver for the reboot handler
+ + Renamed the files to match shmobile conventions
+ + Adapted the compatible= strings to reflect 'family' vs 'part'
+   distinction.
+ + Removed the sysctrl.h file entirelly.
+ + Fixed every warnings from the DTC compiler on W=12 mode.
+ + Split the device-tree patches from the code.
+
+Michel Pollet (8):
+  arm: shmobile: Add the RZ/N1 arch to the shmobile Kconfig
+  arm: shmobile: Add the RZ/N1D (R9A06G032) to the shmobile Kconfig
+  dt-bindings: mfd: renesas,rzn1-sysctrl: document RZ/N1 sysctrl node
+  dt-bindings: reset: renesas,rzn1-reboot: document RZ/N1 reboot driver
+  dt-bindings: arm: Document the RZN1D-DB board
+  ARM: dts: Renesas RZ/N1 SoC base device tree file
+  ARM: dts: Renesas RZN1D-DB Board base file
+  reset: Renesas RZ/N1 reboot driver
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |   5 +-
+ .../bindings/mfd/renesas,rzn1-sysctrl.txt          |  23 +++++
+ .../bindings/power/renesas,rzn1-reboot.txt         |  23 +++++
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts        |  29 ++++++
+ arch/arm/boot/dts/r9a06g032.dtsi                   |  94 ++++++++++++++++++
+ arch/arm/mach-shmobile/Kconfig                     |   9 ++
+ drivers/power/reset/Kconfig                        |   7 ++
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/rzn1-reboot.c                  | 105 +++++++++++++++++++++
+ 10 files changed, 296 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+ create mode 100644 drivers/power/reset/rzn1-reboot.c
+
 -- 
 2.7.4
