@@ -1,102 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:51427 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753077AbeDTVLk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38240 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751778AbeDJJe3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 17:11:40 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v7 06/11] ARM: sunxi: Add initialization of CNTVOFF
-Date: Fri, 20 Apr 2018 23:10:17 +0200
-Message-Id: <20180420211022.11759-7-mylene.josserand@bootlin.com>
-In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
-References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+        Tue, 10 Apr 2018 05:34:29 -0400
+Date: Tue, 10 Apr 2018 11:34:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: balbi@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] usb: gadget: udc: renesas_usb3: disable the
+ controller's irqs for reconnecting
+Message-ID: <20180410093424.ddumstqnsi4q3z6l@verge.net.au>
+References: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1523338734-20474-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523338734-20474-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initialization of CNTVOFF for sun8i-a83t.
+On Tue, Apr 10, 2018 at 02:38:54PM +0900, Yoshihiro Shimoda wrote:
+> This patch fixes an issue that reconnection is possible to fail
+> because unexpected state handling happens by the irqs. To fix the issue,
+> the driver disables the controller's irqs when disconnected.
+> 
+> Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
+> Cc: <stable@vger.kernel.org> # v4.5+
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-For boot CPU, create a new machine that handles this
-function's call in an "init_early" callback. We need to initialize
-CNTVOFF before the arch timer's initialization otherwise, it will
-not be taken into account and fails to boot correctly.
-Because of that, this function can't be called in SMP's early_initcall
-function which is called after timer's init.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-For secondary CPUs, add this function into secondary_startup
-assembly entry.
-
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
----
- arch/arm/mach-sunxi/headsmp.S |  1 +
- arch/arm/mach-sunxi/sunxi.c   | 20 +++++++++++++++++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-index 37dc772701f3..32d76be98541 100644
---- a/arch/arm/mach-sunxi/headsmp.S
-+++ b/arch/arm/mach-sunxi/headsmp.S
-@@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
- 
- ENTRY(sunxi_mc_smp_secondary_startup)
- 	bl	sunxi_mc_smp_cluster_cache_enable
-+	bl	secure_cntvoff_init
- 	b	secondary_startup
- ENDPROC(sunxi_mc_smp_secondary_startup)
- 
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index 5e9602ce1573..ddc439f6269b 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -16,6 +16,7 @@
- #include <linux/platform_device.h>
- 
- #include <asm/mach/arch.h>
-+#include <asm/secure_cntvoff.h>
- 
- static const char * const sunxi_board_dt_compat[] = {
- 	"allwinner,sun4i-a10",
-@@ -62,7 +63,6 @@ MACHINE_END
- static const char * const sun8i_board_dt_compat[] = {
- 	"allwinner,sun8i-a23",
- 	"allwinner,sun8i-a33",
--	"allwinner,sun8i-a83t",
- 	"allwinner,sun8i-h2-plus",
- 	"allwinner,sun8i-h3",
- 	"allwinner,sun8i-r40",
-@@ -75,6 +75,24 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
- 	.dt_compat	= sun8i_board_dt_compat,
- MACHINE_END
- 
-+void __init sun8i_cntvoff_init(void)
-+{
-+#ifdef CONFIG_SMP
-+	secure_cntvoff_init();
-+#endif
-+}
-+
-+static const char * const sun8i_cntvoff_board_dt_compat[] = {
-+	"allwinner,sun8i-a83t",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i-a83t board")
-+	.init_early	= sun8i_cntvoff_init,
-+	.init_time	= sun6i_timer_init,
-+	.dt_compat	= sun8i_cntvoff_board_dt_compat,
-+MACHINE_END
-+
- static const char * const sun9i_board_dt_compat[] = {
- 	"allwinner,sun9i-a80",
- 	NULL,
--- 
-2.11.0
+> ---
+> 
+> Remarks:
+>  - A new file in v2
+> 
+>  drivers/usb/gadget/udc/renesas_usb3.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+> index 0e70163..5caf78b 100644
+> --- a/drivers/usb/gadget/udc/renesas_usb3.c
+> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
+> @@ -623,6 +623,13 @@ static void usb3_disconnect(struct renesas_usb3 *usb3)
+>  	usb3_usb2_pullup(usb3, 0);
+>  	usb3_clear_bit(usb3, USB30_CON_B3_CONNECT, USB3_USB30_CON);
+>  	usb3_reset_epc(usb3);
+> +	usb3_disable_irq_1(usb3, USB_INT_1_B2_RSUM | USB_INT_1_B3_PLLWKUP |
+> +			   USB_INT_1_B3_LUPSUCS | USB_INT_1_B3_DISABLE |
+> +			   USB_INT_1_SPEED | USB_INT_1_B3_WRMRST |
+> +			   USB_INT_1_B3_HOTRST | USB_INT_1_B2_SPND |
+> +			   USB_INT_1_B2_L1SPND | USB_INT_1_B2_USBRST);
+> +	usb3_clear_bit(usb3, USB_COM_CON_SPD_MODE, USB3_USB_COM_CON);
+> +	usb3_init_epc_registers(usb3);
+>  
+>  	if (usb3->driver)
+>  		usb3->driver->disconnect(&usb3->gadget);
+> -- 
+> 1.9.1
+> 
