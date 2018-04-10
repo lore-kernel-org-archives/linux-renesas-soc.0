@@ -1,9 +1,15 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 12 Apr 2018 10:00:10 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
-        buserror+upstream@gmail.com, Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:63203 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752127AbeDJIfj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 10 Apr 2018 04:35:39 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Lee Jones <lee.jones@linaro.org>,
@@ -11,23 +17,38 @@ Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
         Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] arm: shmobile: Add the RZ/N1 arch to the shmobile
- Kconfig
-Message-ID: <20180412080010.n2am3co66acwgo22@verge.net.au>
+Subject: [PATCH v4 1/8] arm: shmobile: Add the RZ/N1 arch to the shmobile Kconfig
+Date: Tue, 10 Apr 2018 09:30:01 +0100
+Message-Id: <1523349015-37985-2-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
- <1523349015-37985-2-git-send-email-michel.pollet@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523349015-37985-2-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 10, 2018 at 09:30:01AM +0100, Michel Pollet wrote:
-> Add the RZ/N1 Family (Part #R9A06G0xx) ARCH config to the rest of
-> the Renesas SoC collection.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the RZ/N1 Family (Part #R9A06G0xx) ARCH config to the rest of
+the Renesas SoC collection.
 
-This change has already been accepted for v4.18.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/mach-shmobile/Kconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 280e731..221fbcb 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -110,6 +110,11 @@ config ARCH_R8A7794
+ 	bool "R-Car E2 (R8A77940)"
+ 	select ARCH_RCAR_GEN2
+ 
++config ARCH_RZN1
++	bool "RZ/N1 (R9A06G0xx) Family"
++	select ARM_AMBA
++	select CPU_V7
++
+ config ARCH_SH73A0
+ 	bool "SH-Mobile AG5 (R8A73A00)"
+ 	select ARCH_RMOBILE
+-- 
+2.7.4
