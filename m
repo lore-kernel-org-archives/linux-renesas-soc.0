@@ -1,147 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42757 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753824AbeDCWLd (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:37227 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751812AbeDJFjL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 18:11:33 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v13 17/33] rcar-vin: cache video standard
-Date: Wed, 04 Apr 2018 01:11:41 +0300
-Message-ID: <2169799.4QuVgQcVPN@avalon>
-In-Reply-To: <20180326214456.6655-18-niklas.soderlund+renesas@ragnatech.se>
-References: <20180326214456.6655-1-niklas.soderlund+renesas@ragnatech.se> <20180326214456.6655-18-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 10 Apr 2018 01:39:11 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: balbi@kernel.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 2/6] usb: gadget: udc: renesas_usb3: should remove debugfs
+Date: Tue, 10 Apr 2018 14:38:50 +0900
+Message-Id: <1523338734-20474-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+This patch fixes an issue that this driver doesn't remove its debugfs.
 
-Thank you for the patch.
+Fixes: 43ba968b00ea ("usb: gadget: udc: renesas_usb3: add debugfs to set the b-device mode")
+Cc: <stable@vger.kernel.org> # v4.14+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+Changes from v1:
+ - Add Reviewed-by.
 
-On Tuesday, 27 March 2018 00:44:40 EEST Niklas S=F6derlund wrote:
-> At stream on time the driver should not query the subdevice for which
-> standard are used. Instead it should be cached when userspace sets the
-> standard and used at stream on time.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+ drivers/usb/gadget/udc/renesas_usb3.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c |  6 ++++++
->  drivers/media/platform/rcar-vin/rcar-dma.c  |  7 ++-----
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
->  drivers/media/platform/rcar-vin/rcar-vin.h  |  2 ++
->  4 files changed, 18 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
-> b/drivers/media/platform/rcar-vin/rcar-core.c index
-> be49d8968f0a0cef..8c251687e81b345b 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -96,6 +96,12 @@ static int rvin_digital_subdevice_attach(struct rvin_d=
-ev
-> *vin, if (ret < 0 && ret !=3D -ENOIOCTLCMD && ret !=3D -ENODEV)
->  		return ret;
->=20
-> +	/* Read standard */
-> +	vin->std =3D V4L2_STD_UNKNOWN;
-> +	ret =3D v4l2_subdev_call(subdev, video, g_std, &vin->std);
-> +	if (ret < 0 && ret !=3D -ENOIOCTLCMD)
-> +		return ret;
-> +
->  	/* Add the controls */
->  	ret =3D v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
->  	if (ret < 0)
-> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
-> b/drivers/media/platform/rcar-vin/rcar-dma.c index
-> 9233924e5b52de5f..79f4074b931b5aeb 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-> @@ -592,7 +592,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
->  static int rvin_setup(struct rvin_dev *vin)
->  {
->  	u32 vnmc, dmr, dmr2, interrupts;
-> -	v4l2_std_id std;
->  	bool progressive =3D false, output_is_yuv =3D false, input_is_yuv =3D f=
-alse;
->=20
->  	switch (vin->format.field) {
-> @@ -606,10 +605,8 @@ static int rvin_setup(struct rvin_dev *vin)
->  		/* Default to TB */
->  		vnmc =3D VNMC_IM_FULL;
->  		/* Use BT if video standard can be read and is 60 Hz format */
-> -		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
-> -			if (std & V4L2_STD_525_60)
-> -				vnmc =3D VNMC_IM_FULL | VNMC_FOC;
-> -		}
-> +		if (vin->std & V4L2_STD_525_60)
-> +			vnmc =3D VNMC_IM_FULL | VNMC_FOC;
->  		break;
->  	case V4L2_FIELD_INTERLACED_TB:
->  		vnmc =3D VNMC_IM_FULL;
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index
-> c4be0bcb8b16f941..43370c57d4b6239a 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -477,6 +477,8 @@ static int rvin_s_std(struct file *file, void *priv,
-> v4l2_std_id a) if (ret < 0)
->  		return ret;
->=20
-> +	vin->std =3D a;
-> +
->  	/* Changing the standard will change the width/height */
->  	return rvin_reset_format(vin);
->  }
-> @@ -484,9 +486,13 @@ static int rvin_s_std(struct file *file, void *priv,
-> v4l2_std_id a) static int rvin_g_std(struct file *file, void *priv,
-> v4l2_std_id *a) {
->  	struct rvin_dev *vin =3D video_drvdata(file);
-> -	struct v4l2_subdev *sd =3D vin_to_source(vin);
->=20
-> -	return v4l2_subdev_call(sd, video, g_std, a);
-> +	if (v4l2_subdev_has_op(vin_to_source(vin), pad, dv_timings_cap))
-> +		return -ENOIOCTLCMD;
-> +
-> +	*a =3D vin->std;
-> +
-> +	return 0;
->  }
->=20
->  static int rvin_subscribe_event(struct v4l2_fh *fh,
-> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
-> b/drivers/media/platform/rcar-vin/rcar-vin.h index
-> e940366d7e8d0e76..06cec4f8e5ffaf2b 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
-> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-> @@ -118,6 +118,7 @@ struct rvin_info {
->   * @crop:		active cropping
->   * @compose:		active composing
->   * @source:		active size of the video source
-> + * @std:		active video standard of the video source
->   */
->  struct rvin_dev {
->  	struct device *dev;
-> @@ -146,6 +147,7 @@ struct rvin_dev {
->  	struct v4l2_rect crop;
->  	struct v4l2_rect compose;
->  	struct v4l2_rect source;
-> +	v4l2_std_id std;
->  };
->=20
->  #define vin_to_source(vin)		((vin)->digital->subdev)
-
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index 78a12a5..1c54a77 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -333,6 +333,7 @@ struct renesas_usb3 {
+ 	struct extcon_dev *extcon;
+ 	struct work_struct extcon_work;
+ 	struct phy *phy;
++	struct dentry *dentry;
+ 
+ 	struct renesas_usb3_ep *usb3_ep;
+ 	int num_usb3_eps;
+@@ -2393,8 +2394,12 @@ static void renesas_usb3_debugfs_init(struct renesas_usb3 *usb3,
+ 
+ 	file = debugfs_create_file("b_device", 0644, root, usb3,
+ 				   &renesas_usb3_b_device_fops);
+-	if (!file)
++	if (!file) {
+ 		dev_info(dev, "%s: Can't create debugfs mode\n", __func__);
++		debugfs_remove_recursive(root);
++	} else {
++		usb3->dentry = root;
++	}
+ }
+ 
+ /*------- platform_driver ------------------------------------------------*/
+@@ -2402,6 +2407,7 @@ static int renesas_usb3_remove(struct platform_device *pdev)
+ {
+ 	struct renesas_usb3 *usb3 = platform_get_drvdata(pdev);
+ 
++	debugfs_remove_recursive(usb3->dentry);
+ 	device_remove_file(&pdev->dev, &dev_attr_role);
+ 
+ 	usb_del_gadget_udc(&usb3->gadget);
+-- 
+1.9.1
