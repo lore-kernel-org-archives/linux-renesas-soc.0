@@ -1,34 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52839 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750734AbeDKI1o (ORCPT
+Received: from sauhun.de ([88.99.104.3]:43264 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751914AbeDJTtX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:27:44 -0400
-Date: Wed, 11 Apr 2018 10:27:38 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v2 1/2] MAINTAINERS: remove me as maintainer for I2C host
- drivers
-Message-ID: <20180411082738.jot5ugwto4otsj3s@verge.net.au>
-References: <20180410194914.7268-1-wsa@the-dreams.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410194914.7268-1-wsa@the-dreams.de>
+        Tue, 10 Apr 2018 15:49:23 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>, Joe Perches <joe@perches.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH v2 1/2] MAINTAINERS: remove me as maintainer for I2C host drivers
+Date: Tue, 10 Apr 2018 21:49:13 +0200
+Message-Id: <20180410194914.7268-1-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 10, 2018 at 09:49:13PM +0200, Wolfram Sang wrote:
-> The number of I2C host controller drivers keeps increasing, and although
-> I had some success acquiring specific driver maintainers, my bandwidth
-> is by far not enough to act as a fallback for the rest of the drivers.
-> To reflect this status-quo in MAINTAINERS, add a seperate entry for I2C
-> host drivers, let the I2C list (= community) be the contact point, and
-> mark this section as "Odd fixes".
-> 
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+The number of I2C host controller drivers keeps increasing, and although
+I had some success acquiring specific driver maintainers, my bandwidth
+is by far not enough to act as a fallback for the rest of the drivers.
+To reflect this status-quo in MAINTAINERS, add a seperate entry for I2C
+host drivers, let the I2C list (= community) be the contact point, and
+mark this section as "Odd fixes".
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+---
+
+Changes since v1:
+* explicitly state which files from include/linux I keep maintaining
+* rename the new section to HOST DRIVERS instead of just DRIVERS
+* explicitly state which subdirs belong to the HOST DRIVERS section
+
+ MAINTAINERS | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 342895717506..1fe9149fa062 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6580,15 +6580,25 @@ W:	https://i2c.wiki.kernel.org/
+ Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/i2c/
++F:	Documentation/devicetree/bindings/i2c/i2c.txt
+ F:	Documentation/i2c/
+-F:	drivers/i2c/
+-F:	drivers/i2c/*/
++F:	drivers/i2c/*
+ F:	include/linux/i2c.h
+-F:	include/linux/i2c-*.h
++F:	include/linux/i2c-dev.h
++F:	include/linux/i2c-smbus.h
+ F:	include/uapi/linux/i2c.h
+ F:	include/uapi/linux/i2c-*.h
+ 
++I2C SUBSYSTEM HOST DRIVERS
++L:	linux-i2c@vger.kernel.org
++W:	https://i2c.wiki.kernel.org/
++Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
++S:	Odd Fixes
++F:	Documentation/devicetree/bindings/i2c/
++F:	drivers/i2c/algos/
++F:	drivers/i2c/busses/
++
+ I2C-TAOS-EVM DRIVER
+ M:	Jean Delvare <jdelvare@suse.com>
+ L:	linux-i2c@vger.kernel.org
+-- 
+2.11.0
