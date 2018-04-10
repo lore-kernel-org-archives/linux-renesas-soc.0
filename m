@@ -1,100 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:37789 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752128AbeDFMm0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 08:42:26 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        vladimir_zapolskiy@mentor.com, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge
-Date: Fri,  6 Apr 2018 14:41:55 +0200
-Message-Id: <1523018517-24121-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4 4/8] dt-bindings: reset: renesas,rzn1-reboot: document RZ/N1 reboot driver
+Date: Tue, 10 Apr 2018 09:30:04 +0100
+Message-Id: <1523349015-37985-5-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-    this new version moves the driver and its bindings to use semi-standard
-names for powerdown and output enable GPIOs, as result of the discussion with
-Laurent, Vladimir and Rob. I kept the actual pin names in the bindings
-description for reference, even if there are no huge ambiguities on which
-chip pin is actually an enable and which one a power down.
+The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
+as part of the sysctrl MFD to handle rebooting the CA7 cores.
+This documents the driver bindings.
 
-I have reworked the regulator management, making the 'vcc' supply the only
-requested one, and all other optional supplies have been removed as suggested
-by Laurent. It is unlikely a dedicated regulator is to be installed for each
-power supply, and in case some HW design requires this, it's an easy add to be
-implemented in future.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ .../bindings/power/renesas,rzn1-reboot.txt         | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
 
-Contrary to what discussed on v6, the 'vcc' supply is still described
-as optional in dt bindings, and the driver is now using
-'regulator_get(NORMAL_GET)' in place of the _optional() version that was used
-before. With the 'NORMAL_GET' version the regulator core provides a dummy
-regulator in case an actual one is not available. This simplifies integration
-in designs where the chip power supplies are directly connected to some power
-rail. At the same time it makes easier to forget to add a regulator if there's
-actually one there, and someone could find herself wondering why the chip does
-not work even if probe completes properly.
-
-I removed the Eagle display enablement patch from the series, I'll send it
-separately squashed on top of Niklas' series that addresses the issue.
-
-Thanks
-   j
-
-v6 -> v7:
-- Use semi-standard names for powerdown and output enable GPIOs as suggested
-  by Rob and Vladimir
-- Use 'regulator_get()' not the optional version, and list only 'vcc' as
-  requested supply
-- Addressed Laurent's review comments and removed Eagle display enablement patch
-  to be sent separately
-
-v5 -> v6:
-- Drop check for CONFIG_OF as it is a Kconfig dependency
-- Add Niklas Reviewed-by tags
-- List [3/3] depenencies below commit message to ease integration
-
-v4 -> v5:
-- Fix punctuation in bindings documentation
-- Add small statement to bindings document to clarify the chip has no
-  control bus
-- Print regulator name in enable/disable routines error path
-- Add Andrzej Reviewed-by tag
-
-v3 -> v4:
-- Rename permutations of "pdwn" to just "pdwn" everywhere in the series
-- Improve power enable/disable routines as suggested by Andrzej and Sergei
-- Change "pdwn" gpio initialization to use the logical output level
-- Change Kconfig description
-
-v2 -> v3:
-- Drop support for "lvds-decoder" and make the driver THC63LVD1024 specific
--- Rework bindings to describe multiple input/output ports
--- Rename driver and remove "lvds-decoder" references
--- Rework Eagle DTS to use new bindings
-
-v1 -> v2:
-- Drop support for THC63LVD1024
-
-Jacopo Mondi (2):
-  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-  drm: bridge: Add thc63lvd1024 LVDS decoder driver
-
- .../bindings/display/bridge/thine,thc63lvd1024.txt |  60 ++++++
- drivers/gpu/drm/bridge/Kconfig                     |   6 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/thc63lvd1024.c              | 212 +++++++++++++++++++++
- 4 files changed, 279 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
- create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
-
---
+diff --git a/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+new file mode 100644
+index 0000000..8516ab0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+@@ -0,0 +1,23 @@
++DT bindings for the Renesas RZ/N1 Reboot Driver
++
++== Reboot Driver Node ==
++
++The reboot driver is always a subnode of the system controller node, see
++renesas,rzn1-sysctrl.txt for details.
++
++Bindings:
+++ Required:
++	compatible = "renesas,r9a06g032-reboot", "renesas,rzn1-reboot";
++
++Example:
++	sysctrl: sysctrl@4000c000 {
++		compatible = "renesas,r9a06g032-sysctrl",
++				"renesas,rzn1-sysctrl",
++				"syscon", "simple-mfd";
++		reg = <0x4000c000 0x1000>;
++
++		reboot {
++			compatible = "renesas,r9a06g032-reboot",
++					"renesas,rzn1-reboot";
++		};
++	};
+-- 
 2.7.4
+
