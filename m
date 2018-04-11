@@ -1,63 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:59469 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752829AbeDFNIc (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56792 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753356AbeDKVN5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:08:32 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/7] arm64: dts: renesas: r8a77970: add FCPVD support
-Date: Fri,  6 Apr 2018 15:08:06 +0200
-Message-Id: <1523020092-25540-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 11 Apr 2018 17:13:57 -0400
+Date: Wed, 11 Apr 2018 23:13:55 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>, Joe Perches <joe@perches.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 2/2] MAINTAINERS: add maintainer for Renesas I2C
+ related drivers
+Message-ID: <20180411211355.s74g2cug5hj6bmky@ninjato>
+References: <20180410194914.7268-1-wsa@the-dreams.de>
+ <20180410194914.7268-2-wsa@the-dreams.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l4vrhxqdhelps3kp"
+Content-Disposition: inline
+In-Reply-To: <20180410194914.7268-2-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Describe FCPVD0 in the R8A77970 device tree; it will be used by VSPD0 in
-the next patch...
+--l4vrhxqdhelps3kp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+On Tue, Apr 10, 2018 at 09:49:14PM +0200, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Intentionally missing i2c-riic here, Chris Brandt will add himself for
+> that one later.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Applied to for-current, thanks!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index e8358d9..71f466d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -617,6 +617,14 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+		};
- 	};
- 
- 	timer {
--- 
-2.7.4
+
+--l4vrhxqdhelps3kp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrOepMACgkQFA3kzBSg
+KbbPKA/7BJJ+bZ0W80TqYbAlsehSUg0NdIMg+cZE3i40KEx7ac7PA53nVDCig3Vx
+IvXwN1uuZsddHgUhm6IENQTgQiJ91k3iooItCXfvRKG9DB6H/iIQpkdGP5czCC4/
+I0R4DytQITkI6O8JYhi51S3m1lUxB+EnNBiFBsI6lFUJSOqVRCCsAVLmDIaMqU0G
+t95KJkUep0mVoX+AbLfCeLT3KWLI8MzexY3ZDimnv99tIIz6DW2KsoTIJs7DOypR
+RZLnZYvI2WGIjUNDMo1onLtdCrIKGlZDMtJikbv+XqU8Q2XBfKObL4fQbOBY2ZTW
+Bi4pkP9h3SgNoAATjLTmgtBgffTCmIZeqM/ftXuzJQpjZXFE9YW1UFb6hPFsFuyr
+Ku6w6jBGnGYqrB/PEEsjIrLMZ09muO277g2XfHsrH6YrLbqaAENIfMIICkIQXNeU
+V+5+H8MyPf2tIKhEg8n6d5vPRcJWw3e+T4ycz1H0mZjGDyEXoPpsPMX125iFkl4R
+MJDxpyz9c9UKed2qXocxIruaoT2koG9TPWijQ5MfWsbjM02qVeU4UHGWhwkhsJYv
+7DHqUawNPa89RSpLU8kc4kUiYwZaYBCUewqiyRnJjs8ghlH/dg/O/EfgpZXR7dn9
+tdr5vpnBUNhPRLpjhKetM+nia24Qj1nRUAmjPPthVkMMIi0OE4s=
+=WXVg
+-----END PGP SIGNATURE-----
+
+--l4vrhxqdhelps3kp--
