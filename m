@@ -1,109 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:62631 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754607AbeDTM2J (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:28:09 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, geert+renesas@glider.be,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 1/2] clk: renesas: Add r8a77990 CPG Core Clock Definitions
-Date: Fri, 20 Apr 2018 21:27:43 +0900
-Message-Id: <1524227264-24896-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524227264-24896-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524227264-24896-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/2] vfio: platform: Improve reset support
+Date: Wed, 11 Apr 2018 11:15:47 +0200
+Message-Id: <1523438149-16433-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
+References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+	Hi all,
 
-This patch adds all R-Car E3 Clock Pulse Generator Core Clock Outputs.
+This patch series improves reset support for vfio-platform:
+  - The first patch fixes a bug I ran into while working on this.
+  - The second patch implements generic DT reset controller support, for
+    devices that are connected to an SoC-internal reset controller and
+    can be reset in a generic way.  This avoids having to write/change a
+    vfio-specific reset driver for each and every device to be
+    passed-through to a guest.
 
-Note that internal CPG clocks (S0, S1, S2, S3, SDSRC) are not included,
-as they are used as internal clock sources only, and never referenced
-from DT.
+Changes compared to v2:
+  - Add Reviewed-by,
+  - Merge similar checks in vfio_platform_has_reset().
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[shimoda: add SPDX-License-Identifier]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- include/dt-bindings/clock/r8a77990-cpg-mssr.h | 62 +++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a77990-cpg-mssr.h
+Changes compared to v1:
+  - Add Reviewed-by,
+  - Don't store error values in vdev->reset_control,
+  - Use of_reset_control_get_exclusive() instead of
+    __of_reset_control_get(),
+  - Improve description.
 
-diff --git a/include/dt-bindings/clock/r8a77990-cpg-mssr.h b/include/dt-bindings/clock/r8a77990-cpg-mssr.h
-new file mode 100644
-index 0000000..2418e39
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a77990-cpg-mssr.h
-@@ -0,0 +1,62 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a77990 CPG Core Clocks */
-+#define R8A77990_CLK_Z2			0
-+#define R8A77990_CLK_ZR			1
-+#define R8A77990_CLK_ZG			2
-+#define R8A77990_CLK_ZTR		3
-+#define R8A77990_CLK_ZT			4
-+#define R8A77990_CLK_ZX			5
-+#define R8A77990_CLK_S0D1		6
-+#define R8A77990_CLK_S0D3		7
-+#define R8A77990_CLK_S0D6		8
-+#define R8A77990_CLK_S0D12		9
-+#define R8A77990_CLK_S0D24		10
-+#define R8A77990_CLK_S1D1		11
-+#define R8A77990_CLK_S1D2		12
-+#define R8A77990_CLK_S1D4		13
-+#define R8A77990_CLK_S2D1		14
-+#define R8A77990_CLK_S2D2		15
-+#define R8A77990_CLK_S2D4		16
-+#define R8A77990_CLK_S3D1		17
-+#define R8A77990_CLK_S3D2		18
-+#define R8A77990_CLK_S3D4		19
-+#define R8A77990_CLK_S0D6C		20
-+#define R8A77990_CLK_S3D1C		21
-+#define R8A77990_CLK_S3D2C		22
-+#define R8A77990_CLK_S3D4C		23
-+#define R8A77990_CLK_LB			24
-+#define R8A77990_CLK_CL			25
-+#define R8A77990_CLK_ZB3		26
-+#define R8A77990_CLK_ZB3D2		27
-+#define R8A77990_CLK_CR			28
-+#define R8A77990_CLK_CRD2		29
-+#define R8A77990_CLK_SD0H		30
-+#define R8A77990_CLK_SD0		31
-+#define R8A77990_CLK_SD1H		32
-+#define R8A77990_CLK_SD1		33
-+#define R8A77990_CLK_SD3H		34
-+#define R8A77990_CLK_SD3		35
-+#define R8A77990_CLK_RPC		36
-+#define R8A77990_CLK_RPCD2		37
-+#define R8A77990_CLK_ZA2		38
-+#define R8A77990_CLK_ZA8		39
-+#define R8A77990_CLK_Z2D		40
-+#define R8A77990_CLK_CANFD		41
-+#define R8A77990_CLK_MSO		42
-+#define R8A77990_CLK_R			43
-+#define R8A77990_CLK_OSC		44
-+#define R8A77990_CLK_LV0		45
-+#define R8A77990_CLK_LV1		46
-+#define R8A77990_CLK_CSI0		47
-+#define R8A77990_CLK_CP			49
-+#define R8A77990_CLK_CPEX		50
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__ */
+This has been tested on R-Car H3/Salvator-XS by exporting a GPIO module
+to a QEMU+KWM guest: the GPIO module is reset before QEMU opens the vfio
+device, and reset again after QEMU has released it, as can be witnessed
+by the LEDs connected to the GPIOs.
+
+Thanks!
+
+Geert Uytterhoeven (2):
+  vfio: platform: Fix reset module leak in error path
+  vfio: platform: Add generic DT reset support
+
+ drivers/vfio/platform/vfio_platform_common.c  | 35 +++++++++++++++++++++------
+ drivers/vfio/platform/vfio_platform_private.h |  1 +
+ 2 files changed, 29 insertions(+), 7 deletions(-)
+
 -- 
-1.9.1
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
