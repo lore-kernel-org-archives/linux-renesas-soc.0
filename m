@@ -1,50 +1,58 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45212 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752337AbeDSOGu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:06:50 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 01/61] ARM: plat-samsung: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:31 +0200
-Message-Id: <20180419140641.27926-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Wed, 11 Apr 2018 23:13:26 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>, Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v2 1/2] MAINTAINERS: remove me as maintainer for I2C host
+ drivers
+Message-ID: <20180411211326.hudtgm2ldd2fnptm@ninjato>
+References: <20180410194914.7268-1-wsa@the-dreams.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rhzmdsafba5t3hyz"
+Content-Disposition: inline
+In-Reply-To: <20180410194914.7268-1-wsa@the-dreams.de>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--rhzmdsafba5t3hyz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Build tested only. buildbot is happy. Please apply individually.
+On Tue, Apr 10, 2018 at 09:49:13PM +0200, Wolfram Sang wrote:
+> The number of I2C host controller drivers keeps increasing, and although
+> I had some success acquiring specific driver maintainers, my bandwidth
+> is by far not enough to act as a fallback for the rest of the drivers.
+> To reflect this status-quo in MAINTAINERS, add a seperate entry for I2C
+> host drivers, let the I2C list (=3D community) be the contact point, and
+> mark this section as "Odd fixes".
+>=20
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
- arch/arm/plat-samsung/adc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Applied to for-current, thanks!
 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index 42bac8d5ab5d..2da35735fa38 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -413,8 +413,7 @@ static int s3c_adc_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM
- static int s3c_adc_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct adc_device *adc = platform_get_drvdata(pdev);
-+	struct adc_device *adc = dev_get_drvdata(dev);
- 	unsigned long flags;
- 	u32 con;
- 
--- 
-2.11.0
+
+--rhzmdsafba5t3hyz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrOenYACgkQFA3kzBSg
+Kbb+vw//ZrPOcCY4PsuF3rUnGZ27PrMGjCGyVAf7O1Y18Jgsgc+AyUiflyqKFdDP
+w5ui5aELcgQN5XpemQnqaSKFlDduLyywm7ZwjH78YA2rjhVmA1j8tIPoFMwSnzjG
+mQSeYZGCBO1lwt79QHXvnh+v7h8DkknL4vJEI5qgkPHL03ESR5sHg6D5NFLIi6Vi
+GI7Xpr9Tx5ZFj99jee6iRycM/P8i5B66AxtsjBPnsOt/ilpS04sBldP/PNXFpQ2r
+lmqyAIoh9FuE5aip1+m1RhCwQSKin/0BnwjvPH0QWSOWES5O2yVZY15vwmz1GrpK
+hm8+AJLFe4rLx/qZDSAB6pIg5vXRPC9ugk2lrDv4dzMpn7WNc7T32GwlH9AhlSBo
+TItEFAJtnaoPeQSaypDBWX8SvTTIN0/vwacDlEJNDOcQPdPS5fTuK7jm25BmuLSn
+sjhJD9GYb0X3zr9RdXO2w2XPKKhr0+Z6iwzAWnxo/RPES1PE2JMgiR8YAj8Q4+nI
+M52g2Wg9d6tQE+qUjw3/X42XwcVK2KZTJRnYveT9Z3TvIBXZJiajbYGKunKNOybc
+bUA+aj53z7BX0eo17vEwCy2mfpl164Tp8HE3DZq/pJ7Fe1lfrwEEXqsZpMRIKMo+
+K7X5QZAu4ZWcwFPwX9Ev+2ORxyTaeeTXSIHrW13JiOsba399Z7I=
+=jIMJ
+-----END PGP SIGNATURE-----
+
+--rhzmdsafba5t3hyz--
