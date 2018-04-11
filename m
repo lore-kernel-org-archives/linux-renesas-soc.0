@@ -1,74 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54335 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751967AbeDEJSo (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:18696 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751961AbeDKJiB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:18:44 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 12/15] v4l: vsp1: Generalize detection of entity removal from DRM pipeline
-Date: Thu,  5 Apr 2018 12:18:37 +0300
-Message-Id: <20180405091840.30728-13-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 11 Apr 2018 05:38:01 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] arm64: dts: renesas: Add Renesas Ebisu board support
+Date: Wed, 11 Apr 2018 18:37:42 +0900
+Message-Id: <1523439462-1130-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1523439462-1130-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1523439462-1130-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When disabling a DRM plane, the corresponding RPF is only marked as
-removed from the pipeline in the atomic update handler, with the actual
-removal happening when configuring the pipeline at atomic commit time.
-This is required as the RPF has to be disabled in the hardware, which
-can't be done from the atomic update handler.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-The current implementation is RPF-specific. Make it independent of the
-entity type by using the entity's pipe pointer to mark removal from the
-pipeline. This will allow using the mechanism to remove BRU instances.
+Basic support for the Renesas Ebisu board based on R-Car E3:
+  - Memory,
+  - Main crystal,
+  - Serial console,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[shimoda: rebase and add SPDX-License-Identifier]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/media/platform/vsp1/vsp1_drm.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile           |  1 +
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 37 ++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 68b126044ea1..a9c53892a9ea 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -346,13 +346,12 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
- 	dl = vsp1_dl_list_get(pipe->output->dlm);
- 
- 	list_for_each_entry_safe(entity, next, &pipe->entities, list_pipe) {
--		/* Disconnect unused RPFs from the pipeline. */
--		if (entity->type == VSP1_ENTITY_RPF &&
--		    !pipe->inputs[entity->index]) {
-+		/* Disconnect unused entities from the pipeline. */
-+		if (!entity->pipe) {
- 			vsp1_dl_list_write(dl, entity->route->reg,
- 					   VI6_DPR_NODE_UNUSED);
- 
--			entity->pipe = NULL;
-+			entity->sink = NULL;
- 			list_del(&entity->list_pipe);
- 
- 			continue;
-@@ -569,10 +568,11 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
- 			rpf_index);
- 
- 		/*
--		 * Remove the RPF from the pipe's inputs. The atomic flush
--		 * handler will disable the input and remove the entity from the
--		 * pipe's entities list.
-+		 * Remove the RPF from the pipeline's inputs. Keep it in the
-+		 * pipeline's entity list to let vsp1_du_pipeline_configure()
-+		 * remove it from the hardware pipeline.
- 		 */
-+		rpf->entity.pipe = NULL;
- 		drm_pipe->pipe.inputs[rpf_index] = NULL;
- 		return 0;
- 	}
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 5ede060..a235961 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -10,4 +10,5 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
+ dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb
++dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+new file mode 100644
+index 0000000..63ee134
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Device Tree Source for the ebisu board
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a77990.dtsi"
++
++/ {
++	model = "Renesas Ebisu board based on r8a77990";
++	compatible = "renesas,ebisu", "renesas,r8a77990";
++
++	aliases {
++		serial0 = &scif2;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <48000000>;
++};
++
++&scif2 {
++	status = "okay";
++};
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
