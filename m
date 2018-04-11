@@ -1,56 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47526 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754561AbeDMOKd (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52682 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751883AbeDKIJf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:10:33 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 5/5] mmc: renesas_sdhi_internal_dmac: remove superfluous WARN
-Date: Fri, 13 Apr 2018 16:10:21 +0200
-Message-Id: <20180413141021.8680-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
-References: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
+        Wed, 11 Apr 2018 04:09:35 -0400
+Date: Wed, 11 Apr 2018 10:09:31 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] vfio: platform: Fix reset module leak in error
+ path
+Message-ID: <20180411080930.6knha76gu5f6qgnw@verge.net.au>
+References: <1523375627-23746-1-git-send-email-geert+renesas@glider.be>
+ <1523375627-23746-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523375627-23746-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The WARN can never trigger because we limited the max_seg number in
-renesas_sdhi_of_data already. Remove it and update the comment.
+On Tue, Apr 10, 2018 at 05:53:46PM +0200, Geert Uytterhoeven wrote:
+> If the IOMMU group setup fails, the reset module is not released.
+> 
+> Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 4b275225aa9d..0415ecbfeb43 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -91,7 +91,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
- 	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
--	/* Gen3 SDHI DMAC can handle 0xffffffff blk count, but seg = 1 */
-+	/* DMAC can handle 0xffffffff blk count but only 1 segment */
- 	.max_blk_count	= 0xffffffff,
- 	.max_segs	= 1,
- };
-@@ -159,9 +159,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	struct scatterlist *sg = host->sg_ptr;
- 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
- 
--	/* This DMAC cannot handle if sg_len is not 1 */
--	WARN_ON(host->sg_len > 1);
--
- 	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
- 			mmc_get_dma_dir(data)))
- 		goto force_pio;
--- 
-2.11.0
