@@ -1,44 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f169.google.com ([209.85.220.169]:43605 "EHLO
-        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753194AbeDKNYl (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:60905 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752323AbeDKJgN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Apr 2018 09:24:41 -0400
+        Wed, 11 Apr 2018 05:36:13 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] dt-bindings: arm: Document Renesas Ebisu board DT bindings
+Date: Wed, 11 Apr 2018 18:35:52 +0900
+Message-Id: <1523439353-980-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1523439353-980-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1523439353-980-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1523439353-980-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523439353-980-1-git-send-email-yoshihiro.shimoda.uh@renesas.com> <1523439353-980-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Apr 2018 15:24:39 +0200
-Message-ID: <CAMuHMdXyRz8R7jTq5V-RCv5ardpJucJ80Qnp72bcetsKuc=JMQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] dt-bindings: arm: Document Renesas Ebisu board DT bindings
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 11, 2018 at 11:35 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch adds device tree bindings documentation for Renesas
-> Ebisu board (RTP0RC77990SEB0010S).
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch adds device tree bindings documentation for Renesas
+Ebisu board (RTP0RC77990SEB0010S).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 5d21d48..61b486f 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -71,6 +71,8 @@ Boards:
+     compatible = "renesas,draak", "renesas,r8a77995"
+   - Eagle (RTP0RC77970SEB0010S)
+     compatible = "renesas,eagle", "renesas,r8a77970"
++  - Ebisu (RTP0RC77990SEB0010S)
++    compatible = "renesas,ebisu", "renesas,r8a77990"
+   - Genmai (RTK772100BC00000BR)
+     compatible = "renesas,genmai", "renesas,r7s72100"
+   - GR-Peach (X28A-M01-E/F)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+1.9.1
