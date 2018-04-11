@@ -1,65 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:53388 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752428AbeDLLLb (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51018 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751858AbeDKHOV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:11:31 -0400
-Date: Thu, 12 Apr 2018 13:11:27 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Wed, 11 Apr 2018 03:14:21 -0400
+Date: Wed, 11 Apr 2018 09:14:16 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-mmc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
         Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
 Subject: Re: [PATCH 1/5] mmc: renesas_sdhi_internal_dmac: limit DMA RX for
  old SoCs
-Message-ID: <20180412111127.iyvxe2xvemlnpj4v@katana>
+Message-ID: <20180411071416.ohzwyhifviuoq7wo@verge.net.au>
 References: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
  <20180410093831.1759-2-wsa+renesas@sang-engineering.com>
- <CAMuHMdXPOJMEMt9o3gTk5OzpQm4p=3M8tdmP0Vm3o9WrP9Xq1g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="knxvkkd7hd4qnmcw"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXPOJMEMt9o3gTk5OzpQm4p=3M8tdmP0Vm3o9WrP9Xq1g@mail.gmail.com>
+In-Reply-To: <20180410093831.1759-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Tue, Apr 10, 2018 at 11:38:27AM +0200, Wolfram Sang wrote:
+> Early revisions of certain SoCs cannot do multiple DMA RX streams in
+> parallel. To avoid data corruption, only allow one DMA RX channel and
+> fall back to PIO, if needed.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+> ---
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 35 ++++++++++++++++++++++++---
+>  1 file changed, 32 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> index 8e0acd197c43..9c50d64cd10c 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -9,6 +9,7 @@
+>   * published by the Free Software Foundation.
+>   */
+>  
+> +#include <linux/bitops.h>
+>  #include <linux/device.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/io-64-nonatomic-hi-lo.h>
+> @@ -62,6 +63,17 @@
+>   *   need a custom accessor.
+>   */
+>  
+> +static unsigned long global_flags;
 
---knxvkkd7hd4qnmcw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is the restriction on concurrent DMA RX streams global or per-device?
 
+> +/*
+> + * Workaround for avoiding to use RX DMAC by multiple channels.
+> + * On R-Car H3 ES1.* and M3-W ES1.0, when multiple SDHI channels use
+> + * RX DMAC simultaneously, sometimes hundreds of bytes data are not
+> + * stored into the system memory even if the DMAC interrupt happened.
+> + * So, this driver then uses one RX DMAC channel only.
+> + */
+> +#define SDHI_INTERNAL_DMAC_ONE_RX_ONLY	0
+> +#define SDHI_INTERNAL_DMAC_RX_IN_USE	1
+> +
+>  /* Definitions for sampling clocks */
+>  static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+>  	{
+> @@ -126,6 +138,10 @@ renesas_sdhi_internal_dmac_abort_dma(struct tmio_mmc_host *host) {
+>  	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_RST,
+>  					    RST_RESERVED_BITS | val);
+>  
+> +
+> +	if (host->data && host->data->flags & MMC_DATA_READ)
+> +		clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
+>  	renesas_sdhi_internal_dmac_enable_dma(host, true);
+>  }
+>  
+> @@ -155,6 +171,9 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
+>  	if (data->flags & MMC_DATA_READ) {
+>  		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
+>  		dir = DMA_FROM_DEVICE;
+> +		if (test_bit(SDHI_INTERNAL_DMAC_ONE_RX_ONLY, &global_flags) &&
+> +		    test_and_set_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags))
+> +			goto force_pio;
+>  	} else {
+>  		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
+>  		dir = DMA_TO_DEVICE;
+> @@ -208,6 +227,9 @@ static void renesas_sdhi_internal_dmac_complete_tasklet_fn(unsigned long arg)
+>  	renesas_sdhi_internal_dmac_enable_dma(host, false);
+>  	dma_unmap_sg(&host->pdev->dev, host->sg_ptr, host->sg_len, dir);
+>  
+> +	if (dir == DMA_FROM_DEVICE)
+> +		clear_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags);
+> +
 
-> > +       if (soc->data)
->=20
-> This non-NULL check is not really needed.
+Is clear_bit() expensive? If so it might be worth avoiding on SoCs that
+don't have the restriction covered by this patch.
 
-And if we match using the Gen3 generic compatible with a non-whitelisted
-SoC?
-
-
---knxvkkd7hd4qnmcw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrPPtsACgkQFA3kzBSg
-KbZM3g/9HVXxOSLgy3fHi3Rh3G0BFP6VsGNt+ob/8SDtbDMJg2qdvyk1J+3IFD54
-9wt2JvKqdvY27+t7wZjYSNdUeMPOHroxr3TR6HgYP27r2aEdsTJlAZ8R5U+6Jqlq
-YVzGUUu1d8+6bcmVIyXMfsxXMmmd9AZrYxWjoGxGCXdM+RXqDNDXet8fovlAwupr
-N9hb92EZvq2VuhWmcWeytpXVT+9zJxof8b9jMewNqJri3KMBRMlrWGeIPBmyYY6/
-wzAk7jAvBeLDUF5irlyaRzHhTgAYl469qMhCvgKU5qNqX1yltF4ep1J6rdA4FdhD
-jOtD6i5UPFTCb7quba47uPnHLHKeND+va1Auzya9mAxYgtiEFjpJsNV4vWtvbf2g
-Z6l7BsIuLqcbnUePePEMBuPg1mWbdBMC/Md2R3gn/BGG2G1SIxRYAnpEPGwc8oVR
-KtTL0hgO8NATPYyuReh+Ly2AXy8pB5CEov+eIpI7N31jNqIQmP1+p3LqpyuGexI6
-n/Ae9PWF3I3cN0TI3dFozfoCOpH/6GdoUAqaEp5mgZiHjV/igHfWAxKDfUyik3Ln
-Kkww6S0clQMlCkbOqm9GVxnAtnjMyJ80x2JpHbIy5k3ikiaJQOjPWnPRE6Qagt34
-VYFwhC3/wZcCiq9ZumypzGtItx1IgHbfQC102SFlWrDS6E32h7g=
-=XVH3
------END PGP SIGNATURE-----
-
---knxvkkd7hd4qnmcw--
+> +
+>  	tmio_mmc_do_data_irq(host);
+>  out:
+>  	spin_unlock_irq(&host->lock);
+> @@ -251,18 +273,25 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
+>   * implementation as others may use a different implementation.
+>   */
+>  static const struct soc_device_attribute gen3_soc_whitelist[] = {
+> -        { .soc_id = "r8a7795", .revision = "ES1.*" },
+> +        { .soc_id = "r8a7795", .revision = "ES1.*",
+> +	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+>          { .soc_id = "r8a7795", .revision = "ES2.0" },
+> -        { .soc_id = "r8a7796", .revision = "ES1.0" },
+> +        { .soc_id = "r8a7796", .revision = "ES1.0",
+> +	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+>          { .soc_id = "r8a77995", .revision = "ES1.0" },
+>          { /* sentinel */ }
+>  };
+>  
+>  static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
+>  {
+> -	if (!soc_device_match(gen3_soc_whitelist))
+> +	const struct soc_device_attribute *soc = soc_device_match(gen3_soc_whitelist);
+> +
+> +	if (!soc)
+>  		return -ENODEV;
+>  
+> +	if (soc->data)
+> +		global_flags |= (unsigned long)soc->data;
+> +
+>  	return renesas_sdhi_probe(pdev, &renesas_sdhi_internal_dmac_dma_ops);
+>  }
+>  
+> -- 
+> 2.11.0
+> 
