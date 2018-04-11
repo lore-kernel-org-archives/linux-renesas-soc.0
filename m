@@ -1,167 +1,38 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54331 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751971AbeDEJSo (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:18:44 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 11/15] v4l: vsp1: Add per-display list internal completion notification support
-Date: Thu,  5 Apr 2018 12:18:36 +0300
-Message-Id: <20180405091840.30728-12-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Hoan Tran <hotran@apm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Michel Pollet" <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] gpio: dwapb: Add support for 32 interrupts
+Date: Wed, 11 Apr 2018 10:17:51 +0000
+Message-ID: <OSBPR01MB1766927B331E6011CE7AEDDCF5BD0@OSBPR01MB1766.jpnprd01.prod.outlook.com>
+References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+ <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Display list completion is already reported to the frame end handler,
-but that mechanism is global to all display lists. In order to implement
-BRU and BRS reassignment in DRM pipelines we will need to commit a
-display list and wait for its completion internally, without reporting
-it to the DRM driver. Extend the display list API to support such an
-internal use of the display list.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v1:
-
-- Use the frame end status flags to report notification
-- Rename the notify flag to internal
----
- drivers/media/platform/vsp1/vsp1_dl.c    | 23 ++++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_dl.h    |  3 ++-
- drivers/media/platform/vsp1/vsp1_drm.c   |  2 +-
- drivers/media/platform/vsp1/vsp1_video.c |  2 +-
- 4 files changed, 26 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 662fa2a347c9..30ad491605ff 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -72,6 +72,7 @@ struct vsp1_dl_body {
-  * @fragments: list of extra display list bodies
-  * @has_chain: if true, indicates that there's a partition chain
-  * @chain: entry in the display list partition chain
-+ * @internal: whether the display list is used for internal purpose
-  */
- struct vsp1_dl_list {
- 	struct list_head list;
-@@ -85,6 +86,8 @@ struct vsp1_dl_list {
- 
- 	bool has_chain;
- 	struct list_head chain;
-+
-+	bool internal;
- };
- 
- enum vsp1_dl_mode {
-@@ -550,8 +553,16 @@ static void vsp1_dl_list_commit_continuous(struct vsp1_dl_list *dl)
- 	 * case we can't replace the queued list by the new one, as we could
- 	 * race with the hardware. We thus mark the update as pending, it will
- 	 * be queued up to the hardware by the frame end interrupt handler.
-+	 *
-+	 * If a display list is already pending we simply drop it as the new
-+	 * display list is assumed to contain a more recent configuration. It is
-+	 * an error if the already pending list has the internal flag set, as
-+	 * there is then a process waiting for that list to complete. This
-+	 * shouldn't happen as the waiting process should perform proper
-+	 * locking, but warn just in case.
- 	 */
- 	if (vsp1_dl_list_hw_update_pending(dlm)) {
-+		WARN_ON(dlm->pending && dlm->pending->internal);
- 		__vsp1_dl_list_put(dlm->pending);
- 		dlm->pending = dl;
- 		return;
-@@ -581,7 +592,7 @@ static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
- 	dlm->active = dl;
- }
- 
--void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
-+void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal)
- {
- 	struct vsp1_dl_manager *dlm = dl->dlm;
- 	struct vsp1_dl_list *dl_child;
-@@ -598,6 +609,8 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
- 		}
- 	}
- 
-+	dl->internal = internal;
-+
- 	spin_lock_irqsave(&dlm->lock, flags);
- 
- 	if (dlm->singleshot)
-@@ -624,6 +637,10 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
-  * raced with the frame end interrupt. The function always returns with the flag
-  * set in header mode as display list processing is then not continuous and
-  * races never occur.
-+ *
-+ * The VSP1_DL_FRAME_END_INTERNAL flag indicates that the previous display list
-+ * has completed and had been queued with the internal notification flag.
-+ * Internal notification is only supported for continuous mode.
-  */
- unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- {
-@@ -656,6 +673,10 @@ unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- 	 * frame end interrupt. The display list thus becomes active.
- 	 */
- 	if (dlm->queued) {
-+		if (dlm->queued->internal)
-+			flags |= VSP1_DL_FRAME_END_INTERNAL;
-+		dlm->queued->internal = false;
-+
- 		__vsp1_dl_list_put(dlm->active);
- 		dlm->active = dlm->queued;
- 		dlm->queued = NULL;
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-index cbc2fc53e10b..1a5bbd5ddb7b 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.h
-+++ b/drivers/media/platform/vsp1/vsp1_dl.h
-@@ -21,6 +21,7 @@ struct vsp1_dl_list;
- struct vsp1_dl_manager;
- 
- #define VSP1_DL_FRAME_END_COMPLETED		BIT(0)
-+#define VSP1_DL_FRAME_END_INTERNAL		BIT(1)
- 
- void vsp1_dlm_setup(struct vsp1_device *vsp1);
- 
-@@ -34,7 +35,7 @@ unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
- struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
- void vsp1_dl_list_put(struct vsp1_dl_list *dl);
- void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data);
--void vsp1_dl_list_commit(struct vsp1_dl_list *dl);
-+void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal);
- 
- struct vsp1_dl_body *vsp1_dl_fragment_alloc(struct vsp1_device *vsp1,
- 					    unsigned int num_entries);
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 541473b1df67..68b126044ea1 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -370,7 +370,7 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
- 		}
- 	}
- 
--	vsp1_dl_list_commit(dl);
-+	vsp1_dl_list_commit(dl, false);
- }
- 
- /* -----------------------------------------------------------------------------
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 4152704c2ccb..a76a44698aff 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -437,7 +437,7 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- 	}
- 
- 	/* Complete, and commit the head display list. */
--	vsp1_dl_list_commit(pipe->dl);
-+	vsp1_dl_list_commit(pipe->dl, false);
- 	pipe->dl = NULL;
- 
- 	vsp1_pipeline_run(pipe);
--- 
-Regards,
-
-Laurent Pinchart
+SGkgQW5keSwNCg0KT24gMDUgQXByaWwgMjAxOCAxMDo0MywgUGhpbCBFZHdvcnRoeSB3cm90ZToN
+Cj4gT24gMzAgTWFyY2ggMjAxOCAyMjoyNiBBbmR5IFNoZXZjaGVua28gd3JvdGU6DQo+ID4gT24g
+V2VkLCBNYXIgMjgsIDIwMTggYXQgNToyMiBQTSwgUGhpbCBFZHdvcnRoeSB3cm90ZToNCj4gPiA+
+IFRoZSBEZXNpZ25XYXJlIEdQSU8gSVAgY2FuIGJlIGNvbmZpZ3VyZWQgZm9yIGVpdGhlciAxIG9y
+IDMyDQo+ID4gPiBpbnRlcnJ1cHRzLA0KPiA+DQo+ID4gMSB0byAzMiwgb3IganVzdCBhIGNob2lj
+ZSBiZXR3ZWVuIHR3bz8NCj4gSnVzdCBhIGNob2ljZSBvZiAxIG9yIDMyLg0KU29ycnksIEkgd2Fz
+IHdyb25nIGFib3V0IHRoaXMuLi4gdGhlIG1hbnVhbCBkb2VzIG5vdCBzYXkgMSBvciAzMi4gSXQg
+c2F5czoNCiJQb3J0IEEgY2FuIGJlIGNvbmZpZ3VyZWQgdG8gZ2VuZXJhdGUgbXVsdGlwbGUgaW50
+ZXJydXB0IHNpZ25hbHMgb3INCmEgc2luZ2xlIGNvbWJpbmVkIGludGVycnVwdCBmbGFnLiBXaGVu
+IHNldCB0byAxLCB0aGUgY29tcG9uZW50IGdlbmVyYXRlcyBhDQpzaW5nbGUgY29tYmluZWQgaW50
+ZXJydXB0IGZsYWcuIg0KDQpUaGVyZSBpcyBubyBvdGhlciB0ZXh0IGRlc2NyaWJpbmcgdGhpcyBv
+cHRpb24sIGJ1dCBJIGJlbGlldmUgYWxsIEdQSU9zIG9uDQpwb3J0IEEgd2lsbCBoYXZlIGFuIGlu
+dGVycnVwdC4gSW4gb3VyIGNhc2Ugd2UgaGF2ZSAzMiBHUElPcyBvbiBwb3J0IEENCmFuZCAzMiBp
+bnRlcnJ1cHRzIGNvbm5lY3RlZCB0byB0aGVtLg0KDQpUaGFua3MNClBoaWwNCg==
