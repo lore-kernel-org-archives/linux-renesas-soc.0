@@ -1,57 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45322 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753375AbeDSOG7 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:41921 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752653AbeDKJFx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:06:59 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Subject: [PATCH 22/61] input: mouse: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:52 +0200
-Message-Id: <20180419140641.27926-23-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Wed, 11 Apr 2018 05:05:53 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+CC: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        USB <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Subject: RE: [PATCH] usb: role: rcar-usb3-role-switch: add support for R-Car
+ SoCs
+Date: Wed, 11 Apr 2018 09:05:46 +0000
+Message-ID: <TY1PR06MB0992704D0454522517E0B0C6D8BD0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1523361826-8772-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAHp75Vd20+dQewCsy-UPpSw+5OkuVhok=MEYLJ8OqPHEQKSZdA@mail.gmail.com>
+ <TY1PR06MB0992CB520090B80CB8B68104D8BD0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+ <20180411080137.GB7517@kuha.fi.intel.com>
+In-Reply-To: <20180411080137.GB7517@kuha.fi.intel.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+Hi Heikki,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thank you for the comments!
 
-Build tested only. buildbot is happy. Please apply individually.
+> From: Heikki Krogerus, Sent: Wednesday, April 11, 2018 5:02 PM
+>=20
+> On Wed, Apr 11, 2018 at 03:15:23AM +0000, Yoshihiro Shimoda wrote:
+> > > > +       host_node =3D of_parse_phandle(pdev->dev.of_node, "renesas,=
+host", 0);
+> > > > +       if (!host_node)
+> > > > +               return -ENODEV;
+> > > > +
+> > > > +       pdev_host =3D of_find_device_by_node(host_node);
+> > > > +       if (!pdev_host)
+> > > > +               return -ENODEV;
+> > > > +
+> > > > +       of_node_put(host_node);
+> > >
+> > > Isn't what Heikki tried to solve with graphs and stuff like that?
+> >
+> > Heikki prepared "device connection" framework (devcon) [1] to get a dev=
+ice pointer.
+> > However, IIUC, we need to improve the framework for device tree environ=
+ment because:
+> >  - The devcon needs each dev_name() through the endpoint array of struc=
+t device_connection.
+> >  - Each dev_name() on device tree environment will be <base address reg=
+ister>.<device name>,
+> >    f.e. "ee020000.usb". So, I don???t think adding such strings to a dr=
+iver is a good way.
+>=20
+> That is how the build-in connection descriptions are handled, but in
+> this case you want to describe them in your bindings, and to do that you
+> should use remote-endpoints, ie. OF graph bindings: bindings/graph.txt
 
- drivers/input/mouse/navpoint.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+I understood it. As I mentioned other thread, I'll try to use the usb-conne=
+ctor bindings.
 
-diff --git a/drivers/input/mouse/navpoint.c b/drivers/input/mouse/navpoint.c
-index d6e8f58a1de3..3d83a79e14d9 100644
---- a/drivers/input/mouse/navpoint.c
-+++ b/drivers/input/mouse/navpoint.c
-@@ -320,8 +320,7 @@ static int navpoint_remove(struct platform_device *pdev)
- 
- static int __maybe_unused navpoint_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct navpoint *navpoint = platform_get_drvdata(pdev);
-+	struct navpoint *navpoint = dev_get_drvdata(dev);
- 	struct input_dev *input = navpoint->input;
- 
- 	mutex_lock(&input->mutex);
-@@ -334,8 +333,7 @@ static int __maybe_unused navpoint_suspend(struct device *dev)
- 
- static int __maybe_unused navpoint_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct navpoint *navpoint = platform_get_drvdata(pdev);
-+	struct navpoint *navpoint = dev_get_drvdata(dev);
- 	struct input_dev *input = navpoint->input;
- 
- 	mutex_lock(&input->mutex);
--- 
-2.11.0
+> > So, I wrote such a code by using existing APIs.
+> > Should I improve the framework first somehow? Or, is my understanding i=
+ncorrect?
+>=20
+> You don't necessarily need to propose any changes to the device
+> connection framework at this point, but you do need to use graph for
+> describing that connection. Once we add device graph handling to the
+> device connection framework, it is no problem to update this driver.
+
+I got it.
+
+> Of course, if you have time and interest in preparing a proposal for
+> graph handling to the device connection framework, I would appreciate
+> it.
+
+I'll try to add graph handling to the device connection framework by
+end of next week. If failed, I'll inform in this thread.
+
+Best regards,
+Yoshihiro Shimoda
+
+>=20
+> Thanks,
+>=20
+> --
+> heikki
