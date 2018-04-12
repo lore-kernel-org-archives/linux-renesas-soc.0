@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:54441 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbeDLIMD (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:36517 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752450AbeDLIOM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Apr 2018 04:12:03 -0400
+        Thu, 12 Apr 2018 04:14:12 -0400
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
         laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
@@ -12,11 +12,8 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: [PATCH v3 0/5] V3M-Eagle HDMI output enablement
-Date: Thu, 12 Apr 2018 10:11:47 +0200
-Message-Id: <1523520712-16106-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Thu, 12 Apr 2018 10:13:56 +0200
+Message-Id: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
