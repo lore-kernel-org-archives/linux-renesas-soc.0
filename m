@@ -1,71 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:9069 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751137AbeDNMAP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38227 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751049AbeDLHd5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:00:15 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 14/33] rcar-vin: align pixelformat check
-Date: Sat, 14 Apr 2018 13:57:07 +0200
-Message-Id: <20180414115726.5075-15-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 12 Apr 2018 03:33:57 -0400
+Date: Thu, 12 Apr 2018 09:33:54 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: arm: Document Renesas Ebisu board DT
+ bindings
+Message-ID: <20180412073353.6qxkpo3brepo4f2p@verge.net.au>
+References: <1523439353-980-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1523439353-980-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdXyRz8R7jTq5V-RCv5ardpJucJ80Qnp72bcetsKuc=JMQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXyRz8R7jTq5V-RCv5ardpJucJ80Qnp72bcetsKuc=JMQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the pixelformat is not supported it should not fail but be set to
-something that works. While we are at it move the two different
-checks of the pixelformat to the same statement.
+On Wed, Apr 11, 2018 at 03:24:39PM +0200, Geert Uytterhoeven wrote:
+> On Wed, Apr 11, 2018 at 11:35 AM, Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > This patch adds device tree bindings documentation for Renesas
+> > Ebisu board (RTP0RC77990SEB0010S).
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 907322e1eeb5f6a0..d9231a074aa2c29d 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -189,12 +189,10 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	u32 walign;
- 	int ret;
- 
--	/* If requested format is not supported fallback to the default */
--	if (!rvin_format_from_pixel(pix->pixelformat)) {
--		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
--			pix->pixelformat, RVIN_DEFAULT_FORMAT);
-+	if (!rvin_format_from_pixel(pix->pixelformat) ||
-+	    (vin->info->model == RCAR_M1 &&
-+	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
- 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
--	}
- 
- 	/* Limit to source capabilities */
- 	ret = __rvin_try_format_source(vin, which, pix, source);
-@@ -233,12 +231,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	pix->bytesperline = rvin_format_bytesperline(pix);
- 	pix->sizeimage = rvin_format_sizeimage(pix);
- 
--	if (vin->info->model == RCAR_M1 &&
--	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
--		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
--		return -EINVAL;
--	}
--
- 	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
- 		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
- 
--- 
-2.16.2
+Thanks, applied.
