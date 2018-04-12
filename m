@@ -1,121 +1,70 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, daniel@ffwll.ch,
-        peda@axentia.se, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] drm: rcar-du: rcar-lvds: Add bridge format support
-Date: Thu, 19 Apr 2018 11:31:07 +0200
-Message-Id: <1524130269-32688-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 12 Apr 2018 10:11:36 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, magnus.damm@gmail.com,
+        geert@linux-m68k.org, laurent.pinchart@ideasonboard.com,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] V3M-Eagle HDMI output enablement
+Message-ID: <20180412081136.GI20945@w540>
+References: <1523450590-31347-1-git-send-email-jacopo+renesas@jmondi.org>
+ <20180412080827.5cxipw53nqpfnrfn@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="CV9cI//wlcIKC9rG"
+Content-Disposition: inline
+In-Reply-To: <20180412080827.5cxipw53nqpfnrfn@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With the introduction of static input image format enumeration in DRM
-bridges, add support to retrieve the format in rcar-lvds LVDS encoder
-from both panel or bridge, to set the desired LVDS mode.
 
-Do not rely on 'DRM_BUS_FLAG_DATA_LSB_TO_MSB' flag to mirror the LVDS
-format, as it is only defined for drm connectors, but use the newly
-introduced _LE version of LVDS mbus image formats.
+--CV9cI//wlcIKC9rG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 64 +++++++++++++++++++++++++------------
- 1 file changed, 44 insertions(+), 20 deletions(-)
+Hi Simon,
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 3d2d3bb..2fa875f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -280,41 +280,65 @@ static bool rcar_lvds_mode_fixup(struct drm_bridge *bridge,
- 	return true;
- }
- 
--static void rcar_lvds_get_lvds_mode(struct rcar_lvds *lvds)
-+static int rcar_lvds_get_lvds_mode_from_connector(struct rcar_lvds *lvds,
-+						  unsigned int *bus_fmt)
- {
- 	struct drm_display_info *info = &lvds->connector.display_info;
--	enum rcar_lvds_mode mode;
--
--	/*
--	 * There is no API yet to retrieve LVDS mode from a bridge, only panels
--	 * are supported.
--	 */
--	if (!lvds->panel)
--		return;
- 
- 	if (!info->num_bus_formats || !info->bus_formats) {
- 		dev_err(lvds->dev, "no LVDS bus format reported\n");
--		return;
-+		return -EINVAL;
-+	}
-+
-+	*bus_fmt = info->bus_formats[0];
-+
-+	return 0;
-+}
-+
-+static int rcar_lvds_get_lvds_mode_from_bridge(struct rcar_lvds *lvds,
-+					       unsigned int *bus_fmt)
-+{
-+	if (!lvds->next_bridge->num_bus_formats ||
-+	    !lvds->next_bridge->bus_formats) {
-+		dev_err(lvds->dev, "no LVDS bus format reported\n");
-+		return -EINVAL;
- 	}
- 
--	switch (info->bus_formats[0]) {
-+	*bus_fmt = lvds->next_bridge->bus_formats[0];
-+
-+	return 0;
-+}
-+
-+static void rcar_lvds_get_lvds_mode(struct rcar_lvds *lvds)
-+{
-+	unsigned int bus_fmt;
-+	int ret;
-+
-+	if (lvds->panel)
-+		ret = rcar_lvds_get_lvds_mode_from_connector(lvds, &bus_fmt);
-+	else
-+		ret = rcar_lvds_get_lvds_mode_from_bridge(lvds, &bus_fmt);
-+	if (ret)
-+		return;
-+
-+	switch (bus_fmt) {
-+	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE:
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE:
-+		lvds->mode |= RCAR_LVDS_MODE_MIRROR;
- 	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
- 	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
--		mode = RCAR_LVDS_MODE_JEIDA;
-+		lvds->mode = RCAR_LVDS_MODE_JEIDA;
- 		break;
-+
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE:
-+		lvds->mode |= RCAR_LVDS_MODE_MIRROR;
- 	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
--		mode = RCAR_LVDS_MODE_VESA;
-+		lvds->mode = RCAR_LVDS_MODE_VESA;
- 		break;
- 	default:
- 		dev_err(lvds->dev, "unsupported LVDS bus format 0x%04x\n",
--			info->bus_formats[0]);
--		return;
-+			bus_fmt);
- 	}
--
--	if (info->bus_flags & DRM_BUS_FLAG_DATA_LSB_TO_MSB)
--		mode |= RCAR_LVDS_MODE_MIRROR;
--
--	lvds->mode = mode;
- }
- 
- static void rcar_lvds_mode_set(struct drm_bridge *bridge,
--- 
-2.7.4
+On Thu, Apr 12, 2018 at 10:08:27AM +0200, Simon Horman wrote:
+> On Wed, Apr 11, 2018 at 02:43:05PM +0200, Jacopo Mondi wrote:
+> > Hello,
+> >    I have rebased the Eagle display enablement on top of (part of) Sergei's
+> > series:
+> >  [PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
+>
+> Hi Jacopo,
+>
+> the emails with the patches of this series do not
+> seem to have hit my inbox or patchwork.
+>
+
+Damn, I've noticed! I have no idea what happened, I have 3 out of 5
+patches in my inbox, but it seems most of them didn't went out.
+
+ISP problems again? :(
+
+I'll resend right away
+
+--CV9cI//wlcIKC9rG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJazxS4AAoJEHI0Bo8WoVY8zrwP+wVnSKEA50quXFK78TvNodA9
+AgQz4Su7ofG3Ef9Rlk22oRP26Yceb6JKrvsqiGbp4CPZJ61DrjtznX11bn2r5dgB
+MzwR2LWuGujT2Ay8h1XsVyV4Sqe0DxqLfvD9uP0R9Ztz6n7V5KO4/J/ET8dGt4W+
+4vVD9QBukgNnazQEKlq+WEKXf49IMqYg8u1R2Hw4ln6fco58WC0P7LSYg8bbOlOc
+ASXNrPyvcaNy0CccjiFM7gEHeRuMQjNwaYM5nFqEqL9gSluP2LV5myia250kLfC0
+r9CaMGxPMbIiuTqIfR4JwiTqxciQxF4IthEr/fOggb4L1B9qbHFwAP+BsVd58wJz
+29n6d7RvEOqFEhtGYJQRpWHFW6G8NrZhcZkPY78aFsmybp9Eil/K96Ee3EZok86r
+elFhGKdybJ96dHjgcssU8Nc5/87pRH1YGZseUjI/YVr7Y5FO15cQfZOB8tZnzJMs
+2WRhBoUXjhx9ZYi+5eMsIcEie0/hZLEbgY7b31h13sbiVVYUSpN6Zpy/XPT4nujH
+0WzD/Dw6EiyMbYr4wle144rN3O+OcjLfHI/CJfKKrYdPJux67drIZQc5enMHntXX
+3wu1BpdCNpk8aesf3jsl4edyl+IR8zec3xFQLB2F67wHqeAs+BoIx1PBGEq+vpng
+OS939QDhA4aSqExHN86N
+=eF/B
+-----END PGP SIGNATURE-----
+
+--CV9cI//wlcIKC9rG--
