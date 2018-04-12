@@ -1,67 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755402AbeDZKaL (ORCPT
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:53447 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752450AbeDLIOP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:30:11 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/10] arm64: dts: renesas: r8a7796: Add address properties to rcar_sound port nodes
-Date: Thu, 26 Apr 2018 12:29:50 +0200
-Message-Id: <20180426102951.8683-10-horms+renesas@verge.net.au>
-In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
-References: <20180426102951.8683-1-horms+renesas@verge.net.au>
+        Thu, 12 Apr 2018 04:14:15 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 1/5] arm64: dts: renesas: r8a77970: add FCPVD support
+Date: Thu, 12 Apr 2018 10:13:57 +0200
+Message-Id: <1523520841-16455-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar_sound port nodes have unit names and thus should have register
-properties.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This is flagged by dtc as follows:
- # make dtbs W=1
- ...
- DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@1: node has a unit name, but no reg property
- ...
- DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb
- arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
- arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@1: node has a unit name, but no reg property
+Describe FCPVD0 in the R8A77970 device tree; it will be used by VSPD0 in
+the next patch...
 
-Prior to this patch the port nodes only defined in board DTS files.
-As the register properties are common this patch defines the port nodes
-and provides register properties in the SoC DTS file.
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index f41bc25b3933..3fbd86590fb0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1594,6 +1594,17 @@
- 					dma-names = "rx", "tx", "rxu", "txu";
- 				};
- 			};
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index c6db8ea..97c27ef 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -617,6 +617,14 @@
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
  		};
++
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++		};
+ 	};
  
- 		audma0: dma-controller@ec700000 {
+ 	timer {
 -- 
-2.11.0
+2.7.4
