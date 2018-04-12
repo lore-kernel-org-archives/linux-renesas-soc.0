@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:39517 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752842AbeDJK4M (ORCPT
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:54441 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752291AbeDLIMD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:56:12 -0400
+        Thu, 12 Apr 2018 04:12:03 -0400
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
         laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
@@ -11,9 +11,9 @@ To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/4] V3M-Eagle HDMI output enablement
-Date: Tue, 10 Apr 2018 12:54:02 +0200
-Message-Id: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v3 0/5] V3M-Eagle HDMI output enablement
+Date: Thu, 12 Apr 2018 10:11:47 +0200
+Message-Id: <1523520712-16106-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -21,28 +21,34 @@ Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hello,
-   this series enables HDMI display on V3M Eagle board.
+   I have rebased the Eagle display enablement on top of (part of) Sergei's
+series:
+ [PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
 
-The v2 of this series is based on Linus' master, as it already contains the
-pull request for arm64 DT is merged already, and it includes enablement of
-R8A77970 basic components such as PFC, GPIOs and I2c.
+Simon: you can skip "[1/5]  arm64: dts: renesas: r8a77970: add FCPVD support"
+as you already collected that
 
-Compared to to v1 I have not included
-[PATCH 1/7] arm64: dts: renesas: r8a77970: add FCPVD support
-as Simon has already included this in his tree for v4.18.
+Sergei: I re-sent your series because there was an additional comment from
+Laurent on [3/5]. I felt it was wrong to send a follow up patch on a series
+still not collected by Simon, so I've resent it. Hope this time is ok with you.
+Also, please note that [5/5] of your original series shall be re-sent using
+the newly introduced (still in-review) LVDS decoder. Please see [5/5] of this
+series as an example.
 
-Indivual patches contains the changelog, the biggest overall change is that
-HDMI output enablement, previously split in 3 patches is now performed in a
-single patch for arch/arm64/boot/dts/renesas/r8a77970-eagle.dts as suggested
-by Laurent.
+Niklas: [5/5] of this series is a fixup of your patches and mine. I added
+your signed-off-by, hope it is ok.
 
 The series depends on THC63LVD1024 driver, currently submitted for inclusion
-[PATCH v8 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge
+"[PATCH v8 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge"
 currently available at:
 git://jmondi.org/linux lvds-bridge/linus-master/v8
 
 Thanks
-  j
+   j
+
+v2 -> v3:
+- Use Sergei's series for patches [1-4] with a minor comment from Laurent
+- Remove the lvds-decoder node label and add Laurent's Reviewed-by in [5/5]
 
 v1 -> v2:
 - Add Laurent's reviewed by tags
@@ -54,16 +60,15 @@ v1 -> v2:
 Jacopo Mondi (1):
   arm64: dts: renesas: eagle: Enable HDMI output
 
-Niklas Söderlund (1):
-  arm64: dts: renesas: r8a77970: add LVDS support
-
-Sergei Shtylyov (2):
+Sergei Shtylyov (4):
+  arm64: dts: renesas: r8a77970: add FCPVD support
   arm64: dts: renesas: r8a77970: add VSPD support
   arm64: dts: renesas: r8a77970: add DU support
+  arm64: dts: renesas: r8a77970: add LVDS support
 
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 82 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77970.dtsi      | 65 ++++++++++++++++++++
- 2 files changed, 147 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 93 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi      | 75 +++++++++++++++++++++
+ 2 files changed, 168 insertions(+)
 
 --
 2.7.4
