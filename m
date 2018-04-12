@@ -1,95 +1,146 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39961 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751747AbeDLLct (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:32:49 -0400
-MIME-Version: 1.0
-In-Reply-To: <e6a70247-14f2-63b6-852b-3d43e45f8fa2@redhat.com>
-References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
- <1523438149-16433-4-git-send-email-geert+renesas@glider.be> <e6a70247-14f2-63b6-852b-3d43e45f8fa2@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Apr 2018 13:32:48 +0200
-Message-ID: <CAMuHMdU5m=vV9nuVoRkX6tX-A=az3aK6HT7yFqgDam_rCNEfSg@mail.gmail.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
 Subject: Re: [PATCH v3 2/2] vfio: platform: Add generic DT reset support
-To: Auger Eric <eric.auger@redhat.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
+ <1523438149-16433-4-git-send-email-geert+renesas@glider.be>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <e6a70247-14f2-63b6-852b-3d43e45f8fa2@redhat.com>
+Date: Thu, 12 Apr 2018 12:31:09 +0200
+MIME-Version: 1.0
+In-Reply-To: <1523438149-16433-4-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Eric,
+Hi Geert, Philipp,
 
-On Thu, Apr 12, 2018 at 12:31 PM, Auger Eric <eric.auger@redhat.com> wrote:
-> On 11/04/18 11:15, Geert Uytterhoeven wrote:
->> Vfio-platform requires reset support, provided either by ACPI, or, on DT
->> platforms, by a device-specific reset driver matching against the
->> device's compatible value.
->>
->> On many SoCs, devices are connected to an SoC-internal reset controller.
->> If the reset hierarchy is described in DT using "resets" properties,
->> such devices can be reset in a generic way through the reset controller
->> subsystem.  Hence add support for this, avoiding the need to write
->> device-specific reset drivers for each single device on affected SoCs.
->>
->> Devices that do require a more complex reset procedure can still provide
->> a device-specific reset driver, as that takes precedence.
->>
->> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
->> becomes a no-op (as in: "No reset function found for device") if reset
->> controller support is disabled.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+On 11/04/18 11:15, Geert Uytterhoeven wrote:
+> Vfio-platform requires reset support, provided either by ACPI, or, on DT
+> platforms, by a device-specific reset driver matching against the
+> device's compatible value.
+> 
+> On many SoCs, devices are connected to an SoC-internal reset controller.
+> If the reset hierarchy is described in DT using "resets" properties,
+> such devices can be reset in a generic way through the reset controller
+> subsystem.  Hence add support for this, avoiding the need to write
+> device-specific reset drivers for each single device on affected SoCs.
+> 
+> Devices that do require a more complex reset procedure can still provide
+> a device-specific reset driver, as that takes precedence.
+> 
+> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
+> becomes a no-op (as in: "No reset function found for device") if reset
+> controller support is disabled.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
+> v3:
+>   - Add Reviewed-by,
+>   - Merge similar checks in vfio_platform_has_reset(),
+> 
+> v2:
+>   - Don't store error values in vdev->reset_control,
+>   - Use of_reset_control_get_exclusive() instead of
+>     __of_reset_control_get(),
+>   - Improve description.
+> ---
+>  drivers/vfio/platform/vfio_platform_common.c  | 20 ++++++++++++++++++--
+>  drivers/vfio/platform/vfio_platform_private.h |  1 +
+>  2 files changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+> index b60bb5326668498c..ef9b9e3220ebe939 100644
+> --- a/drivers/vfio/platform/vfio_platform_common.c
+> +++ b/drivers/vfio/platform/vfio_platform_common.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+>  #include <linux/uaccess.h>
+> @@ -112,11 +113,13 @@ static bool vfio_platform_has_reset(struct vfio_platform_device *vdev)
+>  	if (VFIO_PLATFORM_IS_ACPI(vdev))
+>  		return vfio_platform_acpi_has_reset(vdev);
+>  
+> -	return vdev->of_reset ? true : false;
+> +	return vdev->of_reset || vdev->reset_control;
+>  }
+>  
+>  static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+>  {
+> +	struct reset_control *rstc;
+> +
+>  	if (VFIO_PLATFORM_IS_ACPI(vdev))
+>  		return vfio_platform_acpi_has_reset(vdev) ? 0 : -ENOENT;
+>  
+> @@ -127,8 +130,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+>  		vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
+>  							&vdev->reset_module);
+>  	}
+> +	if (vdev->of_reset)
+> +		return 0;
+> +
+> +	rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
 
->> --- a/drivers/vfio/platform/vfio_platform_common.c
->> +++ b/drivers/vfio/platform/vfio_platform_common.c
+Shouldn't we prefer the top level reset_control_get_exclusive()?
 
->> @@ -127,8 +130,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
->>               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
->>                                                       &vdev->reset_module);
->>       }
->> +     if (vdev->of_reset)
->> +             return 0;
->> +
->> +     rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
->
-> Shouldn't we prefer the top level reset_control_get_exclusive()?
+To make sure about the exclusive/shared terminology, does
+get_reset_control_get_exclusive() check we have an exclusive wire
+between this device and the reset controller?
 
-I guess that should work, too.
+Thanks
 
-> To make sure about the exclusive/shared terminology, does
-> get_reset_control_get_exclusive() check we have an exclusive wire
-> between this device and the reset controller?
-
-AFAIU, the "exclusive" means that only a single user can obtain access to
-the reset, and it does not guarantee that we have an exclusive wire between
-the device and the reset controller.
-
-The latter depends on the SoC's reset topology. If a reset wire is shared
-by multiple devices (e.g. resets shared by PWM or Display Unit devices on
-R-Car SoCs), exporting a subset of these devices to a guest is a bad idea,
-indeed.
-
-I guess the same thing can happen with the ACPI "_RST" method?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Eric
+> +	if (!IS_ERR(rstc)) {
+> +		vdev->reset_control = rstc;
+> +		return 0;
+> +	}
+>  
+> -	return vdev->of_reset ? 0 : -ENOENT;
+> +	return PTR_ERR(rstc);
+>  }
+>  
+>  static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
+> @@ -138,6 +149,8 @@ static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
+>  
+>  	if (vdev->of_reset)
+>  		module_put(vdev->reset_module);
+> +
+> +	reset_control_put(vdev->reset_control);
+>  }
+>  
+>  static int vfio_platform_regions_init(struct vfio_platform_device *vdev)
+> @@ -217,6 +230,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
+>  	} else if (vdev->of_reset) {
+>  		dev_info(vdev->device, "reset\n");
+>  		return vdev->of_reset(vdev);
+> +	} else if (vdev->reset_control) {
+> +		dev_info(vdev->device, "reset\n");
+> +		return reset_control_reset(vdev->reset_control);
+>  	}
+>  
+>  	dev_warn(vdev->device, "no reset function found!\n");
+> diff --git a/drivers/vfio/platform/vfio_platform_private.h b/drivers/vfio/platform/vfio_platform_private.h
+> index 85ffe5d9d1abd94e..a56e80ae5986540b 100644
+> --- a/drivers/vfio/platform/vfio_platform_private.h
+> +++ b/drivers/vfio/platform/vfio_platform_private.h
+> @@ -60,6 +60,7 @@ struct vfio_platform_device {
+>  	const char			*compat;
+>  	const char			*acpihid;
+>  	struct module			*reset_module;
+> +	struct reset_control		*reset_control;
+>  	struct device			*device;
+>  
+>  	/*
+> 
