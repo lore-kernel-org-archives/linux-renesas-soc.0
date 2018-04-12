@@ -1,93 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:23027 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754716AbeDTM2l (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:28:41 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/2] arm64: dts: renesas: Add Renesas Ebisu board support
-Date: Fri, 20 Apr 2018 21:28:17 +0900
-Message-Id: <1524227297-24955-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524227297-24955-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524227297-24955-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 12 Apr 2018 09:33:18 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: arm: Document R-Car E3 SoC DT bindings
+Message-ID: <20180412073317.qdyllmssllpivj22@verge.net.au>
+References: <1523439353-980-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1523439353-980-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdV5Ta9B+4FiGk3gVcQ6xV74ZhdO75xFqbGNuA0+BNatkg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV5Ta9B+4FiGk3gVcQ6xV74ZhdO75xFqbGNuA0+BNatkg@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Wed, Apr 11, 2018 at 01:42:08PM +0200, Geert Uytterhoeven wrote:
+> On Wed, Apr 11, 2018 at 11:35 AM, Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > This patch adds device tree bindings documentation for Renesas R-Car
+> > E3 (r8a77990).
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Basic support for the Renesas Ebisu board based on R-Car E3:
-  - Memory,
-  - Main crystal,
-  - Serial console,
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[shimoda: rebase and add SPDX-License-Identifier]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/Makefile           |  1 +
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 37 ++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 5ede060..a235961 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -10,4 +10,5 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
- dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb
-+dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-new file mode 100644
-index 0000000..63ee134
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Device Tree Source for the ebisu board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77990.dtsi"
-+
-+/ {
-+	model = "Renesas Ebisu board based on r8a77990";
-+	compatible = "renesas,ebisu", "renesas,r8a77990";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <48000000>;
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
--- 
-1.9.1
+Thanks, applied.
