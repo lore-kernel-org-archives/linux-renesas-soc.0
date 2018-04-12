@@ -1,72 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45119 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751775AbeDHSBr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37835 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752849AbeDLGy3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Apr 2018 14:01:47 -0400
-Received: by mail-wr0-f195.google.com with SMTP id u11so6350967wri.12
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 08 Apr 2018 11:01:46 -0700 (PDT)
-Subject: [PATCH v2 2/5] pcie-rcar: remove PHYRDY polling from
- rcar_pcie_hw_init_h1()
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
-Message-ID: <3c582c72-cee2-54b3-f82a-186999450f44@cogentembedded.com>
-Date: Sun, 8 Apr 2018 21:01:44 +0300
+        Thu, 12 Apr 2018 02:54:29 -0400
+Date: Thu, 12 Apr 2018 08:54:23 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        KVM list <kvm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] vfio: platform: Add generic DT reset controller
+ support
+Message-ID: <20180412065422.zsm4ztlet4zgober@verge.net.au>
+References: <1523375627-23746-1-git-send-email-geert+renesas@glider.be>
+ <1523375627-23746-3-git-send-email-geert+renesas@glider.be>
+ <20180411082226.qbhf7hcvtcns7ge3@verge.net.au>
+ <CAMuHMdXq5gTrYBGnP8EfL4s_c+=JA6vXgrmgs3Wa_+8cS3jYNA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXq5gTrYBGnP8EfL4s_c+=JA6vXgrmgs3Wa_+8cS3jYNA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now that we've added PCIEPHYSR.PHYRDY polling to rcar_pcie_hw_init(),
-there is no need anymore  for polling the PHY specific register in
-rcar_pcie_hw_init_h1() -- remove it.
+Hi Geert,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, Apr 11, 2018 at 10:39:19AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Apr 11, 2018 at 10:22 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Tue, Apr 10, 2018 at 05:53:47PM +0200, Geert Uytterhoeven wrote:
 
----
- drivers/pci/host/pcie-rcar.c |   12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+...
 
-Index: pci/drivers/pci/host/pcie-rcar.c
-===================================================================
---- pci.orig/drivers/pci/host/pcie-rcar.c
-+++ pci/drivers/pci/host/pcie-rcar.c
-@@ -102,7 +102,6 @@
- #define  LANE_POS		8
- #define  ADR_POS		0
- #define H1_PCIEPHYDOUTR		0x040014
--#define H1_PCIEPHYSR		0x040018
- 
- /* R-Car Gen2 PHY */
- #define GEN2_PCIEPHYADDR	0x780
-@@ -627,8 +626,6 @@ static int rcar_pcie_hw_init(struct rcar
- 
- static int rcar_pcie_hw_init_h1(struct rcar_pcie *pcie)
- {
--	unsigned int timeout = 10;
--
- 	/* Initialize the phy */
- 	phy_write_reg(pcie, 0, 0x42, 0x1, 0x0EC34191);
- 	phy_write_reg(pcie, 1, 0x42, 0x1, 0x0EC34180);
-@@ -647,14 +644,7 @@ static int rcar_pcie_hw_init_h1(struct r
- 	phy_write_reg(pcie, 0, 0x64, 0x1, 0x3F0F1F0F);
- 	phy_write_reg(pcie, 0, 0x66, 0x1, 0x00008000);
- 
--	while (timeout--) {
--		if (rcar_pci_read_reg(pcie, H1_PCIEPHYSR))
--			return rcar_pcie_hw_init(pcie);
--
--		msleep(5);
--	}
--
--	return -ETIMEDOUT;
-+	return rcar_pcie_hw_init(pcie);
- }
- 
- static int rcar_pcie_hw_init_gen2(struct rcar_pcie *pcie)
+> >> @@ -217,6 +236,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
+> >>       } else if (vdev->of_reset) {
+> >>               dev_info(vdev->device, "reset\n");
+> >>               return vdev->of_reset(vdev);
+> >> +     } else if (vdev->reset_control) {
+> >> +             dev_info(vdev->device, "reset\n");
+> >
+> > Would it be useful to differentiate between the above two informational
+> > messages?
+> 
+> Probably not, there's also no differentiation with the message for the
+> ACPI case above (out of visible context).
+
+Thanks, I agree that it seems fine to leave things as you have them above.
