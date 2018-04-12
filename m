@@ -1,45 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38519 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754202AbeDTJbb (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:31:31 -0400
-Date: Fri, 20 Apr 2018 11:31:25 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: magnus.damm@gmail.com, geert@linux-m68k.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
         laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com,
+        sergei.shtylyov@cogentembedded.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v3 2/5] arm64: dts: renesas: r8a77970: add VSPD support
-Message-ID: <20180420093125.apsnijk744z2g5l2@verge.net.au>
+Subject: [PATCH v3 2/5] arm64: dts: renesas: r8a77970: add VSPD support
+Date: Thu, 12 Apr 2018 10:13:58 +0200
+Message-Id: <1523520841-16455-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
- <1523520841-16455-3-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1523520841-16455-3-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 12, 2018 at 10:13:58AM +0200, Jacopo Mondi wrote:
-> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
-> the next patch...
-> 
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Thanks, applied.
+Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
+the next patch...
+
+Based on the original (and large) patch by Daisuke Matsushita
+<daisuke.matsushita.ns@hitachi.com>.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+---
+v1 -> v2 (Jacopo) :
+- Extend the memory region to include V6_CLUTn_TBL* registers.
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 97c27ef..a3ef3bd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -625,6 +625,16 @@
+ 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+ 			resets = <&cpg 603>;
+ 		};
++
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x8000>;
++			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 623>;
++			renesas,fcp = <&fcpvd0>;
++		};
+ 	};
+ 
+ 	timer {
+-- 
+2.7.4
+
