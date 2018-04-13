@@ -1,44 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40854 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751259AbeDER0F (ORCPT
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37340 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754094AbeDMIzF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Apr 2018 13:26:05 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-pwm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] pwm: rcar: simplify getting .drvdata
-Date: Thu,  5 Apr 2018 19:25:51 +0200
-Message-Id: <20180405172552.8720-1-wsa+renesas@sang-engineering.com>
+        Fri, 13 Apr 2018 04:55:05 -0400
+Subject: Re: [PATCH v3 1/2] vfio: platform: Fix reset module leak in error
+ path
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
+ <1523438149-16433-3-git-send-email-geert+renesas@glider.be>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <a948bec8-4674-9dc1-be44-0f7284940149@redhat.com>
+Date: Fri, 13 Apr 2018 10:55:01 +0200
+MIME-Version: 1.0
+In-Reply-To: <1523438149-16433-3-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+Hi Geert,
+On 11/04/18 11:15, Geert Uytterhoeven wrote:
+> If the IOMMU group setup fails, the reset module is not released.
+> 
+> Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Eric Auger <eric.auger@redhat.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thanks
 
-Only build tested. Fixed numerous times in other drivers, however...
-
- drivers/pwm/pwm-rcar.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 91d11f2e2fef..748f614d5375 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -261,8 +261,7 @@ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
- #ifdef CONFIG_PM_SLEEP
- static struct pwm_device *rcar_pwm_dev_to_pwm_dev(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
-+	struct rcar_pwm_chip *rcar_pwm = dev_get_drvdata(dev);
- 	struct pwm_chip *chip = &rcar_pwm->chip;
- 
- 	return &chip->pwms[0];
--- 
-2.11.0
+Eric
+> ---
+> v3:
+>   - Add Reviewed-by,
+> 
+> v2:
+>   - Add Reviewed-by.
+> ---
+>  drivers/vfio/platform/vfio_platform_common.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+> index 35469af87f88678e..b60bb5326668498c 100644
+> --- a/drivers/vfio/platform/vfio_platform_common.c
+> +++ b/drivers/vfio/platform/vfio_platform_common.c
+> @@ -680,18 +680,23 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
+>  	group = vfio_iommu_group_get(dev);
+>  	if (!group) {
+>  		pr_err("VFIO: No IOMMU group for device %s\n", vdev->name);
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		goto put_reset;
+>  	}
+>  
+>  	ret = vfio_add_group_dev(dev, &vfio_platform_ops, vdev);
+> -	if (ret) {
+> -		vfio_iommu_group_put(group, dev);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		goto put_iommu;
+>  
+>  	mutex_init(&vdev->igate);
+>  
+>  	return 0;
+> +
+> +put_iommu:
+> +	vfio_iommu_group_put(group, dev);
+> +put_reset:
+> +	vfio_platform_put_reset(vdev);
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(vfio_platform_probe_common);
+>  
+> 
