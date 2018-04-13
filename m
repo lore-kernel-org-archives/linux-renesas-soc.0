@@ -1,56 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:49218 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751775AbeDMR21 (ORCPT
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37113 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750940AbeDMRBx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 13:28:27 -0400
-Date: Fri, 13 Apr 2018 19:28:25 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        linux-spi@vger.kernel.org, magnus.damm@gmail.com,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Subject: Re: [PATCH] spi: sh-msiof: Add spi_master_suspend/spi_master_resume
-Message-ID: <20180413172825.3y6ah3tyx4vw4sf5@ninjato>
-References: <1523638908-21924-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="24ckc5cjsdsdofv5"
-Content-Disposition: inline
-In-Reply-To: <1523638908-21924-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Fri, 13 Apr 2018 13:01:53 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: wsa@the-dreams.de, geert@linux-m68k.org, linux-spi@vger.kernel.org,
+        magnus.damm@gmail.com, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH] spi: sh-msiof: Add spi_master_suspend/spi_master_resume
+Date: Fri, 13 Apr 2018 19:01:48 +0200
+Message-Id: <1523638908-21924-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
 
---24ckc5cjsdsdofv5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Add spi_master_suspend(), spi_master_resume() in PM callback since it needs
+to start/stop the queue during suspend/resume.
 
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+[uli: simplified code, added pm field to platform driver]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+Slightly brushed up port from the BSP; tested to execute on suspend/resume
+without breaking anything.
 
-struct sh_msiof_spi_priv *p = dev_get_drvdata(dev);
+CU
+Uli
 
+ drivers/spi/spi-sh-msiof.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
---24ckc5cjsdsdofv5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrQ6LkACgkQFA3kzBSg
-KbaAwBAAifn/x58WHJvUQQzW0gDeRwhcUx/UiTbHCT8NmgspjtwyY/7L5foj/nUN
-5Zz5BBRZMPpB9ZMZgmuPC4gxsEj+rTSi5pyfbkqoMQ2C5AgBsQEcs27o77PDIh+Z
-gOMQ2f6gDBOx2oGFfMCcoi86MHgbWzbqCnNPZoAgIkAW3PHaALQ/Lijb+iw/KrcP
-rJwvi01sRWF6EaVMkN2uwMkCZJ+J7f+D2WjFBLMJDCey5hphx3VC60r/klB5BY5v
-bh5k0rTGrI+NsGFeU97y2LKveQuF/d6wGqBNAs3xRYl8a9MG9V6t1wR15W8dmfZ8
-970AK2Qq6CAUpOR7XZI1o4uhBo6UhsEztjrC8mC/+lLaOheLyDs6Yb86iJyDsT8P
-UYTy058+wzBTlhDzpSICXfJDDf6htMa5bPZ5QyUuHdwvhLYxdH10vjwL4l0Oo0Dz
-83ixgTdJ90t2iQxk+HXAbAQNkJ8i4dNbxwlTOq1y6dM2dK58DSMsSpqX8cZUtT+R
-Yze4tFe8Odjd2zTyy8Otz+fbIoGDcYm+hzjaLRD+KL2Er2v3SIUMmIT5OHyHlKRH
-mB+lBHlYnHhYA/iKXjUECo/mqBlqFFGh6l1o/mzvsyyYiDpHZzLqvkbNcRAkbWRN
-44LjCjT42lW51uBvpbUZ1uD0poUunQK5UJal12+E3iQR03Rkct0=
-=J3LN
------END PGP SIGNATURE-----
-
---24ckc5cjsdsdofv5--
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index ae086aa..db30aad 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1415,12 +1415,35 @@ static const struct platform_device_id spi_driver_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+ 
++#ifdef CONFIG_PM_SLEEP
++static int sh_msiof_spi_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
++
++	return spi_master_suspend(p->master);
++}
++
++static int sh_msiof_spi_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
++
++	return spi_master_resume(p->master);
++}
++#endif /* CONFIG_PM_SLEEP */
++
++static SIMPLE_DEV_PM_OPS(sh_msiof_spi_pm_ops,
++			 sh_msiof_spi_suspend,
++			 sh_msiof_spi_resume);
++
+ static struct platform_driver sh_msiof_spi_drv = {
+ 	.probe		= sh_msiof_spi_probe,
+ 	.remove		= sh_msiof_spi_remove,
+ 	.id_table	= spi_driver_ids,
+ 	.driver		= {
+ 		.name		= "spi_sh_msiof",
++		.pm		= &sh_msiof_spi_pm_ops,
+ 		.of_match_table = of_match_ptr(sh_msiof_match),
+ 	},
+ };
+-- 
+2.7.4
