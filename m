@@ -1,87 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45342 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753088AbeDSOHB (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:43925 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752604AbeDMIqW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:01 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 26/61] media: platform: exynos4-is: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:56 +0200
-Message-Id: <20180419140641.27926-27-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Fri, 13 Apr 2018 04:46:22 -0400
+MIME-Version: 1.0
+In-Reply-To: <TY1PR06MB09922C1E3B83DF01EB084714D8BC0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1523439386-1032-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1523439386-1032-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdVP5U2W3Zmpfe689UYBdNfS6nK7jFW5oQcJQ_QakW1UfQ@mail.gmail.com>
+ <20180412075506.frylywvges5c6nzx@verge.net.au> <TY1PR06MB09922C1E3B83DF01EB084714D8BC0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Apr 2018 10:46:20 +0200
+Message-ID: <CAMuHMdVXm52gCOx9KL+0Nn2pw507ansPVFGtAjN8sTTwEKWtdg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] soc: renesas: rcar-sysc: Add support for R-Car E3
+ power areas
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+Hi Shimoda-san,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Thu, Apr 12, 2018 at 10:25 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+>> From: Simon Horman <horms@verge.net.au>, Sent: Thursday, April 12, 2018 4:55 PM
+>> On Wed, Apr 11, 2018 at 05:10:02PM +0200, Geert Uytterhoeven wrote:
+>> > On Wed, Apr 11, 2018 at 11:36 AM, Yoshihiro Shimoda
+>> > <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> > > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> > >
+>> > > This patch adds Cortex-A53 CPU{0,1}, Cortex-A53 SCU, Cortex-R7, A3VC,
+>> > > A2VC1 and 3DG-{A,B} power domain areas for the R8A77990 SoC.
+>> >
+>> > > - The 3DG power domain resume order of R-Car E3 is [3DG-B] -> [3DG-A],
+>> >
+>> > So 3DG-B is the parent of 3DG-A?
+>> > I have to take your word on this, as I cannot find this in the documentation.
+>
+> Geert-san, you're correct. the documentation doesn't have any description about this.
+> So, software team are asking HW guys about this.
+> This means, should we drop 3DGs (or always on these domains) at initial support?
 
-Build tested only. buildbot is happy. Please apply individually.
+Using always-on is an acceptable solution, for now.
 
- drivers/media/platform/exynos4-is/media-dev.c | 6 ++----
- drivers/media/platform/exynos4-is/mipi-csis.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+But let's wait and see the response from the HW guys. The v4.18 deadline is
+sufficiently far in the future...
 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 78b48a1fa26c..deb499f76412 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -1201,8 +1201,7 @@ static const struct media_device_ops fimc_md_ops = {
- static ssize_t fimc_md_sysfs_show(struct device *dev,
- 				  struct device_attribute *attr, char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct fimc_md *fmd = platform_get_drvdata(pdev);
-+	struct fimc_md *fmd = dev_get_drvdata(dev);
- 
- 	if (fmd->user_subdev_api)
- 		return strlcpy(buf, "Sub-device API (sub-dev)\n", PAGE_SIZE);
-@@ -1214,8 +1213,7 @@ static ssize_t fimc_md_sysfs_store(struct device *dev,
- 				   struct device_attribute *attr,
- 				   const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct fimc_md *fmd = platform_get_drvdata(pdev);
-+	struct fimc_md *fmd = dev_get_drvdata(dev);
- 	bool subdev_api;
- 	int i;
- 
-diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-index cba46a656338..b4e28a299e26 100644
---- a/drivers/media/platform/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-@@ -891,8 +891,7 @@ static int s5pcsis_probe(struct platform_device *pdev)
- 
- static int s5pcsis_pm_suspend(struct device *dev, bool runtime)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
- 	struct csis_state *state = sd_to_csis_state(sd);
- 	int ret = 0;
- 
-@@ -921,8 +920,7 @@ static int s5pcsis_pm_suspend(struct device *dev, bool runtime)
- 
- static int s5pcsis_pm_resume(struct device *dev, bool runtime)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
- 	struct csis_state *state = sd_to_csis_state(sd);
- 	int ret = 0;
- 
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
