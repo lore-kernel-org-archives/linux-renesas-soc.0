@@ -1,241 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33910 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753780AbeDRNSJ (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:48052 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754076AbeDMIYk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:18:09 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 13 Apr 2018 04:24:40 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Hoan Tran <hotran@apm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 4/4] regulator: bd9571mwv: Add support for backup mode
-Date: Wed, 18 Apr 2018 15:18:04 +0200
-Message-Id: <1524057484-25350-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1524057484-25350-1-git-send-email-geert+renesas@glider.be>
-References: <1524057484-25350-1-git-send-email-geert+renesas@glider.be>
+        Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Michel Pollet" <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 2/2] mfd: intel_quark_i2c_gpio: Update Synopsys GPIO
+ interrupts
+Date: Fri, 13 Apr 2018 08:24:30 +0000
+Message-ID: <TY1PR01MB176970ECD9C66DCF865E5C17F5B30@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1523606900-2332-1-git-send-email-phil.edworthy@renesas.com>
+ <1523606900-2332-3-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdVKi=dDvn29U-S26PtAc_Um_+1Oy=PzKAgYUSU9qvcF-Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdVKi=dDvn29U-S26PtAc_Um_+1Oy=PzKAgYUSU9qvcF-Q@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The BD9571MWV PMIC supports backup mode, which keeps one or more DDR
-rails powered while the main SoC is powered down.
-
-Which DDR rails are to be kept powered is board-specific, and controlled
-using the optional "rohm,ddr-backup-power" DT property.  In the absence
-of this property, backup mode is not available.
-
-Backup mode can be enabled or disabled by the user using the standard
-"wakeup" virtual file in sysfs, e.g. to enable:
-
-    echo enabled > /sys/devices/platform/soc/e60b0000.i2c/i2c-7/7-0030/bd9571mwv-regulator.2.auto/power/wakeup
-
-When the PMIC is configured for backup mode, the role of the accessory
-power switch changes from a power switch to a wake-up switch.
-Two types of switches (or signals) can be used:
-  A. With a momentary power switch (or pulse signal), the PMIC is
-     configured for backup mode in the PMIC driver's suspend callback,
-     during system suspend.
-     Backup mode is enabled by default, as there is no further impact
-     during normal system operation.
-
-  B. With a toggle power switch (or level signal), the following steps
-     must be followed exactly:
-       1. Configure PMIC for backup mode,
-       2. Switch accessory power switch off, to prepare for system
-          suspend, which is a manual step not controlled by software,
-       3. Suspend system.
-     This mode is not yet supported by the driver.
-
-As the switch type is board-specific, and cannot be determined
-automatically, it is obtained from the presence of one of the
-"rohm,rstbmode-*" properties in DT.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - No changes,
-
-v2:
-  - Use normal "wakeup" sysfs virtual file instead of adding our own
-    "backup_mode" file,
-  - Differentiate between momentary and toggle power switches:
-      - Support for momentary switches is enabled automatically,
-      - Toggle switches are not yet supported (but still work when
-	backup mode is enabled using i2set from userspace).
----
- drivers/regulator/bd9571mwv-regulator.c | 127 +++++++++++++++++++++++++++++++-
- 1 file changed, 126 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index c67a83d53c4cb76b..be574eb444ebda97 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -24,6 +24,18 @@
- 
- #include <linux/mfd/bd9571mwv.h>
- 
-+struct bd9571mwv_reg {
-+	struct bd9571mwv *bd;
-+
-+	/* DDR Backup Power */
-+	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
-+	u8 bkup_mode_cnt_saved;
-+
-+	/* Power switch type */
-+	bool rstbmode_level;
-+	bool rstbmode_pulse;
-+};
-+
- enum bd9571mwv_regulators { VD09, VD18, VD25, VD33, DVFS };
- 
- #define BD9571MWV_REG(_name, _of, _id, _ops, _vr, _vm, _nv, _min, _step, _lmin)\
-@@ -131,14 +143,99 @@ static struct regulator_desc regulators[] = {
- 		      0x80, 600000, 10000, 0x3c),
- };
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int bd9571mwv_bkup_mode_read(struct bd9571mwv *bd, unsigned int *mode)
-+{
-+	int ret;
-+
-+	ret = regmap_read(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
-+	if (ret) {
-+		dev_err(bd->dev, "failed to read backup mode (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
-+{
-+	int ret;
-+
-+	ret = regmap_write(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
-+	if (ret) {
-+		dev_err(bd->dev, "failed to configure backup mode 0x%x (%d)\n",
-+			mode, ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int bd9571mwv_suspend(struct device *dev)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+	unsigned int mode;
-+	int ret;
-+
-+	if (!device_may_wakeup(dev))
-+		return 0;
-+
-+	/* Save DDR Backup Mode */
-+	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
-+	if (ret)
-+		return ret;
-+
-+	bdreg->bkup_mode_cnt_saved = mode;
-+
-+	if (!bdreg->rstbmode_pulse)
-+		return 0;
-+
-+	/* Enable DDR Backup Mode */
-+	mode &= ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
-+	mode |= bdreg->bkup_mode_cnt_keepon;
-+
-+	if (mode != bdreg->bkup_mode_cnt_saved)
-+		return bd9571mwv_bkup_mode_write(bdreg->bd, mode);
-+
-+	return 0;
-+}
-+
-+static int bd9571mwv_resume(struct device *dev)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+
-+	if (!device_may_wakeup(dev))
-+		return 0;
-+
-+	/* Restore DDR Backup Mode */
-+	return bd9571mwv_bkup_mode_write(bdreg->bd, bdreg->bkup_mode_cnt_saved);
-+}
-+
-+static const struct dev_pm_ops bd9571mwv_pm  = {
-+	SET_SYSTEM_SLEEP_PM_OPS(bd9571mwv_suspend, bd9571mwv_resume)
-+};
-+
-+#define DEV_PM_OPS	&bd9571mwv_pm
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- {
- 	struct bd9571mwv *bd = dev_get_drvdata(pdev->dev.parent);
- 	struct regulator_config config = { };
-+	struct bd9571mwv_reg *bdreg;
- 	struct regulator_dev *rdev;
-+	unsigned int val;
- 	int i;
- 
--	platform_set_drvdata(pdev, bd);
-+	bdreg = devm_kzalloc(&pdev->dev, sizeof(*bdreg), GFP_KERNEL);
-+	if (!bdreg)
-+		return -ENOMEM;
-+
-+	bdreg->bd = bd;
-+
-+	platform_set_drvdata(pdev, bdreg);
- 
- 	config.dev = &pdev->dev;
- 	config.dev->of_node = bd->dev->of_node;
-@@ -155,6 +252,33 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	val = 0;
-+	of_property_read_u32(bd->dev->of_node, "rohm,ddr-backup-power", &val);
-+	if (val & ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK) {
-+		dev_err(bd->dev, "invalid %s mode %u\n",
-+			"rohm,ddr-backup-power", val);
-+		return -EINVAL;
-+	}
-+	bdreg->bkup_mode_cnt_keepon = val;
-+
-+	bdreg->rstbmode_level = of_property_read_bool(bd->dev->of_node,
-+						      "rohm,rstbmode-level");
-+	bdreg->rstbmode_pulse = of_property_read_bool(bd->dev->of_node,
-+						      "rohm,rstbmode-pulse");
-+	if (bdreg->rstbmode_level && bdreg->rstbmode_pulse) {
-+		dev_err(bd->dev, "only one rohm,rstbmode-* may be specified");
-+		return -EINVAL;
-+	}
-+
-+	if (bdreg->bkup_mode_cnt_keepon) {
-+		device_set_wakeup_capable(&pdev->dev, true);
-+		/*
-+		 * Wakeup is enabled by default in pulse mode, but needs
-+		 * explicit user setup in level mode.
-+		 */
-+		device_set_wakeup_enable(&pdev->dev, bdreg->rstbmode_pulse);
-+	}
-+
- 	return 0;
- }
- 
-@@ -167,6 +291,7 @@ MODULE_DEVICE_TABLE(platform, bd9571mwv_regulator_id_table);
- static struct platform_driver bd9571mwv_regulator_driver = {
- 	.driver = {
- 		.name = "bd9571mwv-regulator",
-+		.pm = DEV_PM_OPS,
- 	},
- 	.probe = bd9571mwv_regulator_probe,
- 	.id_table = bd9571mwv_regulator_id_table,
--- 
-2.7.4
+SGkgR2VlcnQsDQoNCk9uIDEzIEFwcmlsIDIwMTggMDk6MjAgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
+b3RlOg0KPiBPbiBGcmksIEFwciAxMywgMjAxOCBhdCAxMDowOCBBTSwgUGhpbCBFZHdvcnRoeSB3
+cm90ZToNCj4gPiBTaW5jZSB0aGUgd2F5IHRoZSBTeW5vcHN5cyBHUElPIGludGVycnVwdHMgYXJl
+IHN0b3JlZCBoYXMgY2hhbmdlZCwNCj4gPiB0aGlzIGRyaXZlciBuZWVkcyB0byBiZSB1cGRhdGVk
+IGluIGxpbmUgd2l0aCB0aGUgY2hhbmdlcy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBoaWwg
+RWR3b3J0aHkgPHBoaWwuZWR3b3J0aHlAcmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gdjI6DQo+
+ID4gIC0gTmV3IHBhdGNoIGluIHYyIHRvIGZpeCB0aGUgb25seSBvdGhlciB1c2VyIG9mIHN0cnVj
+dA0KPiBkd2FwYl9wb3J0X3Byb3BlcnR5Lg0KPiANCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0K
+PiANCj4gVG8gYXZvaWQgYmlzZWN0aW9uIGNvbXBpbGUgZmFpbHVyZXMgZHVlIHRvIHRoZSBjaGFu
+Z2VkIHR5cGUgb2YNCj4gZHdhcGJfcG9ydF9wcm9wZXJ0eS5pcnEsIEkgdGhpbmsgdGhpcyBzaG91
+bGQgYmUgZm9sZGVkIGludG8gdGhlIGZpcnN0IHBhdGNoLA0KUmlnaHQsIHRoYW5rcyBmb3IgcG9p
+bnRpbmcgdGhpcyBvdXQhDQpQaGlsDQoNCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9tZmQvaW50ZWxf
+cXVhcmtfaTJjX2dwaW8uYyB8IDMgKystDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
+bnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21mZC9p
+bnRlbF9xdWFya19pMmNfZ3Bpby5jDQo+ID4gYi9kcml2ZXJzL21mZC9pbnRlbF9xdWFya19pMmNf
+Z3Bpby5jDQo+ID4gaW5kZXggOTBlMzVkZS4uNWJkZGI4NCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
+ZXJzL21mZC9pbnRlbF9xdWFya19pMmNfZ3Bpby5jDQo+ID4gKysrIGIvZHJpdmVycy9tZmQvaW50
+ZWxfcXVhcmtfaTJjX2dwaW8uYw0KPiA+IEBAIC0yMzMsNyArMjMzLDggQEAgc3RhdGljIGludCBp
+bnRlbF9xdWFya19ncGlvX3NldHVwKHN0cnVjdCBwY2lfZGV2DQo+ICpwZGV2LCBzdHJ1Y3QgbWZk
+X2NlbGwgKmNlbGwpDQo+ID4gICAgICAgICBwZGF0YS0+cHJvcGVydGllcy0+aWR4ICAgICAgICAg
+ID0gMDsNCj4gPiAgICAgICAgIHBkYXRhLT5wcm9wZXJ0aWVzLT5uZ3BpbyAgICAgICAgPSBJTlRF
+TF9RVUFSS19NRkRfTkdQSU87DQo+ID4gICAgICAgICBwZGF0YS0+cHJvcGVydGllcy0+Z3Bpb19i
+YXNlICAgID0gSU5URUxfUVVBUktfTUZEX0dQSU9fQkFTRTsNCj4gPiAtICAgICAgIHBkYXRhLT5w
+cm9wZXJ0aWVzLT5pcnEgICAgICAgICAgPSBwZGV2LT5pcnE7DQo+ID4gKyAgICAgICBwZGF0YS0+
+cHJvcGVydGllcy0+aXJxWzBdICAgICAgID0gcGRldi0+aXJxOw0KPiA+ICsgICAgICAgcGRhdGEt
+PnByb3BlcnRpZXMtPmhhc19pcnEgICAgICA9IHRydWU7DQo+ID4gICAgICAgICBwZGF0YS0+cHJv
+cGVydGllcy0+aXJxX3NoYXJlZCAgID0gdHJ1ZTsNCj4gPg0KPiA+ICAgICAgICAgY2VsbC0+cGxh
+dGZvcm1fZGF0YSA9IHBkYXRhOw0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAg
+ICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVu
+IC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC0NCj4g
+bTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwg
+cGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0
+byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0
+aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRz
+DQo=
