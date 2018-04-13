@@ -1,470 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34170 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752326AbeDRUPK (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47620 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754229AbeDMOS5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 16:15:10 -0400
-Received: by mail-pg0-f68.google.com with SMTP id p10so1380791pgn.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Apr 2018 13:15:10 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 5/5] arm64: dts: renesas: r8a77970: sort subnodes of the soc node
-Date: Thu, 19 Apr 2018 05:14:40 +0900
-Message-Id: <1524082480-18163-6-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
-References: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
+        Fri, 13 Apr 2018 10:18:57 -0400
+Date: Fri, 13 Apr 2018 16:18:54 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] watchdog: renesas-wdt: Add support for WDIOF_CARDRESET
+Message-ID: <20180413141853.hkkic2hdzjkflrq6@ninjato>
+References: <20180320213626.14208-1-wsa+renesas@sang-engineering.com>
+ <20180320215943.GB29962@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="faggxpooeyofyrik"
+Content-Disposition: inline
+In-Reply-To: <20180320215943.GB29962@roeck-us.net>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort subnodes of the soc node.
-- The primary key is the bus address.
-- The secondary key is the IP block.
-- The tertiary key is the node name.
 
-This is part of an ongoing effort to provide consistent node
-order in the DT of Renesas SoCs to improve maintainability.
+--faggxpooeyofyrik
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This should not have any run-time effect.
 
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 378 +++++++++++++++---------------
- 1 file changed, 189 insertions(+), 189 deletions(-)
+> Reviewed-by: Guenetr Roeck <linux@roeck-us.net>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 71f466d..d8f6808 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -83,23 +83,6 @@
- 		#size-cells = <2>;
- 		ranges;
- 
--		gic: interrupt-controller@f1010000 {
--			compatible = "arm,gic-400";
--			#interrupt-cells = <3>;
--			#address-cells = <0>;
--			interrupt-controller;
--			reg = <0 0xf1010000 0 0x1000>,
--			      <0 0xf1020000 0 0x20000>,
--			      <0 0xf1040000 0 0x20000>,
--			      <0 0xf1060000 0 0x20000>;
--			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
--				      IRQ_TYPE_LEVEL_HIGH)>;
--			clocks = <&cpg CPG_MOD 408>;
--			clock-names = "clk";
--			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
--			resets = <&cpg 408>;
--		};
--
- 		rwdt: watchdog@e6020000 {
- 			compatible = "renesas,r8a77970-wdt",
- 				     "renesas,rcar-gen3-wdt";
-@@ -110,75 +93,6 @@
- 			status = "disabled";
- 		};
- 
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a77970-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&extalr_clk>;
--			clock-names = "extal", "extalr";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--			#reset-cells = <1>;
--		};
--
--		rst: reset-controller@e6160000 {
--			compatible = "renesas,r8a77970-rst";
--			reg = <0 0xe6160000 0 0x200>;
--		};
--
--		sysc: system-controller@e6180000 {
--			compatible = "renesas,r8a77970-sysc";
--			reg = <0 0xe6180000 0 0x440>;
--			#power-domain-cells = <1>;
--		};
--
--		ipmmu_vi0: mmu@febd0000 {
--			compatible = "renesas,ipmmu-r8a77970";
--			reg = <0 0xfebd0000 0 0x1000>;
--			renesas,ipmmu-main = <&ipmmu_mm 9>;
--			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
--			#iommu-cells = <1>;
--			status = "disabled";
--		};
--
--		ipmmu_ir: mmu@ff8b0000 {
--			compatible = "renesas,ipmmu-r8a77970";
--			reg = <0 0xff8b0000 0 0x1000>;
--			renesas,ipmmu-main = <&ipmmu_mm 3>;
--			power-domains = <&sysc R8A77970_PD_A3IR>;
--			#iommu-cells = <1>;
--			status = "disabled";
--		};
--
--		ipmmu_rt: mmu@ffc80000 {
--			compatible = "renesas,ipmmu-r8a77970";
--			reg = <0 0xffc80000 0 0x1000>;
--			renesas,ipmmu-main = <&ipmmu_mm 7>;
--			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
--			#iommu-cells = <1>;
--		};
--
--		ipmmu_ds1: mmu@e7740000 {
--			compatible = "renesas,ipmmu-r8a77970";
--			reg = <0 0xe7740000 0 0x1000>;
--			renesas,ipmmu-main = <&ipmmu_mm 0>;
--			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
--			#iommu-cells = <1>;
--		};
--
--		ipmmu_mm: mmu@e67b0000 {
--			compatible = "renesas,ipmmu-r8a77970";
--			reg = <0 0xe67b0000 0 0x1000>;
--			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
--			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
--			#iommu-cells = <1>;
--		};
--
--		pfc: pin-controller@e6060000 {
--			compatible = "renesas,pfc-r8a77970";
--			reg = <0 0xe6060000 0 0x504>;
--		};
--
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77970",
- 				     "renesas,rcar-gen3-gpio";
-@@ -269,6 +183,32 @@
- 			resets = <&cpg 907>;
- 		};
- 
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a77970";
-+			reg = <0 0xe6060000 0 0x504>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77970-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77970-rst";
-+			reg = <0 0xe6160000 0 0x200>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77970-sysc";
-+			reg = <0 0xe6180000 0 0x440>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a77970", "renesas,irqc";
- 			#interrupt-cells = <2>;
-@@ -285,67 +225,6 @@
- 			resets = <&cpg 407>;
- 		};
- 
--		prr: chipid@fff00044 {
--			compatible = "renesas,prr";
--			reg = <0 0xfff00044 0 4>;
--		};
--
--		dmac1: dma-controller@e7300000 {
--			compatible = "renesas,dmac-r8a77970",
--				     "renesas,rcar-dmac";
--			reg = <0 0xe7300000 0 0x10000>;
--			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "error",
--					  "ch0", "ch1", "ch2", "ch3",
--					  "ch4", "ch5", "ch6", "ch7";
--			clocks = <&cpg CPG_MOD 218>;
--			clock-names = "fck";
--			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
--			resets = <&cpg 218>;
--			#dma-cells = <1>;
--			dma-channels = <8>;
--			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
--			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
--			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
--			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>;
--		};
--
--		dmac2: dma-controller@e7310000 {
--			compatible = "renesas,dmac-r8a77970",
--				     "renesas,rcar-dmac";
--			reg = <0 0xe7310000 0 0x10000>;
--			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "error",
--					  "ch0", "ch1", "ch2", "ch3",
--					  "ch4", "ch5", "ch6", "ch7";
--			clocks = <&cpg CPG_MOD 217>;
--			clock-names = "fck";
--			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
--			resets = <&cpg 217>;
--			#dma-cells = <1>;
--			dma-channels = <8>;
--			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
--			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
--			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
--			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
--		};
--
- 		i2c0: i2c@e6500000 {
- 			compatible = "renesas,i2c-r8a77970",
- 				     "renesas,rcar-gen3-i2c";
-@@ -502,6 +381,51 @@
- 			status = "disabled";
- 		};
- 
-+		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a77970",
-+				     "renesas,etheravb-rcar-gen3";
-+			reg = <0 0xe6800000 0 0x800>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15",
-+					  "ch16", "ch17", "ch18", "ch19",
-+					  "ch20", "ch21", "ch22", "ch23",
-+					  "ch24";
-+			clocks = <&cpg CPG_MOD 812>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 812>;
-+			phy-mode = "rgmii";
-+			iommus = <&ipmmu_rt 3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a77970",
- 				     "renesas,rcar-gen3-scif",
-@@ -573,49 +497,120 @@
- 			status = "disabled";
- 		};
- 
--		avb: ethernet@e6800000 {
--			compatible = "renesas,etheravb-r8a77970",
--				     "renesas,etheravb-rcar-gen3";
--			reg = <0 0xe6800000 0 0x800>;
--			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "ch0", "ch1", "ch2", "ch3",
--					  "ch4", "ch5", "ch6", "ch7",
--					  "ch8", "ch9", "ch10", "ch11",
--					  "ch12", "ch13", "ch14", "ch15",
--					  "ch16", "ch17", "ch18", "ch19",
--					  "ch20", "ch21", "ch22", "ch23",
--					  "ch24";
--			clocks = <&cpg CPG_MOD 812>;
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a77970",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
--			resets = <&cpg 812>;
--			phy-mode = "rgmii";
--			iommus = <&ipmmu_rt 3>;
--			#address-cells = <1>;
--			#size-cells = <0>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>;
-+		};
-+
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a77970",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 217>;
-+			#dma-cells = <1>;
-+			dma-channels = <8>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
-+		};
-+
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xe7740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_ir: mmu@ff8b0000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xff8b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 3>;
-+			power-domains = <&sysc R8A77970_PD_A3IR>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xe67b0000 0 0x1000>;
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_rt: mmu@ffc80000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xffc80000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 7>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a77970";
-+			reg = <0 0xfebd0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 9>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1010000 0 0x1000>,
-+			      <0 0xf1020000 0 0x20000>,
-+			      <0 0xf1040000 0 0x20000>,
-+			      <0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
-+				      IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
- 		};
- 
- 		fcpvd0: fcp@fea27000 {
-@@ -625,6 +620,11 @@
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 603>;
- 		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
- 	};
- 
- 	timer {
--- 
-1.9.1
+Guenter, how about a keyboard macro to avoid such typos? ;)
+Fixed it in v2.
+
+
+--faggxpooeyofyrik
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrQvEoACgkQFA3kzBSg
+KbbOwhAArhzVMm3Qx2i5aLOe2+PVFPIvPqMbAahQ/D3esv/GXJnuX+OAEO+kcKpB
+9mXwgG+ndl1A6bLukm1shiegaudrZH4yRl7MWt+3q57ft62s85D0rKimbc2bZxgu
+R5DfhUNodkleqeEgg8qOwOXCkSt0jRFte7TbZDoaRjfPsVnbzJROI3nRXYTleCSs
+weBYiGh1XsqMGb9lJk7Gb0LE9rmRfH2zBHwoJWUqFHj404GEYs3kKt5UtdQ1Ow88
+ZZal6hVIUxw5FY0nZvaCuUvSrEabixoqgM0evn6ISwoHsUAqvSR4eeJ89s3kQd3f
+GA57IVU/JsDikNIWuNw1SPgPAxjfIjHthVcUqLe9e1vMTu6YtuD/6YkAlSHCPCM2
+Oao2QSzbEsKhNJfkjCB0gXXZI0z0Bx9Mqilk0fMPKIgyX/zz/hf+RcX2/AyuUduK
+495lo7jXIN56mkgIbF4YcCiyKOfTZn3LuqdB6Ua0/nPeB4w6B+BYrs1IZbyiJhsg
+pydAKZ/a3yRjAeopbmJ5BH7wAQUuFyrf0cPvYJKOGZbbxT044dEfPcw1stptToPn
+R6JZDMRP1OKPzlN5uPfhRHPaj4qSM3G4I519l2HxTddcXEjlOip4OHpClzx0t+RM
+aI3jIO3Fm46mkC20755U56uH7XYekvVcE0VNOzGCyrkP9xVT9o4=
+=EE1k
+-----END PGP SIGNATURE-----
+
+--faggxpooeyofyrik--
