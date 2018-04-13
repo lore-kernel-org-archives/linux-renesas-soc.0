@@ -1,41 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54148 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751234AbeDVK2o (ORCPT
+Received: from sauhun.de ([88.99.104.3]:47464 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754300AbeDMOKb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Apr 2018 06:28:44 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
+        Fri, 13 Apr 2018 10:10:31 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] R-Car Gen2 support for FDP1
-Date: Sun, 22 Apr 2018 13:28:46 +0300
-Message-Id: <20180422102849.2481-1-laurent.pinchart+renesas@ideasonboard.com>
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 0/5] mmc: renesas_sdhi_internal_dmac: DMA handling fixes
+Date: Fri, 13 Apr 2018 16:10:16 +0200
+Message-Id: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+I have collected the patches floating around for renesas_sdhi_internal_dmac and
+grouped them to avoid dependency issues. I think it would be good to give
+Shimoda-san next week to look at these patches, too.
 
-This small patch series improves support of the FDP1 on R-Car Gen2 platforms
-by enabling compilation without requiring the Gen3-only FCP dependency.
+Regarding stable: I think patch 1 is clearly for stable. Patch 3 maybe, but it
+needs patch 2 which is not. Not sure if it is worth the hazzle. Maybe
+Shimoda-san has an opinion, too? Patches 4 & 5 are not for stable.
 
-As the Kconfig change (2/3) conflicts with a patch recently posted by Geert I
-have included it in the series as 1/3. Patch 3/3 fixes indentation oddities I
-have run across during development.
+Changes since v1
+	* patch 1: drop superfluous NULL check on soc->date
+		   (Thanks Geert!)
+	* patches 2,3,5: added Simon's tag
 
-Geert Uytterhoeven (1):
-  v4l: rcar_fdp1: Change platform dependency to ARCH_RENESAS
+Kind regards,
 
-Laurent Pinchart (2):
-  v4l: rcar_fdp1: Enable compilation on Gen2 platforms
-  v4l: rcar_fdp1: Fix indentation oddities
+   Wolfram
 
- drivers/media/platform/Kconfig     |  4 ++--
- drivers/media/platform/rcar_fdp1.c | 28 ++++++++++++++--------------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+Masaharu Hayakawa (1):
+  mmc: renesas_sdhi: Fix alignment check of sg buffer
+
+Niklas Söderlund (1):
+  mmc: renesas_sdhi: use helpers to access struct scatterlist members
+
+Wolfram Sang (3):
+  mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs
+  mmc: renesas_sdhi_internal_dmac: use more generic whitelisting
+  mmc: renesas_sdhi_internal_dmac: remove superfluous WARN
+
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 63 +++++++++++++++++++--------
+ 1 file changed, 45 insertions(+), 18 deletions(-)
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
