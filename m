@@ -1,70 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45302 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:47526 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753335AbeDSOG5 (ORCPT
+        id S1754561AbeDMOKd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:06:57 -0400
+        Fri, 13 Apr 2018 10:10:33 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To: linux-mmc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Simon Horman <horms@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org
-Subject: [PATCH 19/61] iio: common: hid-sensors: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:49 +0200
-Message-Id: <20180419140641.27926-20-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 5/5] mmc: renesas_sdhi_internal_dmac: remove superfluous WARN
+Date: Fri, 13 Apr 2018 16:10:21 +0200
+Message-Id: <20180413141021.8680-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
+References: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+The WARN can never trigger because we limited the max_seg number in
+renesas_sdhi_of_data already. Remove it and update the comment.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-index cfb6588565ba..2ce0efd98cc0 100644
---- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-+++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-@@ -304,8 +304,7 @@ EXPORT_SYMBOL(hid_sensor_setup_trigger);
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 4b275225aa9d..0415ecbfeb43 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -91,7 +91,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ 	.scc_offset	= 0x1000,
+ 	.taps		= rcar_gen3_scc_taps,
+ 	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
+-	/* Gen3 SDHI DMAC can handle 0xffffffff blk count, but seg = 1 */
++	/* DMAC can handle 0xffffffff blk count but only 1 segment */
+ 	.max_blk_count	= 0xffffffff,
+ 	.max_segs	= 1,
+ };
+@@ -159,9 +159,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
+ 	struct scatterlist *sg = host->sg_ptr;
+ 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
  
- static int __maybe_unused hid_sensor_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
- 
- 	return _hid_sensor_power_state(attrb, false);
-@@ -313,8 +312,7 @@ static int __maybe_unused hid_sensor_suspend(struct device *dev)
- 
- static int __maybe_unused hid_sensor_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
- 	schedule_work(&attrb->work);
- 	return 0;
-@@ -322,8 +320,7 @@ static int __maybe_unused hid_sensor_resume(struct device *dev)
- 
- static int __maybe_unused hid_sensor_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
- 	return _hid_sensor_power_state(attrb, true);
- }
+-	/* This DMAC cannot handle if sg_len is not 1 */
+-	WARN_ON(host->sg_len > 1);
+-
+ 	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
+ 			mmc_get_dma_dir(data)))
+ 		goto force_pio;
 -- 
 2.11.0
