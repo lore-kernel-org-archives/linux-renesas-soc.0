@@ -1,108 +1,168 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:55466 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751100AbeDNL7e (ORCPT
+Received: from relay1.mentorg.com ([192.94.38.131]:65092 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751536AbeDMMof (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 07:59:34 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 08/33] rcar-vin: move max width and height information to chip information
-Date: Sat, 14 Apr 2018 13:57:01 +0200
-Message-Id: <20180414115726.5075-9-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 13 Apr 2018 08:44:35 -0400
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: <linux-spi@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH 2/2] spi: sh-msiof: Simplify calculation of divisors for transfer rate
+Date: Fri, 13 Apr 2018 15:44:17 +0300
+Message-ID: <1523623457-9682-3-git-send-email-vladimir_zapolskiy@mentor.com>
+In-Reply-To: <1523623457-9682-1-git-send-email-vladimir_zapolskiy@mentor.com>
+References: <1523623457-9682-1-git-send-email-vladimir_zapolskiy@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the max supported width and height will be different from Gen2.
-Move the limits to the struct rvin_info to prepare for Gen3 support.
+The change updates sh_msiof_spi_set_clk_regs() function by iterating
+over BRDV power values. Note that the change is a functional one, namely
+prescaler output x 1/1 set in BRDV bit field (0b111) for MSO division
+rate set to 2 is substituted by BRDV = 0b000 and BRPS = 0b0, in terms
+of written values to TSCR setting of 0x0107 is substituted by 0x0000,
+and for all input parameter cases this is the only functional change,
+which touches the controller.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+As a result of the rework the function is supposed to be slightly more
+efficient and more readable and maintainable in case of any further
+extensions.
+
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 6 ++++++
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++----
- drivers/media/platform/rcar-vin/rcar-vin.h  | 5 +++++
- 3 files changed, 13 insertions(+), 4 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 67 ++++++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 71d66916ce1b28ab..be49d8968f0a0cef 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -243,14 +243,20 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 
- static const struct rvin_info rcar_info_h1 = {
- 	.model = RCAR_H1,
-+	.max_width = 2048,
-+	.max_height = 2048,
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 8171eedbfc90..5c1ff0097e41 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -39,7 +39,7 @@ struct sh_msiof_chipdata {
+ 	u16 tx_fifo_size;
+ 	u16 rx_fifo_size;
+ 	u16 master_flags;
+-	u16 min_div;
++	u16 min_div_pow;
  };
  
- static const struct rvin_info rcar_info_m1 = {
- 	.model = RCAR_M1,
-+	.max_width = 2048,
-+	.max_height = 2048,
+ struct sh_msiof_spi_priv {
+@@ -51,7 +51,7 @@ struct sh_msiof_spi_priv {
+ 	struct completion done;
+ 	unsigned int tx_fifo_size;
+ 	unsigned int rx_fifo_size;
+-	unsigned int min_div;
++	unsigned int min_div_pow;
+ 	void *tx_dma_page;
+ 	void *rx_dma_page;
+ 	dma_addr_t tx_dma_addr;
+@@ -249,43 +249,46 @@ static irqreturn_t sh_msiof_spi_irq(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static struct {
+-	unsigned short div;
+-	unsigned short brdv;
+-} const sh_msiof_spi_div_table[] = {
+-	{ 1,	SCR_BRDV_DIV_1 },
+-	{ 2,	SCR_BRDV_DIV_2 },
+-	{ 4,	SCR_BRDV_DIV_4 },
+-	{ 8,	SCR_BRDV_DIV_8 },
+-	{ 16,	SCR_BRDV_DIV_16 },
+-	{ 32,	SCR_BRDV_DIV_32 },
++static const u32 sh_msiof_spi_div_array[] = {
++	SCR_BRDV_DIV_1, SCR_BRDV_DIV_2,	 SCR_BRDV_DIV_4,
++	SCR_BRDV_DIV_8,	SCR_BRDV_DIV_16, SCR_BRDV_DIV_32,
  };
  
- static const struct rvin_info rcar_info_gen2 = {
- 	.model = RCAR_GEN2,
-+	.max_width = 2048,
-+	.max_height = 2048,
- };
+ static void sh_msiof_spi_set_clk_regs(struct sh_msiof_spi_priv *p,
+ 				      unsigned long parent_rate, u32 spi_hz)
+ {
+-	unsigned long div = 1024;
++	unsigned long div;
+ 	u32 brps, scr;
+-	size_t k;
++	unsigned int div_pow = p->min_div_pow;
  
- static const struct of_device_id rvin_of_id_table[] = {
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 0a035667c0b0e93f..8805d7911a761019 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -23,8 +23,6 @@
- #include "rcar-vin.h"
+-	if (!WARN_ON(!spi_hz || !parent_rate))
+-		div = DIV_ROUND_UP(parent_rate, spi_hz);
+-
+-	div = max_t(unsigned long, div, p->min_div);
++	if (!spi_hz || !parent_rate) {
++		WARN(1, "Invalid clock rate parameters %lu and %u\n",
++		     parent_rate, spi_hz);
++		return;
++	}
  
- #define RVIN_DEFAULT_FORMAT	V4L2_PIX_FMT_YUYV
--#define RVIN_MAX_WIDTH		2048
--#define RVIN_MAX_HEIGHT		2048
- 
- /* -----------------------------------------------------------------------------
-  * Format Conversions
-@@ -258,8 +256,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
- 
- 	/* Limit to VIN capabilities */
--	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
--			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
-+	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
-+			      &pix->height, 4, vin->info->max_height, 2, 0);
- 
- 	pix->bytesperline = max_t(u32, pix->bytesperline,
- 				  rvin_format_bytesperline(pix));
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index b63c4fce68adaae6..8d135ed3f7abd855 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -89,9 +89,14 @@ struct rvin_graph_entity {
- /**
-  * struct rvin_info - Information about the particular VIN implementation
-  * @model:		VIN model
-+ * @max_width:		max input width the VIN supports
-+ * @max_height:		max input height the VIN supports
-  */
- struct rvin_info {
- 	enum model_id model;
+-	for (k = 0; k < ARRAY_SIZE(sh_msiof_spi_div_table); k++) {
+-		brps = DIV_ROUND_UP(div, sh_msiof_spi_div_table[k].div);
++	div = DIV_ROUND_UP(parent_rate, spi_hz);
++	if (div <= 1024) {
+ 		/* SCR_BRDV_DIV_1 is valid only if BRPS is x 1/1 or x 1/2 */
+-		if (sh_msiof_spi_div_table[k].div == 1 && brps > 2)
+-			continue;
+-		if (brps <= 32) /* max of brdv is 32 */
+-			break;
+-	}
++		if (!div_pow && div <= 32 && div > 2)
++			div_pow = 1;
 +
-+	unsigned int max_width;
-+	unsigned int max_height;
++		if (div_pow)
++			brps = (div + 1) >> div_pow;
++		else
++			brps = div;
+ 
+-	k = min_t(int, k, ARRAY_SIZE(sh_msiof_spi_div_table) - 1);
+-	brps = min_t(int, brps, 32);
++		for (; brps > 32; div_pow++)
++			brps = (brps + 1) >> 1;
++	} else {
++		/* Set transfer rate composite divisor to 2^5 * 32 = 1024 */
++		dev_err(&p->pdev->dev,
++			"Requested SPI transfer rate %d is too low\n", spi_hz);
++		div_pow = 5;
++		brps = 32;
++	}
+ 
+-	scr = sh_msiof_spi_div_table[k].brdv | SCR_BRPS(brps);
++	scr = sh_msiof_spi_div_array[div_pow] | SCR_BRPS(brps);
+ 	sh_msiof_write(p, TSCR, scr);
+ 	if (!(p->master->flags & SPI_MASTER_MUST_TX))
+ 		sh_msiof_write(p, RSCR, scr);
+@@ -1041,21 +1044,21 @@ static const struct sh_msiof_chipdata sh_data = {
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.master_flags = 0,
+-	.min_div = 1,
++	.min_div_pow = 0,
  };
  
- /**
+ static const struct sh_msiof_chipdata rcar_gen2_data = {
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.master_flags = SPI_MASTER_MUST_TX,
+-	.min_div = 1,
++	.min_div_pow = 0,
+ };
+ 
+ static const struct sh_msiof_chipdata rcar_gen3_data = {
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.master_flags = SPI_MASTER_MUST_TX,
+-	.min_div = 2,
++	.min_div_pow = 1,
+ };
+ 
+ static const struct of_device_id sh_msiof_match[] = {
+@@ -1319,7 +1322,7 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, p);
+ 	p->master = master;
+ 	p->info = info;
+-	p->min_div = chipdata->min_div;
++	p->min_div_pow = chipdata->min_div_pow;
+ 
+ 	init_completion(&p->done);
+ 
 -- 
-2.16.2
+2.8.1
