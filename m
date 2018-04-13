@@ -1,59 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:31964 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752410AbeDJIgd (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34676 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750851AbeDMRWp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:36:33 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v4 5/8] dt-bindings: arm: Document the RZN1D-DB board
-Date: Tue, 10 Apr 2018 09:30:05 +0100
-Message-Id: <1523349015-37985-6-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+        Fri, 13 Apr 2018 13:22:45 -0400
+Date: Fri, 13 Apr 2018 12:22:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 3/5] pcie-rcar: add R-Car gen3 PHY support
+Message-ID: <20180413172244.ceixi5lhl2tygsfk@rob-hp-laptop>
+References: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
+ <3eb7e548-8b21-2347-c742-a007fd9cfed9@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3eb7e548-8b21-2347-c742-a007fd9cfed9@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This documents the RZ/N1 bindings for the RZN1D-DB board.
+On Sun, Apr 08, 2018 at 09:05:10PM +0300, Sergei Shtylyov wrote:
+> On R-Car gen3 SoCs the PCIe PHY has its own register region -- and I have
+> written  a generic PHY driver for it, thus we need to add the corresponding
+> code in  rcar_pcie_hw_init_gen3() and call devm_phy_optional_get() at the
+> driver's probing time,  so that the existing R-Car gen3 device trees (not
+> having a PHY node) would still work (we only need  to power up the PHY on
+> R-Car V3H).
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Spurious spaces, again...
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index d3d1df9..024caf7 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -47,7 +47,8 @@ SoCs:
-     compatible = "renesas,r8a77980"
-   - R-Car D3 (R8A77995)
-     compatible = "renesas,r8a77995"
--
-+  - RZ/N1D (R9A06G032)
-+    compatible = "renesas,r9a06g032", "renesas,rzn1"
- 
- Boards:
- 
-@@ -104,6 +105,8 @@ Boards:
-     compatible = "renesas,porter", "renesas,r8a7791"
-   - RSKRZA1 (YR0K77210C000BE)
-     compatible = "renesas,rskrza1", "renesas,r7s72100"
-+  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
-+    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032", "renesas,rzn1"
-   - Salvator-X (RTP0RC7795SIPB0010S)
-     compatible = "renesas,salvator-x", "renesas,r8a7795"
-   - Salvator-X (RTP0RC7796SIPB0011S)
--- 
-2.7.4
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> Changes in version 2:
+> - updated the bindings.
+> 
+>  Documentation/devicetree/bindings/pci/rcar-pci.txt |    5 +++
+
+Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+>  drivers/pci/host/pcie-rcar.c                       |   27 +++++++++++++++++++--
+>  2 files changed, 30 insertions(+), 2 deletions(-)
