@@ -1,61 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:44802 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1945928AbeCBKRp (ORCPT
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:33354 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750972AbeDMR2A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:17:45 -0500
-Received: by mail-oi0-f67.google.com with SMTP id b8so6678655oib.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Mar 2018 02:17:45 -0800 (PST)
+        Fri, 13 Apr 2018 13:28:00 -0400
 MIME-Version: 1.0
-In-Reply-To: <1517240748-14780-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1517240748-14780-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1517240748-14780-6-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 2 Mar 2018 11:17:44 +0100
-Message-ID: <CAMRc=MdBFBqts1G7m9mXfok+ZHTK8EtB=T6Nmn7ACmLQptxyDw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] dt-bindings: at24: add bindings for Rohm BR24T01
+In-Reply-To: <1523638854-21804-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1523638854-21804-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Apr 2018 19:27:59 +0200
+Message-ID: <CAMuHMdXn3ngXNFFM6Zsi2-YftvKeWnBSCxoQHd7j3xxFnBORrA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] serial: sh-sci: Use pm_runtime_get_sync()/put()
 To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>, geert@linux-m68k.org,
-        kieran.bingham@ideasonboard.com, Wolfram Sang <wsa@the-dreams.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-serial@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-2018-01-29 16:45 GMT+01:00 Ulrich Hecht <ulrich.hecht+renesas@gmail.com>:
-> Both manufacturer and name variant.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> ---
->  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
-> index 1812c84..dd29937 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at24.txt
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.txt
-> @@ -40,6 +40,7 @@ Required properties:
->                  "microchip",
->                  "ramtron",
->                  "renesas",
-> +                "rohm",
->                  "nxp",
->                  "st",
->
-> @@ -47,6 +48,7 @@ Required properties:
->                  variants of the above. Known such exceptions are listed below:
->
->                  "renesas,r1ex24002" - the fallback is "atmel,24c02"
-> +                "rohm,br24t01" - the fallback is "atmel,24c01"
->
->    - reg: The I2C address of the EEPROM.
->
-> --
-> 2.7.4
->
+Hi Ulrich,
 
-Applied to for-next, thanks.
+On Fri, Apr 13, 2018 at 7:00 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> These patches make sure that the device is up while the suspend/resume code
+> is executed. Up-port from the BSP, tested not to break stuff.
+>
+> Hien Dang (2):
+>   serial: sh-sci: Use pm_runtime_get_sync()/put() on suspend
+>   serial: sh-sci: Use pm_runtime_get_sync()/put() on resume
 
-Bart
+I don't think it makes much sense to split this in two parts...
+
+Furthermore, shouldn't this be handled by the serial core, calling
+uart_change_pm()?
+
+It looks like uart_resume_port() already changes the port's state to
+enabled, while  uart_suspend_port() assumes the port is already enabled,
+and disables it.
+
+Perhaps handling is not correct for some code paths?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
