@@ -1,83 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f54.google.com ([209.85.214.54]:52542 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeDEHaK (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:64730 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753126AbeDMCQM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Apr 2018 03:30:10 -0400
-Received: by mail-it0-f54.google.com with SMTP id f6-v6so1697522ita.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Apr 2018 00:30:10 -0700 (PDT)
+        Thu, 12 Apr 2018 22:16:12 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
+Subject: RE: [PATCH 1/2] clk: renesas: Add r8a77990 CPG Core Clock Definitions
+Date: Fri, 13 Apr 2018 02:16:06 +0000
+Message-ID: <TY1PR06MB09927E1CE7136B0690A31B7AD8B30@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1523439447-1084-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdXata291k6ViN-eHrw6OLN49p2CJT6yZHqQukL2Yf2Lag@mail.gmail.com>
+In-Reply-To: <CAMuHMdXata291k6ViN-eHrw6OLN49p2CJT6yZHqQukL2Yf2Lag@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20180327111206.y7azdu355c6cevvi@verge.net.au>
-References: <20180213123358.13212-1-horms+renesas@verge.net.au>
- <CAPDyKFryhg=5G9G3ss3hFSAuri1-_y0uu7ZK=PNGJ0TF=-__DA@mail.gmail.com>
- <20180227090757.wvm6j4sy5nmeecf3@katana> <CAPDyKFqMacY1THjO+cTb6Aws3mCnbLogui9T6PjiVcoR89FiLg@mail.gmail.com>
- <20180227130222.zsz73d3upi3s7vjv@ninjato> <20180327111206.y7azdu355c6cevvi@verge.net.au>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 5 Apr 2018 09:30:09 +0200
-Message-ID: <CAPDyKFohK90+5mQRx84HhkFCUPBuNDSMRZ+7FyGt5k0akjsOwA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] mmc: renesas_sdhi: add eMMC HS400 mode support
-To: Simon Horman <horms@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 27 March 2018 at 13:12, Simon Horman <horms@verge.net.au> wrote:
-> On Tue, Feb 27, 2018 at 02:02:23PM +0100, Wolfram Sang wrote:
->>
->> > Perhaps someone need to explain in more detail what the HW controller
->> > needs to manage tuning for HS400? I don't like that we may end up
->> > getting it magically to work, then it's we better understand the
->> > details and if the current sequence provided by the mmc core can't
->> > fulfill the need for this case, we may instead consider adding an
->> > additional pre/post host ops.
->>
->> Thanks. Exactly this thinking prevented me from saying "It works, let's
->> ship it" ;)
->
-> Thanks, I've dug a little deeper into the history of this code and
-> the associated hardware documentation and it seems that the desired
-> sequence is as follows:
->
-> 1. Reset HS400 mode (currently executed near beginning of tmio_mmc_set_ios())
-> 2. Set clock for HS200 mode (tmio_mmc_set_ios())
-> 3. Tune in HS200 mode
-> 4. Set clock for HS200 mode (tmio_mmc_set_ios())
-> 5. Set to HS400 mode (currently renesas_sdhi_prepare_hs400_tuning() which
->                       is executed near the end of tmio_mmc_set_ios())
-
-This seems to also refer to how the eMMC spec describes the sequence,
-and thus also implemented by the mmc core.
-
->
-> X. It is also necessary to disable the SCC after setting HS400 mode
->    has occurred before setting to High Speed mode.
->    This is currently executed near the beginning of tmio_mmc_set_ios().
->
-> The current implementation differs a little from the above and its
-> hard to tell if that is because of hardware requirements or as
-> an artefact of the implementation of steps 1 and 5 being hooked into
-> tmio_mmc_set_ios().
->
-> It seems to me that step 1 could use the MMC core prepare_hs400_tuning
-> hook. Its less clear to me where steps 5 and X should hook in but perhaps
-> tmio_mmc_set_ios() is the right place.
-
-In ->set_ios() you are relying on checking the value of ->ios.timing
-(MMC_TIMING_MMC_HS200 and MMC_TIMING_MMC_HS400) to understand what
-actions to take.
-
-For tuning, we found this was not sufficient when trying to cope with
-all different MMC controller constraints, which is why we added the
-->prepare_hs400_tuning() ops. I am guessing it should work for your
-case as well.
-
-However, if that isn't the case and you find reasons to add another
-->[xyz]_hs400_tuning() callback, then I am open to discuss that.
-
-Kind regards
-Uffe
+SGkgR2VlcnQtc2FuLA0KDQpUaGFuayB5b3UgZm9yIHRoZSByZXZpZXchDQoNCj4gRnJvbTogR2Vl
+cnQgVXl0dGVyaG9ldmVuLCBTZW50OiBUaHVyc2RheSwgQXByaWwgMTIsIDIwMTggOToyMyBQTQ0K
+PiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBPbiBXZWQsIEFwciAxMSwgMjAxOCBhdCAxMToz
+NyBBTSwgWW9zaGloaXJvIFNoaW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMu
+Y29tPiB3cm90ZToNCjxzbmlwPg0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9pbmNsdWRl
+L2R0LWJpbmRpbmdzL2Nsb2NrL3I4YTc3OTkwLWNwZy1tc3NyLmgNCj4gPiBAQCAtMCwwICsxLDYz
+IEBADQo+ID4gKy8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wICovDQo+ID4gKy8q
+DQo+ID4gKyAqIENvcHlyaWdodCAoQykgMjAxOCBSZW5lc2FzIEVsZWN0cm9uaWNzIENvcnAuDQo+
+ID4gKyAqLw0KPiA+ICsjaWZuZGVmIF9fRFRfQklORElOR1NfQ0xPQ0tfUjhBNzc5OTBfQ1BHX01T
+U1JfSF9fDQo+ID4gKyNkZWZpbmUgX19EVF9CSU5ESU5HU19DTE9DS19SOEE3Nzk5MF9DUEdfTVNT
+Ul9IX18NCj4gPiArDQo+ID4gKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9jbG9jay9yZW5lc2FzLWNw
+Zy1tc3NyLmg+DQo+ID4gKw0KPiA+ICsvKiByOGE3Nzk5MCBDUEcgQ29yZSBDbG9ja3MgKi8NCj4g
+DQo+IFsuLi5dDQo+IA0KPiA+ICsjZGVmaW5lIFI4QTc3OTkwX0NMS19DU0kwICAgICAgICAgICAg
+ICA0Nw0KPiANCj4gTm90ZSB0aGF0IENTSTAgaXMgbm90IGxpc3RlZCBpbiBUYWJsZSA4LjJnICgi
+Ui1DYXIgRTMiKS4NCj4gUHJvYmFibHkgaXQgZG9lcyBleGlzdCwgZ2l2ZW46DQo+ICAgLSBUYWJs
+ZSA4LjExICgiUmVnaXN0ZXIgQ29uZmlndXJhdGlvbiIpIHNheXMgQ1NJMENLQ1IgZXhpc3RzIG9u
+IFItQ2FyIEUzLA0KPiAgIC0gRmlndXJlIDI1LjYgKCJDU0kyIEJsb2NrIERpYWdyYW0gKFItQ2Fy
+IEUzKSIpIHNob3dzIENTSTAuDQoNCkkgdGhpbmsgc28uIEknbSBhc2tpbmcgSFcgdGVhbSBhYm91
+dCBtaXNzaW5nIENTSTAgaW4gVGFibGUgOC4yZyBub3cuDQoNCj4gPiArI2RlZmluZSBSOEE3Nzk5
+MF9DTEtfUE9TVDMgICAgICAgICAgICAgNDgNCj4gDQo+IEkgbm90aWNlZCB0aGVzZSBQT1NUeCBj
+bG9ja3MgaGF2ZSBiZWVuIGFkZGVkIHRvIGFsbCBSLUNhciBHZW4zIGNsb2NrIHRhYmxlcy4NCj4g
+SXQgZG9lc24ndCBsb29rIGxpa2Ugd2Ugd2lsbCBldmVyIG5lZWQgdG8gcmVmZXIgdGhlbSBmcm9t
+IERULCBzbyBJIHRoaW5rIHdlDQo+IGNhbiB0cmVhdCB0aGVtIGFzIGludGVybmFsIGNsb2Nrcywg
+YW5kIG9taXQgdGhlbSBmcm9tIHRoZSBEVCBiaW5kaW5ncy4NCj4gDQo+IFdoYXQgZG8geW91IHRo
+aW5rPw0KDQpJIGFncmVlIHdpdGggeW91LiBTbywgSSB3aWxsIG9taXQgUE9TVHggY2xvY2tzIGZy
+b20gdGhlIERUIGJpbmRpbmdzIGluIHYyIHBhdGNoLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhp
+cm8gU2hpbW9kYQ0KDQo=
