@@ -1,87 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47512 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754305AbeDMOKb (ORCPT
+Received: from bombadil.infradead.org ([198.137.202.133]:51714 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeDMQnq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:10:31 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Simon Horman <horms@verge.net.au>,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 3/5] mmc: renesas_sdhi: Fix alignment check of sg buffer
-Date: Fri, 13 Apr 2018 16:10:19 +0200
-Message-Id: <20180413141021.8680-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
-References: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
+        Fri, 13 Apr 2018 12:43:46 -0400
+Date: Fri, 13 Apr 2018 09:43:33 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, robin.murphy@arm.com,
+        dalias@libc.org, ysato@users.sourceforge.jp,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: Re: [PATCH] base: dma-mapping: Postpone cpu addr translation on
+ mmap()
+Message-ID: <20180413164333.GA2205@infradead.org>
+References: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
+ <20180409175251.GA5426@infradead.org>
+ <20180410075752.GB20945@w540>
+ <20180413163009.GE6666@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180413163009.GE6666@w540>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-
-Sometimes sg->offset is not used for buffer addresses allocated by
-dma_map_sg(), so alignment checks should be done on the allocated buffer
-addresses. Delete the alignment check for sg->offset that is done before
-dma_map_sg(). Instead, it performs the alignment check for
-sg->dma_address after dma_map_sg().
-
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: broke this commit in two and tidied small style issue]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[rebased to mmc/next]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 4f67195cb5f5..a02fab89e25e 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -158,14 +158,20 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- {
- 	struct scatterlist *sg = host->sg_ptr;
- 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
--	int ret;
- 
- 	/* This DMAC cannot handle if sg_len is not 1 */
- 	WARN_ON(host->sg_len > 1);
- 
-+	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
-+			mmc_get_dma_dir(data)))
-+		goto force_pio;
-+
- 	/* This DMAC cannot handle if buffer is not 8-bytes alignment */
--	if (!IS_ALIGNED(sg->offset, 8))
-+	if (!IS_ALIGNED(sg_dma_address(sg), 8)) {
-+		dma_unmap_sg(&host->pdev->dev, sg, host->sg_len,
-+			     mmc_get_dma_dir(data));
- 		goto force_pio;
-+	}
- 
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
-@@ -176,11 +182,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
- 	}
- 
--	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len,
--			 mmc_get_dma_dir(data));
--	if (ret == 0)
--		goto force_pio;
--
- 	renesas_sdhi_internal_dmac_enable_dma(host, true);
- 
- 	/* set dma parameters */
--- 
-2.11.0
+Please send a v2.
