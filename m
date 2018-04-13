@@ -1,62 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45342 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:47512 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753544AbeDSOHL (ORCPT
+        id S1754305AbeDMOKb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:11 -0400
+        Fri, 13 Apr 2018 10:10:31 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To: linux-mmc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Simon Horman <horms@verge.net.au>,
+        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org
-Subject: [PATCH 48/61] staging: iio: adc: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:18 +0200
-Message-Id: <20180419140641.27926-49-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 3/5] mmc: renesas_sdhi: Fix alignment check of sg buffer
+Date: Fri, 13 Apr 2018 16:10:19 +0200
+Message-Id: <20180413141021.8680-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
+References: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
+Sometimes sg->offset is not used for buffer addresses allocated by
+dma_map_sg(), so alignment checks should be done on the allocated buffer
+addresses. Delete the alignment check for sg->offset that is done before
+dma_map_sg(). Instead, it performs the alignment check for
+sg->dma_address after dma_map_sg().
+
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+[Niklas: broke this commit in two and tidied small style issue]
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+[rebased to mmc/next]
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/staging/iio/adc/ad7606_par.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/iio/adc/ad7606_par.c b/drivers/staging/iio/adc/ad7606_par.c
-index 3eb6f8f312dd..a34c2a1d5373 100644
---- a/drivers/staging/iio/adc/ad7606_par.c
-+++ b/drivers/staging/iio/adc/ad7606_par.c
-@@ -18,8 +18,7 @@
- static int ad7606_par16_read_block(struct device *dev,
- 				   int count, void *buf)
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 4f67195cb5f5..a02fab89e25e 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -158,14 +158,20 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct ad7606_state *st = iio_priv(indio_dev);
+ 	struct scatterlist *sg = host->sg_ptr;
+ 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
+-	int ret;
  
- 	insw((unsigned long)st->base_address, buf, count);
-@@ -34,8 +33,7 @@ static const struct ad7606_bus_ops ad7606_par16_bops = {
- static int ad7606_par8_read_block(struct device *dev,
- 				  int count, void *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct ad7606_state *st = iio_priv(indio_dev);
+ 	/* This DMAC cannot handle if sg_len is not 1 */
+ 	WARN_ON(host->sg_len > 1);
  
- 	insb((unsigned long)st->base_address, buf, count * 2);
++	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
++			mmc_get_dma_dir(data)))
++		goto force_pio;
++
+ 	/* This DMAC cannot handle if buffer is not 8-bytes alignment */
+-	if (!IS_ALIGNED(sg->offset, 8))
++	if (!IS_ALIGNED(sg_dma_address(sg), 8)) {
++		dma_unmap_sg(&host->pdev->dev, sg, host->sg_len,
++			     mmc_get_dma_dir(data));
+ 		goto force_pio;
++	}
+ 
+ 	if (data->flags & MMC_DATA_READ) {
+ 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
+@@ -176,11 +182,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
+ 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
+ 	}
+ 
+-	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len,
+-			 mmc_get_dma_dir(data));
+-	if (ret == 0)
+-		goto force_pio;
+-
+ 	renesas_sdhi_internal_dmac_enable_dma(host, true);
+ 
+ 	/* set dma parameters */
 -- 
 2.11.0
