@@ -1,132 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:15837 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750939AbeDNMAt (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43430 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750792AbeDMT0J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:00:49 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+        Fri, 13 Apr 2018 15:26:09 -0400
+Received: by mail-lf0-f66.google.com with SMTP id v207-v6so14068037lfa.10
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Apr 2018 12:26:08 -0700 (PDT)
+Subject: Re: [PATCH v2 1/5] mmc: renesas_sdhi_internal_dmac: limit DMA RX for
+ old SoCs
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 17/33] rcar-vin: cache video standard
-Date: Sat, 14 Apr 2018 13:57:10 +0200
-Message-Id: <20180414115726.5075-18-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Simon Horman <horms@verge.net.au>,
+        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+References: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
+ <20180413141021.8680-2-wsa+renesas@sang-engineering.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <5a7d9222-76dd-8071-03a0-6eb39c7e0393@cogentembedded.com>
+Date: Fri, 13 Apr 2018 22:26:05 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180413141021.8680-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-At stream on time the driver should not query the subdevice for which
-standard are used. Instead it should be cached when userspace sets the
-standard and used at stream on time.
+Hello!
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c |  6 ++++++
- drivers/media/platform/rcar-vin/rcar-dma.c  |  7 ++-----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  2 ++
- 4 files changed, 18 insertions(+), 7 deletions(-)
+On 04/13/2018 05:10 PM, Wolfram Sang wrote:
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index be49d8968f0a0cef..8c251687e81b345b 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -96,6 +96,12 @@ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
- 	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
- 		return ret;
- 
-+	/* Read standard */
-+	vin->std = V4L2_STD_UNKNOWN;
-+	ret = v4l2_subdev_call(subdev, video, g_std, &vin->std);
-+	if (ret < 0 && ret != -ENOIOCTLCMD)
-+		return ret;
-+
- 	/* Add the controls */
- 	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
- 	if (ret < 0)
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 9233924e5b52de5f..79f4074b931b5aeb 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -592,7 +592,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
- static int rvin_setup(struct rvin_dev *vin)
- {
- 	u32 vnmc, dmr, dmr2, interrupts;
--	v4l2_std_id std;
- 	bool progressive = false, output_is_yuv = false, input_is_yuv = false;
- 
- 	switch (vin->format.field) {
-@@ -606,10 +605,8 @@ static int rvin_setup(struct rvin_dev *vin)
- 		/* Default to TB */
- 		vnmc = VNMC_IM_FULL;
- 		/* Use BT if video standard can be read and is 60 Hz format */
--		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
--			if (std & V4L2_STD_525_60)
--				vnmc = VNMC_IM_FULL | VNMC_FOC;
--		}
-+		if (vin->std & V4L2_STD_525_60)
-+			vnmc = VNMC_IM_FULL | VNMC_FOC;
- 		break;
- 	case V4L2_FIELD_INTERLACED_TB:
- 		vnmc = VNMC_IM_FULL;
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 9eddc2d95ea7d341..ee8044992eca1a35 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -475,6 +475,8 @@ static int rvin_s_std(struct file *file, void *priv, v4l2_std_id a)
- 	if (ret < 0)
- 		return ret;
- 
-+	vin->std = a;
-+
- 	/* Changing the standard will change the width/height */
- 	return rvin_reset_format(vin);
- }
-@@ -482,9 +484,13 @@ static int rvin_s_std(struct file *file, void *priv, v4l2_std_id a)
- static int rvin_g_std(struct file *file, void *priv, v4l2_std_id *a)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
--	struct v4l2_subdev *sd = vin_to_source(vin);
- 
--	return v4l2_subdev_call(sd, video, g_std, a);
-+	if (v4l2_subdev_has_op(vin_to_source(vin), pad, dv_timings_cap))
-+		return -ENOIOCTLCMD;
-+
-+	*a = vin->std;
-+
-+	return 0;
- }
- 
- static int rvin_subscribe_event(struct v4l2_fh *fh,
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index e940366d7e8d0e76..06cec4f8e5ffaf2b 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -118,6 +118,7 @@ struct rvin_info {
-  * @crop:		active cropping
-  * @compose:		active composing
-  * @source:		active size of the video source
-+ * @std:		active video standard of the video source
-  */
- struct rvin_dev {
- 	struct device *dev;
-@@ -146,6 +147,7 @@ struct rvin_dev {
- 	struct v4l2_rect crop;
- 	struct v4l2_rect compose;
- 	struct v4l2_rect source;
-+	v4l2_std_id std;
- };
- 
- #define vin_to_source(vin)		((vin)->digital->subdev)
--- 
-2.16.2
+> Early revisions of certain SoCs cannot do multiple DMA RX streams in
+> parallel. To avoid data corruption, only allow one DMA RX channel and
+> fall back to PIO, if needed.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+> ---
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 34 ++++++++++++++++++++++++---
+>  1 file changed, 31 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> index 8e0acd197c43..c8d479375fb6 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+[...]
+> @@ -251,18 +273,24 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
+>   * implementation as others may use a different implementation.
+>   */
+>  static const struct soc_device_attribute gen3_soc_whitelist[] = {
+> -        { .soc_id = "r8a7795", .revision = "ES1.*" },
+> +        { .soc_id = "r8a7795", .revision = "ES1.*",
+> +	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+>          { .soc_id = "r8a7795", .revision = "ES2.0" },
+> -        { .soc_id = "r8a7796", .revision = "ES1.0" },
+> +        { .soc_id = "r8a7796", .revision = "ES1.0",
+> +	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+
+   Again, could you fix the indentation while updating these 2 initializers?
+checkpatch.pl complains about the spaces...
+
+>          { .soc_id = "r8a77995", .revision = "ES1.0" },
+>          { /* sentinel */ }
+>  };
+
+MBR, Sergei
