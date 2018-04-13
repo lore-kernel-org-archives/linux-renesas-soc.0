@@ -1,79 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:56801 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbeDMRZv (ORCPT
+Received: from mail-ot0-f174.google.com ([74.125.82.174]:38085 "EHLO
+        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751125AbeDMRrU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 13:25:51 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, robin.murphy@arm.com,
-        hch@infradead.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        ysato@users.sourceforge.jp, dalias@libc.org,
-        iommu@lists.linux-foundation.org, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] base: dma-mapping: Postpone cpu addr translation on mmap()
-Date: Fri, 13 Apr 2018 19:25:37 +0200
-Message-Id: <1523640337-26064-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 13 Apr 2018 13:47:20 -0400
+Date: Fri, 13 Apr 2018 12:47:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [RESEND PATCH] serial: sh-sci: Document r8a77470 bindings
+Message-ID: <20180413174718.bwmmemw6ta3cuujv@rob-hp-laptop>
+References: <1523276400-7673-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523276400-7673-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Postpone calling virt_to_page() translation on memory locations not
-guaranteed to be backed by a struct page. Try first to map memory from
-device's coherent memory pool, then perform translation if that fails.
+On Mon, Apr 09, 2018 at 01:20:00PM +0100, Biju Das wrote:
+> RZ/G1C (R8A77470) SoC also has the R-Car gen2 compatible SCIF and HSCIF
+> ports, so document the SoC specific bindings.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-On some architectures, specifically SH when configured with SPARSEMEM
-memory model, assuming a struct page is always assigned to a memory
-address lead to unexpected hangs during the virtual to page address
-translation. This patch fixes that specific issue but applies in the
-general case too.
-
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
----
-
-It has now been clarified this patch does not resolve the issue, but only
-mitigate it on platforms where dma_mmap_from_dev_coherent() succeeds and
-delay page_to_pfn() faulty conversion.
-
-A suggested proper solution would be not relying on dma_common_mmap() but
-require all platforms to implement an mmap methods known to work, as noted
-by Christoph in v1 review.
-
-v1 -> v2:
-- Save the 'pfn' temp variable performing the page_to_pfn() conversion in the
-  remap_pfn_range() function call as suggested by Christoph.
-
----
- drivers/base/dma-mapping.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
-index 3b11835..d82566d 100644
---- a/drivers/base/dma-mapping.c
-+++ b/drivers/base/dma-mapping.c
-@@ -226,7 +226,6 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
- 	unsigned long user_count = vma_pages(vma);
- 	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
--	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
- 	unsigned long off = vma->vm_pgoff;
-
- 	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-@@ -234,12 +233,11 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- 	if (dma_mmap_from_dev_coherent(dev, vma, cpu_addr, size, &ret))
- 		return ret;
-
--	if (off < count && user_count <= (count - off)) {
-+	if (off < count && user_count <= (count - off))
- 		ret = remap_pfn_range(vma, vma->vm_start,
--				      pfn + off,
-+				      page_to_pfn(virt_to_page(cpu_addr)) + off,
- 				      user_count << PAGE_SHIFT,
- 				      vma->vm_page_prot);
--	}
- #endif	/* !CONFIG_ARCH_NO_COHERENT_DMA_MMAP */
-
- 	return ret;
---
-2.7.4
+Reviewed-by: Rob Herring <robh@kernel.org>
