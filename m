@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:23368 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:63818 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751776AbeDMIvU (ORCPT
+        by vger.kernel.org with ESMTP id S1753634AbeDMIIt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:51:20 -0400
+        Fri, 13 Apr 2018 04:08:49 -0400
 From: Phil Edworthy <phil.edworthy@renesas.com>
 To: Hoan Tran <hotran@apm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -15,9 +15,11 @@ Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v3] gpio: dwapb: Add support for 1 interrupt per port A GPIO
-Date: Fri, 13 Apr 2018 09:51:12 +0100
-Message-Id: <1523609472-4481-1-git-send-email-phil.edworthy@renesas.com>
+Subject: [PATCH v2 1/2] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+Date: Fri, 13 Apr 2018 09:08:19 +0100
+Message-Id: <1523606900-2332-2-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1523606900-2332-1-git-send-email-phil.edworthy@renesas.com>
+References: <1523606900-2332-1-git-send-email-phil.edworthy@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -33,14 +35,6 @@ the same handler used for single interrupt hardware.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
-One point to mention is that I have made it possible for users to have
-unconncted interrupts by specifying holes in the list of interrupts. This is
-done by supporting the interrupts-extended DT prop.
-However, I have no use for this and had to hack some test case for this.
-Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
-
-v3:
- - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
 v2:
  - Replaced interrupt-mask DT prop with support for the interrupts-extended
    prop. This means replacing the call to irq_of_parse_and_map() with calls
@@ -51,9 +45,8 @@ Note: There are a few *code* lines over 80 chars, but this is just guidance,
 ---
  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 ++++-
  drivers/gpio/gpio-dwapb.c                          | 43 +++++++++++++++++-----
- drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
  include/linux/platform_data/gpio-dwapb.h           |  3 +-
- 4 files changed, 45 insertions(+), 13 deletions(-)
+ 3 files changed, 43 insertions(+), 12 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
 index 4a75da7..3c1118b 100644
@@ -158,20 +151,6 @@ index 226977f..3273504 100644
  
  		pp->irq_shared	= false;
  		pp->gpio_base	= -1;
-diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
-index 90e35de..5bddb84 100644
---- a/drivers/mfd/intel_quark_i2c_gpio.c
-+++ b/drivers/mfd/intel_quark_i2c_gpio.c
-@@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
- 	pdata->properties->idx		= 0;
- 	pdata->properties->ngpio	= INTEL_QUARK_MFD_NGPIO;
- 	pdata->properties->gpio_base	= INTEL_QUARK_MFD_GPIO_BASE;
--	pdata->properties->irq		= pdev->irq;
-+	pdata->properties->irq[0]	= pdev->irq;
-+	pdata->properties->has_irq	= true;
- 	pdata->properties->irq_shared	= true;
- 
- 	cell->platform_data = pdata;
 diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
 index 2dc7f4a..5a52d69 100644
 --- a/include/linux/platform_data/gpio-dwapb.h
