@@ -1,62 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45350 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753411AbeDSOHC (ORCPT
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:33383 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbeDMScf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:02 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org
-Subject: [PATCH 30/61] mtd: nand: onenand: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:00 +0200
-Message-Id: <20180419140641.27926-31-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Fri, 13 Apr 2018 14:32:35 -0400
+Date: Fri, 13 Apr 2018 13:32:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, phil.edworthy@renesas.com,
+        buserror+upstream@gmail.com, Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 5/8] dt-bindings: arm: Document the RZN1D-DB board
+Message-ID: <20180413183233.2mf7fttoccc3jl2n@rob-hp-laptop>
+References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1523349015-37985-6-git-send-email-michel.pollet@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523349015-37985-6-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Tue, Apr 10, 2018 at 09:30:05AM +0100, Michel Pollet wrote:
+> This documents the RZ/N1 bindings for the RZN1D-DB board.
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/mtd/nand/onenand/samsung.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mtd/nand/onenand/samsung.c b/drivers/mtd/nand/onenand/samsung.c
-index 2e9d076e445a..4cce4c0311ca 100644
---- a/drivers/mtd/nand/onenand/samsung.c
-+++ b/drivers/mtd/nand/onenand/samsung.c
-@@ -958,8 +958,7 @@ static int s3c_onenand_remove(struct platform_device *pdev)
- 
- static int s3c_pm_ops_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct mtd_info *mtd = platform_get_drvdata(pdev);
-+	struct mtd_info *mtd = dev_get_drvdata(dev);
- 	struct onenand_chip *this = mtd->priv;
- 
- 	this->wait(mtd, FL_PM_SUSPENDED);
-@@ -968,8 +967,7 @@ static int s3c_pm_ops_suspend(struct device *dev)
- 
- static  int s3c_pm_ops_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct mtd_info *mtd = platform_get_drvdata(pdev);
-+	struct mtd_info *mtd = dev_get_drvdata(dev);
- 	struct onenand_chip *this = mtd->priv;
- 
- 	this->unlock_all(mtd);
--- 
-2.11.0
+Reviewed-by: Rob Herring <robh@kernel.org>
