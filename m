@@ -1,41 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47714 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750817AbeDMOZd (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:9069 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751137AbeDNMAP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:25:33 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-watchdog@vger.kernel.org
+        Sat, 14 Apr 2018 08:00:15 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH] watchdog: renesas-wdt: Add support for the R8A77965 WDT
-Date: Fri, 13 Apr 2018 16:25:26 +0200
-Message-Id: <20180413142526.9321-1-wsa+renesas@sang-engineering.com>
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 14/33] rcar-vin: align pixelformat check
+Date: Sat, 14 Apr 2018 13:57:07 +0200
+Message-Id: <20180414115726.5075-15-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for the Watchdog Timer (WDT) Controller in the Renesas
-R-Car M3N (R8A77965) SoC. No driver update is needed.
+If the pixelformat is not supported it should not fail but be set to
+something that works. While we are at it move the two different
+checks of the pixelformat to the same statement.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[wsa: rebased to top-of-tree]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index 123bb1b2654b..291d239fcbca 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -15,6 +15,7 @@ Required properties:
- 		 - "renesas,r8a7794-wdt" (R-Car E2)
- 		 - "renesas,r8a7795-wdt" (R-Car H3)
- 		 - "renesas,r8a7796-wdt" (R-Car M3-W)
-+		 - "renesas,r8a77965-wdt" (R-Car M3N)
- 		 - "renesas,r8a77970-wdt" (R-Car V3M)
- 		 - "renesas,r8a77995-wdt" (R-Car D3)
- 	       The generic compatible string must be:
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 907322e1eeb5f6a0..d9231a074aa2c29d 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -189,12 +189,10 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	u32 walign;
+ 	int ret;
+ 
+-	/* If requested format is not supported fallback to the default */
+-	if (!rvin_format_from_pixel(pix->pixelformat)) {
+-		vin_dbg(vin, "Format 0x%x not found, using default 0x%x\n",
+-			pix->pixelformat, RVIN_DEFAULT_FORMAT);
++	if (!rvin_format_from_pixel(pix->pixelformat) ||
++	    (vin->info->model == RCAR_M1 &&
++	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
+ 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
+-	}
+ 
+ 	/* Limit to source capabilities */
+ 	ret = __rvin_try_format_source(vin, which, pix, source);
+@@ -233,12 +231,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	pix->bytesperline = rvin_format_bytesperline(pix);
+ 	pix->sizeimage = rvin_format_sizeimage(pix);
+ 
+-	if (vin->info->model == RCAR_M1 &&
+-	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
+-		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
+-		return -EINVAL;
+-	}
+-
+ 	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
+ 		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+ 
 -- 
-2.11.0
+2.16.2
