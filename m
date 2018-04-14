@@ -1,245 +1,147 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:40697 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752652AbeDPVvB (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:26946 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751144AbeDNMA1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:51:01 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v6 01/11] ARM: sunxi: smp: Move assembly code into a file
-Date: Mon, 16 Apr 2018 23:50:22 +0200
-Message-Id: <20180416215032.5023-2-mylene.josserand@bootlin.com>
-In-Reply-To: <20180416215032.5023-1-mylene.josserand@bootlin.com>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+        Sat, 14 Apr 2018 08:00:27 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 15/33] rcar-vin: break out format alignment and checking
+Date: Sat, 14 Apr 2018 13:57:08 +0200
+Message-Id: <20180414115726.5075-16-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the assembly code for cluster cache enabling and resuming
-into an assembly file instead of having it directly in C code.
+Part of the format alignment and checking can be shared with the Gen3
+format handling. Break that part out to a separate function.
 
-Remove the CFLAGS because we are using the ARM directive "arch"
-instead.
-
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/mach-sunxi/Makefile  |  4 +--
- arch/arm/mach-sunxi/headsmp.S | 80 +++++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-sunxi/mc_smp.c  | 82 +++----------------------------------------
- 3 files changed, 85 insertions(+), 81 deletions(-)
- create mode 100644 arch/arm/mach-sunxi/headsmp.S
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 85 ++++++++++++++++-------------
+ 1 file changed, 48 insertions(+), 37 deletions(-)
 
-diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
-index 7de9cc286d53..7f45071ae74a 100644
---- a/arch/arm/mach-sunxi/Makefile
-+++ b/arch/arm/mach-sunxi/Makefile
-@@ -1,5 +1,3 @@
--CFLAGS_mc_smp.o	+= -march=armv7-a
--
- obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
--obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o
-+obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o headsmp.o
- obj-$(CONFIG_SMP) += platsmp.o
-diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-new file mode 100644
-index 000000000000..37dc772701f3
---- /dev/null
-+++ b/arch/arm/mach-sunxi/headsmp.S
-@@ -0,0 +1,80 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2018 Chen-Yu Tsai
-+ * Copyright (c) 2018 Bootlin
-+ *
-+ * Chen-Yu Tsai <wens@csie.org>
-+ * Mylène Josserand <mylene.josserand@bootlin.com>
-+ *
-+ * SMP support for sunxi based systems with Cortex A7/A15
-+ *
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/assembler.h>
-+#include <asm/cputype.h>
-+
-+ENTRY(sunxi_mc_smp_cluster_cache_enable)
-+	.arch	armv7-a
-+	/*
-+	 * Enable cluster-level coherency, in preparation for turning on the MMU.
-+	 *
-+	 * Also enable regional clock gating and L2 data latency settings for
-+	 * Cortex-A15. These settings are from the vendor kernel.
-+	 */
-+	mrc	p15, 0, r1, c0, c0, 0
-+	movw	r2, #(ARM_CPU_PART_MASK & 0xffff)
-+	movt	r2, #(ARM_CPU_PART_MASK >> 16)
-+	and	r1, r1, r2
-+	movw	r2, #(ARM_CPU_PART_CORTEX_A15 & 0xffff)
-+	movt	r2, #(ARM_CPU_PART_CORTEX_A15 >> 16)
-+	cmp	r1, r2
-+	bne	not_a15
-+
-+	/* The following is Cortex-A15 specific */
-+
-+	/* ACTLR2: Enable CPU regional clock gates */
-+	mrc p15, 1, r1, c15, c0, 4
-+	orr r1, r1, #(0x1 << 31)
-+	mcr p15, 1, r1, c15, c0, 4
-+
-+	/* L2ACTLR */
-+	mrc p15, 1, r1, c15, c0, 0
-+	/* Enable L2, GIC, and Timer regional clock gates */
-+	orr r1, r1, #(0x1 << 26)
-+	/* Disable clean/evict from being pushed to external */
-+	orr r1, r1, #(0x1<<3)
-+	mcr p15, 1, r1, c15, c0, 0
-+
-+	/* L2CTRL: L2 data RAM latency */
-+	mrc p15, 1, r1, c9, c0, 2
-+	bic r1, r1, #(0x7 << 0)
-+	orr r1, r1, #(0x3 << 0)
-+	mcr p15, 1, r1, c9, c0, 2
-+
-+	/* End of Cortex-A15 specific setup */
-+	not_a15:
-+
-+	/* Get value of sunxi_mc_smp_first_comer */
-+	adr	r1, first
-+	ldr	r0, [r1]
-+	ldr	r0, [r1, r0]
-+
-+	/* Skip cci_enable_port_for_self if not first comer */
-+	cmp	r0, #0
-+	bxeq	lr
-+	b	cci_enable_port_for_self
-+
-+	.align 2
-+	first: .word sunxi_mc_smp_first_comer - .
-+ENDPROC(sunxi_mc_smp_cluster_cache_enable)
-+
-+ENTRY(sunxi_mc_smp_secondary_startup)
-+	bl	sunxi_mc_smp_cluster_cache_enable
-+	b	secondary_startup
-+ENDPROC(sunxi_mc_smp_secondary_startup)
-+
-+ENTRY(sunxi_mc_smp_resume)
-+	bl	sunxi_mc_smp_cluster_cache_enable
-+	b	cpu_resume
-+ENDPROC(sunxi_mc_smp_resume)
-diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-index c0246ec54a0a..727968d6a3e5 100644
---- a/arch/arm/mach-sunxi/mc_smp.c
-+++ b/arch/arm/mach-sunxi/mc_smp.c
-@@ -72,6 +72,9 @@ static void __iomem *cpucfg_base;
- static void __iomem *prcm_base;
- static void __iomem *sram_b_smp_base;
- 
-+extern void sunxi_mc_smp_secondary_startup(void);
-+extern void sunxi_mc_smp_resume(void);
-+
- static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
- {
- 	struct device_node *node;
-@@ -300,74 +303,7 @@ static void sunxi_cluster_cache_disable_without_axi(void)
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index d9231a074aa2c29d..f3a0310c43a9877f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -87,6 +87,53 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
+ 	return pix->bytesperline * pix->height;
  }
  
- static int sunxi_mc_smp_cpu_table[SUNXI_NR_CLUSTERS][SUNXI_CPUS_PER_CLUSTER];
--static int sunxi_mc_smp_first_comer;
--
--/*
-- * Enable cluster-level coherency, in preparation for turning on the MMU.
-- *
-- * Also enable regional clock gating and L2 data latency settings for
-- * Cortex-A15. These settings are from the vendor kernel.
-- */
--static void __naked sunxi_mc_smp_cluster_cache_enable(void)
--{
--	asm volatile (
--		"mrc	p15, 0, r1, c0, c0, 0\n"
--		"movw	r2, #" __stringify(ARM_CPU_PART_MASK & 0xffff) "\n"
--		"movt	r2, #" __stringify(ARM_CPU_PART_MASK >> 16) "\n"
--		"and	r1, r1, r2\n"
--		"movw	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 & 0xffff) "\n"
--		"movt	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 >> 16) "\n"
--		"cmp	r1, r2\n"
--		"bne	not_a15\n"
--
--		/* The following is Cortex-A15 specific */
--
--		/* ACTLR2: Enable CPU regional clock gates */
--		"mrc p15, 1, r1, c15, c0, 4\n"
--		"orr r1, r1, #(0x1<<31)\n"
--		"mcr p15, 1, r1, c15, c0, 4\n"
--
--		/* L2ACTLR */
--		"mrc p15, 1, r1, c15, c0, 0\n"
--		/* Enable L2, GIC, and Timer regional clock gates */
--		"orr r1, r1, #(0x1<<26)\n"
--		/* Disable clean/evict from being pushed to external */
--		"orr r1, r1, #(0x1<<3)\n"
--		"mcr p15, 1, r1, c15, c0, 0\n"
--
--		/* L2CTRL: L2 data RAM latency */
--		"mrc p15, 1, r1, c9, c0, 2\n"
--		"bic r1, r1, #(0x7<<0)\n"
--		"orr r1, r1, #(0x3<<0)\n"
--		"mcr p15, 1, r1, c9, c0, 2\n"
--
--		/* End of Cortex-A15 specific setup */
--		"not_a15:\n"
--
--		/* Get value of sunxi_mc_smp_first_comer */
--		"adr	r1, first\n"
--		"ldr	r0, [r1]\n"
--		"ldr	r0, [r1, r0]\n"
--
--		/* Skip cci_enable_port_for_self if not first comer */
--		"cmp	r0, #0\n"
--		"bxeq	lr\n"
--		"b	cci_enable_port_for_self\n"
--
--		".align 2\n"
--		"first: .word sunxi_mc_smp_first_comer - .\n"
--	);
--}
--
--static void __naked sunxi_mc_smp_secondary_startup(void)
--{
--	asm volatile(
--		"bl	sunxi_mc_smp_cluster_cache_enable\n"
--		"b	secondary_startup"
--		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
--		:: "i" (sunxi_mc_smp_cluster_cache_enable)
--	);
--}
-+int sunxi_mc_smp_first_comer;
- 
- static DEFINE_SPINLOCK(boot_lock);
- 
-@@ -637,16 +573,6 @@ static bool __init sunxi_mc_smp_cpu_table_init(void)
++static int rvin_format_align(struct rvin_dev *vin, struct v4l2_pix_format *pix)
++{
++	u32 walign;
++
++	if (!rvin_format_from_pixel(pix->pixelformat) ||
++	    (vin->info->model == RCAR_M1 &&
++	     pix->pixelformat == V4L2_PIX_FMT_XBGR32))
++		pix->pixelformat = RVIN_DEFAULT_FORMAT;
++
++	switch (pix->field) {
++	case V4L2_FIELD_TOP:
++	case V4L2_FIELD_BOTTOM:
++	case V4L2_FIELD_NONE:
++	case V4L2_FIELD_INTERLACED_TB:
++	case V4L2_FIELD_INTERLACED_BT:
++	case V4L2_FIELD_INTERLACED:
++		break;
++	case V4L2_FIELD_ALTERNATE:
++		/*
++		 * Driver does not (yet) support outputting ALTERNATE to a
++		 * userspace. It does support outputting INTERLACED so use
++		 * the VIN hardware to combine the two fields.
++		 */
++		pix->field = V4L2_FIELD_INTERLACED;
++		pix->height *= 2;
++		break;
++	default:
++		pix->field = RVIN_DEFAULT_FIELD;
++		break;
++	}
++
++	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
++	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
++
++	/* Limit to VIN capabilities */
++	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
++			      &pix->height, 4, vin->info->max_height, 2, 0);
++
++	pix->bytesperline = rvin_format_bytesperline(pix);
++	pix->sizeimage = rvin_format_sizeimage(pix);
++
++	vin_dbg(vin, "Format %ux%u bpl: %u size: %u\n",
++		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
++
++	return 0;
++}
++
+ /* -----------------------------------------------------------------------------
+  * V4L2
   */
- typedef typeof(cpu_reset) phys_reset_t;
- 
--static void __init __naked sunxi_mc_smp_resume(void)
--{
--	asm volatile(
--		"bl	sunxi_mc_smp_cluster_cache_enable\n"
--		"b	cpu_resume"
--		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
--		:: "i" (sunxi_mc_smp_cluster_cache_enable)
--	);
--}
--
- static int __init nocache_trampoline(unsigned long __unused)
+@@ -186,7 +233,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 			     struct v4l2_pix_format *pix,
+ 			     struct rvin_source_fmt *source)
  {
- 	phys_reset_t phys_reset;
+-	u32 walign;
+ 	int ret;
+ 
+ 	if (!rvin_format_from_pixel(pix->pixelformat) ||
+@@ -199,42 +245,7 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	if (ret)
+ 		return ret;
+ 
+-	switch (pix->field) {
+-	case V4L2_FIELD_TOP:
+-	case V4L2_FIELD_BOTTOM:
+-	case V4L2_FIELD_NONE:
+-	case V4L2_FIELD_INTERLACED_TB:
+-	case V4L2_FIELD_INTERLACED_BT:
+-	case V4L2_FIELD_INTERLACED:
+-		break;
+-	case V4L2_FIELD_ALTERNATE:
+-		/*
+-		 * Driver does not (yet) support outputting ALTERNATE to a
+-		 * userspace. It does support outputting INTERLACED so use
+-		 * the VIN hardware to combine the two fields.
+-		 */
+-		pix->field = V4L2_FIELD_INTERLACED;
+-		pix->height *= 2;
+-		break;
+-	default:
+-		pix->field = RVIN_DEFAULT_FIELD;
+-		break;
+-	}
+-
+-	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
+-	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+-
+-	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
+-			      &pix->height, 4, vin->info->max_height, 2, 0);
+-
+-	pix->bytesperline = rvin_format_bytesperline(pix);
+-	pix->sizeimage = rvin_format_sizeimage(pix);
+-
+-	vin_dbg(vin, "Format %ux%u bpl: %d size: %d\n",
+-		pix->width, pix->height, pix->bytesperline, pix->sizeimage);
+-
+-	return 0;
++	return rvin_format_align(vin, pix);
+ }
+ 
+ static int rvin_querycap(struct file *file, void *priv,
 -- 
-2.11.0
+2.16.2
