@@ -1,153 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:41580 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755830AbeDTQAR (ORCPT
+Received: from mail-it0-f47.google.com ([209.85.214.47]:34111 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbeDNL03 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:00:17 -0400
-Received: by mail-wr0-f170.google.com with SMTP id v24-v6so24254766wra.8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Apr 2018 09:00:16 -0700 (PDT)
-Date: Fri, 20 Apr 2018 18:00:13 +0200
+        Sat, 14 Apr 2018 07:26:29 -0400
+Received: by mail-it0-f47.google.com with SMTP id t192-v6so7448869itc.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 14 Apr 2018 04:26:29 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180413203813.GB8132@bigcity.dyn.berto.se>
+References: <20180412091822.GG12256@bigcity.dyn.berto.se> <CAKfTPtAE3qeWcTdT-WL8nrbZmP_+OaxPyyjUfVCzn=rax9tQZQ@mail.gmail.com>
+ <20180412111519.GH12256@bigcity.dyn.berto.se> <20180413203813.GB8132@bigcity.dyn.berto.se>
 From: Vincent Guittot <vincent.guittot@linaro.org>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>,
-        Heiner Kallweit <hkallweit1@gmail.com>
+Date: Sat, 14 Apr 2018 13:26:08 +0200
+Message-ID: <CAKfTPtCQmSrbCjYbzjMJvy0JEks0ReR2LjPrqwVsGUn31dH4Dg@mail.gmail.com>
+Subject: Re: Potential problem with 31e77c93e432dec7 ("sched/fair: Update
+ blocked load when newly idle")
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
 Cc: Peter Zijlstra <peterz@infradead.org>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Ingo Molnar <mingo@redhat.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: Potential problem with 31e77c93e432dec7 ("sched/fair: Update
- blocked load when newly idle")
-Message-ID: <20180420160013.GA13769@linaro.org>
-References: <20180412091822.GG12256@bigcity.dyn.berto.se>
- <CAKfTPtAE3qeWcTdT-WL8nrbZmP_+OaxPyyjUfVCzn=rax9tQZQ@mail.gmail.com>
- <20180412111519.GH12256@bigcity.dyn.berto.se>
- <20180412133031.GA551@linaro.org>
- <20180412223904.GJ12256@bigcity.dyn.berto.se>
- <CAKfTPtDRtto7w806gYgdS_bCJ77EY0RRtszycB+TnG6aQ6ve4Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKfTPtDRtto7w806gYgdS_bCJ77EY0RRtszycB+TnG6aQ6ve4Q@mail.gmail.com>
+        linux-renesas-soc@vger.kernel.org,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Heiner and Niklas,
+On 13 April 2018 at 22:38, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> Hi Vincent,
+>
+> On 2018-04-12 13:15:19 +0200, Niklas S=C3=B6derlund wrote:
+>> Hi Vincent,
+>>
+>> Thanks for your feedback.
+>>
+>> On 2018-04-12 12:33:27 +0200, Vincent Guittot wrote:
+>> > Hi Niklas,
+>> >
+>> > On 12 April 2018 at 11:18, Niklas S=C3=B6derlund
+>> > <niklas.soderlund@ragnatech.se> wrote:
+>> > > Hi Vincent,
+>> > >
+>> > > I have observed issues running on linus/master from a few days back =
+[1].
+>> > > I'm running on a Renesas Koelsch board (arm32) and I can trigger a i=
+ssue
+>> > > by X forwarding the v4l2 test application qv4l2 over ssh and moving =
+the
+>> > > courser around in the GUI (best test case description award...). I'm
+>> > > sorry about the really bad way I trigger this but I can't do it in a=
+ny
+>> > > other way, I'm happy to try other methods if you got some ideas. The
+>> > > symptom of the issue is a complete hang of the system for more then =
+30
+>> > > seconds and then this information is printed in the console:
+>> >
+>> > Heiner (edded cc) also reported similar problem with his platform: a
+>> > dual core celeron
+>> >
+>> > Do you confirm that your platform is a dual cortex-A15 ? At least that
+>> > what I have seen on web
+>> > This would confirm that dual system is a key point.
+>>
+>> I can confirm that my platform is a dual core.
+>
+> I tested another dual core system today Renesas M3-W ARM64 system and I
+> can observe the same lockups-on that system if it helps you understand
+> the problem. It seems to be much harder to trigger the issue on this
+> system for some reason. Hitting return in a ssh session don't seem to
+> produce the lockup while starting a GUI using X forwarding over ssh it's
+> possible.
 
-Le Saturday 14 Apr 2018 � 13:24:20 (+0200), Vincent Guittot a �crit :
-> Hi Niklas,
-> 
-> On 13 April 2018 at 00:39, Niklas S�derlund
-> <niklas.soderlund@ragnatech.se> wrote:
-> > Hi Vincent,
-> >
-> > Thanks for helping trying to figure this out.
-> >
-> > On 2018-04-12 15:30:31 +0200, Vincent Guittot wrote:
-> >
-> > [snip]
-> >
-> >>
-> >> I'd like to narrow the problem a bit more with the 2 patchies aboves. Can you try
-> >> them separatly on top of c18bb396d3d261eb ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net"))
-> >> and check if one of them fixes the problem ?i
-> >
-> > I tried your suggested changes based on top of c18bb396d3d261eb.
-> >
-> >>
-> >> (They should apply on linux-next as well)
-> >>
-> >> First patch always kick ilb instead of doing ilb on local cpu before entering idle
-> >>
-> >> ---
-> >>  kernel/sched/fair.c | 3 +--
-> >>  1 file changed, 1 insertion(+), 2 deletions(-)
-> >>
-> >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> >> index 0951d1c..b21925b 100644
-> >> --- a/kernel/sched/fair.c
-> >> +++ b/kernel/sched/fair.c
-> >> @@ -9739,8 +9739,7 @@ static void nohz_newidle_balance(struct rq *this_rq)
-> >>        * candidate for ilb instead of waking up another idle CPU.
-> >>        * Kick an normal ilb if we failed to do the update.
-> >>        */
-> >> -     if (!_nohz_idle_balance(this_rq, NOHZ_STATS_KICK, CPU_NEWLY_IDLE))
-> >> -             kick_ilb(NOHZ_STATS_KICK);
-> >> +     kick_ilb(NOHZ_STATS_KICK);
-> >>       raw_spin_lock(&this_rq->lock);
-> >>  }
-> >
-> > This change don't seem to effect the issue. I can still get the single
-> > ssh session and the system to lockup by hitting the return key. And
-> > opening a second ssh session immediately unblocks both the first ssh
-> > session and the serial console. And I can still trigger the console
-> > warning by just letting the system be once it locks-up. I do have
-> > just as before reset the system a few times to trigger the issue.
-> 
-> You results are similar to Heiner's ones. The problem is still there
-> even if we only kick ilb which mainly send an IPI reschedule to the
-> other CPU if Idle
-> 
+Thanks for the test. That's confirm, it's only happen on dual core
 
-Could it be possible to record some traces of the problem to get a better view
-of what happens ?
-
-I have a small patch that adds some traces in the functions that seems to create
-the problem
-
----
- kernel/sched/fair.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0951d1c..a951464 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9606,6 +9606,8 @@ static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags,
- 	 */
- 	WRITE_ONCE(nohz.has_blocked, 0);
- 
-+	trace_printk("_nohz_idle_balance cpu %d idle %d flag %x", this_cpu, idle, flags);
-+
- 	/*
- 	 * Ensures that if we miss the CPU, we must see the has_blocked
- 	 * store from nohz_balance_enter_idle().
-@@ -9680,6 +9682,8 @@ static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags,
- 	if (likely(update_next_balance))
- 		nohz.next_balance = next_balance;
- 
-+	trace_printk("_nohz_idle_balance return %d", ret);
-+
- 	return ret;
- }
- 
-@@ -9732,6 +9736,8 @@ static void nohz_newidle_balance(struct rq *this_rq)
- 	    time_before(jiffies, READ_ONCE(nohz.next_blocked)))
- 		return;
- 
-+	trace_printk("nohz_newidle_balance start update");
-+
- 	raw_spin_unlock(&this_rq->lock);
- 	/*
- 	 * This CPU is going to be idle and blocked load of idle CPUs
--- 
-2.7.4
-
-
-Also that would be good to stop tracing when the RCU stall happens
-
-In case you are not familiar with the trace tool, I have put below how to configure ftrace to trace scheudler, irq, timer ... events and stop tracing when dump_backtrace function is called
-
-trace-cmd reset > /dev/null
-trace-cmd start -b 40000 -p function -l dump_backtrace:traceoff -e sched -e cpu_idle -e cpu_frequency -e timer -e ipi -e irq -e printk
-trace-cmd start -b 40000 -p function -l dump_backtrace
-
-The trace-cmd start has to be called twice to make sure that we will not trace all function
-
-Once the dump happen and the trace is stopped, you can extract the traces with 
-
-trace-cmd extract -o <trace file name>
-
-Thanks
-Vincent
+>
+> [  392.306441] INFO: rcu_preempt detected stalls on CPUs/tasks:
+> [  392.312201]  (detected by 0, t=3D19366 jiffies, g=3D7177, c=3D7176, q=
+=3D35)
+> [  392.318555] All QSes seen, last rcu_preempt kthread activity 19368
+> (4294990375-4294971007), jiffies_till_next_fqs=3D1, root ->qsmask 0x0
+> [  392.330758] swapper/0       R  running task        0     0      0
+> 0x00000022
+> [  392.337883] Call trace:
+> [  392.340365]  dump_backtrace+0x0/0x1c8
+> [  392.344065]  show_stack+0x14/0x20
+> [  392.347416]  sched_show_task+0x224/0x2e8
+> [  392.351377]  rcu_check_callbacks+0x8ac/0x8b0
+> [  392.355686]  update_process_times+0x2c/0x58
+> [  392.359908]  tick_sched_handle.isra.5+0x30/0x50
+> [  392.364479]  tick_sched_timer+0x40/0x90
+> [  392.368351]  __hrtimer_run_queues+0xfc/0x208
+> [  392.372659]  hrtimer_interrupt+0xd4/0x258
+> [  392.376710]  arch_timer_handler_virt+0x28/0x48
+> [  392.381194]  handle_percpu_devid_irq+0x80/0x138
+> [  392.385767]  generic_handle_irq+0x28/0x40
+> [  392.389813]  __handle_domain_irq+0x5c/0xb8
+> [  392.393946]  gic_handle_irq+0x58/0xa8
+> [  392.397640]  el1_irq+0xb4/0x130
+> [  392.400810]  arch_cpu_idle+0x14/0x20
+> [  392.404422]  default_idle_call+0x1c/0x38
+> [  392.408381]  do_idle+0x17c/0x1f8
+> [  392.411640]  cpu_startup_entry+0x20/0x28
+> [  392.415598]  rest_init+0x24c/0x260
+> [  392.419037]  start_kernel+0x3e8/0x414
+>
+> I was running the same tests on another ARM64 platform earlier using the
+> same build which have more then two cores and there I could not observe
+> this issue.
+>
+> --
+> Regards,
+> Niklas S=C3=B6derlund
