@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:28034 "EHLO
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:15837 "EHLO
         bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750932AbeDNMDI (ORCPT
+        by vger.kernel.org with ESMTP id S1750939AbeDNMAt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:03:08 -0400
+        Sat, 14 Apr 2018 08:00:49 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -12,9 +12,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 31/33] rcar-vin: enable support for r8a7795
-Date: Sat, 14 Apr 2018 13:57:24 +0200
-Message-Id: <20180414115726.5075-32-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 17/33] rcar-vin: cache video standard
+Date: Sat, 14 Apr 2018 13:57:10 +0200
+Message-Id: <20180414115726.5075-18-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -23,186 +23,110 @@ Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a7795 ES1.x and ES2.0.
+At stream on time the driver should not query the subdevice for which
+standard are used. Instead it should be cached when userspace sets the
+standard and used at stream on time.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/Kconfig     |   2 +-
- drivers/media/platform/rcar-vin/rcar-core.c | 120 ++++++++++++++++++++++++++++
- 2 files changed, 121 insertions(+), 1 deletion(-)
+ drivers/media/platform/rcar-vin/rcar-core.c |  6 ++++++
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  7 ++-----
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++++++++--
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  2 ++
+ 4 files changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-index af4c98b44d2e22cb..8fa7ee468c63afb9 100644
---- a/drivers/media/platform/rcar-vin/Kconfig
-+++ b/drivers/media/platform/rcar-vin/Kconfig
-@@ -6,7 +6,7 @@ config VIDEO_RCAR_VIN
- 	select V4L2_FWNODE
- 	---help---
- 	  Support for Renesas R-Car Video Input (VIN) driver.
--	  Supports R-Car Gen2 SoCs.
-+	  Supports R-Car Gen2 and Gen3 SoCs.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rcar-vin.
 diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 0cc76d73115e9277..81119ae4402d0990 100644
+index be49d8968f0a0cef..8c251687e81b345b 100644
 --- a/drivers/media/platform/rcar-vin/rcar-core.c
 +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -21,6 +21,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-+#include <linux/sys_soc.h>
+@@ -96,6 +96,12 @@ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
+ 	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
+ 		return ret;
  
- #include <media/v4l2-async.h>
- #include <media/v4l2-fwnode.h>
-@@ -832,6 +833,104 @@ static const struct rvin_info rcar_info_gen2 = {
- 	.max_height = 2048,
- };
- 
-+static const struct rvin_group_route rcar_info_r8a7795_routes[] = {
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 0, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(1) | BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 2, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) | BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI41, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
-+	{ .csi = RVIN_CSI41, .channel = 1, .vin = 4, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI41, .channel = 1, .vin = 5, .mask = BIT(1) | BIT(3) },
-+	{ .csi = RVIN_CSI41, .channel = 0, .vin = 5, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 6, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI41, .channel = 0, .vin = 6, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI41, .channel = 2, .vin = 6, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI41, .channel = 1, .vin = 7, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) | BIT(2) },
-+	{ .csi = RVIN_CSI41, .channel = 3, .vin = 7, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
-+	{ /* Sentinel */ }
-+};
++	/* Read standard */
++	vin->std = V4L2_STD_UNKNOWN;
++	ret = v4l2_subdev_call(subdev, video, g_std, &vin->std);
++	if (ret < 0 && ret != -ENOIOCTLCMD)
++		return ret;
 +
-+static const struct rvin_info rcar_info_r8a7795 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a7795_routes,
-+};
-+
-+static const struct rvin_group_route rcar_info_r8a7795es1_routes[] = {
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
-+	{ .csi = RVIN_CSI21, .channel = 0, .vin = 0, .mask = BIT(2) | BIT(5) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI21, .channel = 0, .vin = 1, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI21, .channel = 1, .vin = 1, .mask = BIT(5) },
-+	{ .csi = RVIN_CSI21, .channel = 0, .vin = 2, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI21, .channel = 2, .vin = 2, .mask = BIT(5) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI21, .channel = 1, .vin = 3, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI21, .channel = 3, .vin = 3, .mask = BIT(5) },
-+	{ .csi = RVIN_CSI41, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
-+	{ .csi = RVIN_CSI21, .channel = 0, .vin = 4, .mask = BIT(2) | BIT(5) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI21, .channel = 0, .vin = 5, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI41, .channel = 0, .vin = 5, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI41, .channel = 1, .vin = 5, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI21, .channel = 1, .vin = 5, .mask = BIT(5) },
-+	{ .csi = RVIN_CSI21, .channel = 0, .vin = 6, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI41, .channel = 0, .vin = 6, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI41, .channel = 2, .vin = 6, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI21, .channel = 2, .vin = 6, .mask = BIT(5) },
-+	{ .csi = RVIN_CSI41, .channel = 1, .vin = 7, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI21, .channel = 1, .vin = 7, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI41, .channel = 3, .vin = 7, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI21, .channel = 3, .vin = 7, .mask = BIT(5) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a7795es1 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a7795es1_routes,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -861,12 +960,25 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,rcar-gen2-vin",
- 		.data = &rcar_info_gen2,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a7795",
-+		.data = &rcar_info_r8a7795,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
- 
-+static const struct soc_device_attribute r8a7795es1[] = {
-+	{
-+		.soc_id = "r8a7795", .revision = "ES1.*",
-+		.data = &rcar_info_r8a7795es1,
-+	},
-+	{ /* Sentinel */ }
-+};
-+
- static int rcar_vin_probe(struct platform_device *pdev)
+ 	/* Add the controls */
+ 	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
+ 	if (ret < 0)
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 9233924e5b52de5f..79f4074b931b5aeb 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -592,7 +592,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+ static int rvin_setup(struct rvin_dev *vin)
  {
-+	const struct soc_device_attribute *attr;
- 	struct rvin_dev *vin;
- 	struct resource *mem;
- 	int irq, ret;
-@@ -878,6 +990,14 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	vin->dev = &pdev->dev;
- 	vin->info = of_device_get_match_data(&pdev->dev);
+ 	u32 vnmc, dmr, dmr2, interrupts;
+-	v4l2_std_id std;
+ 	bool progressive = false, output_is_yuv = false, input_is_yuv = false;
  
-+	/*
-+	 * Special care is needed on r8a7795 ES1.x since it
-+	 * uses different routing than r8a7795 ES2.0.
-+	 */
-+	attr = soc_device_match(r8a7795es1);
-+	if (attr)
-+		vin->info = attr->data;
+ 	switch (vin->format.field) {
+@@ -606,10 +605,8 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		/* Default to TB */
+ 		vnmc = VNMC_IM_FULL;
+ 		/* Use BT if video standard can be read and is 60 Hz format */
+-		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
+-			if (std & V4L2_STD_525_60)
+-				vnmc = VNMC_IM_FULL | VNMC_FOC;
+-		}
++		if (vin->std & V4L2_STD_525_60)
++			vnmc = VNMC_IM_FULL | VNMC_FOC;
+ 		break;
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 		vnmc = VNMC_IM_FULL;
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 9eddc2d95ea7d341..ee8044992eca1a35 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -475,6 +475,8 @@ static int rvin_s_std(struct file *file, void *priv, v4l2_std_id a)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	vin->std = a;
 +
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (mem == NULL)
- 		return -EINVAL;
+ 	/* Changing the standard will change the width/height */
+ 	return rvin_reset_format(vin);
+ }
+@@ -482,9 +484,13 @@ static int rvin_s_std(struct file *file, void *priv, v4l2_std_id a)
+ static int rvin_g_std(struct file *file, void *priv, v4l2_std_id *a)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+-	struct v4l2_subdev *sd = vin_to_source(vin);
+ 
+-	return v4l2_subdev_call(sd, video, g_std, a);
++	if (v4l2_subdev_has_op(vin_to_source(vin), pad, dv_timings_cap))
++		return -ENOIOCTLCMD;
++
++	*a = vin->std;
++
++	return 0;
+ }
+ 
+ static int rvin_subscribe_event(struct v4l2_fh *fh,
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index e940366d7e8d0e76..06cec4f8e5ffaf2b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -118,6 +118,7 @@ struct rvin_info {
+  * @crop:		active cropping
+  * @compose:		active composing
+  * @source:		active size of the video source
++ * @std:		active video standard of the video source
+  */
+ struct rvin_dev {
+ 	struct device *dev;
+@@ -146,6 +147,7 @@ struct rvin_dev {
+ 	struct v4l2_rect crop;
+ 	struct v4l2_rect compose;
+ 	struct v4l2_rect source;
++	v4l2_std_id std;
+ };
+ 
+ #define vin_to_source(vin)		((vin)->digital->subdev)
 -- 
 2.16.2
