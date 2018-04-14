@@ -1,40 +1,67 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Hoan Tran <hotran@apm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2 0/2] gpio: dwapb: Add support for 1 interrupt per port A GPIO
-Date: Fri, 13 Apr 2018 09:08:18 +0100
-Message-Id: <1523606900-2332-1-git-send-email-phil.edworthy@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:7139 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751073AbeDNMAL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 14 Apr 2018 08:00:11 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 13/33] rcar-vin: update bytesperline and sizeimage calculation
+Date: Sat, 14 Apr 2018 13:57:06 +0200
+Message-Id: <20180414115726.5075-14-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All details about the change is in patch 0001. patch 0002 fixes up other users
-of 'struct dwapb_port_property'.
+Remove over complicated logic to calculate the value for bytesperline
+and sizeimage that was carried over from the soc_camera port. There is
+no need to find the max value of bytesperline and sizeimage from
+user-space as they are set to 0 before the max_t() operation.
 
-One point to mention is that I have made it possible for users to have
-unconncted interrupts by specifying holes in the list of interrupts. This is
-done by supporting the interrupts-extended DT prop.
-However, I have no use for this and had to hack some test case for this.
-Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-Phil Edworthy (2):
-  gpio: dwapb: Add support for 1 interrupt per port A GPIO
-  mfd: intel_quark_i2c_gpio: Update Synopsys GPIO interrupts
-
- .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 ++++-
- drivers/gpio/gpio-dwapb.c                          | 43 +++++++++++++++++-----
- drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
- include/linux/platform_data/gpio-dwapb.h           |  3 +-
- 4 files changed, 45 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 81a9aec96e8e664a..907322e1eeb5f6a0 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -196,10 +196,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
+ 	}
+ 
+-	/* Always recalculate */
+-	pix->bytesperline = 0;
+-	pix->sizeimage = 0;
+-
+ 	/* Limit to source capabilities */
+ 	ret = __rvin_try_format_source(vin, which, pix, source);
+ 	if (ret)
+@@ -234,10 +230,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
+ 			      &pix->height, 4, vin->info->max_height, 2, 0);
+ 
+-	pix->bytesperline = max_t(u32, pix->bytesperline,
+-				  rvin_format_bytesperline(pix));
+-	pix->sizeimage = max_t(u32, pix->sizeimage,
+-			       rvin_format_sizeimage(pix));
++	pix->bytesperline = rvin_format_bytesperline(pix);
++	pix->sizeimage = rvin_format_sizeimage(pix);
+ 
+ 	if (vin->info->model == RCAR_M1 &&
+ 	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
 -- 
-2.7.4
-
+2.16.2
