@@ -1,68 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44190 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932101AbeDCMpA (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:57721 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbeDNMCY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 08:45:00 -0400
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH/RFT v3 3/3] arm64: dts: renesas: r8a77995: add thermal device support
-Date: Tue,  3 Apr 2018 21:43:05 +0900
-Message-Id: <1522759385-17661-4-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1522759385-17661-1-git-send-email-ykaneko0929@gmail.com>
-References: <1522759385-17661-1-git-send-email-ykaneko0929@gmail.com>
+        Sat, 14 Apr 2018 08:02:24 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 27/33] rcar-vin: add chsel information to rvin_info
+Date: Sat, 14 Apr 2018 13:57:20 +0200
+Message-Id: <20180414115726.5075-28-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Each Gen3 SoC has a limited set of predefined routing possibilities for
+which CSI-2 device and channel can be routed to which VIN instance.
+Prepare to store this information in the struct rvin_info.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index cff42cd..9a52b41 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -636,5 +636,35 @@
- 			#phy-cells = <0>;
- 			status = "disabled";
- 		};
-+
-+		thermal: thermal@e6190000 {
-+			compatible = "renesas,thermal-r8a77995";
-+			reg = <0 0xe6190000 0 0x10>, <0 0xe6190100 0 0x38>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+	};
-+
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&thermal>;
-+
-+			trips {
-+				cpu-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+			cooling-maps {
-+			};
-+		};
- 	};
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+---
+
+* Changes since v13
+- Add review by Laurent.
+
+* Changes since v11
+- Fixed spelling.
+- Reorderd filed order in struct rvin_group_route.
+- Renamed chan to channel in struct rvin_group_route.
+---
+ drivers/media/platform/rcar-vin/rcar-vin.h | 42 ++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index cf5c467d45e10847..93eb40856b866117 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -43,6 +43,14 @@ enum model_id {
+ 	RCAR_GEN3,
  };
+ 
++enum rvin_csi_id {
++	RVIN_CSI20,
++	RVIN_CSI21,
++	RVIN_CSI40,
++	RVIN_CSI41,
++	RVIN_CSI_MAX,
++};
++
+ /**
+  * STOPPED  - No operation in progress
+  * RUNNING  - Operation in progress have buffers
+@@ -79,12 +87,45 @@ struct rvin_graph_entity {
+ 	unsigned int sink_pad;
+ };
+ 
++/**
++ * struct rvin_group_route - describes a route from a channel of a
++ *	CSI-2 receiver to a VIN
++ *
++ * @csi:	CSI-2 receiver ID.
++ * @channel:	Output channel of the CSI-2 receiver.
++ * @vin:	VIN ID.
++ * @mask:	Bitmask of the different CHSEL register values that
++ *		allow for a route from @csi + @chan to @vin.
++ *
++ * .. note::
++ *	Each R-Car CSI-2 receiver has four output channels facing the VIN
++ *	devices, each channel can carry one CSI-2 Virtual Channel (VC).
++ *	There is no correlation between channel number and CSI-2 VC. It's
++ *	up to the CSI-2 receiver driver to configure which VC is output
++ *	on which channel, the VIN devices only care about output channels.
++ *
++ *	There are in some cases multiple CHSEL register settings which would
++ *	allow for the same route from @csi + @channel to @vin. For example
++ *	on R-Car H3 both the CHSEL values 0 and 3 allow for a route from
++ *	CSI40/VC0 to VIN0. All possible CHSEL values for a route need to be
++ *	recorded as a bitmask in @mask, in this example bit 0 and 3 should
++ *	be set.
++ */
++struct rvin_group_route {
++	enum rvin_csi_id csi;
++	unsigned int channel;
++	unsigned int vin;
++	unsigned int mask;
++};
++
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @model:		VIN model
+  * @use_mc:		use media controller instead of controlling subdevice
+  * @max_width:		max input width the VIN supports
+  * @max_height:		max input height the VIN supports
++ * @routes:		list of possible routes from the CSI-2 recivers to
++ *			all VINs. The list mush be NULL terminated.
+  */
+ struct rvin_info {
+ 	enum model_id model;
+@@ -92,6 +133,7 @@ struct rvin_info {
+ 
+ 	unsigned int max_width;
+ 	unsigned int max_height;
++	const struct rvin_group_route *routes;
+ };
+ 
+ /**
 -- 
-1.9.1
+2.16.2
