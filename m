@@ -1,9 +1,4 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:7139 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751073AbeDNMAL (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:00:11 -0400
+Return-Path: <linux-media-owner@vger.kernel.org>
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -12,56 +7,57 @@ Cc: linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 13/33] rcar-vin: update bytesperline and sizeimage calculation
-Date: Sat, 14 Apr 2018 13:57:06 +0200
-Message-Id: <20180414115726.5075-14-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 05/33] rcar-vin: unregister video device on driver removal
+Date: Sat, 14 Apr 2018 13:56:58 +0200
+Message-Id: <20180414115726.5075-6-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove over complicated logic to calculate the value for bytesperline
-and sizeimage that was carried over from the soc_camera port. There is
-no need to find the max value of bytesperline and sizeimage from
-user-space as they are set to 0 before the max_t() operation.
+If the video device was registered by the complete() callback it should
+be unregistered when a device is unbound from the driver. Protect from
+printing an uninitialized video device node name by adding a check in
+rvin_v4l2_unregister() to identify that the video device is registered.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 +++
+ 2 files changed, 5 insertions(+)
 
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 2bedf20abcf3ca07..47f06acde2e698f2 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -272,6 +272,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	rvin_v4l2_unregister(vin);
++
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
+ 
 diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 81a9aec96e8e664a..907322e1eeb5f6a0 100644
+index 178aecc94962abe2..32a658214f48fa49 100644
 --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -196,10 +196,6 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 		pix->pixelformat = RVIN_DEFAULT_FORMAT;
- 	}
+@@ -841,6 +841,9 @@ static const struct v4l2_file_operations rvin_fops = {
  
--	/* Always recalculate */
--	pix->bytesperline = 0;
--	pix->sizeimage = 0;
--
- 	/* Limit to source capabilities */
- 	ret = __rvin_try_format_source(vin, which, pix, source);
- 	if (ret)
-@@ -234,10 +230,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	v4l_bound_align_image(&pix->width, 2, vin->info->max_width, walign,
- 			      &pix->height, 4, vin->info->max_height, 2, 0);
+ void rvin_v4l2_unregister(struct rvin_dev *vin)
+ {
++	if (!video_is_registered(&vin->vdev))
++		return;
++
+ 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
+ 		  video_device_node_name(&vin->vdev));
  
--	pix->bytesperline = max_t(u32, pix->bytesperline,
--				  rvin_format_bytesperline(pix));
--	pix->sizeimage = max_t(u32, pix->sizeimage,
--			       rvin_format_sizeimage(pix));
-+	pix->bytesperline = rvin_format_bytesperline(pix);
-+	pix->sizeimage = rvin_format_sizeimage(pix);
- 
- 	if (vin->info->model == RCAR_M1 &&
- 	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
 -- 
 2.16.2
