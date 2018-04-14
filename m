@@ -1,61 +1,92 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:47510 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751862AbeDJFjM (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 01:39:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 3/6] usb: gadget: udc: renesas_usb3: should call pm_runtime_enable() before add udc
-Date: Tue, 10 Apr 2018 14:38:51 +0900
-Message-Id: <1523338734-20474-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 21/33] rcar-vin: add flag to switch to media controller mode
+Date: Sat, 14 Apr 2018 13:57:14 +0200
+Message-Id: <20180414115726.5075-22-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that this driver causes panic if a gadget
-driver is already loaded because usb_add_gadget_udc() might call
-renesas_usb3_start() via .udc_start, and then pm_runtime_get_sync()
-in renesas_usb3_start() doesn't work correctly.
-Note that the usb3_to_dev() macro should not be called at this timing
-because the macro uses the gadget structure.
+On Gen3 a media controller API needs to be used to allow userspace to
+configure the subdevices in the pipeline instead of directly controlling
+a single source subdevice, which is and will continue to be the mode of
+operation on Gen2.
 
-Fixes: cf06df3fae28 ("usb: gadget: udc: renesas_usb3: move pm_runtime_{en,dis}able()")
-Cc: <stable@vger.kernel.org> # v4.15+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Prepare for these two modes of operation by adding a flag to struct
+rvin_info which will control which mode to use.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-Changes from v1:
- - Add Reviewed-by.
+ drivers/media/platform/rcar-vin/rcar-core.c | 6 +++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  | 2 ++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
- drivers/usb/gadget/udc/renesas_usb3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 1c54a77..738b734 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2632,6 +2632,7 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_alloc_prd;
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 07a04d4bcc91b18b..c0e0412e2ecd9487 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -249,18 +249,21 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
  
-+	pm_runtime_enable(&pdev->dev);
- 	ret = usb_add_gadget_udc(&pdev->dev, &usb3->gadget);
- 	if (ret < 0)
- 		goto err_add_udc;
-@@ -2653,7 +2654,6 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	renesas_usb3_debugfs_init(usb3, &pdev->dev);
+ static const struct rvin_info rcar_info_h1 = {
+ 	.model = RCAR_H1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
  
- 	dev_info(&pdev->dev, "probed%s\n", usb3->phy ? " with phy" : "");
--	pm_runtime_enable(usb3_to_dev(usb3));
+ static const struct rvin_info rcar_info_m1 = {
+ 	.model = RCAR_M1,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
  
- 	return 0;
+ static const struct rvin_info rcar_info_gen2 = {
+ 	.model = RCAR_GEN2,
++	.use_mc = false,
+ 	.max_width = 2048,
+ 	.max_height = 2048,
+ };
+@@ -355,7 +358,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 	v4l2_async_notifier_unregister(&vin->notifier);
+ 	v4l2_async_notifier_cleanup(&vin->notifier);
  
+-	v4l2_ctrl_handler_free(&vin->ctrl_handler);
++	if (!vin->info->use_mc)
++		v4l2_ctrl_handler_free(&vin->ctrl_handler);
+ 
+ 	rvin_dma_unregister(vin);
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index c19ddc5e08cbbea4..e5668c1120a67899 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -75,11 +75,13 @@ struct rvin_graph_entity {
+ /**
+  * struct rvin_info - Information about the particular VIN implementation
+  * @model:		VIN model
++ * @use_mc:		use media controller instead of controlling subdevice
+  * @max_width:		max input width the VIN supports
+  * @max_height:		max input height the VIN supports
+  */
+ struct rvin_info {
+ 	enum model_id model;
++	bool use_mc;
+ 
+ 	unsigned int max_width;
+ 	unsigned int max_height;
 -- 
-1.9.1
+2.16.2
