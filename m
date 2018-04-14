@@ -1,147 +1,225 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:63586 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753073AbeDQMw7 (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:43958 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750898AbeDNMC5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:52:59 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Carlo Caione <carlo@endlessm.com>,
-        Juri Lelli <juri.lelli@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/3] arm: shmobile: Add the RZ/N1D SMP enabler driver
-Date: Tue, 17 Apr 2018 13:48:01 +0100
-Message-Id: <1523969291-41756-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
+        Sat, 14 Apr 2018 08:02:57 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 30/33] rcar-vin: extend {start,stop}_streaming to work with media controller
+Date: Sat, 14 Apr 2018 13:57:23 +0200
+Message-Id: <20180414115726.5075-31-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas RZ/N1D second CA7 is parked in a ROM pen at boot time, it
-requires a special enable method to get it started.
+The procedure to start or stop streaming using the non-MC single
+subdevice and the MC graph and multiple subdevices are quite different.
+Create a new function to abstract which method is used based on which
+mode the driver is running in and add logic to start the MC graph.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+
 ---
- arch/arm/mach-shmobile/Makefile        |  1 +
- arch/arm/mach-shmobile/smp-r9a06g032.c | 85 ++++++++++++++++++++++++++++++++++
- 2 files changed, 86 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 1939f52..d7fc98f 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
- smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
-+smp-$(CONFIG_ARCH_R9A06G032)	+= smp-r9a06g032.o
- smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+* Changes since v12
+- Rebase to latest media-tree/master changed a 'return ret' to a 'goto
+  out' in rvin_start_streaming().
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 135 +++++++++++++++++++++++++++--
+ 1 file changed, 127 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index d70a689d9dd3713f..4a3a195e7f59047c 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -996,10 +996,126 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+ }
  
- # PM objects
-diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c b/arch/arm/mach-shmobile/smp-r9a06g032.c
-new file mode 100644
-index 0000000..a536e89
---- /dev/null
-+++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/N1D Second CA7 enabler.
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from action,s500-smp
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/smp.h>
-+#include <asm/cacheflush.h>
-+#include <asm/smp_plat.h>
-+#include <asm/smp_scu.h>
-+
-+/*
-+ * The second CPU is parked in ROM at boot time. It requires waking it after
-+ * writing an address into the BOOTADDR register of sysctrl.
-+ *
-+ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
-+ *
-+ * *However* the BOOTADDR register is not available when the kernel
-+ * starts in NONSEC mode.
-+ *
-+ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
-+ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
-+ * which is not restricted.
-+ */
-+
-+static void __iomem *cpu_bootaddr;
-+
-+static DEFINE_SPINLOCK(cpu_lock);
-+
-+static int rzn1_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
++static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
++				   struct media_pad *pad)
 +{
-+	if (!cpu_bootaddr)
-+		return -ENODEV;
++	struct v4l2_subdev_format fmt = {
++		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
++	};
 +
-+	spin_lock(&cpu_lock);
++	fmt.pad = pad->index;
++	if (v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt))
++		return -EPIPE;
 +
-+	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
-+	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
++	switch (fmt.format.code) {
++	case MEDIA_BUS_FMT_YUYV8_1X16:
++	case MEDIA_BUS_FMT_UYVY8_2X8:
++	case MEDIA_BUS_FMT_UYVY10_2X10:
++	case MEDIA_BUS_FMT_RGB888_1X24:
++		vin->mbus_code = fmt.format.code;
++		break;
++	default:
++		return -EPIPE;
++	}
 +
-+	spin_unlock(&cpu_lock);
++	switch (fmt.format.field) {
++	case V4L2_FIELD_TOP:
++	case V4L2_FIELD_BOTTOM:
++	case V4L2_FIELD_NONE:
++	case V4L2_FIELD_INTERLACED_TB:
++	case V4L2_FIELD_INTERLACED_BT:
++	case V4L2_FIELD_INTERLACED:
++	case V4L2_FIELD_SEQ_TB:
++	case V4L2_FIELD_SEQ_BT:
++		/* Supported natively */
++		break;
++	case V4L2_FIELD_ALTERNATE:
++		switch (vin->format.field) {
++		case V4L2_FIELD_TOP:
++		case V4L2_FIELD_BOTTOM:
++		case V4L2_FIELD_NONE:
++			break;
++		case V4L2_FIELD_INTERLACED_TB:
++		case V4L2_FIELD_INTERLACED_BT:
++		case V4L2_FIELD_INTERLACED:
++		case V4L2_FIELD_SEQ_TB:
++		case V4L2_FIELD_SEQ_BT:
++			/* Use VIN hardware to combine the two fields */
++			fmt.format.height *= 2;
++			break;
++		default:
++			return -EPIPE;
++		}
++		break;
++	default:
++		return -EPIPE;
++	}
++
++	if (fmt.format.width != vin->format.width ||
++	    fmt.format.height != vin->format.height ||
++	    fmt.format.code != vin->mbus_code)
++		return -EPIPE;
 +
 +	return 0;
 +}
 +
-+static void __init rzn1_smp_prepare_cpus(unsigned int max_cpus)
++static int rvin_set_stream(struct rvin_dev *vin, int on)
 +{
-+	struct device_node *dn;
++	struct media_pipeline *pipe;
++	struct media_device *mdev;
++	struct v4l2_subdev *sd;
++	struct media_pad *pad;
 +	int ret;
-+	u32 bootaddr;
 +
-+	dn = of_get_cpu_node(1, NULL);
-+	if (!dn) {
-+		pr_err("CPU#1: missing device tree node\n");
-+		return;
++	/* No media controller used, simply pass operation to subdevice. */
++	if (!vin->info->use_mc) {
++		ret = v4l2_subdev_call(vin->digital->subdev, video, s_stream,
++				       on);
++
++		return ret == -ENOIOCTLCMD ? 0 : ret;
 +	}
++
++	pad = media_entity_remote_pad(&vin->pad);
++	if (!pad)
++		return -EPIPE;
++
++	sd = media_entity_to_v4l2_subdev(pad->entity);
++
++	if (!on) {
++		media_pipeline_stop(&vin->vdev.entity);
++		return v4l2_subdev_call(sd, video, s_stream, 0);
++	}
++
++	ret = rvin_mc_validate_format(vin, sd, pad);
++	if (ret)
++		return ret;
++
 +	/*
-+	 * Determine the address from which the CPU is polling.
-+	 * The bootloader *does* change this property
++	 * The graph lock needs to be taken to protect concurrent
++	 * starts of multiple VIN instances as they might share
++	 * a common subdevice down the line and then should use
++	 * the same pipe.
 +	 */
-+	ret = of_property_read_u32(dn, "cpu-release-addr", &bootaddr);
-+	of_node_put(dn);
-+	if (ret) {
-+		pr_err("CPU#1: invalid cpu-release-addr property\n");
-+		return;
-+	}
-+	pr_info("CPU#1: cpu-release-addr %08x\n", (u32)bootaddr);
++	mdev = vin->vdev.entity.graph_obj.mdev;
++	mutex_lock(&mdev->graph_mutex);
++	pipe = sd->entity.pipe ? sd->entity.pipe : &vin->vdev.pipe;
++	ret = __media_pipeline_start(&vin->vdev.entity, pipe);
++	mutex_unlock(&mdev->graph_mutex);
++	if (ret)
++		return ret;
 +
-+	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-+	if (!cpu_bootaddr)
-+		pr_err("CPU#1: cpu-release-addr map failed\n");
++	ret = v4l2_subdev_call(sd, video, s_stream, 1);
++	if (ret == -ENOIOCTLCMD)
++		ret = 0;
++	if (ret)
++		media_pipeline_stop(&vin->vdev.entity);
++
++	return ret;
 +}
 +
-+static const struct smp_operations rzn1_smp_ops __initconst = {
-+	.smp_prepare_cpus = rzn1_smp_prepare_cpus,
-+	.smp_boot_secondary = rzn1_smp_boot_secondary,
-+};
-+CPU_METHOD_OF_DECLARE(rzn1_smp, "renesas,r9a06g032-smp", &rzn1_smp_ops);
+ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ {
+ 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
+-	struct v4l2_subdev *sd;
+ 	unsigned long flags;
+ 	int ret;
+ 
+@@ -1014,8 +1130,13 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 		return -ENOMEM;
+ 	}
+ 
+-	sd = vin_to_source(vin);
+-	v4l2_subdev_call(sd, video, s_stream, 1);
++	ret = rvin_set_stream(vin, 1);
++	if (ret) {
++		spin_lock_irqsave(&vin->qlock, flags);
++		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
++		spin_unlock_irqrestore(&vin->qlock, flags);
++		goto out;
++	}
+ 
+ 	spin_lock_irqsave(&vin->qlock, flags);
+ 
+@@ -1024,11 +1145,11 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	ret = rvin_capture_start(vin);
+ 	if (ret) {
+ 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
+-		v4l2_subdev_call(sd, video, s_stream, 0);
++		rvin_set_stream(vin, 0);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+-
++out:
+ 	if (ret)
+ 		dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
+ 				  vin->scratch_phys);
+@@ -1039,7 +1160,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ static void rvin_stop_streaming(struct vb2_queue *vq)
+ {
+ 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
+-	struct v4l2_subdev *sd;
+ 	unsigned long flags;
+ 	int retries = 0;
+ 
+@@ -1078,8 +1198,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
+ 
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+ 
+-	sd = vin_to_source(vin);
+-	v4l2_subdev_call(sd, video, s_stream, 0);
++	rvin_set_stream(vin, 0);
+ 
+ 	/* disable interrupts */
+ 	rvin_disable_interrupts(vin);
 -- 
-2.7.4
+2.16.2
