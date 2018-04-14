@@ -1,1061 +1,237 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37556 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752308AbeDRUPI (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:45646 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750942AbeDNMCp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 16:15:08 -0400
-Received: by mail-pg0-f67.google.com with SMTP id r14so1374088pgq.4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Apr 2018 13:15:08 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/5] arm64: dts: renesas: r8a77965: sort subnodes of the soc node
-Date: Thu, 19 Apr 2018 05:14:39 +0900
-Message-Id: <1524082480-18163-5-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
-References: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
+        Sat, 14 Apr 2018 08:02:45 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 29/33] rcar-vin: add link notify for Gen3
+Date: Sat, 14 Apr 2018 13:57:22 +0200
+Message-Id: <20180414115726.5075-30-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort subnodes of the soc node.
-- The primary key is the bus address.
-- The secondary key is the IP block.
-- The tertiary key is the node name.
+Add the ability to process media device link change requests. Link
+enabling is a bit complicated on Gen3, whether or not it's possible to
+enable a link depends on what other links already are enabled. On Gen3
+the 8 VINs are split into two subgroup's (VIN0-3 and VIN4-7) and from a
+routing perspective these two groups are independent of each other.
+Each subgroup's routing is controlled by the subgroup VIN master
+instance (VIN0 and VIN4).
 
-This is part of an ongoing effort to provide consistent node
-order in the DT of Renesas SoCs to improve maintainability.
+There are a limited number of possible route setups available for each
+subgroup and the configuration of each setup is dictated by the
+hardware. On H3 for example there are 6 possible route setups for each
+subgroup to choose from.
 
-This should not have any run-time effect.
+This leads to the media device link notification code being rather large
+since it will find the best routing configuration to try and accommodate
+as many links as possible. When it's not possible to enable a new link
+due to hardware constrains the link_notifier callback will return
+-EMLINK.
 
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 912 +++++++++++++++---------------
- 1 file changed, 456 insertions(+), 456 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index d110382..b12f417 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -130,52 +130,9 @@
- 		#size-cells = <2>;
- 		ranges;
+* Changes since v12
+- Add review tag from Laurent.
+
+* Changes since v11
+- Fixed spelling
+- Updated comment to clarify the intent that no link can be enabled if
+any video node is open.
+- Use container_of() instead of a loop to find struct vin_dev from the
+video device.
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 147 ++++++++++++++++++++++++++++
+ 1 file changed, 147 insertions(+)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 99f6301a778046df..0cc76d73115e9277 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -24,6 +24,7 @@
  
--		gic: interrupt-controller@f1010000 {
--			compatible = "arm,gic-400";
--			#interrupt-cells = <3>;
--			#address-cells = <0>;
--			interrupt-controller;
--			reg = <0x0 0xf1010000 0 0x1000>,
--			      <0x0 0xf1020000 0 0x20000>,
--			      <0x0 0xf1040000 0 0x20000>,
--			      <0x0 0xf1060000 0 0x20000>;
--			interrupts = <GIC_PPI 9
--					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
--			clocks = <&cpg CPG_MOD 408>;
--			clock-names = "clk";
--			power-domains = <&sysc 32>;
--			resets = <&cpg 408>;
--		};
--
--		pfc: pin-controller@e6060000 {
--			compatible = "renesas,pfc-r8a77965";
--			reg = <0 0xe6060000 0 0x50c>;
--		};
--
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a77965-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&extalr_clk>;
--			clock-names = "extal", "extalr";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--			#reset-cells = <1>;
--		};
--
--		rst: reset-controller@e6160000 {
--			compatible = "renesas,r8a77965-rst";
--			reg = <0 0xe6160000 0 0x0200>;
--		};
--
--		prr: chipid@fff00044 {
--			compatible = "renesas,prr";
--			reg = <0 0xfff00044 0 4>;
--		};
--
--		sysc: system-controller@e6180000 {
--			compatible = "renesas,r8a77965-sysc";
--			reg = <0 0xe6180000 0 0x0400>;
--			#power-domain-cells = <1>;
-+		wdt0: watchdog@e6020000 {
-+			reg = <0 0xe6020000 0 0x0c>;
-+			/* placeholder */
- 		};
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-fwnode.h>
++#include <media/v4l2-mc.h>
  
- 		gpio0: gpio@e6050000 {
-@@ -298,6 +255,32 @@
- 			resets = <&cpg 905>;
- 		};
+ #include "rcar-vin.h"
  
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a77965";
-+			reg = <0 0xe6060000 0 0x50c>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77965-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77965-rst";
-+			reg = <0 0xe6160000 0 0x0200>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77965-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a77965", "renesas,irqc";
- 			#interrupt-cells = <2>;
-@@ -314,6 +297,121 @@
- 			resets = <&cpg 407>;
- 		};
+@@ -44,6 +45,151 @@
+  */
+ #define rvin_group_id_to_master(vin) ((vin) < 4 ? 0 : 4)
  
-+		i2c0: i2c@e6500000 {
-+			reg = <0 0xe6500000 0 0x40>;
-+			/* placeholder */
-+		};
++/* -----------------------------------------------------------------------------
++ * Media Controller link notification
++ */
 +
-+		i2c1: i2c@e6508000 {
-+			reg = <0 0xe6508000 0 0x40>;
-+			/* placeholder */
-+		};
++/* group lock should be held when calling this function. */
++static int rvin_group_entity_to_csi_id(struct rvin_group *group,
++				       struct media_entity *entity)
++{
++	struct v4l2_subdev *sd;
++	unsigned int i;
 +
-+		i2c2: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++	sd = media_entity_to_v4l2_subdev(entity);
 +
-+			reg = <0 0xe6510000 0 0x40>;
-+			/* placeholder */
-+		};
++	for (i = 0; i < RVIN_CSI_MAX; i++)
++		if (group->csi[i].subdev == sd)
++			return i;
 +
-+		i2c3: i2c@e66d0000 {
-+			reg = <0 0xe66d0000 0 0x40>;
-+			/* placeholder */
-+		};
++	return -ENODEV;
++}
 +
-+		i2c4: i2c@e66d8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++static unsigned int rvin_group_get_mask(struct rvin_dev *vin,
++					enum rvin_csi_id csi_id,
++					unsigned char channel)
++{
++	const struct rvin_group_route *route;
++	unsigned int mask = 0;
 +
-+			reg = <0 0xe66d8000 0 0x40>;
-+			/* placeholder */
-+		};
++	for (route = vin->info->routes; route->mask; route++) {
++		if (route->vin == vin->id &&
++		    route->csi == csi_id &&
++		    route->channel == channel) {
++			vin_dbg(vin,
++				"Adding route: vin: %d csi: %d channel: %d\n",
++				route->vin, route->csi, route->channel);
++			mask |= route->mask;
++		}
++	}
 +
-+		i2c5: i2c@e66e0000 {
-+			reg = <0 0xe66e0000 0 0x40>;
-+			/* placeholder */
-+		};
++	return mask;
++}
 +
-+		i2c6: i2c@e66e8000 {
-+			reg = <0 0xe66e8000 0 0x40>;
-+			/* placeholder */
-+		};
++/*
++ * Link setup for the links between a VIN and a CSI-2 receiver is a bit
++ * complex. The reason for this is that the register controlling routing
++ * is not present in each VIN instance. There are special VINs which
++ * control routing for themselves and other VINs. There are not many
++ * different possible links combinations that can be enabled at the same
++ * time, therefor all already enabled links which are controlled by a
++ * master VIN need to be taken into account when making the decision
++ * if a new link can be enabled or not.
++ *
++ * 1. Find out which VIN the link the user tries to enable is connected to.
++ * 2. Lookup which master VIN controls the links for this VIN.
++ * 3. Start with a bitmask with all bits set.
++ * 4. For each previously enabled link from the master VIN bitwise AND its
++ *    route mask (see documentation for mask in struct rvin_group_route)
++ *    with the bitmask.
++ * 5. Bitwise AND the mask for the link the user tries to enable to the bitmask.
++ * 6. If the bitmask is not empty at this point the new link can be enabled
++ *    while keeping all previous links enabled. Update the CHSEL value of the
++ *    master VIN and inform the user that the link could be enabled.
++ *
++ * Please note that no link can be enabled if any VIN in the group is
++ * currently open.
++ */
++static int rvin_group_link_notify(struct media_link *link, u32 flags,
++				  unsigned int notification)
++{
++	struct rvin_group *group = container_of(link->graph_obj.mdev,
++						struct rvin_group, mdev);
++	unsigned int master_id, channel, mask_new, i;
++	unsigned int mask = ~0;
++	struct media_entity *entity;
++	struct video_device *vdev;
++	struct media_pad *csi_pad;
++	struct rvin_dev *vin = NULL;
++	int csi_id, ret;
 +
-+		i2c_dvfs: i2c@e60b0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a77965",
-+				     "renesas,rcar-gen3-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe60b0000 0 0x425>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 926>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 926>;
-+			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
++	ret = v4l2_pipeline_link_notify(link, flags, notification);
++	if (ret)
++		return ret;
 +
-+		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a7796",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x100>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 704>;
-+			status = "disabled";
-+		};
++	/* Only care about link enablement for VIN nodes. */
++	if (!(flags & MEDIA_LNK_FL_ENABLED) ||
++	    !is_media_entity_v4l2_video_device(link->sink->entity))
++		return 0;
 +
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a77965-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 330>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
++	/* If any entity is in use don't allow link changes. */
++	media_device_for_each_entity(entity, &group->mdev)
++		if (entity->use_count)
++			return -EBUSY;
 +
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a77965-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 331>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
++	mutex_lock(&group->lock);
 +
-+		usb3_phy0: usb-phy@e65ee000 {
-+			compatible = "renesas,r8a77965-usb3-phy",
-+				     "renesas,rcar-gen3-usb3-phy";
-+			reg = <0 0xe65ee000 0 0x90>;
-+			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
-+				 <&usb_extal_clk>;
-+			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 328>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
++	/* Find the master VIN that controls the routes. */
++	vdev = media_entity_to_video_device(link->sink->entity);
++	vin = container_of(vdev, struct rvin_dev, vdev);
++	master_id = rvin_group_id_to_master(vin->id);
 +
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a77965",
- 				     "renesas,rcar-dmac";
-@@ -416,35 +514,150 @@
- 			dma-channels = <16>;
- 		};
++	if (WARN_ON(!group->vin[master_id])) {
++		ret = -ENODEV;
++		goto out;
++	}
++
++	/* Build a mask for already enabled links. */
++	for (i = master_id; i < master_id + 4; i++) {
++		if (!group->vin[i])
++			continue;
++
++		/* Get remote CSI-2, if any. */
++		csi_pad = media_entity_remote_pad(
++				&group->vin[i]->vdev.entity.pads[0]);
++		if (!csi_pad)
++			continue;
++
++		csi_id = rvin_group_entity_to_csi_id(group, csi_pad->entity);
++		channel = rvin_group_csi_pad_to_channel(csi_pad->index);
++
++		mask &= rvin_group_get_mask(group->vin[i], csi_id, channel);
++	}
++
++	/* Add the new link to the existing mask and check if it works. */
++	csi_id = rvin_group_entity_to_csi_id(group, link->source->entity);
++	channel = rvin_group_csi_pad_to_channel(link->source->index);
++	mask_new = mask & rvin_group_get_mask(vin, csi_id, channel);
++
++	vin_dbg(vin, "Try link change mask: 0x%x new: 0x%x\n", mask, mask_new);
++
++	if (!mask_new) {
++		ret = -EMLINK;
++		goto out;
++	}
++
++	/* New valid CHSEL found, set the new value. */
++	ret = rvin_set_channel_routing(group->vin[master_id], __ffs(mask_new));
++out:
++	mutex_unlock(&group->lock);
++
++	return ret;
++}
++
++static const struct media_device_ops rvin_media_ops = {
++	.link_notify = rvin_group_link_notify,
++};
++
+ /* -----------------------------------------------------------------------------
+  * Gen3 CSI2 Group Allocator
+  */
+@@ -85,6 +231,7 @@ static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
+ 	vin_dbg(vin, "found %u enabled VIN's in DT", group->count);
  
--		scif0: serial@e6e60000 {
--			compatible = "renesas,scif-r8a77965",
--				     "renesas,rcar-gen3-scif", "renesas,scif";
--			reg = <0 0xe6e60000 0 64>;
--			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 207>,
--				 <&cpg CPG_CORE 20>,
--				 <&scif_clk>;
--			clock-names = "fck", "brg_int", "scif_clk";
--			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
--			       <&dmac2 0x51>, <&dmac2 0x50>;
--			dma-names = "tx", "rx", "tx", "rx";
-+		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a77965",
-+				     "renesas,etheravb-rcar-gen3";
-+			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15",
-+					  "ch16", "ch17", "ch18", "ch19",
-+					  "ch20", "ch21", "ch22", "ch23",
-+					  "ch24";
-+			clocks = <&cpg CPG_MOD 812>;
- 			power-domains = <&sysc 32>;
--			resets = <&cpg 207>;
-+			resets = <&cpg 812>;
-+			phy-mode = "rgmii";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 			status = "disabled";
- 		};
+ 	mdev->dev = vin->dev;
++	mdev->ops = &rvin_media_ops;
  
--		scif1: serial@e6e68000 {
--			compatible = "renesas,scif-r8a77965",
--				     "renesas,rcar-gen3-scif", "renesas,scif";
--			reg = <0 0xe6e68000 0 64>;
--			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 206>,
--				 <&cpg CPG_CORE 20>,
--				 <&scif_clk>;
--			clock-names = "fck", "brg_int", "scif_clk";
--			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
--			       <&dmac2 0x53>, <&dmac2 0x52>;
--			dma-names = "tx", "rx", "tx", "rx";
-+		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
-+			reg = <0 0xe6e30000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
-+		};
-+
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
-+		};
-+
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
-+		};
-+
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 8>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE 20>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-+			       <&dmac2 0x51>, <&dmac2 0x50>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 207>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a77965",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE 20>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-+			       <&dmac2 0x53>, <&dmac2 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc 32>;
- 			resets = <&cpg 206>;
- 			status = "disabled";
-@@ -513,69 +726,66 @@
- 			status = "disabled";
- 		};
- 
--		avb: ethernet@e6800000 {
--			compatible = "renesas,etheravb-r8a77965",
--				     "renesas,etheravb-rcar-gen3";
--			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
--			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "ch0", "ch1", "ch2", "ch3",
--					  "ch4", "ch5", "ch6", "ch7",
--					  "ch8", "ch9", "ch10", "ch11",
--					  "ch12", "ch13", "ch14", "ch15",
--					  "ch16", "ch17", "ch18", "ch19",
--					  "ch20", "ch21", "ch22", "ch23",
--					  "ch24";
--			clocks = <&cpg CPG_MOD 812>;
-+		msiof0: spi@e6e90000 {
-+			compatible = "renesas,msiof-r8a77965",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6e90000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 211>;
-+			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
-+			       <&dmac2 0x41>, <&dmac2 0x40>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc 32>;
--			resets = <&cpg 812>;
--			phy-mode = "rgmii";
-+			resets = <&cpg 211>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
- 		};
- 
--		csi20: csi2@fea80000 {
--			reg = <0 0xfea80000 0 0x10000>;
--			/* placeholder */
--
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--			};
-+		msiof1: spi@e6ea0000 {
-+			compatible = "renesas,msiof-r8a77965",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6ea0000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 210>;
-+			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
-+			       <&dmac2 0x43>, <&dmac2 0x42>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 210>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
--		csi40: csi2@feaa0000 {
--			reg = <0 0xfeaa0000 0 0x10000>;
--			/* placeholder */
-+		msiof2: spi@e6c00000 {
-+			compatible = "renesas,msiof-r8a77965",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6c00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 209>;
-+			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 209>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
- 
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--			};
-+		msiof3: spi@e6c10000 {
-+			compatible = "renesas,msiof-r8a77965",
-+				     "renesas,rcar-gen3-msiof";
-+			reg = <0 0xe6c10000 0 0x0064>;
-+			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 208>;
-+			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 208>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
- 		vin0: video@e6ef0000 {
-@@ -618,6 +828,58 @@
- 			/* placeholder */
- 		};
- 
-+		rcar_sound: sound@ec500000 {
-+			reg =	<0 0xec500000 0 0x1000>, /* SCU */
-+				<0 0xec5a0000 0 0x100>,  /* ADG */
-+				<0 0xec540000 0 0x1000>, /* SSIU */
-+				<0 0xec541000 0 0x280>,  /* SSI */
-+				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
-+			/* placeholder */
-+
-+			rcar_sound,dvc {
-+				dvc0: dvc-0 {
-+				};
-+				dvc1: dvc-1 {
-+				};
-+			};
-+
-+			rcar_sound,src {
-+				src0: src-0 {
-+				};
-+				src1: src-1 {
-+				};
-+			};
-+
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 {
-+				};
-+				ssi1: ssi-1 {
-+				};
-+			};
-+		};
-+
-+		xhci0: usb@ee000000 {
-+			compatible = "renesas,xhci-r8a77965",
-+				     "renesas,rcar-gen3-xhci";
-+			reg = <0 0xee000000 0 0xc00>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+		};
-+
-+		usb3_peri0: usb@ee020000 {
-+			compatible = "renesas,r8a77965-usb3-peri",
-+				     "renesas,rcar-gen3-usb3-peri";
-+			reg = <0 0xee020000 0 0x400>;
-+			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+		};
-+
- 		ohci0: usb@ee080000 {
- 			compatible = "generic-ohci";
- 			reg = <0 0xee080000 0 0x100>;
-@@ -630,6 +892,18 @@
- 			status = "disabled";
- 		};
- 
-+		ohci1: usb@ee0a0000 {
-+			compatible = "generic-ohci";
-+			reg = <0 0xee0a0000 0 0x100>;
-+			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 702>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 702>;
-+			status = "disabled";
-+		};
-+
- 		ehci0: usb@ee080100 {
- 			compatible = "generic-ehci";
- 			reg = <0 0xee080100 0 0x100>;
-@@ -643,6 +917,19 @@
- 			status = "disabled";
- 		};
- 
-+		ehci1: usb@ee0a0100 {
-+			compatible = "generic-ehci";
-+			reg = <0 0xee0a0100 0 0x100>;
-+			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 702>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			companion = <&ohci1>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 702>;
-+			status = "disabled";
-+		};
-+
- 		usb2_phy0: usb-phy@ee080200 {
- 			compatible = "renesas,usb2-phy-r8a77965",
- 				     "renesas,rcar-gen3-usb2-phy";
-@@ -666,218 +953,71 @@
- 			status = "disabled";
- 		};
- 
--		ohci1: usb@ee0a0000 {
--			compatible = "generic-ohci";
--			reg = <0 0xee0a0000 0 0x100>;
--			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 702>;
--			phys = <&usb2_phy1>;
--			phy-names = "usb";
--			power-domains = <&sysc 32>;
--			resets = <&cpg 702>;
--			status = "disabled";
--		};
--
--		ehci1: usb@ee0a0100 {
--			compatible = "generic-ehci";
--			reg = <0 0xee0a0100 0 0x100>;
--			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 702>;
--			phys = <&usb2_phy1>;
--			phy-names = "usb";
--			companion = <&ohci1>;
--			power-domains = <&sysc 32>;
--			resets = <&cpg 702>;
--			status = "disabled";
--		};
--
--		i2c0: i2c@e6500000 {
--			reg = <0 0xe6500000 0 0x40>;
-+		sdhi0: sd@ee100000 {
-+			reg = <0 0xee100000 0 0x2000>;
- 			/* placeholder */
- 		};
- 
--		i2c1: i2c@e6508000 {
--			reg = <0 0xe6508000 0 0x40>;
-+		sdhi1: sd@ee120000 {
-+			reg = <0 0xee120000 0 0x2000>;
- 			/* placeholder */
- 		};
- 
--		i2c2: i2c@e6510000 {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			reg = <0 0xe6510000 0 0x40>;
-+		sdhi2: sd@ee140000 {
-+			reg = <0 0xee140000 0 0x2000>;
- 			/* placeholder */
- 		};
- 
--		i2c3: i2c@e66d0000 {
--			reg = <0 0xe66d0000 0 0x40>;
-+		sdhi3: sd@ee160000 {
-+			reg = <0 0xee160000 0 0x2000>;
- 			/* placeholder */
- 		};
- 
--		i2c4: i2c@e66d8000 {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			reg = <0 0xe66d8000 0 0x40>;
--			/* placeholder */
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1010000 0 0x1000>,
-+			      <0x0 0xf1020000 0 0x20000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 408>;
- 		};
- 
--		i2c5: i2c@e66e0000 {
--			reg = <0 0xe66e0000 0 0x40>;
-+		pciec0: pcie@fe000000 {
-+			reg = <0 0xfe000000 0 0x80000>;
- 			/* placeholder */
- 		};
- 
--		i2c6: i2c@e66e8000 {
--			reg = <0 0xe66e8000 0 0x40>;
-+		pciec1: pcie@ee800000 {
-+			reg = <0 0xee800000 0 0x80000>;
- 			/* placeholder */
- 		};
- 
--		i2c_dvfs: i2c@e60b0000 {
--			#address-cells = <1>;
--			#size-cells = <0>;
--			compatible = "renesas,iic-r8a77965",
--				     "renesas,rcar-gen3-iic",
--				     "renesas,rmobile-iic";
--			reg = <0 0xe60b0000 0 0x425>;
--			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 926>;
--			power-domains = <&sysc 32>;
--			resets = <&cpg 926>;
--			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
--			dma-names = "tx", "rx";
--			status = "disabled";
--		};
--
--		pwm0: pwm@e6e30000 {
--			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
--			reg = <0 0xe6e30000 0 8>;
--			#pwm-cells = <2>;
--			clocks = <&cpg CPG_MOD 523>;
--			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
--			status = "disabled";
--		};
--
--		pwm1: pwm@e6e31000 {
--			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
--			reg = <0 0xe6e31000 0 8>;
--			#pwm-cells = <2>;
--			clocks = <&cpg CPG_MOD 523>;
--			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
--			status = "disabled";
--		};
--
--		pwm2: pwm@e6e32000 {
--			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
--			reg = <0 0xe6e32000 0 8>;
--			#pwm-cells = <2>;
--			clocks = <&cpg CPG_MOD 523>;
--			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
--			status = "disabled";
--		};
--
--		pwm3: pwm@e6e33000 {
--			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
--			reg = <0 0xe6e33000 0 8>;
--			#pwm-cells = <2>;
--			clocks = <&cpg CPG_MOD 523>;
--			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
--			status = "disabled";
--		};
--
--		pwm4: pwm@e6e34000 {
--			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
--			reg = <0 0xe6e34000 0 8>;
--			#pwm-cells = <2>;
--			clocks = <&cpg CPG_MOD 523>;
--			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
--			status = "disabled";
--		};
--
--		pwm5: pwm@e6e35000 {
--			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
--			reg = <0 0xe6e35000 0 8>;
--			#pwm-cells = <2>;
--			clocks = <&cpg CPG_MOD 523>;
--			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
--			status = "disabled";
--		};
--
--		pwm6: pwm@e6e36000 {
--			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
--			reg = <0 0xe6e36000 0 8>;
--			#pwm-cells = <2>;
--			clocks = <&cpg CPG_MOD 523>;
--			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
--			status = "disabled";
--		};
--
--		msiof0: spi@e6e90000 {
--			compatible = "renesas,msiof-r8a77965",
--				     "renesas,rcar-gen3-msiof";
--			reg = <0 0xe6e90000 0 0x0064>;
--			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 211>;
--			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
--			       <&dmac2 0x41>, <&dmac2 0x40>;
--			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
--			resets = <&cpg 211>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			status = "disabled";
--		};
-+		csi20: csi2@fea80000 {
-+			reg = <0 0xfea80000 0 0x10000>;
-+			/* placeholder */
- 
--		msiof1: spi@e6ea0000 {
--			compatible = "renesas,msiof-r8a77965",
--				     "renesas,rcar-gen3-msiof";
--			reg = <0 0xe6ea0000 0 0x0064>;
--			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 210>;
--			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
--			       <&dmac2 0x43>, <&dmac2 0x42>;
--			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
--			resets = <&cpg 210>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			status = "disabled";
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
- 		};
- 
--		msiof2: spi@e6c00000 {
--			compatible = "renesas,msiof-r8a77965",
--				     "renesas,rcar-gen3-msiof";
--			reg = <0 0xe6c00000 0 0x0064>;
--			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 209>;
--			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
--			dma-names = "tx", "rx";
--			power-domains = <&sysc 32>;
--			resets = <&cpg 209>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			status = "disabled";
--		};
-+		csi40: csi2@feaa0000 {
-+			reg = <0 0xfeaa0000 0 0x10000>;
-+			/* placeholder */
- 
--		msiof3: spi@e6c10000 {
--			compatible = "renesas,msiof-r8a77965",
--				     "renesas,rcar-gen3-msiof";
--			reg = <0 0xe6c10000 0 0x0064>;
--			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 208>;
--			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
--			dma-names = "tx", "rx";
--			power-domains = <&sysc 32>;
--			resets = <&cpg 208>;
--			#address-cells = <1>;
--			#size-cells = <0>;
--			status = "disabled";
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
- 		};
- 
- 		du: display@feb00000 {
-@@ -907,149 +1047,9 @@
- 			};
- 		};
- 
--		usb_dmac0: dma-controller@e65a0000 {
--			compatible = "renesas,r8a77965-usb-dmac",
--				     "renesas,usb-dmac";
--			reg = <0 0xe65a0000 0 0x100>;
--			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "ch0", "ch1";
--			clocks = <&cpg CPG_MOD 330>;
--			power-domains = <&sysc 32>;
--			resets = <&cpg 330>;
--			#dma-cells = <1>;
--			dma-channels = <2>;
--		};
--
--		usb_dmac1: dma-controller@e65b0000 {
--			compatible = "renesas,r8a77965-usb-dmac",
--				     "renesas,usb-dmac";
--			reg = <0 0xe65b0000 0 0x100>;
--			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
--				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "ch0", "ch1";
--			clocks = <&cpg CPG_MOD 331>;
--			power-domains = <&sysc 32>;
--			resets = <&cpg 331>;
--			#dma-cells = <1>;
--			dma-channels = <2>;
--		};
--
--		hsusb: usb@e6590000 {
--			compatible = "renesas,usbhs-r8a7796",
--				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe6590000 0 0x100>;
--			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 704>;
--			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
--			       <&usb_dmac1 0>, <&usb_dmac1 1>;
--			dma-names = "ch0", "ch1", "ch2", "ch3";
--			renesas,buswait = <11>;
--			phys = <&usb2_phy0>;
--			phy-names = "usb";
--			power-domains = <&sysc 32>;
--			resets = <&cpg 704>;
--			status = "disabled";
--		};
--
--		pciec0: pcie@fe000000 {
--			reg = <0 0xfe000000 0 0x80000>;
--			/* placeholder */
--		};
--
--		pciec1: pcie@ee800000 {
--			reg = <0 0xee800000 0 0x80000>;
--			/* placeholder */
--		};
--
--		rcar_sound: sound@ec500000 {
--			reg =	<0 0xec500000 0 0x1000>, /* SCU */
--				<0 0xec5a0000 0 0x100>,  /* ADG */
--				<0 0xec540000 0 0x1000>, /* SSIU */
--				<0 0xec541000 0 0x280>,  /* SSI */
--				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
--			/* placeholder */
--
--			rcar_sound,dvc {
--				dvc0: dvc-0 {
--				};
--				dvc1: dvc-1 {
--				};
--			};
--
--			rcar_sound,src {
--				src0: src-0 {
--				};
--				src1: src-1 {
--				};
--			};
--
--			rcar_sound,ssi {
--				ssi0: ssi-0 {
--				};
--				ssi1: ssi-1 {
--				};
--			};
--		};
--
--		sdhi0: sd@ee100000 {
--			reg = <0 0xee100000 0 0x2000>;
--			/* placeholder */
--		};
--
--		sdhi1: sd@ee120000 {
--			reg = <0 0xee120000 0 0x2000>;
--			/* placeholder */
--		};
--
--		sdhi2: sd@ee140000 {
--			reg = <0 0xee140000 0 0x2000>;
--			/* placeholder */
--		};
--
--		sdhi3: sd@ee160000 {
--			reg = <0 0xee160000 0 0x2000>;
--			/* placeholder */
--		};
--
--		usb3_phy0: usb-phy@e65ee000 {
--			compatible = "renesas,r8a77965-usb3-phy",
--				     "renesas,rcar-gen3-usb3-phy";
--			reg = <0 0xe65ee000 0 0x90>;
--			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
--				 <&usb_extal_clk>;
--			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
--			power-domains = <&sysc 32>;
--			resets = <&cpg 328>;
--			#phy-cells = <0>;
--			status = "disabled";
--		};
--
--		usb3_peri0: usb@ee020000 {
--			compatible = "renesas,r8a77965-usb3-peri",
--				     "renesas,rcar-gen3-usb3-peri";
--			reg = <0 0xee020000 0 0x400>;
--			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 328>;
--			power-domains = <&sysc 32>;
--			resets = <&cpg 328>;
--			status = "disabled";
--		};
--
--		xhci0: usb@ee000000 {
--			compatible = "renesas,xhci-r8a77965",
--				     "renesas,rcar-gen3-xhci";
--			reg = <0 0xee000000 0 0xc00>;
--			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 328>;
--			power-domains = <&sysc 32>;
--			resets = <&cpg 328>;
--			status = "disabled";
--		};
--
--		wdt0: watchdog@e6020000 {
--			reg = <0 0xe6020000 0 0x0c>;
--			/* placeholder */
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
- 		};
- 	};
- 
+ 	match = of_match_node(vin->dev->driver->of_match_table,
+ 			      vin->dev->of_node);
 -- 
-1.9.1
+2.16.2
