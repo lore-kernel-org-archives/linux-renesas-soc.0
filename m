@@ -1,105 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:51469 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752658AbeDTVLz (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:28276 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750936AbeDNMD3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 17:11:55 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v7 10/11] ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
-Date: Fri, 20 Apr 2018 23:10:21 +0200
-Message-Id: <20180420211022.11759-11-mylene.josserand@bootlin.com>
-In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
-References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+        Sat, 14 Apr 2018 08:03:29 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 33/33] rcar-vin: enable support for r8a77970
+Date: Sat, 14 Apr 2018 13:57:26 +0200
+Message-Id: <20180414115726.5075-34-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the use of enable-method property for SMP support which allows
-to handle the SMP support for this specific SoC.
+Add the SoC specific information for Renesas r8a77970.
 
-This commit adds enable-method properties to all CPU nodes.
-
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 42539267e329..c9b60047b0b8 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -67,6 +67,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0>;
- 		};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 81c82793b1312aae..55b745ac86a5884d 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -971,6 +971,25 @@ static const struct rvin_info rcar_info_r8a7796 = {
+ 	.routes = rcar_info_r8a7796_routes,
+ };
  
-@@ -75,6 +76,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <1>;
- 		};
- 
-@@ -83,6 +85,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <2>;
- 		};
- 
-@@ -91,6 +94,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <3>;
- 		};
- 
-@@ -101,6 +105,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x100>;
- 		};
- 
-@@ -109,6 +114,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x101>;
- 		};
- 
-@@ -117,6 +123,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x102>;
- 		};
- 
-@@ -125,6 +132,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x103>;
- 		};
- 	};
++static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
++	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
++	{ /* Sentinel */ }
++};
++
++static const struct rvin_info rcar_info_r8a77970 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = _rcar_info_r8a77970_routes,
++};
++
+ static const struct of_device_id rvin_of_id_table[] = {
+ 	{
+ 		.compatible = "renesas,vin-r8a7778",
+@@ -1008,6 +1027,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,vin-r8a7796",
+ 		.data = &rcar_info_r8a7796,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a77970",
++		.data = &rcar_info_r8a77970,
++	},
+ 	{ /* Sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
 -- 
-2.11.0
+2.16.2
