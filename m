@@ -1,108 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:51484 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752658AbeDTVL7 (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:35073 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750898AbeDNMDT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 17:11:59 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v7 11/11] ARM: shmobile: Convert file to use cntvoff
-Date: Fri, 20 Apr 2018 23:10:22 +0200
-Message-Id: <20180420211022.11759-12-mylene.josserand@bootlin.com>
-In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
-References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+        Sat, 14 Apr 2018 08:03:19 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v14 32/33] rcar-vin: enable support for r8a7796
+Date: Sat, 14 Apr 2018 13:57:25 +0200
+Message-Id: <20180414115726.5075-33-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now that a common function is available for CNTVOFF's
-initialization, let's convert shmobile-apmu code to use
-this function.
+Add the SoC specific information for Renesas r8a7796.
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 ---
- arch/arm/mach-shmobile/common.h          |  1 -
- arch/arm/mach-shmobile/headsmp-apmu.S    | 22 +---------------------
- arch/arm/mach-shmobile/setup-rcar-gen2.c |  3 ++-
- 3 files changed, 3 insertions(+), 23 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 44 +++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
-index 43c1ac696274..2109f123bdfb 100644
---- a/arch/arm/mach-shmobile/common.h
-+++ b/arch/arm/mach-shmobile/common.h
-@@ -2,7 +2,6 @@
- #ifndef __ARCH_MACH_COMMON_H
- #define __ARCH_MACH_COMMON_H
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 81119ae4402d0990..81c82793b1312aae 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -931,6 +931,46 @@ static const struct rvin_info rcar_info_r8a7795es1 = {
+ 	.routes = rcar_info_r8a7795es1_routes,
+ };
  
--extern void shmobile_init_cntvoff(void);
- extern void shmobile_init_delay(void);
- extern void shmobile_boot_vector(void);
- extern unsigned long shmobile_boot_fn;
-diff --git a/arch/arm/mach-shmobile/headsmp-apmu.S b/arch/arm/mach-shmobile/headsmp-apmu.S
-index 5672b5849401..d49ab194766a 100644
---- a/arch/arm/mach-shmobile/headsmp-apmu.S
-+++ b/arch/arm/mach-shmobile/headsmp-apmu.S
-@@ -11,29 +11,9 @@
- #include <linux/linkage.h>
- #include <asm/assembler.h>
- 
--ENTRY(shmobile_init_cntvoff)
--	/*
--	 * CNTVOFF has to be initialized either from non-secure Hypervisor
--	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
--	 * then it should be handled by the secure code
--	 */
--	cps	#MON_MODE
--	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
--	orr	r0, r1, #1
--	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
--	instr_sync
--	mov	r0, #0
--	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
--	instr_sync
--	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
--	instr_sync
--	cps	#SVC_MODE
--	ret	lr
--ENDPROC(shmobile_init_cntvoff)
--
- #ifdef CONFIG_SMP
- ENTRY(shmobile_boot_apmu)
--	bl	shmobile_init_cntvoff
-+	bl	secure_cntvoff_init
- 	b	secondary_startup
- ENDPROC(shmobile_boot_apmu)
- #endif
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 5561dbed7a33..4a881026d740 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -26,6 +26,7 @@
- #include <linux/of_fdt.h>
- #include <linux/of_platform.h>
- #include <asm/mach/arch.h>
-+#include <asm/secure_cntvoff.h>
- #include "common.h"
- #include "rcar-gen2.h"
- 
-@@ -70,7 +71,7 @@ void __init rcar_gen2_timer_init(void)
- 	void __iomem *base;
- 	u32 freq;
- 
--	shmobile_init_cntvoff();
-+	secure_cntvoff_init();
- 
- 	if (of_machine_is_compatible("renesas,r8a7745") ||
- 	    of_machine_is_compatible("renesas,r8a7792") ||
++static const struct rvin_group_route rcar_info_r8a7796_routes[] = {
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) },
++	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 6, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 2, .vin = 6, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 7, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) },
++	{ .csi = RVIN_CSI40, .channel = 3, .vin = 7, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
++	{ /* Sentinel */ }
++};
++
++static const struct rvin_info rcar_info_r8a7796 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a7796_routes,
++};
++
+ static const struct of_device_id rvin_of_id_table[] = {
+ 	{
+ 		.compatible = "renesas,vin-r8a7778",
+@@ -964,6 +1004,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,vin-r8a7795",
+ 		.data = &rcar_info_r8a7795,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a7796",
++		.data = &rcar_info_r8a7796,
++	},
+ 	{ /* Sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, rvin_of_id_table);
 -- 
-2.11.0
+2.16.2
