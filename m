@@ -1,54 +1,155 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:41916 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752527AbeDOUfw (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:39818 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752926AbeDOUdM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 15 Apr 2018 16:35:52 -0400
-Received: by mail-lf0-f49.google.com with SMTP id m202-v6so1916552lfe.8
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Apr 2018 13:35:51 -0700 (PDT)
+        Sun, 15 Apr 2018 16:33:12 -0400
+Received: by mail-lf0-f51.google.com with SMTP id p142-v6so19169551lfd.6
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Apr 2018 13:33:11 -0700 (PDT)
 From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Sun, 15 Apr 2018 22:35:49 +0200
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+Date: Sun, 15 Apr 2018 22:33:08 +0200
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Fukawa <tomoharu.fukawa.eb@renesas.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
+        linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCH v13 2/2] rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver
  driver
-Message-ID: <20180415203549.GE20093@bigcity.dyn.berto.se>
+Message-ID: <20180415203308.GD20093@bigcity.dyn.berto.se>
 References: <20180212230132.5402-1-niklas.soderlund+renesas@ragnatech.se>
- <2180075.m4Wkig6IL5@avalon>
- <CAMuHMdXoprxZNP6KuYjcYW5EYjzAAFqNn6orK24pv7k_fO+i4A@mail.gmail.com>
- <1571834.H8Xd6h4YlB@avalon>
+ <20180212230132.5402-3-niklas.soderlund+renesas@ragnatech.se>
+ <20180329113039.4v5whquyrtgf5yaa@flea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1571834.H8Xd6h4YlB@avalon>
+In-Reply-To: <20180329113039.4v5whquyrtgf5yaa@flea>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert and Laurent,
+Hi Maxime,
 
-Thanks for the feedback.
+Thanks for your feedback.
 
-On 2018-04-05 11:26:45 +0300, Laurent Pinchart wrote:
-
-[snip]
-
-> > Alternatively, you could check for a valid number of lanes, and use
-> > knowledge about the internal lane bits:
-> > 
-> >     phycnt = PHYCNT_ENABLECLK;
-> >     phycnt |= (1 << priv->lanes) - 1;
+On 2018-03-29 13:30:39 +0200, Maxime Ripard wrote:
+> Hi Niklas,
 > 
-> If Niklas is fine with that, I like it too.
+> On Tue, Feb 13, 2018 at 12:01:32AM +0100, Niklas S�derlund wrote:
+> > +	switch (priv->lanes) {
+> > +	case 1:
+> > +		phycnt = PHYCNT_ENABLECLK | PHYCNT_ENABLE_0;
+> > +		break;
+> > +	case 2:
+> > +		phycnt = PHYCNT_ENABLECLK | PHYCNT_ENABLE_1 | PHYCNT_ENABLE_0;
+> > +		break;
+> > +	case 4:
+> > +		phycnt = PHYCNT_ENABLECLK | PHYCNT_ENABLE_3 | PHYCNT_ENABLE_2 |
+> > +			PHYCNT_ENABLE_1 | PHYCNT_ENABLE_0;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> 
+> I guess you could have a simpler construct here using this:
+> 
+> phycnt = PHYCNT_ENABLECLK;
+> 
+> switch (priv->lanes) {
+> case 4:
+> 	phycnt |= PHYCNT_ENABLE_3 | PHYCNT_ENABLE_2;
+> case 2:
+> 	phycnt |= PHYCNT_ENABLE_1;
+> case 1:
+> 	phycnt |= PHYCNT_ENABLE_0;
+> 	break;
+> 
+> default:
+> 	return -EINVAL;
+> }
+> 
+> But that's really up to you.
 
-I'm fine what that thanks for the suggestion Geert!
+Thanks for the suggestion and sparking of the discussion, I think I will 
+go with Geert at.al approach of:
+
+    phycnt = PHYCNT_ENABLECLK;
+    phycnt |= (1 << priv->lanes) - 1;
+
+> 
+> > +static int rcar_csi2_probe(struct platform_device *pdev)
+> > +{
+> > +	const struct soc_device_attribute *attr;
+> > +	struct rcar_csi2 *priv;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv)
+> > +		return -ENOMEM;
+> > +
+> > +	priv->info = of_device_get_match_data(&pdev->dev);
+> > +
+> > +	/* r8a7795 ES1.x behaves different then ES2.0+ but no own compat */
+> > +	attr = soc_device_match(r8a7795es1);
+> > +	if (attr)
+> > +		priv->info = attr->data;
+> > +
+> > +	priv->dev = &pdev->dev;
+> > +
+> > +	mutex_init(&priv->lock);
+> > +	priv->stream_count = 0;
+> > +
+> > +	ret = rcar_csi2_probe_resources(priv, pdev);
+> > +	if (ret) {
+> > +		dev_err(priv->dev, "Failed to get resources\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	platform_set_drvdata(pdev, priv);
+> > +
+> > +	ret = rcar_csi2_parse_dt(priv);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	priv->subdev.owner = THIS_MODULE;
+> > +	priv->subdev.dev = &pdev->dev;
+> > +	v4l2_subdev_init(&priv->subdev, &rcar_csi2_subdev_ops);
+> > +	v4l2_set_subdevdata(&priv->subdev, &pdev->dev);
+> > +	snprintf(priv->subdev.name, V4L2_SUBDEV_NAME_SIZE, "%s %s",
+> > +		 KBUILD_MODNAME, dev_name(&pdev->dev));
+> > +	priv->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+> > +
+> > +	priv->subdev.entity.function = MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER;
+> > +	priv->subdev.entity.ops = &rcar_csi2_entity_ops;
+> > +
+> > +	priv->pads[RCAR_CSI2_SINK].flags = MEDIA_PAD_FL_SINK;
+> > +	for (i = RCAR_CSI2_SOURCE_VC0; i < NR_OF_RCAR_CSI2_PAD; i++)
+> > +		priv->pads[i].flags = MEDIA_PAD_FL_SOURCE;
+> > +
+> > +	ret = media_entity_pads_init(&priv->subdev.entity, NR_OF_RCAR_CSI2_PAD,
+> > +				     priv->pads);
+> > +	if (ret)
+> > +		goto error;
+> > +
+> > +	pm_runtime_enable(&pdev->dev);
+> 
+> Is CONFIG_PM mandatory on Renesas SoCs? If not, you end up with the
+> device uninitialised at probe, and pm_runtime_get_sync will not
+> initialise it either if CONFIG_PM is not enabled. I guess you could
+> call your runtime_resume function unconditionally, and mark the device
+> as active in runtime_pm using pm_runtime_set_active.
+
+Yes CONFIG_PM is selected by ARCH_RENESAS. Thanks for letting me know 
+about this in any case I was not aware of this behavior in the case 
+CONFIG_PM where not enabled.
+
+> 
+> Looks good otherwise, once fixed (and if relevant):
+> Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Thanks!
 
 -- 
 Regards,
