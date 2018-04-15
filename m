@@ -1,114 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:35657 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753041AbeDOV0J (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 15 Apr 2018 17:26:09 -0400
-Received: by mail-lf0-f50.google.com with SMTP id r125-v6so2543186lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 15 Apr 2018 14:26:09 -0700 (PDT)
+Return-Path: <linux-media-owner@vger.kernel.org>
 From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Sun, 15 Apr 2018 23:26:06 +0200
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+Date: Sun, 15 Apr 2018 22:47:37 +0200
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         linux-renesas-soc@vger.kernel.org, tomoharu.fukawa.eb@renesas.com,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCH v13 2/2] rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver
  driver
-Message-ID: <20180415212606.GG20093@bigcity.dyn.berto.se>
+Message-ID: <20180415204737.GF20093@bigcity.dyn.berto.se>
 References: <20180212230132.5402-1-niklas.soderlund+renesas@ragnatech.se>
  <20180212230132.5402-3-niklas.soderlund+renesas@ragnatech.se>
- <5149348.Rp98f1K5qJ@avalon>
+ <20180329113039.4v5whquyrtgf5yaa@flea>
+ <20180404201357.kx7e4dbqurn5zx2r@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5149348.Rp98f1K5qJ@avalon>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20180404201357.kx7e4dbqurn5zx2r@valkosipuli.retiisi.org.uk>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Sakari,
 
 Thanks for your feedback.
 
-I have addressed all your comment's but one for the next version. Please 
-indicate if you are fine with this and I can still keep your review tag 
-:-)
-
-On 2018-04-04 18:15:16 +0300, Laurent Pinchart wrote:
+On 2018-04-04 23:13:57 +0300, Sakari Ailus wrote:
 
 [snip]
 
-> > +static int rcar_csi2_start(struct rcar_csi2 *priv)
-> > +{
-> > +	const struct rcar_csi2_format *format;
-> > +	u32 phycnt, phypll, vcdt = 0, vcdt2 = 0;
-> > +	unsigned int i;
-> > +	int ret;
-> > +
-> > +	dev_dbg(priv->dev, "Input size (%ux%u%c)\n",
-> > +		priv->mf.width, priv->mf.height,
-> > +		priv->mf.field == V4L2_FIELD_NONE ? 'p' : 'i');
-> > +
-> > +	/* Code is validated in set_fmt */
-> > +	format = rcar_csi2_code_to_fmt(priv->mf.code);
+> > > +	pm_runtime_enable(&pdev->dev);
+> > 
+> > Is CONFIG_PM mandatory on Renesas SoCs? If not, you end up with the
+> > device uninitialised at probe, and pm_runtime_get_sync will not
+> > initialise it either if CONFIG_PM is not enabled. I guess you could
+> > call your runtime_resume function unconditionally, and mark the device
+> > as active in runtime_pm using pm_runtime_set_active.
 > 
-> You could store the format pointer iin the rcar_csi2 structure to avoid 
-> looking it up here.
+> There doesn't seem to be any runtime_resume function. Was there supposed
+> to be one?
 
-I could do that, but then I would duplicate the storage of the code 
-between the two cached values priv->mf and priv-><cached pointer to 
-rcar_csi2>. I could find that acceptable but if you don't strongly 
-disagree I would prefer to keep the current way of looking it up here 
-:-)
+No there is not suppose to be one.
 
-[snip]
-
-> > +static int rcar_csi2_probe_resources(struct rcar_csi2 *priv,
-> > +				     struct platform_device *pdev)
-> > +{
-> > +	struct resource *res;
-> > +	int irq;
-> > +
-> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	priv->base = devm_ioremap_resource(&pdev->dev, res);
-> > +	if (IS_ERR(priv->base))
-> > +		return PTR_ERR(priv->base);
-> > +
-> > +	irq = platform_get_irq(pdev, 0);
-> > +	if (irq < 0)
-> > +		return irq;
 > 
-> You don't seem to use the IRQ. Is this meant to catch invalid DT that don't 
-> specify an IRQ, to make sure we'll always have one available when we'll need 
-> to later ?
-
-Yes, as you deducted this is currently only to catch invalid DT. In the 
-DT documentation I list it as a mandatory property. I think there might 
-be potential use-case to at some point add interrupt support of for the 
-some of the error interrupts which can be enabled, specially now when we 
-seen similar patches for VIN floating around.
-
-> > +
-> > +	return 0;
-> > +
-> > +error:
-> > +	v4l2_async_notifier_unregister(&priv->notifier);
-> > +	v4l2_async_notifier_cleanup(&priv->notifier);
-> > +
-> > +	return ret;
-> > +}
+> Assuming runtime PM would actually do something here, you might add
+> pm_runtime_idle() to power the device off after probing.
 > 
-> [snip]
-> 
-> With these small issues fixed and Kieran's and Maxime's comments addressed as 
-> you see fit,
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> I guess pm_runtime_set_active() should precede pm_runtime_enable().
 
-Thanks, I will hold of adding it until you indicate if you are OK with 
-the one comment I'm not fully agreeing with you on.
+The CSI-2 is in the always on power domain so the calls to 
+pm_runtime_get_sync() and pm_runtime_put() are there in the s_stream() 
+callback to enable and disable the module clock. I'm no expert on PM but 
+in my testing the pm_ calls in this driver seems to be correct.
+
+1. In probe I call pm_runtime_enable(). And rudimentary tests shows the 
+   clock is off (but I might miss something) as I wish it to be until 
+   stream on time.
+2. In s_stream() I call pm_runtime_get_sync() before writing any 
+   register when starting a stream. And likewise I call pm_runtime_put() 
+   when stopping and I no longer need to write to a register.
+3. In remove() I call pm_runtime_disable().
+
+Am I missing something obvious here?
 
 -- 
 Regards,
