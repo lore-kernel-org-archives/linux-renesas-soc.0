@@ -1,51 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:37477 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750948AbeDNMCS (ORCPT
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:42493 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752736AbeDPMUu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:02:18 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 26/33] rcar-vin: change name of video device
-Date: Sat, 14 Apr 2018 13:57:19 +0200
-Message-Id: <20180414115726.5075-27-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 16 Apr 2018 08:20:50 -0400
+Received: by mail-ot0-f194.google.com with SMTP id h55-v6so17074629ote.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 Apr 2018 05:20:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523541337-23919-1-git-send-email-geert+renesas@glider.be>
+References: <1523541337-23919-1-git-send-email-geert+renesas@glider.be>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Mon, 16 Apr 2018 13:20:29 +0100
+Message-ID: <CAFEAcA-8yd9oKu1_FTxRHs1w_q7O5c1K7+n9s-BO3_WW8+Piog@mail.gmail.com>
+Subject: Re: [PATCH qemu v3] device_tree: Increase FDT_MAX_SIZE to 1 MiB
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Peter Crosthwaite <crosthwaite.peter@gmail.com>,
+        Alexander Graf <agraf@suse.de>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        qemu-stable <qemu-stable@nongnu.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar-vin driver needs to be part of a media controller to support
-Gen3. Give each VIN instance a unique name so it can be referenced from
-userspace.
+On 12 April 2018 at 14:55, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> It is not uncommon for a contemporary FDT to be larger than 64 KiB,
+> leading to failures loading the device tree from sysfs:
+>
+>     qemu-system-aarch64: qemu_fdt_setprop: Couldn't set ...: FDT_ERR_NOSPACE
+>
+> Hence increase the limit to 1 MiB, like on PPC.
+>
+> For reference, the largest arm64 DTB created from the Linux sources is
+> ca. 75 KiB large (100 KiB when built with symbols/fixup support).
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>   - Update example size figures,
+>
+> v2:
+>   - Enlarge from 128 KiB to 1 MiB, as suggested by Peter Maydell.
+> ---
+>  device_tree.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks; applied to target-arm.next for 2.13. I'll add cc:qemu-stable too.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 2c28daf1c725e64c..09d584d8e839b868 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -991,7 +991,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	/* video node */
- 	vdev->v4l2_dev = &vin->v4l2_dev;
- 	vdev->queue = &vin->queue;
--	strlcpy(vdev->name, KBUILD_MODNAME, sizeof(vdev->name));
-+	snprintf(vdev->name, sizeof(vdev->name), "VIN%u output", vin->id);
- 	vdev->release = video_device_release_empty;
- 	vdev->lock = &vin->lock;
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
--- 
-2.16.2
+-- PMM
