@@ -1,95 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:8706 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751211AbeDQJcp (ORCPT
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34808 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751110AbeDPVq2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Apr 2018 05:32:45 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
+        Mon, 16 Apr 2018 17:46:28 -0400
+Subject: Re: [RFC 3/3] arm: shmobile: Add the RZ/N1D SMP enabler driver.
+To: Michel Pollet <michel.pollet@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>
-CC: Phil Edworthy <phil.edworthy@renesas.com>,
-        "buserror+upstream@gmail.com" <buserror+upstream@gmail.com>,
+Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chen-Yu Tsai <wens@csie.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
         Andy Gross <andy.gross@linaro.org>,
         Carlo Caione <carlo@endlessm.com>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         Frank Rowand <frank.rowand@sony.com>,
-        Juri Lelli <juri.lelli@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [RFC 3/3] arm: shmobile: Add the RZ/N1D SMP enabler driver.
-Date: Tue, 17 Apr 2018 09:32:38 +0000
-Message-ID: <OSBPR01MB2054A677AE2DA04684D51468D2B70@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+        Juri Lelli <juri.lelli@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <1523871304-48517-1-git-send-email-michel.pollet@bp.renesas.com>
  <1523871304-48517-5-git-send-email-michel.pollet@bp.renesas.com>
- <9f33a1d2-3c55-2485-a1f2-909def69e5b0@gmail.com>
-In-Reply-To: <9f33a1d2-3c55-2485-a1f2-909def69e5b0@gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <9f33a1d2-3c55-2485-a1f2-909def69e5b0@gmail.com>
+Date: Mon, 16 Apr 2018 14:46:16 -0700
 MIME-Version: 1.0
+In-Reply-To: <1523871304-48517-5-git-send-email-michel.pollet@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgRmxvcmlhbiwNCg0KT24gMTYgQXByaWwgMjAxOCAyMjo0NiwgRmxvcmlhbiBGYWluZWxsaToN
-Cj4gSGkgTWljaGVsLA0KPg0KPiBPbiAwNC8xNi8yMDE4IDAyOjM0IEFNLCBNaWNoZWwgUG9sbGV0
-IHdyb3RlOg0KPiA+IFRoZSBSZW5lc2FzIFJaL04xRCBzZWNvbmQgQ0E3IGlzIHBhcmtlZCBpbiBh
-IFJPTSBwZW4gYXQgYm9vdCB0aW1lLCBpdA0KPiA+IHJlcXVpcmVzIGEgc3BlY2lhbCBlbmFibGUg
-bWV0aG9kIHRvIGdldCBpdCBzdGFydGVkIGF0IGJvb3QgdGltZS4NCj4gPg0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IE1pY2hlbCBQb2xsZXQgPG1pY2hlbC5wb2xsZXRAYnAucmVuZXNhcy5jb20+DQo+DQo+
-IFNvbWUgZmV3IGNvbW1lbnRzIGJlbG93LiBUaGlzIHBhdGNoIHNob3VsZCBwcm9iYWJseSBiZSBy
-ZS1vcmRlcmVkIGluDQo+IHlvdXIgcGF0Y2ggc2VyaWVzLCBJIHdvdWxkIGV4cGVjdCB5b3UgdG8g
-aGF2ZSB0aGlzIGJlY29tZSBwYXRjaCAyIGFuZCBoYXZlDQo+IHBhdGNoIDIgYmUgcGF0Y2ggMyAo
-Zmlyc3QgeW91IGFkZCBpbmZyYXN0cnVjdHVyZSBmb3IgdXNpbmcgc29tZXRoaW5nLCB0aGVuIHlv
-dQ0KPiBtYWtlIHVzZSBvZiBpdCkuDQoNClRoYW5rcywgdG9vayB0aGF0IG9uYm9hcmQgZm9yIHYy
-DQoNCj4NCj4gPiArc3RhdGljIGludCByem4xX3NtcF9ib290X3NlY29uZGFyeSh1bnNpZ25lZCBp
-bnQgY3B1LCBzdHJ1Y3QNCj4gPiArdGFza19zdHJ1Y3QgKmlkbGUpIHsNCj4gPiAraWYgKCFjcHVf
-Ym9vdGFkZHIpDQo+ID4gK3JldHVybiAtRU5PREVWOw0KPiA+ICsNCj4gPiArc3Bpbl9sb2NrKCZj
-cHVfbG9jayk7DQo+ID4gKw0KPiA+ICt3cml0ZWwodmlydF90b19waHlzKHNlY29uZGFyeV9zdGFy
-dHVwKSwgY3B1X2Jvb3RhZGRyKTsNCj4NCj4gQ29uc2lkZXIgdXNpbmcgX19wYV9zeW1ib2woKSBp
-bnN0ZWFkIG9mIHZpcnRfdG9fcGh5cygpIHNpbmNlDQo+IHNlY29uZGFyeV9zdGFydHVwIGlzIHBh
-cnQgb2YgdGhlIGtlcm5lbCdzIGxpbmVhciBtZW1vcnkgbWFwLg0KDQpBZ3JlZWQuDQoNCj4NCj4g
-PiArYXJjaF9zZW5kX3dha2V1cF9pcGlfbWFzayhjcHVtYXNrX29mKGNwdSkpOw0KPiA+ICsNCj4g
-PiArc3Bpbl91bmxvY2soJmNwdV9sb2NrKTsNCj4gPiArDQo+ID4gK3JldHVybiAwOw0KPiA+ICt9
-DQo+ID4gKw0KPiA+ICtzdGF0aWMgdm9pZCBfX2luaXQgcnpuMV9zbXBfcHJlcGFyZV9jcHVzKHVu
-c2lnbmVkIGludCBtYXhfY3B1cykgew0KPiA+ICtzdHJ1Y3QgZGV2aWNlX25vZGUgKmRuOw0KPiA+
-ICtpbnQgcmV0Ow0KPiA+ICt1MzIgYm9vdGFkZHI7DQo+ID4gKw0KPiA+ICtkbiA9IG9mX2dldF9j
-cHVfbm9kZSgxLCBOVUxMKTsNCj4gPiAraWYgKCFkbikgew0KPiA+ICtwcl9lcnIoIkNQVSMxOiBt
-aXNzaW5nIGRldmljZSB0cmVlIG5vZGVcbiIpOw0KPiA+ICtyZXR1cm47DQo+ID4gK30NCj4gPiAr
-LyoNCj4gPiArICogRGV0ZXJtaW5lIHRoZSBhZGRyZXNzIGZyb20gd2hpY2ggdGhlIENQVSBpcyBw
-b2xsaW5nLg0KPiA+ICsgKi8NCj4gPiArcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIoZG4sICJj
-cHUtcmVsZWFzZS1hZGRyIiwgJmJvb3RhZGRyKTsNCj4gPiAraWYgKHJldCkNCj4gPiArcHJfZXJy
-KCJDUFUjMTogaW52YWxpZCBjcHUtcmVsZWFzZS1hZGRyIHByb3BlcnR5XG4iKTsNCj4gPiArDQo+
-ID4gK29mX25vZGVfcHV0KGRuKTsNCj4gPiArLyogVGhlIGJvb3Rsb2FkZXIgKmRvZXMqIGNoYW5n
-ZSB0aGlzIHByb3BlcnR5ICovDQo+DQo+IFRoaXMgY29tbWVudCBzaG91bGQgcHJvYmFibHkgYmUg
-bW92ZWQgYWJvdmUgdGhlIGZ1bmN0aW9uIHRoYXQgZmV0Y2hlcw0KPiAiY3B1LXJlbGVhc2UtYWRk
-ciINCg0KVGhhbmtzLCBJJ3ZlIHNpbXBsaWZpZWQgdGhhdCBiaXQgdG9vLi4NCj4NCj4gPiArcHJf
-aW5mbygiQ1BVIzE6IGNwdS1yZWxlYXNlLWFkZHIgJTA4eFxuIiwgKHUzMilib290YWRkcik7DQo+
-ID4gKw0KPiA+ICtpZiAoIWJvb3RhZGRyKQ0KPiA+ICtyZXR1cm47DQo+DQo+IFdvdWxkIG5vdCB5
-b3Ugd2FudCB0byBzaG93IGEgbWVzc2FnZSBoZXJlIHRvIGhlbHAgY2F0Y2ggc3VjaCBjb25kaXRp
-b25zDQo+DQo+ID4gKw0KPiA+ICtjcHVfYm9vdGFkZHIgPSBpb3JlbWFwKGJvb3RhZGRyLCBzaXpl
-b2YoYm9vdGFkZHIpKTsNCj4NCj4gUmVseWluZyBvbiBpb3JlbWFwKCkgdG8gcmVqZWN0IHZhbHVl
-cyB0aGF0IG1pZ2h0IGJlIG91dHNpZGUgb2YgdGhlIGFsbG93ZWQNCj4gcmFuZ2UgbWF5IGJlIGEg
-bGl0dGxlIGZyYWdpbGUsIGJ1dCBJIGNhbid0IHN1Z2dlc3QgYW55IGJldHRlciBhbHRlcm5hdGl2
-ZS4NCg0KSXQncyBkaWZmaWN1bHQsIEknZCBoYXZlIHRvIGFkZCBhIG1lbW9yeSBtYXAgaGVhZGVy
-IEkndmUgYmVlbiB0cnlpbmcgbm90IHRvDQp1c2Ugc28gZmFyIGZvciBLSVNTIHJlYXNvbi4uLg0K
-DQo+DQo+ID4gK2lmICghY3B1X2Jvb3RhZGRyKQ0KPiA+ICtwcl9lcnIoIkNQVSMxOiBjcHUtcmVs
-ZWFzZS1hZGRyIG1hcCBmYWlsZWRcbiIpOyB9DQo+ID4gKw0KPiA+ICtzdGF0aWMgY29uc3Qgc3Ry
-dWN0IHNtcF9vcGVyYXRpb25zIHJ6bjFfc21wX29wcyBfX2luaXRjb25zdCA9IHsNCj4gPiArLnNt
-cF9wcmVwYXJlX2NwdXMgPSByem4xX3NtcF9wcmVwYXJlX2NwdXMsDQo+ID4gKy5zbXBfYm9vdF9z
-ZWNvbmRhcnkgPSByem4xX3NtcF9ib290X3NlY29uZGFyeSwgfTsNCj4gPiArQ1BVX01FVEhPRF9P
-Rl9ERUNMQVJFKHJ6bjFfc21wLCAicmVuZXNhcyxyOWEwNmcwMzItc21wIiwNCj4gPiArJnJ6bjFf
-c21wX29wcyk7DQo+ID4NCj4NCg0KTWljaGVsDQoNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3Mg
-RXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVj
-a2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMg
-dW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+Hi Michel,
+
+On 04/16/2018 02:34 AM, Michel Pollet wrote:
+> The Renesas RZ/N1D second CA7 is parked in a ROM pen at boot time, it
+> requires a special enable method to get it started at boot time.
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+
+Some few comments below. This patch should probably be re-ordered in
+your patch series, I would expect you to have this become patch 2 and
+have patch 2 be patch 3 (first you add infrastructure for using
+something, then you make use of it).
+
+> +static int rzn1_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
+> +{
+> +	if (!cpu_bootaddr)
+> +		return -ENODEV;
+> +
+> +	spin_lock(&cpu_lock);
+> +
+> +	writel(virt_to_phys(secondary_startup), cpu_bootaddr);
+
+Consider using __pa_symbol() instead of virt_to_phys() since
+secondary_startup is part of the kernel's linear memory map.
+
+> +	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
+> +
+> +	spin_unlock(&cpu_lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static void __init rzn1_smp_prepare_cpus(unsigned int max_cpus)
+> +{
+> +	struct device_node *dn;
+> +	int ret;
+> +	u32 bootaddr;
+> +
+> +	dn = of_get_cpu_node(1, NULL);
+> +	if (!dn) {
+> +		pr_err("CPU#1: missing device tree node\n");
+> +		return;
+> +	}
+> +	/*
+> +	 * Determine the address from which the CPU is polling.
+> +	 */
+> +	ret = of_property_read_u32(dn, "cpu-release-addr", &bootaddr);
+> +	if (ret)
+> +		pr_err("CPU#1: invalid cpu-release-addr property\n");
+> +
+> +	of_node_put(dn);
+> +	/* The bootloader *does* change this property */
+
+This comment should probably be moved above the function that fetches
+"cpu-release-addr"
+
+> +	pr_info("CPU#1: cpu-release-addr %08x\n", (u32)bootaddr);
+> +
+> +	if (!bootaddr)
+> +		return;
+
+Would not you want to show a message here to help catch such conditions
+
+> +
+> +	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
+
+Relying on ioremap() to reject values that might be outside of the
+allowed range may be a little fragile, but I can't suggest any better
+alternative.
+
+> +	if (!cpu_bootaddr)
+> +		pr_err("CPU#1: cpu-release-addr map failed\n");
+> +}
+> +
+> +static const struct smp_operations rzn1_smp_ops __initconst = {
+> +	.smp_prepare_cpus = rzn1_smp_prepare_cpus,
+> +	.smp_boot_secondary = rzn1_smp_boot_secondary,
+> +};
+> +CPU_METHOD_OF_DECLARE(rzn1_smp, "renesas,r9a06g032-smp", &rzn1_smp_ops);
+> 
+
+
+-- 
+Florian
