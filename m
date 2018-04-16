@@ -1,121 +1,150 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:34808 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751110AbeDPVq2 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:50007 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752980AbeDPJkW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:46:28 -0400
-Subject: Re: [RFC 3/3] arm: shmobile: Add the RZ/N1D SMP enabler driver.
-To: Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
+        Mon, 16 Apr 2018 05:40:22 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Chen-Yu Tsai <wens@csie.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         Andy Gross <andy.gross@linaro.org>,
         Carlo Caione <carlo@endlessm.com>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         Frank Rowand <frank.rowand@sony.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Juri Lelli <juri.lelli@arm.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [RFC 3/3] arm: shmobile: Add the RZ/N1D SMP enabler driver.
+Date: Mon, 16 Apr 2018 10:34:59 +0100
+Message-Id: <1523871304-48517-5-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1523871304-48517-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1523871304-48517-1-git-send-email-michel.pollet@bp.renesas.com>
- <1523871304-48517-5-git-send-email-michel.pollet@bp.renesas.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <9f33a1d2-3c55-2485-a1f2-909def69e5b0@gmail.com>
-Date: Mon, 16 Apr 2018 14:46:16 -0700
-MIME-Version: 1.0
-In-Reply-To: <1523871304-48517-5-git-send-email-michel.pollet@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Michel,
+The Renesas RZ/N1D second CA7 is parked in a ROM pen at boot time, it
+requires a special enable method to get it started at boot time.
 
-On 04/16/2018 02:34 AM, Michel Pollet wrote:
-> The Renesas RZ/N1D second CA7 is parked in a ROM pen at boot time, it
-> requires a special enable method to get it started at boot time.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ arch/arm/mach-shmobile/Makefile        |  1 +
+ arch/arm/mach-shmobile/smp-r9a06g032.c | 87 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 88 insertions(+)
+ create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
 
-Some few comments below. This patch should probably be re-ordered in
-your patch series, I would expect you to have this become patch 2 and
-have patch 2 be patch 3 (first you add infrastructure for using
-something, then you make use of it).
-
-> +static int rzn1_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
-> +{
-> +	if (!cpu_bootaddr)
-> +		return -ENODEV;
-> +
-> +	spin_lock(&cpu_lock);
-> +
-> +	writel(virt_to_phys(secondary_startup), cpu_bootaddr);
-
-Consider using __pa_symbol() instead of virt_to_phys() since
-secondary_startup is part of the kernel's linear memory map.
-
-> +	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-> +
-> +	spin_unlock(&cpu_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static void __init rzn1_smp_prepare_cpus(unsigned int max_cpus)
-> +{
-> +	struct device_node *dn;
-> +	int ret;
-> +	u32 bootaddr;
-> +
-> +	dn = of_get_cpu_node(1, NULL);
-> +	if (!dn) {
-> +		pr_err("CPU#1: missing device tree node\n");
-> +		return;
-> +	}
-> +	/*
-> +	 * Determine the address from which the CPU is polling.
-> +	 */
-> +	ret = of_property_read_u32(dn, "cpu-release-addr", &bootaddr);
-> +	if (ret)
-> +		pr_err("CPU#1: invalid cpu-release-addr property\n");
-> +
-> +	of_node_put(dn);
-> +	/* The bootloader *does* change this property */
-
-This comment should probably be moved above the function that fetches
-"cpu-release-addr"
-
-> +	pr_info("CPU#1: cpu-release-addr %08x\n", (u32)bootaddr);
-> +
-> +	if (!bootaddr)
-> +		return;
-
-Would not you want to show a message here to help catch such conditions
-
-> +
-> +	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-
-Relying on ioremap() to reject values that might be outside of the
-allowed range may be a little fragile, but I can't suggest any better
-alternative.
-
-> +	if (!cpu_bootaddr)
-> +		pr_err("CPU#1: cpu-release-addr map failed\n");
-> +}
-> +
-> +static const struct smp_operations rzn1_smp_ops __initconst = {
-> +	.smp_prepare_cpus = rzn1_smp_prepare_cpus,
-> +	.smp_boot_secondary = rzn1_smp_boot_secondary,
-> +};
-> +CPU_METHOD_OF_DECLARE(rzn1_smp, "renesas,r9a06g032-smp", &rzn1_smp_ops);
-> 
-
-
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 1939f52..d7fc98f 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
+ smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
+ smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
+ smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
++smp-$(CONFIG_ARCH_R9A06G032)	+= smp-r9a06g032.o
+ smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+ 
+ # PM objects
+diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c b/arch/arm/mach-shmobile/smp-r9a06g032.c
+new file mode 100644
+index 0000000..59ec287
+--- /dev/null
++++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
+@@ -0,0 +1,87 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * RZ/N1D Second CA7 enabler.
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
++ * Derived from action,s500-smp
++ */
++
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/smp.h>
++#include <asm/cacheflush.h>
++#include <asm/smp_plat.h>
++#include <asm/smp_scu.h>
++
++/*
++ * The second CPU is parked in ROM at boot time. It requires waking it after
++ * writing an address into the BOOTADDR register of sysctrl.
++ *
++ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
++ *
++ * *However* the BOOTADDR register is not available when the kernel
++ * starts in NONSEC mode.
++ *
++ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
++ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
++ * which is not restricted.
++ */
++
++static void __iomem *cpu_bootaddr;
++
++static DEFINE_SPINLOCK(cpu_lock);
++
++static int rzn1_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
++{
++	if (!cpu_bootaddr)
++		return -ENODEV;
++
++	spin_lock(&cpu_lock);
++
++	writel(virt_to_phys(secondary_startup), cpu_bootaddr);
++	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
++
++	spin_unlock(&cpu_lock);
++
++	return 0;
++}
++
++static void __init rzn1_smp_prepare_cpus(unsigned int max_cpus)
++{
++	struct device_node *dn;
++	int ret;
++	u32 bootaddr;
++
++	dn = of_get_cpu_node(1, NULL);
++	if (!dn) {
++		pr_err("CPU#1: missing device tree node\n");
++		return;
++	}
++	/*
++	 * Determine the address from which the CPU is polling.
++	 */
++	ret = of_property_read_u32(dn, "cpu-release-addr", &bootaddr);
++	if (ret)
++		pr_err("CPU#1: invalid cpu-release-addr property\n");
++
++	of_node_put(dn);
++	/* The bootloader *does* change this property */
++	pr_info("CPU#1: cpu-release-addr %08x\n", (u32)bootaddr);
++
++	if (!bootaddr)
++		return;
++
++	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
++	if (!cpu_bootaddr)
++		pr_err("CPU#1: cpu-release-addr map failed\n");
++}
++
++static const struct smp_operations rzn1_smp_ops __initconst = {
++	.smp_prepare_cpus = rzn1_smp_prepare_cpus,
++	.smp_boot_secondary = rzn1_smp_boot_secondary,
++};
++CPU_METHOD_OF_DECLARE(rzn1_smp, "renesas,r9a06g032-smp", &rzn1_smp_ops);
 -- 
-Florian
+2.7.4
