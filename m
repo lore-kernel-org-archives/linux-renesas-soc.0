@@ -1,34 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39364 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751383AbeDROId (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:08:33 -0400
-Date: Wed, 18 Apr 2018 16:08:29 +0200
-From: Simon Horman <horms@verge.net.au>
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Apr 2018 18:27:33 +0200
+Message-ID: <CAMuHMdWYOPPzo6HJF5H+L8x6vWwcQMCYS-eV-Xz0AS2FtQ8c1Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: renesas: replace toshiba, mmc-wrprotect-disable
+ with disable-wp
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: renesas: replace toshiba,
- mmc-wrprotect-disable with disable-wp
-Message-ID: <20180418140829.oi5pkn6hsiabe62i@verge.net.au>
-References: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 12:02:32AM +0900, Masahiro Yamada wrote:
+Hi Yamada-san,
+
+On Mon, Apr 16, 2018 at 5:02 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 > Follow up commit 788778b0d21a ("mmc: tmio: deprecate "toshiba,
 > mmc-wrprotect-disable" DT property").
-> 
+
+Thanks for following up this work.
+
+(I had the exact same changes queued up in my local branch, to be sent out
+ after v4.17-rc1, but you beat me to it ;-)
+
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Thanks, applied.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
