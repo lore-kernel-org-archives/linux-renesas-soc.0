@@ -1,98 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:35073 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750898AbeDNMDT (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:40757 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752981AbeDPVvi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:03:19 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 32/33] rcar-vin: enable support for r8a7796
-Date: Sat, 14 Apr 2018 13:57:25 +0200
-Message-Id: <20180414115726.5075-33-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 16 Apr 2018 17:51:38 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v6 06/11] ARM: sunxi: Add initialization of CNTVOFF
+Date: Mon, 16 Apr 2018 23:50:27 +0200
+Message-Id: <20180416215032.5023-7-mylene.josserand@bootlin.com>
+In-Reply-To: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a7796.
+Add the initialization of CNTVOFF for sun8i-a83t.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+For boot CPU, create a new machine that handles this
+function's call in an "init_early" callback. We need to initialize
+CNTVOFF before the arch timer's initialization otherwise, it will
+not be taken into account and fails to boot correctly.
+Because of that, this function can't be called in SMP's early_initcall
+function which is called after timer's init.
+
+For secondary CPUs, add this function into secondary_startup
+assembly entry.
+
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 44 +++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ arch/arm/mach-sunxi/headsmp.S |  1 +
+ arch/arm/mach-sunxi/sunxi.c   | 20 +++++++++++++++++++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 81119ae4402d0990..81c82793b1312aae 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -931,6 +931,46 @@ static const struct rvin_info rcar_info_r8a7795es1 = {
- 	.routes = rcar_info_r8a7795es1_routes,
- };
+diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+index 37dc772701f3..32d76be98541 100644
+--- a/arch/arm/mach-sunxi/headsmp.S
++++ b/arch/arm/mach-sunxi/headsmp.S
+@@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
  
-+static const struct rvin_group_route rcar_info_r8a7796_routes[] = {
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 6, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 2, .vin = 6, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 7, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI40, .channel = 3, .vin = 7, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
-+	{ /* Sentinel */ }
+ ENTRY(sunxi_mc_smp_secondary_startup)
+ 	bl	sunxi_mc_smp_cluster_cache_enable
++	bl	secure_cntvoff_init
+ 	b	secondary_startup
+ ENDPROC(sunxi_mc_smp_secondary_startup)
+ 
+diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+index 5e9602ce1573..ddc439f6269b 100644
+--- a/arch/arm/mach-sunxi/sunxi.c
++++ b/arch/arm/mach-sunxi/sunxi.c
+@@ -16,6 +16,7 @@
+ #include <linux/platform_device.h>
+ 
+ #include <asm/mach/arch.h>
++#include <asm/secure_cntvoff.h>
+ 
+ static const char * const sunxi_board_dt_compat[] = {
+ 	"allwinner,sun4i-a10",
+@@ -62,7 +63,6 @@ MACHINE_END
+ static const char * const sun8i_board_dt_compat[] = {
+ 	"allwinner,sun8i-a23",
+ 	"allwinner,sun8i-a33",
+-	"allwinner,sun8i-a83t",
+ 	"allwinner,sun8i-h2-plus",
+ 	"allwinner,sun8i-h3",
+ 	"allwinner,sun8i-r40",
+@@ -75,6 +75,24 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
+ 	.dt_compat	= sun8i_board_dt_compat,
+ MACHINE_END
+ 
++void __init sun8i_cntvoff_init(void)
++{
++#ifdef CONFIG_SMP
++	secure_cntvoff_init();
++#endif
++}
++
++static const char * const sun8i_cntvoff_board_dt_compat[] = {
++	"allwinner,sun8i-a83t",
++	NULL,
 +};
 +
-+static const struct rvin_info rcar_info_r8a7796 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = rcar_info_r8a7796_routes,
-+};
++DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i-a83t board")
++	.init_early	= sun8i_cntvoff_init,
++	.init_time	= sun6i_timer_init,
++	.dt_compat	= sun8i_cntvoff_board_dt_compat,
++MACHINE_END
 +
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -964,6 +1004,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,vin-r8a7795",
- 		.data = &rcar_info_r8a7795,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a7796",
-+		.data = &rcar_info_r8a7796,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+ static const char * const sun9i_board_dt_compat[] = {
+ 	"allwinner,sun9i-a80",
+ 	NULL,
 -- 
-2.16.2
+2.11.0
