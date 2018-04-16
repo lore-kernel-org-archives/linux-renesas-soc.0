@@ -1,97 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www.zeus03.de ([194.117.254.33]:39444 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750892AbeDHHjo (ORCPT
+Received: from relay10.mail.gandi.net ([217.70.178.230]:44141 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753088AbeDPSuY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Apr 2018 03:39:44 -0400
-Date: Sun, 8 Apr 2018 09:39:42 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: qemu-devel@nongnu.org,
-        Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] nvram: at24c: fix problems related to "rom-size"
-Message-ID: <20180408073942.lktkq4gqn6ofvjwf@katana>
-References: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
+        Mon, 16 Apr 2018 14:50:24 -0400
+Date: Mon, 16 Apr 2018 20:50:05 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: David Miller <davem@davemloft.net>
+Cc: jacopo+renesas@jmondi.org, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: net: ravb: Add support for r8a77965 SoC
+Message-ID: <20180416185005.GC3377@w540>
+References: <1523886917-14491-1-git-send-email-jacopo+renesas@jmondi.org>
+ <20180416.101755.99677892602830691.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="buikjcctq7qeoo2h"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="p2kqVDKq5asng8Dg"
 Content-Disposition: inline
-In-Reply-To: <20180320161850.2104-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180416.101755.99677892602830691.davem@davemloft.net>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---buikjcctq7qeoo2h
-Content-Type: text/plain; charset=us-ascii
+--p2kqVDKq5asng8Dg
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 20, 2018 at 05:18:47PM +0100, Wolfram Sang wrote:
-> I used this driver as a template for a custom one. While hacking on my ow=
-n, I
-> noticed some problems in this driver, too. This series fixes the first se=
-t of
-> them, related to the "rom-size" parameter. It fixes a segfault.
->=20
-> I think the first patch is clearly suitable for stable. I think the secon=
-d one,
-> too, but not as clearly. The third one is a cleanup and not for stable. S=
-till,
-> I am open for opinions about these thoughts.
+Hi David,
 
-Through which tree should these patches go? get_maintainer doesn't list
-a person specifically. Anything else I could do?
+On Mon, Apr 16, 2018 at 10:17:55AM -0400, David Miller wrote:
+> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Date: Mon, 16 Apr 2018 15:55:17 +0200
+>
+> > Add documentation for r8a77965 compatible string to renesas ravb device
+> > tree bindings documentation.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> > Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > ---
+> >
+> > Renesas R-Car M3-N support has been merged for v4.17.
+> > Document the missing device tree bindings.
+>
+> Since this is purely a devicetree update, I'm assuming that it doesn't
+> go through my networking tree.
 
->=20
-> Thanks,
->=20
->    Wolfram
->=20
-> Changes since v2:
->=20
-> * removed '\n' from error_report-strings
-> * made sure checkpatch is happy
-> * added tags from Philippe (thanks!)
->=20
-> Changes since v1:
->=20
-> * reordered patches according to significance for stable
-> * use AT24C_ROMSIZE_DEFAULT instead of magic value
-> * patch 3 doesn't improve the ERR macro anymore but replaces
->   it completely with error_report().
->=20
->=20
-> Wolfram Sang (3):
->   nvram: at24c: prevent segfault by checking "rom-size"
->   nvram: at24c: use a sane default for "rom-size"
->   nvram: at24c: use standard error reporting
->=20
->  hw/nvram/eeprom_at24c.c | 25 ++++++++++++++-----------
->  1 file changed, 14 insertions(+), 11 deletions(-)
->=20
-> --=20
-> 2.11.0
->=20
+Rob has picked this patch up in his tree, so no need for you to do the
+same.
 
---buikjcctq7qeoo2h
+Thanks
+   j
+
+--p2kqVDKq5asng8Dg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrJxz4ACgkQFA3kzBSg
-KbZHyQ//ZkGZuVhmHH7+iPHMtlL66tg3bF3DImVFKQgHwq7dhgsCx3cJFSs/ixtI
-fezPy4dqF9xSD46K2maueLLbW8QGIa+ukEwe74OP8j07yMjCiPtmtvB2Lj6G89da
-QyfxBsxOkUuicx1MrUUN42MTHCFa2gvoZgdHD6hgs4mXqWiAHCIX3LMigkHZ327b
-K92bJhGvZmAu6MUhMp+vJ8x7QLnreADATItZATp1NBQH4OGZ+Kp1Vo9fKDwTwMDm
-N7xuEqNEPmg5bGnVa3de0XUY6/au4Ywu5oECwr6bH0yDVLueegOONzw7VaFKl7Ao
-Vcxk2rheo2is/RKPcgGCnZBwyG3mxP2pxSUv0o4tEl9VbChc7HGNIRZcMLXWGTCg
-A/lJASUs10CcGXNaAtnZ4ObrRsWkAZdp1MswilSnh0xzNAJw+04nXRPuqGimrcv8
-UnY4hpYIWdfHxQKVdH9sDU6DXB/n2K/pCm5u/4xCtfrK+R/zIXrxJvz+cbSmhee7
-ZZu3Gxnk+WwAIHMYaSoq7mrILz3a4WqrNZahfmkO3CYOb/ufUvztQQyxdXuUnR2H
-VyY+VEioZyl3NMJm4+Sig19Mx1G/SJxH0/a/f0XaVLUNtgxwv427uu+rKHBELCua
-YWqLYg0qF5pYF3ebwIhmwEAfWbhn3xhDF7iCmnxBAl36MX5xFbk=
-=bYzH
+iQIcBAEBAgAGBQJa1PBdAAoJEHI0Bo8WoVY81BYQAMXgTZJrm632/N1eWEREMG7+
+pZx42hdprYwyBACD89Y5CI8P/cyioGqgo1u7+aOik+CMfOshKxEf6gZGclny8Wt6
+UOFusA1FvqN/kGURH+ojFAAR5SjofkUqIPRbfZ1zEIdaTSquA9J4NN+hkY2o/FvM
+lgAFjQgEUsnl53/ldLlpoQuG/mLqcptjL5VxNXuTMG5PQx3iRNXYQQ8CLR9mVz3U
+5FqlCANoZTxvCRbHQZGW0Fq5IhPuOM7YlJkUkT2VsCQ2L0T/KtBZ2rxIASvT4GUE
+uCI8VJimikaPZVFqnTXk1FuWGle8grH146aM0vLjlLDagZOVbZ3A+WjPC1THyhWc
+2TzP+fyyJ1LyfdHYllf44YJ4FI/QxjWLORtZL7DGVusPB9RADnL7ZKj+llcFr2WR
+SK4ptBtG7Ww90l2L78QpLXnM7MUJbIlVDTQ8Yx68LJvDvo3Tjoqyp66WLt97UR1S
+leKJKhhEv52ScuTqYudMgBE5zgaXP16rBvx9zTlZ4pvZVT+HtVngnIsHLThfEO9X
+dBqXLD/GTF4YsPvvZBSNKvN0ybpHQ/ndd3nHXANwkAj9acAVKr3M7vOvCRC/NDOn
+CjOAtPuzsM3+QiNre7FUwRcTpU8fQW42auAgFoO/lJ9tvgzfgdHZ0HCPjnkHM5TU
+AnKZWtXyrl+PWeS9/C/a
+=YanS
 -----END PGP SIGNATURE-----
 
---buikjcctq7qeoo2h--
+--p2kqVDKq5asng8Dg--
