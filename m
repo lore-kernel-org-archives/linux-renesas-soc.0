@@ -1,168 +1,37 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:42655 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751087AbeDNMAH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:00:07 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 12/33] rcar-vin: fix handling of single field frames (top, bottom and alternate fields)
-Date: Sat, 14 Apr 2018 13:57:05 +0200
-Message-Id: <20180414115726.5075-13-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 16 Apr 2018 10:23:15 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: vinod.koul@intel.com, mark.rutland@arm.com,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: dmaengine: rcar-dmac: document R8A77965
+ support
+Message-ID: <20180416152314.bwpchjpspcvkpcuv@rob-hp-laptop>
+References: <1523886968-14644-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523886968-14644-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There was never proper support in the VIN driver to deliver ALTERNATING
-field format to user-space, remove this field option. The problem is
-that ALTERNATING field order requires the sequence numbers of buffers
-returned to userspace to reflect if fields were dropped or not,
-something which is not possible with the VIN drivers capture logic.
+On Mon, Apr 16, 2018 at 03:56:08PM +0200, Jacopo Mondi wrote:
+> Add documentation for r8a77965 compatible string to rcar-dmac device
+> tree bindings documentation.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> 
+> Renesas R-Car M3-N support has been merged for v4.17.
+> Document the missing device tree bindings.
+> 
+> ---
+>  Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-The VIN driver can still capture from a video source which delivers
-frames in ALTERNATING field order, but needs to combine them using the
-VIN hardware into INTERLACED field order. Before this change if a source
-was delivering fields using ALTERNATE the driver would default to
-combining them using this hardware feature. Only if the user explicitly
-requested ALTERNATE field order would incorrect frames be delivered.
+Applied.
 
-The height should not be cut in half for the format for TOP or BOTTOM
-fields settings. This was a mistake and it was made visible by the
-scaling refactoring. Correct behavior is that the user should request a
-frame size that fits the half height frame reflected in the field
-setting. If not the VIN will do its best to scale the top or bottom to
-the requested format and cropping and scaling do not work as expected.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
----
-
-* Changes since v13
-- Spelling dose -> does
-- Add review tag from Laurent
-
-* Changes since v12
-- Spelling where -> were.
-- Add review tag from Hans.
----
- drivers/media/platform/rcar-vin/rcar-dma.c  | 15 +----------
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 40 +++++++----------------------
- 2 files changed, 10 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 4f48575f2008fe34..9233924e5b52de5f 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -617,7 +617,6 @@ static int rvin_setup(struct rvin_dev *vin)
- 	case V4L2_FIELD_INTERLACED_BT:
- 		vnmc = VNMC_IM_FULL | VNMC_FOC;
- 		break;
--	case V4L2_FIELD_ALTERNATE:
- 	case V4L2_FIELD_NONE:
- 		vnmc = VNMC_IM_ODD_EVEN;
- 		progressive = true;
-@@ -745,18 +744,6 @@ static bool rvin_capture_active(struct rvin_dev *vin)
- 	return rvin_read(vin, VNMS_REG) & VNMS_CA;
- }
- 
--static enum v4l2_field rvin_get_active_field(struct rvin_dev *vin, u32 vnms)
--{
--	if (vin->format.field == V4L2_FIELD_ALTERNATE) {
--		/* If FS is set it's a Even field */
--		if (vnms & VNMS_FS)
--			return V4L2_FIELD_BOTTOM;
--		return V4L2_FIELD_TOP;
--	}
--
--	return vin->format.field;
--}
--
- static void rvin_set_slot_addr(struct rvin_dev *vin, int slot, dma_addr_t addr)
- {
- 	const struct rvin_video_format *fmt;
-@@ -892,7 +879,7 @@ static irqreturn_t rvin_irq(int irq, void *data)
- 
- 	/* Capture frame */
- 	if (vin->queue_buf[slot]) {
--		vin->queue_buf[slot]->field = rvin_get_active_field(vin, vnms);
-+		vin->queue_buf[slot]->field = vin->format.field;
- 		vin->queue_buf[slot]->sequence = vin->sequence;
- 		vin->queue_buf[slot]->vb2_buf.timestamp = ktime_get_ns();
- 		vb2_buffer_done(&vin->queue_buf[slot]->vb2_buf,
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 16e895657c3f51c5..81a9aec96e8e664a 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -121,33 +121,6 @@ static int rvin_reset_format(struct rvin_dev *vin)
- 	vin->format.colorspace	= mf->colorspace;
- 	vin->format.field	= mf->field;
- 
--	/*
--	 * If the subdevice uses ALTERNATE field mode and G_STD is
--	 * implemented use the VIN HW to combine the two fields to
--	 * one INTERLACED frame. The ALTERNATE field mode can still
--	 * be requested in S_FMT and be respected, this is just the
--	 * default which is applied at probing or when S_STD is called.
--	 */
--	if (vin->format.field == V4L2_FIELD_ALTERNATE &&
--	    v4l2_subdev_has_op(vin_to_source(vin), video, g_std))
--		vin->format.field = V4L2_FIELD_INTERLACED;
--
--	switch (vin->format.field) {
--	case V4L2_FIELD_TOP:
--	case V4L2_FIELD_BOTTOM:
--	case V4L2_FIELD_ALTERNATE:
--		vin->format.height /= 2;
--		break;
--	case V4L2_FIELD_NONE:
--	case V4L2_FIELD_INTERLACED_TB:
--	case V4L2_FIELD_INTERLACED_BT:
--	case V4L2_FIELD_INTERLACED:
--		break;
--	default:
--		vin->format.field = RVIN_DEFAULT_FIELD;
--		break;
--	}
--
- 	rvin_reset_crop_compose(vin);
- 
- 	vin->format.bytesperline = rvin_format_bytesperline(&vin->format);
-@@ -235,15 +208,20 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	switch (pix->field) {
- 	case V4L2_FIELD_TOP:
- 	case V4L2_FIELD_BOTTOM:
--	case V4L2_FIELD_ALTERNATE:
--		pix->height /= 2;
--		source->height /= 2;
--		break;
- 	case V4L2_FIELD_NONE:
- 	case V4L2_FIELD_INTERLACED_TB:
- 	case V4L2_FIELD_INTERLACED_BT:
- 	case V4L2_FIELD_INTERLACED:
- 		break;
-+	case V4L2_FIELD_ALTERNATE:
-+		/*
-+		 * Driver does not (yet) support outputting ALTERNATE to a
-+		 * userspace. It does support outputting INTERLACED so use
-+		 * the VIN hardware to combine the two fields.
-+		 */
-+		pix->field = V4L2_FIELD_INTERLACED;
-+		pix->height *= 2;
-+		break;
- 	default:
- 		pix->field = RVIN_DEFAULT_FIELD;
- 		break;
--- 
-2.16.2
+Rob
