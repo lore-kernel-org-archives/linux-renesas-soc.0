@@ -1,103 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36374 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751579AbeDFLIW (ORCPT
+Received: from mail-ua0-f173.google.com ([209.85.217.173]:42375 "EHLO
+        mail-ua0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753016AbeDPIBF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 07:08:22 -0400
-Received: by mail-wr0-f193.google.com with SMTP id y55so1395329wry.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Apr 2018 04:08:22 -0700 (PDT)
-Subject: [PATCH 3/4] pcie-rcar: add R-Car gen3 PHY support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <23335d95-63ca-b107-e43d-f4c2621adc2c@cogentembedded.com>
-Message-ID: <d8dde257-814f-142c-d58b-91eaf78a7d10@cogentembedded.com>
-Date: Fri, 6 Apr 2018 14:08:12 +0300
+        Mon, 16 Apr 2018 04:01:05 -0400
 MIME-Version: 1.0
-In-Reply-To: <23335d95-63ca-b107-e43d-f4c2621adc2c@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180413172825.3y6ah3tyx4vw4sf5@ninjato>
+References: <1523638908-21924-1-git-send-email-ulrich.hecht+renesas@gmail.com> <20180413172825.3y6ah3tyx4vw4sf5@ninjato>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Apr 2018 10:01:04 +0200
+Message-ID: <CAMuHMdWnMQLQuZu_=r05MGbApWGDZUMm-tJ48cr+YeDvFfR=Dw@mail.gmail.com>
+Subject: Re: [PATCH] spi: sh-msiof: Add spi_master_suspend/spi_master_resume
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car gen3 SoCs the PCIe PHY has its own register region -- and I have
-written  a generic PHY driver for it, thus we need to add the corresponding
-code in  rcar_pcie_hw_init_gen3() and call devm_phy_optional_get() at the
-driver's probing time,  so that the existing R-Car gen3 device trees (not
-having a PHY node) would still work (we only need  to power up the PHY on
-R-Car V3H).
+On Fri, Apr 13, 2018 at 7:28 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> +     struct platform_device *pdev = to_platform_device(dev);
+>> +     struct sh_msiof_spi_priv *p = platform_get_drvdata(pdev);
+>
+> struct sh_msiof_spi_priv *p = dev_get_drvdata(dev);
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+With Wolfram's comment taken into account:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
----
- drivers/pci/host/pcie-rcar.c |   27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-Index: pci/drivers/pci/host/pcie-rcar.c
-===================================================================
---- pci.orig/drivers/pci/host/pcie-rcar.c
-+++ pci/drivers/pci/host/pcie-rcar.c
-@@ -24,6 +24,7 @@
- #include <linux/of_pci.h>
- #include <linux/of_platform.h>
- #include <linux/pci.h>
-+#include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-@@ -140,6 +141,7 @@ static inline struct rcar_msi *to_rcar_m
- /* Structure representing the PCIe interface */
- struct rcar_pcie {
- 	struct device		*dev;
-+	struct phy		*phy;
- 	void __iomem		*base;
- 	struct list_head	resources;
- 	int			root_bus_nr;
-@@ -667,6 +669,21 @@ static int rcar_pcie_hw_init_gen2(struct
- 	return rcar_pcie_hw_init(pcie);
- }
- 
-+static int rcar_pcie_hw_init_gen3(struct rcar_pcie *pcie)
-+{
-+	int err;
-+
-+	err = phy_init(pcie->phy);
-+	if (err)
-+		return err;
-+
-+	err = phy_power_on(pcie->phy);
-+	if (err)
-+		return err;
-+
-+	return rcar_pcie_hw_init(pcie);
-+}
-+
- static int rcar_msi_alloc(struct rcar_msi *chip)
- {
- 	int msi;
-@@ -916,6 +933,10 @@ static int rcar_pcie_get_resources(struc
- 	struct resource res;
- 	int err, i;
- 
-+	pcie->phy = devm_phy_optional_get(dev, "pcie");
-+	if (IS_ERR(pcie->phy))
-+		return PTR_ERR(pcie->phy);
-+
- 	err = of_address_to_resource(dev->of_node, 0, &res);
- 	if (err)
- 		return err;
-@@ -1068,8 +1089,10 @@ static const struct of_device_id rcar_pc
- 	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-rcar-gen2",
- 	  .data = rcar_pcie_hw_init_gen2 },
--	{ .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
--	{ .compatible = "renesas,pcie-rcar-gen3", .data = rcar_pcie_hw_init },
-+	{ .compatible = "renesas,pcie-r8a7795",
-+	  .data = rcar_pcie_hw_init_gen3 },
-+	{ .compatible = "renesas,pcie-rcar-gen3",
-+	  .data = rcar_pcie_hw_init_gen3 },
- 	{},
- };
- 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
