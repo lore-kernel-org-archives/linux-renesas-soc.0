@@ -1,50 +1,59 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Apr 2018 18:27:33 +0200
-Message-ID: <CAMuHMdWYOPPzo6HJF5H+L8x6vWwcQMCYS-eV-Xz0AS2FtQ8c1Q@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: renesas: replace toshiba, mmc-wrprotect-disable
- with disable-wp
+Date: Mon, 16 Apr 2018 18:14:36 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] ARM: dts: renesas: replace toshiba,mmc-wrprotect-disable
+ with disable-wp
+Message-ID: <20180416161435.g7na5yk2v2e2y633@ninjato>
+References: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6q5tvrnjeljvmcmh"
+Content-Disposition: inline
+In-Reply-To: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Yamada-san,
 
-On Mon, Apr 16, 2018 at 5:02 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+--6q5tvrnjeljvmcmh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Apr 17, 2018 at 12:02:32AM +0900, Masahiro Yamada wrote:
 > Follow up commit 788778b0d21a ("mmc: tmio: deprecate "toshiba,
 > mmc-wrprotect-disable" DT property").
-
-Thanks for following up this work.
-
-(I had the exact same changes queued up in my local branch, to be sent out
- after v4.17-rc1, but you beat me to it ;-)
-
+>=20
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Gr{oetje,eeting}s,
 
-                        Geert
+--6q5tvrnjeljvmcmh
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrUy+sACgkQFA3kzBSg
+KbZoBRAAqTX6Vs6Rq7RTzKSr0G+5l+LZQmEeorV/p3RuvxU+PdfGSqMbJfBWwPis
+pJ8jTyUslLPz+dKHmyKWkejKtHTNwcz8rIDW1xGyXJEGEeuqnF1kOyddpacS8Q2c
+6N8nXpkAe5/8Gh7fWd15nWG1wBQ0LnNZEWRNn0Nnw3ZqxPDv2GeBZogO3+5ueQUu
+65IxptFIPz6k9hKDaIopsf1lJRiIXoTFty/Vw4Y2O1gLAA6sakcEskCi86UhwI2N
+q9y86LL8E+mXD16EWMmEqsB/m97RIoRxXzJhr9WxwSU7ond88FJZkaJ72Ay2jUcg
+VbUZ97A77kLOY0RisXzDS9btdKsNMBqs7qINiPsN4ZXRE4xd56tx+uxmZsdrAuYr
+HUFXURET6T/p8t3YAtjDP9gDXjKflrD0Jol3XlpAmOJwbB/PXjYTemkIYtmU+CzY
+YuwZnYGg0wqB4dodSsm6CBC6NtxB19cgNvDPoSuXHX4PH84SVKh/d155EoMbAheS
+A+01obX4SdBCBYtA1HNkqMsvLC+QHJKdk2afOWHdLJakQ70LRG52rzCxa6BuGRPp
+t+W60ztaDBK8h8k05vrbQsmIDhpbVnZYwMSXBxXh/S9OFvOgu8nfTtu+RfMbHtYL
+udn+1x+d45gPssKOIDhXeclh7T1CJbufUNpFFgV8x+sZWKEmwr0=
+=d5X2
+-----END PGP SIGNATURE-----
+
+--6q5tvrnjeljvmcmh--
