@@ -1,83 +1,35 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:41357 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752254AbeDQUyz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Apr 2018 16:54:55 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a7795: decrease temperature hysteresis
-Date: Tue, 17 Apr 2018 22:54:27 +0200
-Message-Id: <20180417205428.15227-2-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20180417205428.15227-1-niklas.soderlund@ragnatech.se>
-References: <20180417205428.15227-1-niklas.soderlund@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 16 Apr 2018 10:22:38 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: gregkh@linuxfoundation.org, mark.rutland@arm.com,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: serial: sh-sci: Add support for r8a77965
+ (H)SCIF
+Message-ID: <20180416152238.mbz4vktzvrjnavdt@rob-hp-laptop>
+References: <1523886928-14535-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523886928-14535-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Mon, Apr 16, 2018 at 03:55:28PM +0200, Jacopo Mondi wrote:
+> Add documentation for r8a77965 compatible string to Renesas sci-serial
+> device tree bindings documentation.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+> 
+> Renesas R-Car M3-N support has been merged for v4.17.
+> Document the missing device tree bindings.
+> 
+> ---
+>  Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-To incorporate more tests by the hardware team decrease the hysteresis
-value to 1C.
+Applied.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 5ae85d8a7685aec8..6eaa7c78d8402a7c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2826,12 +2826,12 @@
- 			trips {
- 				sensor1_passive: sensor1-passive {
- 					temperature = <95000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "passive";
- 				};
- 				sensor1_crit: sensor1-crit {
- 					temperature = <120000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
-@@ -2852,12 +2852,12 @@
- 			trips {
- 				sensor2_passive: sensor2-passive {
- 					temperature = <95000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "passive";
- 				};
- 				sensor2_crit: sensor2-crit {
- 					temperature = <120000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
-@@ -2878,12 +2878,12 @@
- 			trips {
- 				sensor3_passive: sensor3-passive {
- 					temperature = <95000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "passive";
- 				};
- 				sensor3_crit: sensor3-crit {
- 					temperature = <120000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
--- 
-2.17.0
+Rob
