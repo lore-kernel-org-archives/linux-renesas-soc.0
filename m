@@ -1,44 +1,49 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34341 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751398AbeDQDNg (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Apr 2018 23:13:36 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v6 03/11] ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
+Date: Mon, 16 Apr 2018 23:50:24 +0200
+Message-Id: <20180416215032.5023-4-mylene.josserand@bootlin.com>
+In-Reply-To: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180416215032.5023-4-mylene.josserand@bootlin.com>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com> <20180416215032.5023-4-mylene.josserand@bootlin.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 17 Apr 2018 11:13:12 +0800
-Message-ID: <CAGb2v67b_-RTF2HyNE5NoWTiHy9BDPR95sxvOYzGbz7=qP_ewA@mail.gmail.com>
-Subject: Re: [PATCH v6 03/11] ARM: dts: sun8i: Add R_CPUCFG device node for
- the A83T dtsi
-To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, Simon <horms@verge.net.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 5:50 AM, Mylène Josserand
-<mylene.josserand@bootlin.com> wrote:
-> The R_CPUCFG is a collection of registers needed for SMP bringup
-> on clusters and cluster's reset.
-> For the moment, documentation about this register is found in
-> Allwinner's code only.
->
-> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+The R_CPUCFG is a collection of registers needed for SMP bringup
+on clusters and cluster's reset.
+For the moment, documentation about this register is found in
+Allwinner's code only.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 32992afa0b12..7974eaba57a7 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -933,6 +933,11 @@
+ 			#reset-cells = <1>;
+ 		};
+ 
++		r_cpucfg@1f01c00 {
++			compatible = "allwinner,sun8i-a83t-r-cpucfg";
++			reg = <0x1f01c00 0x400>;
++		};
++
+ 		r_pio: pinctrl@1f02c00 {
+ 			compatible = "allwinner,sun8i-a83t-r-pinctrl";
+ 			reg = <0x01f02c00 0x400>;
+-- 
+2.11.0
+
