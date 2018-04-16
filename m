@@ -1,141 +1,101 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41636 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752234AbeDHSID (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Apr 2018 14:08:03 -0400
-Received: by mail-wr0-f194.google.com with SMTP id s12so6367802wrc.8
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 08 Apr 2018 11:08:02 -0700 (PDT)
-Subject: [PATCH v2 4/5] pcie-rcar: factor out rcar_pcie_hw_init() call
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
-Message-ID: <fdb3e7ef-bb78-ad7c-8482-f6586f405f07@cogentembedded.com>
-Date: Sun, 8 Apr 2018 21:07:59 +0300
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Mon, 16 Apr 2018 15:07:21 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 15/19] dt-bindings: gpio: Add support for r8a77965
+Message-ID: <20180416130721.GB3377@w540>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-16-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdW4k+GROdy6kKT-3jd7YYGVbKvieyCSEWXGXJyvZg7NGQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW4k+GROdy6kKT-3jd7YYGVbKvieyCSEWXGXJyvZg7NGQ@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We now have rcar_pcie_hw_init_{h1|gen2|gen3}() differing only in the PCIe
-PHY init code and all ending with a call to rcar_pcie_hw_init(), thus it
-makes  sense to move that call into the driver's probe() method and then
-rename those functions to rcar_pcie_phy_init_{h1|gen2|gen3}() -- doing
-this saves 48 bytes of object code (AArch64 gcc 4.8.5)...
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+--xXmbgvnjoT4axfJE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
- drivers/pci/host/pcie-rcar.c |   42 ++++++++++++++++++++++--------------------
- 1 file changed, 22 insertions(+), 20 deletions(-)
+Hi Geert,
 
-Index: pci/drivers/pci/host/pcie-rcar.c
-===================================================================
---- pci.orig/drivers/pci/host/pcie-rcar.c
-+++ pci/drivers/pci/host/pcie-rcar.c
-@@ -626,7 +626,7 @@ static int rcar_pcie_hw_init(struct rcar
- 	return 0;
- }
- 
--static int rcar_pcie_hw_init_h1(struct rcar_pcie *pcie)
-+static int rcar_pcie_phy_init_h1(struct rcar_pcie *pcie)
- {
- 	/* Initialize the phy */
- 	phy_write_reg(pcie, 0, 0x42, 0x1, 0x0EC34191);
-@@ -646,10 +646,10 @@ static int rcar_pcie_hw_init_h1(struct r
- 	phy_write_reg(pcie, 0, 0x64, 0x1, 0x3F0F1F0F);
- 	phy_write_reg(pcie, 0, 0x66, 0x1, 0x00008000);
- 
--	return rcar_pcie_hw_init(pcie);
-+	return 0;
- }
- 
--static int rcar_pcie_hw_init_gen2(struct rcar_pcie *pcie)
-+static int rcar_pcie_phy_init_gen2(struct rcar_pcie *pcie)
- {
- 	/*
- 	 * These settings come from the R-Car Series, 2nd Generation User's
-@@ -666,10 +666,10 @@ static int rcar_pcie_hw_init_gen2(struct
- 	rcar_pci_write_reg(pcie, 0x00000001, GEN2_PCIEPHYCTRL);
- 	rcar_pci_write_reg(pcie, 0x00000006, GEN2_PCIEPHYCTRL);
- 
--	return rcar_pcie_hw_init(pcie);
-+	return 0;
- }
- 
--static int rcar_pcie_hw_init_gen3(struct rcar_pcie *pcie)
-+static int rcar_pcie_phy_init_gen3(struct rcar_pcie *pcie)
- {
- 	int err;
- 
-@@ -677,11 +677,7 @@ static int rcar_pcie_hw_init_gen3(struct
- 	if (err)
- 		return err;
- 
--	err = phy_power_on(pcie->phy);
--	if (err)
--		return err;
--
--	return rcar_pcie_hw_init(pcie);
-+	return phy_power_on(pcie->phy);
- }
- 
- static int rcar_msi_alloc(struct rcar_msi *chip)
-@@ -1082,17 +1078,18 @@ static int rcar_pcie_parse_map_dma_range
- }
- 
- static const struct of_device_id rcar_pcie_of_match[] = {
--	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
-+	{ .compatible = "renesas,pcie-r8a7779",
-+	  .data = rcar_pcie_phy_init_h1 },
- 	{ .compatible = "renesas,pcie-r8a7790",
--	  .data = rcar_pcie_hw_init_gen2 },
-+	  .data = rcar_pcie_phy_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7791",
--	  .data = rcar_pcie_hw_init_gen2 },
-+	  .data = rcar_pcie_phy_init_gen2 },
- 	{ .compatible = "renesas,pcie-rcar-gen2",
--	  .data = rcar_pcie_hw_init_gen2 },
-+	  .data = rcar_pcie_phy_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7795",
--	  .data = rcar_pcie_hw_init_gen3 },
-+	  .data = rcar_pcie_phy_init_gen3 },
- 	{ .compatible = "renesas,pcie-rcar-gen3",
--	  .data = rcar_pcie_hw_init_gen3 },
-+	  .data = rcar_pcie_phy_init_gen3 },
- 	{},
- };
- 
-@@ -1140,7 +1137,7 @@ static int rcar_pcie_probe(struct platfo
- 	struct rcar_pcie *pcie;
- 	unsigned int data;
- 	int err;
--	int (*hw_init_fn)(struct rcar_pcie *);
-+	int (*phy_init_fn)(struct rcar_pcie *);
- 	struct pci_host_bridge *bridge;
- 
- 	bridge = pci_alloc_host_bridge(sizeof(*pcie));
-@@ -1174,10 +1171,15 @@ static int rcar_pcie_probe(struct platfo
- 		goto err_pm_disable;
- 	}
- 
--	/* Failure to get a link might just be that no cards are inserted */
--	hw_init_fn = of_device_get_match_data(dev);
--	err = hw_init_fn(pcie);
-+	phy_init_fn = of_device_get_match_data(dev);
-+	err = phy_init_fn(pcie);
- 	if (err) {
-+		dev_err(dev, "failed to init PCIe PHY\n");
-+		goto err_pm_put;
-+	}
-+
-+	/* Failure to get a link might just be that no cards are inserted */
-+	if (rcar_pcie_hw_init(pcie)) {
- 		dev_info(dev, "PCIe link down\n");
- 		err = -ENODEV;
- 		goto err_pm_put;
+On Mon, Apr 16, 2018 at 01:12:06PM +0200, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org>=
+ wrote:
+> > Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Can you please resend to the GPIO maintainer?
+> Thanks!
+
+Thank you for the useful reminder.
+
+=46rom my original M3-N support series, the following DT binding patches
+have actually to be resent, now that the SoC support is in v4.17-rc1.
+
+dt-bindings: dmaengine: rcar-dmac: document R8A77965 support
+dt-bindings: serial: sh-sci: Add support for r8a77965 (H)SCIF
+dt-bindings: net: ravb: Add support for r8a77965 SoC
+dt-bindings: gpio: Add support for r8a77965
+
+I will resend each one to the appropriate tree maintainer.
+
+Thanks
+   j
+
+
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
+
+--xXmbgvnjoT4axfJE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa1KAJAAoJEHI0Bo8WoVY8nbsQAJo7vULjkaCO/iMsjeYGgbqS
+394iQwYhLWZ2cAVbvWc7srLMJDA3oy9HwuK72rAuBRYiU3uTJXE0b8uAI0YdJZI+
+cB0WJc3WwwbNq9sE55j72xH5pBWGJYwKxrUv6BIf6GCTIwyVZsh28oNRjTJUaSWP
+jhYxZTXuBsVoJ0K9i+2EQDjPmIzXQzF/kK8v/z3h7bQih2/7yHOjZl+5sNDwwX3f
+RjN0L9P+cXY3SVJyEb4Ax1l5NP9MFZ8FkNEOijV7Yg0INVD7M2+bZeDXNmcC2400
+IiZhEYDY7bgEmRM5FNfUvXP+550GYBZdBoSAT6Vx2OXPod3mE6y0iJYuvVPw8DIQ
+Q6jHfe4g4wV8knV+FZpBpFylVhA2KsGqGHkVMzomBltamcukmL0FyRJctEwIaQX7
+ynbDhoBtBppgg4INY+vXqWtO9jxoTCF7H9DKVLZz7o5M7fe936FHyipxG+lksowN
+32IAgsx9VgTuJCbf5eco+24vhERU5othazdS0oKwDfm+tuw8Rw/n8Yv3R5YGeSS4
+0NzDV+jphU+/Ru+XIE6MuaWMu9QLtqWNWZy1lMxqqeRFx10pDi/aFTXxsBA6Yg+m
+VnlEYMZtNIYOz1Z9szhe1HTtBDQd97Sgp8h3B4OZPFrkYhhBX06IIk1SVzkUTvDn
+VhLcu8UFzHzGWT06DXK5
+=tQ6Y
+-----END PGP SIGNATURE-----
+
+--xXmbgvnjoT4axfJE--
