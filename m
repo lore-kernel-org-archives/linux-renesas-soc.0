@@ -1,180 +1,219 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:40348 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752725AbeDSNsr (ORCPT
+Received: from mail-vk0-f46.google.com ([209.85.213.46]:45179 "EHLO
+        mail-vk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752641AbeDQNXY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:48:47 -0400
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tue, 17 Apr 2018 09:23:24 -0400
+MIME-Version: 1.0
+In-Reply-To: <OSBPR01MB2103463F72505673548AC737B8B70@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1522855377-48527-1-git-send-email-biju.das@bp.renesas.com>
+ <1522855377-48527-2-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdX9YC+QT_dbKSqtQUHJkoA=3=gmgPYNFdXBOrsTT9rCRw@mail.gmail.com> <OSBPR01MB2103463F72505673548AC737B8B70@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Apr 2018 15:23:23 +0200
+Message-ID: <CAMuHMdX6YTD9X0r9Dfz5uLAx2vSvxPp7Hidi_FbtZjrdSuE8eA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: Add r8a77470 PFC support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
-        "Chris Paterson" <Chris.Paterson2@renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: RE: [PATCH v2 1/2] pinctrl: sh-pfc: Add r8a77470 PFC support
-Date: Thu, 19 Apr 2018 13:48:40 +0000
-Message-ID: <OSBPR01MB21032379AC54CD51765820F6B8B50@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1522855377-48527-1-git-send-email-biju.das@bp.renesas.com>
- <1522855377-48527-2-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdX9YC+QT_dbKSqtQUHJkoA=3=gmgPYNFdXBOrsTT9rCRw@mail.gmail.com>
- <OSBPR01MB2103463F72505673548AC737B8B70@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <CAMuHMdX6YTD9X0r9Dfz5uLAx2vSvxPp7Hidi_FbtZjrdSuE8eA@mail.gmail.com>
-In-Reply-To: <CAMuHMdX6YTD9X0r9Dfz5uLAx2vSvxPp7Hidi_FbtZjrdSuE8eA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGNvbW1lbnQuDQoNCj4gU3ViamVjdDogUmU6IFtQ
-QVRDSCB2MiAxLzJdIHBpbmN0cmw6IHNoLXBmYzogQWRkIHI4YTc3NDcwIFBGQyBzdXBwb3J0DQo+
-DQo+IEhpIEJpanUsDQo+DQo+ICsgU2VyZ2VpDQo+DQo+IE9uIFR1ZSwgQXByIDE3LCAyMDE4IGF0
-IDExOjA3IEFNLCBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+IHdyb3RlOg0K
-PiA+PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDEvMl0gcGluY3RybDogc2gtcGZjOiBBZGQgcjhh
-Nzc0NzAgUEZDIHN1cHBvcnQNCj4gPj4gT24gV2VkLCBBcHIgNCwgMjAxOCBhdCA1OjIyIFBNLCBC
-aWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+IHdyb3RlOg0KPiA+PiA+IEFkZCBQ
-RkMgc3VwcG9ydCBmb3IgdGhlIFI4QTc3NDcwIFNvQyBpbmNsdWRpbmcgcGluIGdyb3VwcyBmb3Ig
-c29tZQ0KPiA+PiA+IG9uLWNoaXAgZGV2aWNlcyBzdWNoIGFzIFNDSUYsIEFWQiBhbmQgTU1DLg0K
-PiA+PiA+DQo+ID4+ID4gU2lnbmVkLW9mZi1ieTogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVz
-YXMuY29tPg0KPiA+PiA+IFJldmlld2VkLWJ5OiBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNh
-c3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4NCj4gPj4gPiAtLS0gL2Rldi9udWxsDQo+ID4+ID4gKysr
-IGIvZHJpdmVycy9waW5jdHJsL3NoLXBmYy9wZmMtcjhhNzc0NzAuYw0KPg0KPiA+PiA+ICsvKiAt
-IEFWQg0KPiA+PiA+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gPj4gPiArLS0gKi8gc3RhdGljIGNvbnN0DQo+ID4+
-IHVuc2lnbmVkIGludCBhdmJfbGlua19waW5zW10gPSB7DQo+ID4+ID4gKyAgICAgICBSQ0FSX0dQ
-X1BJTig1LCAxNCksDQo+ID4+ID4gK307DQo+ID4+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBp
-bnQgYXZiX2xpbmtfbXV4W10gPSB7DQo+ID4+ID4gKyAgICAgICBBVkJfTElOS19NQVJLLA0KPiA+
-PiA+ICt9Ow0KPiA+PiA+ICtzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50IGF2Yl9tYWdpY19waW5z
-W10gPSB7DQo+ID4+ID4gKyAgICAgICBSQ0FSX0dQX1BJTig1LCAxNSksDQo+ID4+ID4gK307DQo+
-ID4+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgYXZiX21hZ2ljX211eFtdID0gew0KPiA+
-PiA+ICsgICAgICAgQVZCX01BR0lDX01BUkssDQo+ID4+ID4gK307DQo+ID4+ID4gK3N0YXRpYyBj
-b25zdCB1bnNpZ25lZCBpbnQgYXZiX3BoeV9pbnRfcGluc1tdID0gew0KPiA+PiA+ICsgICAgICAg
-UkNBUl9HUF9QSU4oNSwgMTYpLA0KPiA+PiA+ICt9Ow0KPiA+PiA+ICtzdGF0aWMgY29uc3QgdW5z
-aWduZWQgaW50IGF2Yl9waHlfaW50X211eFtdID0gew0KPiA+PiA+ICsgICAgICAgQVZCX1BIWV9J
-TlRfTUFSSywNCj4gPj4gPiArfTsNCj4gPj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBh
-dmJfbWRpb19waW5zW10gPSB7DQo+ID4+ID4gKyAgICAgICBSQ0FSX0dQX1BJTig1LCAxMiksIFJD
-QVJfR1BfUElOKDUsIDEzKSwgfTsgc3RhdGljIGNvbnN0DQo+ID4+ID4gK3Vuc2lnbmVkIGludCBh
-dmJfbWRpb19tdXhbXSA9IHsNCj4gPj4gPiArICAgICAgIEFWQl9NRENfTUFSSywgQVZCX01ESU9f
-TUFSSywgfTsgc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludA0KPiA+PiA+ICthdmJfbWlpX3BpbnNb
-XSA9IHsNCj4gPj4gPiArICAgICAgIFJDQVJfR1BfUElOKDMsIDE0KSwgUkNBUl9HUF9QSU4oMywg
-MTUpLCBSQ0FSX0dQX1BJTigzLCAxNiksDQo+ID4+ID4gKyAgICAgICBSQ0FSX0dQX1BJTigzLCAy
-NyksDQo+ID4+ID4gKw0KPiA+PiA+ICsgICAgICAgUkNBUl9HUF9QSU4oMywgMiksIFJDQVJfR1Bf
-UElOKDMsIDMpLCBSQ0FSX0dQX1BJTigzLCA0KSwNCj4gPj4gPiArICAgICAgIFJDQVJfR1BfUElO
-KDMsIDUpLA0KPiA+PiA+ICsNCj4gPj4gPiArICAgICAgIFJDQVJfR1BfUElOKDMsIDEwKSwgUkNB
-Ul9HUF9QSU4oMywgMCksIFJDQVJfR1BfUElOKDMsIDEpLA0KPiA+PiA+ICsgICAgICAgUkNBUl9H
-UF9QSU4oNSwgMTcpLCBSQ0FSX0dQX1BJTigzLCAxMyksIFJDQVJfR1BfUElOKDUsIDIzKSwNCj4g
-Pj4gPiArICAgICAgIFJDQVJfR1BfUElOKDMsIDEyKSwNCj4gPj4gPiArfTsNCj4gPj4gPiArc3Rh
-dGljIGNvbnN0IHVuc2lnbmVkIGludCBhdmJfbWlpX211eFtdID0gew0KPiA+PiA+ICsgICAgICAg
-QVZCX1RYRDBfTUFSSywgQVZCX1RYRDFfTUFSSywgQVZCX1RYRDJfTUFSSywNCj4gPj4gPiArICAg
-ICAgIEFWQl9UWEQzX01BUkssDQo+ID4+ID4gKw0KPiA+PiA+ICsgICAgICAgQVZCX1JYRDBfTUFS
-SywgQVZCX1JYRDFfTUFSSywgQVZCX1JYRDJfTUFSSywNCj4gPj4gPiArICAgICAgIEFWQl9SWEQz
-X01BUkssDQo+ID4+ID4gKw0KPiA+PiA+ICsgICAgICAgQVZCX1JYX0VSX01BUkssIEFWQl9SWF9D
-TEtfTUFSSywgQVZCX1JYX0RWX01BUkssDQo+ID4+ID4gKyAgICAgICBBVkJfQ1JTX01BUkssIEFW
-Ql9UWF9FTl9NQVJLLCBBVkJfVFhfRVJfTUFSSywNCj4gPj4gPiArICAgICAgIEFWQl9UWF9DTEtf
-TUFSSywNCj4gPj4NCj4gPj4gWW91IGZvcmdvdCBBVkJfQ09MLCB3aGljaCBpcyBHUDVfMTg/DQo+
-ID4NCj4gPiBHUDVfMTggaXMgc2hyZWQgYmV0d2VlbiB0aGUgc2lnbmFscyBBVkJfQ09MIGFuZCBW
-STBfQ0xLLiBBcyBwZXIgdGhlDQo+ID4gUlovRzFDIGJvYXJkIHNjaGVtYXRpYyAvaGFyZHdhcmUg
-dXNlciBndWlkZSBFdGhlcm5ldCBQaHkgY29sbGlzaW9uDQo+ID4gcGluKEFWQl9DT0wpIHBpbiAg
-aXMgbm90IHBvcHVsYXRlZCBvbiB0aGlzIGJvYXJkIGJ5IGRlZmF1bHQuIEl0IGlzIHBvcHVsYXRl
-ZA0KPiBvbmx5IGZvciBWaWRlbyBJbnB1dCBDaGFubmVsMCBwaXhlbCBjbG9jay4NCj4gPg0KPiA+
-IFNpbmNlIGl0IGlzIGluaXRpYWwgc3VibWlzc2lvbiwgSSB0aG91Z2h0IG9mIGFkZGluZyBvbmx5
-IGJvYXJkDQo+ID4gc3BlY2lmaWMgcGlucyBmaXJzdCBhbmQgbGF0ZXIgYWRkIHRoaXMgY29sbGlz
-aW9uIHBpbiBhbG9uZSBhcyBhDQo+ID4gc2VwYXJhdGUgcGluIGVudHJ5ICBpbiB0aGUgYXZiIGdy
-b3VwLiBUaGF0IHdheSB3ZSBjYW4gc3VwcG9ydCBleGlzdGluZw0KPiBib2FyZCBhcyB3ZWxsIGFz
-IGFueSBmdXR1cmUgUlovRzFDIGJvYXJkIHdoaWNoIHBvcHVsYXRlcyB0aGlzIHBpbi4gQXJlIHlv
-dQ0KPiBvayBmb3IgdGhpcyBhcHByb2FjaD8NCj4NCj4gT29wcy4gVGhhdCBtZWFucyBvdXIgZ3Jv
-dXBpbmcgaXMgc3Vib3B0aW1hbC4gUGVyaGFwcyB3ZSBzaG91bGQgcmV2aXNpdCAoZm9yDQo+IGFs
-bCBTb0NzLCB3aGlsZSBrZWVwaW5nIGJhY2t3YXJkcyBjb21wYXRpYmlsaXR5KT8NCj4NCj4gQWZ0
-ZXIgcmVhZGluZyBzb21lIHdpa2lwZWRpYSwgSSBjYW1lIHVwIHdpdGg6DQo+DQo+ICAgICBtaWlf
-dHgNCj4gICAgIG1paV90eF9lciAob3B0aW9uYWwpDQo+ICAgICBtaWlfcngNCj4gICAgIG1paV9j
-b2xfY3JzIChvcHRpb25hbCwgaGFsZiBkdXBsZXgpDQo+DQo+IEhvd2V2ZXIsIGdpdmVuIHlvdXIg
-Ym9hcmQgdXNlcyBBVkJfQ1JTIHdpdGhvdXQgQVZCX0NPTCwgdGhhdCB3b3VsZCBzdGlsbA0KPiBu
-b3QgYmUgc3VmZmljaWVudCwgc28gdGhlIGxhc3QgZ3JvdXAgc2hvdWxkIGJlIHNwbGl0IHRvIGNv
-dmVyIHlvdXIgdXNlIGNhc2U/DQoNCk9rIEkgYWdyZWUgdG8geW91ciBwb2ludC4gV2hhdCBhYm91
-dCBzcGxpdHRpbmcgdGhlIGxhc3QgZ3JvdXAgIiBtaWlfY29sX2NycyIgIHRvICJtaWlfY29sIiBh
-bmQgICJtaWlfY3JzIiBhcyBzZXBhcmF0ZSBncm91cHMgLg0KU2luY2UgdGhpcyBwaW5zIGFyZSBv
-bmx5IG1lYW5pbmcgZnVsbCBpbiBoYWxmIGR1cGxleCBtb2RlKGh0dHBzOi8vZW4ud2lraXBlZGlh
-Lm9yZy93aWtpL01lZGlhLWluZGVwZW5kZW50X2ludGVyZmFjZSkNCg0KPiBCVFcsIGhvdyBkb2Vz
-IGl0IHdvcmsgd2l0aCBBVkJfQ09MIG5vdCB3aXJlZCB0byBhbnl0aGluZyBieSBkZWZhdWx0LCBh
-bmQNCj4gdGh1cyBmbG9hdGluZz8gRG8geW91IGVuYWJsZSBwdWxsLXVwL2Rvd24gZm9yIHRoYXQg
-cGluIGluIHRoZSBQRkMsIG9yIGlzIHRoZQ0KPiBwaW4ganVzdCBpZ25vcmVkIGluIGZ1bGwtZHVw
-bGV4IG1vZGU/DQoNClNpbmNlIGl0IGlzIHVud2lyZWQsIHRoZSBwaW4gaXMgaW4gR1BJTyBtb2Rl
-LCBoaWdoIGltcGVkYW5jZSBzdGF0ZShaVSkgd2l0aCBpbml0aWFsIHN0YXRlIGlzIHB1bGwtdXAg
-Im9uIiBpbiB0aGUgUEZDLg0KDQo+ID4+ID4gK307DQo+ID4+ID4gK3N0YXRpYyBjb25zdCB1bnNp
-Z25lZCBpbnQgYXZiX2dtaWlfcGluc1tdID0gew0KPiA+PiA+ICsgICAgICAgUkNBUl9HUF9QSU4o
-MywgMTQpLCBSQ0FSX0dQX1BJTigzLCAxNSksIFJDQVJfR1BfUElOKDMsIDE2KSwNCj4gPj4gPiAr
-ICAgICAgIFJDQVJfR1BfUElOKDMsIDI3KSwgUkNBUl9HUF9QSU4oMywgMjgpLCBSQ0FSX0dQX1BJ
-TigzLCAyOSksDQo+ID4+ID4gKyAgICAgICBSQ0FSX0dQX1BJTig0LCAwKSwgUkNBUl9HUF9QSU4o
-NSwgMjIpLA0KPiA+PiA+ICsNCj4gPj4gPiArICAgICAgIFJDQVJfR1BfUElOKDMsIDIpLCBSQ0FS
-X0dQX1BJTigzLCAzKSwgUkNBUl9HUF9QSU4oMywgNCksDQo+ID4+ID4gKyAgICAgICBSQ0FSX0dQ
-X1BJTigzLCA1KSwgUkNBUl9HUF9QSU4oMywgNiksIFJDQVJfR1BfUElOKDMsIDcpLA0KPiA+PiA+
-ICsgICAgICAgUkNBUl9HUF9QSU4oMywgOCksIFJDQVJfR1BfUElOKDMsIDkpLA0KPiA+PiA+ICsN
-Cj4gPj4gPiArICAgICAgIFJDQVJfR1BfUElOKDMsIDEwKSwgUkNBUl9HUF9QSU4oMywgMCksIFJD
-QVJfR1BfUElOKDMsIDEpLA0KPiA+PiA+ICsgICAgICAgUkNBUl9HUF9QSU4oNSwgMTcpLCBSQ0FS
-X0dQX1BJTig0LCAxKSwgUkNBUl9HUF9QSU4oMywgMTEpLA0KPiA+PiA+ICsgICAgICAgUkNBUl9H
-UF9QSU4oMywgMTMpLCBSQ0FSX0dQX1BJTig1LCAyMyksIFJDQVJfR1BfUElOKDMsIDEyKSwNCj4g
-Pj4gPiArfTsgc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBhdmJfZ21paV9tdXhbXSA9IHsNCj4g
-Pj4gPiArICAgICAgIEFWQl9UWEQwX01BUkssIEFWQl9UWEQxX01BUkssIEFWQl9UWEQyX01BUkss
-DQo+ID4+ID4gKyAgICAgICBBVkJfVFhEM19NQVJLLCBBVkJfVFhENF9NQVJLLCBBVkJfVFhENV9N
-QVJLLA0KPiA+PiA+ICsgICAgICAgQVZCX1RYRDZfTUFSSywgQVZCX1RYRDdfTUFSSywNCj4gPj4g
-PiArDQo+ID4+ID4gKyAgICAgICBBVkJfUlhEMF9NQVJLLCBBVkJfUlhEMV9NQVJLLCBBVkJfUlhE
-Ml9NQVJLLA0KPiA+PiA+ICsgICAgICAgQVZCX1JYRDNfTUFSSywgQVZCX1JYRDRfTUFSSywgQVZC
-X1JYRDVfTUFSSywNCj4gPj4gPiArICAgICAgIEFWQl9SWEQ2X01BUkssIEFWQl9SWEQ3X01BUkss
-DQo+ID4+ID4gKw0KPiA+PiA+ICsgICAgICAgQVZCX1JYX0VSX01BUkssIEFWQl9SWF9DTEtfTUFS
-SywgQVZCX1JYX0RWX01BUkssDQo+ID4+ID4gKyAgICAgICBBVkJfQ1JTX01BUkssIEFWQl9HVFhf
-Q0xLX01BUkssIEFWQl9HVFhSRUZDTEtfTUFSSywNCj4gPj4gPiArICAgICAgIEFWQl9UWF9FTl9N
-QVJLLCBBVkJfVFhfRVJfTUFSSywgQVZCX1RYX0NMS19NQVJLLA0KPiA+Pg0KPiA+PiBZb3UgZm9y
-Z290IEFWQl9DT0wsIHdoaWNoIGlzIEdQNV8xOD8NCj4gPg0KPiA+IFRoZSBzYW1lIGNvbW1lbnQg
-YXMgYWJvdmUuDQo+DQo+IExpa2V3aXNlOg0KPg0KPiAgICAgZ21paV90eA0KPiAgICAgZ21paV9y
-eA0KPiAgICAgZ21paV9jb2xfY3JzIChvcHRpb25hbCwgaGFsZiBkdXBsZXg7IHNob3VsZCB0aGlz
-IGJlIHNwbGl0PykNCg0KT2sgSSBhZ3JlZSB0byB5b3VyIHBvaW50LiBXaGF0IGFib3V0IHNwbGl0
-dGluZyB0aGUgZ3JvdXAgIiBnbWlpX2NvbF9jcnMiICB0byAiZ21paV9jb2wiIGFuZCAgImdtaWlf
-Y3JzIiBhcyBzZXBhcmF0ZSBncm91cHMgLg0KU2luY2UgdGhpcyBwaW5zIGFyZSBvbmx5IGZvciBo
-YWxmIGR1cGxleCBtb2RlKGh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL01lZGlhLWluZGVw
-ZW5kZW50X2ludGVyZmFjZSkNCg0KPiA+PiA+ICt9Ow0KPiA+Pg0KPiA+PiBBbnkgc3BlY2lmaWMg
-cmVhc29uIHlvdSBoYXZlbid0IGFkZGVkIHRoZSBhdmJfYXZ0cF9jYXB0dXJlIGFuZA0KPiA+PiBh
-dmJfYXZ0cF9tYXRjaCBwaW5zPw0KPiA+DQo+ID4gU2luY2UgaXQgaXMgaW5pdGlhbCBzdWJtaXNz
-aW9uLCBJIHRob3VnaHQgb2YgYWRkaW5nIG9ubHkgYm9hcmQgc3BlY2lmaWMgcGlucyBmaXJzdC4N
-Cj4gPiBJdCB3YXMgcGxhbm5lZCB0byBhZGQgdGhpcyBpbiBsYXRlciBzdWJtaXNzaW9uLg0KPg0K
-PiBJQy4gUGxlYXNlIGFkZCB0aGVtLCBzbyB3ZSBrbm93IEFWQiBpcyBjb21wbGV0ZS4gV2UgdXN1
-YWxseSBkb24ndCBoYXZlDQo+IGluY29tcGxldGUgcGluIGdyb3Vwcy4NCg0KT0sgd2lsbCBhZGQg
-dGhpcyBpbiBWMi4NCg0KPiA+PiA+ICsvKiAtIFNDSUYxDQo+ID4+ID4gKy0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+
-PiA+ICsqLyBzdGF0aWMgY29uc3QNCj4gPj4gdW5zaWduZWQgaW50IHNjaWYxX2RhdGFfYl9waW5z
-W10gPSB7DQo+ID4+ID4gKyAgICAgICAvKiBSWCwgVFggKi8NCj4gPj4gPiArICAgICAgIFJDQVJf
-R1BfUElOKDUsIDE5KSwgUkNBUl9HUF9QSU4oNSwgMjApLCB9OyBzdGF0aWMgY29uc3QNCj4gPj4g
-PiArdW5zaWduZWQgaW50IHNjaWYxX2RhdGFfYl9tdXhbXSA9IHsNCj4gPj4gPiArICAgICAgIFJY
-MV9CX01BUkssIFRYMV9CX01BUkssDQo+ID4+ID4gK307DQo+ID4+ID4gKy8qIC0gU0NJRjINCj4g
-Pj4gPiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tDQo+ID4+ID4gKyovIHN0YXRpYyBjb25zdA0KPiA+PiB1bnNpZ25lZCBp
-bnQgc2NpZjJfZGF0YV9iX3BpbnNbXSA9IHsNCj4gPj4gPiArICAgICAgIC8qIFJYLCBUWCAqLw0K
-PiA+PiA+ICsgICAgICAgUkNBUl9HUF9QSU4oNSwgMjUpLCBSQ0FSX0dQX1BJTig1LCAyNiksIH07
-IHN0YXRpYyBjb25zdA0KPiA+PiA+ICt1bnNpZ25lZCBpbnQgc2NpZjJfZGF0YV9iX211eFtdID0g
-ew0KPiA+PiA+ICsgICAgICAgUlgyX0JfTUFSSywgVFgyX0JfTUFSSywNCj4gPj4gPiArfTsNCj4g
-Pj4gPiArLyogLSBTQ0lGNA0KPiA+PiA+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gPj4gPiArKi8gc3RhdGljIGNv
-bnN0DQo+ID4+IHVuc2lnbmVkIGludCBzY2lmNF9kYXRhX2JfcGluc1tdID0gew0KPiA+PiA+ICsg
-ICAgICAgLyogUlgsIFRYICovDQo+ID4+ID4gKyAgICAgICBSQ0FSX0dQX1BJTigxLCAyKSwgUkNB
-Ul9HUF9QSU4oMSwgMyksIH07IHN0YXRpYyBjb25zdA0KPiA+PiA+ICt1bnNpZ25lZCBpbnQgc2Np
-ZjRfZGF0YV9iX211eFtdID0gew0KPiA+PiA+ICsgICAgICAgUlg0X0JfTUFSSywgVFg0X0JfTUFS
-SywNCj4gPj4gPiArfTsNCj4gPj4gPiArLyogLSBTQ0lGNQ0KPiA+PiA+ICstLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4g
-Pj4gPiArKi8gc3RhdGljIGNvbnN0DQo+ID4+IHVuc2lnbmVkIGludCBzY2lmNV9kYXRhX2JfcGlu
-c1tdID0gew0KPiA+PiA+ICsgICAgICAgLyogUlgsIFRYICovDQo+ID4+ID4gKyAgICAgICBSQ0FS
-X0dQX1BJTigxLCAwKSwgUkNBUl9HUF9QSU4oMSwgMSksIH07IHN0YXRpYyBjb25zdA0KPiA+PiA+
-ICt1bnNpZ25lZCBpbnQgc2NpZjVfZGF0YV9iX211eFtdID0gew0KPiA+PiA+ICsgICAgICAgUlg1
-X0JfTUFSSywgVFg1X0JfTUFSSywNCj4gPj4gPiArfTsNCj4gPj4NCj4gPj4gUGxlYXNlIGFkZCBh
-bGwgU0NJRiBwaW4gZ3JvdXBzLCBub3QganVzdCBhIHJhbmRvbSBzdWJzZXQuDQo+ID4NCj4gPiBJ
-dCBpcyBub3QgcmFuZG9tIHN1YnNldCwgdGhlIGFib3ZlIHNldCBpcyBiYXNlZCBvbiBjdXJyZW50
-IGJvYXJkLg0KPg0KPiBUbyBtZSBpdCBsb29rcyByYW5kb20gOy0pDQo+IFBpbiBjb250cm9sIGRy
-aXZlcnMgYXJlIHN1ZmZpY2llbnRseSBoYXJkIHdpdGhvdXQgaW5jb21wbGV0ZSBwaW4gZ3JvdXBz
-LCBzbw0KPiBwbGVhc2UgYWRkIHRoZSBtaXNzaW5nIHBhcnRzLg0KDQpPSy4gV2lsbCBhZGQgdGhp
-cyBpbiBWMi4NCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVh
-ZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZI
-LCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4g
-MDQ1ODY3MDkuDQo=
+Hi Biju,
+
++ Sergei
+
+On Tue, Apr 17, 2018 at 11:07 AM, Biju Das <biju.das@bp.renesas.com> wrote:
+>> Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: Add r8a77470 PFC support
+>> On Wed, Apr 4, 2018 at 5:22 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+>> > Add PFC support for the R8A77470 SoC including pin groups for some
+>> > on-chip devices such as SCIF, AVB and MMC.
+>> >
+>> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+>> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+
+>> > --- /dev/null
+>> > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+
+>> > +/* - AVB
+>> > +-------------------------------------------------------------------- */ static const
+>> unsigned int avb_link_pins[] = {
+>> > +       RCAR_GP_PIN(5, 14),
+>> > +};
+>> > +static const unsigned int avb_link_mux[] = {
+>> > +       AVB_LINK_MARK,
+>> > +};
+>> > +static const unsigned int avb_magic_pins[] = {
+>> > +       RCAR_GP_PIN(5, 15),
+>> > +};
+>> > +static const unsigned int avb_magic_mux[] = {
+>> > +       AVB_MAGIC_MARK,
+>> > +};
+>> > +static const unsigned int avb_phy_int_pins[] = {
+>> > +       RCAR_GP_PIN(5, 16),
+>> > +};
+>> > +static const unsigned int avb_phy_int_mux[] = {
+>> > +       AVB_PHY_INT_MARK,
+>> > +};
+>> > +static const unsigned int avb_mdio_pins[] = {
+>> > +       RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13), }; static const
+>> > +unsigned int avb_mdio_mux[] = {
+>> > +       AVB_MDC_MARK, AVB_MDIO_MARK,
+>> > +};
+>> > +static const unsigned int avb_mii_pins[] = {
+>> > +       RCAR_GP_PIN(3, 14), RCAR_GP_PIN(3, 15), RCAR_GP_PIN(3, 16),
+>> > +       RCAR_GP_PIN(3, 27),
+>> > +
+>> > +       RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 4),
+>> > +       RCAR_GP_PIN(3, 5),
+>> > +
+>> > +       RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 0), RCAR_GP_PIN(3, 1),
+>> > +       RCAR_GP_PIN(5, 17), RCAR_GP_PIN(3, 13), RCAR_GP_PIN(5, 23),
+>> > +       RCAR_GP_PIN(3, 12),
+>> > +};
+>> > +static const unsigned int avb_mii_mux[] = {
+>> > +       AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
+>> > +       AVB_TXD3_MARK,
+>> > +
+>> > +       AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
+>> > +       AVB_RXD3_MARK,
+>> > +
+>> > +       AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
+>> > +       AVB_CRS_MARK, AVB_TX_EN_MARK, AVB_TX_ER_MARK,
+>> > +       AVB_TX_CLK_MARK,
+>>
+>> You forgot AVB_COL, which is GP5_18?
+>
+> GP5_18 is shred between the signals AVB_COL and VI0_CLK. As per the RZ/G1C board schematic /hardware user guide
+> Ethernet Phy collision pin(AVB_COL) pin  is not populated on this board by default. It is populated only for
+> Video Input Channel0 pixel clock.
+>
+> Since it is initial submission, I thought of adding only board specific pins first and later
+> add this collision pin alone as a separate pin entry  in the avb group. That way we can support existing board
+> as well as any future RZ/G1C board which populates this pin. Are you ok for this approach?
+
+Oops. That means our grouping is suboptimal. Perhaps we should revisit
+(for all SoCs, while keeping backwards compatibility)?
+
+After reading some wikipedia, I came up with:
+
+    mii_tx
+    mii_tx_er (optional)
+    mii_rx
+    mii_col_crs (optional, half duplex)
+
+However, given your board uses AVB_CRS without AVB_COL, that would still
+not be sufficient, so the last group should be split to cover your use case?
+
+BTW, how does it work with AVB_COL not wired to anything by default, and thus
+floating? Do you enable pull-up/down for that pin in the PFC, or is the pin
+just ignored in full-duplex mode?
+
+>> > +};
+>> > +static const unsigned int avb_gmii_pins[] = {
+>> > +       RCAR_GP_PIN(3, 14), RCAR_GP_PIN(3, 15), RCAR_GP_PIN(3, 16),
+>> > +       RCAR_GP_PIN(3, 27), RCAR_GP_PIN(3, 28), RCAR_GP_PIN(3, 29),
+>> > +       RCAR_GP_PIN(4, 0), RCAR_GP_PIN(5, 22),
+>> > +
+>> > +       RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 4),
+>> > +       RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
+>> > +       RCAR_GP_PIN(3, 8), RCAR_GP_PIN(3, 9),
+>> > +
+>> > +       RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 0), RCAR_GP_PIN(3, 1),
+>> > +       RCAR_GP_PIN(5, 17), RCAR_GP_PIN(4, 1), RCAR_GP_PIN(3, 11),
+>> > +       RCAR_GP_PIN(3, 13), RCAR_GP_PIN(5, 23), RCAR_GP_PIN(3, 12), };
+>> > +static const unsigned int avb_gmii_mux[] = {
+>> > +       AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
+>> > +       AVB_TXD3_MARK, AVB_TXD4_MARK, AVB_TXD5_MARK,
+>> > +       AVB_TXD6_MARK, AVB_TXD7_MARK,
+>> > +
+>> > +       AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
+>> > +       AVB_RXD3_MARK, AVB_RXD4_MARK, AVB_RXD5_MARK,
+>> > +       AVB_RXD6_MARK, AVB_RXD7_MARK,
+>> > +
+>> > +       AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
+>> > +       AVB_CRS_MARK, AVB_GTX_CLK_MARK, AVB_GTXREFCLK_MARK,
+>> > +       AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
+>>
+>> You forgot AVB_COL, which is GP5_18?
+>
+> The same comment as above.
+
+Likewise:
+
+    gmii_tx
+    gmii_rx
+    gmii_col_crs (optional, half duplex; should this be split?)
+
+>> > +};
+>>
+>> Any specific reason you haven't added the avb_avtp_capture and
+>> avb_avtp_match pins?
+>
+> Since it is initial submission, I thought of adding only board specific pins first.
+> It was planned to add this in later submission.
+
+IC. Please add them, so we know AVB is complete. We usually don't have
+incomplete pin groups.
+
+>> > +/* - SCIF1
+>> > +------------------------------------------------------------------ */ static const
+>> unsigned int scif1_data_b_pins[] = {
+>> > +       /* RX, TX */
+>> > +       RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20), }; static const
+>> > +unsigned int scif1_data_b_mux[] = {
+>> > +       RX1_B_MARK, TX1_B_MARK,
+>> > +};
+>> > +/* - SCIF2
+>> > +------------------------------------------------------------------ */ static const
+>> unsigned int scif2_data_b_pins[] = {
+>> > +       /* RX, TX */
+>> > +       RCAR_GP_PIN(5, 25), RCAR_GP_PIN(5, 26), }; static const
+>> > +unsigned int scif2_data_b_mux[] = {
+>> > +       RX2_B_MARK, TX2_B_MARK,
+>> > +};
+>> > +/* - SCIF4
+>> > +------------------------------------------------------------------ */ static const
+>> unsigned int scif4_data_b_pins[] = {
+>> > +       /* RX, TX */
+>> > +       RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3), }; static const unsigned
+>> > +int scif4_data_b_mux[] = {
+>> > +       RX4_B_MARK, TX4_B_MARK,
+>> > +};
+>> > +/* - SCIF5
+>> > +------------------------------------------------------------------ */ static const
+>> unsigned int scif5_data_b_pins[] = {
+>> > +       /* RX, TX */
+>> > +       RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1), }; static const unsigned
+>> > +int scif5_data_b_mux[] = {
+>> > +       RX5_B_MARK, TX5_B_MARK,
+>> > +};
+>>
+>> Please add all SCIF pin groups, not just a random subset.
+>
+> It is not random subset, the above set is based on current board.
+
+To me it looks random ;-)
+Pin control drivers are sufficiently hard without incomplete pin groups,
+so please add the missing parts.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
