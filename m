@@ -1,84 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:56394 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753526AbeDRNSJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:18:09 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 1/4] dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties
-Date: Wed, 18 Apr 2018 15:18:01 +0200
-Message-Id: <1524057484-25350-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1524057484-25350-1-git-send-email-geert+renesas@glider.be>
-References: <1524057484-25350-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Carlo Caione <carlo@endlessm.com>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Juri Lelli <juri.lelli@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 3/3] ARM: dts: Renesas RZ/N1D SMP enable method
+Date: Tue, 17 Apr 2018 13:48:02 +0100
+Message-Id: <1523969291-41756-4-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the new optional properties related to DDR Backup Mode and
-toggle/momentary power switches.
+Add a special enable method for the second CA7 of the Renesas RZ/N1D
+(R9A06G032), as well as the default value for the "cpu-release-addr"
+property.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+ arch/arm/boot/dts/r9a06g032.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v3:
-  - Add Reviewed-by, Acked-for-MFD-by (for Lee's own reference),
-  - Use a hex value for the bit mask,
-
-v2:
-  - Improve property description,
-  - Add properties for power switch type.
----
- Documentation/devicetree/bindings/mfd/bd9571mwv.txt | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-index 9ab216a851d5619b..25d1f697eb25c67d 100644
---- a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -25,6 +25,25 @@ Required properties:
- 			    Each child node is defined using the standard
- 			    binding for regulators.
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 23c56d7..170376d 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -33,6 +33,8 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a7";
+ 			reg = <1>;
++			enable-method = "renesas,r9a06g032-smp";
++			cpu-release-addr = <0x4000c204>;
+ 		};
+ 	};
  
-+Optional properties:
-+  - rohm,ddr-backup-power : Value to use for DDR-Backup Power (default 0).
-+			    This is a bitmask that specifies which DDR power
-+			    rails need to be kept powered when backup mode is
-+			    entered, for system suspend:
-+			      - bit 0: DDR0
-+			      - bit 1: DDR1
-+			      - bit 2: DDR0C
-+			      - bit 3: DDR1C
-+			    These bits match the KEEPON_DDR* bits in the
-+			    documentation for the "BKUP Mode Cnt" register.
-+  - rohm,rstbmode-level: The RSTB signal is configured for level mode, to
-+			 accommodate a toggle power switch (the RSTBMODE pin is
-+			 strapped low).
-+  - rohm,rstbmode-pulse: The RSTB signal is configured for pulse mode, to
-+			 accommodate a momentary power switch (the RSTBMODE pin
-+			 is strapped high).
-+			 The two properties above are mutually exclusive.
-+
- Example:
- 
- 	pmic: pmic@30 {
-@@ -36,6 +55,8 @@ Example:
- 		#interrupt-cells = <2>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		rohm,ddr-backup-power = <0xf>;
-+		rohm,rstbmode-pulse;
- 
- 		regulators {
- 			dvfs: dvfs {
 -- 
 2.7.4
+
