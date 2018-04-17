@@ -1,14 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44416 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754437AbeDWKIO (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:22747 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752004AbeDQLJ3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:08:14 -0400
-Date: Mon, 23 Apr 2018 12:08:10 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+        Tue, 17 Apr 2018 07:09:29 -0400
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
         Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -16,21 +17,35 @@ Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
         Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 1/6] arm: shmobile: Add the RZ/N1D (R9A06G032) to the
- shmobile Kconfig
-Message-ID: <20180423100810.g2tucr5bd6ftubmo@verge.net.au>
+Subject: [PATCH v5 1/6] arm: shmobile: Add the RZ/N1D (R9A06G032) to the shmobile Kconfig
+Date: Tue, 17 Apr 2018 12:04:16 +0100
+Message-Id: <1523963101-56725-2-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
- <1523963101-56725-2-git-send-email-michel.pollet@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523963101-56725-2-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 12:04:16PM +0100, Michel Pollet wrote:
-> Add the RZ/N1D SoC to the reset of the Renesas SoC Collection.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Add the RZ/N1D SoC to the reset of the Renesas SoC Collection.
 
-Thanks, applied.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ arch/arm/mach-shmobile/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 96672da..fcc273f 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -114,6 +114,10 @@ config ARCH_R8A7794
+ 	bool "R-Car E2 (R8A77940)"
+ 	select ARCH_RCAR_GEN2
+ 
++config ARCH_R9A06G032
++	bool "RZ/N1D (R9A06G032)"
++	select ARCH_RZN1
++
+ config ARCH_RZN1
+ 	bool "RZ/N1 (R9A06G0xx) Family"
+ 	select ARM_AMBA
+-- 
+2.7.4
