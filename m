@@ -1,87 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:32005 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752147AbeDJIg7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:36:59 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+Cc: phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
         Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v4 7/8] ARM: dts: Renesas RZN1D-DB Board base file
-Date: Tue, 10 Apr 2018 09:30:07 +0100
-Message-Id: <1523349015-37985-8-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Carlo Caione <carlo@endlessm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Juri Lelli <juri.lelli@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/3] dt-bindings: cpu: Add Renesas RZ/N1D SMP enable method.
+Date: Tue, 17 Apr 2018 13:48:00 +0100
+Message-Id: <1523969291-41756-2-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds a base device tree file for the RZN1-DB board, with only the
-basic support allowing the system to boot to a prompt. Only one UART is
-used, with only a single CPU running.
+Add a special enable method for second CA8 of the Renesas RZ/N1D
+(R9A06G032).
 
 Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/Makefile                  |  1 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 29 +++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+ Documentation/devicetree/bindings/arm/cpus.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 7e24249..53c9bf4 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -806,6 +806,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-+	r9a06g032-rzn1d400-db.dtb \
- 	sh73a0-kzm9g.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += \
- 	rv1108-evb.dtb \
-diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-new file mode 100644
-index 0000000..5fc2c40
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZN1D-DB Board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+/dts-v1/;
-+
-+#include "r9a06g032.dtsi"
-+
-+/ {
-+	model = "RZN1D-DB Board";
-+	compatible = "renesas,rzn1d400-db",
-+			"renesas,r9a06g032", "renesas,rzn1";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 29e1dc5..b395d107 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -219,6 +219,7 @@ described below.
+ 			    "qcom,kpss-acc-v1"
+ 			    "qcom,kpss-acc-v2"
+ 			    "renesas,apmu"
++			    "renesas,r9a06g032-smp"
+ 			    "rockchip,rk3036-smp"
+ 			    "rockchip,rk3066-smp"
+ 			    "ste,dbx500-smp"
 -- 
 2.7.4
+
