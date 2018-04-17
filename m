@@ -1,86 +1,118 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:62157 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752408AbeDJMOM (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:34484 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752144AbeDQIbk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:14:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] usb: gadget: udc: renesas_usb3: add property "renesas,ignore-id"
-Date: Tue, 10 Apr 2018 21:13:53 +0900
-Message-Id: <1523362434-17808-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523362434-17808-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523362434-17808-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 17 Apr 2018 04:31:40 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <OSBPR01MB20548CE7A728549EFA2B9ADBD2B70@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1523349015-37985-4-git-send-email-michel.pollet@bp.renesas.com>
+ <20180413180549.yjzkl2yf7osz7myt@rob-hp-laptop> <OSBPR01MB20548CE7A728549EFA2B9ADBD2B70@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Apr 2018 10:31:38 +0200
+Message-ID: <CAMuHMdWoW6QXofvS0Ju5VL1WivmWWMx8c=ppVbKe1+2eO6LsFg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/8] dt-bindings: mfd: renesas,rzn1-sysctrl: document
+ RZ/N1 sysctrl node
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Rob Herring <robh@kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        "buserror+upstream@gmail.com" <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a new property to ignore the ID signal on a board.
+Hi Michel,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/usb/renesas_usb3.txt |  2 ++
- drivers/usb/gadget/udc/renesas_usb3.c                  | 10 ++++++++++
- 2 files changed, 12 insertions(+)
+On Tue, Apr 17, 2018 at 9:56 AM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> On 13 April 2018 19:06, Rob Herring:
+>> On Tue, Apr 10, 2018 at 09:30:03AM +0100, Michel Pollet wrote:
+>> > The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function system
+>> > controller. This documents the node used to encapsulate it's sub
+>> > drivers.
+>> >
+>> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+>> > ---
+>> >  .../bindings/mfd/renesas,rzn1-sysctrl.txt          | 23
+>> ++++++++++++++++++++++
+>> >  1 file changed, 23 insertions(+)
+>> >  create mode 100644
+>> > Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+>> >
+>> > diff --git
+>> > a/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+>> > b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+>> > new file mode 100644
+>> > index 0000000..9897f8f
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+>> > @@ -0,0 +1,23 @@
+>> > +DT bindings for the Renesas RZ/N1 System Controller
+>> > +
+>> > +== System Controller Node ==
+>> > +
+>> > +The system controller node currently only hosts a single sub-node to
+>> > +handle the rebooting of the CPU. Eventually it will host the clock
+>> > +driver, SMP start handler, watchdog etc.
+>>
+>> Please submit a complete binding for the h/w block.
+>>
+>> Again, if the only reason you have sub nodes is to define compatible strings
+>> and in turn enumerate drivers, then you don't need the nodes in DT. DT is
+>> not the only way to instantiate drivers.
+>
+> I can't document it before I have the code. There is 0.000% chance of my clock
+> driver for example to be upstreamed the way I would imagine making it -- in
+> fact pretty much any other driver will have to be reworked to fit, so documenting
+> bindings first is impossible.
+>
+> So, if I understand correctly, you are telling me to make a 'sysctrl' driver and use
+> platform_device to instantiate my sub-drivers? Isn't that what machine files used
+> to do? And they are now banned?
+>
+> Geert, any guidance here?
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-index 2c071bb..53949bd 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-@@ -19,6 +19,8 @@ Required properties:
- Optional properties:
-   - phys: phandle + phy specifier pair
-   - phy-names: must be "usb"
-+  - renesas,ignore-id: when a board doesn't use ID pin, you can add this
-+		       property to ignore the ID state.
- 
- Example of R-Car H3 ES1.x:
- 	usb3_peri0: usb@ee020000 {
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 409cde4..59e1485 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -350,6 +350,7 @@ struct renesas_usb3 {
- 	bool extcon_host;		/* check id and set EXTCON_USB_HOST */
- 	bool extcon_usb;		/* check vbus and set EXTCON_USB */
- 	bool forced_b_device;
-+	bool ignore_id;
- };
- 
- #define gadget_to_renesas_usb3(_gadget)	\
-@@ -645,6 +646,9 @@ static void usb3_check_vbus(struct renesas_usb3 *usb3)
- 
- static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
- {
-+	if (usb3->ignore_id && !usb3->forced_b_device)
-+		return;
-+
- 	if (host)
- 		usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
- 	else
-@@ -675,6 +679,9 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
- 
- static bool usb3_is_a_device(struct renesas_usb3 *usb3)
- {
-+	if (usb3->ignore_id)
-+		return false;
-+
- 	return !(usb3_read(usb3, USB3_USB_OTG_STA) & USB_OTG_IDMON);
- }
- 
-@@ -2632,6 +2639,9 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_add_udc;
- 
-+	if (of_property_read_bool(pdev->dev.of_node, "renesas,no-id"))
-+		usb3->ignore_id = true;
-+
- 	ret = device_create_file(&pdev->dev, &dev_attr_role);
- 	if (ret < 0)
- 		goto err_dev_create;
+It depends on how many and which subnodes you want to add to  the sysctrl
+node. Without a complete binding for the block, we cannot know.
+If the major part will be the clock driver, I would make that the main
+driver for the sysctrl node. The clock driver can easily register
+e.g. a simple reset handler.
+
+Cfr. the renesas-cpg-mssr driver, which also handles (module) resets.
+There are plenty of other examples of drivers providing multiple
+functionalities (e.g. pinctrl drivers also registering GPIO controllers).
+
+If a monolithic driver becomes too large, it can still be split using the
+MFD framework.
+E.g. the BD9571 PMIC driver is split in an MFD core driver, and 2 drivers
+for different functionalities:
+
+   drivers/gpio/gpio-bd9571mwv.c
+   drivers/mfd/bd9571mwv.c
+   drivers/regulator/bd9571mwv-regulator.c
+   include/linux/mfd/bd9571mwv.h
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
