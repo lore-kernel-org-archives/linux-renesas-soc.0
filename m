@@ -1,51 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:40237 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753339AbeDUUdw (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:44062 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754879AbeDQQGA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 21 Apr 2018 16:33:52 -0400
-Received: by mail-lf0-f52.google.com with SMTP id i18-v6so9591579lfc.7
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 21 Apr 2018 13:33:52 -0700 (PDT)
+        Tue, 17 Apr 2018 12:06:00 -0400
+Received: by mail-lf0-f48.google.com with SMTP id g203-v6so28128222lfg.11
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Apr 2018 09:05:59 -0700 (PDT)
 Subject: Re: [PATCH/RFC net-next 2/5] ravb: correct ptp does failure after
  suspend and resume
-To: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Simon Horman <horms+renesas@verge.net.au>
 Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 References: <20180417085030.32650-1-horms+renesas@verge.net.au>
  <20180417085030.32650-3-horms+renesas@verge.net.au>
+ <20180417100532.tfjgm4hewmi42al4@ninjato>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <51e8277c-5ac3-adc9-9daa-855bf4243468@cogentembedded.com>
-Date: Sat, 21 Apr 2018 23:33:48 +0300
+Message-ID: <b1b9ba17-8e7d-df49-5e83-ea3f2d84570a@cogentembedded.com>
+Date: Tue, 17 Apr 2018 19:05:56 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180417085030.32650-3-horms+renesas@verge.net.au>
+In-Reply-To: <20180417100532.tfjgm4hewmi42al4@ninjato>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+On 04/17/2018 01:05 PM, Wolfram Sang wrote:
 
-   s/failure/fail/ in the subject.
+>> @@ -2302,6 +2305,7 @@ static int __maybe_unused ravb_resume(struct device *dev)
+>>  {
+>>  	struct net_device *ndev = dev_get_drvdata(dev);
+>>  	struct ravb_private *priv = netdev_priv(ndev);
+>> +	struct platform_device *pdev = priv->pdev;
 
-On 04/17/2018 11:50 AM, Simon Horman wrote:
+   Could infer 'pdev' from 'dev' (avoiding the dereference)...
 
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Minor nit: I'd save this line...
 > 
-> This patch fixes the problem that ptp4l command does not work after
-> suspend and resume.
-> Add the initial setting in ravb_suspend() and ravb_resume(),
-> because ptp does not work.
+>> +	if (priv->chip_id != RCAR_GEN2)
+>> +		ravb_ptp_init(ndev, pdev);
 > 
-> Fixes: a0d2f20650e8 ("Renesas Ethernet AVB PTP clock driver")
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[...]
+> ... and use ravb_ptp_init(ndev, priv->pdev); here.
 
-   Other than the earlier comments, this seems good:
-
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+   Agreed, no dire need for the new variable used only once.
 
 MBR, Sergei
