@@ -1,68 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:60584 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753392AbeDQNyX (ORCPT
+Received: from relay12.mail.gandi.net ([217.70.178.232]:46427 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753099AbeDQNfn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Apr 2018 09:54:23 -0400
-Date: Tue, 17 Apr 2018 15:54:07 +0200
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: ysato@users.sourceforge.jp, dalias@libc.org,
-        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com,
-        geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sh: mm: Fix unprotected access to struct device
-Message-ID: <20180417155407.49c981b3@windsurf.numericable.fr>
-In-Reply-To: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Apr 2018 09:35:43 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: ysato@users.sourceforge.jp, dalias@libc.org,
+        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] sh: mm: Fix unprotected access to struct device
+Date: Tue, 17 Apr 2018 15:35:23 +0200
+Message-Id: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
+operations observe dev->dma_pfn_offset") the generic DMA allocation
+function on which the SH 'dma_alloc_coherent()' function relies on,
+access the 'dma_pfn_offset' field of struct device.
 
-On Tue, 17 Apr 2018 15:35:23 +0200, Jacopo Mondi wrote:
-> With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
-> operations observe dev->dma_pfn_offset") the generic DMA allocation
-> function on which the SH 'dma_alloc_coherent()' function relies on,
-> access the 'dma_pfn_offset' field of struct device.
-> 
-> Unfortunately the 'dma_generic_alloc_coherent()' function is called from
-> several places with a NULL struct device argument, halting the CPU
-> during the boot process.
-> 
-> This patch fixes the issue protecting access to dev->dma_pfn_offset,
-> with a trivial check for validity. It also passes a valid 'struct device'
-> in the 'platform_resource_setup_memory' function which is the main user
-> of 'dma_alloc_coherent()', and inserting a WARN_ON() check to make future
-> (and existing) bogus users of this function they're should provide a valid
-> 'struct device' whenever possible.
-> 
-> Fixes: ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset")
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Unfortunately the 'dma_generic_alloc_coherent()' function is called from
+several places with a NULL struct device argument, halting the CPU
+during the boot process.
 
-I would have done two commits here, one to fix:
+This patch fixes the issue protecting access to dev->dma_pfn_offset,
+with a trivial check for validity. It also passes a valid 'struct device'
+in the 'platform_resource_setup_memory' function which is the main user
+of 'dma_alloc_coherent()', and inserting a WARN_ON() check to make future
+(and existing) bogus users of this function they're should provide a valid
+'struct device' whenever possible.
 
-  dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
+Fixes: ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset")
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/sh/mm/consistent.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-and one to switch to the WARN_ON + if(dev) model. But I don't really
-care either way, so:
+diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
+index 8ce9869..b257155 100644
+--- a/arch/sh/mm/consistent.c
++++ b/arch/sh/mm/consistent.c
+@@ -39,6 +39,8 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+ 	void *ret, *ret_nocache;
+ 	int order = get_order(size);
 
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
++	WARN_ON(!dev);
++
+ 	gfp |= __GFP_ZERO;
 
-Note that even with the if (dev) check, you don't avoid all possible
-regressions. For example, some parts of the sh_eth driver were passing
-a non-NULL struct device, but it was the wrong struct device (the one
-inside struct net_device, and not the one part of struct
-platform_device). I fixed that for sh_eth, but there could be other
-drivers doing bogus things.
+ 	ret = (void *)__get_free_pages(gfp, order);
+@@ -59,7 +61,9 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
 
-Best regards,
+ 	split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-	*dma_handle = virt_to_phys(ret) - PFN_PHYS(dev->dma_pfn_offset);
++	*dma_handle = virt_to_phys(ret);
++	if (dev)
++		*dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
+
+ 	return ret_nocache;
+ }
+@@ -69,9 +73,14 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
+ 			       unsigned long attrs)
+ {
+ 	int order = get_order(size);
+-	unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
++	unsigned long pfn = (dma_handle >> PAGE_SHIFT);
+ 	int k;
+
++	WARN_ON(!dev);
++
++	if (dev)
++		pfn += dev->dma_pfn_offset;
++
+ 	for (k = 0; k < (1 << order); k++)
+ 		__free_pages(pfn_to_page(pfn + k), 0);
+
+@@ -143,7 +152,7 @@ int __init platform_resource_setup_memory(struct platform_device *pdev,
+ 	if (!memsize)
+ 		return 0;
+
+-	buf = dma_alloc_coherent(NULL, memsize, &dma_handle, GFP_KERNEL);
++	buf = dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
+ 	if (!buf) {
+ 		pr_warning("%s: unable to allocate memory\n", name);
+ 		return -ENOMEM;
+--
+2.7.4
