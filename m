@@ -1,174 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45350 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753563AbeDSOHO (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:15802 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752387AbeDQUzB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:14 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 53/61] tty: serial: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:23 +0200
-Message-Id: <20180419140641.27926-54-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Tue, 17 Apr 2018 16:55:01 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] arm64: dts: renesas: r8a7796: decrease temperature hysteresis
+Date: Tue, 17 Apr 2018 22:54:28 +0200
+Message-Id: <20180417205428.15227-3-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20180417205428.15227-1-niklas.soderlund@ragnatech.se>
+References: <20180417205428.15227-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To incorporate more tests by the hardware team decrease the hysteresis
+value to 1C.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/tty/serial/imx.c              | 18 ++++++------------
- drivers/tty/serial/qcom_geni_serial.c |  6 ++----
- drivers/tty/serial/st-asc.c           |  6 ++----
- drivers/tty/serial/xilinx_uartps.c    |  6 ++----
- 4 files changed, 12 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 91f3a1a5cb7f..f370c1cf4f27 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -2408,8 +2408,7 @@ static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
- 
- static int imx_uart_suspend_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx_port *sport = platform_get_drvdata(pdev);
-+	struct imx_port *sport = dev_get_drvdata(dev);
- 
- 	imx_uart_save_context(sport);
- 
-@@ -2420,8 +2419,7 @@ static int imx_uart_suspend_noirq(struct device *dev)
- 
- static int imx_uart_resume_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx_port *sport = platform_get_drvdata(pdev);
-+	struct imx_port *sport = dev_get_drvdata(dev);
- 	int ret;
- 
- 	ret = clk_enable(sport->clk_ipg);
-@@ -2435,8 +2433,7 @@ static int imx_uart_resume_noirq(struct device *dev)
- 
- static int imx_uart_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx_port *sport = platform_get_drvdata(pdev);
-+	struct imx_port *sport = dev_get_drvdata(dev);
- 	int ret;
- 
- 	uart_suspend_port(&imx_uart_uart_driver, &sport->port);
-@@ -2454,8 +2451,7 @@ static int imx_uart_suspend(struct device *dev)
- 
- static int imx_uart_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx_port *sport = platform_get_drvdata(pdev);
-+	struct imx_port *sport = dev_get_drvdata(dev);
- 
- 	/* disable wakeup from i.MX UART */
- 	imx_uart_enable_wakeup(sport, false);
-@@ -2470,8 +2466,7 @@ static int imx_uart_resume(struct device *dev)
- 
- static int imx_uart_freeze(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx_port *sport = platform_get_drvdata(pdev);
-+	struct imx_port *sport = dev_get_drvdata(dev);
- 
- 	uart_suspend_port(&imx_uart_uart_driver, &sport->port);
- 
-@@ -2480,8 +2475,7 @@ static int imx_uart_freeze(struct device *dev)
- 
- static int imx_uart_thaw(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx_port *sport = platform_get_drvdata(pdev);
-+	struct imx_port *sport = dev_get_drvdata(dev);
- 
- 	uart_resume_port(&imx_uart_uart_driver, &sport->port);
- 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 65ff669373d4..66558d42d980 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -1085,8 +1085,7 @@ static int qcom_geni_serial_remove(struct platform_device *pdev)
- 
- static int __maybe_unused qcom_geni_serial_sys_suspend_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct qcom_geni_serial_port *port = platform_get_drvdata(pdev);
-+	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
- 	struct uart_port *uport = &port->uport;
- 
- 	uart_suspend_port(uport->private_data, uport);
-@@ -1095,8 +1094,7 @@ static int __maybe_unused qcom_geni_serial_sys_suspend_noirq(struct device *dev)
- 
- static int __maybe_unused qcom_geni_serial_sys_resume_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct qcom_geni_serial_port *port = platform_get_drvdata(pdev);
-+	struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
- 	struct uart_port *uport = &port->uport;
- 
- 	if (console_suspend_enabled && uport->suspended) {
-diff --git a/drivers/tty/serial/st-asc.c b/drivers/tty/serial/st-asc.c
-index 5f9f01fac6dd..7971997cdead 100644
---- a/drivers/tty/serial/st-asc.c
-+++ b/drivers/tty/serial/st-asc.c
-@@ -842,16 +842,14 @@ static int asc_serial_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int asc_serial_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct uart_port *port = platform_get_drvdata(pdev);
-+	struct uart_port *port = dev_get_drvdata(dev);
- 
- 	return uart_suspend_port(&asc_uart_driver, port);
- }
- 
- static int asc_serial_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct uart_port *port = platform_get_drvdata(pdev);
-+	struct uart_port *port = dev_get_drvdata(dev);
- 
- 	return uart_resume_port(&asc_uart_driver, port);
- }
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index abcb4d09a2d8..3ec4efbf25a9 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1430,8 +1430,7 @@ static int cdns_uart_resume(struct device *device)
- #endif /* ! CONFIG_PM_SLEEP */
- static int __maybe_unused cdns_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct uart_port *port = platform_get_drvdata(pdev);
-+	struct uart_port *port = dev_get_drvdata(dev);
- 	struct cdns_uart *cdns_uart = port->private_data;
- 
- 	clk_disable(cdns_uart->uartclk);
-@@ -1441,8 +1440,7 @@ static int __maybe_unused cdns_runtime_suspend(struct device *dev)
- 
- static int __maybe_unused cdns_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct uart_port *port = platform_get_drvdata(pdev);
-+	struct uart_port *port = dev_get_drvdata(dev);
- 	struct cdns_uart *cdns_uart = port->private_data;
- 
- 	clk_enable(cdns_uart->pclk);
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 599c74d6a6cb67ab..e3a28b9a5fbdd2a6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -2438,12 +2438,12 @@
+ 			trips {
+ 				sensor1_passive: sensor1-passive {
+ 					temperature = <95000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "passive";
+ 				};
+ 				sensor1_crit: sensor1-crit {
+ 					temperature = <120000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
+@@ -2464,12 +2464,12 @@
+ 			trips {
+ 				sensor2_passive: sensor2-passive {
+ 					temperature = <95000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "passive";
+ 				};
+ 				sensor2_crit: sensor2-crit {
+ 					temperature = <120000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
+@@ -2490,12 +2490,12 @@
+ 			trips {
+ 				sensor3_passive: sensor3-passive {
+ 					temperature = <95000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "passive";
+ 				};
+ 				sensor3_crit: sensor3-crit {
+ 					temperature = <120000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
 -- 
-2.11.0
+2.17.0
