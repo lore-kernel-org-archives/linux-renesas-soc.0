@@ -1,122 +1,94 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54319 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751414AbeDEJSe (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:18:34 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 00/15] R-Car VSP1: Dynamically assign blend units to display pipelines
-Date: Thu,  5 Apr 2018 12:18:25 +0300
-Message-Id: <20180405091840.30728-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 18 Apr 2018 07:51:51 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 07/11] ARM: sun9i: smp: Rename clusters's power-off
+Message-ID: <20180418075151.3542f7cd@dell-desktop.home>
+In-Reply-To: <fd19ec26-9240-5ae2-fc6e-d3918ab91d01@cogentembedded.com>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+        <20180416215032.5023-8-mylene.josserand@bootlin.com>
+        <fd19ec26-9240-5ae2-fc6e-d3918ab91d01@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hello,
 
-On R-Car H3 ES2.0+ and M3-N SoCs, two display pipelines are served by the same
-VSP instance (named VSPDL). The VSPDL includes two blending units named BRU
-and BRS, unlike the other display-related VSPD that serves a single display
-channel with a single blending unit.
+On Tue, 17 Apr 2018 11:21:02 +0300
+Sergei Shtylyov <sergei.shtylyov@cogentembedded.com> wrote:
 
-The VSPDL has five inputs and can freely assign them at runtime to two display
-pipelines, using the BRU and BRS to blend multiple inputs. The BRU supports
-blending up to five inputs, while the BRS is limited to two inputs.
+> Hello!
+> 
+> On 4/17/2018 12:50 AM, Mylène Josserand wrote:
+> 
+> > To prepare the support for sun8i-a83t, rename the variable name  
+> 
+>     s/variable/macro/ maybe? Also "rename the ... name" sounds tautological...
 
-Each display pipeline requires a blending unit, and the BRU and BRS are
-currently assigned statically to the first and second pipeline respectively.
-This artificially limits the number of inputs for the second pipeline to two.
-To overcome that limitation, the BRU and BRS need to be dynamically assigned
-to the display pipelines, which is what this patch series does.
+Thank you for the correction.
 
-Patches 01/15 to 10/15 perform small cleanups and refactoring to prepare for
-the rest of the series. Patches 11/15 and 12/15 implement new internal
-features for the same purpose, and patch 13/15 performs the bulk of the work
-by implementing dynamic BRU and BRS assignment to pipelines.
+Best regards,
 
-Reassigning the BRU and BRS when two pipelines are running results in flicker
-as one pipeline has to first release its blending unit. Synchronization
-between the two pipelines also require locking that effectively serializes
-page flips for the two pipelines, even when not interacting with each other.
-This is currently believed to be unavoidable due to the hardware design, but
-please feel free to prove me wrong (ideally with a patch - one can always
-dream).
-
-Patch 14/15 then adds messages useful for debugging this new feature. I have
-kept it separate from 13/15 to make it easier to remove those messages once
-dynamic assignment of blending units will be deemed perfectly stable, but I
-won't oppose squashing it with 13/15 if that is preferred.
-
-Patch 15/15 finally rename BRU to BRx to avoid confusion between the BRU terms
-that refer to the BRU in particular, and the ones that refer to any of the BRU
-or BRS. As this might be a bit controversial I've put the patch last in the
-series in case it needs to be dropped.
-
-I have decided to CC the dri-devel mailing list even though the code doesn't
-touch the R-Car DU driver and will be merged through the Linux media tree as
-the display is involved and the series could benefit from the expertise of the
-DRM/KMS community from that point of view.
-
-The patches are based on top of the latest Linux media master branch. For
-convenience their are available from
-
-	git://linuxtv.org/pinchartl/media.git v4l2-vsp1-bru-brs-v2-20180405
-
-The series passes the DU test suite with the new BRx dynamic assignment
-test available from
-
-	git://git.ideasonboard.com/renesas/kms-tests.git bru-brs
-
-The VSP test suite also runs without any noticed regression.
-
-Since v1, patch 10/15 has been added an the v1 02/15 patch merged with
-01/15. Other small changes are documented in individual changelogs.
-
-Laurent Pinchart (15):
-  v4l: vsp1: Don't start/stop media pipeline for DRM
-  v4l: vsp1: Remove unused field from vsp1_drm_pipeline structure
-  v4l: vsp1: Store pipeline pointer in vsp1_entity
-  v4l: vsp1: Use vsp1_entity.pipe to check if entity belongs to a
-    pipeline
-  v4l: vsp1: Share duplicated DRM pipeline configuration code
-  v4l: vsp1: Move DRM atomic commit pipeline setup to separate function
-  v4l: vsp1: Setup BRU at atomic commit time
-  v4l: vsp1: Replace manual DRM pipeline input setup in
-    vsp1_du_setup_lif
-  v4l: vsp1: Move DRM pipeline output setup code to a function
-  v4l: vsp1: Turn frame end completion status into a bitfield
-  v4l: vsp1: Add per-display list internal completion notification
-    support
-  v4l: vsp1: Generalize detection of entity removal from DRM pipeline
-  v4l: vsp1: Assign BRU and BRS to pipelines dynamically
-  v4l: vsp1: Add BRx dynamic assignment debugging messages
-  v4l: vsp1: Rename BRU to BRx
-
- drivers/media/platform/vsp1/Makefile               |   2 +-
- drivers/media/platform/vsp1/vsp1.h                 |   6 +-
- .../media/platform/vsp1/{vsp1_bru.c => vsp1_brx.c} | 202 ++---
- .../media/platform/vsp1/{vsp1_bru.h => vsp1_brx.h} |  18 +-
- drivers/media/platform/vsp1/vsp1_dl.c              |  45 +-
- drivers/media/platform/vsp1/vsp1_dl.h              |   7 +-
- drivers/media/platform/vsp1/vsp1_drm.c             | 828 ++++++++++++---------
- drivers/media/platform/vsp1/vsp1_drm.h             |  16 +-
- drivers/media/platform/vsp1/vsp1_drv.c             |   8 +-
- drivers/media/platform/vsp1/vsp1_entity.h          |   2 +
- drivers/media/platform/vsp1/vsp1_histo.c           |   2 +-
- drivers/media/platform/vsp1/vsp1_histo.h           |   3 -
- drivers/media/platform/vsp1/vsp1_pipe.c            |  53 +-
- drivers/media/platform/vsp1/vsp1_pipe.h            |   6 +-
- drivers/media/platform/vsp1/vsp1_rpf.c             |  12 +-
- drivers/media/platform/vsp1/vsp1_rwpf.h            |   4 +-
- drivers/media/platform/vsp1/vsp1_video.c           |  39 +-
- drivers/media/platform/vsp1/vsp1_wpf.c             |   8 +-
- 18 files changed, 718 insertions(+), 543 deletions(-)
- rename drivers/media/platform/vsp1/{vsp1_bru.c => vsp1_brx.c} (63%)
- rename drivers/media/platform/vsp1/{vsp1_bru.h => vsp1_brx.h} (66%)
+Mylène
 
 -- 
-Regards,
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
 
-Laurent Pinchart
+> 
+> > that handles the power-off of clusters because it is different from
+> > sun9i-a80 to sun8i-a83t.
+> > 
+> > The power off register for clusters are different from a80 and a83t.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >   arch/arm/mach-sunxi/mc_smp.c | 6 +++---
+> >   1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+> > index 727968d6a3e5..03f021d0c73e 100644
+> > --- a/arch/arm/mach-sunxi/mc_smp.c
+> > +++ b/arch/arm/mach-sunxi/mc_smp.c
+> > @@ -60,7 +60,7 @@
+> >   #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
+> >   #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
+> >   #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
+> > -#define PRCM_PWROFF_GATING_REG_CLUSTER	BIT(4)
+> > +#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
+> >   #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
+> >   #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
+> >   #define PRCM_CPU_SOFT_ENTRY_REG		0x164
+> > @@ -255,7 +255,7 @@ static int sunxi_cluster_powerup(unsigned int cluster)
+> >   
+> >   	/* clear cluster power gate */
+> >   	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+> > -	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER;
+> > +	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+> >   	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+> >   	udelay(20);
+> >   
+> > @@ -452,7 +452,7 @@ static int sunxi_cluster_powerdown(unsigned int cluster)
+> >   	/* gate cluster power */
+> >   	pr_debug("%s: gate cluster power\n", __func__);
+> >   	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+> > -	reg |= PRCM_PWROFF_GATING_REG_CLUSTER;
+> > +	reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+> >   	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+> >   	udelay(20);
+> >     
+> 
+> MBR, Sergei
+
