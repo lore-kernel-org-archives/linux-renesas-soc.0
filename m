@@ -1,27 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.133]:41482 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750861AbeDRKrS (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34493 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752665AbeDRJNN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 06:47:18 -0400
-Date: Wed, 18 Apr 2018 03:47:03 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: ysato@users.sourceforge.jp, dalias@libc.org,
-        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com,
-        geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+        Wed, 18 Apr 2018 05:13:13 -0400
+Received: by mail-lf0-f66.google.com with SMTP id r7-v6so1564168lfr.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Apr 2018 02:13:13 -0700 (PDT)
 Subject: Re: [PATCH] sh: mm: Fix unprotected access to struct device
-Message-ID: <20180418104703.GA12462@infradead.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        ysato@users.sourceforge.jp, dalias@libc.org,
+        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com
+Cc: geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <75621aa6-1fe9-2049-fc70-fd6d542c7307@cogentembedded.com>
+Date: Wed, 18 Apr 2018 12:13:10 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 03:35:23PM +0200, Jacopo Mondi wrote:
+Hello!
+
+On 4/17/2018 4:35 PM, Jacopo Mondi wrote:
+
 > With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
 > operations observe dev->dma_pfn_offset") the generic DMA allocation
 > function on which the SH 'dma_alloc_coherent()' function relies on,
@@ -37,5 +43,27 @@ On Tue, Apr 17, 2018 at 03:35:23PM +0200, Jacopo Mondi wrote:
 > of 'dma_alloc_coherent()', and inserting a WARN_ON() check to make future
 > (and existing) bogus users of this function they're should provide a valid
 > 'struct device' whenever possible.
+> 
+> Fixes: ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset")
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>   arch/sh/mm/consistent.c | 15 ++++++++++++---
+>   1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
+> index 8ce9869..b257155 100644
+> --- a/arch/sh/mm/consistent.c
+> +++ b/arch/sh/mm/consistent.c
+[...]
+> @@ -69,9 +73,14 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
+>   			       unsigned long attrs)
+>   {
+>   	int order = get_order(size);
+> -	unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
+> +	unsigned long pfn = (dma_handle >> PAGE_SHIFT);
 
-Please fix those callers to not pass a NULL pointer instead.
+    Parens no longer needed...
+
+[...]
+
+MBR, Sergei
