@@ -1,90 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47454 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752337AbeDTREK (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:10668 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753421AbeDRIKo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:04:10 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
-        kernel-janitors@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: atmel: simplify getting .drvdata" to the asoc tree
-In-Reply-To: <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
-Message-Id: <E1f9ZS7-0004VB-By@debutante>
-Date: Fri, 20 Apr 2018 18:04:03 +0100
+        Wed, 18 Apr 2018 04:10:44 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, frowand.list@gmail.com
+Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, p.zabel@pengutronix.de,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 05/11] usb: common: roles: add fwnode graph parsing
+Date: Wed, 18 Apr 2018 17:09:59 +0900
+Message-Id: <1524039005-30618-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This patch adds fwnode graph parsing to set usb[23]_port and udc
+into the usb_role_switch structure by usb_role_switch_register().
 
-   ASoC: atmel: simplify getting .drvdata
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From c0380478139fce887b948b35dc0dcee0b40bdf09 Mon Sep 17 00:00:00 2001
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 16:06:31 +0200
-Subject: [PATCH] ASoC: atmel: simplify getting .drvdata
-
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- sound/soc/atmel/atmel_ssc_dai.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/usb/common/roles.c | 40 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index 1c7af0ca98ec..d3b69682d9c2 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -1002,8 +1002,7 @@ static const struct snd_soc_component_driver atmel_ssc_component = {
+diff --git a/drivers/usb/common/roles.c b/drivers/usb/common/roles.c
+index 15cc76e..cc1c55a 100644
+--- a/drivers/usb/common/roles.c
++++ b/drivers/usb/common/roles.c
+@@ -11,6 +11,8 @@
+ #include <linux/device.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of_platform.h>
++#include <linux/property.h>
+ #include <linux/slab.h>
  
- static int asoc_ssc_init(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ssc_device *ssc = platform_get_drvdata(pdev);
-+	struct ssc_device *ssc = dev_get_drvdata(dev);
- 	int ret;
+ static struct class *role_class;
+@@ -219,6 +221,42 @@ static void usb_role_switch_release(struct device *dev)
+ 	.release = usb_role_switch_release,
+ };
  
- 	ret = snd_soc_register_component(dev, &atmel_ssc_component,
-@@ -1033,8 +1032,7 @@ static int asoc_ssc_init(struct device *dev)
++static void usb_role_parse_fwnode_graph(struct usb_role_switch *sw)
++{
++	struct fwnode_handle *parent = sw->dev.parent->fwnode;
++	struct fwnode_handle *child_ep, *child_port;
++	struct fwnode_handle *remote;
++	/* This order comes from DT bindings */
++	struct device **dev[] = {
++		&sw->usb2_port,
++		&sw->usb3_port,
++		&sw->udc,
++	};
++	u32 port;
++
++	fwnode_graph_for_each_endpoint(parent, child_ep) {
++		child_port = fwnode_get_parent(child_ep);
++		if (!child_port)
++			continue;
++
++		if (fwnode_property_read_u32(child_port, "reg", &port) < 0)
++			continue;
++
++		if (port >= ARRAY_SIZE(dev))
++			break;
++
++		remote = fwnode_graph_get_remote_port_parent(child_ep);
++		if (remote) {
++			struct device_node *remote_np = to_of_node(remote);
++			struct platform_device *pdev;
++
++			pdev = of_find_device_by_node(remote_np);
++			if (pdev)
++				*dev[port] = &pdev->dev;
++		}
++	};
++}
++
+ /**
+  * usb_role_switch_register - Register USB Role Switch
+  * @parent: Parent device for the switch
+@@ -267,7 +305,7 @@ struct usb_role_switch *
+ 		return ERR_PTR(ret);
+ 	}
  
- static void asoc_ssc_exit(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ssc_device *ssc = platform_get_drvdata(pdev);
-+	struct ssc_device *ssc = dev_get_drvdata(dev);
+-	/* TODO: Symlinks for the host port and the device controller. */
++	usb_role_parse_fwnode_graph(sw);
  
- 	if (ssc->pdata->use_dma)
- 		atmel_pcm_dma_platform_unregister(dev);
+ 	return sw;
+ }
 -- 
-2.17.0
+1.9.1
