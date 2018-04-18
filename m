@@ -1,67 +1,80 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 2/5] arm64: dts: renesas: r8a77970: add VSPD support
-Date: Thu, 12 Apr 2018 10:13:58 +0200
-Message-Id: <1523520841-16455-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1524039005-30618-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524039005-30618-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Apr 2018 10:47:55 +0200
+Message-ID: <CAMuHMdUmHsXnU27JAyA9dq545NLYRb1ypMpdRZ6o0O3MrtfmTQ@mail.gmail.com>
+Subject: Re: [PATCH/RFC 08/11] usb: role: rcar-usb3-role-switch: add support
+ for R-Car SoCs
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Shimoda-san,
 
-Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
-the next patch...
+On Wed, Apr 18, 2018 at 10:10 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> This patch adds role switch support for R-Car SoCs. Some R-Car SoCs
+> (e.g. R-Car H3) have USB 3.0 dual-role device controller which has
+> the USB 3.0 xHCI host and Renesas USB 3.0 peripheral.
+>
+> Unfortunately, the mode change register contains the USB 3.0 peripheral
+> controller side only. So, the USB 3.0 peripheral driver (renesas_usb3)
+> manages this register. However, in peripheral mode, the host should
+> stop. Also the host hardware needs to reinitialize its own registers
+> when the mode changes from peripheral to host mode. Otherwise,
+> the host cannot work correctly (e.g. detect a device as high-speed).
+>
+> To achieve this by a driver, this role switch driver manages
+> the mode change register and attach/release the xhci-plat driver.
+> The renesas_usb3 udc driver should call devm_of_platform_populate()
+> to probe this driver.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+Thanks for your patch!
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> --- a/drivers/usb/roles/Kconfig
+> +++ b/drivers/usb/roles/Kconfig
+> @@ -11,4 +11,16 @@ config USB_ROLES_INTEL_XHCI
+>           To compile the driver as a module, choose M here: the module will
+>           be called intel-xhci-usb-role-switch.
+>
+> +config USB_ROLES_RCAR_USB3
+> +       tristate "Renesas R-Car USB3.0 Role Switch"
+> +       depends on ARCH_RENESAS && OF
 
----
-v1 -> v2 (Jacopo) :
-- Extend the memory region to include V6_CLUTn_TBL* registers.
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ARCH_RENESAS implies OF.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 97c27ef..a3ef3bd 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -625,6 +625,16 @@
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 603>;
- 		};
-+
-+		vspd0: vsp@fea20000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea20000 0 0x8000>;
-+			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 623>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 623>;
-+			renesas,fcp = <&fcpvd0>;
-+		};
- 	};
- 
- 	timer {
+Perhaps you intended:
+
+        depends on OF
+        depends on ARCH_RENESAS || COMPILE_TEST
+
+?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
