@@ -1,76 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36191 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751407AbeDRJ5K (ORCPT
+Received: from sauhun.de ([88.99.104.3]:37868 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751830AbeDRSVJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 05:57:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        Wed, 18 Apr 2018 14:21:09 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 1/4] mmc: core: select HS400 from HS200 tuning function
-Date: Wed, 18 Apr 2018 11:56:57 +0200
-Message-Id: <20180418095700.29948-2-horms+renesas@verge.net.au>
-In-Reply-To: <20180418095700.29948-1-horms+renesas@verge.net.au>
-References: <20180418095700.29948-1-horms+renesas@verge.net.au>
+Subject: [PATCH v3 5/5] mmc: renesas_sdhi_internal_dmac: remove superfluous WARN
+Date: Wed, 18 Apr 2018 20:21:01 +0200
+Message-Id: <20180418182101.5723-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
+References: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Call mmc_select_hs400() from mmc_hs200_tuning().
+The WARN can never trigger because we limited the max_seg number in
+renesas_sdhi_of_data already. Remove it and update the comment.
 
-This should have no run-time effect as the existing call to
-mmc_select_hs400() is right after a call to mmc_hs200_tuning() in
-mmc_init_card() and that is the only caller of mmc_hs200_tuning().
-
-This is in preparation for adding a new mmc_host_opp to be called
-after tuning and selecting HS400 - or in other words,
-after mmc_execute_tuning() and mmc_select_hs400().
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v4
-- New patch
----
- drivers/mmc/core/mmc.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 6f8ebd6caa4c..099b327e10ca 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1508,6 +1508,7 @@ static int mmc_select_timing(struct mmc_card *card)
- static int mmc_hs200_tuning(struct mmc_card *card)
- {
- 	struct mmc_host *host = card->host;
-+	int err;
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 240e8a168aa1..2935dd9315d3 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -91,7 +91,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ 	.scc_offset	= 0x1000,
+ 	.taps		= rcar_gen3_scc_taps,
+ 	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
+-	/* Gen3 SDHI DMAC can handle 0xffffffff blk count, but seg = 1 */
++	/* DMAC can handle 0xffffffff blk count but only 1 segment */
+ 	.max_blk_count	= 0xffffffff,
+ 	.max_segs	= 1,
+ };
+@@ -158,9 +158,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
+ 	struct scatterlist *sg = host->sg_ptr;
+ 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
  
- 	/*
- 	 * Timing should be adjusted to the HS400 target
-@@ -1518,7 +1519,11 @@ static int mmc_hs200_tuning(struct mmc_card *card)
- 		if (host->ops->prepare_hs400_tuning)
- 			host->ops->prepare_hs400_tuning(host, &host->ios);
- 
--	return mmc_execute_tuning(card);
-+	err = mmc_execute_tuning(card);
-+	if (err)
-+		return err;
-+
-+	return mmc_select_hs400(card);
- }
- 
- /*
-@@ -1733,10 +1738,6 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 		err = mmc_hs200_tuning(card);
- 		if (err)
- 			goto free_card;
+-	/* This DMAC cannot handle if sg_len is not 1 */
+-	WARN_ON(host->sg_len > 1);
 -
--		err = mmc_select_hs400(card);
--		if (err)
--			goto free_card;
- 	} else if (!mmc_card_hs400es(card)) {
- 		/* Select the desired bus width optionally */
- 		err = mmc_select_bus_width(card);
+ 	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
+ 			mmc_get_dma_dir(data)))
+ 		goto force_pio;
 -- 
 2.11.0
