@@ -1,12 +1,12 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:57753 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750861AbeDRKDj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 06:03:39 -0400
-Date: Wed, 18 Apr 2018 12:03:27 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20180416215032.5023-12-mylene.josserand@bootlin.com>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com> <20180416215032.5023-12-mylene.josserand@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Apr 2018 11:36:27 +0200
+Message-ID: <CAMuHMdU9soQuNMC59Y2AQdTmXbWBz-P3EFfZ6NYGKukJVukKgg@mail.gmail.com>
+Subject: Re: [PATCH v6 11/11] ARM: shmobile: Convert file to use cntvoff
+To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
 Cc: Russell King <linux@armlinux.org.uk>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -23,52 +23,37 @@ Cc: Russell King <linux@armlinux.org.uk>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 11/11] ARM: shmobile: Convert file to use cntvoff
-Message-ID: <20180418120327.0f707abf@dell-desktop.home>
-In-Reply-To: <CAMuHMdU9soQuNMC59Y2AQdTmXbWBz-P3EFfZ6NYGKukJVukKgg@mail.gmail.com>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
-        <20180416215032.5023-12-mylene.josserand@bootlin.com>
-        <CAMuHMdU9soQuNMC59Y2AQdTmXbWBz-P3EFfZ6NYGKukJVukKgg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi Myl=C3=A8ne,
 
-On Wed, 18 Apr 2018 11:36:27 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Mon, Apr 16, 2018 at 11:50 PM, Myl=C3=A8ne Josserand
+<mylene.josserand@bootlin.com> wrote:
+> Now that a common function is available for CNTVOFF's
+> initialization, let's convert shmobile-apmu code to use
+> this function.
 
-> Hi Mylène,
-> 
-> On Mon, Apr 16, 2018 at 11:50 PM, Mylène Josserand
-> <mylene.josserand@bootlin.com> wrote:
-> > Now that a common function is available for CNTVOFF's
-> > initialization, let's convert shmobile-apmu code to use
-> > this function.  
-> 
-> Thanks for your patch, works fine on Renesas ALT with R-Car E2,
-> which suffers from lack of CNTVOFF initialization.
+Thanks for your patch, works fine on Renesas ALT with R-Car E2,
+which suffers from lack of CNTVOFF initialization.
 
-Great to know that it works on this board.
+> Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@bootlin.com>
 
-> 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>  
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thank you again for testing it :)
+Gr{oetje,eeting}s,
 
-Best regards,
+                        Geert
 
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
