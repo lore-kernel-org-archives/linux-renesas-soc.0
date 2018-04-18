@@ -1,144 +1,184 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:40313 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbeDHNJc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36191 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751407AbeDRJ5N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Apr 2018 09:09:32 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Dien Pham <dien.pham.ry@rvc.renesas.com>,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V5] PCI: rcar: Use runtime PM to control controller clock
-Date: Sun,  8 Apr 2018 15:09:25 +0200
-Message-Id: <20180408130925.19088-1-marek.vasut+renesas@gmail.com>
+        Wed, 18 Apr 2018 05:57:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v4 2/4] mmc: core: more fine-grained hooks for HS400 tuning
+Date: Wed, 18 Apr 2018 11:56:58 +0200
+Message-Id: <20180418095700.29948-3-horms+renesas@verge.net.au>
+In-Reply-To: <20180418095700.29948-1-horms+renesas@verge.net.au>
+References: <20180418095700.29948-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dien Pham <dien.pham.ry@rvc.renesas.com>
+This adds two new HS400 tuning operations:
+* prepare_hs400_tuning_downgrade
+* complete_hs400_tuning
 
-The controller clock can be switched off during suspend/resume,
-let runtime PM take care of that.
+These supplement the existing HS400 operation:
+* prepare_hs400_tuning
 
-Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
-To: linux-pci@vger.kernel.org
+This is motivated by a requirement of Renesas SDHI for the following:
+1. Disabling SCC before selecting to HS if selection of HS400 has occurred.
+   This can be done in an implementation of prepare_hs400_tuning_downgrade
+2. Updating registers after switching to HS400
+   This can be done in an implementation of complete_hs400_tuning
+
+After this patch the call sequence is as follows:
+
+* Initial tuning
+  i. prepare_hs400_tuning
+  2. Tuning procedure
+  3. Select HS400
+  4. complete_hs400_tuning
+
+* Retune
+  1. prepare_hs400_tuning_downgrade
+  2. Select HS200
+  3. prepare_hs400_tuning
+  4. Tuning procedure
+  5. Select HS400
+  6. complete_hs400_tuning
+
+If prepare_hs400_tuning or complete_hs400_tuning are not implemented they
+are not called. And if neither are called the procedure is the same as
+before this patch.
+
+Design consideration: In the case of Renesas SDHI it is likely that
+prepare_hs400_tuning_downgrade and prepare_hs400_tuning could be combined
+if the latter was called before selecting HS200 during tuning. When I say
+likely, I believe it matches my understanding of the hardware. However, I
+did not test this as I am entirely unsure if moving the
+prepare_hs400_tuning call would work for other hardware that uses this
+operation and I am in no position to test such hardware.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-V2: - Reorder the fail path in rcar_pcie_probe() to cater for the
-      reordering of function calls in probe
-    - Dispose of fail_clk in rcar_pcie_get_resources()
-V3: - Fix up the failpath in probe function
-V4: - Rebase on recent linux-next
-V5: - Do not call pci_free_resource_list(&pcie->resources) if
-      rcar_pcie_parse_request_of_pci_ranges() fails, since that
-      functiona calls pci_free_resource_list() already.
+v4
+* New patch
 ---
- drivers/pci/host/pcie-rcar.c | 38 ++++++++++++--------------------------
- 1 file changed, 12 insertions(+), 26 deletions(-)
+ drivers/mmc/core/host.c  | 13 ++++++++++++-
+ drivers/mmc/core/mmc.c   | 19 ++++++++++++++-----
+ include/linux/mmc/host.h | 26 +++++++++++++++++++++++++-
+ 3 files changed, 51 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 6ab28f29ac6a..25f68305322c 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -142,7 +142,6 @@ struct rcar_pcie {
- 	void __iomem		*base;
- 	struct list_head	resources;
- 	int			root_bus_nr;
--	struct clk		*clk;
- 	struct clk		*bus_clk;
- 	struct			rcar_msi msi;
- };
-@@ -914,24 +913,14 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
- 	if (IS_ERR(pcie->base))
- 		return PTR_ERR(pcie->base);
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index 64b03d6eaf18..5e60df7ca11f 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -138,6 +138,10 @@ int mmc_retune(struct mmc_host *host)
+ 	host->doing_retune = 1;
  
--	pcie->clk = devm_clk_get(dev, "pcie");
--	if (IS_ERR(pcie->clk)) {
--		dev_err(dev, "cannot get platform clock\n");
--		return PTR_ERR(pcie->clk);
--	}
--	err = clk_prepare_enable(pcie->clk);
--	if (err)
--		return err;
--
- 	pcie->bus_clk = devm_clk_get(dev, "pcie_bus");
- 	if (IS_ERR(pcie->bus_clk)) {
- 		dev_err(dev, "cannot get pcie bus clock\n");
--		err = PTR_ERR(pcie->bus_clk);
--		goto fail_clk;
-+		return PTR_ERR(pcie->bus_clk);
- 	}
- 	err = clk_prepare_enable(pcie->bus_clk);
+ 	if (host->ios.timing == MMC_TIMING_MMC_HS400) {
++		if (host->ops->prepare_hs400_tuning_downgrade)
++			host->ops->prepare_hs400_tuning_downgrade(host,
++								  &host->ios);
++
+ 		err = mmc_hs400_to_hs200(host->card);
+ 		if (err)
+ 			goto out;
+@@ -152,8 +156,15 @@ int mmc_retune(struct mmc_host *host)
  	if (err)
--		goto fail_clk;
-+		return err;
+ 		goto out;
  
- 	i = irq_of_parse_and_map(dev->of_node, 0);
- 	if (!i) {
-@@ -953,8 +942,6 @@ static int rcar_pcie_get_resources(struct rcar_pcie *pcie)
- 
- err_map_reg:
- 	clk_disable_unprepare(pcie->bus_clk);
--fail_clk:
--	clk_disable_unprepare(pcie->clk);
- 
- 	return err;
- }
-@@ -1124,22 +1111,22 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	if (err)
- 		goto err_free_bridge;
- 
-+	pm_runtime_enable(pcie->dev);
-+	err = pm_runtime_get_sync(pcie->dev);
-+	if (err < 0) {
-+		dev_err(pcie->dev, "pm_runtime_get_sync failed\n");
-+		goto err_pm_disable;
+-	if (return_to_hs400)
++	if (return_to_hs400) {
+ 		err = mmc_hs200_to_hs400(host->card);
++		if (err)
++			goto out;
++
++		if (host->ops->complete_hs400_tuning)
++			host->ops->complete_hs400_tuning(host, &host->ios);
 +	}
 +
- 	err = rcar_pcie_get_resources(pcie);
- 	if (err < 0) {
- 		dev_err(dev, "failed to request resources: %d\n", err);
--		goto err_free_resource_list;
-+		goto err_pm_put;
- 	}
+ out:
+ 	host->doing_retune = 0;
  
- 	err = rcar_pcie_parse_map_dma_ranges(pcie, dev->of_node);
- 	if (err)
--		goto err_free_resource_list;
--
--	pm_runtime_enable(dev);
--	err = pm_runtime_get_sync(dev);
--	if (err < 0) {
--		dev_err(dev, "pm_runtime_get_sync failed\n");
--		goto err_pm_disable;
--	}
-+		goto err_pm_put;
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 099b327e10ca..a108a1a3e27f 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1508,22 +1508,31 @@ static int mmc_select_timing(struct mmc_card *card)
+ static int mmc_hs200_tuning(struct mmc_card *card)
+ {
+ 	struct mmc_host *host = card->host;
++	bool run_hs400_ops;
+ 	int err;
  
- 	/* Failure to get a link might just be that no cards are inserted */
- 	hw_init_fn = of_device_get_match_data(dev);
-@@ -1174,9 +1161,8 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 
- err_pm_disable:
- 	pm_runtime_disable(dev);
--
--err_free_resource_list:
- 	pci_free_resource_list(&pcie->resources);
++	run_hs400_ops = card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS400 &&
++		host->ios.bus_width == MMC_BUS_WIDTH_8;
 +
- err_free_bridge:
- 	pci_free_host_bridge(bridge);
+ 	/*
+ 	 * Timing should be adjusted to the HS400 target
+ 	 * operation frequency for tuning process
+ 	 */
+-	if (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS400 &&
+-	    host->ios.bus_width == MMC_BUS_WIDTH_8)
+-		if (host->ops->prepare_hs400_tuning)
+-			host->ops->prepare_hs400_tuning(host, &host->ios);
++	if (run_hs400_ops && host->ops->prepare_hs400_tuning)
++		host->ops->prepare_hs400_tuning(host, &host->ios);
  
+ 	err = mmc_execute_tuning(card);
+ 	if (err)
+ 		return err;
+ 
+-	return mmc_select_hs400(card);
++	err = mmc_select_hs400(card);
++	if (err)
++		return err;
++
++	if (run_hs400_ops && host->ops->complete_hs400_tuning)
++		host->ops->complete_hs400_tuning(host, &host->ios);
++
++	return 0;
+ }
+ 
+ /*
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 85146235231e..5d3ae1071d2f 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -143,8 +143,32 @@ struct mmc_host_ops {
+ 	/* The tuning command opcode value is different for SD and eMMC cards */
+ 	int	(*execute_tuning)(struct mmc_host *host, u32 opcode);
+ 
+-	/* Prepare HS400 target operating frequency depending host driver */
++	/* Prepare for HS400 downgrade during tuning of target operating frequency depending on host driver
++	 * If provided and retuning is in progress, this is called before:
++	 * 1. Switching from HS400 to HS200; which preceeds
++	 * 2. Calling .prepare_hs400_tuning, if present; which preceeds
++	 * 3. The HS400 tuning procedure
++	 */
++	void	(*prepare_hs400_tuning_downgrade)(struct mmc_host *host, struct mmc_ios *ios);
++
++	/* Prepare for tuning HS400 target operating frequency depending on host driver
++	 * If provided, this called:
++	 * - In the case that retuning is in progress, after:
++	 *   1. .prepare_hs400_tuning_downgrade(), if present
++	 *   2. Switching from HS400 to HS200
++	 * - And in any case before:
++	 *   3. The HS400 tuning procedure
++	 */
++
+ 	int	(*prepare_hs400_tuning)(struct mmc_host *host, struct mmc_ios *ios);
++
++	/* Complete tuning HS400 target operating frequency depending host driver
++	 * If provided, this is called after:
++	 * 1. The HS400 tuning procedure
++	 * 2. Switching from HS200 to HS400
++	 */
++	void	(*complete_hs400_tuning)(struct mmc_host *host, struct mmc_ios *ios);
++
+ 	/* Prepare enhanced strobe depending host driver */
+ 	void	(*hs400_enhanced_strobe)(struct mmc_host *host,
+ 					 struct mmc_ios *ios);
 -- 
-2.16.2
+2.11.0
