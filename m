@@ -1,64 +1,65 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:35936 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752747AbeDRM00 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 08:26:26 -0400
-Date: Wed, 18 Apr 2018 20:26:08 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-Cc: kbuild-all@01.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [RFC PATCH renesas] mmc: tmio: tmio_mmc_prepare_hs400_tuning() can
- be static
-Message-ID: <20180418122608.GA52968@lkp-hsx03>
-References: <201804182048.TydzQbRW%fengguang.wu@intel.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, frowand.list@gmail.com
+Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, p.zabel@pengutronix.de,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 00/11] add support for R-Car USB3.0 role switch
+Date: Wed, 18 Apr 2018 17:09:54 +0900
+Message-Id: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201804182048.TydzQbRW%fengguang.wu@intel.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+This patch set is based on v4.17-rc1.
 
-Fixes: 485c8281e412 ("mmc: tmio: add eMMC HS400 mode support")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- tmio_mmc_core.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+In last week, I submitted a patch as v1 [1]. But, the v1 patch
+doesn't use graphs to get usb host device pointer. So, I modified
+some frameworks for it.
+Since the patch 4 "of: platform: add device connection parsing"
+has TODOs, I marked this patch set as "RFC". Before I resolve them,
+I would like to know whether this way is good or not.
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 4a83320..cd7afa9 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1100,7 +1100,7 @@ static int tmio_multi_io_quirk(struct mmc_card *card,
- 	return blk_size;
- }
- 
--int tmio_mmc_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
-+static int tmio_mmc_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
- 
-@@ -1110,8 +1110,8 @@ int tmio_mmc_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
- 	return 0;
- }
- 
--void tmio_mmc_prepare_hs400_tuning_downgrade(struct mmc_host *mmc,
--					     struct mmc_ios *ios)
-+static void tmio_mmc_prepare_hs400_tuning_downgrade(struct mmc_host *mmc,
-+						    struct mmc_ios *ios)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
- 
-@@ -1119,8 +1119,8 @@ void tmio_mmc_prepare_hs400_tuning_downgrade(struct mmc_host *mmc,
- 		host->prepare_hs400_tuning_downgrade(host, ios);
- }
- 
--void tmio_mmc_complete_hs400_tuning(struct mmc_host *mmc,
--				    struct mmc_ios *ios)
-+static void tmio_mmc_complete_hs400_tuning(struct mmc_host *mmc,
-+					   struct mmc_ios *ios)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
- 
+[1] https://patchwork.kernel.org/patch/10332865/
+
+
+Yoshihiro Shimoda (11):
+  Documentation: of: Add device-connection-id property
+  dt-bindings: usb: add usb role switch driver
+  dt-bindings: usb: add Renesas R-Car USB 3.0 role switch driver
+  of: platform: add device connection parsing
+  usb: common: roles: add fwnode graph parsing
+  usb: common: roles: Allow if the parent dev_name matches
+  usb: common: roles: add getting device pointer APIs
+  usb: role: rcar-usb3-role-switch: add support for R-Car SoCs
+  usb: gadget: udc: renesas_usb3: add support for a usb role switch
+  arm64: dts: renesas: r8a7795: add OF graph for usb role switch
+  arm64: dts: renesas: r8a7795: salvator-xs: add OF graph for usb role
+    switch
+
+ Documentation/devicetree/bindings/graph.txt        |   2 +-
+ .../bindings/usb/renesas,rcar-usb3-role-sw.txt     |  56 +++++++
+ .../devicetree/bindings/usb/usb-role-switch.txt    |  42 +++++
+ .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |  28 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  44 +++++
+ drivers/of/platform.c                              |  66 ++++++++
+ drivers/usb/common/roles.c                         |  84 +++++++++-
+ drivers/usb/gadget/udc/Kconfig                     |   1 +
+ drivers/usb/gadget/udc/renesas_usb3.c              |  34 +++-
+ drivers/usb/roles/Kconfig                          |  12 ++
+ drivers/usb/roles/Makefile                         |   1 +
+ drivers/usb/roles/rcar-usb3-role-switch.c          | 179 +++++++++++++++++++++
+ include/linux/of.h                                 |   1 +
+ include/linux/usb/role.h                           |   4 +
+ 14 files changed, 545 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/usb-role-switch.txt
+ create mode 100644 drivers/usb/roles/rcar-usb3-role-switch.c
+
+-- 
+1.9.1
+
