@@ -1,39 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:33557 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751417AbeDFULl (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:57679 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750861AbeDRKCH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 16:11:41 -0400
-Received: by mail-lf0-f44.google.com with SMTP id x70-v6so2150612lfa.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 06 Apr 2018 13:11:41 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/3] Add R8A77980/Condor PCIe support
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Wed, 18 Apr 2018 06:02:07 -0400
+Date: Wed, 18 Apr 2018 12:01:54 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Message-ID: <f07e6173-75b3-fe10-81d6-915942a5f4fe@cogentembedded.com>
-Date: Fri, 6 Apr 2018 23:11:38 +0300
+        Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>,
+        quentin.schulz@bootlin.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 05/11] ARM: smp: Add initialization of CNTVOFF
+Message-ID: <20180418120154.28fe6c4c@dell-desktop.home>
+In-Reply-To: <CAMuHMdWFyLCQb=c=gnWokxGFtsQF2i+s1nPWtJJmZPXAQjnu4g@mail.gmail.com>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+        <20180416215032.5023-6-mylene.josserand@bootlin.com>
+        <CAMuHMdWFyLCQb=c=gnWokxGFtsQF2i+s1nPWtJJmZPXAQjnu4g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hello Geert,
 
-Here's the set of 3 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20180330-v4.16-rc7' tag. We're adding the R8A77980 PCIe related
-device nodes and then enable PCIe on the Condor board. These patches depend on
-the R8A77980 PCIe PHY and PCIEC driver support in order to work properly...
+On Wed, 18 Apr 2018 11:30:47 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-[1/3] arm64: dts: renesas: r8a77980: add PCIe PHY support
-[2/3] arm64: dts: renesas: r8a77980: add PCIEC support
-[3/3] arm64: dts: renesas: condor: add PCIe support
+> Allo Mylène,
+> 
+> On Mon, Apr 16, 2018 at 11:50 PM, Mylène Josserand
+> <mylene.josserand@bootlin.com> wrote:
+> > The CNTVOFF register from arch timer is uninitialized.
+> > It should be done by the bootloader but it is currently not the case,
+> > even for boot CPU because this SoC is booting in secure mode.
+> > It leads to an random offset value meaning that each CPU will have a
+> > different time, which isn't working very well.
+> >
+> > Add assembly code used for boot CPU and secondary CPU cores to make
+> > sure that the CNTVOFF register is initialized. Because this code can
+> > be used by different platforms, add this assembly file in ARM's common
+> > folder.  
+> 
+> Thanks for your patch!
+> 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>  
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
-WBR, Sergei
+Great, thank you very much for your test!
+
+Best regards,
+
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
