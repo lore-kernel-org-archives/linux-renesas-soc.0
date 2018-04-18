@@ -1,12 +1,12 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:57679 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750861AbeDRKCH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 06:02:07 -0400
-Date: Wed, 18 Apr 2018 12:01:54 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20180416215032.5023-6-mylene.josserand@bootlin.com>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com> <20180416215032.5023-6-mylene.josserand@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 18 Apr 2018 11:30:47 +0200
+Message-ID: <CAMuHMdWFyLCQb=c=gnWokxGFtsQF2i+s1nPWtJJmZPXAQjnu4g@mail.gmail.com>
+Subject: Re: [PATCH v6 05/11] ARM: smp: Add initialization of CNTVOFF
+To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
 Cc: Russell King <linux@armlinux.org.uk>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -23,55 +23,43 @@ Cc: Russell King <linux@armlinux.org.uk>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 05/11] ARM: smp: Add initialization of CNTVOFF
-Message-ID: <20180418120154.28fe6c4c@dell-desktop.home>
-In-Reply-To: <CAMuHMdWFyLCQb=c=gnWokxGFtsQF2i+s1nPWtJJmZPXAQjnu4g@mail.gmail.com>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
-        <20180416215032.5023-6-mylene.josserand@bootlin.com>
-        <CAMuHMdWFyLCQb=c=gnWokxGFtsQF2i+s1nPWtJJmZPXAQjnu4g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Geert,
+Allo Myl=C3=A8ne,
 
-On Wed, 18 Apr 2018 11:30:47 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Mon, Apr 16, 2018 at 11:50 PM, Myl=C3=A8ne Josserand
+<mylene.josserand@bootlin.com> wrote:
+> The CNTVOFF register from arch timer is uninitialized.
+> It should be done by the bootloader but it is currently not the case,
+> even for boot CPU because this SoC is booting in secure mode.
+> It leads to an random offset value meaning that each CPU will have a
+> different time, which isn't working very well.
+>
+> Add assembly code used for boot CPU and secondary CPU cores to make
+> sure that the CNTVOFF register is initialized. Because this code can
+> be used by different platforms, add this assembly file in ARM's common
+> folder.
 
-> Allo Mylène,
-> 
-> On Mon, Apr 16, 2018 at 11:50 PM, Mylène Josserand
-> <mylene.josserand@bootlin.com> wrote:
-> > The CNTVOFF register from arch timer is uninitialized.
-> > It should be done by the bootloader but it is currently not the case,
-> > even for boot CPU because this SoC is booting in secure mode.
-> > It leads to an random offset value meaning that each CPU will have a
-> > different time, which isn't working very well.
-> >
-> > Add assembly code used for boot CPU and secondary CPU cores to make
-> > sure that the CNTVOFF register is initialized. Because this code can
-> > be used by different platforms, add this assembly file in ARM's common
-> > folder.  
-> 
-> Thanks for your patch!
-> 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>  
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Thanks for your patch!
 
-Great, thank you very much for your test!
+> Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@bootlin.com>
 
-Best regards,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
