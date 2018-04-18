@@ -1,50 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:37617 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754043AbeDYLPi (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:10668 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753694AbeDRIKr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Apr 2018 07:15:38 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: r8a7740: Enable CEU0
-Date: Wed, 25 Apr 2018 13:15:20 +0200
-Message-Id: <1524654920-18749-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 18 Apr 2018 04:10:47 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, frowand.list@gmail.com
+Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, p.zabel@pengutronix.de,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 07/11] usb: common: roles: add getting device pointer APIs
+Date: Wed, 18 Apr 2018 17:10:01 +0900
+Message-Id: <1524039005-30618-8-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable CEU0 peripheral for Renesas R-Mobile A1 R8A7740.
+This patch adds APIs that a role switch driver can get device pointer
+of USB 2.0/3.0 and udc.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/usb/common/roles.c | 36 ++++++++++++++++++++++++++++++++++++
+ include/linux/usb/role.h   |  4 ++++
+ 2 files changed, 40 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index afd3bc5..05ec41e 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -67,6 +67,16 @@
- 		power-domains = <&pd_d4>;
- 	};
+diff --git a/drivers/usb/common/roles.c b/drivers/usb/common/roles.c
+index 381259c..5fd14b2 100644
+--- a/drivers/usb/common/roles.c
++++ b/drivers/usb/common/roles.c
+@@ -34,6 +34,42 @@ struct usb_role_switch {
+ #define to_role_switch(d)	container_of(d, struct usb_role_switch, dev)
  
-+	ceu0: ceu@fe910000 {
-+		reg = <0xfe910000 0x100>;
-+		compatible = "renesas,r8a7740-ceu";
-+		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
-+		clock-names = "ceu20";
-+		power-domains = <&pd_a4mp>;
-+		status = "disabled";
-+	};
+ /**
++ * usb_role_switch_get_usb2_port - Get device of a USB 2.0 host
++ * @sw: USB role switch
++ *
++ * Returns USB 2.0 host device pointer.
++ */
++struct device *usb_role_switch_get_usb2_port(struct usb_role_switch *sw)
++{
++	return sw->usb2_port;
++}
++EXPORT_SYMBOL(usb_role_switch_get_usb2_port);
 +
- 	cmt1: timer@e6138000 {
- 		compatible = "renesas,cmt-48-r8a7740", "renesas,cmt-48";
- 		reg = <0xe6138000 0x170>;
++/**
++ * usb_role_switch_get_usb3_port - Get device of a USB 3.0 host
++ * @sw: USB role switch
++ *
++ * Returns USB 3.0 host device pointer.
++ */
++struct device *usb_role_switch_get_usb3_port(struct usb_role_switch *sw)
++{
++	return sw->usb3_port;
++}
++EXPORT_SYMBOL(usb_role_switch_get_usb3_port);
++
++/**
++ * usb_role_switch_get_udc - Get device of a udc
++ * @sw: USB role switch
++ *
++ * Returns udc device pointer.
++ */
++struct device *usb_role_switch_get_udc(struct usb_role_switch *sw)
++{
++	return sw->udc;
++}
++EXPORT_SYMBOL(usb_role_switch_get_udc);
++
++/**
+  * usb_role_switch_set_role - Set USB role for a switch
+  * @sw: USB role switch
+  * @role: USB role to be switched to
+diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
+index edc51be..c7eb73b 100644
+--- a/include/linux/usb/role.h
++++ b/include/linux/usb/role.h
+@@ -40,6 +40,10 @@ struct usb_role_switch_desc {
+ 	bool allow_userspace_control;
+ };
+ 
++struct device *usb_role_switch_get_usb2_port(struct usb_role_switch *sw);
++struct device *usb_role_switch_get_usb3_port(struct usb_role_switch *sw);
++struct device *usb_role_switch_get_udc(struct usb_role_switch *sw);
++
+ int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
+ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
+ struct usb_role_switch *usb_role_switch_get(struct device *dev);
 -- 
-2.7.4
+1.9.1
