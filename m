@@ -1,51 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:43339 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753202AbeDPLJM (ORCPT
+Received: from sauhun.de ([88.99.104.3]:37860 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752326AbeDRSVJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:09:12 -0400
-MIME-Version: 1.0
-In-Reply-To: <1519139541-18783-11-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org> <1519139541-18783-11-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Apr 2018 13:09:10 +0200
-Message-ID: <CAMuHMdWS+6g=e-jzve74530zR-fw43oLeJaa+h7TWZ0nyjgMwg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/19] dt-bindings: dmaengine: rcar-dmac: document
- R8A77965 support
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 18 Apr 2018 14:21:09 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Subject: [PATCH v3 4/5] mmc: renesas_sdhi_internal_dmac: use more generic whitelisting
+Date: Wed, 18 Apr 2018 20:21:00 +0200
+Message-Id: <20180418182101.5723-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
+References: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jacopo,
+Whitelisting every ES version does not scale. So, we whitelist whole
+SoCs independent of ES version. If we need specific handling for an ES
+version, we put it to the front, so it will be matched first.
 
-On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add documentation for r8a77965 compatible string to rcar-dmac device
-> tree bindings documentation.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Can you please resend to the DMA engine maintainer?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index b36e174a4b0c..240e8a168aa1 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -271,12 +271,15 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
+  * implementation as others may use a different implementation.
+  */
+ static const struct soc_device_attribute gen3_soc_whitelist[] = {
++	/* specific ones */
+ 	{ .soc_id = "r8a7795", .revision = "ES1.*",
+ 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+-	{ .soc_id = "r8a7795", .revision = "ES2.0" },
+ 	{ .soc_id = "r8a7796", .revision = "ES1.0",
+ 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+-	{ .soc_id = "r8a77995", .revision = "ES1.0" },
++	/* generic ones */
++	{ .soc_id = "r8a7795" },
++	{ .soc_id = "r8a7796" },
++	{ .soc_id = "r8a77995" },
+ 	{ /* sentinel */ }
+ };
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
