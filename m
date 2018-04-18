@@ -1,192 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36699 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbeDRUPF (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:45474 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751870AbeDRIql (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 16:15:05 -0400
-Received: by mail-pl0-f65.google.com with SMTP id m7-v6so1775953plt.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Apr 2018 13:15:04 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/5] arm64: dts: renesas: r8a77965: sort subnodes of the root node
-Date: Thu, 19 Apr 2018 05:14:38 +0900
-Message-Id: <1524082480-18163-4-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
-References: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
+        Wed, 18 Apr 2018 04:46:41 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 2/2] clk: renesas: cpg-mssr: Add support for R-Car E3
+Date: Wed, 18 Apr 2018 08:46:35 +0000
+Message-ID: <TY1PR06MB0992839D645B697E5D2DD2C9D8B60@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1523439447-1084-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdXViS-HoHWaO55FW3vepMt-KOmo-EpF1C-6N=Kq_WgV1Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdXViS-HoHWaO55FW3vepMt-KOmo-EpF1C-6N=Kq_WgV1Q@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort subnodes of the root node alphanumerically.
-
-This is part of an ongoing effort to provide consistent node
-order in the DT of Renesas SoCs to improve maintainability.
-
-This should not have any run-time effect.
-
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 120 +++++++++++++++---------------
- 1 file changed, 60 insertions(+), 60 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index a41f916..d110382 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -22,9 +22,34 @@
- 		i2c7 = &i2c_dvfs;
- 	};
- 
--	psci {
--		compatible = "arm,psci-1.0", "arm,psci-0.2";
--		method = "smc";
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
- 	};
- 
- 	cpus {
-@@ -71,34 +96,24 @@
- 		clock-frequency = <0>;
- 	};
- 
--	/*
--	 * The external audio clocks are configured as 0 Hz fixed frequency
--	 * clocks by default.
--	 * Boards that provide audio clocks should override them.
--	 */
--	audio_clk_a: audio_clk_a {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
--	audio_clk_b: audio_clk_b {
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <0>;
- 	};
- 
--	audio_clk_c: audio_clk_c {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
-+	pmu_a57 {
-+		compatible = "arm,cortex-a57-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a57_0>,
-+				     <&a57_1>;
- 	};
- 
--	/* External CAN clock - to be overridden by boards that provide it */
--	can_clk: can {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
- 	};
- 
- 	/* External SCIF clock - to be overridden by boards that provide it */
-@@ -108,42 +123,6 @@
- 		clock-frequency = <0>;
- 	};
- 
--	/* External PCIe clock - can be overridden by the board */
--	pcie_bus_clk: pcie_bus {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
--	/* External USB clocks - can be overridden by the board */
--	usb3s0_clk: usb3s0 {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
--	usb_extal_clk: usb_extal {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
--	timer {
--		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
--	};
--
--	pmu_a57 {
--		compatible = "arm,cortex-a57-pmu";
--		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
--				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-affinity = <&a57_0>,
--				     <&a57_1>;
--	};
--
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -1073,4 +1052,25 @@
- 			/* placeholder */
- 		};
- 	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	/* External USB clocks - can be overridden by the board */
-+	usb3s0_clk: usb3s0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
- };
--- 
-1.9.1
+SGkgR2VlcnQtc2FuLA0KDQpUaGFuayB5b3UgZm9yIHRoZSByZXZpZXchDQoNCj4gRnJvbTogR2Vl
+cnQgVXl0dGVyaG9ldmVuLCBTZW50OiBGcmlkYXksIEFwcmlsIDEzLCAyMDE4IDc6MzcgUE0NCj4g
+DQo+IEhpIFNoaW1vZGEtc2FuLA0KPiANCj4gT24gV2VkLCBBcHIgMTEsIDIwMTggYXQgMTE6Mzcg
+QU0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNv
+bT4gd3JvdGU6DQo8c25pcD4NCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvY2xvY2svcmVuZXNhcyxjcGctbXNzci50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svcmVuZXNhcyxjcGctbXNzci50eHQNCj4gPiBAQCAt
+MjYsNiArMjYsNyBAQCBSZXF1aXJlZCBQcm9wZXJ0aWVzOg0KPiA+ICAgICAgICAtICJyZW5lc2Fz
+LHI4YTc3OTY1LWNwZy1tc3NyIiBmb3IgdGhlIHI4YTc3OTY1IFNvQyAoUi1DYXIgTTMtTikNCj4g
+PiAgICAgICAgLSAicmVuZXNhcyxyOGE3Nzk3MC1jcGctbXNzciIgZm9yIHRoZSByOGE3Nzk3MCBT
+b0MgKFItQ2FyIFYzTSkNCj4gPiAgICAgICAgLSAicmVuZXNhcyxyOGE3Nzk4MC1jcGctbXNzciIg
+Zm9yIHRoZSByOGE3Nzk4MCBTb0MgKFItQ2FyIFYzSCkNCj4gPiArICAgICAgLSAicmVuZXNhcyxy
+OGE3Nzk5MC1jcGctbXNzciIgZm9yIHRoZSByOGE3Nzk5NSBTb0MgKFItQ2FyIEUzKQ0KPiANCj4g
+cjhhNzc5OTAgU29DDQoNCk9vcHMhIEkgd2lsbCBmaXggdGhpcyBpbiB2Mi4NCg0KPiA+ICAgICAg
+ICAtICJyZW5lc2FzLHI4YTc3OTk1LWNwZy1tc3NyIiBmb3IgdGhlIHI4YTc3OTk1IFNvQyAoUi1D
+YXIgRDMpDQo+IA0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9yZW5l
+c2FzL3I4YTc3OTkwLWNwZy1tc3NyLmMNCj4gPiBAQCAtMCwwICsxLDI5MSBAQA0KPiANCj4gPiAr
+c3RhdGljIGNvbnN0IHN0cnVjdCBjcGdfY29yZV9jbGsgcjhhNzc5OTBfY29yZV9jbGtzW10gX19p
+bml0Y29uc3QgPSB7DQo+IA0KPiA+ICsgICAgICAgLyogQ29yZSBDbG9jayBPdXRwdXRzICovDQo+
+IA0KPiA+ICsgICAgICAgREVGX0dFTjNfUEUoInMwZDZjIiwgICBSOEE3Nzk5MF9DTEtfUzBENkMs
+IENMS19TMCwgNiwgQ0xLX1BFLCA2KSwNCj4gDQo+IC4uLiBDTEtfUEUsIDIpLA0KDQpJIHdpbGwg
+Zml4IHRoaXMuDQoNCj4gPiArICAgICAgIERFRl9HRU4zX1BFKCJzM2QxYyIsICAgUjhBNzc5OTBf
+Q0xLX1MzRDFDLCBDTEtfUzMsIDEsIENMS19QRSwgMSksDQo+ID4gKyAgICAgICBERUZfR0VOM19Q
+RSgiczNkMmMiLCAgIFI4QTc3OTkwX0NMS19TM0QyQywgQ0xLX1MzLCAyLCBDTEtfUEUsIDIpLA0K
+PiA+ICsgICAgICAgREVGX0dFTjNfUEUoInMzZDRjIiwgICBSOEE3Nzk5MF9DTEtfUzNENEMsIENM
+S19TMywgNCwgQ0xLX1BFLCA0KSwNCj4gPiArDQo+ID4gKyAgICAgICBERUZfRElWNlAxKCJjYW5m
+ZCIsICAgIFI4QTc3OTkwX0NMS19DQU5GRCwgQ0xLX1BMTDBENiwgMHgyNDQpLA0KPiANCj4gSSBj
+YW5ub3QgY29uZmlybSB0aGUgcGFyZW50LCBhcyBTZWN0aW9uIDguMi4xOCAoIkNBTi1GRCBDbG9j
+ayBGcmVxdWVuY3kNCj4gQ29udHJvbCBSZWdpc3RlciAoQ0FORkRDS0NSKSIpIGRvZXMgbm90IHNw
+ZWNpZnkgdGhlIHNvdXJjZSBjbG9jayBmcmVxdWVuY3kNCj4gZm9yIFItQ2FyIEUzICh1bmxpa2Ug
+Zm9yIEQzKS4gQnV0IDgwMCBNSHogc291bmRzIHNhbmUuDQoNCkFjY29yZGluZyB0byB0aGUgRmln
+dXJlIDguMWcsIFBMTDAgd2l0aCAxLzIgLS0gMS8zIC0tIENBTkZEIGNsb2NrLg0KU28sIHRoZSBw
+YXJlbnQgY2xvY2sgaXMgUExMMEQ2IChQTEwwIHdpdGggRElWIDYpLg0KDQo+ID4gKyAgICAgICBE
+RUZfRElWNlAxKCJjc2kwIiwgICAgIFI4QTc3OTkwX0NMS19DU0kwLCAgQ0xLX1BMTDFEMiwgMHgw
+MGMpLA0KPiANCj4gSSBjYW5ub3QgY29uZmlybSB0aGUgcGFyZW50IGNsb2NrLCBhcyBDU0kwIGlz
+IG5vdCBkb2N1bWVudGVkLg0KPiBCdXQgZ2l2ZW4gUExMMSBydW5zIGF0IDEuNiBHSHosIFBMTDEv
+MiBpcyBjb25zaXN0ZW50IHdpdGggUExMMS80IG9uIG90aGVyDQo+IFItQ2FyIEdlbjMgU29DcyB3
+aXRoIGEgZmFzdGVyIFBMTDEgKDMuMiBHSHopLg0KDQpJIGhlYXJkIHRoZSBDU0kwIHdpbGwgYmUg
+ZG9jdW1lbnRlZCBpbiB0aGUgZnV0dXJlLg0KDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbXNz
+cl9tb2RfY2xrIHI4YTc3OTkwX21vZF9jbGtzW10gX19pbml0Y29uc3QgPSB7DQo+IA0KPiA+ICsg
+ICAgICAgREVGX01PRCgidmluNyIsICAgICAgICAgICAgICAgICAgODA0LCAgIFI4QTc3OTkwX0NM
+S19TMUQyKSwNCj4gPiArICAgICAgIERFRl9NT0QoInZpbjYiLCAgICAgICAgICAgICAgICAgIDgw
+NSwgICBSOEE3Nzk5MF9DTEtfUzFEMiksDQo+IA0KPiBWaW42LzcgaGF2ZSBiZWVuIHJlbW92ZWQg
+aW4gdGhlIEZlYi4gZXJyYXRhLg0KDQpPb3BzLCBJIHdpbGwgcmVtb3ZlIHRoZW0gaW4gdjIgcGF0
+Y2guDQoNCj4gV2l0aCB0aGUgYWJvdmUgZml4ZWQvY29uZmlybWVkOg0KPiBSZXZpZXdlZC1ieTog
+R2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCg0KVGhhbmtzIQ0K
+DQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IEdye29ldGplLGVldGluZ31z
+LA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0
+IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2Vl
+cnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0
+ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20g
+dGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhp
+bmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVz
+IFRvcnZhbGRzDQo=
