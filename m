@@ -1,82 +1,93 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53204 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758888AbeD0Q5j (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:57:39 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 11/11] arm64: dts: r8a77965-salvator-xs: Enable DU external clocks and HDMI
-Date: Fri, 27 Apr 2018 17:57:22 +0100
-Message-Id: <20180427165722.19445-12-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, frowand.list@gmail.com
+Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, p.zabel@pengutronix.de,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 03/11] dt-bindings: usb: add Renesas R-Car USB 3.0 role switch driver
+Date: Wed, 18 Apr 2018 17:09:57 +0900
+Message-Id: <1524039005-30618-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU1 external dot clock is provided by the fixed frequency clock
-generator X21, while the DU0 and DU3 clocks are provided by the
-programmable Versaclock6 clock generator.
+This patch adds a new documentation for Renesas R-Car USB 3.0 role
+switch driver.
 
-Enable the clocks, and the HDMI encoder for the M3-N Salvator-XS, and
-hook it up to the HDMI connector
-
-Based on patches from Takeshi Kihara <takeshi.kihara.df@renesas.com>
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- .../boot/dts/renesas/r8a77965-salvator-xs.dts | 29 +++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ .../bindings/usb/renesas,rcar-usb3-role-sw.txt     | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-index a83a00deed9e..dcf1849f1a67 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-@@ -19,3 +19,32 @@
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
- };
+diff --git a/Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt b/Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt
+new file mode 100644
+index 0000000..ed60f66
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt
+@@ -0,0 +1,56 @@
++Renesas Electronics R-Car USB 3.0 role switch driver
 +
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&versaclock6 1>,
-+		 <&x21_clk>,
-+		 <&versaclock6 2>;
-+	clock-names = "du.0", "du.1", "du.3", "lvds.0",
-+		      "dclkin.0", "dclkin.1", "dclkin.3";
-+};
++A renesas_usb3's node can contain this node.
 +
-+&hdmi0 {
-+	status = "okay";
++Required properties:
++ - compatible: Must contain "renesas,rcar-usb3-role-switch".
 +
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
++Required nodes:
++
++The connection to a USB connector node and USB role switch node need by
++using OF graph bindings. Please refer to the usb-role-switch.txt about
++port number of the OF graph. Note that port@3 is connected to
++the usb-connector.
++
++
++Example of R-Car H3 ES2.0:
++	usb3_peri0: usb@ee020000 {
++		compatible = "renesas,r8a7795-usb3-peri",
++			     "renesas,rcar-gen3-usb3-peri";
++		reg = <0 0xee020000 0 0x400>;
++		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 328>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		resets = <&cpg 328>;
++
++		usb3-role-sw {
++			compatible = "renesas,rcar-usb3-role-switch";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					reg = <1>;
++
++					usb3_host_sw0: endpoint {
++						remote-endpoint = <&usb3_host_ep0>;
++					};
++				};
++
++				port@2 {
++					reg = <2>;
++					usb3_peri_sw0: endpoint {
++						remote-endpoint = <&usb3_peri_ep0>;
++						device-connection-id = "usb-role-switch";
++					};
++				};
++
++				port@3 {
++					reg = <3>;
++					usb3_role_sw0_ep: endpoint {
++					};
++				};
 +			};
 +		};
 +	};
-+};
-+
-+&hdmi0_con {
-+	remote-endpoint = <&rcar_dw_hdmi0_out>;
-+};
 -- 
-2.17.0
+1.9.1
+
