@@ -1,47 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40890 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753584AbeD2S0t (ORCPT
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:58903 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751305AbeDRJm7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 29 Apr 2018 14:26:49 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] arm64: dts: renesas: salvator-common: add eeprom
-Date: Sun, 29 Apr 2018 20:26:39 +0200
-Message-Id: <20180429182639.6243-1-wsa+renesas@sang-engineering.com>
+        Wed, 18 Apr 2018 05:42:59 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: ysato@users.sourceforge.jp, dalias@libc.org,
+        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        sergei.shtylyov@cogentembedded.com,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] sh: mm: Fix unprotected access to struct device
+Date: Wed, 18 Apr 2018 11:42:35 +0200
+Message-Id: <1524044555-20610-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the EEPROM found on Salvator-X and -XS boards for H3, M3-W, and M3-N
-on the IIC_DVFS bus.
+With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
+operations observe dev->dma_pfn_offset") the generic DMA allocation
+function on which the SH 'dma_alloc_coherent()' function relies on,
+accesses the 'dma_pfn_offset' field of struct device.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Unfortunately the 'dma_generic_alloc_coherent()' function is called from
+several places with a NULL struct device argument, halting the CPU
+during the boot process.
+
+This patch fixes the issue by protecting access to dev->dma_pfn_offset,
+with a trivial check for validity. It also passes a valid 'struct device'
+in the 'platform_resource_setup_memory()' function which is the main user
+of 'dma_alloc_coherent()', and inserts a WARN_ON() check to remind to future
+(and existing) bogus users of this function to provide a valid 'struct device'
+whenever possible.
+
+Fixes: ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset")
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+
 ---
+v2 -> v3:
+- remove (now) useless parenthesis around pfn assignement as suggested
+  by Sergei
+- Add changelog to the patch, which I forgot in v2
 
-Always nice for I2C debugging to have en EEPROM around...
+v1 -> v2:
+- Move WARN_ON() closer to dev validity check as suggested by Geert
 
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+---
+ arch/sh/mm/consistent.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index b5b9b83bd972..1b686602f418 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -492,6 +492,12 @@
- 			};
- 		};
- 	};
+diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
+index 8ce9869..f1b4469 100644
+--- a/arch/sh/mm/consistent.c
++++ b/arch/sh/mm/consistent.c
+@@ -59,7 +59,9 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+
+ 	split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
+
+-	*dma_handle = virt_to_phys(ret) - PFN_PHYS(dev->dma_pfn_offset);
++	*dma_handle = virt_to_phys(ret);
++	if (!WARN_ON(!dev))
++		*dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
+
+ 	return ret_nocache;
+ }
+@@ -69,9 +71,12 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
+ 			       unsigned long attrs)
+ {
+ 	int order = get_order(size);
+-	unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
++	unsigned long pfn = dma_handle >> PAGE_SHIFT;
+ 	int k;
+
++	if (!WARN_ON(!dev))
++		pfn += dev->dma_pfn_offset;
 +
-+	eeprom@50 {
-+		compatible = "rohm,br24t01", "atmel,24c01";
-+		reg = <0x50>;
-+		pagesize = <8>;
-+	};
- };
- 
- &ohci0 {
--- 
-2.11.0
+ 	for (k = 0; k < (1 << order); k++)
+ 		__free_pages(pfn_to_page(pfn + k), 0);
+
+@@ -143,7 +148,7 @@ int __init platform_resource_setup_memory(struct platform_device *pdev,
+ 	if (!memsize)
+ 		return 0;
+
+-	buf = dma_alloc_coherent(NULL, memsize, &dma_handle, GFP_KERNEL);
++	buf = dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
+ 	if (!buf) {
+ 		pr_warning("%s: unable to allocate memory\n", name);
+ 		return -ENOMEM;
+--
+2.7.4
