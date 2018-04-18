@@ -1,119 +1,74 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Hoan Tran <hotran@apm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+Date: Wed, 18 Apr 2018 09:13:13 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Hoan Tran <hotran@apm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "Lee Jones" <lee.jones@linaro.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Michel Pollet <michel.pollet@bp.renesas.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3] gpio: dwapb: Add support for 1 interrupt per port A
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] gpio: dwapb: Add support for 1 interrupt per port A
  GPIO
-Date: Thu, 19 Apr 2018 10:03:25 +0000
-Message-ID: <TY1PR01MB17691AADC510B417E3F6E49DF5B50@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1523609472-4481-1-git-send-email-phil.edworthy@renesas.com>
- <CAFHUOYziPaZC-Zcb7rXqC9p24H+CU4wK4NQShQkYLgH7c5mVwA@mail.gmail.com>
- <TY1PR01MB1769DB39F986BEADEF61F8C9F5B30@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAFHUOYzPO+99HMLV7i1=ZoQG3vKRp2v5GzJdpW9yoWovx8D91Q@mail.gmail.com>
-In-Reply-To: <CAFHUOYzPO+99HMLV7i1=ZoQG3vKRp2v5GzJdpW9yoWovx8D91Q@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Message-ID: <20180418081313.dqxdtjqmw4z27uny@dell>
+References: <1523968977-4241-1-git-send-email-phil.edworthy@renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523968977-4241-1-git-send-email-phil.edworthy@renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgSG9hbg0KDQpPbiAxOCBBcHJpbCAyMDE4IDA4OjAzIEhvYW4gVHJhbiB3cm90ZToNCj4gT24g
-RnJpLCBBcHIgMTMsIDIwMTggYXQgOTo0NyBBTSwgUGhpbCBFZHdvcnRoeSB3cm90ZToNCj4gPiBP
-biAxMyBBcHJpbCAyMDE4IDE3OjM3IEhvYW4gVHJhbiB3cm90ZToNCj4gPj4gT24gRnJpLCBBcHIg
-MTMsIDIwMTggYXQgMTo1MSBBTSwgUGhpbCBFZHdvcnRoeSB3cm90ZToNCj4gPj4gPiBUaGUgRGVz
-aWduV2FyZSBHUElPIElQIGNhbiBiZSBjb25maWd1cmVkIGZvciBlaXRoZXIgMSBpbnRlcnJ1cHQg
-b3INCj4gPj4gPiAxIHBlciBHUElPIGluIHBvcnQgQSwgYnV0IHRoZSBkcml2ZXIgY3VycmVudGx5
-IG9ubHkgc3VwcG9ydHMgMSBpbnRlcnJ1cHQuDQo+ID4+ID4gU2VlIHRoZSBEZXNpZ25XYXJlIERX
-X2FwYl9ncGlvIERhdGFib29rIGRlc2NyaXB0aW9uIG9mIHRoZQ0KPiA+PiA+ICdHUElPX0lOVFJf
-SU8nIHBhcmFtZXRlci4NCj4gPj4gPg0KPiA+PiA+IFRoaXMgY2hhbmdlIGFsbG93cyB0aGUgZHJp
-dmVyIHRvIHdvcmsgd2l0aCB1cCB0byAzMiBpbnRlcnJ1cHRzLCBpdA0KPiA+PiA+IHdpbGwgZ2V0
-IGFzIG1hbnkgaW50ZXJydXB0cyBhcyBzcGVjaWZpZWQgaW4gdGhlIERUICdpbnRlcnJ1cHRzJyBw
-cm9wZXJ0eS4NCj4gPj4gPiBJdCBkb2Vzbid0IGRvIGFueXRoaW5nIGNsZXZlciB3aXRoIHRoZSBk
-aWZmZXJlbnQgaW50ZXJydXB0cywgaXQNCj4gPj4gPiBqdXN0IGNhbGxzIHRoZSBzYW1lIGhhbmRs
-ZXIgdXNlZCBmb3Igc2luZ2xlIGludGVycnVwdCBoYXJkd2FyZS4NCj4gPj4gPg0KPiA+PiA+IFNp
-Z25lZC1vZmYtYnk6IFBoaWwgRWR3b3J0aHkgPHBoaWwuZWR3b3J0aHlAcmVuZXNhcy5jb20+DQo+
-ID4+ID4gLS0tDQo+ID4+ID4gT25lIHBvaW50IHRvIG1lbnRpb24gaXMgdGhhdCBJIGhhdmUgbWFk
-ZSBpdCBwb3NzaWJsZSBmb3IgdXNlcnMgdG8NCj4gPj4gPiBoYXZlIHVuY29ubmN0ZWQgaW50ZXJy
-dXB0cyBieSBzcGVjaWZ5aW5nIGhvbGVzIGluIHRoZSBsaXN0IG9mIGludGVycnVwdHMuDQo+ID4+
-ID4gVGhpcyBpcyBkb25lIGJ5IHN1cHBvcnRpbmcgdGhlIGludGVycnVwdHMtZXh0ZW5kZWQgRFQg
-cHJvcC4NCj4gPj4gPiBIb3dldmVyLCBJIGhhdmUgbm8gdXNlIGZvciB0aGlzIGFuZCBoYWQgdG8g
-aGFjayBzb21lIHRlc3QgY2FzZSBmb3IgdGhpcy4NCj4gPj4gPiBQZXJoYXBzIHRoZSBkcml2ZXIg
-c2hvdWxkIHN1cHBvcnQgMSBpbnRlcnJ1cHQgb3IgYWxsIEdQSU9hIGFzIGludGVycnVwdHM/DQo+
-ID4+ID4NCj4gPj4gPiB2MzoNCj4gPj4gPiAgLSBSb2xsZWQgbWZkOiBpbnRlbF9xdWFya19pMmNf
-Z3BpbyBmaXggaW50byB0aGlzIHBhdGNoIHRvIGF2b2lkDQo+ID4+ID4gYmlzZWN0IHByb2JsZW1z
-DQo+ID4+ID4gdjI6DQo+ID4+ID4gIC0gUmVwbGFjZWQgaW50ZXJydXB0LW1hc2sgRFQgcHJvcCB3
-aXRoIHN1cHBvcnQgZm9yIHRoZSBpbnRlcnJ1cHRzLQ0KPiA+PiBleHRlbmRlZA0KPiA+PiA+ICAg
-IHByb3AuIFRoaXMgbWVhbnMgcmVwbGFjaW5nIHRoZSBjYWxsIHRvIGlycV9vZl9wYXJzZV9hbmRf
-bWFwKCkgd2l0aA0KPiBjYWxscw0KPiA+PiA+ICAgIHRvIG9mX2lycV9wYXJzZV9vbmUoKSBhbmQg
-aXJxX2NyZWF0ZV9vZl9tYXBwaW5nKCkuDQo+ID4+ID4NCj4gPj4gPiBOb3RlOiBUaGVyZSBhcmUg
-YSBmZXcgKmNvZGUqIGxpbmVzIG92ZXIgODAgY2hhcnMsIGJ1dCB0aGlzIGlzIGp1c3QNCj4gZ3Vp
-ZGFuY2UsDQo+ID4+ID4gICAgcmlnaHQ/IEVzcGVjaWFsbHkgYXMgdGhlcmUgYXJlIGFscmVhZHkg
-c29tZSBsaW5lcyBvdmVyIDgwIGNoYXJzLg0KPiA+PiA+IC0tLQ0KPiA+IFtzbmlwXQ0KPiA+DQo+
-ID4+ID4gLSAgICAgICAgICAgICAgIGlmIChoYXNfYWNwaV9jb21wYW5pb24oZGV2KSAmJiBwcC0+
-aWR4ID09IDApDQo+ID4+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgcHAtPmlycSA9IHBsYXRm
-b3JtX2dldF9pcnEodG9fcGxhdGZvcm1fZGV2aWNlKGRldiksIDApOw0KPiA+PiA+ICsgICAgICAg
-ICAgICAgICBpZiAoaGFzX2FjcGlfY29tcGFuaW9uKGRldikgJiYgcHAtPmlkeCA9PSAwKSB7DQo+
-ID4+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcHAtPmlycVswXSA9IHBsYXRmb3JtX2dldF9p
-cnEodG9fcGxhdGZvcm1fZGV2aWNlKGRldiksDQo+IDApOw0KPiA+PiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIGlmIChwcC0+aXJxWzBdKQ0KPiA+PiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgcHAtPmhhc19pcnEgPSB0cnVlOw0KPiA+PiA+ICsgICAgICAgICAgICAgICB9DQo+
-ID4+DQo+ID4+IEl0IGRvZXNuJ3Qgd29yayBmb3IgQUNQSS4gQ291bGQgeW91IGRvIHRoZSBzYW1l
-IGxvZ2ljIGZvciBBQ1BJPw0KPiA+IEkgZG9u4oCZdCBoYXZlIGFjY2VzcyB0byBhbnkgZGV2aWNl
-IHRoYXQgd2FzIGJha2VkIChpLmUuIGZhYmJlZCkgd2l0aA0KPiA+IG11bHRpcGxlIG91dHB1dCBp
-bnRlcnJ1cHRzIGZyb20gdGhlIFN5bm9wc3lzIEdQSU8gYmxvY2tzIGFuZCB1c2UgQUNQSS4NCj4g
-PiBJIGRvbid0IGtub3cgaWYgYW55IHN1Y2ggZGV2aWNlIGV4aXN0cy4NCj4gDQo+IEJlbG93IGNv
-ZGUgaXMgdGVzdGVkIG9uIFgtR2VuZSBzeXN0ZW0gd2hpY2ggc3VwcG9ydHMgMSBpbnRlcnJ1cHQg
-cGVyIEdQSU8NCj4gb24gUG9ydCBBLiBZb3UgY2FuIHVwZGF0ZSBpdCBpbnRvIHlvdXIgcGF0Y2gu
-DQo+IA0KPiAtICAgICAgICAgICAgICAgaWYgKGhhc19hY3BpX2NvbXBhbmlvbihkZXYpICYmIHBw
-LT5pZHggPT0gMCkNCj4gLSAgICAgICAgICAgICAgICAgICAgICAgcHAtPmlycSA9IHBsYXRmb3Jt
-X2dldF9pcnEodG9fcGxhdGZvcm1fZGV2aWNlKGRldiksIDApOw0KPiArICAgICAgICAgICAgICAg
-aWYgKGhhc19hY3BpX2NvbXBhbmlvbihkZXYpICYmIHBwLT5pZHggPT0gMCkgew0KPiArICAgICAg
-ICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgajsNCj4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgZm9yIChqID0gMDsgaiA8IHBwLT5uZ3BpbzsgaisrKSB7DQo+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgcHAtPmlycVtqXSA9DQo+IHBsYXRmb3JtX2dldF9pcnEodG9fcGxhdGZv
-cm1fZGV2aWNlKGRldiksIGopOw0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlm
-IChwcC0+aXJxW2pdKQ0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-cHAtPmhhc19pcnEgPSB0cnVlOw0KPiArICAgICAgICAgICAgICAgICAgICAgICB9DQo+ICsgICAg
-ICAgICAgICAgICB9DQpTaW5jZSBJJ3ZlIGFscmVhZHkgZ290IHNvbWUgcmV2aWV3ZWQtYnkgYW5k
-IGFja3MgZm9yIHY0LCBJJ2xsIGxlYXZlIGl0IHRvIExpbnVzDQp0byBkZWNpZGUgaWYgaGUgd2Fu
-dHMgbWUgdG8gcm9sbCB5b3VyIGNoYW5nZXMgaW50byB0aGlzIHBhdGNoIG9yIGZvciB5b3UgdG8N
-CnN1Ym1pdCBhIHNlcGFyYXRlIHBhdGNoLg0KDQpUaGFua3MNClBoaWwNCg0KDQo+ID4+ID4gICAg
-ICAgICAgICAgICAgIHBwLT5pcnFfc2hhcmVkICA9IGZhbHNlOw0KPiA+PiA+ICAgICAgICAgICAg
-ICAgICBwcC0+Z3Bpb19iYXNlICAgPSAtMTsNCj4gPj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9t
-ZmQvaW50ZWxfcXVhcmtfaTJjX2dwaW8uYw0KPiA+PiA+IGIvZHJpdmVycy9tZmQvaW50ZWxfcXVh
-cmtfaTJjX2dwaW8uYw0KPiA+PiA+IGluZGV4IDkwZTM1ZGUuLjViZGRiODQgMTAwNjQ0DQo+ID4+
-ID4gLS0tIGEvZHJpdmVycy9tZmQvaW50ZWxfcXVhcmtfaTJjX2dwaW8uYw0KPiA+PiA+ICsrKyBi
-L2RyaXZlcnMvbWZkL2ludGVsX3F1YXJrX2kyY19ncGlvLmMNCj4gPj4gPiBAQCAtMjMzLDcgKzIz
-Myw4IEBAIHN0YXRpYyBpbnQgaW50ZWxfcXVhcmtfZ3Bpb19zZXR1cChzdHJ1Y3QNCj4gPj4gPiBw
-Y2lfZGV2DQo+ID4+ICpwZGV2LCBzdHJ1Y3QgbWZkX2NlbGwgKmNlbGwpDQo+ID4+ID4gICAgICAg
-ICBwZGF0YS0+cHJvcGVydGllcy0+aWR4ICAgICAgICAgID0gMDsNCj4gPj4gPiAgICAgICAgIHBk
-YXRhLT5wcm9wZXJ0aWVzLT5uZ3BpbyAgICAgICAgPSBJTlRFTF9RVUFSS19NRkRfTkdQSU87DQo+
-ID4+ID4gICAgICAgICBwZGF0YS0+cHJvcGVydGllcy0+Z3Bpb19iYXNlICAgID0NCj4gSU5URUxf
-UVVBUktfTUZEX0dQSU9fQkFTRTsNCj4gPj4gPiAtICAgICAgIHBkYXRhLT5wcm9wZXJ0aWVzLT5p
-cnEgICAgICAgICAgPSBwZGV2LT5pcnE7DQo+ID4+ID4gKyAgICAgICBwZGF0YS0+cHJvcGVydGll
-cy0+aXJxWzBdICAgICAgID0gcGRldi0+aXJxOw0KPiA+PiA+ICsgICAgICAgcGRhdGEtPnByb3Bl
-cnRpZXMtPmhhc19pcnEgICAgICA9IHRydWU7DQo+ID4+ID4gICAgICAgICBwZGF0YS0+cHJvcGVy
-dGllcy0+aXJxX3NoYXJlZCAgID0gdHJ1ZTsNCj4gPj4gPg0KPiA+PiA+ICAgICAgICAgY2VsbC0+
-cGxhdGZvcm1fZGF0YSA9IHBkYXRhOyBkaWZmIC0tZ2l0DQo+ID4+ID4gYS9pbmNsdWRlL2xpbnV4
-L3BsYXRmb3JtX2RhdGEvZ3Bpby1kd2FwYi5oDQo+ID4+ID4gYi9pbmNsdWRlL2xpbnV4L3BsYXRm
-b3JtX2RhdGEvZ3Bpby1kd2FwYi5oDQo+ID4+ID4gaW5kZXggMmRjN2Y0YS4uNWE1MmQ2OSAxMDA2
-NDQNCj4gPj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvZ3Bpby1kd2FwYi5o
-DQo+ID4+ID4gKysrIGIvaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL2dwaW8tZHdhcGIuaA0K
-PiA+PiA+IEBAIC0xOSw3ICsxOSw4IEBAIHN0cnVjdCBkd2FwYl9wb3J0X3Byb3BlcnR5IHsNCj4g
-Pj4gPiAgICAgICAgIHVuc2lnbmVkIGludCAgICBpZHg7DQo+ID4+ID4gICAgICAgICB1bnNpZ25l
-ZCBpbnQgICAgbmdwaW87DQo+ID4+ID4gICAgICAgICB1bnNpZ25lZCBpbnQgICAgZ3Bpb19iYXNl
-Ow0KPiA+PiA+IC0gICAgICAgdW5zaWduZWQgaW50ICAgIGlycTsNCj4gPj4gPiArICAgICAgIHVu
-c2lnbmVkIGludCAgICBpcnFbMzJdOw0KPiA+PiA+ICsgICAgICAgYm9vbCAgICAgICAgICAgIGhh
-c19pcnE7DQo+ID4+ID4gICAgICAgICBib29sICAgICAgICAgICAgaXJxX3NoYXJlZDsNCj4gPj4g
-PiAgfTsNCj4gPj4gPg0KPiA+PiA+IC0tDQo+ID4+ID4gMi43LjQNCj4gPj4gPg0K
+On Tue, 17 Apr 2018, Phil Edworthy wrote:
+
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
+> 
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> One point to mention is that I have made it possible for users to have
+> unconncted interrupts by specifying holes in the list of interrupts. This is
+> done by supporting the interrupts-extended DT prop.
+> However, I have no use for this and had to hack some test case for this.
+> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+> 
+> v4:
+>  - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
+> v3:
+>  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
+> v2:
+>  - Replaced interrupt-mask DT prop with support for the interrupts-extended
+>    prop. This means replacing the call to irq_of_parse_and_map() with calls
+>    to of_irq_parse_one() and irq_create_of_mapping().
+> 
+> Note: There are a few *code* lines over 80 chars, but this is just guidance,
+>    right? Especially as there are already some lines over 80 chars.
+> 
+> snps:gpio fix
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+>  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++--
+>  drivers/gpio/gpio-dwapb.c                          | 42 +++++++++++++++++-----
+>  drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+
+If Linus, is happy with the GPIO implementation, then the changes in
+MFD look fine:
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
