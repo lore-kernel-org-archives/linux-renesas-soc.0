@@ -1,83 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:60111 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752402AbeDJK4f (ORCPT
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:46599 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751870AbeDRJCS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:56:35 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 3/4] arm64: dts: renesas: r8a77970: add LVDS support
-Date: Tue, 10 Apr 2018 12:54:05 +0200
-Message-Id: <1523357646-3946-4-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 18 Apr 2018 05:02:18 -0400
+Received: by mail-wr0-f182.google.com with SMTP id d1-v6so2623479wrj.13
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Apr 2018 02:02:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXVz_CjdGtW4SYOUx7kMS-T1RadVzMQdqMktt2NXz6PnQ@mail.gmail.com>
+References: <152404037580.7843.5140455339218102749.sendpatchset@little-apple>
+ <152404040278.7843.524678765267319751.sendpatchset@little-apple> <CAMuHMdXVz_CjdGtW4SYOUx7kMS-T1RadVzMQdqMktt2NXz6PnQ@mail.gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Wed, 18 Apr 2018 18:02:16 +0900
+Message-ID: <CANqRtoST+UfQzTZs+QMpHXJEjPH+LaoqjhBEpeSd0q0QnsUHrA@mail.gmail.com>
+Subject: Re: [PATCH 03/03] ARM: shmobile: stout: Initial support and regulator quirk
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi Geert,
 
-Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
-the it to the LVDS output of the DU.
+On Wed, Apr 18, 2018 at 5:55 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Magnus,
+>
+> On Wed, Apr 18, 2018 at 10:33 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> This is a back port to v4.16 of the following commits merged in v4.17-rc1:
+>> ff938cd14d67 ARM: shmobile: stout: enable R-Car Gen2 regulator quirk
+>> 92bcfdb334ca ARM: dts: stout: Initial r8a7790 Stout board support
+>
+> I think you also want
+> 60fc75bdf5b1b8ed ("ARM: shmobile: rcar-gen2: Fix error check in
+> regulator quirk")
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Thanks - good point!
 
----
-v1 -> v2:
-- Rebased on the modified endpoint name and changed patch subject to
-  comply with other patches in the series from Sergei.
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Cheers,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index ae5797d..ae15355 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -659,6 +659,33 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a77970-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
--- 
-2.7.4
+/ magnus
