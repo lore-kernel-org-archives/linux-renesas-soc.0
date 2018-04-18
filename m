@@ -1,59 +1,59 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+        Mark Brown <broonie@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/8] staging: emxx_udc: Change platform dependency to ARCH_RENESAS
-Date: Fri, 20 Apr 2018 15:28:31 +0200
-Message-Id: <1524230914-10175-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
-References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-media-owner@vger.kernel.org
+Subject: [PATCH v3 3/4] mfd: bd9571mwv: Allow DDR Backup Power register access
+Date: Wed, 18 Apr 2018 15:18:03 +0200
+Message-Id: <1524057484-25350-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1524057484-25350-1-git-send-email-geert+renesas@glider.be>
+References: <1524057484-25350-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Emma Mobile is a Renesas ARM SoC.  Since commit 9b5ba0df4ea4f940 ("ARM:
-shmobile: Introduce ARCH_RENESAS") is ARCH_RENESAS a more appropriate
-platform dependency than the legacy ARCH_SHMOBILE, hence use the
-former.
-
-This will allow to drop ARCH_SHMOBILE on ARM in the near future.
+Enable read/write access to the BD9571MWV_BKUP_MODE_CNT register, which
+is amongst others used to configure DDR Backup Power.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/staging/emxx_udc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-diff --git a/drivers/staging/emxx_udc/Kconfig b/drivers/staging/emxx_udc/Kconfig
-index d7577096fb25ae7a..e50e722183648c55 100644
---- a/drivers/staging/emxx_udc/Kconfig
-+++ b/drivers/staging/emxx_udc/Kconfig
-@@ -1,6 +1,6 @@
- config USB_EMXX
- 	tristate "EMXX USB Function Device Controller"
-- 	depends on USB_GADGET && (ARCH_SHMOBILE || (ARM && COMPILE_TEST))
-+	depends on USB_GADGET && (ARCH_RENESAS || (ARM && COMPILE_TEST))
- 	help
- 	   The Emma Mobile series of SoCs from Renesas Electronics and
- 	   former NEC Electronics include USB Function hardware.
+v3:
+  - No changes,
+
+v2:
+  - Expand "a.o.",
+  - Add Acked-for-MFD-by.
+---
+ drivers/mfd/bd9571mwv.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+index 64e088dfe7b05b5b..503979c81dae11bb 100644
+--- a/drivers/mfd/bd9571mwv.c
++++ b/drivers/mfd/bd9571mwv.c
+@@ -29,6 +29,7 @@ static const struct mfd_cell bd9571mwv_cells[] = {
+ 
+ static const struct regmap_range bd9571mwv_readable_yes_ranges[] = {
+ 	regmap_reg_range(BD9571MWV_VENDOR_CODE, BD9571MWV_PRODUCT_REVISION),
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
+ 	regmap_reg_range(BD9571MWV_AVS_SET_MONI, BD9571MWV_AVS_DVFS_VID(3)),
+ 	regmap_reg_range(BD9571MWV_VD18_VID, BD9571MWV_VD33_VID),
+ 	regmap_reg_range(BD9571MWV_DVFS_VINIT, BD9571MWV_DVFS_VINIT),
+@@ -44,6 +45,7 @@ static const struct regmap_access_table bd9571mwv_readable_table = {
+ };
+ 
+ static const struct regmap_range bd9571mwv_writable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
+ 	regmap_reg_range(BD9571MWV_AVS_VD09_VID(0), BD9571MWV_AVS_VD09_VID(3)),
+ 	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_SETVID),
+ 	regmap_reg_range(BD9571MWV_GPIO_DIR, BD9571MWV_GPIO_OUT),
 -- 
 2.7.4
+
