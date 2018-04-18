@@ -1,46 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45416 "EHLO pokefinder.org"
+Received: from mga05.intel.com ([192.55.52.43]:35936 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753465AbeDSOHE (ORCPT
+        id S1752747AbeDRM00 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:04 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Nicolas Pitre <nico@fluxnic.net>, netdev@vger.kernel.org
-Subject: [PATCH 34/61] net: ethernet: smsc: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:04 +0200
-Message-Id: <20180419140641.27926-35-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Wed, 18 Apr 2018 08:26:26 -0400
+Date: Wed, 18 Apr 2018 20:26:08 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Cc: kbuild-all@01.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [RFC PATCH renesas] mmc: tmio: tmio_mmc_prepare_hs400_tuning() can
+ be static
+Message-ID: <20180418122608.GA52968@lkp-hsx03>
+References: <201804182048.TydzQbRW%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201804182048.TydzQbRW%fengguang.wu@intel.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Fixes: 485c8281e412 ("mmc: tmio: add eMMC HS400 mode support")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
+ tmio_mmc_core.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/net/ethernet/smsc/smc91x.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
-index 080428762858..3e84a499fe92 100644
---- a/drivers/net/ethernet/smsc/smc91x.c
-+++ b/drivers/net/ethernet/smsc/smc91x.c
-@@ -2453,8 +2453,7 @@ static int smc_drv_remove(struct platform_device *pdev)
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 4a83320..cd7afa9 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1100,7 +1100,7 @@ static int tmio_multi_io_quirk(struct mmc_card *card,
+ 	return blk_size;
+ }
  
- static int smc_drv_suspend(struct device *dev)
+-int tmio_mmc_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
++static int tmio_mmc_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct tmio_mmc_host *host = mmc_priv(mmc);
  
- 	if (ndev) {
- 		if (netif_running(ndev)) {
--- 
-2.11.0
+@@ -1110,8 +1110,8 @@ int tmio_mmc_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	return 0;
+ }
+ 
+-void tmio_mmc_prepare_hs400_tuning_downgrade(struct mmc_host *mmc,
+-					     struct mmc_ios *ios)
++static void tmio_mmc_prepare_hs400_tuning_downgrade(struct mmc_host *mmc,
++						    struct mmc_ios *ios)
+ {
+ 	struct tmio_mmc_host *host = mmc_priv(mmc);
+ 
+@@ -1119,8 +1119,8 @@ void tmio_mmc_prepare_hs400_tuning_downgrade(struct mmc_host *mmc,
+ 		host->prepare_hs400_tuning_downgrade(host, ios);
+ }
+ 
+-void tmio_mmc_complete_hs400_tuning(struct mmc_host *mmc,
+-				    struct mmc_ios *ios)
++static void tmio_mmc_complete_hs400_tuning(struct mmc_host *mmc,
++					   struct mmc_ios *ios)
+ {
+ 	struct tmio_mmc_host *host = mmc_priv(mmc);
+ 
