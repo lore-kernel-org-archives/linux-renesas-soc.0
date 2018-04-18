@@ -1,87 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:37840 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752334AbeDRSVJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36191 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751407AbeDRJ5K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 14:21:09 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wed, 18 Apr 2018 05:57:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 3/5] mmc: renesas_sdhi: Fix alignment check of sg buffer
-Date: Wed, 18 Apr 2018 20:20:59 +0200
-Message-Id: <20180418182101.5723-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
-References: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v4 1/4] mmc: core: select HS400 from HS200 tuning function
+Date: Wed, 18 Apr 2018 11:56:57 +0200
+Message-Id: <20180418095700.29948-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180418095700.29948-1-horms+renesas@verge.net.au>
+References: <20180418095700.29948-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+Call mmc_select_hs400() from mmc_hs200_tuning().
 
-Sometimes sg->offset is not used for buffer addresses allocated by
-dma_map_sg(), so alignment checks should be done on the allocated buffer
-addresses. Delete the alignment check for sg->offset that is done before
-dma_map_sg(). Instead, it performs the alignment check for
-sg->dma_address after dma_map_sg().
+This should have no run-time effect as the existing call to
+mmc_select_hs400() is right after a call to mmc_hs200_tuning() in
+mmc_init_card() and that is the only caller of mmc_hs200_tuning().
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: broke this commit in two and tidied small style issue]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[rebased to mmc/next]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+This is in preparation for adding a new mmc_host_opp to be called
+after tuning and selecting HS400 - or in other words,
+after mmc_execute_tuning() and mmc_select_hs400().
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+v4
+- New patch
+---
+ drivers/mmc/core/mmc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 6a86619d3f85..b36e174a4b0c 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -157,14 +157,20 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 6f8ebd6caa4c..099b327e10ca 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1508,6 +1508,7 @@ static int mmc_select_timing(struct mmc_card *card)
+ static int mmc_hs200_tuning(struct mmc_card *card)
  {
- 	struct scatterlist *sg = host->sg_ptr;
- 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
--	int ret;
+ 	struct mmc_host *host = card->host;
++	int err;
  
- 	/* This DMAC cannot handle if sg_len is not 1 */
- 	WARN_ON(host->sg_len > 1);
+ 	/*
+ 	 * Timing should be adjusted to the HS400 target
+@@ -1518,7 +1519,11 @@ static int mmc_hs200_tuning(struct mmc_card *card)
+ 		if (host->ops->prepare_hs400_tuning)
+ 			host->ops->prepare_hs400_tuning(host, &host->ios);
  
-+	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
-+			mmc_get_dma_dir(data)))
-+		goto force_pio;
+-	return mmc_execute_tuning(card);
++	err = mmc_execute_tuning(card);
++	if (err)
++		return err;
 +
- 	/* This DMAC cannot handle if buffer is not 8-bytes alignment */
--	if (!IS_ALIGNED(sg->offset, 8))
-+	if (!IS_ALIGNED(sg_dma_address(sg), 8)) {
-+		dma_unmap_sg(&host->pdev->dev, sg, host->sg_len,
-+			     mmc_get_dma_dir(data));
- 		goto force_pio;
-+	}
++	return mmc_select_hs400(card);
+ }
  
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
-@@ -175,11 +181,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
- 	}
- 
--	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len,
--			 mmc_get_dma_dir(data));
--	if (ret == 0)
--		goto force_pio;
+ /*
+@@ -1733,10 +1738,6 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 		err = mmc_hs200_tuning(card);
+ 		if (err)
+ 			goto free_card;
 -
- 	renesas_sdhi_internal_dmac_enable_dma(host, true);
- 
- 	/* set dma parameters */
+-		err = mmc_select_hs400(card);
+-		if (err)
+-			goto free_card;
+ 	} else if (!mmc_card_hs400es(card)) {
+ 		/* Select the desired bus width optionally */
+ 		err = mmc_select_bus_width(card);
 -- 
 2.11.0
