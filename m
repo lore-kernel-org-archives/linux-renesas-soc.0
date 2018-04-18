@@ -1,52 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45322 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752325AbeDSOHC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39170 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752769AbeDRNyA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:02 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org
-Subject: [PATCH 29/61] mtd: devices: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:59 +0200
-Message-Id: <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Wed, 18 Apr 2018 09:54:00 -0400
+Date: Wed, 18 Apr 2018 15:53:55 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH 0/2] arm64: dts: renesas: r8a779{5,6}: decrease
+ temperature
+Message-ID: <20180418135355.4y2psrt5vtvjucgu@verge.net.au>
+References: <20180417205428.15227-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180417205428.15227-1-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Tue, Apr 17, 2018 at 10:54:26PM +0200, Niklas Söderlund wrote:
+> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Hi Simon,
+> 
+> This series decrease the hysteresis from 2C to 1C for the two boards we 
+> have described upstream. They have no dependencies and are ready to be 
+> accepted if the review is in favor of them.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thanks Niklas,
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/mtd/devices/docg3.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
-index c594fe5eac08..802d8f159e90 100644
---- a/drivers/mtd/devices/docg3.c
-+++ b/drivers/mtd/devices/docg3.c
-@@ -1470,8 +1470,7 @@ static struct docg3 *sysfs_dev2docg3(struct device *dev,
- 				     struct device_attribute *attr)
- {
- 	int floor;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct mtd_info **docg3_floors = platform_get_drvdata(pdev);
-+	struct mtd_info **docg3_floors = dev_get_drvdata(dev);
- 
- 	floor = attr->attr.name[1] - '0';
- 	if (floor < 0 || floor >= DOC_MAX_NBFLOORS)
--- 
-2.11.0
+applied.
