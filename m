@@ -1,47 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45386 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752337AbeDSOG4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39222 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753133AbeDRN5M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:06:56 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH 16/61] gpu: drm: vc4: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:46 +0200
-Message-Id: <20180419140641.27926-17-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Wed, 18 Apr 2018 09:57:12 -0400
+Date: Wed, 18 Apr 2018 15:57:08 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/3] Add R8A77980/Condor PCIe support
+Message-ID: <20180418135707.ruifzsv3ljgriujg@verge.net.au>
+References: <f07e6173-75b3-fe10-81d6-915942a5f4fe@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f07e6173-75b3-fe10-81d6-915942a5f4fe@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Fri, Apr 06, 2018 at 11:11:38PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> Here's the set of 3 patches against Simon Horman's 'renesas.git' repo's
+> 'renesas-devel-20180330-v4.16-rc7' tag. We're adding the R8A77980 PCIe related
+> device nodes and then enable PCIe on the Condor board. These patches depend on
+> the R8A77980 PCIe PHY and PCIEC driver support in order to work properly...
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thanks, I have marked these as deferred.
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/gpu/drm/vc4/vc4_drv.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 94b99c90425a..af9515ae0e0a 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -318,8 +318,7 @@ static int vc4_drm_bind(struct device *dev)
- 
- static void vc4_drm_unbind(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct drm_device *drm = platform_get_drvdata(pdev);
-+	struct drm_device *drm = dev_get_drvdata(dev);
- 
- 	drm_dev_unregister(drm);
- 
--- 
-2.11.0
+Please ping me once the dependencies have been accepted.
