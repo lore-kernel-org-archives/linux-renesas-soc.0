@@ -1,77 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:28276 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750936AbeDNMD3 (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:45868 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbeDSNSP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:03:29 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 33/33] rcar-vin: enable support for r8a77970
-Date: Sat, 14 Apr 2018 13:57:26 +0200
-Message-Id: <20180414115726.5075-34-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 19 Apr 2018 09:18:15 -0400
+Received: by mail-io0-f194.google.com with SMTP id a7-v6so6520116ioc.12
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Apr 2018 06:18:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
+References: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 19 Apr 2018 15:18:13 +0200
+Message-ID: <CAPDyKFrOYSg3khTwBB6zbqFPNU_eGhDx44Ug4jXaP9fwYx1vGw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] mmc: renesas_sdhi_internal_dmac: DMA handling fixes
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the SoC specific information for Renesas r8a77970.
+On 18 April 2018 at 20:20, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> I have collected the patches floating around for renesas_sdhi_internal_dm=
+ac and
+> grouped them to avoid dependency issues.
+>
+> Regarding stable: I think patch 1 is clearly for stable. Patch 3 maybe, b=
+ut it
+> needs patch 2 which is not. Not sure if it is worth the hazzle. Patches 4=
+ & 5
+> are not for stable.
+>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Patch 1 applied for fixes (added a stable tag) and the rest applied
+for next. Please tell if you want me to change something in regards to
+this.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 81c82793b1312aae..55b745ac86a5884d 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -971,6 +971,25 @@ static const struct rvin_info rcar_info_r8a7796 = {
- 	.routes = rcar_info_r8a7796_routes,
- };
- 
-+static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
-+	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
-+	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
-+	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct rvin_info rcar_info_r8a77970 = {
-+	.model = RCAR_GEN3,
-+	.use_mc = true,
-+	.max_width = 4096,
-+	.max_height = 4096,
-+	.routes = _rcar_info_r8a77970_routes,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
- 	{
- 		.compatible = "renesas,vin-r8a7778",
-@@ -1008,6 +1027,10 @@ static const struct of_device_id rvin_of_id_table[] = {
- 		.compatible = "renesas,vin-r8a7796",
- 		.data = &rcar_info_r8a7796,
- 	},
-+	{
-+		.compatible = "renesas,vin-r8a77970",
-+		.data = &rcar_info_r8a77970,
-+	},
- 	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
--- 
-2.16.2
+Kind regards
+Uffe
+
+> Changes since v2:
+>         * fixed checkpatch issues (Thanks Sergei!)
+>         * rebased to mmc/next
+>
+> Changes since v1:
+>         * patch 1: drop superfluous NULL check on soc->date
+>                    (Thanks Geert!)
+>         * patches 2,3,5: added Simon's tag
+>
+> Kind regards,
+>
+>    Wolfram
+>
+>
+> Masaharu Hayakawa (1):
+>   mmc: renesas_sdhi: Fix alignment check of sg buffer
+>
+> Niklas S=C3=B6derlund (1):
+>   mmc: renesas_sdhi: use helpers to access struct scatterlist members
+>
+> Wolfram Sang (3):
+>   mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs
+>   mmc: renesas_sdhi_internal_dmac: use more generic whitelisting
+>   mmc: renesas_sdhi_internal_dmac: remove superfluous WARN
+>
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 64 +++++++++++++++++++--=
+------
+>  1 file changed, 45 insertions(+), 19 deletions(-)
+>
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
