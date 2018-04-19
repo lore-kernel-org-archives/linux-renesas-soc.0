@@ -1,40 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:40692 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:45378 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753171AbeDJON7 (ORCPT
+        id S1753330AbeDSOG4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:13:59 -0400
+        Thu, 19 Apr 2018 10:06:56 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] MAINTAINERS: I'll maintain Renesas R-Car I2C host drivers
-Date: Tue, 10 Apr 2018 16:13:47 +0200
-Message-Id: <20180410141347.5014-1-wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH 13/61] gpu: drm: msm: disp: mdp5: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:43 +0200
+Message-Id: <20180419140641.27926-14-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
+
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2f7ccdcf76f7..3bb87e65889c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11897,6 +11897,12 @@ L:	linux-iio@vger.kernel.org
- S:	Supported
- F:	drivers/iio/adc/rcar_gyro_adc.c
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+index 6d8e3a9a6fc0..d50927f00c6f 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+@@ -1014,8 +1014,7 @@ static int mdp5_dev_remove(struct platform_device *pdev)
  
-+RENESAS R-CAR I2C DRIVERS
-+M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
-+S:	Supported
-+F:	drivers/i2c/busses/i2c-rcar.c
-+F:	drivers/i2c/busses/i2c-sh_mobile.c
-+
- RENESAS USB PHY DRIVER
- M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
- L:	linux-renesas-soc@vger.kernel.org
+ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
++	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
+ 
+ 	DBG("");
+ 
+@@ -1024,8 +1023,7 @@ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
+ 
+ static __maybe_unused int mdp5_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
++	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
+ 
+ 	DBG("");
+ 
 -- 
 2.11.0
