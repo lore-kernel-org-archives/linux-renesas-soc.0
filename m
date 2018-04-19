@@ -1,43 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36081 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752532AbeDXQC3 (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45626 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753568AbeDSOHQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 12:02:29 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180424160227euoutp02a10e071e24287e2b149a1eccab12cc0f~oaqjvA-UP0967309673euoutp02K
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Apr 2018 16:02:27 +0000 (GMT)
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+        Thu, 19 Apr 2018 10:07:16 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 58/61] video: fbdev: omap2: omapfb: displays: simplify
- getting .drvdata
-Date: Tue, 24 Apr 2018 18:02:11 +0200
-Message-ID: <1726457.eauaWiscAe@amdc3058>
-In-Reply-To: <20180419140641.27926-59-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Subject: [PATCH 58/61] video: fbdev: omap2: omapfb: displays: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:28 +0200
+Message-Id: <20180419140641.27926-59-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-        <CGME20180419140716epcas2p3dd25b3be301017affaef3908823c5ace@epcas2p3.samsung.com>
-        <20180419140641.27926-59-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thursday, April 19, 2018 04:06:28 PM Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Patch queued for 4.18, thanks.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Build tested only. buildbot is happy. Please apply individually.
+
+ .../video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c   | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
+index bef431530090..87497a00241f 100644
+--- a/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
++++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-dsi-cm.c
+@@ -387,8 +387,7 @@ static void dsicm_get_resolution(struct omap_dss_device *dssdev,
+ static ssize_t dsicm_num_errors_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	u8 errors = 0;
+ 	int r;
+@@ -419,8 +418,7 @@ static ssize_t dsicm_num_errors_show(struct device *dev,
+ static ssize_t dsicm_hw_revision_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	u8 id1, id2, id3;
+ 	int r;
+@@ -451,8 +449,7 @@ static ssize_t dsicm_store_ulps(struct device *dev,
+ 		struct device_attribute *attr,
+ 		const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	unsigned long t;
+ 	int r;
+@@ -486,8 +483,7 @@ static ssize_t dsicm_show_ulps(struct device *dev,
+ 		struct device_attribute *attr,
+ 		char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	unsigned t;
+ 
+ 	mutex_lock(&ddata->lock);
+@@ -501,8 +497,7 @@ static ssize_t dsicm_store_ulps_timeout(struct device *dev,
+ 		struct device_attribute *attr,
+ 		const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	unsigned long t;
+ 	int r;
+@@ -533,8 +528,7 @@ static ssize_t dsicm_show_ulps_timeout(struct device *dev,
+ 		struct device_attribute *attr,
+ 		char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	unsigned t;
+ 
+ 	mutex_lock(&ddata->lock);
+-- 
+2.11.0
