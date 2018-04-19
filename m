@@ -1,40 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:17734 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752606AbeDQU6L (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:37477 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752546AbeDSJbl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Apr 2018 16:58:11 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] thermal: rcar_gen3_thermal: update constants for calculation of temperature
-Date: Tue, 17 Apr 2018 22:57:45 +0200
-Message-Id: <20180417205747.15492-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 19 Apr 2018 05:31:41 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, daniel@ffwll.ch,
+        peda@axentia.se, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 7/8] drm: panel: Use _LE LVDS formats for data mirroring
+Date: Thu, 19 Apr 2018 11:31:08 +0200
+Message-Id: <1524130269-32688-8-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+As now both bridges and panels report supported image formats,
+use the newly introduced _LE version of LVDS media bus formats in place
+of the DRM_BUS_FLAG_DATA_ flags defined in drm_connector.h
 
-Hi,
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/gpu/drm/panel/panel-lvds.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-This series updates the constants used to convert the register values to 
-degrease. It is based on feedback from the hardware team communicated 
-through BSP patches and updated datasheets. :-)
-
-Hien Dang (1):
-  thermal: rcar_gen3_thermal: Update calculation formula due to HW
-    evaluation
-
-Niklas Söderlund (1):
-  thermal: rcar_gen3_thermal: update max temperature clamp
-
- drivers/thermal/rcar_gen3_thermal.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+index 5185819..ac03eab 100644
+--- a/drivers/gpu/drm/panel/panel-lvds.c
++++ b/drivers/gpu/drm/panel/panel-lvds.c
+@@ -37,7 +37,6 @@ struct panel_lvds {
+ 	unsigned int height;
+ 	struct videomode video_mode;
+ 	unsigned int bus_format;
+-	bool data_mirror;
+ 
+ 	struct backlight_device *backlight;
+ 	struct regulator *supply;
+@@ -129,9 +128,6 @@ static int panel_lvds_get_modes(struct drm_panel *panel)
+ 	connector->display_info.height_mm = lvds->height;
+ 	drm_display_info_set_bus_formats(&connector->display_info,
+ 					 &lvds->bus_format, 1);
+-	connector->display_info.bus_flags = lvds->data_mirror
+-					  ? DRM_BUS_FLAG_DATA_LSB_TO_MSB
+-					  : DRM_BUS_FLAG_DATA_MSB_TO_LSB;
+ 
+ 	return 1;
+ }
+@@ -149,6 +145,7 @@ static int panel_lvds_parse_dt(struct panel_lvds *lvds)
+ 	struct device_node *np = lvds->dev->of_node;
+ 	struct display_timing timing;
+ 	const char *mapping;
++	bool data_mirror;
+ 	int ret;
+ 
+ 	ret = of_get_display_timing(np, "panel-timing", &timing);
+@@ -179,20 +176,26 @@ static int panel_lvds_parse_dt(struct panel_lvds *lvds)
+ 		return -ENODEV;
+ 	}
+ 
++	data_mirror = of_property_read_bool(np, "data-mirror");
++
+ 	if (!strcmp(mapping, "jeida-18")) {
+-		lvds->bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG;
++		lvds->bus_format = data_mirror ?
++				   MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE :
++				   MEDIA_BUS_FMT_RGB666_1X7X3_SPWG;
+ 	} else if (!strcmp(mapping, "jeida-24")) {
+-		lvds->bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
++		lvds->bus_format = data_mirror ?
++				   MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE :
++				   MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
+ 	} else if (!strcmp(mapping, "vesa-24")) {
+-		lvds->bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
++		lvds->bus_format = data_mirror ?
++				   MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE :
++				   MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
+ 	} else {
+ 		dev_err(lvds->dev, "%pOF: invalid or missing %s DT property\n",
+ 			np, "data-mapping");
+ 		return -EINVAL;
+ 	}
+ 
+-	lvds->data_mirror = of_property_read_bool(np, "data-mirror");
+-
+ 	return 0;
+ }
+ 
 -- 
-2.17.0
+2.7.4
