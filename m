@@ -1,72 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:46750 "EHLO mail.bootlin.com"
+Received: from sauhun.de ([88.99.104.3]:45350 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751564AbeDVR3f (ORCPT
+        id S1753411AbeDSOHC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Apr 2018 13:29:35 -0400
-Date: Sun, 22 Apr 2018 19:29:21 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        kernel-janitors@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Thu, 19 Apr 2018 10:07:02 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-mtd@lists.infradead.org,
-        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
         David Woodhouse <dwmw2@infradead.org>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH 30/61] mtd: nand: onenand: simplify getting .drvdata
-Message-ID: <20180422192921.61a6b28b@bbrezillon>
-In-Reply-To: <20180419140641.27926-31-wsa+renesas@sang-engineering.com>
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org
+Subject: [PATCH 30/61] mtd: nand: onenand: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:00 +0200
+Message-Id: <20180419140641.27926-31-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-        <20180419140641.27926-31-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, 19 Apr 2018 16:06:00 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Applied to nand/next.
+Build tested only. buildbot is happy. Please apply individually.
 
-Thanks,
+ drivers/mtd/nand/onenand/samsung.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Boris
-
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/mtd/nand/onenand/samsung.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/onenand/samsung.c b/drivers/mtd/nand/onenand/samsung.c
-> index 2e9d076e445a..4cce4c0311ca 100644
-> --- a/drivers/mtd/nand/onenand/samsung.c
-> +++ b/drivers/mtd/nand/onenand/samsung.c
-> @@ -958,8 +958,7 @@ static int s3c_onenand_remove(struct platform_device *pdev)
->  
->  static int s3c_pm_ops_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct mtd_info *mtd = platform_get_drvdata(pdev);
-> +	struct mtd_info *mtd = dev_get_drvdata(dev);
->  	struct onenand_chip *this = mtd->priv;
->  
->  	this->wait(mtd, FL_PM_SUSPENDED);
-> @@ -968,8 +967,7 @@ static int s3c_pm_ops_suspend(struct device *dev)
->  
->  static  int s3c_pm_ops_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct mtd_info *mtd = platform_get_drvdata(pdev);
-> +	struct mtd_info *mtd = dev_get_drvdata(dev);
->  	struct onenand_chip *this = mtd->priv;
->  
->  	this->unlock_all(mtd);
+diff --git a/drivers/mtd/nand/onenand/samsung.c b/drivers/mtd/nand/onenand/samsung.c
+index 2e9d076e445a..4cce4c0311ca 100644
+--- a/drivers/mtd/nand/onenand/samsung.c
++++ b/drivers/mtd/nand/onenand/samsung.c
+@@ -958,8 +958,7 @@ static int s3c_onenand_remove(struct platform_device *pdev)
+ 
+ static int s3c_pm_ops_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct mtd_info *mtd = platform_get_drvdata(pdev);
++	struct mtd_info *mtd = dev_get_drvdata(dev);
+ 	struct onenand_chip *this = mtd->priv;
+ 
+ 	this->wait(mtd, FL_PM_SUSPENDED);
+@@ -968,8 +967,7 @@ static int s3c_pm_ops_suspend(struct device *dev)
+ 
+ static  int s3c_pm_ops_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct mtd_info *mtd = platform_get_drvdata(pdev);
++	struct mtd_info *mtd = dev_get_drvdata(dev);
+ 	struct onenand_chip *this = mtd->priv;
+ 
+ 	this->unlock_all(mtd);
+-- 
+2.11.0
