@@ -1,212 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43455 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755184AbeDWUp7 (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38934 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753628AbeDSQWh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 16:45:59 -0400
-Received: by mail-lf0-f66.google.com with SMTP id g12-v6so894358lfb.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Apr 2018 13:45:58 -0700 (PDT)
+        Thu, 19 Apr 2018 12:22:37 -0400
+Received: by mail-lf0-f68.google.com with SMTP id p142-v6so1019190lfd.6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Apr 2018 09:22:36 -0700 (PDT)
+Subject: Re: [PATCH 02/61] ata: simplify getting .drvdata
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-3-wsa+renesas@sang-engineering.com>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3] arm64: dts: renesas: v3msk: add DU/LVDS/HDMI support
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
-Message-ID: <d18c4314-e6ad-1558-30fb-1a32397494b6@cogentembedded.com>
-Date: Mon, 23 Apr 2018 23:45:49 +0300
+Message-ID: <c486565a-d3f3-2ce0-eca2-3aa60a6c99b2@cogentembedded.com>
+Date: Thu, 19 Apr 2018 19:22:33 +0300
 MIME-Version: 1.0
-In-Reply-To: <23a6ac28-134b-b5dd-69a7-910774c4b8c1@cogentembedded.com>
+In-Reply-To: <20180419140641.27926-3-wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the V3M Starter Kit board dependent part of the DU and LVDS device
-nodes. Also add the device nodes for Thine THC63LVD1024 LVDS decoder and
-Analog Devices ADV7511W HDMI transmitter...
+Hello!
 
-Based on the original (and large) patch by Vladimir Barinov.
+On 04/19/2018 05:05 PM, Wolfram Sang wrote:
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> We should get drvdata from struct device directly. Going via
 
----
-This patch is against the 'renesas-devel-20180423-v4.17-rc2' tag of Simon
-Horman's 'renesas.git' repo. It requires the Thine THC63LVD1024 driver in
-order to work (the same as the Eagle HDMI patch by Jacopo/Niklas).
+  Note that the name of the field in the 'struct device' is driver_data,
+not drvdata. Otherwise the patch looks good.
 
-Changes in version 3:
-- added  Thine THC63LVD1024 device node, updating the respected endpoints;
-- merged the I2C pins subnode to the main PFC device node;
-- renamed the regulators;
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[...]
 
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts |  129 +++++++++++++++++++++++++
- 1 file changed, 129 insertions(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-@@ -29,6 +29,65 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	osc5_clk: osc5-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <148500000>;
-+	};
-+
-+	vcc_d1_8v: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_D1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vcc_d3_3v: regulator-1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_D3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&vcc_d3_3v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
- };
- 
- &avb {
-@@ -46,6 +105,13 @@
- 	};
- };
- 
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&osc5_clk>;
-+	clock-names = "du.0", "dclkin.0";
-+	status = "okay";
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
-@@ -60,12 +126,75 @@
- 		function = "avb0";
- 	};
- 
-+	i2c0_pins: i2c0 {
-+		groups = "i2c0";
-+		function = "i2c0";
-+	};
-+
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
- 		function = "scif0";
- 	};
- };
- 
-+&i2c0 {
-+	pinctrl-0 = <&i2c0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	hdmi@39{
-+		compatible = "adi,adv7511w";
-+		#sound-dai-cells = <0>;
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		avdd-supply = <&vcc_d1_8v>;
-+		dvdd-supply = <&vcc_d1_8v>;
-+		pvdd-supply = <&vcc_d1_8v>;
-+		bgvdd-supply = <&vcc_d1_8v>;
-+		dvdd-3v-supply = <&vcc_d3_3v>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
-+	};
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>;
- 	pinctrl-names = "default";
+MBR, Sergei
