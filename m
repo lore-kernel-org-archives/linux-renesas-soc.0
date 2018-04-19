@@ -1,45 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42650 "EHLO mail.kernel.org"
+Received: from sauhun.de ([88.99.104.3]:45272 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750751AbeDTGHq (ORCPT
+        id S1752792AbeDSOGw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 02:07:46 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 20 Apr 2018 08:07:43 +0200
-Message-ID: <CAJKOXPcpOHF6a_XtvKD-PUw_CRsXXrb-fHSm+HOug9YX=zj68w@mail.gmail.com>
-Subject: Re: [PATCH 06/61] crypto: simplify getting .drvdata
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+        Thu, 19 Apr 2018 10:06:52 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
         Kukjin Kim <kgene@kernel.org>,
         Jamie Iles <jamie@jamieiles.com>, linux-crypto@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH 06/61] crypto: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:36 +0200
+Message-Id: <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 4:05 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Build tested only. buildbot is happy. Please apply individually.
->
->  drivers/crypto/exynos-rng.c       | 6 ++----
->  drivers/crypto/picoxcell_crypto.c | 6 ++----
->  2 files changed, 4 insertions(+), 8 deletions(-)
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Best regards,
-Krzysztof
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/crypto/exynos-rng.c       | 6 ++----
+ drivers/crypto/picoxcell_crypto.c | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
+index 86f5f459762e..2cfabb99cb6e 100644
+--- a/drivers/crypto/exynos-rng.c
++++ b/drivers/crypto/exynos-rng.c
+@@ -319,8 +319,7 @@ static int exynos_rng_remove(struct platform_device *pdev)
+ 
+ static int __maybe_unused exynos_rng_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct exynos_rng_dev *rng = platform_get_drvdata(pdev);
++	struct exynos_rng_dev *rng = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	/* If we were never seeded then after resume it will be the same */
+@@ -350,8 +349,7 @@ static int __maybe_unused exynos_rng_suspend(struct device *dev)
+ 
+ static int __maybe_unused exynos_rng_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct exynos_rng_dev *rng = platform_get_drvdata(pdev);
++	struct exynos_rng_dev *rng = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	/* Never seeded so nothing to do */
+diff --git a/drivers/crypto/picoxcell_crypto.c b/drivers/crypto/picoxcell_crypto.c
+index a4df966adbf6..321d5e2ac833 100644
+--- a/drivers/crypto/picoxcell_crypto.c
++++ b/drivers/crypto/picoxcell_crypto.c
+@@ -1169,8 +1169,7 @@ static void spacc_spacc_complete(unsigned long data)
+ #ifdef CONFIG_PM
+ static int spacc_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spacc_engine *engine = platform_get_drvdata(pdev);
++	struct spacc_engine *engine = dev_get_drvdata(dev);
+ 
+ 	/*
+ 	 * We only support standby mode. All we have to do is gate the clock to
+@@ -1184,8 +1183,7 @@ static int spacc_suspend(struct device *dev)
+ 
+ static int spacc_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spacc_engine *engine = platform_get_drvdata(pdev);
++	struct spacc_engine *engine = dev_get_drvdata(dev);
+ 
+ 	return clk_enable(engine->clk);
+ }
+-- 
+2.11.0
