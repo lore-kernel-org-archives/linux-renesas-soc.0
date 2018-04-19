@@ -1,63 +1,100 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 05/33] rcar-vin: unregister video device on driver removal
-Date: Sat, 14 Apr 2018 13:56:58 +0200
-Message-Id: <20180414115726.5075-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 19 Apr 2018 08:53:16 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, Simon <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 01/11] ARM: sunxi: smp: Move assembly code into a
+ file
+Message-ID: <20180419085316.0bd9bfad@dell-desktop.home>
+In-Reply-To: <CAGb2v64UCA825xC=wvBZ6n0K-c=vsOO15F7S6Bn=i9c=eAqYww@mail.gmail.com>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+        <20180416215032.5023-2-mylene.josserand@bootlin.com>
+        <CAGb2v67VL70yqTF7xq4T3_9zA9T3UT2AV0gGarh1mqvC17r3Mg@mail.gmail.com>
+        <20180417111737.6dous6eiuvjn33jf@flea>
+        <CAGb2v67qvk=T7u7bOjVZ7q_qsjJuEOM6iarw7by42ga=EYuYDg@mail.gmail.com>
+        <20180418084535.lqdvjgcbxtnwqwri@flea>
+        <CAGb2v64UCA825xC=wvBZ6n0K-c=vsOO15F7S6Bn=i9c=eAqYww@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the video device was registered by the complete() callback it should
-be unregistered when a device is unbound from the driver. Protect from
-printing an uninitialized video device node name by adding a check in
-rvin_v4l2_unregister() to identify that the video device is registered.
+Hello Chen-Yu,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 +++
- 2 files changed, 5 insertions(+)
+On Wed, 18 Apr 2018 18:05:03 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 2bedf20abcf3ca07..47f06acde2e698f2 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -272,6 +272,8 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 
- 	pm_runtime_disable(&pdev->dev);
- 
-+	rvin_v4l2_unregister(vin);
-+
- 	v4l2_async_notifier_unregister(&vin->notifier);
- 	v4l2_async_notifier_cleanup(&vin->notifier);
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 178aecc94962abe2..32a658214f48fa49 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -841,6 +841,9 @@ static const struct v4l2_file_operations rvin_fops = {
- 
- void rvin_v4l2_unregister(struct rvin_dev *vin)
- {
-+	if (!video_is_registered(&vin->vdev))
-+		return;
-+
- 	v4l2_info(&vin->v4l2_dev, "Removing %s\n",
- 		  video_device_node_name(&vin->vdev));
- 
+> On Wed, Apr 18, 2018 at 4:45 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Tue, Apr 17, 2018 at 07:25:15PM +0800, Chen-Yu Tsai wrote:  
+> >> On Tue, Apr 17, 2018 at 7:17 PM, Maxime Ripard
+> >> <maxime.ripard@bootlin.com> wrote:  
+> >> > On Tue, Apr 17, 2018 at 11:12:41AM +0800, Chen-Yu Tsai wrote:  
+> >> >> On Tue, Apr 17, 2018 at 5:50 AM, Mylène Josserand
+> >> >> <mylene.josserand@bootlin.com> wrote:  
+> >> >> > Move the assembly code for cluster cache enabling and resuming
+> >> >> > into an assembly file instead of having it directly in C code.
+> >> >> >
+> >> >> > Remove the CFLAGS because we are using the ARM directive "arch"
+> >> >> > instead.
+> >> >> >
+> >> >> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> >> >> > ---
+> >> >> >  arch/arm/mach-sunxi/Makefile  |  4 +--
+> >> >> >  arch/arm/mach-sunxi/headsmp.S | 80 +++++++++++++++++++++++++++++++++++++++++
+> >> >> >  arch/arm/mach-sunxi/mc_smp.c  | 82 +++----------------------------------------
+> >> >> >  3 files changed, 85 insertions(+), 81 deletions(-)
+> >> >> >  create mode 100644 arch/arm/mach-sunxi/headsmp.S  
+> >> >>
+> >> >> I'm still not convinced about this whole "move ASM to separate
+> >> >> file" thing, especially now that you aren't actually adding any
+> >> >> sunxi-specific ASM code beyond a simple function call.
+> >> >>
+> >> >> Could you drop this for now?  
+> >> >
+> >> > I'd really like to have this merged actually. There's a significant
+> >> > readibility improvement, so even if there's no particular functional
+> >> > improvement, I'd still call it a win.  
+> >>
+> >> What parts do you consider hard to read? The extra quotes? Trailing
+> >> newline? Or perhaps the __stringify bits?  
+> >
+> > All of this, plus the clobbers and operands.  
+> 
+> Ok. Lets move it then.
+
+Ok, I will not drop this patch then.
+
+> 
+> The kbuild reports indicate this still needs some work though.
+
+Yes, this is "normal" because the patch, that I depend on, is not
+applied yet (even if my cover-letter can let think that, it is not the
+case, sorry).
+
+It is applied on Broadcom ARM SoC since Tuesday: 
+https://lkml.org/lkml/2018/2/23/1263
+https://github.com/Broadcom/stblinux/commits/soc/next
+
+With this patch, it should fix the errors reported by kbuild.
+
+Best regards,
+
 -- 
-2.16.2
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
