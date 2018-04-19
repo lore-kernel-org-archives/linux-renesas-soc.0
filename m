@@ -1,84 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47496 "EHLO pokefinder.org"
+Received: from mail.bootlin.com ([62.4.15.54]:52662 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754319AbeDMOKb (ORCPT
+        id S1750934AbeDSGk7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:10:31 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Simon Horman <horms@verge.net.au>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 2/5] mmc: renesas_sdhi: use helpers to access struct scatterlist members
-Date: Fri, 13 Apr 2018 16:10:18 +0200
-Message-Id: <20180413141021.8680-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
-References: <20180413141021.8680-1-wsa+renesas@sang-engineering.com>
+        Thu, 19 Apr 2018 02:40:59 -0400
+Date: Thu, 19 Apr 2018 08:40:47 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>,
+        quentin.schulz@bootlin.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 11/11] ARM: shmobile: Convert file to use cntvoff
+Message-ID: <20180419084047.720e2976@dell-desktop.home>
+In-Reply-To: <20180418134855.j3o7u3bxurnrsuay@verge.net.au>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+        <20180416215032.5023-12-mylene.josserand@bootlin.com>
+        <CAMuHMdU9soQuNMC59Y2AQdTmXbWBz-P3EFfZ6NYGKukJVukKgg@mail.gmail.com>
+        <20180418120327.0f707abf@dell-desktop.home>
+        <20180418134855.j3o7u3bxurnrsuay@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hello Simon,
 
-Instead of directly accessing the members of struct scatterlist use the
-helpers mmc_get_dma_dir() and sg_dma_address() in
-renesas_sdhi_internal_dmac_start_dma(). Based on previous work by
-Masaharu Hayakawa.
+On Wed, 18 Apr 2018 15:48:55 +0200
+Simon Horman <horms@verge.net.au> wrote:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[rebased to mmc/next]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> On Wed, Apr 18, 2018 at 12:03:27PM +0200, Mylène Josserand wrote:
+> > Hello,
+> > 
+> > On Wed, 18 Apr 2018 11:36:27 +0200
+> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >   
+> > > Hi Mylène,
+> > > 
+> > > On Mon, Apr 16, 2018 at 11:50 PM, Mylène Josserand
+> > > <mylene.josserand@bootlin.com> wrote:  
+> > > > Now that a common function is available for CNTVOFF's
+> > > > initialization, let's convert shmobile-apmu code to use
+> > > > this function.    
+> > > 
+> > > Thanks for your patch, works fine on Renesas ALT with R-Car E2,
+> > > which suffers from lack of CNTVOFF initialization.  
+> > 
+> > Great to know that it works on this board.
+> >   
+> > >   
+> > > > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>    
+> > > 
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > 
+> > > Gr{oetje,eeting}s,
+> > > 
+> > >                         Geert
+> > >   
+> > 
+> > Thank you again for testing it :)  
+> 
+> What is the plan for merging this patch/series?
+> 
+> I'd be happy to take this patch through the renesas tree once any
+> dependencies are in place.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index c8d479375fb6..4f67195cb5f5 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -158,7 +158,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- {
- 	struct scatterlist *sg = host->sg_ptr;
- 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
--	enum dma_data_direction dir;
- 	int ret;
- 
- 	/* This DMAC cannot handle if sg_len is not 1 */
-@@ -170,16 +169,15 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
--		dir = DMA_FROM_DEVICE;
- 		if (test_bit(SDHI_INTERNAL_DMAC_ONE_RX_ONLY, &global_flags) &&
- 		    test_and_set_bit(SDHI_INTERNAL_DMAC_RX_IN_USE, &global_flags))
- 			goto force_pio;
- 	} else {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
--		dir = DMA_TO_DEVICE;
- 	}
- 
--	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len, dir);
-+	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len,
-+			 mmc_get_dma_dir(data));
- 	if (ret == 0)
- 		goto force_pio;
- 
-@@ -189,7 +187,7 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_DTRAN_MODE,
- 					    dtran_mode);
- 	renesas_sdhi_internal_dmac_dm_write(host, DM_DTRAN_ADDR,
--					    sg->dma_address);
-+					    sg_dma_address(sg));
- 
- 	return;
- 
+I will send a new series before the end of the week to correct the
+reviews I got so far and I hope that the next one will be merged
+(otherwise, I will fix what needs to be fixed, of course).
+
+Best regards,
+
 -- 
-2.11.0
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
