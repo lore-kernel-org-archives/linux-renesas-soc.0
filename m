@@ -1,48 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755238AbeDZKaT (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45270 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752640AbeDSOHN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:30:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/10] ARM: dts: alt: Drop unnecessary address properties from vin port node
-Date: Thu, 26 Apr 2018 12:29:46 +0200
-Message-Id: <20180426102951.8683-6-horms+renesas@verge.net.au>
-In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
-References: <20180426102951.8683-1-horms+renesas@verge.net.au>
+        Thu, 19 Apr 2018 10:07:13 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 54/61] uio: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:24 +0200
+Message-Id: <20180419140641.27926-55-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vin port node does not have an address and thus does not need
-address-cells or address size-properties.
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-This is flagged by dtc as follows:
- # make dtbs W=1
- arch/arm/boot/dts/r8a7794-alt.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 1ecc5b9135f3..c210412f80ec 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -380,9 +380,6 @@
- 	pinctrl-names = "default";
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/uio/uio_fsl_elbc_gpcm.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/uio/uio_fsl_elbc_gpcm.c b/drivers/uio/uio_fsl_elbc_gpcm.c
+index b46323d9dc18..50b460c540f7 100644
+--- a/drivers/uio/uio_fsl_elbc_gpcm.c
++++ b/drivers/uio/uio_fsl_elbc_gpcm.c
+@@ -73,8 +73,7 @@ DEVICE_ATTR(reg_or, S_IRUGO|S_IWUSR|S_IWGRP, reg_show, reg_store);
+ static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
+ 			char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct uio_info *info = platform_get_drvdata(pdev);
++	struct uio_info *info = dev_get_drvdata(dev);
+ 	struct fsl_elbc_gpcm *priv = info->priv;
+ 	struct fsl_lbc_bank *bank = &priv->lbc->bank[priv->bank];
  
- 	port {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
- 		vin0ep: endpoint {
- 			remote-endpoint = <&adv7180>;
- 			bus-width = <8>;
+@@ -93,8 +92,7 @@ static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
+ static ssize_t reg_store(struct device *dev, struct device_attribute *attr,
+ 			 const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct uio_info *info = platform_get_drvdata(pdev);
++	struct uio_info *info = dev_get_drvdata(dev);
+ 	struct fsl_elbc_gpcm *priv = info->priv;
+ 	struct fsl_lbc_bank *bank = &priv->lbc->bank[priv->bank];
+ 	unsigned long val;
 -- 
 2.11.0
