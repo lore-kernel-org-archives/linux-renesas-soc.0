@@ -1,43 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:21663 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752274AbeDJMOL (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45322 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753375AbeDSOG7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:14:11 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] usb: gadet: udc: renesas_usb3: add role switch for R-Car SoCs
-Date: Tue, 10 Apr 2018 21:13:52 +0900
-Message-Id: <1523362434-17808-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 19 Apr 2018 10:06:59 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Subject: [PATCH 22/61] input: mouse: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:52 +0200
+Message-Id: <20180419140641.27926-23-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch is based on the today's Linus master branch.
-This patch uses the USB role switch framework to attach/detach USB 3.0
-host driver when changes the role via the rcar usb switch driver [1]
-and "usb_role" sysfs.
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-[1] https://patchwork.kernel.org/patch/10332865/
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-In the future, I will add using the USB role switch APIs to renesas_usb3
-driver. But, for now, since the device connection framework is not good
-for device tree environment (e.g. calling the API on a driver with
-device name, but device names on device tree environment will be
-<base address register>.<device name>).
+Build tested only. buildbot is happy. Please apply individually.
 
-Yoshihiro Shimoda (2):
-  usb: gadget: udc: renesas_usb3: add property "renesas,ignore-id"
-  usb: gadget: udc: renesas_usb3: add devm_of_platform_populate()
+ drivers/input/mouse/navpoint.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
- Documentation/devicetree/bindings/usb/renesas_usb3.txt |  2 ++
- drivers/usb/gadget/udc/Kconfig                         |  1 +
- drivers/usb/gadget/udc/renesas_usb3.c                  | 16 ++++++++++++++++
- 3 files changed, 19 insertions(+)
-
+diff --git a/drivers/input/mouse/navpoint.c b/drivers/input/mouse/navpoint.c
+index d6e8f58a1de3..3d83a79e14d9 100644
+--- a/drivers/input/mouse/navpoint.c
++++ b/drivers/input/mouse/navpoint.c
+@@ -320,8 +320,7 @@ static int navpoint_remove(struct platform_device *pdev)
+ 
+ static int __maybe_unused navpoint_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct navpoint *navpoint = platform_get_drvdata(pdev);
++	struct navpoint *navpoint = dev_get_drvdata(dev);
+ 	struct input_dev *input = navpoint->input;
+ 
+ 	mutex_lock(&input->mutex);
+@@ -334,8 +333,7 @@ static int __maybe_unused navpoint_suspend(struct device *dev)
+ 
+ static int __maybe_unused navpoint_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct navpoint *navpoint = platform_get_drvdata(pdev);
++	struct navpoint *navpoint = dev_get_drvdata(dev);
+ 	struct input_dev *input = navpoint->input;
+ 
+ 	mutex_lock(&input->mutex);
 -- 
-1.9.1
+2.11.0
