@@ -1,40 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44950 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754078AbeDWKqN (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45448 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753557AbeDSOHN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:46:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: defconfig: enable R8A77990 SoC
-Date: Mon, 23 Apr 2018 12:45:56 +0200
-Message-Id: <20180423104556.17636-1-horms+renesas@verge.net.au>
+        Thu, 19 Apr 2018 10:07:13 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH 52/61] thermal: st: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:22 +0200
+Message-Id: <20180419140641.27926-53-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the Renesas R-Car E3 (R8A77990) SoC in the ARM64 defconfig.
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Based on renesas-devel-20180420-v4.17-rc1
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index ecf613761e78..4a47edcc2f91 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -53,6 +53,7 @@ CONFIG_ARCH_R8A7796=y
- CONFIG_ARCH_R8A77965=y
- CONFIG_ARCH_R8A77970=y
- CONFIG_ARCH_R8A77980=y
-+CONFIG_ARCH_R8A77990=y
- CONFIG_ARCH_R8A77995=y
- CONFIG_ARCH_STRATIX10=y
- CONFIG_ARCH_TEGRA=y
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/thermal/st/st_thermal.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
+index be637e6b01d2..b2bbdf6eb02b 100644
+--- a/drivers/thermal/st/st_thermal.c
++++ b/drivers/thermal/st/st_thermal.c
+@@ -277,8 +277,7 @@ EXPORT_SYMBOL_GPL(st_thermal_unregister);
+ #ifdef CONFIG_PM_SLEEP
+ static int st_thermal_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
++	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
+ 
+ 	return st_thermal_sensor_off(sensor);
+ }
+@@ -286,8 +285,7 @@ static int st_thermal_suspend(struct device *dev)
+ static int st_thermal_resume(struct device *dev)
+ {
+ 	int ret;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
++	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
+ 
+ 	ret = st_thermal_sensor_on(sensor);
+ 	if (ret)
 -- 
 2.11.0
