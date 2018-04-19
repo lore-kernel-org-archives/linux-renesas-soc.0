@@ -1,51 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:53446 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751647AbeDZTFQ (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45342 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753088AbeDSOHB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 15:05:16 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] ARM: dts: r8a7740: Add CEU0
-Date: Thu, 26 Apr 2018 20:24:43 +0200
-Message-Id: <1524767083-19862-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 19 Apr 2018 10:07:01 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 26/61] media: platform: exynos4-is: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:56 +0200
+Message-Id: <20180419140641.27926-27-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe CEU0 peripheral for Renesas R-Mobile A1 R8A7740 Soc.
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Reported-by: Geert Uytterhoeven <geert@glider.be>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index afd3bc5..508d934 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -67,6 +67,16 @@
- 		power-domains = <&pd_d4>;
- 	};
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/media/platform/exynos4-is/media-dev.c | 6 ++----
+ drivers/media/platform/exynos4-is/mipi-csis.c | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index 78b48a1fa26c..deb499f76412 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -1201,8 +1201,7 @@ static const struct media_device_ops fimc_md_ops = {
+ static ssize_t fimc_md_sysfs_show(struct device *dev,
+ 				  struct device_attribute *attr, char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct fimc_md *fmd = platform_get_drvdata(pdev);
++	struct fimc_md *fmd = dev_get_drvdata(dev);
  
-+	ceu0: ceu@fe910000 {
-+		reg = <0xfe910000 0x3000>;
-+		compatible = "renesas,r8a7740-ceu";
-+		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
-+		clock-names = "ceu20";
-+		power-domains = <&pd_a4r>;
-+		status = "disabled";
-+	};
-+
- 	cmt1: timer@e6138000 {
- 		compatible = "renesas,cmt-48-r8a7740", "renesas,cmt-48";
- 		reg = <0xe6138000 0x170>;
+ 	if (fmd->user_subdev_api)
+ 		return strlcpy(buf, "Sub-device API (sub-dev)\n", PAGE_SIZE);
+@@ -1214,8 +1213,7 @@ static ssize_t fimc_md_sysfs_store(struct device *dev,
+ 				   struct device_attribute *attr,
+ 				   const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct fimc_md *fmd = platform_get_drvdata(pdev);
++	struct fimc_md *fmd = dev_get_drvdata(dev);
+ 	bool subdev_api;
+ 	int i;
+ 
+diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
+index cba46a656338..b4e28a299e26 100644
+--- a/drivers/media/platform/exynos4-is/mipi-csis.c
++++ b/drivers/media/platform/exynos4-is/mipi-csis.c
+@@ -891,8 +891,7 @@ static int s5pcsis_probe(struct platform_device *pdev)
+ 
+ static int s5pcsis_pm_suspend(struct device *dev, bool runtime)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
++	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+ 	struct csis_state *state = sd_to_csis_state(sd);
+ 	int ret = 0;
+ 
+@@ -921,8 +920,7 @@ static int s5pcsis_pm_suspend(struct device *dev, bool runtime)
+ 
+ static int s5pcsis_pm_resume(struct device *dev, bool runtime)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
++	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+ 	struct csis_state *state = sd_to_csis_state(sd);
+ 	int ret = 0;
+ 
 -- 
-2.7.4
+2.11.0
