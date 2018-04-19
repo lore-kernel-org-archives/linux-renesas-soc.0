@@ -1,195 +1,279 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36203 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751417AbeDFXzh (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45198 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752647AbeDSOGy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 19:55:37 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v7 7/8] media: vsp1: Adapt entities to configure into a body
-Date: Sat, 07 Apr 2018 02:55:35 +0300
-Message-ID: <2913291.xUNrKpSUYI@avalon>
-In-Reply-To: <c192724a85e17f984e5fa7e5af871eb33bc19384.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com> <c192724a85e17f984e5fa7e5af871eb33bc19384.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 19 Apr 2018 10:06:54 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        ac100@lists.launchpad.net, acpi4asus-user@lists.sourceforge.net,
+        alsa-devel@alsa-project.org, devel@driverdev.osuosl.org,
+        dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, greybus-dev@lists.linaro.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-omap@vger.kernel.org, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-pwm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-rtc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH 00/61] tree-wide: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:30 +0200
+Message-Id: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
-Thank you for the patch.
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
-On Thursday, 8 March 2018 02:05:30 EEST Kieran Bingham wrote:
-> Currently the entities store their configurations into a display list.
-> Adapt this such that the code can be configured into a body directly,
-> allowing greater flexibility and control of the content.
-> 
-> All users of vsp1_dl_list_write() are removed in this process, thus it
-> too is removed.
-> 
-> A helper, vsp1_dl_list_get_body0() is provided to access the internal body0
-> from the display list.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> ---
-> v7
->  - Rebase
->  - s/prepare/configure_stream/
->  - s/configure/configure_frame/
-> 
->  drivers/media/platform/vsp1/vsp1_bru.c    | 22 ++++++-------
->  drivers/media/platform/vsp1/vsp1_clu.c    | 22 ++++++-------
->  drivers/media/platform/vsp1/vsp1_dl.c     | 12 ++-----
->  drivers/media/platform/vsp1/vsp1_dl.h     |  2 +-
->  drivers/media/platform/vsp1/vsp1_drm.c    | 20 +++++++----
->  drivers/media/platform/vsp1/vsp1_entity.c | 15 ++++-----
->  drivers/media/platform/vsp1/vsp1_entity.h | 11 +++---
->  drivers/media/platform/vsp1/vsp1_hgo.c    | 16 ++++-----
->  drivers/media/platform/vsp1/vsp1_hgt.c    | 18 +++++-----
->  drivers/media/platform/vsp1/vsp1_hsit.c   | 10 +++---
->  drivers/media/platform/vsp1/vsp1_lif.c    | 15 ++++-----
->  drivers/media/platform/vsp1/vsp1_lut.c    | 21 ++++++------
->  drivers/media/platform/vsp1/vsp1_pipe.c   |  4 +-
->  drivers/media/platform/vsp1/vsp1_pipe.h   |  3 +-
->  drivers/media/platform/vsp1/vsp1_rpf.c    | 39 +++++++++++-----------
->  drivers/media/platform/vsp1/vsp1_sru.c    | 14 ++++----
->  drivers/media/platform/vsp1/vsp1_uds.c    | 24 +++++++-------
->  drivers/media/platform/vsp1/vsp1_uds.h    |  2 +-
->  drivers/media/platform/vsp1/vsp1_video.c  | 11 ++++--
->  drivers/media/platform/vsp1/vsp1_wpf.c    | 42 ++++++++++++------------
->  20 files changed, 172 insertions(+), 151 deletions(-)
+I send this out as one patch per directory per subsystem. I think they should
+be applied individually. If you prefer a broken out series per subsystem, I can
+provide this as well. Just mail me.
 
-[snip]
+A branch (tested by buildbot; only with all commits squashed into one commit
+before) can be found here:
 
-> diff --git a/drivers/media/platform/vsp1/vsp1_uds.c
-> b/drivers/media/platform/vsp1/vsp1_uds.c index ce1731c2b3a9..6ddfce4bd095
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_uds.c
-> +++ b/drivers/media/platform/vsp1/vsp1_uds.c
-> @@ -31,22 +31,23 @@
->   * Device Access
->   */
-> 
-> -static inline void vsp1_uds_write(struct vsp1_uds *uds, struct vsp1_dl_list
-> *dl,
-> -				  u32 reg, u32 data)
-> +static inline void vsp1_uds_write(struct vsp1_uds *uds,
-> +				  struct vsp1_dl_body *dlb, u32 reg, u32 data)
->  {
-> -	vsp1_dl_list_write(dl, reg + uds->entity.index * VI6_UDS_OFFSET, data);
-> +	vsp1_dl_body_write(dlb, reg + uds->entity.index * VI6_UDS_OFFSET,
-> +			       data);
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
 
-This can hold on a single line.
+Open for other comments, suggestions, too, of course.
 
->  }
+Here is the cocci-script I created (after <n> iterations by manually checking
+samples):
 
-[snip]
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
 
-> diff --git a/drivers/media/platform/vsp1/vsp1_video.c
-> b/drivers/media/platform/vsp1/vsp1_video.c index 1b5a31734834..b47708660e53
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/vsp1/vsp1_video.c
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
 
-[snip]
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
 
-> @@ -802,6 +804,9 @@ static int vsp1_video_setup_pipeline(struct
-> vsp1_pipeline *pipe) if (!pipe->dl)
->  		return -ENOMEM;
-> 
-> +	/* Retrieve the default DLB from the list */
+Kind regards,
 
-s/list/list./
+   Wolfram
 
-> +	dlb = vsp1_dl_list_get_body0(pipe->dl);
-> +
->  	if (pipe->uds) {
->  		struct vsp1_uds *uds = to_uds(&pipe->uds->subdev);
-> 
-> @@ -824,8 +829,8 @@ static int vsp1_video_setup_pipeline(struct
-> vsp1_pipeline *pipe) }
-> 
->  	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-> -		vsp1_entity_route_setup(entity, pipe, pipe->dl);
-> -		vsp1_entity_configure_stream(entity, pipe, pipe->dl);
-> +		vsp1_entity_route_setup(entity, pipe, dlb);
-> +		vsp1_entity_configure_stream(entity, pipe, dlb);
->  	}
-> 
->  	return 0;
-> diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c
-> b/drivers/media/platform/vsp1/vsp1_wpf.c index 6a6cdf0fb5f1..68218625549e
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_wpf.c
-> +++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-> @@ -31,9 +31,10 @@
->   */
-> 
->  static inline void vsp1_wpf_write(struct vsp1_rwpf *wpf,
-> -				  struct vsp1_dl_list *dl, u32 reg, u32 data)
-> +				  struct vsp1_dl_body *dlb, u32 reg, u32 data)
->  {
-> -	vsp1_dl_list_write(dl, reg + wpf->entity.index * VI6_WPF_OFFSET, data);
-> +	vsp1_dl_body_write(dlb, reg + wpf->entity.index * VI6_WPF_OFFSET,
-> +			       data);
 
-This can hold on a single line.
+Wolfram Sang (61):
+  ARM: plat-samsung: simplify getting .drvdata
+  ata: simplify getting .drvdata
+  auxdisplay: simplify getting .drvdata
+  bus: simplify getting .drvdata
+  clk: samsung: simplify getting .drvdata
+  crypto: simplify getting .drvdata
+  dma: simplify getting .drvdata
+  dmaengine: dw: simplify getting .drvdata
+  dmaengine: qcom: simplify getting .drvdata
+  gpio: simplify getting .drvdata
+  gpu: drm: msm: simplify getting .drvdata
+  gpu: drm: msm: adreno: simplify getting .drvdata
+  gpu: drm: msm: disp: mdp5: simplify getting .drvdata
+  gpu: drm: msm: dsi: simplify getting .drvdata
+  gpu: drm: omapdrm: displays: simplify getting .drvdata
+  gpu: drm: vc4: simplify getting .drvdata
+  hid: simplify getting .drvdata
+  iio: common: cros_ec_sensors: simplify getting .drvdata
+  iio: common: hid-sensors: simplify getting .drvdata
+  input: keyboard: simplify getting .drvdata
+  input: misc: simplify getting .drvdata
+  input: mouse: simplify getting .drvdata
+  input: touchscreen: simplify getting .drvdata
+  iommu: simplify getting .drvdata
+  media: platform: am437x: simplify getting .drvdata
+  media: platform: exynos4-is: simplify getting .drvdata
+  media: platform: s5p-mfc: simplify getting .drvdata
+  mmc: host: simplify getting .drvdata
+  mtd: devices: simplify getting .drvdata
+  mtd: nand: onenand: simplify getting .drvdata
+  net: dsa: simplify getting .drvdata
+  net: ethernet: cadence: simplify getting .drvdata
+  net: ethernet: davicom: simplify getting .drvdata
+  net: ethernet: smsc: simplify getting .drvdata
+  net: ethernet: ti: simplify getting .drvdata
+  net: ethernet: wiznet: simplify getting .drvdata
+  perf: simplify getting .drvdata
+  pinctrl: simplify getting .drvdata
+  pinctrl: intel: simplify getting .drvdata
+  platform: x86: simplify getting .drvdata
+  power: supply: simplify getting .drvdata
+  ptp: simplify getting .drvdata
+  pwm: simplify getting .drvdata
+  rtc: simplify getting .drvdata
+  slimbus: simplify getting .drvdata
+  spi: simplify getting .drvdata
+  staging: greybus: simplify getting .drvdata
+  staging: iio: adc: simplify getting .drvdata
+  staging: nvec: simplify getting .drvdata
+  thermal: simplify getting .drvdata
+  thermal: int340x_thermal: simplify getting .drvdata
+  thermal: st: simplify getting .drvdata
+  tty: serial: simplify getting .drvdata
+  uio: simplify getting .drvdata
+  usb: mtu3: simplify getting .drvdata
+  usb: phy: simplify getting .drvdata
+  video: fbdev: simplify getting .drvdata
+  video: fbdev: omap2: omapfb: displays: simplify getting .drvdata
+  watchdog: simplify getting .drvdata
+  net: dsa: simplify getting .drvdata
+  ASoC: atmel: simplify getting .drvdata
 
->  }
-
-[snip]
-
-> @@ -292,10 +293,10 @@ static void wpf_configure_stream(struct vsp1_entity
-> *entity,
-> 
->  	wpf->outfmt = outfmt;
-> 
-> -	vsp1_dl_list_write(dl, VI6_DPR_WPF_FPORCH(wpf->entity.index),
-> -			   VI6_DPR_WPF_FPORCH_FP_WPFN);
-> +	vsp1_dl_body_write(dlb, VI6_DPR_WPF_FPORCH(wpf->entity.index),
-> +			       VI6_DPR_WPF_FPORCH_FP_WPFN);
-
-Strange indentation.
-
-> 
-> -	vsp1_dl_list_write(dl, VI6_WPF_WRBCK_CTRL, 0);
-> +	vsp1_dl_body_write(dlb, VI6_WPF_WRBCK_CTRL, 0);
-> 
->  	/*
->  	 * Sources. If the pipeline has a single input and BRU is not used,
-> @@ -319,17 +320,18 @@ static void wpf_configure_stream(struct vsp1_entity
-> *entity, ? VI6_WPF_SRCRPF_VIRACT_MST
-> 
->  			: VI6_WPF_SRCRPF_VIRACT2_MST;
-> 
-> -	vsp1_wpf_write(wpf, dl, VI6_WPF_SRCRPF, srcrpf);
-> +	vsp1_wpf_write(wpf, dlb, VI6_WPF_SRCRPF, srcrpf);
-> 
->  	/* Enable interrupts */
-> -	vsp1_dl_list_write(dl, VI6_WPF_IRQ_STA(wpf->entity.index), 0);
-> -	vsp1_dl_list_write(dl, VI6_WPF_IRQ_ENB(wpf->entity.index),
-> -			   VI6_WFP_IRQ_ENB_DFEE);
-> +	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_STA(wpf->entity.index), 0);
-> +	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_ENB(wpf->entity.index),
-> +			       VI6_WFP_IRQ_ENB_DFEE);
-
-Here too.
-
->  }
-
-[snip]
-
-With those small issues fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+ arch/arm/plat-samsung/adc.c                        |  3 +-
+ drivers/ata/pata_samsung_cf.c                      |  8 ++---
+ drivers/auxdisplay/arm-charlcd.c                   |  6 ++--
+ drivers/bus/brcmstb_gisb.c                         | 12 +++----
+ drivers/clk/samsung/clk-s3c2410-dclk.c             |  6 ++--
+ drivers/crypto/exynos-rng.c                        |  6 ++--
+ drivers/crypto/picoxcell_crypto.c                  |  6 ++--
+ drivers/dma/at_hdmac.c                             |  9 ++---
+ drivers/dma/at_xdmac.c                             |  9 ++---
+ drivers/dma/dw/platform.c                          |  6 ++--
+ drivers/dma/fsldma.c                               |  6 ++--
+ drivers/dma/idma64.c                               |  6 ++--
+ drivers/dma/qcom/hidma.c                           |  3 +-
+ drivers/dma/qcom/hidma_mgmt_sys.c                  |  6 ++--
+ drivers/dma/ste_dma40.c                            | 12 +++----
+ drivers/dma/txx9dmac.c                             |  8 ++---
+ drivers/gpio/gpio-dwapb.c                          |  6 ++--
+ drivers/gpio/gpio-lynxpoint.c                      |  3 +-
+ drivers/gpio/gpio-omap.c                           | 12 +++----
+ drivers/gpio/gpio-tegra.c                          |  6 ++--
+ drivers/gpio/gpio-zynq.c                           |  6 ++--
+ drivers/gpu/drm/msm/adreno/adreno_device.c         |  6 ++--
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c           |  6 ++--
+ drivers/gpu/drm/msm/dsi/dsi_host.c                 |  6 ++--
+ drivers/gpu/drm/msm/msm_drv.c                      |  3 +-
+ drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c    | 18 ++++------
+ drivers/gpu/drm/vc4/vc4_drv.c                      |  3 +-
+ drivers/hid/hid-sensor-custom.c                    | 12 +++----
+ .../common/cros_ec_sensors/cros_ec_sensors_core.c  |  6 ++--
+ .../iio/common/hid-sensors/hid-sensor-trigger.c    |  9 ++---
+ drivers/input/keyboard/ep93xx_keypad.c             | 10 +++---
+ drivers/input/keyboard/imx_keypad.c                | 10 +++---
+ drivers/input/keyboard/lpc32xx-keys.c              |  6 ++--
+ drivers/input/keyboard/matrix_keypad.c             | 10 +++---
+ drivers/input/keyboard/omap4-keypad.c              | 10 +++---
+ drivers/input/keyboard/pmic8xxx-keypad.c           |  6 ++--
+ drivers/input/keyboard/pxa27x_keypad.c             | 10 +++---
+ drivers/input/keyboard/samsung-keypad.c            | 12 +++----
+ drivers/input/keyboard/snvs_pwrkey.c               | 10 +++---
+ drivers/input/keyboard/spear-keyboard.c            | 10 +++---
+ drivers/input/keyboard/st-keyscan.c                |  6 ++--
+ drivers/input/keyboard/tegra-kbc.c                 | 10 +++---
+ drivers/input/misc/max77693-haptic.c               |  6 ++--
+ drivers/input/misc/max8997_haptic.c                |  3 +-
+ drivers/input/misc/palmas-pwrbutton.c              |  6 ++--
+ drivers/input/misc/regulator-haptic.c              |  6 ++--
+ drivers/input/misc/twl4030-vibra.c                 |  3 +-
+ drivers/input/misc/twl6040-vibra.c                 |  3 +-
+ drivers/input/mouse/navpoint.c                     |  6 ++--
+ drivers/input/touchscreen/imx6ul_tsc.c             |  6 ++--
+ drivers/iommu/qcom_iommu.c                         |  6 ++--
+ drivers/media/platform/am437x/am437x-vpfe.c        |  6 ++--
+ drivers/media/platform/exynos4-is/media-dev.c      |  6 ++--
+ drivers/media/platform/exynos4-is/mipi-csis.c      |  6 ++--
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           |  6 ++--
+ drivers/mmc/host/davinci_mmc.c                     |  6 ++--
+ drivers/mmc/host/sdhci-of-arasan.c                 |  6 ++--
+ drivers/mmc/host/wmt-sdmmc.c                       |  6 ++--
+ drivers/mtd/devices/docg3.c                        |  3 +-
+ drivers/mtd/nand/onenand/samsung.c                 |  6 ++--
+ drivers/net/dsa/bcm_sf2.c                          |  6 ++--
+ drivers/net/dsa/qca8k.c                            |  6 ++--
+ drivers/net/ethernet/cadence/macb_main.c           |  6 ++--
+ drivers/net/ethernet/davicom/dm9000.c              |  6 ++--
+ drivers/net/ethernet/smsc/smc91x.c                 |  3 +-
+ drivers/net/ethernet/ti/cpsw.c                     |  6 ++--
+ drivers/net/ethernet/ti/davinci_emac.c             |  6 ++--
+ drivers/net/ethernet/wiznet/w5300.c                |  6 ++--
+ drivers/perf/arm_spe_pmu.c                         |  6 ++--
+ drivers/pinctrl/intel/pinctrl-baytrail.c           |  6 ++--
+ drivers/pinctrl/intel/pinctrl-cherryview.c         |  6 ++--
+ drivers/pinctrl/intel/pinctrl-intel.c              |  6 ++--
+ drivers/pinctrl/pinctrl-amd.c                      |  6 ++--
+ drivers/pinctrl/pinctrl-at91-pio4.c                |  6 ++--
+ drivers/platform/x86/asus-laptop.c                 |  3 +-
+ drivers/platform/x86/asus-wmi.c                    |  3 +-
+ drivers/platform/x86/samsung-laptop.c              |  3 +-
+ drivers/power/supply/gpio-charger.c                |  3 +-
+ drivers/ptp/ptp_dte.c                              |  6 ++--
+ drivers/pwm/pwm-atmel-tcb.c                        |  6 ++--
+ drivers/pwm/pwm-rcar.c                             |  3 +-
+ drivers/rtc/rtc-bq4802.c                           |  6 ++--
+ drivers/rtc/rtc-ds1216.c                           |  6 ++--
+ drivers/rtc/rtc-ds1511.c                           |  9 ++---
+ drivers/rtc/rtc-ds1553.c                           | 15 +++-----
+ drivers/rtc/rtc-ds1685.c                           | 21 ++++-------
+ drivers/rtc/rtc-ds1742.c                           |  6 ++--
+ drivers/rtc/rtc-lpc32xx.c                          | 16 ++++-----
+ drivers/rtc/rtc-m48t59.c                           | 41 +++++++++-------------
+ drivers/rtc/rtc-mv.c                               |  3 +-
+ drivers/rtc/rtc-mxc.c                              | 21 ++++-------
+ drivers/rtc/rtc-pcap.c                             | 15 +++-----
+ drivers/rtc/rtc-sh.c                               | 15 +++-----
+ drivers/rtc/rtc-stk17ta8.c                         | 15 +++-----
+ drivers/rtc/rtc-test.c                             |  3 +-
+ drivers/rtc/rtc-zynqmp.c                           | 10 +++---
+ drivers/slimbus/qcom-ctrl.c                        |  6 ++--
+ drivers/spi/spi-cadence.c                          |  6 ++--
+ drivers/spi/spi-zynqmp-gqspi.c                     |  6 ++--
+ drivers/staging/greybus/arche-platform.c           |  3 +-
+ drivers/staging/iio/adc/ad7606_par.c               |  6 ++--
+ drivers/staging/nvec/nvec.c                        |  6 ++--
+ drivers/thermal/int340x_thermal/int3400_thermal.c  |  9 ++---
+ drivers/thermal/rockchip_thermal.c                 |  8 ++---
+ drivers/thermal/spear_thermal.c                    |  8 ++---
+ drivers/thermal/st/st_thermal.c                    |  6 ++--
+ drivers/thermal/zx2967_thermal.c                   |  6 ++--
+ drivers/tty/serial/imx.c                           | 18 ++++------
+ drivers/tty/serial/qcom_geni_serial.c              |  6 ++--
+ drivers/tty/serial/st-asc.c                        |  6 ++--
+ drivers/tty/serial/xilinx_uartps.c                 |  6 ++--
+ drivers/uio/uio_fsl_elbc_gpcm.c                    |  6 ++--
+ drivers/usb/mtu3/mtu3_plat.c                       |  6 ++--
+ drivers/usb/phy/phy-am335x.c                       |  6 ++--
+ drivers/video/fbdev/auo_k190x.c                    | 12 +++----
+ .../fbdev/omap2/omapfb/displays/panel-dsi-cm.c     | 18 ++++------
+ drivers/video/fbdev/sh_mobile_lcdcfb.c             |  6 ++--
+ drivers/video/fbdev/sh_mobile_meram.c              |  6 ++--
+ drivers/watchdog/cadence_wdt.c                     |  6 ++--
+ drivers/watchdog/of_xilinx_wdt.c                   |  6 ++--
+ drivers/watchdog/wdat_wdt.c                        |  6 ++--
+ net/dsa/legacy.c                                   |  6 ++--
+ sound/soc/atmel/atmel_ssc_dai.c                    |  6 ++--
+ 123 files changed, 319 insertions(+), 607 deletions(-)
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
