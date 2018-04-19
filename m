@@ -1,44 +1,53 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:32956 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbeDXJ1E (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:27:04 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: renesas: r8a7795-es1: Enable IPMMU devices
-Date: Tue, 24 Apr 2018 11:26:59 +0200
-Message-Id: <20180424092659.23657-1-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: [PATCH 25/61] media: platform: am437x: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:55 +0200
+Message-Id: <20180419140641.27926-26-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove 'status = "disabled"' to make sure all IPMMU devices are enabled
-in DT on the r8a7795 ES1.0 Soc.
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-This is a follow up for a patch by Magnus Damm for the
-the r8a7795 ES2.0 and other R-Car Gen 3 SoCs.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Based on renesas-devel-20180423-v4.17-rc2
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index f9acd125d687..0177f5e60e5a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -39,7 +39,6 @@
- 		reg = <0 0xe7730000 0 0x1000>;
- 		renesas,ipmmu-main = <&ipmmu_mm 8>;
- 		#iommu-cells = <1>;
--		status = "disabled";
- 	};
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/media/platform/am437x/am437x-vpfe.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
+index 601ae6487617..58ebc2220d0e 100644
+--- a/drivers/media/platform/am437x/am437x-vpfe.c
++++ b/drivers/media/platform/am437x/am437x-vpfe.c
+@@ -2662,8 +2662,7 @@ static void vpfe_save_context(struct vpfe_ccdc *ccdc)
  
- 	/delete-node/ usb-phy@ee0e0200;
+ static int vpfe_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct vpfe_device *vpfe = platform_get_drvdata(pdev);
++	struct vpfe_device *vpfe = dev_get_drvdata(dev);
+ 	struct vpfe_ccdc *ccdc = &vpfe->ccdc;
+ 
+ 	/* if streaming has not started we don't care */
+@@ -2720,8 +2719,7 @@ static void vpfe_restore_context(struct vpfe_ccdc *ccdc)
+ 
+ static int vpfe_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct vpfe_device *vpfe = platform_get_drvdata(pdev);
++	struct vpfe_device *vpfe = dev_get_drvdata(dev);
+ 	struct vpfe_ccdc *ccdc = &vpfe->ccdc;
+ 
+ 	/* if streaming has not started we don't care */
 -- 
 2.11.0
