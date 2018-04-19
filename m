@@ -1,51 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54168 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbeDVK2p (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45342 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753229AbeDSOGy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Apr 2018 06:28:45 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 2/3] v4l: rcar_fdp1: Enable compilation on Gen2 platforms
-Date: Sun, 22 Apr 2018 13:28:48 +0300
-Message-Id: <20180422102849.2481-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180422102849.2481-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180422102849.2481-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 19 Apr 2018 10:06:54 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH 11/61] gpu: drm: msm: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:41 +0200
+Message-Id: <20180419140641.27926-12-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 1d3897143815 ("[media] v4l: rcar_fdp1: add FCP dependency") fixed
-a compilation breakage when the optional VIDEO_RENESAS_FCP dependency is
-compiled as a module while the rcar_fdp1 driver is built in. As a side
-effect it disabled compilation on Gen2 by disallowing the valid
-combination ARCH_RENESAS && !VIDEO_RENESAS_FCP. Fix it by handling the
-dependency the same way the vsp1 driver did in commit 199946731fa4
-("[media] vsp1: clarify FCP dependency").
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Fixes: 1d3897143815 ("[media] v4l: rcar_fdp1: add FCP dependency")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/media/platform/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 621d63b2001d..81c3ab95c050 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -397,7 +397,7 @@ config VIDEO_RENESAS_FDP1
- 	tristate "Renesas Fine Display Processor"
- 	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
- 	depends on ARCH_RENESAS || COMPILE_TEST
--	depends on (!ARCH_RENESAS && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
-+	depends on (!ARM64 && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
- 	---help---
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/gpu/drm/msm/msm_drv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 30cd514d8f7c..5fdd6cf6bf42 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -203,8 +203,7 @@ static int vblank_ctrl_queue_work(struct msm_drm_private *priv,
+ 
+ static int msm_drm_uninit(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct drm_device *ddev = platform_get_drvdata(pdev);
++	struct drm_device *ddev = dev_get_drvdata(dev);
+ 	struct msm_drm_private *priv = ddev->dev_private;
+ 	struct msm_kms *kms = priv->kms;
+ 	struct msm_vblank_ctrl *vbl_ctrl = &priv->vblank_ctrl;
 -- 
-Regards,
-
-Laurent Pinchart
+2.11.0
