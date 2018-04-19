@@ -1,42 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:27689 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752768AbeDKJhq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbeDSHgq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:37:46 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, geert+renesas@glider.be,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] clk: renesas: Add support for R-Car E3
-Date: Wed, 11 Apr 2018 18:37:25 +0900
-Message-Id: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 19 Apr 2018 03:36:46 -0400
+Date: Thu, 19 Apr 2018 09:36:42 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Subject: Re: [PATCH v3 1/5] mmc: renesas_sdhi_internal_dmac: limit DMA RX for
+ old SoCs
+Message-ID: <20180419073642.bqrttr34ht4atoyt@verge.net.au>
+References: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
+ <20180418182101.5723-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418182101.5723-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch is based on the renesas-drivers-2018-04-03-v4.16 tag of
-renesas-drivers.git.
+On Wed, Apr 18, 2018 at 08:20:57PM +0200, Wolfram Sang wrote:
+> Early revisions of certain SoCs cannot do multiple DMA RX streams in
+> parallel. To avoid data corruption, only allow one DMA RX channel and
+> fall back to PIO, if needed.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
 
-Takeshi Kihara (1):
-  clk: renesas: Add r8a77990 CPG Core Clock Definitions
-
-Yoshihiro Shimoda (1):
-  clk: renesas: cpg-mssr: Add support for R-Car E3
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a77990-cpg-mssr.c            | 291 +++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- include/dt-bindings/clock/r8a77990-cpg-mssr.h      |  63 +++++
- 7 files changed, 369 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/renesas/r8a77990-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a77990-cpg-mssr.h
-
--- 
-1.9.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
