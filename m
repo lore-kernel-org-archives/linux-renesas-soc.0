@@ -1,52 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:56846 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752591AbeDDRAk (ORCPT
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38157 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752769AbeDSUN6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Apr 2018 13:00:40 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH] mmc: renesas_sdhi_internal_dmac: fall back to PIO if scatterlist doesn't match
-Date: Wed,  4 Apr 2018 19:00:35 +0200
-Message-Id: <20180404170035.5507-1-wsa@the-dreams.de>
+        Thu, 19 Apr 2018 16:13:58 -0400
+Date: Thu, 19 Apr 2018 22:13:56 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Mark Brown <broonie@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH/RFC 0/2] regulator: bd9571mwv: Add support for toggle
+ power switches
+Message-ID: <20180419201356.GC25034@amd>
+References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
+ <CAMuHMdXyWs1v_D4EUd-H75Q3cpQv6yD2V_MptjJP7FjYhu5c3g@mail.gmail.com>
+ <20180418140041.GD10061@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Clx92ZfkiYIKRjnr"
+Content-Disposition: inline
+In-Reply-To: <20180418140041.GD10061@sirena.org.uk>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-If we detect an incompatible scatterlist, we should fall back to PIO,
-too.
+--Clx92ZfkiYIKRjnr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Wed 2018-04-18 15:00:41, Mark Brown wrote:
+> On Wed, Apr 18, 2018 at 03:29:36PM +0200, Geert Uytterhoeven wrote:
+>=20
+> > Any comments/suggestions?
+>=20
+> > In case you lost the patches from the thread:
+> > https://www.spinics.net/lists/linux-renesas-soc/msg24955.html
+>=20
+> Please don't send content free pings and please allow a reasonable time
+> for review.  People get busy, go on holiday, attend conferences and so=20
+> on so unless there is some reason for urgency (like critical bug fixes)
+> please allow at least a couple of weeks for review.  If there have been
+> review comments then people may be waiting for those to be
 
-I found this while working on the RX DMA issue. I don't see a reason why we
-shouldn't fall back in this case as well. But maybe I am missing something.
+If I follow the logs right, there was one month before ping. That
+seems pretty reasonable time.
 
-Shimoda-san: what do you think?
+> Sending content free pings adds to the mail volume (if they are seen at
+> all) which is often the problem and since they can't be reviewed
 
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Yep, and sending content free complains about pings also adds to the
+main volume :-(.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 380570a26a09..561e90755a3b 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -161,11 +161,7 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 	enum dma_data_direction dir;
- 	int ret;
- 
--	/* This DMAC cannot handle if sg_len is not 1 */
--	WARN_ON(host->sg_len > 1);
--
--	/* This DMAC cannot handle if buffer is not 8-bytes alignment */
--	if (!IS_ALIGNED(sg->offset, 8))
-+	if (WARN_ON(host->sg_len > 1) || !IS_ALIGNED(sg->offset, 8))
- 		goto force_pio;
- 
- 	if (data->flags & MMC_DATA_READ) {
--- 
-2.11.0
+Anyway, last time I sent you a patch... you _had_ time to complain
+that I'm pinging too often, but you apparently did not have time to
+look at the patch. That patch would have been in time for v4.16-rc1
+IIRC.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Clx92ZfkiYIKRjnr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrY+IQACgkQMOfwapXb+vLzqgCeL7ZTf7fKhjiIrRwjNAwROwiz
+kdsAni5RaYPZ16cP2+bhWpf5juj0RsL5
+=aa5D
+-----END PGP SIGNATURE-----
+
+--Clx92ZfkiYIKRjnr--
