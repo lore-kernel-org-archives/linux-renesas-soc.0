@@ -1,42 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38934 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753628AbeDSQWh (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45222 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752100AbeDSOGu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:22:37 -0400
-Received: by mail-lf0-f68.google.com with SMTP id p142-v6so1019190lfd.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 Apr 2018 09:22:36 -0700 (PDT)
-Subject: Re: [PATCH 02/61] ata: simplify getting .drvdata
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
+        Thu, 19 Apr 2018 10:06:50 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
+Subject: [PATCH 02/61] ata: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:32 +0200
+Message-Id: <20180419140641.27926-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-3-wsa+renesas@sang-engineering.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <c486565a-d3f3-2ce0-eca2-3aa60a6c99b2@cogentembedded.com>
-Date: Thu, 19 Apr 2018 19:22:33 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180419140641.27926-3-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-On 04/19/2018 05:05 PM, Wolfram Sang wrote:
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-> We should get drvdata from struct device directly. Going via
+Build tested only. buildbot is happy. Please apply individually.
 
-  Note that the name of the field in the 'struct device' is driver_data,
-not drvdata. Otherwise the patch looks good.
+ drivers/ata/pata_samsung_cf.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
+index bb96dc35950d..00602988bee9 100644
+--- a/drivers/ata/pata_samsung_cf.c
++++ b/drivers/ata/pata_samsung_cf.c
+@@ -608,17 +608,15 @@ static int __exit pata_s3c_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int pata_s3c_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ata_host *host = platform_get_drvdata(pdev);
++	struct ata_host *host = dev_get_drvdata(dev);
+ 
+ 	return ata_host_suspend(host, PMSG_SUSPEND);
+ }
+ 
+ static int pata_s3c_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ata_host *host = platform_get_drvdata(pdev);
+-	struct s3c_ide_platdata *pdata = dev_get_platdata(&pdev->dev);
++	struct ata_host *host = dev_get_drvdata(dev);
++	struct s3c_ide_platdata *pdata = dev_get_platdata(dev);
+ 	struct s3c_ide_info *info = host->private_data;
+ 
+ 	pata_s3c_hwinit(info, pdata);
+-- 
+2.11.0
