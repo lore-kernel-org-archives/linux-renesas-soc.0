@@ -1,79 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58064 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756853AbeDZQxz (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45294 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752765AbeDSOG5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:53:55 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 04/17] drm: rcar-du: Use the correct naming for ODPM fields in DEFR6
-Date: Thu, 26 Apr 2018 17:53:33 +0100
-Message-Id: <20180426165346.494-5-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 19 Apr 2018 10:06:57 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: [PATCH 17/61] hid: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:47 +0200
+Message-Id: <20180419140641.27926-18-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The naming of the fields for the ODPM signals in the DU extensional
-function control register 6 (DEFR6) is incorrect against the data sheets
-for both R-Car Gen2 and R-Car Gen3.
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Rename the fields to match the datasheet.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_group.c |  4 ++--
- drivers/gpu/drm/rcar-du/rcar_du_regs.h  | 16 ++++++++--------
- 2 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index 2f37ea901873..eead202c95c7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -46,10 +46,10 @@ void rcar_du_group_write(struct rcar_du_group *rgrp, u32 reg, u32 data)
- 
- static void rcar_du_group_setup_pins(struct rcar_du_group *rgrp)
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/hid/hid-sensor-custom.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/hid/hid-sensor-custom.c b/drivers/hid/hid-sensor-custom.c
+index e8a114157f87..cd0c2a7c8003 100644
+--- a/drivers/hid/hid-sensor-custom.c
++++ b/drivers/hid/hid-sensor-custom.c
+@@ -157,8 +157,7 @@ static int usage_id_cmp(const void *p1, const void *p2)
+ static ssize_t enable_sensor_show(struct device *dev,
+ 				  struct device_attribute *attr, char *buf)
  {
--	u32 defr6 = DEFR6_CODE | DEFR6_ODPM12_DISP;
-+	u32 defr6 = DEFR6_CODE | DEFR6_ODPM02_DISP;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
++	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
  
- 	if (rgrp->num_crtcs > 1)
--		defr6 |= DEFR6_ODPM22_DISP;
-+		defr6 |= DEFR6_ODPM12_DISP;
- 
- 	rcar_du_group_write(rgrp, DEFR6, defr6);
+ 	return sprintf(buf, "%d\n", sensor_inst->enable);
  }
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-index d5bae99d3cfe..9dfd220ceda1 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-@@ -187,14 +187,14 @@
+@@ -237,8 +236,7 @@ static ssize_t enable_sensor_store(struct device *dev,
+ 				   struct device_attribute *attr,
+ 				   const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
++	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
+ 	int value;
+ 	int ret = -EINVAL;
  
- #define DEFR6			0x000e8
- #define DEFR6_CODE		(0x7778 << 16)
--#define DEFR6_ODPM22_DSMR	(0 << 10)
--#define DEFR6_ODPM22_DISP	(2 << 10)
--#define DEFR6_ODPM22_CDE	(3 << 10)
--#define DEFR6_ODPM22_MASK	(3 << 10)
--#define DEFR6_ODPM12_DSMR	(0 << 8)
--#define DEFR6_ODPM12_DISP	(2 << 8)
--#define DEFR6_ODPM12_CDE	(3 << 8)
--#define DEFR6_ODPM12_MASK	(3 << 8)
-+#define DEFR6_ODPM12_DSMR	(0 << 10)
-+#define DEFR6_ODPM12_DISP	(2 << 10)
-+#define DEFR6_ODPM12_CDE	(3 << 10)
-+#define DEFR6_ODPM12_MASK	(3 << 10)
-+#define DEFR6_ODPM02_DSMR	(0 << 8)
-+#define DEFR6_ODPM02_DISP	(2 << 8)
-+#define DEFR6_ODPM02_CDE	(3 << 8)
-+#define DEFR6_ODPM02_MASK	(3 << 8)
- #define DEFR6_TCNE1		(1 << 6)
- #define DEFR6_TCNE0		(1 << 4)
- #define DEFR6_MLOS1		(1 << 2)
+@@ -283,8 +281,7 @@ static const struct attribute_group enable_sensor_attr_group = {
+ static ssize_t show_value(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
++	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
+ 	struct hid_sensor_hub_attribute_info *attribute;
+ 	int index, usage, field_index;
+ 	char name[HID_CUSTOM_NAME_LENGTH];
+@@ -392,8 +389,7 @@ static ssize_t show_value(struct device *dev, struct device_attribute *attr,
+ static ssize_t store_value(struct device *dev, struct device_attribute *attr,
+ 			   const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hid_sensor_custom *sensor_inst = platform_get_drvdata(pdev);
++	struct hid_sensor_custom *sensor_inst = dev_get_drvdata(dev);
+ 	int index, field_index, usage;
+ 	char name[HID_CUSTOM_NAME_LENGTH];
+ 	int value;
 -- 
-2.17.0
+2.11.0
