@@ -1,76 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37996 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759341AbeD0WCc (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45270 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753314AbeDSOG4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 18:02:32 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 5/6] arm64: dts: r8a77965-salvator-x: Enable DU external clocks and HDMI
-Date: Fri, 27 Apr 2018 23:02:19 +0100
-Message-Id: <20180427220220.31286-6-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180427220220.31286-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427220220.31286-1-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 19 Apr 2018 10:06:56 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH 14/61] gpu: drm: msm: dsi: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:44 +0200
+Message-Id: <20180419140641.27926-15-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU1 external dot clock is provided by the fixed frequency clock
-generator X21, while the DU0 and DU3 clocks are provided by the
-programmable Versaclock5 clock generator.
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Enable the clocks, and the HDMI encoder for the M3-N Salvator-X board
-and hook it up to the HDMI connector.
-
-Based on patches from Takeshi Kihara <takeshi.kihara.df@renesas.com>
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v2:
- - Remove LVDS clocks from DU node
- - Merge DU Clocks and HDMI enablement
----
- .../boot/dts/renesas/r8a77965-salvator-x.dts  | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-index 75d890d91df9..340a3c72b65a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-@@ -19,3 +19,31 @@
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
- };
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&versaclock5 1>,
-+		 <&x21_clk>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.3",
-+		      "dclkin.0", "dclkin.1", "dclkin.3";
-+};
-+
-+&hdmi0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi0_con {
-+	remote-endpoint = <&rcar_dw_hdmi0_out>;
-+};
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/gpu/drm/msm/dsi/dsi_host.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+index 7a03a9489708..10ed20736072 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -471,8 +471,7 @@ static void dsi_bus_clk_disable(struct msm_dsi_host *msm_host)
+ 
+ int msm_dsi_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
++	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+ 	struct mipi_dsi_host *host = msm_dsi->host;
+ 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+ 
+@@ -486,8 +485,7 @@ int msm_dsi_runtime_suspend(struct device *dev)
+ 
+ int msm_dsi_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
++	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+ 	struct mipi_dsi_host *host = msm_dsi->host;
+ 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+ 
 -- 
-2.17.0
+2.11.0
