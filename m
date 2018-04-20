@@ -1,84 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38894 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752246AbeDJJis (ORCPT
+Received: from mail-by2nam03on0066.outbound.protection.outlook.com ([104.47.42.66]:39341
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753541AbeDTHY1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:38:48 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 3/5] mmc: renesas_sdhi: Fix alignment check of sg buffer
-Date: Tue, 10 Apr 2018 11:38:29 +0200
-Message-Id: <20180410093831.1759-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
-References: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
+        Fri, 20 Apr 2018 03:24:27 -0400
+Subject: Re: [PATCH 46/61] spi: simplify getting .drvdata
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <linux-renesas-soc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        <linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-47-wsa+renesas@sang-engineering.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <80e6c822-094e-fded-d8bd-28f4cb7d14ad@xilinx.com>
+Date: Fri, 20 Apr 2018 09:24:04 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180419140641.27926-47-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+On 19.4.2018 16:06, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/spi/spi-cadence.c      | 6 ++----
+>  drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
+>  2 files changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
+> index 5c9516ae4942..de394422b611 100644
+> --- a/drivers/spi/spi-cadence.c
+> +++ b/drivers/spi/spi-cadence.c
+> @@ -686,8 +686,7 @@ static int cdns_spi_remove(struct platform_device *pdev)
+>   */
+>  static int __maybe_unused cdns_spi_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct spi_master *master = platform_get_drvdata(pdev);
+> +	struct spi_master *master = dev_get_drvdata(dev);
+>  
+>  	return spi_master_suspend(master);
+>  }
+> @@ -702,8 +701,7 @@ static int __maybe_unused cdns_spi_suspend(struct device *dev)
+>   */
+>  static int __maybe_unused cdns_spi_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct spi_master *master = platform_get_drvdata(pdev);
+> +	struct spi_master *master = dev_get_drvdata(dev);
+>  	struct cdns_spi *xspi = spi_master_get_devdata(master);
+>  
+>  	cdns_spi_init_hw(xspi);
+> diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+> index 18aeaceee286..3608db4ff368 100644
+> --- a/drivers/spi/spi-zynqmp-gqspi.c
+> +++ b/drivers/spi/spi-zynqmp-gqspi.c
+> @@ -918,8 +918,7 @@ static int zynqmp_qspi_start_transfer(struct spi_master *master,
+>   */
+>  static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct spi_master *master = platform_get_drvdata(pdev);
+> +	struct spi_master *master = dev_get_drvdata(dev);
+>  
+>  	spi_master_suspend(master);
+>  
+> @@ -939,8 +938,7 @@ static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
+>   */
+>  static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct spi_master *master = platform_get_drvdata(pdev);
+> +	struct spi_master *master = dev_get_drvdata(dev);
+>  	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+>  	int ret = 0;
+>  
+> 
 
-Sometimes sg->offset is not used for buffer addresses allocated by
-dma_map_sg(), so alignment checks should be done on the allocated buffer
-addresses. Delete the alignment check for sg->offset that is done before
-dma_map_sg(). Instead, it performs the alignment check for
-sg->dma_address after dma_map_sg().
+Acked-by: Michal Simek <michal.simek@xilinx.com>
 
-Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
-[Niklas: broke this commit in two and tidied small style issue]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[rebased to mmc/next]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 6c2f3ae01de9..32b8be4c0b81 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -158,14 +158,20 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- {
- 	struct scatterlist *sg = host->sg_ptr;
- 	u32 dtran_mode = DTRAN_MODE_BUS_WID_TH | DTRAN_MODE_ADDR_MODE;
--	int ret;
- 
- 	/* This DMAC cannot handle if sg_len is not 1 */
- 	WARN_ON(host->sg_len > 1);
- 
-+	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
-+			mmc_get_dma_dir(data)))
-+		goto force_pio;
-+
- 	/* This DMAC cannot handle if buffer is not 8-bytes alignment */
--	if (!IS_ALIGNED(sg->offset, 8))
-+	if (!IS_ALIGNED(sg_dma_address(sg), 8)) {
-+		dma_unmap_sg(&host->pdev->dev, sg, host->sg_len,
-+			     mmc_get_dma_dir(data));
- 		goto force_pio;
-+	}
- 
- 	if (data->flags & MMC_DATA_READ) {
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH1;
-@@ -176,11 +182,6 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 		dtran_mode |= DTRAN_MODE_CH_NUM_CH0;
- 	}
- 
--	ret = dma_map_sg(&host->pdev->dev, sg, host->sg_len,
--			 mmc_get_dma_dir(data));
--	if (ret == 0)
--		goto force_pio;
--
- 	renesas_sdhi_internal_dmac_enable_dma(host, true);
- 
- 	/* set dma parameters */
--- 
-2.11.0
+Thanks,
+Michal
