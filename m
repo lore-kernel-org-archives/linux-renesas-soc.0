@@ -1,60 +1,71 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 12/17] arm64: dts: r8a77965: Populate the DU instance placeholder
-Date: Thu, 26 Apr 2018 17:53:41 +0100
-Message-Id: <20180426165346.494-13-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:51438 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753067AbeDTVLp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Apr 2018 17:11:45 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v7 07/11] ARM: sun9i: smp: Rename clusters's power-off
+Date: Fri, 20 Apr 2018 23:10:18 +0200
+Message-Id: <20180420211022.11759-8-mylene.josserand@bootlin.com>
+In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU entity node has been previously added but only as a placeholder.
-Populate the node with the properties to use the device.
+To prepare the support for sun8i-a83t, rename the macro that handles
+the power-off of clusters because it is different from sun9i-a80 to
+sun8i-a83t.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+The power off register for clusters are different from a80 and a83t.
+
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/arm/mach-sunxi/mc_smp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index e92e6b03333a..8a40bba53027 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1106,9 +1106,21 @@
- 		};
+diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+index 727968d6a3e5..03f021d0c73e 100644
+--- a/arch/arm/mach-sunxi/mc_smp.c
++++ b/arch/arm/mach-sunxi/mc_smp.c
+@@ -60,7 +60,7 @@
+ #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
+ #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
+ #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
+-#define PRCM_PWROFF_GATING_REG_CLUSTER	BIT(4)
++#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
+ #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
+ #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
+ #define PRCM_CPU_SOFT_ENTRY_REG		0x164
+@@ -255,7 +255,7 @@ static int sunxi_cluster_powerup(unsigned int cluster)
  
- 		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77965";
- 			reg = <0 0xfeb00000 0 0x80000>,
- 			      <0 0xfeb90000 0 0x14>;
--			/* placeholder */
-+			reg-names = "du", "lvds.0";
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>,
-+				 <&cpg CPG_MOD 721>,
-+				 <&cpg CPG_MOD 727>;
-+			clock-names = "du.0", "du.1", "du.3", "lvds.0";
-+			status = "disabled";
-+
-+			vsps = <&vspd0 0 &vspd1 0 &vspd0 1>;
+ 	/* clear cluster power gate */
+ 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+-	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER;
++	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+ 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	udelay(20);
  
- 			ports {
- 				#address-cells = <1>;
+@@ -452,7 +452,7 @@ static int sunxi_cluster_powerdown(unsigned int cluster)
+ 	/* gate cluster power */
+ 	pr_debug("%s: gate cluster power\n", __func__);
+ 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+-	reg |= PRCM_PWROFF_GATING_REG_CLUSTER;
++	reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+ 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	udelay(20);
+ 
 -- 
-2.17.0
-
+2.11.0
