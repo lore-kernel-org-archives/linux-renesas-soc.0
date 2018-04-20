@@ -1,66 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:35988 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755052AbeDTN3A (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:51387 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752628AbeDTVLS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:29:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/8] [media] v4l: rcar_fdp1: Change platform dependency to ARCH_RENESAS
-Date: Fri, 20 Apr 2018 15:28:29 +0200
-Message-Id: <1524230914-10175-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
-References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
+        Fri, 20 Apr 2018 17:11:18 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v7 02/11] ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
+Date: Fri, 20 Apr 2018 23:10:13 +0200
+Message-Id: <20180420211022.11759-3-mylene.josserand@bootlin.com>
+In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas Fine Display Processor driver is used on Renesas R-Car SoCs
-only.  Since commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce
-ARCH_RENESAS") is ARCH_RENESAS a more appropriate platform dependency
-than the legacy ARCH_SHMOBILE, hence use the former.
+As we found in sun9i-a80, CPUCFG is a collection of registers that are
+mapped to the SoC's signals from each individual processor core and
+associated peripherals.
 
-This will allow to drop ARCH_SHMOBILE on ARM and ARM64 in the near
-future.
+These registers are used for SMP bringup and CPU hotplugging.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/media/platform/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index f9235e8f8e962d2e..7ad4725f9d1f9627 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -396,7 +396,7 @@ config VIDEO_SH_VEU
- config VIDEO_RENESAS_FDP1
- 	tristate "Renesas Fine Display Processor"
- 	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
--	depends on ARCH_SHMOBILE || COMPILE_TEST
-+	depends on ARCH_RENESAS || COMPILE_TEST
- 	depends on (!ARCH_RENESAS && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 568307639be8..32992afa0b12 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -349,6 +349,11 @@
+ 			};
+ 		};
+ 
++		cpucfg@1700000 {
++			compatible = "allwinner,sun8i-a83t-cpucfg";
++			reg = <0x01700000 0x400>;
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-a83t-system-controller",
+ 				"syscon";
 -- 
-2.7.4
+2.11.0
