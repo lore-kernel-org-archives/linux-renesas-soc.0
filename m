@@ -1,33 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44876 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754600AbeDWKhc (ORCPT
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:45768 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754158AbeDTNMd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 06:37:32 -0400
-Date: Mon, 23 Apr 2018 12:37:28 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Fri, 20 Apr 2018 09:12:33 -0400
+Subject: Re: [PATCH] watchdog: renesas-wdt: Remove R-Car M2-W ES2.x from
+ blacklist
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] watchdog: renesas-wdt: Remove R-Car M2-W ES2.x from
- blacklist
-Message-ID: <20180423103727.at7nz5pjyzslrf4t@verge.net.au>
 References: <1524226849-13301-1-git-send-email-geert+renesas@glider.be>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <146cf699-13da-55a0-4a55-c57bb770c867@roeck-us.net>
+Date: Fri, 20 Apr 2018 06:12:29 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1524226849-13301-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 20, 2018 at 02:20:49PM +0200, Geert Uytterhoeven wrote:
+On 04/20/2018 05:20 AM, Geert Uytterhoeven wrote:
 > System restart triggered by watchdog time-out works fine on a Koelsch
 > board with R-Car M2-W ES2.0.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+> Thanks to Magnus and Shimoda-san for providing board access!
+> ---
+>   drivers/watchdog/renesas_wdt.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+> index 514db5cc15951125..88d81feba4e60087 100644
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -146,7 +146,7 @@ static const struct soc_device_attribute rwdt_quirks_match[] = {
+>   		.data = (void *)1,	/* needs single CPU */
+>   	}, {
+>   		.soc_id = "r8a7791",
+> -		.revision = "ES[12].*",
+> +		.revision = "ES1.*",
+>   		.data = (void *)1,	/* needs single CPU */
+>   	}, {
+>   		.soc_id = "r8a7792",
+> 
