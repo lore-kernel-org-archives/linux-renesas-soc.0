@@ -1,52 +1,108 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v3 1/3] serial: sh-sci: Document r8a77470 bindings
-Date: Tue,  3 Apr 2018 12:19:37 +0100
-Message-Id: <1522754379-64116-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1522754379-64116-1-git-send-email-biju.das@bp.renesas.com>
-References: <1522754379-64116-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:51484 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752658AbeDTVL7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Apr 2018 17:11:59 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v7 11/11] ARM: shmobile: Convert file to use cntvoff
+Date: Fri, 20 Apr 2018 23:10:22 +0200
+Message-Id: <20180420211022.11759-12-mylene.josserand@bootlin.com>
+In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-RZ/G1C (R8A77470) SoC also has the R-Car gen2 compatible SCIF and HSCIF
-ports, so document the SoC specific bindings.
+Now that a common function is available for CNTVOFF's
+initialization, let's convert shmobile-apmu code to use
+this function.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-V1->V2:
-* No Change
-V2->V3:
-* No Change
+ arch/arm/mach-shmobile/common.h          |  1 -
+ arch/arm/mach-shmobile/headsmp-apmu.S    | 22 +---------------------
+ arch/arm/mach-shmobile/setup-rcar-gen2.c |  3 ++-
+ 3 files changed, 3 insertions(+), 23 deletions(-)
 
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index cf504d0..1c90d2c 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -17,6 +17,8 @@ Required properties:
-     - "renesas,scifa-r8a7745" for R8A7745 (RZ/G1E) SCIFA compatible UART.
-     - "renesas,scifb-r8a7745" for R8A7745 (RZ/G1E) SCIFB compatible UART.
-     - "renesas,hscif-r8a7745" for R8A7745 (RZ/G1E) HSCIF compatible UART.
-+    - "renesas,scif-r8a77470" for R8A77470 (RZ/G1C) SCIF compatible UART.
-+    - "renesas,hscif-r8a77470" for R8A77470 (RZ/G1C) HSCIF compatible UART.
-     - "renesas,scif-r8a7778" for R8A7778 (R-Car M1) SCIF compatible UART.
-     - "renesas,scif-r8a7779" for R8A7779 (R-Car H1) SCIF compatible UART.
-     - "renesas,scif-r8a7790" for R8A7790 (R-Car H2) SCIF compatible UART.
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index 43c1ac696274..2109f123bdfb 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -2,7 +2,6 @@
+ #ifndef __ARCH_MACH_COMMON_H
+ #define __ARCH_MACH_COMMON_H
+ 
+-extern void shmobile_init_cntvoff(void);
+ extern void shmobile_init_delay(void);
+ extern void shmobile_boot_vector(void);
+ extern unsigned long shmobile_boot_fn;
+diff --git a/arch/arm/mach-shmobile/headsmp-apmu.S b/arch/arm/mach-shmobile/headsmp-apmu.S
+index 5672b5849401..d49ab194766a 100644
+--- a/arch/arm/mach-shmobile/headsmp-apmu.S
++++ b/arch/arm/mach-shmobile/headsmp-apmu.S
+@@ -11,29 +11,9 @@
+ #include <linux/linkage.h>
+ #include <asm/assembler.h>
+ 
+-ENTRY(shmobile_init_cntvoff)
+-	/*
+-	 * CNTVOFF has to be initialized either from non-secure Hypervisor
+-	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
+-	 * then it should be handled by the secure code
+-	 */
+-	cps	#MON_MODE
+-	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
+-	orr	r0, r1, #1
+-	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
+-	instr_sync
+-	mov	r0, #0
+-	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
+-	instr_sync
+-	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
+-	instr_sync
+-	cps	#SVC_MODE
+-	ret	lr
+-ENDPROC(shmobile_init_cntvoff)
+-
+ #ifdef CONFIG_SMP
+ ENTRY(shmobile_boot_apmu)
+-	bl	shmobile_init_cntvoff
++	bl	secure_cntvoff_init
+ 	b	secondary_startup
+ ENDPROC(shmobile_boot_apmu)
+ #endif
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 5561dbed7a33..4a881026d740 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -26,6 +26,7 @@
+ #include <linux/of_fdt.h>
+ #include <linux/of_platform.h>
+ #include <asm/mach/arch.h>
++#include <asm/secure_cntvoff.h>
+ #include "common.h"
+ #include "rcar-gen2.h"
+ 
+@@ -70,7 +71,7 @@ void __init rcar_gen2_timer_init(void)
+ 	void __iomem *base;
+ 	u32 freq;
+ 
+-	shmobile_init_cntvoff();
++	secure_cntvoff_init();
+ 
+ 	if (of_machine_is_compatible("renesas,r8a7745") ||
+ 	    of_machine_is_compatible("renesas,r8a7792") ||
 -- 
-2.7.4
-
+2.11.0
