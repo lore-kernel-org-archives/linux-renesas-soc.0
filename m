@@ -1,79 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:54509 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755635AbeDWPVw (ORCPT
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:53431 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754387AbeDTIHk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 11:21:52 -0400
-Date: Mon, 23 Apr 2018 17:21:43 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
-        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
-        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
-        mark.rutland@arm.com, pombredanne@nexb.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
- (CEU)
-Message-ID: <20180423152143.GH3999@w540>
-References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
- <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
- <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
+        Fri, 20 Apr 2018 04:07:40 -0400
+Subject: Re: [PATCH 61/61] ASoC: atmel: simplify getting .drvdata
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <linux-renesas-soc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        <alsa-devel@alsa-project.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Message-ID: <23044c16-efbf-7920-2a25-338ad46376eb@microchip.com>
+Date: Fri, 20 Apr 2018 10:06:46 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="RwxaKO075aXzzOz0"
-Content-Disposition: inline
-In-Reply-To: <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
+In-Reply-To: <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On 19/04/2018 at 16:06, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
---RwxaKO075aXzzOz0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Hi Simon,
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>   sound/soc/atmel/atmel_ssc_dai.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+> index a1e2c5682dcd..4a0275a6505d 100644
+> --- a/sound/soc/atmel/atmel_ssc_dai.c
+> +++ b/sound/soc/atmel/atmel_ssc_dai.c
+> @@ -1002,8 +1002,7 @@ static const struct snd_soc_component_driver atmel_ssc_component = {
+>   
+>   static int asoc_ssc_init(struct device *dev)
+>   {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct ssc_device *ssc = platform_get_drvdata(pdev);
+> +	struct ssc_device *ssc = dev_get_drvdata(dev);
+>   	int ret;
+>   
+>   	ret = snd_soc_register_component(dev, &atmel_ssc_component,
+> @@ -1033,8 +1032,7 @@ static int asoc_ssc_init(struct device *dev)
+>   
+>   static void asoc_ssc_exit(struct device *dev)
+>   {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct ssc_device *ssc = platform_get_drvdata(pdev);
+> +	struct ssc_device *ssc = dev_get_drvdata(dev);
+>   
+>   	if (ssc->pdata->use_dma)
+>   		atmel_pcm_dma_platform_unregister(dev);
+> 
 
-On Wed, Feb 21, 2018 at 07:29:18PM +0100, Simon Horman wrote:
-> On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
-> > Add Capture Engine Unit (CEU) node to device tree.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
->
-> This patch depends on the binding for "renesas,r7s72100-ceu".
-> Please repost or otherwise ping me once that dependency has been accepted.
 
-Bindings for the CEU interface went in v4.17-rc1.
-
-Could you please resurect this patch?
-
-Thanks
-   j
-
---RwxaKO075aXzzOz0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJa3foHAAoJEHI0Bo8WoVY88jgP/jwL5jYnW1PO6nNMb2aW2DdP
-lB6YSXYDY25gsU3XZH544VzEmi6Wj2ynXGqKNlkTuWubcvmbvXtMEUqoVuOIfnte
-TJhBphhttylk5yhxXK7MpaxDZ5zeD/mnhSsKr55ZIV6M+4g/7AZAESLif4eoJbeL
-y0v44ngRjol2VJPFSI9S4lm9jiWy5Vi+LG8OFR4mfCkRO9WbCMIuUpehucEQNnWw
-eUnpgr8DnPMCUodbTBxM3E8+3FGZq/EaD9ucNjkxZ5Sb/7wkrfgK37uX6EUuewp8
-51b5ZK8Q9vTnuRnKmhmnEVL19GXAdJga5uSPhnbV7t2rabb1awWoXHX1fLvKzjWn
-Ag5pTjdT7c0mSykQYS48PiQljRBjBT7qh5laUJ/TKH1xHB62eoBFmjkO8z8Tv4K+
-pZA6myEgHSRjI+CerdnzWOn2QmB5i8AmP7f8tbto6EfGMv7Bb3/RBY36cpjkVnhO
-hHKbvwiS1EWBoGyeyGneFdbaFYvWhlBUzdlkIMrmOuZM8mQWc0zJhokOS7XQUkik
-1WK17peJPt/XOZGiBDX2aQIuVyntyqJGFXbSLNWsMD5Hy+3whA2bFMr+OJxjMx43
-pftCR0plJYxIvhLUCIAoiQSRCsVPNtiO/tTmKmknkzx5cDU5cH4jqEkTdJSqhtdr
-IlJgVoiaZ+bwN4ko8IZm
-=9cTo
------END PGP SIGNATURE-----
-
---RwxaKO075aXzzOz0--
+-- 
+Nicolas Ferre
