@@ -1,78 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:35494 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752261AbeDRUO7 (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:51414 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753058AbeDTVLh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 16:14:59 -0400
-Received: by mail-pg0-f68.google.com with SMTP id j11so1378642pgf.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Apr 2018 13:14:59 -0700 (PDT)
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/5] arm64: dts: renesas: r8a77995: sort subnodes of the root node
-Date: Thu, 19 Apr 2018 05:14:36 +0900
-Message-Id: <1524082480-18163-2-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
-References: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
+        Fri, 20 Apr 2018 17:11:37 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v7 05/11] ARM: smp: Add initialization of CNTVOFF
+Date: Fri, 20 Apr 2018 23:10:16 +0200
+Message-Id: <20180420211022.11759-6-mylene.josserand@bootlin.com>
+In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort subnodes of the root node alphanumerically.
+The CNTVOFF register from arch timer is uninitialized.
+It should be done by the bootloader but it is currently not the case,
+even for boot CPU because this SoC is booting in secure mode.
+It leads to an random offset value meaning that each CPU will have a
+different time, which isn't working very well.
 
-This is part of an ongoing effort to provide consistent node
-order in the DT of Renesas SoCs to improve maintainability.
+Add assembly code used for boot CPU and secondary CPU cores to make
+sure that the CNTVOFF register is initialized. Because this code can
+be used by different platforms, add this assembly file in ARM's common
+folder.
 
-This should not have any run-time effect.
-
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm/common/Makefile              |  1 +
+ arch/arm/common/secure_cntvoff.S      | 31 +++++++++++++++++++++++++++++++
+ arch/arm/include/asm/secure_cntvoff.h |  8 ++++++++
+ 3 files changed, 40 insertions(+)
+ create mode 100644 arch/arm/common/secure_cntvoff.S
+ create mode 100644 arch/arm/include/asm/secure_cntvoff.h
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 82aed7e..cf47655 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -18,9 +18,11 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
--	psci {
--		compatible = "arm,psci-1.0", "arm,psci-0.2";
--		method = "smc";
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
- 	};
- 
- 	cpus {
-@@ -51,18 +53,16 @@
- 		clock-frequency = <0>;
- 	};
- 
--	/* External CAN clock - to be overridden by boards that provide it */
--	can_clk: can {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <0>;
--	};
--
- 	pmu_a53 {
- 		compatible = "arm,cortex-a53-pmu";
- 		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
- 	};
- 
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index 70b4a14ed993..1e9f7af8f70f 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -10,6 +10,7 @@ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
+ obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+ obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
++obj-$(CONFIG_SMP)		+= secure_cntvoff.o
+ obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
+ obj-$(CONFIG_MCPM)		+= mcpm_head.o mcpm_entry.o mcpm_platsmp.o vlock.o
+ CFLAGS_REMOVE_mcpm_entry.o	= -pg
+diff --git a/arch/arm/common/secure_cntvoff.S b/arch/arm/common/secure_cntvoff.S
+new file mode 100644
+index 000000000000..68a4a8344319
+--- /dev/null
++++ b/arch/arm/common/secure_cntvoff.S
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (C) 2014 Renesas Electronics Corporation
++ *
++ * Initialization of CNTVOFF register from secure mode
++ *
++ */
 +
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
++#include <linux/linkage.h>
++#include <asm/assembler.h>
++
++ENTRY(secure_cntvoff_init)
++	.arch	armv7-a
++	/*
++	 * CNTVOFF has to be initialized either from non-secure Hypervisor
++	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
++	 * then it should be handled by the secure code
++	 */
++	cps	#MON_MODE
++	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
++	orr	r0, r1, #1
++	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
++	isb
++	mov	r0, #0
++	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
++	isb
++	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
++	isb
++	cps	#SVC_MODE
++	ret	lr
++ENDPROC(secure_cntvoff_init)
+diff --git a/arch/arm/include/asm/secure_cntvoff.h b/arch/arm/include/asm/secure_cntvoff.h
+new file mode 100644
+index 000000000000..1f93aee1f630
+--- /dev/null
++++ b/arch/arm/include/asm/secure_cntvoff.h
+@@ -0,0 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASMARM_ARCH_CNTVOFF_H
++#define __ASMARM_ARCH_CNTVOFF_H
++
++extern void secure_cntvoff_init(void);
++
++#endif
 -- 
-1.9.1
+2.11.0
