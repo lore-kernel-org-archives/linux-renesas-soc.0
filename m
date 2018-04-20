@@ -1,165 +1,193 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:52467 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753078AbeDLIOY (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:41162 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754688AbeDTMGV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Apr 2018 04:14:24 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 5/5] arm64: dts: renesas: eagle: Enable HDMI output
-Date: Thu, 12 Apr 2018 10:14:01 +0200
-Message-Id: <1523520841-16455-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 20 Apr 2018 08:06:21 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>
+Subject: [PATCH v6 1/3] ARM: dts: r8a7790: Convert to new LVDS DT bindings
+Date: Fri, 20 Apr 2018 14:57:52 +0300
+Message-Id: <20180420115754.4136-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180420115754.4136-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180420115754.4136-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable HDMI output on Renesas R-Car V3M Eagle board.
+The internal LVDS encoder now has DT bindings separate from the DU. Port
+the device tree over to the new model.
 
-The HDMI ouput is enabled connecting the DU LVDS output to the
-transparent LVDS converter THC63LVD1024, and successively routing its
-RGB output to the ADV7511W HDMI encoder.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-[for THC63LVD1024: ]
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-
+Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driver")
+Fixes: 4bdb7aa7dcd0 ("ARM: dts: r8a7790: add soc node")
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v1 -> v2:
-- Squash patches [5/7], [6/7] and [7/7] of v1 in a single patch as
-  suggested by Laurent
-- Remove DU pinmuxing as it is used for DU parallel RGB output only used
-  by Eagle's display expander board not enabled by this series.
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 93 ++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
+Changes since v3:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index 3c5f598..ebfbb51 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -31,6 +31,51 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	d3p3: regulator-fixed {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		vcc-supply = <&d3p3>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
- };
+- Added power-domains and resets properties to LVDS nodes
+
+Changes since v2:
+
+- Fixed LVDS compatible string
+
+Changes since v1:
+
+- Remove the DU reg-names property
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 22 ++++++++++---
+ arch/arm/boot/dts/r8a7790.dtsi      | 65 ++++++++++++++++++++++++++++++++-----
+ 2 files changed, 74 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index ff516cda26c6..53b89e96b60c 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -379,7 +379,7 @@
+ 				port@0 {
+ 					reg = <0>;
+ 					adv7511_in: endpoint {
+-						remote-endpoint = <&du_out_lvds0>;
++						remote-endpoint = <&lvds0_out>;
+ 					};
+ 				};
  
- &avb {
-@@ -68,6 +113,38 @@
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
-+
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&thc63lvd1024_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &pfc {
-@@ -93,3 +170,19 @@
- 
+@@ -467,10 +467,8 @@
  	status = "okay";
- };
-+
-+&du {
-+	status = "okay";
+ 
+ 	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 722>,
+-		 <&cpg CPG_MOD 726>, <&cpg CPG_MOD 725>,
+ 		 <&x13_clk>, <&x2_clk>;
+-	clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1",
+-		      "dclkin.0", "dclkin.1";
++	clock-names = "du.0", "du.1", "du.2", "dclkin.0", "dclkin.1";
+ 
+ 	ports {
+ 		port@0 {
+@@ -478,12 +476,26 @@
+ 				remote-endpoint = <&adv7123_in>;
+ 			};
+ 		};
++	};
 +};
 +
 +&lvds0 {
 +	status = "okay";
 +
 +	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&thc63lvd1024_in>;
-+			};
-+		};
+ 		port@1 {
+ 			endpoint {
+ 				remote-endpoint = <&adv7511_in>;
+ 			};
+ 		};
+-		port@2 {
 +	};
 +};
++
++&lvds1 {
++	status = "okay";
++
++	ports {
++		port@1 {
+ 			lvds_connector: endpoint {
+ 			};
+ 		};
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index e4367cecad18..05a0fc23ac88 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1627,18 +1627,13 @@
+ 
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7790";
+-			reg = <0 0xfeb00000 0 0x70000>,
+-			      <0 0xfeb90000 0 0x1c>,
+-			      <0 0xfeb94000 0 0x1c>;
+-			reg-names = "du", "lvds.0", "lvds.1";
++			reg = <0 0xfeb00000 0 0x70000>;
+ 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
+-				 <&cpg CPG_MOD 722>, <&cpg CPG_MOD 726>,
+-				 <&cpg CPG_MOD 725>;
+-			clock-names = "du.0", "du.1", "du.2", "lvds.0",
+-				      "lvds.1";
++				 <&cpg CPG_MOD 722>;
++			clock-names = "du.0", "du.1", "du.2";
+ 			status = "disabled";
+ 
+ 			ports {
+@@ -1653,11 +1648,65 @@
+ 				port@1 {
+ 					reg = <1>;
+ 					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
+ 					};
+ 				};
+ 				port@2 {
+ 					reg = <2>;
+ 					du_out_lvds1: endpoint {
++						remote-endpoint = <&lvds1_in>;
++					};
++				};
++			};
++		};
++
++		lvds0: lvds@feb90000 {
++			compatible = "renesas,r8a7790-lvds";
++			reg = <0 0xfeb90000 0 0x1c>;
++			clocks = <&cpg CPG_MOD 726>;
++			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++			resets = <&cpg 726>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
++					};
++				};
++			};
++		};
++
++		lvds1: lvds@feb94000 {
++			compatible = "renesas,r8a7790-lvds";
++			reg = <0 0xfeb94000 0 0x1c>;
++			clocks = <&cpg CPG_MOD 725>;
++			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
++			resets = <&cpg 725>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds1_in: endpoint {
++						remote-endpoint = <&du_out_lvds1>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++					lvds1_out: endpoint {
+ 					};
+ 				};
+ 			};
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
