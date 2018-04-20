@@ -1,18 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:35464 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754830AbeDTNk0 (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:38482 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755042AbeDTN3A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:40:26 -0400
-MIME-Version: 1.0
-In-Reply-To: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
-References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 20 Apr 2018 15:40:24 +0200
-Message-ID: <CAK8P3a17+rD9o=dKGYPhhjmtZsc7S-1YpPpH+Zfxbx6xVo7UWg@mail.gmail.com>
-Subject: Re: [PATCH 0/8] arm: renesas: Change platform dependency to ARCH_RENESAS
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+        Fri, 20 Apr 2018 09:29:00 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -26,38 +19,67 @@ Cc: Simon Horman <horms@verge.net.au>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
+        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        dmaengine@vger.kernel.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        alsa-devel@alsa-project.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/8] arm: renesas: Change platform dependency to ARCH_RENESAS
+Date: Fri, 20 Apr 2018 15:28:26 +0200
+Message-Id: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 20, 2018 at 3:28 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->         Hi all,
->
-> Commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS")
-> started the conversion from ARCH_SHMOBILE to ARCH_RENESAS for Renesas
-> ARM SoCs.  This patch series completes the conversion, by:
->   1. Updating dependencies for drivers that weren't converted yet,
->   2. Removing the ARCH_SHMOBILE Kconfig symbols on ARM and ARM64.
->
-> The first 6 patches can be applied independently by subsystem
-> maintainers.
-> The last two patches depend on the first 6 patches, and are thus marked
-> RFC.
+	Hi all,
 
-This all looks fine to me.
+Commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS")
+started the conversion from ARCH_SHMOBILE to ARCH_RENESAS for Renesas
+ARM SoCs.  This patch series completes the conversion, by:
+  1. Updating dependencies for drivers that weren't converted yet,
+  2. Removing the ARCH_SHMOBILE Kconfig symbols on ARM and ARM64.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+The first 6 patches can be applied independently by subsystem
+maintainers.
+The last two patches depend on the first 6 patches, and are thus marked
+RFC.
 
-      Arnd
+Thanks for your comments!
+
+Geert Uytterhoeven (8):
+  arm: shmobile: Change platform dependency to ARCH_RENESAS
+  dmaengine: shdmac: Change platform check to CONFIG_ARCH_RENESAS
+  [media] v4l: rcar_fdp1: Change platform dependency to ARCH_RENESAS
+  sh_eth: Change platform check to CONFIG_ARCH_RENESAS
+  staging: emxx_udc: Change platform dependency to ARCH_RENESAS
+  ASoC: sh: Update menu title and platform dependency
+  [RFC] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig symbol
+  [RFC] arm64: renesas: Remove the ARCH_SHMOBILE Kconfig symbol
+
+ arch/arm/Kconfig                      |  2 +-
+ arch/arm/Makefile                     |  2 +-
+ arch/arm/mach-shmobile/Kconfig        |  4 ---
+ arch/arm64/Kconfig.platforms          | 42 +++++++++++++----------------
+ drivers/dma/sh/shdmac.c               | 50 +++++++++++++++--------------------
+ drivers/media/platform/Kconfig        |  2 +-
+ drivers/net/ethernet/renesas/sh_eth.h |  2 +-
+ drivers/staging/emxx_udc/Kconfig      |  2 +-
+ sound/soc/sh/Kconfig                  |  4 +--
+ 9 files changed, 47 insertions(+), 63 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
