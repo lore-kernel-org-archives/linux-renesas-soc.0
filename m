@@ -1,83 +1,191 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:32794 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752783AbeDUQXg (ORCPT
+Received: from mail-by2nam01on0042.outbound.protection.outlook.com ([104.47.34.42]:9949
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751033AbeDTHUe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 21 Apr 2018 12:23:36 -0400
-Date: Sat, 21 Apr 2018 18:23:33 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
+        Fri, 20 Apr 2018 03:20:34 -0400
+Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <linux-renesas-soc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hoan Tran <hotran@apm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Message-ID: <20180421162333.d4jtidmbxrx76k4x@ninjato>
+        Michal Simek <michal.simek@xilinx.com>,
+        <linux-gpio@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
  <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
+Date: Fri, 20 Apr 2018 09:20:00 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="etezdywpoq6lir6p"
-Content-Disposition: inline
-In-Reply-To: <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
+In-Reply-To: <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---etezdywpoq6lir6p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 19.4.2018 16:05, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/gpio/gpio-dwapb.c     |  6 ++----
+>  drivers/gpio/gpio-lynxpoint.c |  3 +--
+>  drivers/gpio/gpio-omap.c      | 12 ++++--------
+>  drivers/gpio/gpio-tegra.c     |  6 ++----
+>  drivers/gpio/gpio-zynq.c      |  6 ++----
+>  5 files changed, 11 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index 226977f78482..caaabb79e31f 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -732,8 +732,7 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
+>  #ifdef CONFIG_PM_SLEEP
+>  static int dwapb_gpio_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
+> +	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
+>  	struct gpio_chip *gc	= &gpio->ports[0].gc;
+>  	unsigned long flags;
+>  	int i;
+> @@ -777,8 +776,7 @@ static int dwapb_gpio_suspend(struct device *dev)
+>  
+>  static int dwapb_gpio_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
+> +	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
+>  	struct gpio_chip *gc	= &gpio->ports[0].gc;
+>  	unsigned long flags;
+>  	int i;
+> diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
+> index 1e557b10d73e..55fa33b7209f 100644
+> --- a/drivers/gpio/gpio-lynxpoint.c
+> +++ b/drivers/gpio/gpio-lynxpoint.c
+> @@ -408,8 +408,7 @@ static int lp_gpio_runtime_resume(struct device *dev)
+>  
+>  static int lp_gpio_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct lp_gpio *lg = platform_get_drvdata(pdev);
+> +	struct lp_gpio *lg = dev_get_drvdata(dev);
+>  	unsigned long reg;
+>  	int i;
+>  
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index 35971a341c40..b4f8a048a2a1 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -856,8 +856,7 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+>  
+>  static int omap_mpuio_suspend_noirq(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct gpio_bank	*bank = platform_get_drvdata(pdev);
+> +	struct gpio_bank	*bank = dev_get_drvdata(dev);
+>  	void __iomem		*mask_reg = bank->base +
+>  					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
+>  	unsigned long		flags;
+> @@ -871,8 +870,7 @@ static int omap_mpuio_suspend_noirq(struct device *dev)
+>  
+>  static int omap_mpuio_resume_noirq(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct gpio_bank	*bank = platform_get_drvdata(pdev);
+> +	struct gpio_bank	*bank = dev_get_drvdata(dev);
+>  	void __iomem		*mask_reg = bank->base +
+>  					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
+>  	unsigned long		flags;
+> @@ -1284,8 +1282,7 @@ static void omap_gpio_restore_context(struct gpio_bank *bank);
+>  
+>  static int omap_gpio_runtime_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct gpio_bank *bank = platform_get_drvdata(pdev);
+> +	struct gpio_bank *bank = dev_get_drvdata(dev);
+>  	u32 l1 = 0, l2 = 0;
+>  	unsigned long flags;
+>  	u32 wake_low, wake_hi;
+> @@ -1352,8 +1349,7 @@ static void omap_gpio_init_context(struct gpio_bank *p);
+>  
+>  static int omap_gpio_runtime_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct gpio_bank *bank = platform_get_drvdata(pdev);
+> +	struct gpio_bank *bank = dev_get_drvdata(dev);
+>  	u32 l = 0, gen, gen0, gen1;
+>  	unsigned long flags;
+>  	int c;
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index 94396caaca75..04c963f03b68 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -403,8 +403,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
+>  #ifdef CONFIG_PM_SLEEP
+>  static int tegra_gpio_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
+> +	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
+>  	unsigned long flags;
+>  	unsigned int b, p;
+>  
+> @@ -443,8 +442,7 @@ static int tegra_gpio_resume(struct device *dev)
+>  
+>  static int tegra_gpio_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
+> +	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
+>  	unsigned long flags;
+>  	unsigned int b, p;
+>  
+> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+> index 75ee877e5cd5..49534241bb1e 100644
+> --- a/drivers/gpio/gpio-zynq.c
+> +++ b/drivers/gpio/gpio-zynq.c
+> @@ -697,8 +697,7 @@ static int __maybe_unused zynq_gpio_resume(struct device *dev)
+>  
+>  static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
+> +	struct zynq_gpio *gpio = dev_get_drvdata(dev);
+>  
+>  	clk_disable_unprepare(gpio->clk);
+>  
+> @@ -707,8 +706,7 @@ static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
+>  
+>  static int __maybe_unused zynq_gpio_runtime_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
+> +	struct zynq_gpio *gpio = dev_get_drvdata(dev);
+>  
+>  	return clk_prepare_enable(gpio->clk);
+>  }
+> 
 
-Hi Michal,
+There are two more occurences in this gpio-zynq driver.
+zynq_gpio_resume, zynq_gpio_suspend. It wasn't detected because these
+two lines are not together. But the same change can be applied for them too.
 
-Thanks for the reviews!
-
-> There are two more occurences in this gpio-zynq driver.
-> zynq_gpio_resume, zynq_gpio_suspend. It wasn't detected because these
-> two lines are not together. But the same change can be applied for them too.
-
-Not really. The rule would have matched if there was just "something"
-inbetween. It did not match because the "something" involves the
-variable 'pdev', so we can't remove it. And just changing towards
-'dev_get_drvdata' and keeping 'pdev' was not worth the hazzle in my
-book. Especially since I think the code should probably get refactored.
-Calling platform_get_irq() in suspend/resume paths in order to get the
-irq_data looks a little expensive to me, but I haven't tested it.
-
-Best wishes,
-
-   Wolfram
-
-PS: Please quote only relevant parts of the message, it is a lot easier
-to find comments then IMO.
-
-
---etezdywpoq6lir6p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrbZYAACgkQFA3kzBSg
-Kbbs9Q/8CL8LUkArsY2fuzYW2Su/J3zMzkR+T15UyicBY0On6vsRRNvm74+Ll0Ot
-RL2LKMT8vTDuX1/rxX4hkeVNyMe+YCvl2zSTYjBMBGhP3nKbw0RZ9T6oQrPYlFlS
-G7H0ye0KDb7Kv1YsoDzoTtMAJHezvGslA3Jh4mWnkQWjPhzLJAIpCCD7sQyGmNq8
-kMofA51jGYZtoPNlvIli1focrJ73x4Ws5zj+GVhVQdEGdsBHRzPK4RGavxFMeH0u
-fJ1FcqusTkuDWCnf2XTorFHUqk4/4RSrdiV5J8vrgdiB76Q8iztNg8mBR5vG0J7t
-NEG1aO4P2yNbFBrIgh/1MgihVIRyTkEuZuEFgPcoDslK8YYMOHvN9AjEHJsD6TsX
-Fp3EQVBD/dMgIKQZc9jIzKZvO6vd7yW1i5iQDmECUbpt0PnQhr8YnDArdEfwFDF5
-DKk5PZKAiOCwi4Kqfcwpr9mhUOln96atjcIPBxC0nBh3leyGwE3qRQjWw+IDB9v3
-5Q8sle2qEa4jfkPk5FQ9kCtOh9/MbWgxZrrPFZwzQUAJgAfcDbgAacLSpNYfaCnj
-sj6Ds5eKt19K2tg/Mg5DLDflzYMwz5ET4TmKHrX+ihi7pzxerVUeEiwiXdo5/62o
-8ywmeyKdIhROHZ1b5GbhnafbZQgPm+p0RQGNp1FMePpg7Xa5Ef8=
-=uQyw
------END PGP SIGNATURE-----
-
---etezdywpoq6lir6p--
+Thanks,
+Michal
