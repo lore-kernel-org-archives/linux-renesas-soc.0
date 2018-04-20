@@ -1,95 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:64945 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753685AbeDRIK6 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42999 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754197AbeDTJSm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:10:58 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, frowand.list@gmail.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, p.zabel@pengutronix.de,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 10/11] arm64: dts: renesas: r8a7795: add OF graph for usb role switch
-Date: Wed, 18 Apr 2018 17:10:04 +0900
-Message-Id: <1524039005-30618-11-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 20 Apr 2018 05:18:42 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180420091839euoutp01b26bc80bb9298992d3ba45783f562dc6~nGk24kjuA0308703087euoutp01e
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Apr 2018 09:18:39 +0000 (GMT)
+Subject: Re: [PATCH v9 0/2] drm: Add Thine THC63LVD1024 LVDS decoder bridge
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        vladimir_zapolskiy@mentor.com, horms@verge.net.au,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <eaa9df5f-99af-69f0-dff0-c03869d7571b@samsung.com>
+Date: Fri, 20 Apr 2018 11:18:35 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1524062429-325-1-git-send-email-jacopo+renesas@jmondi.org>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+References: <CGME20180418144054epcas5p3ec7816f76cd84d4c429b47e23331ee7d@epcas5p3.samsung.com>
+        <1524062429-325-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds OF graph properties for usb role switch in r8a7795.
+On 18.04.2018 16:40, Jacopo Mondi wrote:
+> As I have another series which is based on this one + Eagle board display
+> support, I'm re-sending this one to fix the small issue I pointed out in my
+> reply to v8.
+>
+> Simon: no changes to Eagle DTS series, so the last one sent is still the good
+> one.
+>
+> DRM: I have collected several reviewed-by tags both on driver and bindings.
+> Can I send out incremental patches on this series and consider this one to
+> be ready to be collected?
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 44 ++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Queued to drm-misc-next.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 1d5e3ac..61c1fa0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1746,6 +1746,12 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 328>;
- 			status = "disabled";
-+
-+			port {
-+				usb3_host_ep0: endpoint {
-+					remote-endpoint = <&usb3_host_ep0>;
-+				};
-+			};
- 		};
- 
- 		usb3_peri0: usb@ee020000 {
-@@ -1757,6 +1763,44 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 328>;
- 			status = "disabled";
-+
-+			port {
-+				usb3_peri_ep0: endpoint {
-+					remote-endpoint = <&usb3_peri_sw0>;
-+				};
-+			};
-+
-+			usb3_role_sw0: usb3-role-sw {
-+				compatible = "renesas,rcar-usb3-role-switch";
-+				renesas,host = <&xhci0>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						usb3_host_sw0: endpoint {
-+							remote-endpoint = <&usb3_host_ep0>;
-+						};
-+					};
-+
-+					port@2 {
-+						reg = <2>;
-+						usb3_peri_sw0: endpoint {
-+							remote-endpoint = <&usb3_peri_ep0>;
-+							device-connection-id = "usb-role-switch";
-+						};
-+					};
-+
-+					port@3 {
-+						reg = <3>;
-+						usb3_role_sw0_ep: endpoint {
-+						};
-+					};
-+				};
-+			};
- 		};
- 
- 		usb_dmac0: dma-controller@e65a0000 {
--- 
-1.9.1
+Regards
+Andrzej
+
+
+>
+> Thanks
+>    j
+>
+> v8 -> v9:
+> - Put 'remote' OF node after usage not just in error path during device
+>   tree parsing routine
+> - Add Rob's Reviewed-by tag to the device tree bindings documentation
+>
+> v7 -> b8:
+> - Make 'vcc' supply mandatory
+> - Use 'oe' property name to describe "OE" pin
+> - Minor fixes as suggested by Laurent on bindings and driver
+>
+> v6 -> v7:
+> - Use semi-standard names for powerdown and output enable GPIOs as suggested
+>   by Rob and Vladimir
+> - Use 'regulator_get()' not the optional version, and list only 'vcc' as
+>   requested supply
+> - Addressed Laurent's review comments and removed Eagle display enablement patch
+>   to be sent separately
+>
+> v5 -> v6:
+> - Drop check for CONFIG_OF as it is a Kconfig dependency
+> - Add Niklas Reviewed-by tags
+> - List [3/3] depenencies below commit message to ease integration
+>
+> v4 -> v5:
+> - Fix punctuation in bindings documentation
+> - Add small statement to bindings document to clarify the chip has no
+>   control bus
+> - Print regulator name in enable/disable routines error path
+> - Add Andrzej Reviewed-by tag
+>
+> v3 -> v4:
+> - Rename permutations of "pdwn" to just "pdwn" everywhere in the series
+> - Improve power enable/disable routines as suggested by Andrzej and Sergei
+> - Change "pdwn" gpio initialization to use the logical output level
+> - Change Kconfig description
+>
+> v2 -> v3:
+> - Drop support for "lvds-decoder" and make the driver THC63LVD1024 specific
+> -- Rework bindings to describe multiple input/output ports
+> -- Rename driver and remove "lvds-decoder" references
+> -- Rework Eagle DTS to use new bindings
+>
+> v1 -> v2:
+> - Drop support for THC63LVD1024
+>
+> Jacopo Mondi (2):
+>   dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+>   drm: bridge: Add thc63lvd1024 LVDS decoder driver
+>
+>  .../bindings/display/bridge/thine,thc63lvd1024.txt |  60 ++++++
+>  drivers/gpu/drm/bridge/Kconfig                     |   6 +
+>  drivers/gpu/drm/bridge/Makefile                    |   1 +
+>  drivers/gpu/drm/bridge/thc63lvd1024.c              | 205 +++++++++++++++++++++
+>  4 files changed, 272 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+>  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+>
+> --
+> 2.7.4
+>
+>
+>
+>
