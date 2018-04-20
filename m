@@ -1,57 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54218 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750916AbeDVKfY (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Apr 2018 06:35:24 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 2/4] ARM: dts: renesas: r8a7791: Add FDP1 instances
-Date: Sun, 22 Apr 2018 13:35:26 +0300
-Message-Id: <20180422103528.3402-3-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180422103528.3402-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20180422103528.3402-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 20 Apr 2018 11:48:55 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: magnus.damm@gmail.com, geert@linux-m68k.org,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v3 5/5] arm64: dts: renesas: eagle: Enable HDMI output
+Message-ID: <20180420094855.ikfsjjn4m7vp54fp@verge.net.au>
+References: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1523520841-16455-6-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523520841-16455-6-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The r8a7791 has two FDP1 instances.
+On Thu, Apr 12, 2018 at 10:14:01AM +0200, Jacopo Mondi wrote:
+> Enable HDMI output on Renesas R-Car V3M Eagle board.
+> 
+> The HDMI ouput is enabled connecting the DU LVDS output to the
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm/boot/dts/r8a7791.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+s/ouput/output/
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index f11dab71b03a..55b5a56da35e 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1621,6 +1621,24 @@
- 			resets = <&cpg 127>;
- 		};
- 
-+		fdp1@fe940000 {
-+			compatible = "renesas,fdp1";
-+			reg = <0 0xfe940000 0 0x2400>;
-+			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 119>;
-+			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-+			resets = <&cpg 119>;
-+		};
-+
-+		fdp1@fe944000 {
-+			compatible = "renesas,fdp1";
-+			reg = <0 0xfe944000 0 0x2400>;
-+			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 118>;
-+			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-+			resets = <&cpg 118>;
-+		};
-+
- 		jpu: jpeg-codec@fe980000 {
- 			compatible = "renesas,jpu-r8a7791",
- 				     "renesas,rcar-gen2-jpu";
--- 
-Regards,
+> transparent LVDS converter THC63LVD1024, and successively routing its
+> RGB output to the ADV7511W HDMI encoder.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> [for THC63LVD1024: ]
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Laurent Pinchart
+Thanks, applied.
