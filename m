@@ -1,82 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45448 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753475AbeDSOHF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38550 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754149AbeDTJdR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:05 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH 35/61] net: ethernet: ti: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:05 +0200
-Message-Id: <20180419140641.27926-36-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Fri, 20 Apr 2018 05:33:17 -0400
+Date: Fri, 20 Apr 2018 11:33:13 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: magnus.damm@gmail.com, geert@linux-m68k.org,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: Re: [PATCH v3 3/5] arm64: dts: renesas: r8a77970: add DU support
+Message-ID: <20180420093313.fm4cbgki6iywfm4q@verge.net.au>
+References: <1523520841-16455-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1523520841-16455-4-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523520841-16455-4-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Thu, Apr 12, 2018 at 10:13:59AM +0200, Jacopo Mondi wrote:
+> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Define the generic R8A77970 part of the DU device node.
+> 
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/net/ethernet/ti/cpsw.c         | 6 ++----
- drivers/net/ethernet/ti/davinci_emac.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 30371274409d..ef0c88e71a71 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -3300,8 +3300,7 @@ static int cpsw_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int cpsw_suspend(struct device *dev)
- {
--	struct platform_device	*pdev = to_platform_device(dev);
--	struct net_device	*ndev = platform_get_drvdata(pdev);
-+	struct net_device	*ndev = dev_get_drvdata(dev);
- 	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
- 
- 	if (cpsw->data.dual_emac) {
-@@ -3324,8 +3323,7 @@ static int cpsw_suspend(struct device *dev)
- 
- static int cpsw_resume(struct device *dev)
- {
--	struct platform_device	*pdev = to_platform_device(dev);
--	struct net_device	*ndev = platform_get_drvdata(pdev);
-+	struct net_device	*ndev = dev_get_drvdata(dev);
- 	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
- 
- 	/* Select default pin state */
-diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-index abceea802ea1..ef223613114d 100644
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -1985,8 +1985,7 @@ static int davinci_emac_remove(struct platform_device *pdev)
- 
- static int davinci_emac_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
- 
- 	if (netif_running(ndev))
- 		emac_dev_stop(ndev);
-@@ -1996,8 +1995,7 @@ static int davinci_emac_suspend(struct device *dev)
- 
- static int davinci_emac_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct net_device *ndev = dev_get_drvdata(dev);
- 
- 	if (netif_running(ndev))
- 		emac_dev_open(ndev);
--- 
-2.11.0
+Thanks, applied.
