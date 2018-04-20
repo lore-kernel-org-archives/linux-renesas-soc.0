@@ -1,115 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50820 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753710AbeDTRGH (ORCPT
+Received: from www.zeus03.de ([194.117.254.33]:48020 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753508AbeDTHOY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:06:07 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Michal Simek <michal.simek@xilinx.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: simplify getting .drvdata" to the spi tree
-In-Reply-To: <20180419140641.27926-47-wsa+renesas@sang-engineering.com>
-Message-Id: <E1f9ZTm-0004eH-Ps@debutante>
-Date: Fri, 20 Apr 2018 18:05:46 +0100
+        Fri, 20 Apr 2018 03:14:24 -0400
+Date: Fri, 20 Apr 2018 09:14:21 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Darren Hart <dvhart@infradead.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 40/61] platform: x86: simplify getting .drvdata
+Message-ID: <20180420071421.ex6gcegotzjdswbg@katana>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-41-wsa+renesas@sang-engineering.com>
+ <20180419235651.GC11546@fury>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3khbrrzjm7np76wh"
+Content-Disposition: inline
+In-Reply-To: <20180419235651.GC11546@fury>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
 
-   spi: simplify getting .drvdata
+--3khbrrzjm7np76wh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+> (I'm not sure what you mean by "Please apply individually")
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Right, that is not very precise. "Individually" as "per subsystem
+individually". I.e. I don't want to collect tags and push it upstream as
+one huge pull-request.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Thanks!
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+--3khbrrzjm7np76wh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Mark
+-----BEGIN PGP SIGNATURE-----
 
->From e1f16b0493a01820a137ebbdd96bf695e427fabe Mon Sep 17 00:00:00 2001
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 16:06:16 +0200
-Subject: [PATCH] spi: simplify getting .drvdata
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrZk0kACgkQFA3kzBSg
+KbZT3w//afpRm3RefDNQ2Ysr5+0YF5JxKxGDkxsQbgVVAlWAjt4qsFsM1Y32PcWb
+/uT7lJyE4mNSJie4OFT5X5Hcf9K2wWCO8cOtyDqysNdL7/+eJ/6vvjwjqIwYG6Jh
+eGiq1H7hXI8m3f0xudQFjdKFdMkvQYYWs3VQ2U9wwlOP1AzJqTna7QzNk0hCN7jL
+jyenIY2MsYK059MyE/qgDM0l913/O+3P4mOa5cA4OYGgX84MBc3i4DRrnhnEhLV0
+StzkjAbHQKvVHNip802HC4ML6lDUlrlj3XUutlX78aSKZPs8V6NE3H7GvumcBV7T
+WkH2Jv84jWt+IcF1cwPk5+T6c3rRXvRuRY01LpbsDenbxXPG4dQ0nSqQDvtdyo/e
+6xT2Dk1fQ1PVIOPRyMqUJotg6Fy1+JklLVh8PMXpcEQuLbuy9wBmLFsC88U3AyMi
+tUHbKGfArcITKQmpVacecTI44jff4Eyp77hWOjgujNC92Cj/PT0LPON/vHh6yYyi
+ZcY/Bg6jAxZeHcroJmeVlph0vp6VU3GG7Cx6YJhcGYUWpBBo6HnKQCjOzlaIuvN5
+NMWd5B0ZrjUJ/Awi8AOb0qzI7iyDJtZQ8O60wxPuwfG+4SZXL2KndwsdlZecrxGN
+T5dEJRmA0oq1gSmtpMX3YznXDLwIxz7w3AYiIn2bXFHH/xWeOho=
+=fyhZ
+-----END PGP SIGNATURE-----
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-cadence.c      | 6 ++----
- drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
-index 5c9516ae4942..de394422b611 100644
---- a/drivers/spi/spi-cadence.c
-+++ b/drivers/spi/spi-cadence.c
-@@ -686,8 +686,7 @@ static int cdns_spi_remove(struct platform_device *pdev)
-  */
- static int __maybe_unused cdns_spi_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 
- 	return spi_master_suspend(master);
- }
-@@ -702,8 +701,7 @@ static int __maybe_unused cdns_spi_suspend(struct device *dev)
-  */
- static int __maybe_unused cdns_spi_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct cdns_spi *xspi = spi_master_get_devdata(master);
- 
- 	cdns_spi_init_hw(xspi);
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index 26d1ac3bf496..cc4d31033494 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -906,8 +906,7 @@ static int zynqmp_qspi_start_transfer(struct spi_master *master,
-  */
- static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 
- 	spi_master_suspend(master);
- 
-@@ -927,8 +926,7 @@ static int __maybe_unused zynqmp_qspi_suspend(struct device *dev)
-  */
- static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
- 	int ret = 0;
- 
--- 
-2.17.0
+--3khbrrzjm7np76wh--
