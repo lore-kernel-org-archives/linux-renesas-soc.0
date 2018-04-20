@@ -1,84 +1,61 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 13/17] arm64: dts: r8a77965: Add HDMI encoder instance
-Date: Thu, 26 Apr 2018 17:53:42 +0100
-Message-Id: <20180426165346.494-14-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-by2nam03on0046.outbound.protection.outlook.com ([104.47.42.46]:7638
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753823AbeDTHYs (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 20 Apr 2018 03:24:48 -0400
+Subject: Re: [PATCH 44/61] rtc: simplify getting .drvdata
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <linux-renesas-soc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Joshua Kinard <kumba@gentoo.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        <linux-rtc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-45-wsa+renesas@sang-engineering.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <6c43fc08-4f73-601f-228c-9a4202d5b5c5@xilinx.com>
+Date: Fri, 20 Apr 2018 09:24:26 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180419140641.27926-45-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the HDMI encoder to the R8A77965 DT in disabled state.
+On 19.4.2018 16:06, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/rtc/rtc-bq4802.c   |  6 ++----
+>  drivers/rtc/rtc-ds1216.c   |  6 ++----
+>  drivers/rtc/rtc-ds1511.c   |  9 +++------
+>  drivers/rtc/rtc-ds1553.c   | 15 +++++----------
+>  drivers/rtc/rtc-ds1685.c   | 21 +++++++--------------
+>  drivers/rtc/rtc-ds1742.c   |  6 ++----
+>  drivers/rtc/rtc-lpc32xx.c  | 16 ++++++----------
+>  drivers/rtc/rtc-m48t59.c   | 41 ++++++++++++++++-------------------------
+>  drivers/rtc/rtc-mv.c       |  3 +--
+>  drivers/rtc/rtc-mxc.c      | 21 +++++++--------------
+>  drivers/rtc/rtc-pcap.c     | 15 +++++----------
+>  drivers/rtc/rtc-sh.c       | 15 +++++----------
+>  drivers/rtc/rtc-stk17ta8.c | 15 +++++----------
+>  drivers/rtc/rtc-test.c     |  3 +--
+>  drivers/rtc/rtc-zynqmp.c   | 10 ++++------
 
-Based on a similar patch of the R8A7796 device tree
-by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
+Acked-by: Michal Simek <michal.simek@xilinx.com> (for zynqmp)
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Kieran: Rebase to top of tree]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 28 +++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 8a40bba53027..972be1460a32 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1105,6 +1105,33 @@
- 			};
- 		};
- 
-+		hdmi0: hdmi@fead0000 {
-+			compatible = "renesas,r8a77965-hdmi",
-+				     "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfead0000 0 0x10000>;
-+			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 729>,
-+				 <&cpg CPG_CORE R8A77965_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 729>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a77965";
- 			reg = <0 0xfeb00000 0 0x80000>,
-@@ -1134,6 +1161,7 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_hdmi0: endpoint {
-+						remote-endpoint = <&dw_hdmi0_in>;
- 					};
- 				};
- 				port@2 {
--- 
-2.17.0
-
+Thanks,
+Michal
