@@ -1,67 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:45974 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751270AbeDOAel (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:46188 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754830AbeDTNPp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 20:34:41 -0400
-Date: Sat, 14 Apr 2018 20:34:20 -0400
-From: Rich Felker <dalias@libc.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        Fri, 20 Apr 2018 09:15:45 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-sh@vger.kernel.org
-Subject: Re: [PATCH 3/5] tty: serial: sh-sci: Hide earlycon config question
-Message-ID: <20180415003420.GU3094@brightrain.aerifal.cx>
-References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
- <1512047522-16312-4-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1512047522-16312-4-git-send-email-geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] ARM: multi_v7_defconfig: Disable CONFIG_FB_SH_MOBILE_MERAM
+Date: Fri, 20 Apr 2018 15:15:41 +0200
+Message-Id: <1524230141-7612-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1524230141-7612-1-git-send-email-geert+renesas@glider.be>
+References: <1524230141-7612-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 30, 2017 at 02:12:00PM +0100, Geert Uytterhoeven wrote:
-> Renesas H8/300 and ARM platforms use DT and support earlycon, so most
-> users want earlycon support to be enabled.
-> 
-> On SuperH platforms, earlycon is not yet supported.
-> 
-> Hence follow the above rationale to configure the default, unless
-> CONFIG_EXPERT is enabled.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/tty/serial/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-> index 0c75562d620feb82..952a2c6a9da08fdd 100644
-> --- a/drivers/tty/serial/Kconfig
-> +++ b/drivers/tty/serial/Kconfig
-> @@ -774,10 +774,11 @@ config SERIAL_SH_SCI_CONSOLE
->  	default y
->  
->  config SERIAL_SH_SCI_EARLYCON
-> -	bool "Support for early console on SuperH SCI(F)"
-> +	bool "Support for early console on SuperH SCI(F)" if EXPERT
->  	depends on SERIAL_SH_SCI=y
->  	select SERIAL_CORE_CONSOLE
->  	select SERIAL_EARLYCON
-> +	default ARCH_RENESAS || H8300
->  
->  config SERIAL_SH_SCI_DMA
->  	bool "DMA support"
-> -- 
+The last Renesas ARM platform using this driver was removed in commit
+a521422ea4ae6128 ("ARM: shmobile: mackerel: Remove Legacy C board
+code").
 
-Can you clarify what the claim that SuperH does not support earlycon
-is based on? My understanding is that users were successfully using
-this option on Renesas SH systems, and I'm using it on J2 with the
-uartlite earlycon support which I added in 7cdcc29e49. I think if you
-want to omit the question it should always default to enabled.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/configs/multi_v7_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-Rich
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index be1f043f4deea94b..aca866286498c09d 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -653,7 +653,6 @@ CONFIG_FB_EFI=y
+ CONFIG_FB_WM8505=y
+ CONFIG_FB_SH_MOBILE_LCDC=y
+ CONFIG_FB_SIMPLE=y
+-CONFIG_FB_SH_MOBILE_MERAM=y
+ CONFIG_BACKLIGHT_LCD_SUPPORT=y
+ CONFIG_BACKLIGHT_CLASS_DEVICE=y
+ CONFIG_LCD_PLATFORM=m
+-- 
+2.7.4
