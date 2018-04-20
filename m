@@ -1,44 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44436 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754549AbeDTL2z (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:28:55 -0400
-Received: by mail-lf0-f65.google.com with SMTP id g203-v6so4645490lfg.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Apr 2018 04:28:54 -0700 (PDT)
-Subject: Re: [PATCH] arm64: dts: renesas: v3msk: add EtherAVB pins
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <c42c9e9a-8fe8-5cad-0eeb-0c1fbd09f83c@cogentembedded.com>
-Message-ID: <ed7ddd72-4e52-0b2b-d2ef-1d407f638745@cogentembedded.com>
-Date: Fri, 20 Apr 2018 14:28:51 +0300
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v9 2/2] drm: bridge: Add thc63lvd1024 LVDS decoder driver
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, <architt@codeaurora.org>,
+        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
+        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
+        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
+        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+References: <1524062429-325-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524062429-325-3-git-send-email-jacopo+renesas@jmondi.org>
+CC: <dri-devel@lists.freedesktop.org>,
+        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <cf1263ff-313e-109e-13f0-32cf15d27b41@mentor.com>
+Date: Fri, 20 Apr 2018 09:20:05 +0300
 MIME-Version: 1.0
-In-Reply-To: <c42c9e9a-8fe8-5cad-0eeb-0c1fbd09f83c@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1524062429-325-3-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 03/14/2018 11:30 PM, Sergei Shtylyov wrote:
+Hi Jacopo,
 
-> Add the (previously omitted) EtherAVB pin data to the V3M Starter Kit
-> board's device tree.
+On 04/18/2018 05:40 PM, Jacopo Mondi wrote:
+> Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
+> output converter.
 > 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > ---
-> The patch is against the 'renesas-devel-20180314-v4.16-rc5' tag of Simon's
-> 'renesas.git repo. It depends on the R8A77970 PFC driver patch adding EtherAVB
-> pin groups (posted yesterday) in order to work properly...
+>  drivers/gpu/drm/bridge/Kconfig        |   6 +
+>  drivers/gpu/drm/bridge/Makefile       |   1 +
+>  drivers/gpu/drm/bridge/thc63lvd1024.c | 206 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 213 insertions(+)
+>  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
 
-   The dependency has been now met, please merge this patch.
+Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-MBR, Sergei
+--
+With best wishes,
+Vladimir
