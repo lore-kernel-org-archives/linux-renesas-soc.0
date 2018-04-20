@@ -1,47 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39758 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750868AbeDXPj4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:39:56 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] drm: rcar-du: of: Include header to define prototypes
-Date: Tue, 24 Apr 2018 16:39:42 +0100
-Message-Id: <20180424153942.2526-1-kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v7 03/11] ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
+Date: Fri, 20 Apr 2018 23:10:14 +0200
+Message-Id: <20180420211022.11759-4-mylene.josserand@bootlin.com>
+In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The symbol 'rcar_du_of_init' is defined by the rcar_du_of module header,
-but it is not included by the C implementation.
+The R_CPUCFG is a collection of registers needed for SMP bringup
+on clusters and cluster's reset.
+For the moment, documentation about this register is found in
+Allwinner's code only.
 
-Include the header to correctly define the function prototypes.
-
-Fixes the following warning:
-
-linux/drivers/gpu/drm/rcar-du/rcar_du_of.c:319:13:
-   warning: symbol 'rcar_du_of_init' was not declared. Should it be static?
-    CC      drivers/gpu/drm/rcar-du/rcar_du_of.o
-
-Fixes: 81c0e3dd8292 ("drm: rcar-du: Fix legacy DT to create LVDS encoder nodes")
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_of.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.c b/drivers/gpu/drm/rcar-du/rcar_du_of.c
-index 68a0b82cb17e..afef69669bb4 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_of.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_of.c
-@@ -18,6 +18,7 @@
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 32992afa0b12..7974eaba57a7 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -933,6 +933,11 @@
+ 			#reset-cells = <1>;
+ 		};
  
- #include "rcar_du_crtc.h"
- #include "rcar_du_drv.h"
-+#include "rcar_du_of.h"
- 
- /* -----------------------------------------------------------------------------
-  * Generic Overlay Handling
++		r_cpucfg@1f01c00 {
++			compatible = "allwinner,sun8i-a83t-r-cpucfg";
++			reg = <0x1f01c00 0x400>;
++		};
++
+ 		r_pio: pinctrl@1f02c00 {
+ 			compatible = "allwinner,sun8i-a83t-r-pinctrl";
+ 			reg = <0x01f02c00 0x400>;
 -- 
-2.17.0
+2.11.0
+
