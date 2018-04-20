@@ -1,68 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36032 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755056AbeDTN3A (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42146 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753340AbeDTRBD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:29:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 20 Apr 2018 13:01:03 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        Takashi Iwai <tiwai@suse.com>,
+        linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/8] sh_eth: Change platform check to CONFIG_ARCH_RENESAS
-Date: Fri, 20 Apr 2018 15:28:30 +0200
-Message-Id: <1524230914-10175-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
-References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: sh: Drop SUPERH platform dependency" to the asoc tree
+In-Reply-To: <1524234134-14297-1-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1f9ZOz-0004Hg-U0@debutante>
+Date: Fri, 20 Apr 2018 18:00:49 +0100
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS")
-is CONFIG_ARCH_RENESAS a more appropriate platform check than the legacy
-CONFIG_ARCH_SHMOBILE, hence use the former.
+The patch
 
-Renesas SuperH SH-Mobile SoCs are still covered by the CONFIG_CPU_SH4
-check.
+   ASoC: sh: Drop SUPERH platform dependency
 
-This will allow to drop ARCH_SHMOBILE on ARM and ARM64 in the near
-future.
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 4070d91754039e88f7b64e462f3d0d8cdb4be041 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Fri, 20 Apr 2018 16:22:14 +0200
+Subject: [PATCH] ASoC: sh: Drop SUPERH platform dependency
+
+The SIU sound peripheral is used only on SuperH SH-Mobile platforms.
+As both SUPERH and ARCH_SHMOBILE are set for these platforms, the SUPERH
+dependency can be dropped.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/net/ethernet/renesas/sh_eth.h | 2 +-
+ sound/soc/sh/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.h b/drivers/net/ethernet/renesas/sh_eth.h
-index a5b792ce2ae7d046..1bf930d4a1e52c18 100644
---- a/drivers/net/ethernet/renesas/sh_eth.h
-+++ b/drivers/net/ethernet/renesas/sh_eth.h
-@@ -163,7 +163,7 @@ enum {
- };
+diff --git a/sound/soc/sh/Kconfig b/sound/soc/sh/Kconfig
+index 1aa5cd77ca24..365f46321147 100644
+--- a/sound/soc/sh/Kconfig
++++ b/sound/soc/sh/Kconfig
+@@ -28,7 +28,7 @@ config SND_SOC_SH4_FSI
  
- /* Driver's parameters */
--#if defined(CONFIG_CPU_SH4) || defined(CONFIG_ARCH_SHMOBILE)
-+#if defined(CONFIG_CPU_SH4) || defined(CONFIG_ARCH_RENESAS)
- #define SH_ETH_RX_ALIGN		32
- #else
- #define SH_ETH_RX_ALIGN		2
+ config SND_SOC_SH4_SIU
+ 	tristate
+-	depends on (SUPERH || ARCH_SHMOBILE) && HAVE_CLK
++	depends on ARCH_SHMOBILE && HAVE_CLK
+ 	select DMA_ENGINE
+ 	select DMADEVICES
+ 	select SH_DMAE
 -- 
-2.7.4
+2.17.0
