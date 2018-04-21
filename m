@@ -1,103 +1,78 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        vladimir_zapolskiy@mentor.com, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 1/2] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-Date: Wed, 18 Apr 2018 16:40:28 +0200
-Message-Id: <1524062429-325-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1524062429-325-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524062429-325-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:39128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752819AbeDUQJV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 21 Apr 2018 12:09:21 -0400
+Date: Sat, 21 Apr 2018 17:09:16 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org
+Subject: Re: [PATCH 19/61] iio: common: hid-sensors: simplify getting
+ .drvdata
+Message-ID: <20180421170916.6af36c05@archlinux>
+In-Reply-To: <20180419140641.27926-20-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <20180419140641.27926-20-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+On Thu, 19 Apr 2018 16:05:49 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/display/bridge/thine,thc63lvd1024.txt | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Applied, thanks,
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-new file mode 100644
-index 0000000..37f0c04
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-@@ -0,0 +1,60 @@
-+Thine Electronics THC63LVD1024 LVDS decoder
-+-------------------------------------------
-+
-+The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
-+to parallel data outputs. The chip supports single/dual input/output modes,
-+handling up to two LVDS input streams and up to two digital CMOS/TTL outputs.
-+
-+Single or dual operation mode, output data mapping and DDR output modes are
-+configured through input signals and the chip does not expose any control bus.
-+
-+Required properties:
-+- compatible: Shall be "thine,thc63lvd1024"
-+- vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS input,
-+  PPL and digital circuitry
-+
-+Optional properties:
-+- powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
-+- oe-gpios: Output enable GPIO signal, pin name "OE". Active high
-+
-+The THC63LVD1024 video port connections are modeled according
-+to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
-+
-+Required video port nodes:
-+- port@0: First LVDS input port
-+- port@2: First digital CMOS/TTL parallel output
-+
-+Optional video port nodes:
-+- port@1: Second LVDS input port
-+- port@3: Second digital CMOS/TTL parallel output
-+
-+Example:
-+--------
-+
-+	thc63lvd1024: lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+
-+		vcc-supply = <&reg_lvds_vcc>;
-+		powerdown-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				lvds_dec_in_0: endpoint {
-+					remote-endpoint = <&lvds_out>;
-+				};
-+			};
-+
-+			port@2{
-+				reg = <2>;
-+
-+				lvds_dec_out_2: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
--- 
-2.7.4
+Jonathan
 
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> index cfb6588565ba..2ce0efd98cc0 100644
+> --- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> +++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> @@ -304,8 +304,7 @@ EXPORT_SYMBOL(hid_sensor_setup_trigger);
+>  
+>  static int __maybe_unused hid_sensor_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>  	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
+>  
+>  	return _hid_sensor_power_state(attrb, false);
+> @@ -313,8 +312,7 @@ static int __maybe_unused hid_sensor_suspend(struct device *dev)
+>  
+>  static int __maybe_unused hid_sensor_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>  	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
+>  	schedule_work(&attrb->work);
+>  	return 0;
+> @@ -322,8 +320,7 @@ static int __maybe_unused hid_sensor_resume(struct device *dev)
+>  
+>  static int __maybe_unused hid_sensor_runtime_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>  	struct hid_sensor_common *attrb = iio_device_get_drvdata(indio_dev);
+>  	return _hid_sensor_power_state(attrb, true);
+>  }
