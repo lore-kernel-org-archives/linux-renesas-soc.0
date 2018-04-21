@@ -1,84 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:27256 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753664AbeDRIKk (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:39242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752880AbeDUQKS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:10:40 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, frowand.list@gmail.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, p.zabel@pengutronix.de,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 02/11] dt-bindings: usb: add usb role switch driver
-Date: Wed, 18 Apr 2018 17:09:56 +0900
-Message-Id: <1524039005-30618-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Sat, 21 Apr 2018 12:10:18 -0400
+Date: Sat, 21 Apr 2018 17:07:54 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org
+Subject: Re: [PATCH 18/61] iio: common: cros_ec_sensors: simplify getting
+ .drvdata
+Message-ID: <20180421170754.4f3ab554@archlinux>
+In-Reply-To: <20180419140641.27926-19-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <20180419140641.27926-19-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a new documentation for a usb role switch driver.
-The usb role switch framework will parse this to get each device
-pointer by using each remote-endpoint.
+On Thu, 19 Apr 2018 16:05:48 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- .../devicetree/bindings/usb/usb-role-switch.txt    | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/usb-role-switch.txt
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Applied, thanks.
 
-diff --git a/Documentation/devicetree/bindings/usb/usb-role-switch.txt b/Documentation/devicetree/bindings/usb/usb-role-switch.txt
-new file mode 100644
-index 0000000..941d582
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/usb-role-switch.txt
-@@ -0,0 +1,42 @@
-+USB role switch driver
-+
-+Optional nodes:
-+- If a role switch driver has OF graph ports, the usb role switch framework
-+  will parse the remote-endpoints in usb_role_switch_register(). The OF graph
-+  port number as follows:
-+    0: USB 2.0 host port
-+    1: USB 3.0 host port
-+    2: UDC port
-+
-+For example:
-+	usb-role-sw {
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				usb2_host_sw0: endpoint {
-+					remote-endpoint = <&usb2_host_ep0>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				usb3_host_sw0: endpoint {
-+					remote-endpoint = <&usb3_host_ep0>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				udc_sw0: endpoint {
-+					remote-endpoint = <&udc_ep0>;
-+				};
-+			};
-+		};
-+	};
--- 
-1.9.1
+Jonathan
+
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> index a620eb5ce202..3df6c0e09832 100644
+> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> @@ -448,8 +448,7 @@ EXPORT_SYMBOL_GPL(cros_ec_sensors_core_write);
+>  
+>  static int __maybe_unused cros_ec_sensors_prepare(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>  	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
+>  
+>  	if (st->curr_sampl_freq == 0)
+> @@ -471,8 +470,7 @@ static int __maybe_unused cros_ec_sensors_prepare(struct device *dev)
+>  
+>  static void __maybe_unused cros_ec_sensors_complete(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>  	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
+>  
+>  	if (st->curr_sampl_freq == 0)
