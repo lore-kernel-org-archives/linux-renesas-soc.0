@@ -1,85 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:15727 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750939AbeDNMBl (ORCPT
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35043 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753051AbeDURFS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:01:41 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 23/33] rcar-vin: force default colorspace for media centric mode
-Date: Sat, 14 Apr 2018 13:57:16 +0200
-Message-Id: <20180414115726.5075-24-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+        Sat, 21 Apr 2018 13:05:18 -0400
+Date: Sat, 21 Apr 2018 19:05:14 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 01/61] ARM: plat-samsung: simplify getting .drvdata
+Message-ID: <20180421170514.qmklysbjrnkatns5@kozik-lap>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180419140641.27926-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The V4L2 specification clearly documents the colorspace fields as being
-set by drivers for capture devices. Using the values supplied by
-userspace thus wouldn't comply with the API. Until the API is updated to
-allow for userspace to set these Hans wants the fields to be set by the
-driver to fixed values.
+On Thu, Apr 19, 2018 at 04:05:31PM +0200, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  arch/arm/plat-samsung/adc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+Thanks, applied.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index f07cb4e6fbdec4eb..2c28daf1c725e64c 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -662,12 +662,30 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
-  * V4L2 Media Controller
-  */
- 
-+static void rvin_mc_try_format(struct rvin_dev *vin,
-+			       struct v4l2_pix_format *pix)
-+{
-+	/*
-+	 * The V4L2 specification clearly documents the colorspace fields
-+	 * as being set by drivers for capture devices. Using the values
-+	 * supplied by userspace thus wouldn't comply with the API. Until
-+	 * the API is updated force fixed vaules.
-+	 */
-+	pix->colorspace = RVIN_DEFAULT_COLORSPACE;
-+	pix->xfer_func = V4L2_MAP_XFER_FUNC_DEFAULT(pix->colorspace);
-+	pix->ycbcr_enc = V4L2_MAP_YCBCR_ENC_DEFAULT(pix->colorspace);
-+	pix->quantization = V4L2_MAP_QUANTIZATION_DEFAULT(true, pix->colorspace,
-+							  pix->ycbcr_enc);
-+
-+	rvin_format_align(vin, pix);
-+}
-+
- static int rvin_mc_try_fmt_vid_cap(struct file *file, void *priv,
- 				   struct v4l2_format *f)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
- 
--	rvin_format_align(vin, &f->fmt.pix);
-+	rvin_mc_try_format(vin, &f->fmt.pix);
- 
- 	return 0;
- }
-@@ -680,7 +698,7 @@ static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
- 	if (vb2_is_busy(&vin->queue))
- 		return -EBUSY;
- 
--	rvin_format_align(vin, &f->fmt.pix);
-+	rvin_mc_try_format(vin, &f->fmt.pix);
- 
- 	vin->format = f->fmt.pix;
- 
--- 
-2.16.2
+Best regards,
+Krzysztof
