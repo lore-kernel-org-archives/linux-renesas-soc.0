@@ -1,70 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58080 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54156 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756723AbeDZQyK (ORCPT
+        with ESMTP id S1751313AbeDVK2p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:54:10 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 17/17] arm64: dts: r8a77965-salvator-xs: Enable HDMI output
-Date: Thu, 26 Apr 2018 17:53:46 +0100
-Message-Id: <20180426165346.494-18-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+        Sun, 22 Apr 2018 06:28:45 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] v4l: rcar_fdp1: Change platform dependency to ARCH_RENESAS
+Date: Sun, 22 Apr 2018 13:28:47 +0300
+Message-Id: <20180422102849.2481-2-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20180422102849.2481-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20180422102849.2481-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch enables the HDMI encoder for the Salvator-X 2nd version board
-on the R8A77965 SoC and hook it up to the HDMI connector.
+The Renesas Fine Display Processor driver is used on Renesas R-Car SoCs
+only.  Since commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce
+ARCH_RENESAS") is ARCH_RENESAS a more appropriate platform dependency
+than the legacy ARCH_SHMOBILE, hence use the former.
 
-Based on code of the Salvator-X 2nd version board
-on the R8A7796 SoC device tree
-by Geert Uytterhoeven <geert+renesas@glider.be>
+This will allow to drop ARCH_SHMOBILE on ARM and ARM64 in the near
+future.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- .../boot/dts/renesas/r8a77965-salvator-xs.dts   | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/media/platform/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-index 2223cc2bd6bc..dcf1849f1a67 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-@@ -31,3 +31,20 @@
- 	clock-names = "du.0", "du.1", "du.3", "lvds.0",
- 		      "dclkin.0", "dclkin.1", "dclkin.3";
- };
-+
-+&hdmi0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			rcar_dw_hdmi0_out: endpoint {
-+				remote-endpoint = <&hdmi0_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi0_con {
-+	remote-endpoint = <&rcar_dw_hdmi0_out>;
-+};
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index c7a1cf8a1b01..621d63b2001d 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -396,7 +396,7 @@ config VIDEO_SH_VEU
+ config VIDEO_RENESAS_FDP1
+ 	tristate "Renesas Fine Display Processor"
+ 	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
+-	depends on ARCH_SHMOBILE || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	depends on (!ARCH_RENESAS && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
+ 	select VIDEOBUF2_DMA_CONTIG
+ 	select V4L2_MEM2MEM_DEV
 -- 
-2.17.0
+Regards,
+
+Laurent Pinchart
