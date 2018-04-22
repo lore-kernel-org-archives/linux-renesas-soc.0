@@ -1,49 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:65263 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752633AbeDQU6Y (ORCPT
+Received: from sauhun.de ([88.99.104.3]:37630 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751313AbeDVJOp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Apr 2018 16:58:24 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] thermal: rcar_gen3_thermal: update max temperature clamp
-Date: Tue, 17 Apr 2018 22:57:47 +0200
-Message-Id: <20180417205747.15492-3-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20180417205747.15492-1-niklas.soderlund@ragnatech.se>
-References: <20180417205747.15492-1-niklas.soderlund@ragnatech.se>
+        Sun, 22 Apr 2018 05:14:45 -0400
+Date: Sun, 22 Apr 2018 11:14:43 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Li Yang <leoyang.li@nxp.com>, Zhang Wei <zw@zh-kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 07/61] dma: simplify getting .drvdata
+Message-ID: <20180422091443.ryfdum5nhjc2b7qw@ninjato>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-8-wsa+renesas@sang-engineering.com>
+ <20180422061733.GU6014@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6f5sacsuvgjsenls"
+Content-Disposition: inline
+In-Reply-To: <20180422061733.GU6014@localhost>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Change the upper limit to clamp the high temperature value to 120C when
-setting trip points.
+--6f5sacsuvgjsenls
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/thermal/rcar_gen3_thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Sun, Apr 22, 2018 at 11:47:33AM +0530, Vinod Koul wrote:
+> On Thu, Apr 19, 2018 at 04:05:37PM +0200, Wolfram Sang wrote:
+> > We should get drvdata from struct device directly. Going via
+> > platform_device is an unneeded step back and forth.
+>=20
+> Do you mind splitting this per driver please, that makes it easy to manage
+> for me :)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 79c2cdb4105fc0b8..3905ec8b2689827c 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -207,8 +207,8 @@ static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
- {
- 	struct rcar_gen3_thermal_tsc *tsc = devdata;
- 
--	low = clamp_val(low, -40000, 125000);
--	high = clamp_val(high, -40000, 125000);
-+	low = clamp_val(low, -40000, 120000);
-+	high = clamp_val(high, -40000, 120000);
- 
- 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP1,
- 				rcar_gen3_thermal_mcelsius_to_temp(tsc, low));
--- 
-2.17.0
+No problem, done.
+
+
+--6f5sacsuvgjsenls
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrcUn8ACgkQFA3kzBSg
+KbaGng//WtrP6nLPSP/nblFu9au/lhvSwqTePV4MjjB8spMOB7tG6nOJqt8Lc+Um
+yc1h61Lnh3O/rIwu6R7785FF0yWG9cA1ALk7LOvB/80RbjBDM8X8lOHQ72gEONGs
+1lFo5JqKi/FUsvCbu8OYQjgtzo5Y7YkOVw4yW6Q0H34FzaUwWQNz2d+/adjklEpj
+6tfZrydqy9ell/nwp+0vCj+8TeqexpvgJOvGA2IPAizo8/0xQozcc7gjr5dfzn7j
+fTgqP5cUMrscXRbl0tbZBp4csvPzKZQSgsuu4uu1YAlJGGZkXYARf732i0weVt6F
+zkPKku38zY7uWoti9e5NfX8P6aVgXZpRc+0iuvs7phK0dI/BUQnlnNLztp2gKZRq
+klo7ozG8EEoy+RdzgrEtfvahJPPrf0D8EtIqR3GsDiYKdnDCQenqB9IwuBtpnhji
+IB3NODOOxrCgRvzKM5hUj2lRm3bP4I56SVt+TOQNO7x09ejO2b6lC5Iz2rxqxVHh
+WqIoCjAj1xICqojQLw9Oo7Ow+6PMvMjwqyI2s194LJ8u+R2yPnTy3DVTohZczuw6
+V26zfaxwGQj3sKJ+fDpvwBB4gQ/omcglJVAOrSb0oZXsuiV6jpEQ0xlUh0dTDlUB
+a3md/tXGaYBLn34WOcFKJbwXeOVPVsu/MQIKI6HJUUwBS+BoO9k=
+=hOmb
+-----END PGP SIGNATURE-----
+
+--6f5sacsuvgjsenls--
