@@ -1,62 +1,38 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: media: renesas-ceu: Add R-Mobile R8A7740
-Date: Thu, 26 Apr 2018 20:24:42 +0200
-Message-Id: <1524767083-19862-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54206 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751028AbeDVKfX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 22 Apr 2018 06:35:23 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 0/4] ARM: dts: renesas: Enable FDP1 devices
+Date: Sun, 22 Apr 2018 13:35:24 +0300
+Message-Id: <20180422103528.3402-1-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add R-Mobile A1 R8A7740 SoC to the list of compatible values for the CEU
-unit.
+Hello,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- Documentation/devicetree/bindings/media/renesas,ceu.txt | 7 ++++---
- drivers/media/platform/renesas-ceu.c                    | 1 +
- 2 files changed, 5 insertions(+), 3 deletions(-)
+This patch series adds the FDP1 devices for all applicable Gen2 platforms
+(H2, M2W, M2N and E2). There's no rocket science involved, the devices have
+no I/O pin and need no resource other than a memory range, a functional clock
+and an interrupt.
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-index 3fc66df..8a7a616 100644
---- a/Documentation/devicetree/bindings/media/renesas,ceu.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-@@ -2,14 +2,15 @@ Renesas Capture Engine Unit (CEU)
- ----------------------------------------------
- 
- The Capture Engine Unit is the image capture interface found in the Renesas
--SH Mobile and RZ SoCs.
-+SH Mobile, R-Mobile and RZ SoCs.
- 
- The interface supports a single parallel input with data bus width of 8 or 16
- bits.
- 
- Required properties:
--- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
--  and RZ/A1M SoCs.
-+- compatible: Shall be one of the following values:
-+	"renesas,r7s72100-ceu" for CEU units found in RZ/A1H and RZ/A1M SoCs
-+	"renesas,r8a7740-ceu" for CEU units found in R-Mobile A1 R8A7740 SoCs
- - reg: Registers address base and size.
- - interrupts: The interrupt specifier.
- 
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index 6599dba..c964a56 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -1545,6 +1545,7 @@ static const struct ceu_data ceu_data_sh4 = {
- #if IS_ENABLED(CONFIG_OF)
- static const struct of_device_id ceu_of_match[] = {
- 	{ .compatible = "renesas,r7s72100-ceu", .data = &ceu_data_rz },
-+	{ .compatible = "renesas,r8a7740-ceu", .data = &ceu_data_rz },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ceu_of_match);
+Laurent Pinchart (4):
+  ARM: dts: renesas: r8a7790: Add FDP1 instances
+  ARM: dts: renesas: r8a7791: Add FDP1 instances
+  ARM: dts: renesas: r8a7793: Add FDP1 instances
+  ARM: dts: renesas: r8a7794: Add FDP1 instances
+
+ arch/arm/boot/dts/r8a7790.dtsi | 27 +++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7791.dtsi | 18 ++++++++++++++++++
+ arch/arm/boot/dts/r8a7793.dtsi | 18 ++++++++++++++++++
+ arch/arm/boot/dts/r8a7794.dtsi |  9 +++++++++
+ 4 files changed, 72 insertions(+)
+
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
