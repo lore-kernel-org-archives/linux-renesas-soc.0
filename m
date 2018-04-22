@@ -1,43 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:46188 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754830AbeDTNPp (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:46273 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751564AbeDVROG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:15:45 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: multi_v7_defconfig: Disable CONFIG_FB_SH_MOBILE_MERAM
-Date: Fri, 20 Apr 2018 15:15:41 +0200
-Message-Id: <1524230141-7612-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1524230141-7612-1-git-send-email-geert+renesas@glider.be>
-References: <1524230141-7612-1-git-send-email-geert+renesas@glider.be>
+        Sun, 22 Apr 2018 13:14:06 -0400
+Date: Sun, 22 Apr 2018 19:13:34 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH 29/61] mtd: devices: simplify getting .drvdata
+Message-ID: <20180422191334.784f7723@bbrezillon>
+In-Reply-To: <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <20180419140641.27926-30-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The last Renesas ARM platform using this driver was removed in commit
-a521422ea4ae6128 ("ARM: shmobile: mackerel: Remove Legacy C board
-code").
+On Thu, 19 Apr 2018 16:05:59 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/configs/multi_v7_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index be1f043f4deea94b..aca866286498c09d 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -653,7 +653,6 @@ CONFIG_FB_EFI=y
- CONFIG_FB_WM8505=y
- CONFIG_FB_SH_MOBILE_LCDC=y
- CONFIG_FB_SIMPLE=y
--CONFIG_FB_SH_MOBILE_MERAM=y
- CONFIG_BACKLIGHT_LCD_SUPPORT=y
- CONFIG_BACKLIGHT_CLASS_DEVICE=y
- CONFIG_LCD_PLATFORM=m
--- 
-2.7.4
+Applied to mtd/next.
+
+Thanks,
+
+Boris
+
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/mtd/devices/docg3.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+> index c594fe5eac08..802d8f159e90 100644
+> --- a/drivers/mtd/devices/docg3.c
+> +++ b/drivers/mtd/devices/docg3.c
+> @@ -1470,8 +1470,7 @@ static struct docg3 *sysfs_dev2docg3(struct device *dev,
+>  				     struct device_attribute *attr)
+>  {
+>  	int floor;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct mtd_info **docg3_floors = platform_get_drvdata(pdev);
+> +	struct mtd_info **docg3_floors = dev_get_drvdata(dev);
+>  
+>  	floor = attr->attr.name[1] - '0';
+>  	if (floor < 0 || floor >= DOC_MAX_NBFLOORS)
