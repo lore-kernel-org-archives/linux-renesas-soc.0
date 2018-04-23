@@ -1,13 +1,13 @@
 Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Wed, 25 Apr 2018 14:48:58 +0530
-From: Vinod Koul <vinod.koul@intel.com>
+Date: Mon, 23 Apr 2018 09:53:39 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         "David S . Miller" <davem@davemloft.net>,
@@ -25,7 +25,7 @@ Cc: Simon Horman <horms@verge.net.au>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/8] dmaengine: shdmac: Change platform check to
  CONFIG_ARCH_RENESAS
-Message-ID: <20180425091858.GN6014@localhost>
+Message-ID: <20180423075338.riknxyjugnv5grjb@verge.net.au>
 References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
  <1524230914-10175-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
@@ -48,8 +48,7 @@ On Fri, Apr 20, 2018 at 03:28:28PM +0200, Geert Uytterhoeven wrote:
 > remaining #ifdefs.
 > 
 > This will allow to drop ARCH_SHMOBILE on ARM in the near future.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Applied, thanks
-
--- 
-~Vinod
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
