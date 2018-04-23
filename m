@@ -1,88 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58806 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932516AbeDWSFS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44319 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754576AbeDWKC5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 14:05:18 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Mon, 23 Apr 2018 06:02:57 -0400
+Date: Mon, 23 Apr 2018 12:02:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "mfd: bd9571mwv: Add DDR Backup Power register bit definitions" to the regulator tree
-In-Reply-To: <1507649178-31473-3-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1fAfpr-0004EG-QZ@debutante>
-Date: Mon, 23 Apr 2018 19:05:07 +0100
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v5 3/6] dt-bindings: arm: Document the RZN1D-DB board
+Message-ID: <20180423100248.et7lsq25fmmxdhrn@verge.net.au>
+References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1523963101-56725-4-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdU4upXcYZ_yD2a_=J5VAUE28fni7_NotmchjpYUqCxV=A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU4upXcYZ_yD2a_=J5VAUE28fni7_NotmchjpYUqCxV=A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Tue, Apr 17, 2018 at 05:49:25PM +0200, Geert Uytterhoeven wrote:
+> Hi Michel,
+> 
+> On Tue, Apr 17, 2018 at 1:04 PM, Michel Pollet
+> <michel.pollet@bp.renesas.com> wrote:
+> > This documents the RZ/N1 bindings for the RZN1D-DB board.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/shmobile.txt | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+> > index 61b486f..6efb3f1 100644
+> > --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> > +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> > @@ -51,7 +51,8 @@ SoCs:
+> >      compatible = "renesas,r8a77990"
+> >    - R-Car D3 (R8A77995)
+> >      compatible = "renesas,r8a77995"
+> > -
+> > +  - RZ/N1D (R9A06G032)
+> > +    compatible = "renesas,r9a06g032", "renesas,rzn1"
+> 
+> Why do you need a family-specific compatible value ("renesas,rzn1",
+> which is a marketing name)?
 
-   mfd: bd9571mwv: Add DDR Backup Power register bit definitions
+Thanks Michel, Thanks Geert,
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 2ff0dab80a8999e99a93fd70f8d701ec3deab207 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 18 Apr 2018 15:18:02 +0200
-Subject: [PATCH] mfd: bd9571mwv: Add DDR Backup Power register bit definitions
-
-Add definitions for the KEEPON_* bits in the "BKUP Mode Cnt" register,
-which control the DDR rails to be kept powered when backup mode is
-enabled.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/linux/mfd/bd9571mwv.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
-index f0708ba4cbba..eb05569f752b 100644
---- a/include/linux/mfd/bd9571mwv.h
-+++ b/include/linux/mfd/bd9571mwv.h
-@@ -33,6 +33,11 @@
- #define BD9571MWV_I2C_MD2_E1_BIT_2		0x12
- 
- #define BD9571MWV_BKUP_MODE_CNT			0x20
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK	GENMASK(3, 0)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0	BIT(0)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1	BIT(1)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0C	BIT(2)
-+#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1C	BIT(3)
- #define BD9571MWV_BKUP_MODE_STATUS		0x21
- #define BD9571MWV_BKUP_RECOVERY_CNT		0x22
- #define BD9571MWV_BKUP_CTRL_TIM_CNT		0x23
--- 
-2.17.0
+it looks like this extra compatible value should be dropped.
+Its not consistent with the way other Renesas SoC families are handled
+and past experience has not lead us to want family-specific compatible
+values.
