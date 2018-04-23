@@ -1,12 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:59420 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755724AbeDXIYA (ORCPT
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:54509 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755635AbeDWPVw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 04:24:00 -0400
-Date: Tue, 24 Apr 2018 10:23:56 +0200
-From: Simon Horman <horms@verge.net.au>
-To: jacopo mondi <jacopo@jmondi.org>
+        Mon, 23 Apr 2018 11:21:52 -0400
+Date: Mon, 23 Apr 2018 17:21:43 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Simon Horman <horms@verge.net.au>
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
         geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
@@ -17,87 +17,63 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v10 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
  (CEU)
-Message-ID: <20180424082355.y2cnfkqa7bj4fpy4@verge.net.au>
+Message-ID: <20180423152143.GH3999@w540>
 References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
  <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
  <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
- <20180423152143.GH3999@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="RwxaKO075aXzzOz0"
 Content-Disposition: inline
-In-Reply-To: <20180423152143.GH3999@w540>
+In-Reply-To: <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 05:21:43PM +0200, jacopo mondi wrote:
-> Hi Simon,
-> 
-> On Wed, Feb 21, 2018 at 07:29:18PM +0100, Simon Horman wrote:
-> > On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
-> > > Add Capture Engine Unit (CEU) node to device tree.
-> > >
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+
+--RwxaKO075aXzzOz0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Simon,
+
+On Wed, Feb 21, 2018 at 07:29:18PM +0100, Simon Horman wrote:
+> On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
+> > Add Capture Engine Unit (CEU) node to device tree.
 > >
-> > This patch depends on the binding for "renesas,r7s72100-ceu".
-> > Please repost or otherwise ping me once that dependency has been accepted.
-> 
-> Bindings for the CEU interface went in v4.17-rc1.
-> 
-> Could you please resurect this patch?
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+>
+> This patch depends on the binding for "renesas,r7s72100-ceu".
+> Please repost or otherwise ping me once that dependency has been accepted.
 
-Sure, I took the liberty of "rebasing" it to preserve the new node-order
-of r7s72100.dtsi. The result is as follows:
+Bindings for the CEU interface went in v4.17-rc1.
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
+Could you please resurect this patch?
 
-Add Capture Engine Unit (CEU) node to device tree.
+Thanks
+   j
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-[simon: rebased]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r7s72100.dtsi | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+--RwxaKO075aXzzOz0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index ecf9516bcda8..4a1aade0e751 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -375,6 +375,15 @@
- 			status = "disabled";
- 		};
- 
-+		ceu: camera@e8210000 {
-+			reg = <0xe8210000 0x3000>;
-+			compatible = "renesas,r7s72100-ceu";
-+			interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp6_clks R7S72100_CLK_CEU>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
- 		wdt: watchdog@fcfe0000 {
- 			compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
- 			reg = <0xfcfe0000 0x6>;
-@@ -429,9 +438,9 @@
- 			#clock-cells = <1>;
- 			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0xfcfe042c 4>;
--			clocks = <&p0_clk>;
--			clock-indices = <R7S72100_CLK_RTC>;
--			clock-output-names = "rtc";
-+			clocks = <&b_clk>, <&p0_clk>;
-+			clock-indices = <R7S72100_CLK_CEU R7S72100_CLK_RTC>;
-+			clock-output-names = "ceu", "rtc";
- 		};
- 
- 		mstp7_clks: mstp7_clks@fcfe0430 {
--- 
-2.11.0
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa3foHAAoJEHI0Bo8WoVY88jgP/jwL5jYnW1PO6nNMb2aW2DdP
+lB6YSXYDY25gsU3XZH544VzEmi6Wj2ynXGqKNlkTuWubcvmbvXtMEUqoVuOIfnte
+TJhBphhttylk5yhxXK7MpaxDZ5zeD/mnhSsKr55ZIV6M+4g/7AZAESLif4eoJbeL
+y0v44ngRjol2VJPFSI9S4lm9jiWy5Vi+LG8OFR4mfCkRO9WbCMIuUpehucEQNnWw
+eUnpgr8DnPMCUodbTBxM3E8+3FGZq/EaD9ucNjkxZ5Sb/7wkrfgK37uX6EUuewp8
+51b5ZK8Q9vTnuRnKmhmnEVL19GXAdJga5uSPhnbV7t2rabb1awWoXHX1fLvKzjWn
+Ag5pTjdT7c0mSykQYS48PiQljRBjBT7qh5laUJ/TKH1xHB62eoBFmjkO8z8Tv4K+
+pZA6myEgHSRjI+CerdnzWOn2QmB5i8AmP7f8tbto6EfGMv7Bb3/RBY36cpjkVnhO
+hHKbvwiS1EWBoGyeyGneFdbaFYvWhlBUzdlkIMrmOuZM8mQWc0zJhokOS7XQUkik
+1WK17peJPt/XOZGiBDX2aQIuVyntyqJGFXbSLNWsMD5Hy+3whA2bFMr+OJxjMx43
+pftCR0plJYxIvhLUCIAoiQSRCsVPNtiO/tTmKmknkzx5cDU5cH4jqEkTdJSqhtdr
+IlJgVoiaZ+bwN4ko8IZm
+=9cTo
+-----END PGP SIGNATURE-----
+
+--RwxaKO075aXzzOz0--
