@@ -1,44 +1,48 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39772 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750935AbeDXPkI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 11:40:08 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] drm: rcar-du: Use NULL for table initialisation
-Date: Tue, 24 Apr 2018 16:40:03 +0100
-Message-Id: <20180424154003.2604-1-kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Mon, 23 Apr 2018 09:56:26 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/8] staging: emxx_udc: Change platform dependency to
+ ARCH_RENESAS
+Message-ID: <20180423075625.utzf6sgu4rlvb55r@verge.net.au>
+References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
+ <1524230914-10175-6-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524230914-10175-6-git-send-email-geert+renesas@glider.be>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the initialisation of the vsps table with a NULL specifier.
+On Fri, Apr 20, 2018 at 03:28:31PM +0200, Geert Uytterhoeven wrote:
+> Emma Mobile is a Renesas ARM SoC.  Since commit 9b5ba0df4ea4f940 ("ARM:
+> shmobile: Introduce ARCH_RENESAS") is ARCH_RENESAS a more appropriate
+> platform dependency than the legacy ARCH_SHMOBILE, hence use the
+> former.
+> 
+> This will allow to drop ARCH_SHMOBILE on ARM in the near future.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes the following warning:
- linux/drivers/gpu/drm/rcar-du/rcar_du_kms.c:483:40:
-    warning: Using plain integer as NULL pointer
-      CC      drivers/gpu/drm/rcar-du/rcar_du_kms.o
-
-Fixes: 3e81374e2014 ("drm: rcar-du: Support multiple sources from the same VSP")
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index ef72dff00763..cf5b422fc753 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -480,7 +480,7 @@ static int rcar_du_vsps_init(struct rcar_du_device *rcdu)
- 	struct {
- 		struct device_node *np;
- 		unsigned int crtcs_mask;
--	} vsps[RCAR_DU_MAX_VSPS] = { { 0, }, };
-+	} vsps[RCAR_DU_MAX_VSPS] = { { NULL, }, };
- 	unsigned int vsps_count = 0;
- 	unsigned int cells;
- 	unsigned int i;
--- 
-2.17.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
