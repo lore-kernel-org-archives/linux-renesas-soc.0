@@ -1,125 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:33061 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754905AbeDZL1N (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:38885 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754309AbeDWJSG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 07:27:13 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v2 2/6] base: devcon: add a new API to find the graph
-Date: Thu, 26 Apr 2018 20:26:42 +0900
-Message-Id: <1524742006-17984-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 23 Apr 2018 05:18:06 -0400
+Received: by mail-io0-f196.google.com with SMTP id d24-v6so7767598iob.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Apr 2018 02:18:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <66c0b103-ed6e-36e0-74a6-9809ba55939c@cogentembedded.com>
+References: <66c0b103-ed6e-36e0-74a6-9809ba55939c@cogentembedded.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 23 Apr 2018 11:18:05 +0200
+Message-ID: <CAPDyKFrBJzqwj-NhuopwTSjBeX1U=zYdG4J703h93YCPgRK8Rg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: add R8A77980 to whitelist
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a new API "device_connection_find_by_graph()" to
-find device connection by using graph.
+On 19 April 2018 at 22:07, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> I've successfully tested eMMC on R8A77980/Condor. R8A77980 has a single
+> SDHI core anyway, so can't be a subject of the known RX DMA errata...
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/driver-api/device_connection.rst |  4 +--
- drivers/base/devcon.c                          | 43 ++++++++++++++++++++++++++
- include/linux/device.h                         |  2 ++
- 3 files changed, 47 insertions(+), 2 deletions(-)
+Thanks, applied for next!
 
-diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
-index affbc556..2e2d26f 100644
---- a/Documentation/driver-api/device_connection.rst
-+++ b/Documentation/driver-api/device_connection.rst
-@@ -19,7 +19,7 @@ Device connections alone do not create a dependency between the two devices.
- They are only descriptions which are not tied to either of the devices directly.
- A dependency between the two devices exists only if one of the two endpoint
- devices requests a reference to the other. The descriptions themselves can be
--defined in firmware (not yet supported) or they can be built-in.
-+defined in firmware or they can be built-in.
- 
- Usage
- -----
-@@ -40,4 +40,4 @@ API
- ---
- 
- .. kernel-doc:: drivers/base/devcon.c
--   : functions: device_connection_find_match device_connection_find device_connection_add device_connection_remove
-+   : functions: device_connection_find_match device_connection_find device_connection_add device_connection_remove device_connection_find_by_graph
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index d427e80..5a0da33 100644
---- a/drivers/base/devcon.c
-+++ b/drivers/base/devcon.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/device.h>
-+#include <linux/property.h>
- 
- static DEFINE_MUTEX(devcon_lock);
- static LIST_HEAD(devcon_list);
-@@ -134,3 +135,45 @@ void device_connection_remove(struct device_connection *con)
- 	mutex_unlock(&devcon_lock);
- }
- EXPORT_SYMBOL_GPL(device_connection_remove);
-+
-+static int generic_graph_match(struct device *dev, void *fwnode)
-+{
-+	return dev->fwnode == fwnode;
-+}
-+
-+/**
-+ * device_connection_find_by_graph - Find two devices connected together
-+ * @dev: Device to find connected device
-+ * @port: identifier of the @dev port node
-+ * @endpoint: identifier of the @dev endpoint node
-+ *
-+ * Find a connection with @port and @endpoint by using graph between @dev and
-+ * another device. On success returns handle to the device that is connected
-+ * to @dev, with the reference count for the found device incremented. Returns
-+ * NULL if no matching connection was found, or ERR_PTR(-EPROBE_DEFER) when
-+ * a connection was found but the other device has not been enumerated yet.
-+ */
-+struct device *device_connection_find_by_graph(struct device *dev, u32 port,
-+					       u32 endpoint)
-+{
-+	struct bus_type *bus;
-+	struct fwnode_handle *remote;
-+	struct device *conn;
-+
-+	remote = fwnode_graph_get_remote_node(dev_fwnode(dev), port, endpoint);
-+	if (!remote)
-+		return NULL;
-+
-+	for (bus = generic_match_buses[0]; bus; bus++) {
-+		conn = bus_find_device(bus, NULL, remote, generic_graph_match);
-+		if (conn)
-+			return conn;
-+	}
-+
-+	/*
-+	 * We only get called if a connection was found, tell the caller to
-+	 * wait for the other device to show up.
-+	 */
-+	return ERR_PTR(-EPROBE_DEFER);
-+}
-+EXPORT_SYMBOL_GPL(device_connection_find_by_graph);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 0059b99..58f8544 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -751,6 +751,8 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
- 
- void device_connection_add(struct device_connection *con);
- void device_connection_remove(struct device_connection *con);
-+struct device *device_connection_find_by_graph(struct device *dev, u32 port,
-+					       u32 endpoint);
- 
- /**
-  * enum device_link_state - Device link states.
--- 
-1.9.1
+Kind regards
+Uffe
+
+>
+> ---
+> This patch is against the 'next' branch of Ulf Hansson's 'mmc.git' repo.
+>
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> Index: mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> ===================================================================
+> --- mmc.orig/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ mmc/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -276,6 +276,7 @@ static const struct soc_device_attribute
+>         /* generic ones */
+>         { .soc_id = "r8a7795" },
+>         { .soc_id = "r8a7796" },
+> +       { .soc_id = "r8a77980" },
+>         { .soc_id = "r8a77995" },
+>         { /* sentinel */ }
+>  };
