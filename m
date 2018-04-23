@@ -1,92 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:36968 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752330AbeDKJYL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41966 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753003AbeDWH4L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:24:11 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, kvm@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] vfio: platform: Fix using devices in PM Domains
-Date: Wed, 11 Apr 2018 11:24:08 +0200
-Message-Id: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
+        Mon, 23 Apr 2018 03:56:11 -0400
+Date: Mon, 23 Apr 2018 09:56:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] sh_eth: Change platform check to CONFIG_ARCH_RENESAS
+Message-ID: <20180423075604.a3wwswqj2drl3m7r@verge.net.au>
+References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
+ <1524230914-10175-5-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524230914-10175-5-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If a device is part of a PM Domain (e.g. power and/or clock domain), its
-power state is managed using Runtime PM.  Without Runtime PM, the device
-may not be powered up, causing subtle failures, crashes, or system
-lock-ups when the device is accessed by the guest.
+On Fri, Apr 20, 2018 at 03:28:30PM +0200, Geert Uytterhoeven wrote:
+> Since commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS")
+> is CONFIG_ARCH_RENESAS a more appropriate platform check than the legacy
+> CONFIG_ARCH_SHMOBILE, hence use the former.
+> 
+> Renesas SuperH SH-Mobile SoCs are still covered by the CONFIG_CPU_SH4
+> check.
+> 
+> This will allow to drop ARCH_SHMOBILE on ARM and ARM64 in the near
+> future.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fix this by adding Runtime PM support, powering the device when the VFIO
-device is opened by the guest.
-
-Note that while more fine-grained power management could be implemented
-on the guest side, if exported, this would be inherently unsafe, as
-abusing it may kill the whole system.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "[PATCH v3 2/2] vfio: platform: Add generic DT reset
-support" due to a small contextual change (addition of "#include
-<linux/reset.h>").
-
- drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-index ef9b9e3220ebe939..4db0a143992c3353 100644
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -17,6 +17,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-@@ -249,6 +250,8 @@ static void vfio_platform_release(void *device_data)
- 		const char *extra_dbg = NULL;
- 		int ret;
- 
-+		pm_runtime_put(vdev->device);
-+
- 		ret = vfio_platform_call_reset(vdev, &extra_dbg);
- 		if (ret && vdev->reset_required) {
- 			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
-@@ -291,6 +294,10 @@ static int vfio_platform_open(void *device_data)
- 				 ret, extra_dbg ? extra_dbg : "");
- 			goto err_rst;
- 		}
-+
-+		ret = pm_runtime_get_sync(vdev->device);
-+		if (ret < 0)
-+			goto err_rst;
- 	}
- 
- 	vdev->refcnt++;
-@@ -706,6 +713,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
- 
- 	mutex_init(&vdev->igate);
- 
-+	pm_runtime_enable(vdev->device);
- 	return 0;
- 
- put_iommu:
-@@ -723,6 +731,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
- 	vdev = vfio_del_group_dev(dev);
- 
- 	if (vdev) {
-+		pm_runtime_disable(vdev->device);
- 		vfio_platform_put_reset(vdev);
- 		vfio_iommu_group_put(dev->iommu_group, dev);
- 	}
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
