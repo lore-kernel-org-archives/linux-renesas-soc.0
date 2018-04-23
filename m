@@ -1,59 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42206 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751160AbeDMRBD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45142 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754710AbeDWK4N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Apr 2018 13:01:03 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: wsa@the-dreams.de, geert@linux-m68k.org,
-        linux-serial@vger.kernel.org, magnus.damm@gmail.com,
-        Hien Dang <hien.dang.eb@renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 2/2] serial: sh-sci: Use pm_runtime_get_sync()/put() on resume
-Date: Fri, 13 Apr 2018 19:00:54 +0200
-Message-Id: <1523638854-21804-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1523638854-21804-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1523638854-21804-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Mon, 23 Apr 2018 06:56:13 -0400
+Date: Mon, 23 Apr 2018 12:56:09 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 01/04] arm64: dts: renesas: r8a7795: Enable IPMMU devices
+Message-ID: <20180423105608.ihfnerio5f36u3ck@verge.net.au>
+References: <152439168688.19829.5853068596124565316.sendpatchset@little-apple>
+ <152439169549.19829.11796550786939315157.sendpatchset@little-apple>
+ <CAMuHMdWHQdCwL_FuaDBnzB1rO=eHa_V2-n-Nm_4TgEtr-wDEvg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWHQdCwL_FuaDBnzB1rO=eHa_V2-n-Nm_4TgEtr-wDEvg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hien Dang <hien.dang.eb@renesas.com>
+On Mon, Apr 23, 2018 at 09:50:25AM +0200, Geert Uytterhoeven wrote:
+> On Sun, Apr 22, 2018 at 12:08 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> > From: Magnus Damm <damm+renesas@opensource.se>
+> >
+> > Remove 'status = "disabled"' to make sure all IPMMU devices are enabled
+> > in DT on the r8a7795 SoC.
+> >
+> > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Since commit '39dd0f234fc37d ("PM / Domains: Allow runtime PM during system
-PM phases")', runtime PM may be in suspended state during the system
-suspend phase. It is therefore necessary to call pm_runtime_get_sync()/
-pm_runtime_put() when accessing the hardware.
-
-This modification is the counterpart for the resume case. It ensures
-stability of the system, should the kernel allow the devices's runtime
-suspend state to change during the system resume phase as well.
-
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-[uli: edited description for clarity]
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/tty/serial/sh-sci.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 22d7a78..d5a1acb 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3259,8 +3259,11 @@ static __maybe_unused int sci_resume(struct device *dev)
- {
- 	struct sci_port *sport = dev_get_drvdata(dev);
- 
--	if (sport)
-+	if (sport) {
-+		pm_runtime_get_sync(sport->port.dev);
- 		uart_resume_port(&sci_uart_driver, &sport->port);
-+		pm_runtime_put(sport->port.dev);
-+	}
- 
- 	return 0;
- }
--- 
-2.7.4
+Thanks, applied.
