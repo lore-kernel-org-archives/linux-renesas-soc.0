@@ -1,47 +1,88 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, daniel@ffwll.ch,
-        peda@axentia.se, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] drm: connector: Remove DRM_BUS_FLAG_DATA_* flags
-Date: Thu, 19 Apr 2018 11:31:09 +0200
-Message-Id: <1524130269-32688-9-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58806 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932516AbeDWSFS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 23 Apr 2018 14:05:18 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "mfd: bd9571mwv: Add DDR Backup Power register bit definitions" to the regulator tree
+In-Reply-To: <1507649178-31473-3-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1fAfpr-0004EG-QZ@debutante>
+Date: Mon, 23 Apr 2018 19:05:07 +0100
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DRM_BUS_FLAG_DATA_* flags, defined in drm_connector.h header file are
-used to swap ordering of LVDS RGB format to accommodate DRM objects
-that need to handle LVDS components ordering.
+The patch
 
-Now that the only 2 users of DRM_BUS_FLAG_DATA_* flags have been ported
-to use the newly introduced MEDIA_BUS_FMT_RGB888_1X7X*_LE media bus
-formats, remove them.
+   mfd: bd9571mwv: Add DDR Backup Power register bit definitions
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 2ff0dab80a8999e99a93fd70f8d701ec3deab207 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed, 18 Apr 2018 15:18:02 +0200
+Subject: [PATCH] mfd: bd9571mwv: Add DDR Backup Power register bit definitions
+
+Add definitions for the KEEPON_* bits in the "BKUP Mode Cnt" register,
+which control the DDR rails to be kept powered when backup mode is
+enabled.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/drm/drm_connector.h | 4 ----
- 1 file changed, 4 deletions(-)
+ include/linux/mfd/bd9571mwv.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-index 675cc3f..9e0d6d5 100644
---- a/include/drm/drm_connector.h
-+++ b/include/drm/drm_connector.h
-@@ -286,10 +286,6 @@ struct drm_display_info {
- #define DRM_BUS_FLAG_PIXDATA_POSEDGE	(1<<2)
- /* drive data on neg. edge */
- #define DRM_BUS_FLAG_PIXDATA_NEGEDGE	(1<<3)
--/* data is transmitted MSB to LSB on the bus */
--#define DRM_BUS_FLAG_DATA_MSB_TO_LSB	(1<<4)
--/* data is transmitted LSB to MSB on the bus */
--#define DRM_BUS_FLAG_DATA_LSB_TO_MSB	(1<<5)
+diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
+index f0708ba4cbba..eb05569f752b 100644
+--- a/include/linux/mfd/bd9571mwv.h
++++ b/include/linux/mfd/bd9571mwv.h
+@@ -33,6 +33,11 @@
+ #define BD9571MWV_I2C_MD2_E1_BIT_2		0x12
  
- 	/**
- 	 * @bus_flags: Additional information (like pixel signal polarity) for
+ #define BD9571MWV_BKUP_MODE_CNT			0x20
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK	GENMASK(3, 0)
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0	BIT(0)
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1	BIT(1)
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR0C	BIT(2)
++#define BD9571MWV_BKUP_MODE_CNT_KEEPON_DDR1C	BIT(3)
+ #define BD9571MWV_BKUP_MODE_STATUS		0x21
+ #define BD9571MWV_BKUP_RECOVERY_CNT		0x22
+ #define BD9571MWV_BKUP_CTRL_TIM_CNT		0x23
 -- 
-2.7.4
-
+2.17.0
