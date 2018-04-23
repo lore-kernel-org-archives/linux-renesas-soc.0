@@ -1,72 +1,54 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1524230914-10175-8-git-send-email-geert+renesas@glider.be>
-References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be> <1524230914-10175-8-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Apr 2018 11:51:07 +0200
-Message-ID: <CAMuHMdXyEGY71v6EFDjBhFva_VRtO4p2BdG=HC5zfrwBXLXK0g@mail.gmail.com>
-Subject: Re: [PATCH/RFC 7/8] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig symbol
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:43686 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754437AbeDWJ3X (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 23 Apr 2018 05:29:23 -0400
+Date: Mon, 23 Apr 2018 11:29:18 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-media-owner@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFC 7/8] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig
+ symbol
+Message-ID: <20180423092917.h24b2gem6j24uhnk@verge.net.au>
+References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
+ <1524230914-10175-8-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524230914-10175-8-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-(Reducing/enhancing CC list)
-
-On Fri, Apr 20, 2018 at 3:28 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Apr 20, 2018 at 03:28:33PM +0200, Geert Uytterhoeven wrote:
 > All drivers for Renesas ARM SoCs have gained proper ARCH_RENESAS
 > platform dependencies.  Hence finish the conversion from ARCH_SHMOBILE
 > to ARCH_RENESAS for Renesas 32-bit ARM SoCs, as started by commit
 > 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS").
->
+> 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 > This depends on the previous patches in this series, hence the RFC.
->
-> JFTR, after this, the following symbols for drivers supporting only
-> Renesas SuperH "SH-Mobile" SoCs can no longer be selected:
->   - CONFIG_KEYBOARD_SH_KEYSC,
->   - CONFIG_VIDEO_SH_VOU,
->   - CONFIG_VIDEO_SH_MOBILE_CEU,
->   - CONFIG_DRM_SHMOBILE[*],
->   - CONFIG_FB_SH_MOBILE_MERAM.
-> (changes for a shmobile_defconfig .config)
 
-Apparently CONFIG_VIDEO_SH_MOBILE_CEU was set in the old
-armadillo800eva_defconfig, and used by the old board code.
-
-While DT bindings do exist [1], some DT support has been added to the
-driver [2], and this even ended up as the example in [3], this was never
-enabled in the corresponding board DTS.
-
-Nevertheless, I understand that soc_camera-based driver is obsolete, and
-has been replaced by [4], but bindings for r8a7740 are lacking [5].
-
-[1] Documentation/devicetree/bindings/media/sh_mobile_ceu.txt
-[2] drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
-[3] Documentation/devicetree/bindings/media/video-interfaces.txt
-[4] drivers/media/platform/renesas-ceu.c
-[5] Documentation/devicetree/bindings/media/renesas,ceu.txt
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, I have marked this and the following patch as deferred.
+Please repost or otherwise ping me once the dependencies are in place.
