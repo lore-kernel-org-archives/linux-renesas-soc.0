@@ -1,52 +1,76 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f172.google.com ([209.85.217.172]:41889 "EHLO
+        mail-ua0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751216AbeDWHpJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 23 Apr 2018 03:45:09 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180420164811.GC22369@sirena.org.uk>
+References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be> <20180420164811.GC22369@sirena.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Apr 2018 09:45:07 +0200
+Message-ID: <CAMuHMdUt3ExAD7KEiBhntcOoSWSLMnpNT1Oix4tNRMAM=8g9jQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] arm: renesas: Change platform dependency to ARCH_RENESAS
+To: Mark Brown <broonie@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Carlo Caione <carlo@endlessm.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Juri Lelli <juri.lelli@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/3] ARM: dts: Renesas RZ/N1D SMP enable method
-Date: Tue, 17 Apr 2018 13:48:02 +0100
-Message-Id: <1523969291-41756-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        dmaengine@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a special enable method for the second CA7 of the Renesas RZ/N1D
-(R9A06G032), as well as the default value for the "cpu-release-addr"
-property.
+Hi Mark,
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+On Fri, Apr 20, 2018 at 6:48 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Fri, Apr 20, 2018 at 03:28:26PM +0200, Geert Uytterhoeven wrote:
+>> The first 6 patches can be applied independently by subsystem
+>> maintainers.
+>> The last two patches depend on the first 6 patches, and are thus marked
+>> RFC.
+>
+> Would it not make sense to try to apply everything en masse rather than
+> delaying?  I'm happy to apply the subsystem stuff but if it gets things
+> done quicker or more efficiently I'm also happy to have the lot merged
+> as one series.
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 23c56d7..170376d 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -33,6 +33,8 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
-+			enable-method = "renesas,r9a06g032-smp";
-+			cpu-release-addr = <0x4000c204>;
- 		};
- 	};
- 
+In theory, yes.
+
+However, this touches multiple subsystems, and it's non-critical, so I don't
+want to spent the energy to get this done in a synchronized way.
+It's way easier to postpone the last (RFC) patches when everything else
+has been applied by subsystem maintainers.
+
+So please apply your part, thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
