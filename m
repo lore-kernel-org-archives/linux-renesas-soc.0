@@ -1,71 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:44979 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752610AbeDJK4U (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44795 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754442AbeDWKco (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:56:20 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/4] arm64: dts: renesas: r8a77970: add VSPD support
-Date: Tue, 10 Apr 2018 12:54:03 +0200
-Message-Id: <1523357646-3946-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 23 Apr 2018 06:32:44 -0400
+Date: Mon, 23 Apr 2018 12:32:40 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] R-Car DU: Fix LVDS output on Gen2 boards
+Message-ID: <20180423103239.oofry7je4gznpjsj@verge.net.au>
+References: <20180420115754.4136-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180420115754.4136-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Apr 20, 2018 at 02:57:51PM +0300, Laurent Pinchart wrote:
+> Hello,
+> 
+> This patch series fixes LVDS output support on the Lager, Koelsh, Porter and
+> Gose boards that broke in v4.17-rc1 due to the combination of the R-Car DU
+> LVDS driver rework and the DT move of all on-SoC peripherals to a /soc node.
+> 
+> We could handle the problem in the R-Car DU LVDS DT backward compatibility
+> code, but that fix would only be used for v4.17 as in v4.18 the Gen2 DT will
+> move to the new LVDS DT bindings. I thus propose merging these three patches
+> in v4.17 already to fix the problem as this is the simplest solution.
+> 
+> The patches are based on top of v4.17-rc1. Simon, could you please queue them
+> up as fixes for v4.17 ?
 
-Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
-the next patch...
-
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
----
-
-v1 -> v2:
-- Extend the memory region to include V6_CLUTn_TBL* registers.
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 97c27ef..a3ef3bd 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -625,6 +625,16 @@
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 603>;
- 		};
-+
-+		vspd0: vsp@fea20000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea20000 0 0x8000>;
-+			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 623>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 623>;
-+			renesas,fcp = <&fcpvd0>;
-+		};
- 	};
- 
- 	timer {
--- 
-2.7.4
+Yes. This is in keeping with what we previously discussed.
+Thanks for following up on this. I have applied the patches as fixes
+for v4.17.
