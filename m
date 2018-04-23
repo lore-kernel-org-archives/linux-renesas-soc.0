@@ -1,56 +1,56 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Carlo Caione <carlo@endlessm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/3] Renesas RZ/N1D SMP enabler
-Date: Tue, 17 Apr 2018 13:47:59 +0100
-Message-Id: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from anholt.net ([50.246.234.109]:60284 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932194AbeDWS1B (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 23 Apr 2018 14:27:01 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 16/61] gpu: drm: vc4: simplify getting .drvdata
+In-Reply-To: <20180419140641.27926-17-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-17-wsa+renesas@sang-engineering.com>
+Date: Mon, 23 Apr 2018 11:26:56 -0700
+Message-ID: <87vachhj7z.fsf@anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-*WARNING -- this requires the base RZ/N1 base patches (v5) already posted
+--=-=-=
+Content-Type: text/plain
 
-This patch series is for enabling the second CA7 of the RZ/N1D.
-It's based on a spin_table method, and it reuses the same binding
-property as that driver.
+Wolfram Sang <wsa+renesas@sang-engineering.com> writes:
 
-v2:
-  + Added suggestions from Florian Fainelli
-  + Use __pa_symbol()
-  + Simplified logic in prepare_cpu()
-  + Reordered the patches
-  + Rebased on RZN1 Base patch v5
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-*** BLURB HERE ***
+Applied to drm-misc-next.  Thanks!
 
-Michel Pollet (3):
-  dt-bindings: cpu: Add Renesas RZ/N1D SMP enable method.
-  arm: shmobile: Add the RZ/N1D SMP enabler driver
-  ARM: dts: Renesas RZ/N1D SMP enable method
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
- Documentation/devicetree/bindings/arm/cpus.txt |  1 +
- arch/arm/boot/dts/r9a06g032.dtsi               |  2 +
- arch/arm/mach-shmobile/Makefile                |  1 +
- arch/arm/mach-shmobile/smp-r9a06g032.c         | 85 ++++++++++++++++++++++++++
- 4 files changed, 89 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.7.4
-
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlreJXAACgkQtdYpNtH8
+nuhrfRAAtsGa94ThjB3penHE1ORa0TEnWyCvBzCk80ZZVXTyBXHL1l1vl0AIBFxD
+oHoWFooZYxH0FwpBqFPO1J/y4mVtbkbdOVd9AQZ8yccBiTtuehFMGhCW8RAKSYku
+NAgS3GPxx3QOk0Nn/eIQ1stlJi9PbJByUEwUuJwjMxzDcl18/wIrflzR6yjiaIbo
+c8XhcTao5yy2oHRfQPwSWPdgzaJaQLCQhFcPgoD4ioCNGdtfzQjWV3stHdIcvKwo
+BLlqFyar1+2ReUPNu7TZXpQWeZnP2aW9TAwY14S7/MZzRANcd7HkbMb8ceaUMQHs
++TmhRNtJ//L4jSDhXE7/EZfRGbFyPhx2FZyXvI/UYtU7ZObkUYkW5yC7X7ha47E5
+uSLEaR6eTqnM/fuHOlEcubp7xpT2lOA2QKvcnUCp0UeNGp01f5BQkfWhbBqYndNb
+CgcaUNhKv7SOEvaIapDtuj/SlTtYEQiFzFcA7725Wfxt57iZusM0XwkzpJtfkDSF
+z1ZJmffQVskT+ioUClr8X/5R5yC7f3KMLJQ0L4kYjDnWx4D5qcaWmSavfmhgWG4t
+5QI8WrxWcNaMbPTkKxOqYxzN1XFE+oaFww68aCySBaFtBIbWASSjNYN4l1aC3P5y
+ZVyIoyN9EhmsHdbCLmBrwQJJSBCnfax8aN2zoMEhwiwawthxJG8=
+=v5Lv
+-----END PGP SIGNATURE-----
+--=-=-=--
