@@ -1,78 +1,57 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from conuserg-11.nifty.com ([210.131.2.78]:62358 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbeDPPD4 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:03:56 -0400
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] ARM: dts: renesas: replace toshiba,mmc-wrprotect-disable with disable-wp
-Date: Tue, 17 Apr 2018 00:02:32 +0900
-Message-Id: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
+        daniel@ffwll.ch, peda@axentia.se,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] arm64: dts: renesas: eagle: Add thc63 LVDS map
+Date: Mon, 23 Apr 2018 16:07:03 +0300
+Message-ID: <1945499.PUjoDG4czU@avalon>
+In-Reply-To: <1524130269-32688-5-git-send-email-jacopo+renesas@jmondi.org>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org> <1524130269-32688-5-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Follow up commit 788778b0d21a ("mmc: tmio: deprecate "toshiba,
-mmc-wrprotect-disable" DT property").
+Hi Jacopo,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Thank you for the patch.
 
- arch/arm/boot/dts/r8a73a4-ape6evm.dts | 4 ++--
- arch/arm/boot/dts/sh73a0.dtsi         | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+On Thursday, 19 April 2018 12:31:05 EEST Jacopo Mondi wrote:
+> Add LVDS map mode description property to THC63LVD1024 LVDS decoder in
+> R-Car V3M-Eagle board device tree.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-diff --git a/arch/arm/boot/dts/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-index ec7c86e..125c39c 100644
---- a/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-+++ b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-@@ -234,7 +234,7 @@
- &sdhi0 {
- 	vmmc-supply = <&vcc_sdhi0>;
- 	bus-width = <4>;
--	toshiba,mmc-wrprotect-disable;
-+	disable-wp;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdhi0_pins>;
- 	status = "okay";
-@@ -244,7 +244,7 @@
- 	vmmc-supply = <&ape6evm_fixed_3v3>;
- 	bus-width = <4>;
- 	broken-cd;
--	toshiba,mmc-wrprotect-disable;
-+	disable-wp;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdhi1_pins>;
- 	status = "okay";
-diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
-index 914a7c2..39cc586 100644
---- a/arch/arm/boot/dts/sh73a0.dtsi
-+++ b/arch/arm/boot/dts/sh73a0.dtsi
-@@ -336,7 +336,7 @@
- 			      GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks SH73A0_CLK_SDHI1>;
- 		power-domains = <&pd_a3sp>;
--		toshiba,mmc-wrprotect-disable;
-+		disable-wp;
- 		cap-sd-highspeed;
- 		status = "disabled";
- 	};
-@@ -348,7 +348,7 @@
- 			      GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks SH73A0_CLK_SDHI2>;
- 		power-domains = <&pd_a3sp>;
--		toshiba,mmc-wrprotect-disable;
-+		disable-wp;
- 		cap-sd-highspeed;
- 		status = "disabled";
- 	};
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts index ebfbb51..2609fa3
+> 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> @@ -56,6 +56,7 @@
+>  		compatible = "thine,thc63lvd1024";
+> 
+>  		vcc-supply = <&d3p3>;
+> +		thine,map = <1>;
+> 
+>  		ports {
+>  			#address-cells = <1>;
+
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
+
+
+
