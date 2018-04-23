@@ -1,56 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45270 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752640AbeDSOHN (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49964 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753109AbeDWIn6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:13 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 54/61] uio: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:24 +0200
-Message-Id: <20180419140641.27926-55-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Mon, 23 Apr 2018 04:43:58 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/3] v4l: rcar_fdp1: Enable compilation on Gen2 platforms
+Date: Mon, 23 Apr 2018 11:44:09 +0300
+Message-ID: <2980962.LsAd7PBAGk@avalon>
+In-Reply-To: <CAMuHMdWiFa4_wyQpOHbb9r-55o_gjvQUKOVVbkuYGEbHRsrEuQ@mail.gmail.com>
+References: <20180422102849.2481-1-laurent.pinchart+renesas@ideasonboard.com> <20180422102849.2481-3-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdWiFa4_wyQpOHbb9r-55o_gjvQUKOVVbkuYGEbHRsrEuQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+Hi Geert,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Monday, 23 April 2018 10:58:13 EEST Geert Uytterhoeven wrote:
+> On Sun, Apr 22, 2018 at 12:28 PM, Laurent Pinchart wrote:
+> > Commit 1d3897143815 ("[media] v4l: rcar_fdp1: add FCP dependency") fixed
+> > a compilation breakage when the optional VIDEO_RENESAS_FCP dependency is
+> > compiled as a module while the rcar_fdp1 driver is built in. As a side
+> > effect it disabled compilation on Gen2 by disallowing the valid
+> > combination ARCH_RENESAS && !VIDEO_RENESAS_FCP. Fix it by handling the
+> > dependency the same way the vsp1 driver did in commit 199946731fa4
+> > ("[media] vsp1: clarify FCP dependency").
+> > 
+> > Fixes: 1d3897143815 ("[media] v4l: rcar_fdp1: add FCP dependency")
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  drivers/media/platform/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/media/platform/Kconfig
+> > b/drivers/media/platform/Kconfig index 621d63b2001d..81c3ab95c050 100644
+> > --- a/drivers/media/platform/Kconfig
+> > +++ b/drivers/media/platform/Kconfig
+> > @@ -397,7 +397,7 @@ config VIDEO_RENESAS_FDP1
+> >         tristate "Renesas Fine Display Processor"
+> >         depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
+> >         depends on ARCH_RENESAS || COMPILE_TEST
+> > -       depends on (!ARCH_RENESAS && !VIDEO_RENESAS_FCP) ||
+> > VIDEO_RENESAS_FCP
+> > +       depends on (!ARM64 && !VIDEO_RENESAS_FCP) || VIDEO_RENESAS_FCP
+> 
+> s/!ARM64/ARCH_RCAR_GEN2/?
 
-Build tested only. buildbot is happy. Please apply individually.
+That would work too, but is it any better ? It would only matter is 
+COMPILE_TEST is set, and thus won't really make a difference.
 
- drivers/uio/uio_fsl_elbc_gpcm.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> >         select VIDEOBUF2_DMA_CONTIG
+> >         select V4L2_MEM2MEM_DEV
 
-diff --git a/drivers/uio/uio_fsl_elbc_gpcm.c b/drivers/uio/uio_fsl_elbc_gpcm.c
-index b46323d9dc18..50b460c540f7 100644
---- a/drivers/uio/uio_fsl_elbc_gpcm.c
-+++ b/drivers/uio/uio_fsl_elbc_gpcm.c
-@@ -73,8 +73,7 @@ DEVICE_ATTR(reg_or, S_IRUGO|S_IWUSR|S_IWGRP, reg_show, reg_store);
- static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
- 			char *buf)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct uio_info *info = platform_get_drvdata(pdev);
-+	struct uio_info *info = dev_get_drvdata(dev);
- 	struct fsl_elbc_gpcm *priv = info->priv;
- 	struct fsl_lbc_bank *bank = &priv->lbc->bank[priv->bank];
- 
-@@ -93,8 +92,7 @@ static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
- static ssize_t reg_store(struct device *dev, struct device_attribute *attr,
- 			 const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct uio_info *info = platform_get_drvdata(pdev);
-+	struct uio_info *info = dev_get_drvdata(dev);
- 	struct fsl_elbc_gpcm *priv = info->priv;
- 	struct fsl_lbc_bank *bank = &priv->lbc->bank[priv->bank];
- 	unsigned long val;
 -- 
-2.11.0
+Regards,
+
+Laurent Pinchart
