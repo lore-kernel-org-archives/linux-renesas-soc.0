@@ -1,26 +1,27 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 24 Apr 2018 11:37:57 -0500
-From: Rob Herring <robh@kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+Cc: architt@codeaurora.org, a.hajda@samsung.com, airlied@linux.ie,
         daniel@ffwll.ch, peda@axentia.se,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] dt-bindings: display: bridge: thc63lvd1024: Add lvds
- map property
-Message-ID: <20180424163757.tonxzoyofnvohgv3@rob-hp-laptop>
-References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524130269-32688-3-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Subject: Re: [PATCH 2/8] dt-bindings: display: bridge: thc63lvd1024: Add lvds map property
+Date: Mon, 23 Apr 2018 15:02:59 +0300
+Message-ID: <2645564.GDIDDgbfar@avalon>
 In-Reply-To: <1524130269-32688-3-git-send-email-jacopo+renesas@jmondi.org>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org> <1524130269-32688-3-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 11:31:03AM +0200, Jacopo Mondi wrote:
+Hi Jacopo,
+
+Thank you for the patch.
+
+On Thursday, 19 April 2018 12:31:03 EEST Jacopo Mondi wrote:
 > The THC63LVD1024 LVDS to RGB bridge supports two different input mapping
 > modes, selectable by means of an external pin.
 > 
@@ -29,9 +30,51 @@ On Thu, Apr 19, 2018 at 11:31:03AM +0200, Jacopo Mondi wrote:
 > 
 > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
->  .../devicetree/bindings/display/bridge/thine,thc63lvd1024.txt          | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../devicetree/bindings/display/bridge/thine,thc63lvd1024.txt          | 3
+> +++ 1 file changed, 3 insertions(+)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> index 37f0c04..0937595 100644
+> ---
+> a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> +++
+> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> @@ -12,6 +12,8 @@ Required properties:
+>  - compatible: Shall be "thine,thc63lvd1024"
+>  - vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS input,
+> PPL and digital circuitry
+> +- thine,map: LVDS mapping mode selection signal, pin name "MAP". Shall be
+> <1>
+> +  for mapping mode 1, <0> for mapping mode 2
 
-+1 for what Laurent said.
+That's sounds like an odd mapping. I suppose you have modeled it based on the 
+state of the MAP pin instead of the mode number (MAP low means mode 2, MAP 
+high means mode 1). To avoid confusing readers I would write it as
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+- thine,map: level of the MAP pin that selects the LVDS mapping mode. Shall be
+  <0> for low level (mapping mode 2) or <1> for high level (mapping mode 1).
+
+Apart from that this patch looks good to me.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  Optional properties:
+>  - powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
+> @@ -36,6 +38,7 @@ Example:
+> 
+>  		vcc-supply = <&reg_lvds_vcc>;
+>  		powerdown-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
+> +		thine,map = <1>;
+> 
+>  		ports {
+>  			#address-cells = <1>;
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
