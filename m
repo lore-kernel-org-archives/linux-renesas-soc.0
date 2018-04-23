@@ -1,93 +1,80 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41090 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752578AbeDUMoh (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 21 Apr 2018 08:44:37 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] media: i2c: adv748x: Fix pixel rate values
-Date: Sat, 21 Apr 2018 15:44:44 +0300
-Message-Id: <20180421124444.1652-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH 00/11] fix potential Spectre variant 1 issues
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <cover.1524499368.git.gustavo@embeddedor.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <96bd3e25-9503-d23d-4e3c-091e68b6bf8f@embeddedor.com>
+Date: Mon, 23 Apr 2018 14:13:58 -0500
+MIME-Version: 1.0
+In-Reply-To: <cover.1524499368.git.gustavo@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pixel rate, as reported by the V4L2_CID_PIXEL_RATE control, must
-include both horizontal and vertical blanking. Both the AFE and HDMI
-receiver program it incorrectly:
+Hi,
 
-- The HDMI receiver goes to the trouble of removing blanking to compute
-the rate of active pixels. This is easy to fix by removing the
-computation and returning the incoming pixel clock rate directly.
+Please, drop this series. Further analysis is required as it seems all 
+these are False Positives.
 
-- The AFE performs similar calculation, while it should simply return
-the fixed pixel rate for analog sources, mandated by the ADV748x to be
-28.63636 MHz.
+Sorry for the noise.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/i2c/adv748x/adv748x-afe.c  | 11 +++++------
- drivers/media/i2c/adv748x/adv748x-hdmi.c |  8 +-------
- 2 files changed, 6 insertions(+), 13 deletions(-)
+Thanks
+--
+Gustavo
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
-index 61514bae7e5c..3e18d5ae813b 100644
---- a/drivers/media/i2c/adv748x/adv748x-afe.c
-+++ b/drivers/media/i2c/adv748x/adv748x-afe.c
-@@ -321,17 +321,16 @@ static const struct v4l2_subdev_video_ops adv748x_afe_video_ops = {
- static int adv748x_afe_propagate_pixelrate(struct adv748x_afe *afe)
- {
- 	struct v4l2_subdev *tx;
--	unsigned int width, height, fps;
- 
- 	tx = adv748x_get_remote_sd(&afe->pads[ADV748X_AFE_SOURCE]);
- 	if (!tx)
- 		return -ENOLINK;
- 
--	width = 720;
--	height = afe->curr_norm & V4L2_STD_525_60 ? 480 : 576;
--	fps = afe->curr_norm & V4L2_STD_525_60 ? 30 : 25;
--
--	return adv748x_csi2_set_pixelrate(tx, width * height * fps);
-+	/*
-+	 * The ADV748x samples analog video signals using an externally supplied
-+	 * clock whose frequency is required to be 28.63636 MHz.
-+	 */
-+	return adv748x_csi2_set_pixelrate(tx, 28636360);
- }
- 
- static int adv748x_afe_enum_mbus_code(struct v4l2_subdev *sd,
-diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-index 10d229a4f088..aecc2a84dfec 100644
---- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
-+++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-@@ -402,8 +402,6 @@ static int adv748x_hdmi_propagate_pixelrate(struct adv748x_hdmi *hdmi)
- {
- 	struct v4l2_subdev *tx;
- 	struct v4l2_dv_timings timings;
--	struct v4l2_bt_timings *bt = &timings.bt;
--	unsigned int fps;
- 
- 	tx = adv748x_get_remote_sd(&hdmi->pads[ADV748X_HDMI_SOURCE]);
- 	if (!tx)
-@@ -411,11 +409,7 @@ static int adv748x_hdmi_propagate_pixelrate(struct adv748x_hdmi *hdmi)
- 
- 	adv748x_hdmi_query_dv_timings(&hdmi->sd, &timings);
- 
--	fps = DIV_ROUND_CLOSEST_ULL(bt->pixelclock,
--				    V4L2_DV_BT_FRAME_WIDTH(bt) *
--				    V4L2_DV_BT_FRAME_HEIGHT(bt));
--
--	return adv748x_csi2_set_pixelrate(tx, bt->width * bt->height * fps);
-+	return adv748x_csi2_set_pixelrate(tx, timings.bt.pixelclock);
- }
- 
- static int adv748x_hdmi_enum_mbus_code(struct v4l2_subdev *sd,
--- 
-Regards,
-
-Laurent Pinchart
+On 04/23/2018 12:37 PM, Gustavo A. R. Silva wrote:
+> This patchset aims to fix various media platform and media usb
+> cases where we have user controlled array dereferences that could
+> be exploited due to the Spectre variant 1 vulnerability. All were
+> reported by Dan Carpenter.
+> 
+> Notice that given that speculation windows are large, the policy is
+> to kill the speculation on the first load and not worry if it can be
+> completed with a dependent load/store [1].
+> 
+> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+> 
+> Thanks
+> 
+> Gustavo A. R. Silva (11):
+>    media: tm6000: fix potential Spectre variant 1
+>    exynos4-is: mipi-csis: fix potential Spectre variant 1
+>    fsl-viu: fix potential Spectre variant 1
+>    marvell-ccic: mcam-core: fix potential Spectre variant 1
+>    omap_vout: fix potential Spectre variant 1
+>    rcar-v4l2: fix potential Spectre variant 1
+>    rcar_drif: fix potential Spectre variant 1
+>    sh_vou: fix potential Spectre variant 1
+>    vimc-debayer: fix potential Spectre variant 1
+>    vivid-sdr-cap: fix potential Spectre variant 1
+>    vsp1_rwpf: fix potential Spectre variant 1
+> 
+>   drivers/media/platform/exynos4-is/mipi-csis.c   | 5 ++++-
+>   drivers/media/platform/fsl-viu.c                | 8 ++++----
+>   drivers/media/platform/marvell-ccic/mcam-core.c | 3 +++
+>   drivers/media/platform/omap/omap_vout.c         | 3 +++
+>   drivers/media/platform/rcar-vin/rcar-v4l2.c     | 4 +++-
+>   drivers/media/platform/rcar_drif.c              | 4 +++-
+>   drivers/media/platform/sh_vou.c                 | 3 +++
+>   drivers/media/platform/vimc/vimc-debayer.c      | 5 ++++-
+>   drivers/media/platform/vivid/vivid-sdr-cap.c    | 6 ++++++
+>   drivers/media/platform/vsp1/vsp1_rwpf.c         | 3 +++
+>   drivers/media/usb/tm6000/tm6000-video.c         | 2 ++
+>   11 files changed, 38 insertions(+), 8 deletions(-)
+> 
