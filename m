@@ -1,109 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58718 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932506AbeDWSFP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45231 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754588AbeDWLA2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 14:05:15 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties" to the regulator tree
-In-Reply-To: <1524057484-25350-2-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1fAfpv-0004FS-DO@debutante>
-Date: Mon, 23 Apr 2018 19:05:11 +0100
+        Mon, 23 Apr 2018 07:00:28 -0400
+Date: Mon, 23 Apr 2018 13:00:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 04/04] arm64: dts: renesas: r8a77995: Enable IPMMU devices
+Message-ID: <20180423110024.aq673w7gakyke7np@verge.net.au>
+References: <152439168688.19829.5853068596124565316.sendpatchset@little-apple>
+ <152439172110.19829.3765593463963614506.sendpatchset@little-apple>
+ <CAMuHMdWDkM2vRkg5YTdf2Kyvi9xgiLSAkBc1QCPB++bPpZaqHg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWDkM2vRkg5YTdf2Kyvi9xgiLSAkBc1QCPB++bPpZaqHg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Mon, Apr 23, 2018 at 09:52:41AM +0200, Geert Uytterhoeven wrote:
+> On Sun, Apr 22, 2018 at 12:08 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> > From: Magnus Damm <damm+renesas@opensource.se>
+> >
+> > Remove 'status = "disabled"' to make sure all IPMMU devices are enabled
+> > in DT on the r8a77995 SoC.
+> >
+> > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode properties
+Thanks, I applied this by hand as the node order was updated by
+a patch that I applied earlier today. The result is as follows:
 
-has been applied to the regulator tree at
+From: Magnus Damm <damm+renesas@opensource.se>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+Remove 'status = "disabled"' to make sure all IPMMU devices are enabled
+in DT on the r8a77995 SoC.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From c85964de544cae98c3d8d29c936b6d13258e4a10 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 18 Apr 2018 15:18:01 +0200
-Subject: [PATCH] dt-bindings: mfd: bd9571mwv: Document DDR Backup Mode
- properties
-
-Document the new optional properties related to DDR Backup Mode and
-toggle/momentary power switches.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[simon: rebased]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../devicetree/bindings/mfd/bd9571mwv.txt     | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-index 9ab216a851d5..25d1f697eb25 100644
---- a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-+++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
-@@ -25,6 +25,25 @@ Required properties:
- 			    Each child node is defined using the standard
- 			    binding for regulators.
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index a97830589b0d..ba98865b0c9b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -409,7 +409,6 @@
+ 			reg = <0 0xe6740000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 0>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
-+Optional properties:
-+  - rohm,ddr-backup-power : Value to use for DDR-Backup Power (default 0).
-+			    This is a bitmask that specifies which DDR power
-+			    rails need to be kept powered when backup mode is
-+			    entered, for system suspend:
-+			      - bit 0: DDR0
-+			      - bit 1: DDR1
-+			      - bit 2: DDR0C
-+			      - bit 3: DDR1C
-+			    These bits match the KEEPON_DDR* bits in the
-+			    documentation for the "BKUP Mode Cnt" register.
-+  - rohm,rstbmode-level: The RSTB signal is configured for level mode, to
-+			 accommodate a toggle power switch (the RSTBMODE pin is
-+			 strapped low).
-+  - rohm,rstbmode-pulse: The RSTB signal is configured for pulse mode, to
-+			 accommodate a momentary power switch (the RSTBMODE pin
-+			 is strapped high).
-+			 The two properties above are mutually exclusive.
-+
- Example:
+ 		ipmmu_ds1: mmu@e7740000 {
+@@ -417,7 +416,6 @@
+ 			reg = <0 0xe7740000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 1>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
- 	pmic: pmic@30 {
-@@ -36,6 +55,8 @@ Example:
- 		#interrupt-cells = <2>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		rohm,ddr-backup-power = <0xf>;
-+		rohm,rstbmode-pulse;
+ 		ipmmu_hc: mmu@e6570000 {
+@@ -425,7 +423,6 @@
+ 			reg = <0 0xe6570000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 2>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
- 		regulators {
- 			dvfs: dvfs {
+ 		ipmmu_mm: mmu@e67b0000 {
+@@ -434,7 +431,6 @@
+ 			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_mp: mmu@ec670000 {
+@@ -442,7 +438,6 @@
+ 			reg = <0 0xec670000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 4>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_pv0: mmu@fd800000 {
+@@ -450,7 +445,6 @@
+ 			reg = <0 0xfd800000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 6>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_rt: mmu@ffc80000 {
+@@ -458,7 +452,6 @@
+ 			reg = <0 0xffc80000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 10>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_vc0: mmu@fe6b0000 {
+@@ -466,7 +459,6 @@
+ 			reg = <0 0xfe6b0000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 12>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_vi0: mmu@febd0000 {
+@@ -474,7 +466,6 @@
+ 			reg = <0 0xfebd0000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 14>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		ipmmu_vp0: mmu@fe990000 {
+@@ -482,7 +473,6 @@
+ 			reg = <0 0xfe990000 0 0x1000>;
+ 			renesas,ipmmu-main = <&ipmmu_mm 16>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
+ 
+ 		avb: ethernet@e6800000 {
 -- 
-2.17.0
+2.11.0
