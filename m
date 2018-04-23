@@ -1,122 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:54462 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbeDZTtR (ORCPT
+Received: from mail-vk0-f41.google.com ([209.85.213.41]:35283 "EHLO
+        mail-vk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754449AbeDWJ7v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 15:49:17 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] arm64: dts: r8a77965: Add R-Car Gen3 thermal support
-Date: Thu, 26 Apr 2018 21:49:06 +0200
-Message-Id: <20180426194906.338-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 23 Apr 2018 05:59:51 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0jOk0pLegJK0-LwK3WEA5A560eNd32O5jK+PzQL9ZRofA@mail.gmail.com>
+References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
+ <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
+ <1792056.cK5O20Fh4U@aspire.rjw.lan> <CAMuHMdWtf+AAb0i4Xu9o-LF7dym4jd9UxFZ-jKMbJcnuyQU3Fg@mail.gmail.com>
+ <CAJZ5v0jOk0pLegJK0-LwK3WEA5A560eNd32O5jK+PzQL9ZRofA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Apr 2018 11:59:50 +0200
+Message-ID: <CAMuHMdW84vC5UoYbWRGXq+8-C5Rbr5pFA98VOfeWNZo=8kDxTA@mail.gmail.com>
+Subject: Re: [PATCH/RFC 1/2] PM / wakeup: Add callback for wake-up change notification
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Based on previous work by Ryo Kataoka <ryo.kataoka.wt@renesas.com>.
+Hi Rafael,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Mon, Apr 23, 2018 at 11:37 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Mon, Apr 23, 2018 at 11:32 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Mon, Apr 23, 2018 at 11:18 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>>> On Wednesday, March 14, 2018 12:26:24 PM CEST Geert Uytterhoeven wrote:
+>>>> Add a callback to inform a device that his wake-up setting has been
+>>>> changed.  This allows a device to synchronize device configuration with
+>>>> an external user action.
+>>>>
+>>>> E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
+>>>> switch, the system suspend procedure is:
+>>>>   1. Configure PMIC for DDR backup mode, which changes the role of the
+>>>>      accessory power switch from a power to a wake-up switch,
+>>>>   2. Switch accessory power switch off, to prepare for system suspend,
+>>>>   3. Suspend system.
+>>>>
+>>>> Hence step 1 cannot be done in the PMIC's suspend callback,
+>>>
+>>> I don't quite understand this, so can you please explain?
+>>>
+>>> What can't it be done from ->prepare() or even from a suspend notifier?
+>>>
+>>>> but it can be done in the new callback, in response to the user writing "enabled"
+>>>> to the PMIC's wakeup virtual file in sysfs.
+>>
+>> Step 2 (flip a switch on the board) is a manual step, to be done by the user.
+>> So it cannot be done from any suspend callback or notifier.
+>
+> I still find it somewhat difficult to follow you here. :-)
+>
+> How is this expected to work?  Is the user expected to flip the switch
+> on the board and then write to "wakeup" or is that the other way
+> around?
 
----
+The other way around. The user must not flip the switch before the PMIC
+is configured for DDR backup mode, else the system will be powered off
+immediately.
 
-Hi Simon,
+  1. User writes to wakeup, which invokes the new callback, and configures
+       the PMIC for DDR backup mode,
+  2. User flips the switch,
+  3. User writes to /sys/power/state to suspend.
 
-The compatibility string 'renesas,r8a77965-thermal' is accepted but not 
-yet picked up, see '[PATCH v2 0/2] thermal: rcar_gen3_thermal: add 
-r8a77965 support'.
+After system suspend:
+  4. User flips the switch to resume.
 
-* Changes since v1
-- Rebased to devel branch of Simons tree.
-- Switch to R8A77965_PD_ALWAYS_ON instead of 32 in power-domains as the
-  constant is present in v4.17-rc1. This makes this patch depend on
-  '[PATCH] arm64: dts: renesas: r8a77965: use r8a77965-sysc binding
-  definitions' which adds the r8a77965-sysc.h include to the dtsi file.
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 59 +++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+Yes, it is convoluted. I hope I managed to explain it clearly this time.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 054ac6be43fac6f3..37c38b0f8f435645 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -136,6 +136,21 @@
- 			/* placeholder */
- 		};
- 
-+		tsc: thermal@e6198000 {
-+			compatible = "renesas,r8a77965-thermal";
-+			reg = <0 0xe6198000 0 0x100>,
-+			      <0 0xe61a0000 0 0x100>,
-+			      <0 0xe61a8000 0 0x100>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <1>;
-+			status = "okay";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77965",
- 				     "renesas,rcar-gen3-gpio";
-@@ -1062,6 +1077,50 @@
- 				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
-+	thermal-zones {
-+		sensor_thermal1: sensor-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 0>;
-+
-+			trips {
-+				sensor1_crit: sensor1-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		sensor_thermal2: sensor-thermal2 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 1>;
-+
-+			trips {
-+				sensor2_crit: sensor2-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		sensor_thermal3: sensor-thermal3 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsc 2>;
-+
-+			trips {
-+				sensor3_crit: sensor3-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	/* External USB clocks - can be overridden by the board */
- 	usb3s0_clk: usb3s0 {
- 		compatible = "fixed-clock";
+Currently step 1 is done using i2set from userspace, which is very unfriendly
+(cfr. https://elinux.org/R-Car/Boards/Salvator-XS#PSCI_System_Suspend).
+
+Note that on systems with a momentary power switch (e.g. R-Car Starter Kit Pro
+or Premier aka [HM]3ULCB), step 2 is not needed.
+Hence things are simplified a lot, as PMIC configuration can be done from
+the PMIC's suspend callback on these platforms.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
