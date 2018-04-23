@@ -1,57 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35642 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752151AbeD3JD0 (ORCPT
+Received: from mail-bn3nam01on0056.outbound.protection.outlook.com ([104.47.33.56]:1281
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751414AbeDWGFK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:03:26 -0400
-Received: by mail-io0-f196.google.com with SMTP id g1-v6so62712iob.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Apr 2018 02:03:26 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com> <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 30 Apr 2018 11:03:25 +0200
-Message-ID: <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+        Mon, 23 Apr 2018 02:05:10 -0400
 Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Michal Simek <michal.simek@xilinx.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hoan Tran <hotran@apm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-gpio@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+ <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
+ <20180421162333.d4jtidmbxrx76k4x@ninjato>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <19e48035-917c-7bb0-eef3-a7d6db4c1db2@xilinx.com>
+Date: Mon, 23 Apr 2018 08:04:48 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180421162333.d4jtidmbxrx76k4x@ninjato>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 04/19/2018 09:05 AM, Wolfram Sang wrote:
->>
->> We should get drvdata from struct device directly. Going via
->> platform_device is an unneeded step back and forth.
->>
->> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> ---
->>
->> Build tested only. buildbot is happy. Please apply individually.
->
->
-> for gpio-omap.c:
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Hi Wolfram,
 
-Hm I only see the responses not the actual patch, I guess I will find it
-sooner or later.
+On 21.4.2018 18:23, Wolfram Sang wrote:
+> Hi Michal,
+> 
+> Thanks for the reviews!
+> 
+>> There are two more occurences in this gpio-zynq driver.
+>> zynq_gpio_resume, zynq_gpio_suspend. It wasn't detected because these
+>> two lines are not together. But the same change can be applied for them too.
+> 
+> Not really. The rule would have matched if there was just "something"
+> inbetween. It did not match because the "something" involves the
+> variable 'pdev', so we can't remove it. And just changing towards
+> 'dev_get_drvdata' and keeping 'pdev' was not worth the hazzle in my
+> book. Especially since I think the code should probably get refactored.
+> Calling platform_get_irq() in suspend/resume paths in order to get the
+> irq_data looks a little expensive to me, but I haven't tested it.
+> 
 
-Wolfram: if I don't find it, poke me with something sharp so I get to apply it.
+ok. Thanks. I have overlooked that.
 
-Yours,
-Linus Walleij
+Thanks,
+Michal
