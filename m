@@ -1,65 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:35037 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754372AbeDWJcO (ORCPT
+Received: from cloudserver094114.home.pl ([79.96.170.134]:64281 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754401AbeDWJS0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:32:14 -0400
-MIME-Version: 1.0
-In-Reply-To: <1792056.cK5O20Fh4U@aspire.rjw.lan>
-References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
- <1521026785-26456-2-git-send-email-geert+renesas@glider.be> <1792056.cK5O20Fh4U@aspire.rjw.lan>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 23 Apr 2018 11:32:13 +0200
-Message-ID: <CAMuHMdWtf+AAb0i4Xu9o-LF7dym4jd9UxFZ-jKMbJcnuyQU3Fg@mail.gmail.com>
-Subject: Re: [PATCH/RFC 1/2] PM / wakeup: Add callback for wake-up change notification
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Mon, 23 Apr 2018 05:18:26 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFC 1/2] PM / wakeup: Add callback for wake-up change notification
+Date: Mon, 23 Apr 2018 11:18:17 +0200
+Message-ID: <1792056.cK5O20Fh4U@aspire.rjw.lan>
+In-Reply-To: <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
+References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be> <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rafael,
+First, sorry for the huge delay.
 
-On Mon, Apr 23, 2018 at 11:18 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Wednesday, March 14, 2018 12:26:24 PM CEST Geert Uytterhoeven wrote:
->> Add a callback to inform a device that his wake-up setting has been
->> changed.  This allows a device to synchronize device configuration with
->> an external user action.
->>
->> E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
->> switch, the system suspend procedure is:
->>   1. Configure PMIC for DDR backup mode, which changes the role of the
->>      accessory power switch from a power to a wake-up switch,
->>   2. Switch accessory power switch off, to prepare for system suspend,
->>   3. Suspend system.
->>
->> Hence step 1 cannot be done in the PMIC's suspend callback,
->
-> I don't quite understand this, so can you please explain?
->
-> What can't it be done from ->prepare() or even from a suspend notifier?
->
->> but it can be done in the new callback, in response to the user writing "enabled"
->> to the PMIC's wakeup virtual file in sysfs.
+On Wednesday, March 14, 2018 12:26:24 PM CEST Geert Uytterhoeven wrote:
+> Add a callback to inform a device that his wake-up setting has been
+> changed.  This allows a device to synchronize device configuration with
+> an external user action.
+> 
+> E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
+> switch, the system suspend procedure is:
+>   1. Configure PMIC for DDR backup mode, which changes the role of the
+>      accessory power switch from a power to a wake-up switch,
+>   2. Switch accessory power switch off, to prepare for system suspend,
+>   3. Suspend system.
+> 
+> Hence step 1 cannot be done in the PMIC's suspend callback,
 
-Step 2 (flip a switch on the board) is a manual step, to be done by the user.
-So it cannot be done from any suspend callback or notifier.
+I don't quite understand this, so can you please explain?
 
-Gr{oetje,eeting}s,
+What can't it be done from ->prepare() or even from a suspend notifier?
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> but it can be done in the new callback, in response to the user writing "enabled"
+> to the PMIC's wakeup virtual file in sysfs.
