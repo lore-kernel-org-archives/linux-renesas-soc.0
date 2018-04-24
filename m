@@ -1,48 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37921 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754906AbeDCLAv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:32976 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeDXJ1R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:00:51 -0400
+        Tue, 24 Apr 2018 05:27:17 -0400
+Date: Tue, 24 Apr 2018 11:27:13 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 00/04] arm64: dts: renesas: Enable IPMMU devices
+Message-ID: <20180424092712.dbrd7ih4jfxglv4z@verge.net.au>
+References: <152439168688.19829.5853068596124565316.sendpatchset@little-apple>
+ <CAMuHMdU3eye_jaYA1nb72swAhwZoYSYw3WQ0fpXVOUZumO1Qjw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180330134946.pa3565f2cbtucgja@verge.net.au>
-References: <1522379583-4503-1-git-send-email-ykaneko0929@gmail.com> <20180330134946.pa3565f2cbtucgja@verge.net.au>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Date: Tue, 3 Apr 2018 20:00:50 +0900
-Message-ID: <CAH1o70Km=f8merfVUDprJjF84ziKWgnxCPswbKgov9p3Ja-TeA@mail.gmail.com>
-Subject: Re: [PATCH/RFT v2 0/3] thermal: add support for r8a77995
-To: Simon Horman <horms@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU3eye_jaYA1nb72swAhwZoYSYw3WQ0fpXVOUZumO1Qjw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon-san,
+On Mon, Apr 23, 2018 at 09:56:06AM +0200, Geert Uytterhoeven wrote:
+> Hi Magnus,
+> 
+> On Sun, Apr 22, 2018 at 12:08 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> > arm64: dts: renesas: Enable IPMMU devices
+> >
+> > [PATCH 01/04] arm64: dts: renesas: r8a7795: Enable IPMMU devices
+> > [PATCH 02/04] arm64: dts: renesas: r8a7796: Enable IPMMU devices
+> > [PATCH 03/04] arm64: dts: renesas: r8a77970: Enable IPMMU devices
+> > [PATCH 04/04] arm64: dts: renesas: r8a77995: Enable IPMMU devices
+> >
+> > Following the policy of using DT to describe the hardware and not software
+> > support state, ...
+> 
+> Good policy! So "[PATCH 0/2] arm64: dts: renesas: r8a77970: Add SMP Support"
+> can be applied, too?
+> 
+> > ... this series makes sure all IPMMU devices are enabled in DT
+> > for SoCs such as r8a7795, r8a7796, r8a77970 and r8a77995.
+> 
+> BTW, do you plan to fix arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi, too?
 
-2018-03-30 22:49 GMT+09:00 Simon Horman <horms@verge.net.au>:
-> On Fri, Mar 30, 2018 at 12:13:00PM +0900, Yoshihiro Kaneko wrote:
->> This series adds thermal support for r8a77995.
->> R-Car D3 (r8a77995) have a thermal sensor module which is similar to Gen2.
->> Therefore this series adds r8a77995 support to rcar_thermal driver not
->> rcar_gen3_thermal driver.
->>
->> This series is based on the next branch of Zhang Rui's linux tree.
->
-> I have very lightly tested this as follows after enabling
-> CONFIG_RCAR_THERMAL in the kernel .config.
->
-> # cat /sys/devices/virtual/thermal/thermal_zone0/temp
-> 40000
-
-Thanks for the testing.
-Probably 40C is reasonable, is not?
-
-
-Best regards,
-Kaneko
+I took the liberty of posting a patch to do that.
