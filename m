@@ -1,68 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58144 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751413AbeD3Kxb (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45442 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeDXOky (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Apr 2018 06:53:31 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH] ARM: dts: r8a7790: Fix sort order of VSP1/FDP1 nodes
-Date: Mon, 30 Apr 2018 11:53:25 +0100
-Message-Id: <20180430105325.27753-1-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180430065949.my4733iq3cx2ombj@verge.net.au>
-References: <20180430065949.my4733iq3cx2ombj@verge.net.au>
+        Tue, 24 Apr 2018 10:40:54 -0400
+Received: by mail-lf0-f66.google.com with SMTP id q5-v6so20673295lff.12
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Apr 2018 07:40:53 -0700 (PDT)
+Date: Tue, 24 Apr 2018 16:40:51 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: thermal: rcar-gen3-thermal: update register
+ size in example
+Message-ID: <20180424144051.GD27674@bigcity.dyn.berto.se>
+References: <20180417204958.14723-1-niklas.soderlund@ragnatech.se>
+ <20180424142841.ausmjp3k5tjwyi6g@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180424142841.ausmjp3k5tjwyi6g@rob-hp-laptop>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 5d3b50d3c04d ("ARM: dts: renesas: r8a7790: Add FDP1 instances")
-introduced the FDP1 for the r8a7790, but broke the sort ordering of the
-device tree nodes.
+Hi Rob,
 
-Move the last VSP up to it's peers to correct the ordering.
+On 2018-04-24 09:28:41 -0500, Rob Herring wrote:
+> On Tue, Apr 17, 2018 at 10:49:58PM +0200, Niklas S�derlund wrote:
+> > From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > 
+> > The datasheet have been expanded with more registers and the DT files
+> > have been updated with the new size. This change updates the example so
+> > writing new DT files can use the enchanted driver which uses the new
+> > registers.
+> > 
+> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  .../devicetree/bindings/thermal/rcar-gen3-thermal.txt       | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> Applied with Simon's comments addressed.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- arch/arm/boot/dts/r8a7790.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Thanks for addressing Simon's comments while applying. I had planed to 
+repost the thermal patches I got comments for later today so this is one 
+less thing for me to do :-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index c244aae7a026..b66a18af28f1 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1616,6 +1616,15 @@
- 			resets = <&cpg 128>;
- 		};
- 
-+		vsp@fe938000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe938000 0 0x8000>;
-+			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 127>;
-+			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+			resets = <&cpg 127>;
-+		};
-+
- 		fdp1@fe940000 {
- 			compatible = "renesas,fdp1";
- 			reg = <0 0xfe940000 0 0x2400>;
-@@ -1643,15 +1652,6 @@
- 			resets = <&cpg 117>;
- 		};
- 
--		vsp@fe938000 {
--			compatible = "renesas,vsp1";
--			reg = <0 0xfe938000 0 0x8000>;
--			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 127>;
--			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--			resets = <&cpg 127>;
--		};
--
- 		jpu: jpeg-codec@fe980000 {
- 			compatible = "renesas,jpu-r8a7790",
- 				     "renesas,rcar-gen2-jpu";
+> 
+> Rob
+
 -- 
-2.17.0
+Regards,
+Niklas S�derlund
