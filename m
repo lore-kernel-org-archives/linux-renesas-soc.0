@@ -1,75 +1,37 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40463 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754943AbeDIUK3 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Apr 2018 16:10:29 -0400
-Date: Mon, 9 Apr 2018 15:10:27 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 24 Apr 2018 11:37:57 -0500
 From: Rob Herring <robh@kernel.org>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>, phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 2/8] DT: reset: renesas,rzn1-reboot: document RZ/N1
- reboot driver
-Message-ID: <20180409201027.ydlvyx72mrt5fphh@rob-hp-laptop>
-References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
- <1522309629-10152-3-git-send-email-michel.pollet@bp.renesas.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        daniel@ffwll.ch, peda@axentia.se,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] dt-bindings: display: bridge: thc63lvd1024: Add lvds
+ map property
+Message-ID: <20180424163757.tonxzoyofnvohgv3@rob-hp-laptop>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524130269-32688-3-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522309629-10152-3-git-send-email-michel.pollet@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1524130269-32688-3-git-send-email-jacopo+renesas@jmondi.org>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 08:46:58AM +0100, Michel Pollet wrote:
-> The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-> as part of the sysctrl MFD to handle rebooting the CA7 cores.
-> This documents the driver bindings.
+On Thu, Apr 19, 2018 at 11:31:03AM +0200, Jacopo Mondi wrote:
+> The THC63LVD1024 LVDS to RGB bridge supports two different input mapping
+> modes, selectable by means of an external pin.
 > 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Describe the LVDS mode map through a newly defined mandatory property in
+> device tree bindings.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
->  .../bindings/power/renesas,rzn1-reboot.txt           | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-> new file mode 100644
-> index 0000000..f592769
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-> @@ -0,0 +1,20 @@
-> +DT bindings for the Renesas RZ/N1 Reboot Driver
-> +
-> +== Reboot Driver Node ==
-> +
-> +The reboot driver is always a subnode of the system controller node, see
-> +renesas,rzn1-sysctrl.txt for details.
-> +
-> +Bindings:
-> ++ Required:
-> +	compatible = "renesas,rzn1-reboot";
-> +
-> +Example:
-> +	sysctrl: sysctrl@4000c000 {
-> +		compatible = "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
+>  .../devicetree/bindings/display/bridge/thine,thc63lvd1024.txt          | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Are there other functions for this block? If so, please define a 
-complete binding for the block.
++1 for what Laurent said.
 
-> +		reg = <0x4000c000 0x1000>;
-> +
-> +		reboot {
-> +			compatible = "renesas,rzn1-reboot";
-
-Why is this node needed? The driver for "renesas,rzn1-sysctrl" should 
-be able to register as a reboot handler/driver/provider.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
