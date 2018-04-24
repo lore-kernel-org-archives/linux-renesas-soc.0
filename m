@@ -1,101 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:39479 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755135AbeDCLfE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33300 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752786AbeDXJmJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:35:04 -0400
+        Tue, 24 Apr 2018 05:42:09 -0400
+Date: Tue, 24 Apr 2018 11:42:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a7795-es1: Enable IPMMU devices
+Message-ID: <20180424094204.ifzj6mftzoakjmw6@verge.net.au>
+References: <20180424092659.23657-1-horms+renesas@verge.net.au>
+ <CAMuHMdXyfdt586hzMmL6LP8AOXFuDbtFs1u_vAf-oRj-+MeHog@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1522265176-33226-4-git-send-email-biju.das@bp.renesas.com>
-References: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com> <1522265176-33226-4-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 3 Apr 2018 13:35:02 +0200
-Message-ID: <CAMuHMdWY5KPoowUostOpyRsZQTLuG+REQed0o7ChE3xoo8UAzg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] clk: renesas: Add r8a77470 CPG Core Clock Definitions
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXyfdt586hzMmL6LP8AOXFuDbtFs1u_vAf-oRj-+MeHog@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Biju,
-
-On Wed, Mar 28, 2018 at 9:26 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Add all RZ/G1C Clock Pulse Generator Core Clock Outputs, as listed in
-> Table 7.2 ("List of Clocks [RZ/G1C]") of the RZ/G1C Hardware User's
-> Manual.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Tue, Apr 24, 2018 at 11:32:08AM +0200, Geert Uytterhoeven wrote:
+> On Tue, Apr 24, 2018 at 11:26 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Remove 'status = "disabled"' to make sure all IPMMU devices are enabled
+> > in DT on the r8a7795 ES1.0 Soc.
+> >
+> > This is a follow up for a patch by Magnus Damm for the
+> > the r8a7795 ES2.0 and other R-Car Gen 3 SoCs.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> V1->V2:
-> * incorporated geert's review comment
->
->  include/dt-bindings/clock/r8a77470-cpg-mssr.h | 36 +++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 include/dt-bindings/clock/r8a77470-cpg-mssr.h
->
-> diff --git a/include/dt-bindings/clock/r8a77470-cpg-mssr.h b/include/dt-bindings/clock/r8a77470-cpg-mssr.h
-> new file mode 100644
-> index 0000000..ffc123c
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/r8a77470-cpg-mssr.h
-> @@ -0,0 +1,36 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Corp.
-> + */
-> +#ifndef __DT_BINDINGS_CLOCK_R8A77470_CPG_MSSR_H__
-> +#define __DT_BINDINGS_CLOCK_R8A77470_CPG_MSSR_H__
-> +
-> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> +
-> +/* r8a77470 CPG Core Clocks */
-> +#define R8A77470_CLK_Z2                0
-> +#define R8A77470_CLK_ZTR       2
 
-These should be numbered consecutively, unless there is a good reason not
-to do so.
-
-Sorry for not noticing before, fixing up while applying...
-
-> +#define R8A77470_CLK_ZTRD2     3
-> +#define R8A77470_CLK_ZT                4
-> +#define R8A77470_CLK_ZX                5
-> +#define R8A77470_CLK_ZS                6
-> +#define R8A77470_CLK_HP                7
-> +#define R8A77470_CLK_B         9
-> +#define R8A77470_CLK_LB                10
-> +#define R8A77470_CLK_P         11
-> +#define R8A77470_CLK_CL                12
-> +#define R8A77470_CLK_CP                13
-> +#define R8A77470_CLK_M2                14
-> +#define R8A77470_CLK_ZB3       16
-> +#define R8A77470_CLK_SDH       19
-> +#define R8A77470_CLK_SD0       20
-> +#define R8A77470_CLK_SD1       21
-> +#define R8A77470_CLK_SD2       22
-> +#define R8A77470_CLK_MP                24
-> +#define R8A77470_CLK_QSPI      25
-> +#define R8A77470_CLK_CPEX      26
-> +#define R8A77470_CLK_RCAN      27
-> +#define R8A77470_CLK_R         28
-> +#define R8A77470_CLK_OSC       29
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, applied.
