@@ -1,179 +1,68 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 07/33] rcar-vin: move model information to own struct
-Date: Sat, 14 Apr 2018 13:57:00 +0200
-Message-Id: <20180414115726.5075-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:60907 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754439AbeDXJMW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 24 Apr 2018 05:12:22 -0400
+Date: Tue, 24 Apr 2018 11:12:18 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 0/3] arm64: dts: renesas: Rename EtherAVB "mdc" pin group
+ to "mdio"
+Message-ID: <20180424091217.2bpi2pwm5p3k7o3l@verge.net.au>
+References: <1520867520-13942-1-git-send-email-geert+renesas@glider.be>
+ <20180313184919.si37h5xdkcfiadxu@verge.net.au>
+ <CAMuHMdX8yjx9BaAYpVOhmNfse1rfZ9JYQ__aKQxt73DKoWKdkA@mail.gmail.com>
+ <20180316083858.bgx56kriezcd5pal@verge.net.au>
+ <CAMuHMdWBySWKBwH7RgKf=7VQa5eC5BhwDnLrcJAYXUe0JXKxzA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWBySWKBwH7RgKf=7VQa5eC5BhwDnLrcJAYXUe0JXKxzA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When Gen3 support is added to the driver more than model ID will be
-different for the different SoCs. To avoid a lot of if statements in the
-code create a struct rvin_info to store this information.
+On Wed, Apr 18, 2018 at 03:47:33PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Mar 16, 2018 at 9:39 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Tue, Mar 13, 2018 at 08:23:05PM +0100, Geert Uytterhoeven wrote:
+> >> On Tue, Mar 13, 2018 at 7:49 PM, Simon Horman <horms@verge.net.au> wrote:
+> >> > On Mon, Mar 12, 2018 at 04:11:57PM +0100, Geert Uytterhoeven wrote:
+> >> >> On Renesas R-Car Gen2 SoCs, the pin group for the MDIO bus is named
+> >> >> "mdio".
+> >> >>
+> >> >> When initial support was added for R-Car H3, the MDIO pin was forgotten,
+> >> >> and the MDC pin got its own group named "mdc".  During the addition of
+> >> >> support for R-Car M3-W, this mistake was noticed.  But as R-Car H3 and
+> >> >> M3-W are pin compatible, and can be mounted on the same boards, the
+> >> >> decision was made to just add the MDIO pin to the existing "mdc" group.
+> >> >> Later this was extended to R-Car H3 ES2.0, and M3-N, because of pin
+> >> >> compatibility, and to R-Car D3, in the name of consistency among R-Car
+> >> >> Gen3 SoCs.
+> >> >>
+> >> >> However, this decision keeps on being questioned when adding new SoC
+> >> >> support.  Hence bite the bullet and admit our mistake, and rename the
+> >> >> pin group from "mdc" to "mdio", like on R-Car Gen2 SoCs.
+> >> >>
+> >> >> This series is the DTS part, and depends on the series '[PATCH 0/6]
+> >> >> pinctrl: sh-pfc: rcar-gen3: Rename EtherAVB "mdc" pin group to "mdio"'.
+> >> >
+> >> > could you comment on the forwards/backwards compatibility considerations
+> >> > of this series?
+> >>
+> >> Old and new kernels work with old DT (tested on Salvator-X(S).
+> >> New DT requires a new kernel, hence the dependency of the DTS part on the
+> >> driver part.
+> >
+> > Thanks, that is fine by me.
+> >
+> > I have marked these patches as deferred. Please repost or ping me
+> > once the dependency is available in an RC release.
+> 
+> Now in v4.17-rc1.
 
-While we are at it rename the poorly chosen enum which contains the
-different model IDs from chip_id to model_id. Also sort the compatible
-string entries and make use of of_device_get_match_data() which will
-always work as the driver is DT only, so there's always a valid match.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 56 +++++++++++++++++++++--------
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  3 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  | 14 ++++++--
- 3 files changed, 55 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 64daf92bc66dd81b..71d66916ce1b28ab 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -241,21 +241,53 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
-  * Platform Device Driver
-  */
- 
-+static const struct rvin_info rcar_info_h1 = {
-+	.model = RCAR_H1,
-+};
-+
-+static const struct rvin_info rcar_info_m1 = {
-+	.model = RCAR_M1,
-+};
-+
-+static const struct rvin_info rcar_info_gen2 = {
-+	.model = RCAR_GEN2,
-+};
-+
- static const struct of_device_id rvin_of_id_table[] = {
--	{ .compatible = "renesas,vin-r8a7794", .data = (void *)RCAR_GEN2 },
--	{ .compatible = "renesas,vin-r8a7793", .data = (void *)RCAR_GEN2 },
--	{ .compatible = "renesas,vin-r8a7791", .data = (void *)RCAR_GEN2 },
--	{ .compatible = "renesas,vin-r8a7790", .data = (void *)RCAR_GEN2 },
--	{ .compatible = "renesas,vin-r8a7779", .data = (void *)RCAR_H1 },
--	{ .compatible = "renesas,vin-r8a7778", .data = (void *)RCAR_M1 },
--	{ .compatible = "renesas,rcar-gen2-vin", .data = (void *)RCAR_GEN2 },
--	{ },
-+	{
-+		.compatible = "renesas,vin-r8a7778",
-+		.data = &rcar_info_m1,
-+	},
-+	{
-+		.compatible = "renesas,vin-r8a7779",
-+		.data = &rcar_info_h1,
-+	},
-+	{
-+		.compatible = "renesas,vin-r8a7790",
-+		.data = &rcar_info_gen2,
-+	},
-+	{
-+		.compatible = "renesas,vin-r8a7791",
-+		.data = &rcar_info_gen2,
-+	},
-+	{
-+		.compatible = "renesas,vin-r8a7793",
-+		.data = &rcar_info_gen2,
-+	},
-+	{
-+		.compatible = "renesas,vin-r8a7794",
-+		.data = &rcar_info_gen2,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen2-vin",
-+		.data = &rcar_info_gen2,
-+	},
-+	{ /* Sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rvin_of_id_table);
- 
- static int rcar_vin_probe(struct platform_device *pdev)
- {
--	const struct of_device_id *match;
- 	struct rvin_dev *vin;
- 	struct resource *mem;
- 	int irq, ret;
-@@ -264,12 +296,8 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	if (!vin)
- 		return -ENOMEM;
- 
--	match = of_match_device(of_match_ptr(rvin_of_id_table), &pdev->dev);
--	if (!match)
--		return -ENODEV;
--
- 	vin->dev = &pdev->dev;
--	vin->chip = (enum chip_id)match->data;
-+	vin->info = of_device_get_match_data(&pdev->dev);
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (mem == NULL)
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 4a0610a6b4503501..0a035667c0b0e93f 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -266,7 +266,8 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	pix->sizeimage = max_t(u32, pix->sizeimage,
- 			       rvin_format_sizeimage(pix));
- 
--	if (vin->chip == RCAR_M1 && pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
-+	if (vin->info->model == RCAR_M1 &&
-+	    pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
- 		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
- 		return -EINVAL;
- 	}
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 385243e3d4da130b..b63c4fce68adaae6 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -29,7 +29,7 @@
- /* Address alignment mask for HW buffers */
- #define HW_BUFFER_MASK 0x7f
- 
--enum chip_id {
-+enum model_id {
- 	RCAR_H1,
- 	RCAR_M1,
- 	RCAR_GEN2,
-@@ -86,11 +86,19 @@ struct rvin_graph_entity {
- 	unsigned int sink_pad;
- };
- 
-+/**
-+ * struct rvin_info - Information about the particular VIN implementation
-+ * @model:		VIN model
-+ */
-+struct rvin_info {
-+	enum model_id model;
-+};
-+
- /**
-  * struct rvin_dev - Renesas VIN device structure
-  * @dev:		(OF) device
-  * @base:		device I/O register space remapped to virtual memory
-- * @chip:		type of VIN chip
-+ * @info:		info about VIN instance
-  *
-  * @vdev:		V4L2 video device associated with VIN
-  * @v4l2_dev:		V4L2 device
-@@ -119,7 +127,7 @@ struct rvin_graph_entity {
- struct rvin_dev {
- 	struct device *dev;
- 	void __iomem *base;
--	enum chip_id chip;
-+	const struct rvin_info *info;
- 
- 	struct video_device vdev;
- 	struct v4l2_device v4l2_dev;
--- 
-2.16.2
+Thanks, applied.
