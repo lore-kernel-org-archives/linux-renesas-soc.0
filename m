@@ -1,61 +1,43 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: media: renesas-ceu: Add R-Mobile R8A7740
-Date: Wed, 25 Apr 2018 13:15:19 +0200
-Message-Id: <1524654920-18749-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37422 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750729AbeDXQKB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:10:01 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180424160959euoutp02e4053c3d9f0990d437c10c53767c81fa~oaxIcSp4_1166711667euoutp02o
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Apr 2018 16:09:59 +0000 (GMT)
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] video: fbdev: sh_mobile_meram: Drop SUPERH platform
+ dependency
+Date: Tue, 24 Apr 2018 18:09:42 +0200
+Message-ID: <2605903.FtxXXJybeG@amdc3058>
+In-Reply-To: <1524234051-14058-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+References: <CGME20180420142058epcas4p107bd9707fc2225753d4ae60ac316c45b@epcas4p1.samsung.com>
+        <1524234051-14058-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add R-Mobile A1 R8A7740 SoC to the list of compatible values for the CEU
-unit.
+On Friday, April 20, 2018 04:20:51 PM Geert Uytterhoeven wrote:
+> Since commit a521422ea4ae6128 ("ARM: shmobile: mackerel: Remove Legacy C
+> board code"), the only remaining platforms using this driver are SuperH
+> SH-Mobile SoCs (sh7723).  As both SUPERH and ARCH_SHMOBILE are set for
+> these platforms, the SUPERH dependency can be dropped.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- Documentation/devicetree/bindings/media/renesas,ceu.txt | 7 ++++---
- drivers/media/platform/renesas-ceu.c                    | 1 +
- 2 files changed, 5 insertions(+), 3 deletions(-)
+Patch queued for 4.18 (w/ Laurent's & Simon's ACKs), thanks.
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-index 3fc66df..8a7a616 100644
---- a/Documentation/devicetree/bindings/media/renesas,ceu.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-@@ -2,14 +2,15 @@ Renesas Capture Engine Unit (CEU)
- ----------------------------------------------
- 
- The Capture Engine Unit is the image capture interface found in the Renesas
--SH Mobile and RZ SoCs.
-+SH Mobile, R-Mobile and RZ SoCs.
- 
- The interface supports a single parallel input with data bus width of 8 or 16
- bits.
- 
- Required properties:
--- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
--  and RZ/A1M SoCs.
-+- compatible: Shall be one of the following values:
-+	"renesas,r7s72100-ceu" for CEU units found in RZ/A1H and RZ/A1M SoCs
-+	"renesas,r8a7740-ceu" for CEU units found in R-Mobile A1 R8A7740 SoCs
- - reg: Registers address base and size.
- - interrupts: The interrupt specifier.
- 
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index 6599dba..c964a56 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -1545,6 +1545,7 @@ static const struct ceu_data ceu_data_sh4 = {
- #if IS_ENABLED(CONFIG_OF)
- static const struct of_device_id ceu_of_match[] = {
- 	{ .compatible = "renesas,r7s72100-ceu", .data = &ceu_data_rz },
-+	{ .compatible = "renesas,r8a7740-ceu", .data = &ceu_data_rz },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ceu_of_match);
--- 
-2.7.4
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
