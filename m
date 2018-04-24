@@ -1,68 +1,45 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Mon, 23 Apr 2018 12:37:41 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>, Jonathan Corbet <corbet@lwn.net>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 00/11] fix potential Spectre variant 1 issues
-Message-ID: <cover.1524499368.git.gustavo@embeddedor.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:32803 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753084AbeDXJSf (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 24 Apr 2018 05:18:35 -0400
+Date: Tue, 24 Apr 2018 11:18:31 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] arm64: dts: renesas: eagle: add EtherAVB pins
+Message-ID: <20180424091831.t3mpwmwiuht6nurc@verge.net.au>
+References: <382aeecb-c484-ec27-1ef1-8da1673c2c14@cogentembedded.com>
+ <8495a934-62f1-3b2e-3125-78844aef04e1@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Sender: linux-media-owner@vger.kernel.org
+In-Reply-To: <8495a934-62f1-3b2e-3125-78844aef04e1@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patchset aims to fix various media platform and media usb
-cases where we have user controlled array dereferences that could
-be exploited due to the Spectre variant 1 vulnerability. All were
-reported by Dan Carpenter.
+On Fri, Apr 20, 2018 at 02:25:46PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 03/14/2018 10:58 PM, Sergei Shtylyov wrote:
+> 
+> > Add the (previously omitted) EtherAVB pin data to the Eagle board's
+> > device tree.
+> > 
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > ---
+> > The patch is against the 'renesas-devel-20180314-v4.16-rc5' tag of Simon's
+> > 'renesas.git repo. It depends on the R8A77970 PFC driver patch adding EtherAVB
+> > pin groups (posted yesterday) in order to work properly...
+> 
+>    The dependency has been now met, please merge this patch.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Thanks
-
-Gustavo A. R. Silva (11):
-  media: tm6000: fix potential Spectre variant 1
-  exynos4-is: mipi-csis: fix potential Spectre variant 1
-  fsl-viu: fix potential Spectre variant 1
-  marvell-ccic: mcam-core: fix potential Spectre variant 1
-  omap_vout: fix potential Spectre variant 1
-  rcar-v4l2: fix potential Spectre variant 1
-  rcar_drif: fix potential Spectre variant 1
-  sh_vou: fix potential Spectre variant 1
-  vimc-debayer: fix potential Spectre variant 1
-  vivid-sdr-cap: fix potential Spectre variant 1
-  vsp1_rwpf: fix potential Spectre variant 1
-
- drivers/media/platform/exynos4-is/mipi-csis.c   | 5 ++++-
- drivers/media/platform/fsl-viu.c                | 8 ++++----
- drivers/media/platform/marvell-ccic/mcam-core.c | 3 +++
- drivers/media/platform/omap/omap_vout.c         | 3 +++
- drivers/media/platform/rcar-vin/rcar-v4l2.c     | 4 +++-
- drivers/media/platform/rcar_drif.c              | 4 +++-
- drivers/media/platform/sh_vou.c                 | 3 +++
- drivers/media/platform/vimc/vimc-debayer.c      | 5 ++++-
- drivers/media/platform/vivid/vivid-sdr-cap.c    | 6 ++++++
- drivers/media/platform/vsp1/vsp1_rwpf.c         | 3 +++
- drivers/media/usb/tm6000/tm6000-video.c         | 2 ++
- 11 files changed, 38 insertions(+), 8 deletions(-)
-
--- 
-2.7.4
+Thanks, applied.
