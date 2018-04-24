@@ -1,85 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:38482 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755042AbeDTN3A (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:59559 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756468AbeDXI01 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:29:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/8] arm: renesas: Change platform dependency to ARCH_RENESAS
-Date: Fri, 20 Apr 2018 15:28:26 +0200
-Message-Id: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
+        Tue, 24 Apr 2018 04:26:27 -0400
+Date: Tue, 24 Apr 2018 10:26:23 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] dt-bindings: arm: consistently name r8a77965 as M3-N
+Message-ID: <20180424082623.y6d2unyo45wktkx2@verge.net.au>
+References: <20180424055442.19710-1-horms+renesas@verge.net.au>
+ <CAMuHMdWZoXSJnuEiD4e9SpP+ASFgDCcwy16UFOeSEq5sNnsMSA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWZoXSJnuEiD4e9SpP+ASFgDCcwy16UFOeSEq5sNnsMSA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+On Tue, Apr 24, 2018 at 09:16:17AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Tue, Apr 24, 2018 at 7:54 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > There is an inconsistency between the use of M3N and M3-N.
+> > This patch resolves this by consistently using the latter.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Note that this is for a custom Salvator-X board where the M3-W SiP was
+> replaced by an M3-N SiP.  So I have no idea what's on the sticker, if it was
+> replaced at all, and thus kept the text from the BSP.
 
-Commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS")
-started the conversion from ARCH_SHMOBILE to ARCH_RENESAS for Renesas
-ARM SoCs.  This patch series completes the conversion, by:
-  1. Updating dependencies for drivers that weren't converted yet,
-  2. Removing the ARCH_SHMOBILE Kconfig symbols on ARM and ARM64.
+Understood. But I think we should make the naming consistent regardless.
 
-The first 6 patches can be applied independently by subsystem
-maintainers.
-The last two patches depend on the first 6 patches, and are thus marked
-RFC.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (8):
-  arm: shmobile: Change platform dependency to ARCH_RENESAS
-  dmaengine: shdmac: Change platform check to CONFIG_ARCH_RENESAS
-  [media] v4l: rcar_fdp1: Change platform dependency to ARCH_RENESAS
-  sh_eth: Change platform check to CONFIG_ARCH_RENESAS
-  staging: emxx_udc: Change platform dependency to ARCH_RENESAS
-  ASoC: sh: Update menu title and platform dependency
-  [RFC] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig symbol
-  [RFC] arm64: renesas: Remove the ARCH_SHMOBILE Kconfig symbol
-
- arch/arm/Kconfig                      |  2 +-
- arch/arm/Makefile                     |  2 +-
- arch/arm/mach-shmobile/Kconfig        |  4 ---
- arch/arm64/Kconfig.platforms          | 42 +++++++++++++----------------
- drivers/dma/sh/shdmac.c               | 50 +++++++++++++++--------------------
- drivers/media/platform/Kconfig        |  2 +-
- drivers/net/ethernet/renesas/sh_eth.h |  2 +-
- drivers/staging/emxx_udc/Kconfig      |  2 +-
- sound/soc/sh/Kconfig                  |  4 +--
- 9 files changed, 47 insertions(+), 63 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> 
+> > --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> > +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> > @@ -116,7 +116,7 @@ Boards:
+> >      compatible = "renesas,salvator-x", "renesas,r8a7795"
+> >    - Salvator-X (RTP0RC7796SIPB0011S)
+> >      compatible = "renesas,salvator-x", "renesas,r8a7796"
+> > -  - Salvator-X (RTP0RC7796SIPB0011S (M3N))
+> > +  - Salvator-X (RTP0RC7796SIPB0011S (M3-N))
+> >      compatible = "renesas,salvator-x", "renesas,r8a77965"
+> >    - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
+> >      compatible = "renesas,salvator-xs", "renesas,r8a7795"
+> \
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
