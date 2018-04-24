@@ -1,51 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:41128 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeDXOtC (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39987 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933700AbeDXNRY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 10:49:02 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180424131720.4357-1-luc.vanoostenryck@gmail.com>
-References: <20180424131720.4357-1-luc.vanoostenryck@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Apr 2018 16:49:01 +0200
-Message-ID: <CAMuHMdWvvMyEN_sek1e4QxCVZbSZ4X27RqH7XampcH97t=mvwg@mail.gmail.com>
-Subject: Re: [PATCH] net: sh-eth: fix sh_eth_start_xmit()'s return type
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tue, 24 Apr 2018 09:17:24 -0400
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         "David S. Miller" <davem@davemloft.net>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] net: sh-eth: fix sh_eth_start_xmit()'s return type
+Date: Tue, 24 Apr 2018 15:17:18 +0200
+Message-Id: <20180424131720.4357-1-luc.vanoostenryck@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 3:17 PM, Luc Van Oostenryck
-<luc.vanoostenryck@gmail.com> wrote:
-> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-> which is a typedef for an enum type, but the implementation in this
-> driver returns an 'int'.
->
-> Fix this by returning 'netdev_tx_t' in this driver too.
->
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, but the implementation in this
+driver returns an 'int'.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fix this by returning 'netdev_tx_t' in this driver too.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ drivers/net/ethernet/renesas/sh_eth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
-
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index b6b90a631..0875a169f 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2454,7 +2454,7 @@ static void sh_eth_tx_timeout(struct net_device *ndev)
+ }
+ 
+ /* Packet transmit function */
+-static int sh_eth_start_xmit(struct sk_buff *skb, struct net_device *ndev)
++static netdev_tx_t sh_eth_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ {
+ 	struct sh_eth_private *mdp = netdev_priv(ndev);
+ 	struct sh_eth_txdesc *txdesc;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.0
