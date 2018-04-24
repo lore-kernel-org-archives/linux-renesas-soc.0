@@ -1,58 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:37227 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751892AbeDJFjM (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:44369 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755830AbeDXH6e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 01:39:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 5/6] usb: gadget: udc: renesas_usb3: should fail if devm_phy_get() returns error
-Date: Tue, 10 Apr 2018 14:38:53 +0900
-Message-Id: <1523338734-20474-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 24 Apr 2018 03:58:34 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1524227264-24896-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524227264-24896-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524227264-24896-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Apr 2018 09:58:32 +0200
+Message-ID: <CAMuHMdVKwcZmYZ=gquT-aOzv1TT9UEEun4cZ-jLemVyhGQcMAA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: renesas: cpg-mssr: Add support for R-Car E3
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that this driver ignores errors other than
-the non-existence of the device, f.e. a memory allocation failure
-in devm_phy_get(). So, this patch replaces devm_phy_get() with
-devm_phy_optional_get().
+On Fri, Apr 20, 2018 at 2:27 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Initial support for R-Car E3 (r8a77990), including core and module
+> clocks.
+>
+> Based on the Table 8.2g of "R-Car Series, 3rd Generation User's Manual:
+> Hardware ((Rev. 0.80, Oct 31, 2017) with Manual Errata on Feb. 28, 2018".
+>
+> Inspried by patches by Takeshi Kihara in the BSP.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Reported-by: Simon Horman <horms+renesas@verge.net.au>
-Fixes: 279d4bc64060 ("usb: gadget: udc: renesas_usb3: add support for generic phy")
-Cc: <stable@vger.kernel.org> # v4.15+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-Remarks:
- - A new file in v2
+Thanks, will queue in clk-renesas-for-v4.18.
 
- drivers/usb/gadget/udc/renesas_usb3.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 233bc04..0e70163 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2636,9 +2636,11 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	 * This is optional. So, if this driver cannot get a phy,
- 	 * this driver will not handle a phy anymore.
- 	 */
--	usb3->phy = devm_phy_get(&pdev->dev, "usb");
--	if (IS_ERR(usb3->phy))
--		usb3->phy = NULL;
-+	usb3->phy = devm_phy_optional_get(&pdev->dev, "usb");
-+	if (IS_ERR(usb3->phy)) {
-+		ret = PTR_ERR(usb3->phy);
-+		goto err_add_udc;
-+	}
- 
- 	pm_runtime_enable(&pdev->dev);
- 	ret = usb_add_gadget_udc(&pdev->dev, &usb3->gadget);
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
