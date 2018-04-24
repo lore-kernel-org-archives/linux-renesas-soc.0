@@ -1,46 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay10.mail.gandi.net ([217.70.178.230]:57591 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755241AbeDPNzl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:32884 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752757AbeDXJWZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:55:41 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: serial: sh-sci: Add support for r8a77965 (H)SCIF
-Date: Mon, 16 Apr 2018 15:55:28 +0200
-Message-Id: <1523886928-14535-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 24 Apr 2018 05:22:25 -0400
+Date: Tue, 24 Apr 2018 11:22:20 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77980: add MMC support
+Message-ID: <20180424092220.s6qgtxloinmimqa7@verge.net.au>
+References: <611daf1f-42a2-d463-0814-ebf762871018@cogentembedded.com>
+ <aaa58189-2c27-e51f-1f97-3671c50a1479@cogentembedded.com>
+ <20180420095857.latofivdh3dnvu2z@verge.net.au>
+ <5be1ecdb-8f36-ca1e-aba6-012fbb263894@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5be1ecdb-8f36-ca1e-aba6-012fbb263894@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add documentation for r8a77965 compatible string to Renesas sci-serial
-device tree bindings documentation.
+On Fri, Apr 20, 2018 at 10:06:03PM +0300, Sergei Shtylyov wrote:
+> On 04/20/2018 12:58 PM, Simon Horman wrote:
+> 
+> >> Define the generic R8A77980 part of the MMC0 (SDHI2) device node.
+> >>
+> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >> ---
+> >>  arch/arm64/boot/dts/renesas/r8a77980.dtsi |   12 ++++++++++++
+> >>  1 file changed, 12 insertions(+)
+> >>
+> >> Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> >> ===================================================================
+> >> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> >> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> >> @@ -371,6 +371,18 @@
+> >>  			dma-channels = <16>;
+> >>  		};
+> >>  
+> >> +		mmc0: mmc@ee140000 {
+> > 
+> > Please use sdhi2: sd@ee140000 for consistency with other SoCs
+> > (I refereed to the r8a7795).
+> 
+>    Mmm... note that this controller has MMC signals (8 data bits, DS, no CD/WP),
+> see manual v0.55. I think it's more correct to call it MMC0 (trken from the
+> manual as well)...
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
-
-Renesas R-Car M3-N support has been merged for v4.17.
-Document the missing device tree bindings.
-
----
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index ad962f4..0cc5417 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -41,6 +41,8 @@ Required properties:
-     - "renesas,hscif-r8a7795" for R8A7795 (R-Car H3) HSCIF compatible UART.
-     - "renesas,scif-r8a7796" for R8A7796 (R-Car M3-W) SCIF compatible UART.
-     - "renesas,hscif-r8a7796" for R8A7796 (R-Car M3-W) HSCIF compatible UART.
-+    - "renesas,scif-r8a77965" for R8A77965 (R-Car M3-N) SCIF compatible UART.
-+    - "renesas,hscif-r8a77965" for R8A77965 (R-Car M3-N) HSCIF compatible UART.
-     - "renesas,scif-r8a77970" for R8A77970 (R-Car V3M) SCIF compatible UART.
-     - "renesas,hscif-r8a77970" for R8A77970 (R-Car V3M) HSCIF compatible UART.
-     - "renesas,scif-r8a77980" for R8A77980 (R-Car V3H) SCIF compatible UART.
---
-2.7.4
+Ok, point taken. I've applied this. But in general I would like the
+dtsi files to be consistent where it makes sense.
