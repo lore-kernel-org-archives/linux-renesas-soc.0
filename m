@@ -1,71 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f41.google.com ([209.85.213.41]:33300 "EHLO
-        mail-vk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754276AbeDXJMG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60068 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933061AbeDXIl3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 05:12:06 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180424084124.6tpxf3ekadzefwd4@verge.net.au>
-References: <20180410123241.25745-1-wsa+renesas@sang-engineering.com>
- <20180411073215.fzvh4ejj2kd7wam3@verge.net.au> <20180416091257.swbt7i6zjfbwysg2@dell>
- <20180424084124.6tpxf3ekadzefwd4@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Apr 2018 11:12:04 +0200
-Message-ID: <CAMuHMdWLya+=QeCwzszMxGPm7b3KbdsNFgc0vsk8NWC5tDO2QQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND] backlight: pwm_bl: don't use GPIOF_* with gpiod_get_direction
-To: Simon Horman <horms@verge.net.au>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 24 Apr 2018 04:41:29 -0400
+Date: Tue, 24 Apr 2018 10:41:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
         Daniel Thompson <daniel.thompson@linaro.org>,
         Jingoo Han <jingoohan1@gmail.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH RESEND] backlight: pwm_bl: don't use GPIOF_* with
+ gpiod_get_direction
+Message-ID: <20180424084124.6tpxf3ekadzefwd4@verge.net.au>
+References: <20180410123241.25745-1-wsa+renesas@sang-engineering.com>
+ <20180411073215.fzvh4ejj2kd7wam3@verge.net.au>
+ <20180416091257.swbt7i6zjfbwysg2@dell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180416091257.swbt7i6zjfbwysg2@dell>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 10:41 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Mon, Apr 16, 2018 at 10:12:57AM +0100, Lee Jones wrote:
->> On Wed, 11 Apr 2018, Simon Horman wrote:
->> > On Tue, Apr 10, 2018 at 02:32:40PM +0200, Wolfram Sang wrote:
->> > > The documentation was wrong, gpiod_get_direction() returns 0/1 instead
->> > > of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
->> > > ("gpio: correct docs about return value of gpiod_get_direction"). Now,
->> > > fix this user (until a better, system-wide solution is in place).
->> > >
->> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> > > Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
->> >
->> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
->>
->> Thanks for the Reviewed-by Simon.  I have applied it to the original mail.
->>
->> Do you know why you mail wasn't sent attached to the original thread?
->> For some reason I received this mail on it's own i.e. not in reply
->> to the original.
->
-> No, not off hand. Perhaps I responded to the email in some unusual way
-> but by now I don't recall. In any case I'll try to be more careful
-> in future.
+On Mon, Apr 16, 2018 at 10:12:57AM +0100, Lee Jones wrote:
+> On Wed, 11 Apr 2018, Simon Horman wrote:
+> 
+> > On Tue, Apr 10, 2018 at 02:32:40PM +0200, Wolfram Sang wrote:
+> > > The documentation was wrong, gpiod_get_direction() returns 0/1 instead
+> > > of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
+> > > ("gpio: correct docs about return value of gpiod_get_direction"). Now,
+> > > fix this user (until a better, system-wide solution is in place).
+> > > 
+> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> > 
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Thanks for the Reviewed-by Simon.  I have applied it to the original mail.
+> 
+> Do you know why you mail wasn't sent attached to the original thread?
+> For some reason I received this mail on it's own i.e. not in reply
+> to the original.
 
-I see Lee is using gmail for sending, so I assume also for receiving.
-
-While I did receive Simon's reply in-thread, lately I had issues with gmail
-not always doing so, and sometimes failing to do deduplication when receiving
-email through multiple paths (mailing lists and/or directly).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+No, not off hand. Perhaps I responded to the email in some unusual way
+but by now I don't recall. In any case I'll try to be more careful
+in future.
