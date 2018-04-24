@@ -1,347 +1,144 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36246 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751488AbeDGAan (ORCPT
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:43793 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932837AbeDXIbS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 20:30:43 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v7 0/8] vsp1: TLB optimisation and DL caching
-Date: Sat, 07 Apr 2018 03:30:42 +0300
-Message-ID: <1706399.6jG5Itdsid@avalon>
-In-Reply-To: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Tue, 24 Apr 2018 04:31:18 -0400
+Date: Tue, 24 Apr 2018 10:31:11 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, magnus.damm@gmail.com,
+        geert@glider.be, hverkuil@xs4all.nl, mchehab@kernel.org,
+        festevam@gmail.com, sakari.ailus@iki.fi, robh+dt@kernel.org,
+        mark.rutland@arm.com, pombredanne@nexb.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 04/10] ARM: dts: r7s72100: Add Capture Engine Unit
+ (CEU)
+Message-ID: <20180424083111.GG17088@w540>
+References: <1519235284-32286-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519235284-32286-5-git-send-email-jacopo+renesas@jmondi.org>
+ <20180221182918.fbxnhdl4r4y3ejfj@verge.net.au>
+ <20180423152143.GH3999@w540>
+ <20180424082355.y2cnfkqa7bj4fpy4@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="O8XZ+2Hy8Kj8wLPZ"
+Content-Disposition: inline
+In-Reply-To: <20180424082355.y2cnfkqa7bj4fpy4@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
 
-I've finished reviewing the series. For your convenience, I've rebased it on 
-top of the BRU/BRS dynamic allocation patches, and pushed the result to
+--O8XZ+2Hy8Kj8wLPZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-	git://linuxtv.org/pinchartl/media.git v4l2/vsp1/tlb-optimise
+Hi Simon,
 
-(Please note it has been compile-tested only)
+On Tue, Apr 24, 2018 at 10:23:56AM +0200, Simon Horman wrote:
+> On Mon, Apr 23, 2018 at 05:21:43PM +0200, jacopo mondi wrote:
+> > Hi Simon,
+> >
+> > On Wed, Feb 21, 2018 at 07:29:18PM +0100, Simon Horman wrote:
+> > > On Wed, Feb 21, 2018 at 06:47:58PM +0100, Jacopo Mondi wrote:
+> > > > Add Capture Engine Unit (CEU) node to device tree.
+> > > >
+> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> > >
+> > > This patch depends on the binding for "renesas,r7s72100-ceu".
+> > > Please repost or otherwise ping me once that dependency has been accepted.
+> >
+> > Bindings for the CEU interface went in v4.17-rc1.
+> >
+> > Could you please resurect this patch?
+>
+> Sure, I took the liberty of "rebasing" it to preserve the new node-order
+> of r7s72100.dtsi. The result is as follows:
 
-I have also taken the liberty to incorporate both my review comments and my 
-Reviewed-by line for the patches that have received a conditional Reviewed-by, 
-that is patches 1/8, 5/8 and 7/8. Patches 3/8, 4/8, 6/8 and 8/8 have open 
-questions so I haven't touched them.
+That's even better.
 
-Please don't despair, v8 might well be the last version we will need :-)
+Thanks
+   j
 
-On Thursday, 8 March 2018 02:05:23 EEST Kieran Bingham wrote:
-> Each display list currently allocates an area of DMA memory to store
-> register settings for the VSP1 to process. Each of these allocations adds
-> pressure to the IPMMU TLB entries.
-> 
-> We can reduce the pressure by pre-allocating larger areas and dividing the
-> area across multiple bodies represented as a pool.
-> 
-> With this reconfiguration of bodies, we can adapt the configuration code to
-> separate out constant hardware configuration and cache it for re-use.
-> 
-> The patches provided in this series can be found at:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git 
-> tags/vsp1/tlb-optimise/v7
-> 
-> I hope that this series is at a stage where it could be integrated now.  It
-> has had some thorough testing and is already integrated in both
-> renesas-drivers and renesas-bsp. (except for the minor changes in v7 that
-> is...)
-> 
-> Please note that checkpatch complains on patch 6/8 in this series:
-> 
-> v7-0006-media-vsp1-Refactor-display-list-configure-operations.patch
-> ----------------------------------------------------------------------------
-> -------------------------- WARNING: function definition argument 'struct
-> vsp1_entity *' should also have an identifier name #290: FILE:
-> drivers/media/platform/vsp1/vsp1_entity.h:82:
-> +       void (*configure_stream)(struct vsp1_entity *, struct vsp1_pipeline
-> *,
-> 
-> However - this complaint is regarding pre-existing code. I have only renamed
-> the function pointers.  I do also disagree with checkpatch here - as there
-> is no need to provide an identifier name, and it does not improve
-> readability in this instance to state:
-> 	...(vsp1_entity *entity, struct vsp1_pipeline *pipe)
-> 
-> Thus - I have ignored these warnings.
-> 
-> 
-> Changelog:
-> ----------
-> 
-> v7:
->  - Rebased on to linux-media/master (v4.16-rc4)
->  - Clean up the formatting of the vsp1_dl_list_add_body()
->  - Fix formatting and white space
->  -  s/prepare/configure_stream/
->  -  s/configure/configure_frame/
-> 
-> v6:
->  - Rebased on to linux-media/master (v4.16-rc1)
->  - Removed DRM/UIF (DISCOM/ColorKey) updates
-> 
-> v5:
->  - Rebased on to renesas-drivers-2018-01-09-v4.15-rc7 to fix conflicts
->    with DRM and UIF updates on VSP1 driver
-> 
-> v4:
->  - Rebased to v4.14
->  * v4l: vsp1: Use reference counting for bodies
->    - Fix up reference handling comments
-> 
->  * v4l: vsp1: Provide a body pool
->    - Provide comment explaining extra allocation on body pool
->      highlighting area for optimisation later.
-> 
->  * v4l: vsp1: Refactor display list configure operations
->    - Fix up comment to describe yuv_mode caching rather than format
-> 
->  * vsp1: Adapt entities to configure into a body
->    - Rename vsp1_dl_list_get_body() to vsp1_dl_list_get_body0()
-> 
->  * v4l: vsp1: Move video configuration to a cached dlb
->    - Adjust pipe configured flag to be reset on resume rather than suspend
->    - rename dl_child, dl_next
-> 
-> Testing:
-> --------
-> The VSP unit tests have been run on this patch set with the following
-> results:
-> 
-> --- Test loop 1 ---
-> - vsp-unit-test-0000.sh
-> Test Conditions:
->   Platform          Renesas Salvator-X 2nd version board based on r8a7795
-> ES2.0+ Kernel release    4.16.0-rc4-arm64-renesas-01067-g397eb3811ec0
->   convert           /usr/bin/convert
->   compare           /usr/bin/compare
->   killall           /usr/bin/killall
->   raw2rgbpnm        /usr/bin/raw2rgbpnm
->   stress            /usr/bin/stress
->   yavta             /usr/bin/yavta
-> - vsp-unit-test-0001.sh
-> Testing WPF packing in RGB332: pass
-> Testing WPF packing in ARGB555: pass
-> Testing WPF packing in XRGB555: pass
-> Testing WPF packing in RGB565: pass
-> Testing WPF packing in BGR24: pass
-> Testing WPF packing in RGB24: pass
-> Testing WPF packing in ABGR32: pass
-> Testing WPF packing in ARGB32: pass
-> Testing WPF packing in XBGR32: pass
-> Testing WPF packing in XRGB32: pass
-> - vsp-unit-test-0002.sh
-> Testing WPF packing in NV12M: pass
-> Testing WPF packing in NV16M: pass
-> Testing WPF packing in NV21M: pass
-> Testing WPF packing in NV61M: pass
-> Testing WPF packing in UYVY: pass
-> Testing WPF packing in VYUY: skip
-> Testing WPF packing in YUV420M: pass
-> Testing WPF packing in YUV422M: pass
-> Testing WPF packing in YUV444M: pass
-> Testing WPF packing in YVU420M: pass
-> Testing WPF packing in YVU422M: pass
-> Testing WPF packing in YVU444M: pass
-> Testing WPF packing in YUYV: pass
-> Testing WPF packing in YVYU: pass
-> - vsp-unit-test-0003.sh
-> Testing scaling from 640x640 to 640x480 in RGB24: pass
-> Testing scaling from 1024x768 to 640x480 in RGB24: pass
-> Testing scaling from 640x480 to 1024x768 in RGB24: pass
-> Testing scaling from 640x640 to 640x480 in YUV444M: pass
-> Testing scaling from 1024x768 to 640x480 in YUV444M: pass
-> Testing scaling from 640x480 to 1024x768 in YUV444M: pass
-> - vsp-unit-test-0004.sh
-> Testing histogram in RGB24: pass
-> Testing histogram in YUV444M: pass
-> - vsp-unit-test-0005.sh
-> Testing RPF.0: pass
-> Testing RPF.1: pass
-> Testing RPF.2: pass
-> Testing RPF.3: pass
-> Testing RPF.4: pass
-> - vsp-unit-test-0006.sh
-> Testing invalid pipeline with no RPF: pass
-> Testing invalid pipeline with no WPF: pass
-> - vsp-unit-test-0007.sh
-> Testing BRU in RGB24 with 1 inputs: pass
-> Testing BRU in RGB24 with 2 inputs: pass
-> Testing BRU in RGB24 with 3 inputs: pass
-> Testing BRU in RGB24 with 4 inputs: pass
-> Testing BRU in RGB24 with 5 inputs: pass
-> Testing BRU in YUV444M with 1 inputs: pass
-> Testing BRU in YUV444M with 2 inputs: pass
-> Testing BRU in YUV444M with 3 inputs: pass
-> Testing BRU in YUV444M with 4 inputs: pass
-> Testing BRU in YUV444M with 5 inputs: pass
-> - vsp-unit-test-0008.sh
-> Test requires unavailable feature set `bru rpf.0 uds wpf.0': skipped
-> - vsp-unit-test-0009.sh
-> Test requires unavailable feature set `rpf.0 wpf.0 wpf.1': skipped
-> - vsp-unit-test-0010.sh
-> Testing CLU in RGB24 with zero configuration: pass
-> Testing CLU in RGB24 with identity configuration: pass
-> Testing CLU in RGB24 with wave configuration: pass
-> Testing CLU in YUV444M with zero configuration: pass
-> Testing CLU in YUV444M with identity configuration: pass
-> Testing CLU in YUV444M with wave configuration: pass
-> Testing LUT in RGB24 with zero configuration: pass
-> Testing LUT in RGB24 with identity configuration: pass
-> Testing LUT in RGB24 with gamma configuration: pass
-> Testing LUT in YUV444M with zero configuration: pass
-> Testing LUT in YUV444M with identity configuration: pass
-> Testing LUT in YUV444M with gamma configuration: pass
-> - vsp-unit-test-0011.sh
-> Testing  hflip=0 vflip=0 rotate=0: pass
-> Testing  hflip=1 vflip=0 rotate=0: pass
-> Testing  hflip=0 vflip=1 rotate=0: pass
-> Testing  hflip=1 vflip=1 rotate=0: pass
-> Testing  hflip=0 vflip=0 rotate=90: pass
-> Testing  hflip=1 vflip=0 rotate=90: pass
-> Testing  hflip=0 vflip=1 rotate=90: pass
-> Testing  hflip=1 vflip=1 rotate=90: pass
-> - vsp-unit-test-0012.sh
-> Testing hflip: pass
-> Testing vflip: pass
-> - vsp-unit-test-0013.sh
-> Testing RPF unpacking in RGB332: pass
-> Testing RPF unpacking in ARGB555: pass
-> Testing RPF unpacking in XRGB555: pass
-> Testing RPF unpacking in RGB565: pass
-> Testing RPF unpacking in BGR24: pass
-> Testing RPF unpacking in RGB24: pass
-> Testing RPF unpacking in ABGR32: pass
-> Testing RPF unpacking in ARGB32: pass
-> Testing RPF unpacking in XBGR32: pass
-> Testing RPF unpacking in XRGB32: pass
-> - vsp-unit-test-0014.sh
-> Testing RPF unpacking in NV12M: pass
-> Testing RPF unpacking in NV16M: pass
-> Testing RPF unpacking in NV21M: pass
-> Testing RPF unpacking in NV61M: pass
-> Testing RPF unpacking in UYVY: pass
-> Testing RPF unpacking in VYUY: skip
-> Testing RPF unpacking in YUV420M: pass
-> Testing RPF unpacking in YUV422M: pass
-> Testing RPF unpacking in YUV444M: pass
-> Testing RPF unpacking in YVU420M: pass
-> Testing RPF unpacking in YVU422M: pass
-> Testing RPF unpacking in YVU444M: pass
-> Testing RPF unpacking in YUYV: pass
-> Testing RPF unpacking in YVYU: pass
-> - vsp-unit-test-0015.sh
-> Testing SRU scaling from 1024x768 to 1024x768 in RGB24: pass
-> Testing SRU scaling from 1024x768 to 2048x1536 in RGB24: pass
-> Testing SRU scaling from 1024x768 to 1024x768 in YUV444M: pass
-> Testing SRU scaling from 1024x768 to 2048x1536 in YUV444M: pass
-> - vsp-unit-test-0016.sh
-> Testing  hflip=0 vflip=0 rotate=0 640x480 -> 640x480: pass
-> Testing  hflip=0 vflip=0 rotate=0 640x480 -> 1024x768: pass
-> Testing  hflip=0 vflip=0 rotate=0 1024x768 -> 640x480: pass
-> Testing  hflip=1 vflip=0 rotate=0 640x480 -> 640x480: pass
-> Testing  hflip=1 vflip=0 rotate=0 640x480 -> 1024x768: pass
-> Testing  hflip=1 vflip=0 rotate=0 1024x768 -> 640x480: pass
-> Testing  hflip=0 vflip=1 rotate=0 640x480 -> 640x480: pass
-> Testing  hflip=0 vflip=1 rotate=0 640x480 -> 1024x768: pass
-> Testing  hflip=0 vflip=1 rotate=0 1024x768 -> 640x480: pass
-> Testing  hflip=1 vflip=1 rotate=0 640x480 -> 640x480: pass
-> Testing  hflip=1 vflip=1 rotate=0 640x480 -> 1024x768: pass
-> Testing  hflip=1 vflip=1 rotate=0 1024x768 -> 640x480: pass
-> Testing  hflip=0 vflip=0 rotate=90 640x480 -> 640x480: pass
-> Testing  hflip=0 vflip=0 rotate=90 640x480 -> 1024x768: pass
-> Testing  hflip=0 vflip=0 rotate=90 1024x768 -> 640x480: pass
-> Testing  hflip=1 vflip=0 rotate=90 640x480 -> 640x480: pass
-> Testing  hflip=1 vflip=0 rotate=90 640x480 -> 1024x768: pass
-> Testing  hflip=1 vflip=0 rotate=90 1024x768 -> 640x480: pass
-> Testing  hflip=0 vflip=1 rotate=90 640x480 -> 640x480: pass
-> Testing  hflip=0 vflip=1 rotate=90 640x480 -> 1024x768: pass
-> Testing  hflip=0 vflip=1 rotate=90 1024x768 -> 640x480: pass
-> Testing  hflip=1 vflip=1 rotate=90 640x480 -> 640x480: pass
-> Testing  hflip=1 vflip=1 rotate=90 640x480 -> 1024x768: pass
-> Testing  hflip=1 vflip=1 rotate=90 1024x768 -> 640x480: pass
-> - vsp-unit-test-0017.sh
-> - vsp-unit-test-0018.sh
-> Testing RPF crop from (0,0)/512x384: pass
-> Testing RPF crop from (32,32)/512x384: pass
-> Testing RPF crop from (32,64)/512x384: pass
-> Testing RPF crop from (64,32)/512x384: pass
-> - vsp-unit-test-0019.sh
-> - vsp-unit-test-0020.sh
-> - vsp-unit-test-0021.sh
-> Testing WPF packing in RGB332 during stress testing: pass
-> Testing WPF packing in ARGB555 during stress testing: pass
-> Testing WPF packing in XRGB555 during stress testing: pass
-> Testing WPF packing in RGB565 during stress testing: pass
-> Testing WPF packing in BGR24 during stress testing: pass
-> Testing WPF packing in RGB24 during stress testing: pass
-> Testing WPF packing in ABGR32 during stress testing: pass
-> Testing WPF packing in ARGB32 during stress testing: pass
-> Testing WPF packing in XBGR32 during stress testing: pass
-> Testing WPF packing in XRGB32 during stress testing: pass
-> ./vsp-unit-test-0021.sh: line 34:  4489 Killed                  stress --cpu
-> 8 --io 4 --vm 2 --vm-bytes 128M - vsp-unit-test-0022.sh
-> Testing long duration pipelines under stress: pass
-> ./vsp-unit-test-0022.sh: line 38:  6457 Killed                  stress --cpu
-> 8 --io 4 --vm 2 --vm-bytes 128M - vsp-unit-test-0023.sh
-> Testing histogram HGT with hue areas
-> 0,255,255,255,255,255,255,255,255,255,255,255: pass Testing histogram HGT
-> with hue areas 0,40,40,80,80,120,120,160,160,200,200,255: pass Testing
-> histogram HGT with hue areas 220,40,40,80,80,120,120,160,160,200,200,220:
-> pass Testing histogram HGT with hue areas
-> 0,10,50,60,100,110,150,160,200,210,250,255: pass Testing histogram HGT with
-> hue areas 10,20,50,60,100,110,150,160,200,210,230,240: pass Testing
-> histogram HGT with hue areas 240,20,60,80,100,120,140,160,180,200,210,220:
-> pass - vsp-unit-test-0024.sh
-> Test requires unavailable feature set `rpf.0 rpf.1 brs wpf.0': skipped
-> 158 tests: 142 passed, 0 failed, 3 skipped
-> 
-> Kieran Bingham (8):
->   media: vsp1: Reword uses of 'fragment' as 'body'
->   media: vsp1: Protect bodies against overflow
->   media: vsp1: Provide a body pool
->   media: vsp1: Convert display lists to use new body pool
->   media: vsp1: Use reference counting for bodies
->   media: vsp1: Refactor display list configure operations
->   media: vsp1: Adapt entities to configure into a body
->   media: vsp1: Move video configuration to a cached dlb
-> 
->  drivers/media/platform/vsp1/vsp1_bru.c    |  32 +--
->  drivers/media/platform/vsp1/vsp1_clu.c    | 102 +++---
->  drivers/media/platform/vsp1/vsp1_clu.h    |   1 +-
->  drivers/media/platform/vsp1/vsp1_dl.c     | 393 +++++++++++++----------
->  drivers/media/platform/vsp1/vsp1_dl.h     |  19 +-
->  drivers/media/platform/vsp1/vsp1_drm.c    |  35 +--
->  drivers/media/platform/vsp1/vsp1_entity.c |  26 +-
->  drivers/media/platform/vsp1/vsp1_entity.h |  38 +-
->  drivers/media/platform/vsp1/vsp1_hgo.c    |  26 +--
->  drivers/media/platform/vsp1/vsp1_hgt.c    |  28 +--
->  drivers/media/platform/vsp1/vsp1_hsit.c   |  20 +-
->  drivers/media/platform/vsp1/vsp1_lif.c    |  25 +-
->  drivers/media/platform/vsp1/vsp1_lut.c    |  77 +++--
->  drivers/media/platform/vsp1/vsp1_lut.h    |   1 +-
->  drivers/media/platform/vsp1/vsp1_pipe.c   |  11 +-
->  drivers/media/platform/vsp1/vsp1_pipe.h   |   7 +-
->  drivers/media/platform/vsp1/vsp1_rpf.c    | 183 +++++------
->  drivers/media/platform/vsp1/vsp1_sru.c    |  24 +-
->  drivers/media/platform/vsp1/vsp1_uds.c    |  75 ++--
->  drivers/media/platform/vsp1/vsp1_uds.h    |   2 +-
->  drivers/media/platform/vsp1/vsp1_video.c  |  82 ++---
->  drivers/media/platform/vsp1/vsp1_video.h  |   2 +-
->  drivers/media/platform/vsp1/vsp1_wpf.c    | 327 +++++++++----------
->  23 files changed, 845 insertions(+), 691 deletions(-)
-> 
-> base-commit: 8514509ba5933f4e4ade0d5d81be117f18c1ebd2
+>
+> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Subject: [PATCH] ARM: dts: r7s72100: Add Capture Engine Unit (CEU)
+>
+> Add Capture Engine Unit (CEU) node to device tree.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> [simon: rebased]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  arch/arm/boot/dts/r7s72100.dtsi | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+> index ecf9516bcda8..4a1aade0e751 100644
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -375,6 +375,15 @@
+>  			status = "disabled";
+>  		};
+>
+> +		ceu: camera@e8210000 {
+> +			reg = <0xe8210000 0x3000>;
+> +			compatible = "renesas,r7s72100-ceu";
+> +			interrupts = <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&mstp6_clks R7S72100_CLK_CEU>;
+> +			power-domains = <&cpg_clocks>;
+> +			status = "disabled";
+> +		};
+> +
+>  		wdt: watchdog@fcfe0000 {
+>  			compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
+>  			reg = <0xfcfe0000 0x6>;
+> @@ -429,9 +438,9 @@
+>  			#clock-cells = <1>;
+>  			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
+>  			reg = <0xfcfe042c 4>;
+> -			clocks = <&p0_clk>;
+> -			clock-indices = <R7S72100_CLK_RTC>;
+> -			clock-output-names = "rtc";
+> +			clocks = <&b_clk>, <&p0_clk>;
+> +			clock-indices = <R7S72100_CLK_CEU R7S72100_CLK_RTC>;
+> +			clock-output-names = "ceu", "rtc";
+>  		};
+>
+>  		mstp7_clks: mstp7_clks@fcfe0430 {
+> --
+> 2.11.0
+>
+>
 
--- 
-Regards,
+--O8XZ+2Hy8Kj8wLPZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Laurent Pinchart
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa3utPAAoJEHI0Bo8WoVY83SwQAMcRemJH4whTol5SgaUhhiwt
+7vPzUri9leP+smhF8kzP/cmWuGEHIyQKHzqSivVBZrtRHyk2JZCGNMdp0M1lloCv
+SCVfyv6R/nnPVKdTqJNZYrTN1yJOcGXle271QLEEZUXkL1aDxy5K5Xb5qpSuwu89
+qH1mKj9K39/B/0lmlrn+ENWlVvzewAaZB+WZfFVU89i+4NncFLhx+6gOMceSF8oy
+I4PyfNOIEXXGmKiv7v8H0uHJf0yUTK0NgFLLnFrIwueogXuQTitV2dIdjDuF99SR
+yOR2XPE+h+Ws1BeqnWX81AdSbAeDj6uC+3VVkjiQ6uwXq6BsCmkyqRvY04xmOgNl
+JDwHUYlW/d3D/xs8zYVJ9GxRywKDW48t5kc6MFWxWEPg2DUYV2LrFiwjBGzkcJIv
+wctnUSf3/rh2nNAzeeESbgGvdqSM2iZuCA7PElFZZpudj+F6wcQtLZWoaLrzkdiN
+3pwLo63R67nRzGIvR2DA3xz3Y9rB58kCFHaOrebBSI//wWRBQgXaaruCm1ebYtXt
+3DkKM3uddKTWAkKcEtH8USq1GReGOwZ1CE9vP8zkgKNjoLjEFYHgdRWYKnn5/Fu1
+gDMKw6mStzZHNK/phxoDl1xUehaqH3eMp34fUN4dW6NTnxVYuWdYVx3TINacajjm
+UT3EmMoeafGOJen5gXDI
+=8F7o
+-----END PGP SIGNATURE-----
+
+--O8XZ+2Hy8Kj8wLPZ--
