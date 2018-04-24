@@ -1,80 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45448 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753515AbeDSOHH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:07 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH 40/61] platform: x86: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:10 +0200
-Message-Id: <20180419140641.27926-41-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1524230914-10175-8-git-send-email-geert+renesas@glider.be>
+References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be> <1524230914-10175-8-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Apr 2018 11:51:07 +0200
+Message-ID: <CAMuHMdXyEGY71v6EFDjBhFva_VRtO4p2BdG=HC5zfrwBXLXK0g@mail.gmail.com>
+Subject: Re: [PATCH/RFC 7/8] ARM: shmobile: Remove the ARCH_SHMOBILE Kconfig symbol
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+(Reducing/enhancing CC list)
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Fri, Apr 20, 2018 at 3:28 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> All drivers for Renesas ARM SoCs have gained proper ARCH_RENESAS
+> platform dependencies.  Hence finish the conversion from ARCH_SHMOBILE
+> to ARCH_RENESAS for Renesas 32-bit ARM SoCs, as started by commit
+> 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS").
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This depends on the previous patches in this series, hence the RFC.
+>
+> JFTR, after this, the following symbols for drivers supporting only
+> Renesas SuperH "SH-Mobile" SoCs can no longer be selected:
+>   - CONFIG_KEYBOARD_SH_KEYSC,
+>   - CONFIG_VIDEO_SH_VOU,
+>   - CONFIG_VIDEO_SH_MOBILE_CEU,
+>   - CONFIG_DRM_SHMOBILE[*],
+>   - CONFIG_FB_SH_MOBILE_MERAM.
+> (changes for a shmobile_defconfig .config)
 
-Build tested only. buildbot is happy. Please apply individually.
+Apparently CONFIG_VIDEO_SH_MOBILE_CEU was set in the old
+armadillo800eva_defconfig, and used by the old board code.
 
- drivers/platform/x86/asus-laptop.c    | 3 +--
- drivers/platform/x86/asus-wmi.c       | 3 +--
- drivers/platform/x86/samsung-laptop.c | 3 +--
- 3 files changed, 3 insertions(+), 6 deletions(-)
+While DT bindings do exist [1], some DT support has been added to the
+driver [2], and this even ended up as the example in [3], this was never
+enabled in the corresponding board DTS.
 
-diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
-index c4768be24ba9..700c48ddfa7c 100644
---- a/drivers/platform/x86/asus-laptop.c
-+++ b/drivers/platform/x86/asus-laptop.c
-@@ -1593,8 +1593,7 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
- 				    int idx)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct platform_device *pdev = to_platform_device(dev);
--	struct asus_laptop *asus = platform_get_drvdata(pdev);
-+	struct asus_laptop *asus = dev_get_drvdata(dev);
- 	acpi_handle handle = asus->handle;
- 	bool supported;
- 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index a32c5c00e0e7..ef87e78ca772 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -1862,8 +1862,7 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
- 				    struct attribute *attr, int idx)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct platform_device *pdev = to_platform_device(dev);
--	struct asus_wmi *asus = platform_get_drvdata(pdev);
-+	struct asus_wmi *asus = dev_get_drvdata(dev);
- 	bool ok = true;
- 	int devid = -1;
- 
-diff --git a/drivers/platform/x86/samsung-laptop.c b/drivers/platform/x86/samsung-laptop.c
-index 03305e0b89ff..7b160ee98115 100644
---- a/drivers/platform/x86/samsung-laptop.c
-+++ b/drivers/platform/x86/samsung-laptop.c
-@@ -1216,8 +1216,7 @@ static umode_t samsung_sysfs_is_visible(struct kobject *kobj,
- 					struct attribute *attr, int idx)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct platform_device *pdev = to_platform_device(dev);
--	struct samsung_laptop *samsung = platform_get_drvdata(pdev);
-+	struct samsung_laptop *samsung = dev_get_drvdata(dev);
- 	bool ok = true;
- 
- 	if (attr == &dev_attr_performance_level.attr)
+Nevertheless, I understand that soc_camera-based driver is obsolete, and
+has been replaced by [4], but bindings for r8a7740 are lacking [5].
+
+[1] Documentation/devicetree/bindings/media/sh_mobile_ceu.txt
+[2] drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c
+[3] Documentation/devicetree/bindings/media/video-interfaces.txt
+[4] drivers/media/platform/renesas-ceu.c
+[5] Documentation/devicetree/bindings/media/renesas,ceu.txt
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
