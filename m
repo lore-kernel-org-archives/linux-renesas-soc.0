@@ -1,45 +1,31 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:51774 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751505AbeDIM3Z (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:29:25 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a77980: Correct parent clock of PCIEC0
-Date: Mon,  9 Apr 2018 14:29:22 +0200
-Message-Id: <1523276962-5465-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH  0/2] Add EtherAVB support
+Date: Tue, 24 Apr 2018 16:37:31 +0100
+Message-Id: <1524584253-52936-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 0.80 of
-December 22, 2017, the parent clock of the PCIe module clock on R-Car
-V3H is S2D2.
+This patch series add EtherAVB support to r8a77470 SoC dtsi and 
+iwg23s-sbc board.
 
-Fixes: ce15783c510a9905 ("clk: renesas: cpg-mssr: add R8A77980 support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in clk-renesas-for-v4.18.
+Biju Das (2):
+  ARM: dts: r8a77470: Add EtherAVB support
+  ARM: dts: iwg23s-sbc: Add EtherAVB support
 
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 15 ++++++++++++++-
+ arch/arm/boot/dts/r8a77470.dtsi           | 13 +++++++++++++
+ 2 files changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-index 7aaae73a321a216f..d7ebd9ec00594fc8 100644
---- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-@@ -116,7 +116,7 @@ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
- 	DEF_MOD("sys-dmac1",		 218,	R8A77980_CLK_S0D3),
- 	DEF_MOD("tpu0",			 304,	R8A77980_CLK_S3D4),
- 	DEF_MOD("sdif",			 314,	R8A77980_CLK_SD0),
--	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S3D1),
-+	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S2D2),
- 	DEF_MOD("intc-ex",		 407,	R8A77980_CLK_CP),
- 	DEF_MOD("intc-ap",		 408,	R8A77980_CLK_S0D3),
- 	DEF_MOD("hscif3",		 517,	R8A77980_CLK_S3D1),
 -- 
 2.7.4
+
