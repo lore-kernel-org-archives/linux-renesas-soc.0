@@ -1,15 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:41555 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756965AbeDXKH1 (ORCPT
+Received: from mail-vk0-f41.google.com ([209.85.213.41]:33300 "EHLO
+        mail-vk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754276AbeDXJMG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 06:07:27 -0400
-Received: by mail-wr0-f180.google.com with SMTP id g21-v6so21604071wrb.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Apr 2018 03:07:27 -0700 (PDT)
-Date: Tue, 24 Apr 2018 11:07:23 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 24 Apr 2018 05:12:06 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180424084124.6tpxf3ekadzefwd4@verge.net.au>
+References: <20180410123241.25745-1-wsa+renesas@sang-engineering.com>
+ <20180411073215.fzvh4ejj2kd7wam3@verge.net.au> <20180416091257.swbt7i6zjfbwysg2@dell>
+ <20180424084124.6tpxf3ekadzefwd4@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Apr 2018 11:12:04 +0200
+Message-ID: <CAMuHMdWLya+=QeCwzszMxGPm7b3KbdsNFgc0vsk8NWC5tDO2QQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND] backlight: pwm_bl: don't use GPIOF_* with gpiod_get_direction
+To: Simon Horman <horms@verge.net.au>
+Cc: Lee Jones <lee.jones@linaro.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -20,58 +25,47 @@ Cc: Simon Horman <horms@verge.net.au>,
         Linux PWM List <linux-pwm@vger.kernel.org>,
         DRI Development <dri-devel@lists.freedesktop.org>,
         Linux Fbdev development list <linux-fbdev@vger.kernel.org>
-Subject: Re: [PATCH RESEND] backlight: pwm_bl: don't use GPIOF_* with
- gpiod_get_direction
-Message-ID: <20180424100723.hyt3vxa2wp7sruqz@dell>
-References: <20180410123241.25745-1-wsa+renesas@sang-engineering.com>
- <20180411073215.fzvh4ejj2kd7wam3@verge.net.au>
- <20180416091257.swbt7i6zjfbwysg2@dell>
- <20180424084124.6tpxf3ekadzefwd4@verge.net.au>
- <CAMuHMdWLya+=QeCwzszMxGPm7b3KbdsNFgc0vsk8NWC5tDO2QQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWLya+=QeCwzszMxGPm7b3KbdsNFgc0vsk8NWC5tDO2QQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, 24 Apr 2018, Geert Uytterhoeven wrote:
+On Tue, Apr 24, 2018 at 10:41 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Mon, Apr 16, 2018 at 10:12:57AM +0100, Lee Jones wrote:
+>> On Wed, 11 Apr 2018, Simon Horman wrote:
+>> > On Tue, Apr 10, 2018 at 02:32:40PM +0200, Wolfram Sang wrote:
+>> > > The documentation was wrong, gpiod_get_direction() returns 0/1 instead
+>> > > of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
+>> > > ("gpio: correct docs about return value of gpiod_get_direction"). Now,
+>> > > fix this user (until a better, system-wide solution is in place).
+>> > >
+>> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> > > Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+>> >
+>> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+>>
+>> Thanks for the Reviewed-by Simon.  I have applied it to the original mail.
+>>
+>> Do you know why you mail wasn't sent attached to the original thread?
+>> For some reason I received this mail on it's own i.e. not in reply
+>> to the original.
+>
+> No, not off hand. Perhaps I responded to the email in some unusual way
+> but by now I don't recall. In any case I'll try to be more careful
+> in future.
 
-> On Tue, Apr 24, 2018 at 10:41 AM, Simon Horman <horms@verge.net.au> wrote:
-> > On Mon, Apr 16, 2018 at 10:12:57AM +0100, Lee Jones wrote:
-> >> On Wed, 11 Apr 2018, Simon Horman wrote:
-> >> > On Tue, Apr 10, 2018 at 02:32:40PM +0200, Wolfram Sang wrote:
-> >> > > The documentation was wrong, gpiod_get_direction() returns 0/1 instead
-> >> > > of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
-> >> > > ("gpio: correct docs about return value of gpiod_get_direction"). Now,
-> >> > > fix this user (until a better, system-wide solution is in place).
-> >> > >
-> >> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >> > > Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> >> >
-> >> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> >>
-> >> Thanks for the Reviewed-by Simon.  I have applied it to the original mail.
-> >>
-> >> Do you know why you mail wasn't sent attached to the original thread?
-> >> For some reason I received this mail on it's own i.e. not in reply
-> >> to the original.
-> >
-> > No, not off hand. Perhaps I responded to the email in some unusual way
-> > but by now I don't recall. In any case I'll try to be more careful
-> > in future.
-> 
-> I see Lee is using gmail for sending, so I assume also for receiving.
+I see Lee is using gmail for sending, so I assume also for receiving.
 
-Well I'm using their servers, but my set-up is IMAP/Mutt.
+While I did receive Simon's reply in-thread, lately I had issues with gmail
+not always doing so, and sometimes failing to do deduplication when receiving
+email through multiple paths (mailing lists and/or directly).
 
-> While I did receive Simon's reply in-thread, lately I had issues with gmail
-> not always doing so, and sometimes failing to do deduplication when receiving
-> email through multiple paths (mailing lists and/or directly).
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
