@@ -1,134 +1,62 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v5 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-Date: Tue, 17 Apr 2018 12:04:19 +0100
-Message-Id: <1523963101-56725-5-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44603 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751339AbeDXQgz (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 24 Apr 2018 12:36:55 -0400
+Received: by mail-lf0-f66.google.com with SMTP id g203-v6so21252604lfg.11
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Apr 2018 09:36:54 -0700 (PDT)
+Subject: Re: [PATCH] net: sh-eth: fix sh_eth_start_xmit()'s return type
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20180424131720.4357-1-luc.vanoostenryck@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <18573d77-d874-7864-90f4-cd4454024c7f@cogentembedded.com>
+Date: Tue, 24 Apr 2018 19:36:48 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180424131720.4357-1-luc.vanoostenryck@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
-bone support.
+Hello!
 
-This currently only handles generic parts (gic, architected timer)
-and a UART.
-For simplicity sake, this also relies on the bootloader to set the
-pinctrl and clocks.
+On 04/24/2018 04:17 PM, Luc Van Oostenryck wrote:
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 89 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+> which is a typedef for an enum type, but the implementation in this
+> driver returns an 'int'.
+> 
+> Fix this by returning 'netdev_tx_t' in this driver too.
+> 
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-new file mode 100644
-index 0000000..23c56d7
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -0,0 +1,89 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "renesas,r9a06g032", "renesas,rzn1";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	clkuarts: clkuarts {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <47619047>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		reboot@4000c120 {
-+			compatible = "renesas,r9a06g032-reboot",
-+					"renesas,rzn1-reboot";
-+			reg = <0x4000c120 4>,
-+				<0x4000c198 4>;
-+		};
-+
-+		uart0: serial@40060000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x40060000 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&clkuarts>;
-+			clock-names = "baudclk";
-+			status = "disabled";
-+		};
-+
-+		gic: gic@44101000 {
-+			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x44101000 0x1000>, /* Distributer */
-+			      <0x44102000 0x2000>, /* CPU interface */
-+			      <0x44104000 0x2000>, /* Virt interface control */
-+			      <0x44106000 0x2000>; /* Virt CPU interface */
-+			interrupts =
-+				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,cortex-a7-timer",
-+			     "arm,armv7-timer";
-+		interrupt-parent = <&gic>;
-+		arm,cpu-registers-not-fw-configured;
-+		always-on;
-+		interrupts =
-+			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
--- 
-2.7.4
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
+[...]
+> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> index b6b90a631..0875a169f 100644
+> --- a/drivers/net/ethernet/renesas/sh_eth.c
+> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> @@ -2454,7 +2454,7 @@ static void sh_eth_tx_timeout(struct net_device *ndev)
+>  }
+>  
+>  /* Packet transmit function */
+> -static int sh_eth_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+> +static netdev_tx_t sh_eth_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+
+   But aren't you violating 80-column limit?
+
+[...]
+
+MBR, Sergei
