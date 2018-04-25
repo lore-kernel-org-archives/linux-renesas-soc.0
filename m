@@ -1,64 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:59718 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751587AbeDZTmo (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39714 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754291AbeDYNoi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 15:42:44 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Rob Herring <robh+dt@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/2] dt-bindings: thermal: rcar-gen3-thermal: add r8a77965
-Date: Thu, 26 Apr 2018 21:42:01 +0200
-Message-Id: <20180426194202.31662-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180426194202.31662-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180426194202.31662-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 25 Apr 2018 09:44:38 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Vaishali Thakkar <vthakkar1994@gmail.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm: rcar-du: Use drm_dev_put
+Date: Wed, 25 Apr 2018 16:44:53 +0300
+Message-ID: <16063366.hqKB8js4d5@avalon>
+In-Reply-To: <CAK-LDbKJ5CF7x-Ott68c7uf-sWW9v8+C9C-F6df7Zu9ZVXBU0w@mail.gmail.com>
+References: <20180425121036.28965-1-vthakkar1994@gmail.com> <5811471.PjpYk9OX8O@avalon> <CAK-LDbKJ5CF7x-Ott68c7uf-sWW9v8+C9C-F6df7Zu9ZVXBU0w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Based on previous work by Ryo Kataoka <ryo.kataoka.wt@renesas.com>.
+Hi Vaishali,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Wednesday, 25 April 2018 16:42:59 EEST Vaishali Thakkar wrote:
+> On Wed, Apr 25, 2018 at 7:02 PM, Laurent Pinchart wrote:
+> > On Wednesday, 25 April 2018 15:10:36 EEST Vaishali Thakkar wrote:
+> >> As specified in drm_drv.c, drm_dev_unref is a compatibility alias
+> >> for drm_dev_put and shouldn't be used in new code. So, use
+> >> drm_dev_put instead.
+> > 
+> > This looks good to me. However, how about taking it one step further and
+> > mass- patching all drivers to use drm_dev_put() ? We could then remove
+> > drm_dev_unref() completely.
+> 
+> Sure thing! Do you want me to fold this patch in that patchset or will you
+> be fine with applying this separately?
 
----
+I don't think we should split the change in one patch per driver, so if you 
+send a single patch (to be applied through drm-misc) I think it would make 
+sense to fold this change in.
 
-* Changes since v1
-- s/H3 and M3-W, M3-N/H3, M3-W and M3-N/
-- Add review tags.
----
- .../devicetree/bindings/thermal/rcar-gen3-thermal.txt          | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> >> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+> >> ---
+> >> 
+> >>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> 
+> >> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> >> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 05745e86d73e..418a80e6b2f4
+> >> 100644
+> >> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> >> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> >> @@ -378,7 +378,7 @@ static int rcar_du_remove(struct platform_device
+> >> *pdev)
+> >>       drm_kms_helper_poll_fini(ddev);
+> >>       drm_mode_config_cleanup(ddev);
+> >> 
+> >> -     drm_dev_unref(ddev);
+> >> +     drm_dev_put(ddev);
+> >>       return 0;
+> >>  }
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-index fdf5caa6229b4fff..32c63ffef2e3a3ff 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-@@ -9,6 +9,7 @@ Required properties:
- 			  Examples with soctypes are:
- 			    - "renesas,r8a7795-thermal" (R-Car H3)
- 			    - "renesas,r8a7796-thermal" (R-Car M3-W)
-+			    - "renesas,r8a77965-thermal" (R-Car M3-N)
- - reg			: Address ranges of the thermal registers. Each sensor
- 			  needs one address range. Sorting must be done in
- 			  increasing order according to datasheet, i.e.
-@@ -18,7 +19,7 @@ Required properties:
- 
- Optional properties:
- 
--- interrupts           : interrupts routed to the TSC (3 for H3 and M3-W)
-+- interrupts           : interrupts routed to the TSC (3 for H3, M3-W and M3-N)
- - power-domain		: Must contain a reference to the power domain. This
- 			  property is mandatory if the thermal sensor instance
- 			  is part of a controllable power domain.
 -- 
-2.17.0
+Regards,
+
+Laurent Pinchart
