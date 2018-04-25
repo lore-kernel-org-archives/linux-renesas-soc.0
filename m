@@ -1,154 +1,65 @@
-Return-Path: <linux-gpio-owner@vger.kernel.org>
+Return-Path: <lorenzo.pieralisi@arm.com>
+Date: Wed, 25 Apr 2018 15:13:29 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-pci@vger.kernel.org, Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: rcar: Poll more often in rcar_pcie_wait_for_dl()
+Message-ID: <20180425141329.GA20923@e107981-ln.cambridge.arm.com>
+References: <20180318105253.30532-1-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <TY1PR01MB1769DB39F986BEADEF61F8C9F5B30@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1523609472-4481-1-git-send-email-phil.edworthy@renesas.com>
- <CAFHUOYziPaZC-Zcb7rXqC9p24H+CU4wK4NQShQkYLgH7c5mVwA@mail.gmail.com> <TY1PR01MB1769DB39F986BEADEF61F8C9F5B30@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From: Hoan Tran <hotran@apm.com>
-Date: Wed, 18 Apr 2018 00:02:31 -0700
-Message-ID: <CAFHUOYzPO+99HMLV7i1=ZoQG3vKRp2v5GzJdpW9yoWovx8D91Q@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: dwapb: Add support for 1 interrupt per port A GPIO
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180318105253.30532-1-marek.vasut+renesas@gmail.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Phil,
+Hi Marek,
 
-On Fri, Apr 13, 2018 at 9:47 AM, Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> Hi Hoan,
->
-> On 13 April 2018 17:37 Hoan Tran wrote:
->> On Fri, Apr 13, 2018 at 1:51 AM, Phil Edworthy wrote:
->> > The DesignWare GPIO IP can be configured for either 1 interrupt or 1
->> > per GPIO in port A, but the driver currently only supports 1 interrupt=
-.
->> > See the DesignWare DW_apb_gpio Databook description of the
->> > 'GPIO_INTR_IO' parameter.
->> >
->> > This change allows the driver to work with up to 32 interrupts, it
->> > will get as many interrupts as specified in the DT 'interrupts' proper=
-ty.
->> > It doesn't do anything clever with the different interrupts, it just
->> > calls the same handler used for single interrupt hardware.
->> >
->> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
->> > ---
->> > One point to mention is that I have made it possible for users to have
->> > unconncted interrupts by specifying holes in the list of interrupts.
->> > This is done by supporting the interrupts-extended DT prop.
->> > However, I have no use for this and had to hack some test case for thi=
-s.
->> > Perhaps the driver should support 1 interrupt or all GPIOa as interrup=
-ts?
->> >
->> > v3:
->> >  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid
->> > bisect problems
->> > v2:
->> >  - Replaced interrupt-mask DT prop with support for the interrupts-
->> extended
->> >    prop. This means replacing the call to irq_of_parse_and_map() with =
-calls
->> >    to of_irq_parse_one() and irq_create_of_mapping().
->> >
->> > Note: There are a few *code* lines over 80 chars, but this is just gui=
-dance,
->> >    right? Especially as there are already some lines over 80 chars.
->> > ---
-> [snip]
->
->> > -               if (has_acpi_companion(dev) && pp->idx =3D=3D 0)
->> > -                       pp->irq =3D platform_get_irq(to_platform_devic=
-e(dev), 0);
->> > +               if (has_acpi_companion(dev) && pp->idx =3D=3D 0) {
->> > +                       pp->irq[0] =3D platform_get_irq(to_platform_de=
-vice(dev), 0);
->> > +                       if (pp->irq[0])
->> > +                               pp->has_irq =3D true;
->> > +               }
->>
->> It doesn't work for ACPI. Could you do the same logic for ACPI?
-> I don=E2=80=99t have access to any device that was baked (i.e. fabbed) wi=
-th multiple
-> output interrupts from the Synopsys GPIO blocks and use ACPI. I don't
-> know if any such device exists.
+On Sun, Mar 18, 2018 at 11:52:52AM +0100, Marek Vasut wrote:
+> The data link active signal usually takes ~20 uSec to be asserted,
+> poll the bit more often to avoid useless delays in this function.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  drivers/pci/host/pcie-rcar.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Below code is tested on X-Gene system which supports 1 interrupt per
-GPIO on Port A. You can update it into your patch.
+I assume this patch is still a valid change, I noticed you split this
+series but I think this patch was not updated so I should take it as-is.
 
--               if (has_acpi_companion(dev) && pp->idx =3D=3D 0)
--                       pp->irq =3D platform_get_irq(to_platform_device(dev=
-), 0);
-+               if (has_acpi_companion(dev) && pp->idx =3D=3D 0) {
-+                       unsigned int j;
-+                       for (j =3D 0; j < pp->ngpio; j++) {
-+                               pp->irq[j] =3D
-platform_get_irq(to_platform_device(dev), j);
-+                               if (pp->irq[j])
-+                                       pp->has_irq =3D true;
-+                       }
-+               }
+Please let me know.
 
-Thanks
-Hoan
+Thanks,
+Lorenzo
 
->
-> I would prefer not writing code that can be tested easily. I cannot even
-> test the current, albeit small, changes to the Intel Quark MFD.
->
-> Regards
-> Phil
->
->> Thanks
->> Hoan
->>
->> >
->> >                 pp->irq_shared  =3D false;
->> >                 pp->gpio_base   =3D -1;
->> > diff --git a/drivers/mfd/intel_quark_i2c_gpio.c
->> > b/drivers/mfd/intel_quark_i2c_gpio.c
->> > index 90e35de..5bddb84 100644
->> > --- a/drivers/mfd/intel_quark_i2c_gpio.c
->> > +++ b/drivers/mfd/intel_quark_i2c_gpio.c
->> > @@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev
->> *pdev, struct mfd_cell *cell)
->> >         pdata->properties->idx          =3D 0;
->> >         pdata->properties->ngpio        =3D INTEL_QUARK_MFD_NGPIO;
->> >         pdata->properties->gpio_base    =3D INTEL_QUARK_MFD_GPIO_BASE;
->> > -       pdata->properties->irq          =3D pdev->irq;
->> > +       pdata->properties->irq[0]       =3D pdev->irq;
->> > +       pdata->properties->has_irq      =3D true;
->> >         pdata->properties->irq_shared   =3D true;
->> >
->> >         cell->platform_data =3D pdata;
->> > diff --git a/include/linux/platform_data/gpio-dwapb.h
->> > b/include/linux/platform_data/gpio-dwapb.h
->> > index 2dc7f4a..5a52d69 100644
->> > --- a/include/linux/platform_data/gpio-dwapb.h
->> > +++ b/include/linux/platform_data/gpio-dwapb.h
->> > @@ -19,7 +19,8 @@ struct dwapb_port_property {
->> >         unsigned int    idx;
->> >         unsigned int    ngpio;
->> >         unsigned int    gpio_base;
->> > -       unsigned int    irq;
->> > +       unsigned int    irq[32];
->> > +       bool            has_irq;
->> >         bool            irq_shared;
->> >  };
->> >
->> > --
->> > 2.7.4
->> >
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index 93d59f15c589..099998f1923a 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -528,13 +528,13 @@ static void phy_write_reg(struct rcar_pcie *pcie,
+>  
+>  static int rcar_pcie_wait_for_dl(struct rcar_pcie *pcie)
+>  {
+> -	unsigned int timeout = 10;
+> +	unsigned int timeout = 10000;
+>  
+>  	while (timeout--) {
+>  		if ((rcar_pci_read_reg(pcie, PCIETSTR) & DATA_LINK_ACTIVE))
+>  			return 0;
+>  
+> -		msleep(5);
+> +		udelay(5);
+>  	}
+>  
+>  	return -ETIMEDOUT;
+> -- 
+> 2.16.2
+> 
