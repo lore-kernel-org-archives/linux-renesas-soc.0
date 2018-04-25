@@ -1,69 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36624 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753119AbeDZGNE (ORCPT
+        with ESMTP id S1752358AbeDZGMs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:13:04 -0400
-Date: Wed, 25 Apr 2018 08:57:40 +0200
+        Thu, 26 Apr 2018 02:12:48 -0400
+Date: Wed, 25 Apr 2018 09:01:09 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH 0/5] arm64: dts: renesas: r8a779xx: sort nodes
-Message-ID: <20180425065739.ol4y3lai2anlcgvi@verge.net.au>
+Message-ID: <20180425070108.xflrx5tk47incdmd@verge.net.au>
 References: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
  <20180423102658.ezofcrgzzwvzdfor@verge.net.au>
  <CAH1o70+1wfa1Vc1B_fjofhk4CALXtT-eyvXznDsDNypNOVfG1A@mail.gmail.com>
  <20180424082443.svxfrb2lhzjh3g3z@verge.net.au>
  <CAH1o70+o2-Jb=s5GOkn1e0BJ8yLpz=rAowYBcgBD80m34u4bYg@mail.gmail.com>
+ <20180425065739.ol4y3lai2anlcgvi@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAH1o70+o2-Jb=s5GOkn1e0BJ8yLpz=rAowYBcgBD80m34u4bYg@mail.gmail.com>
+In-Reply-To: <20180425065739.ol4y3lai2anlcgvi@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 02:22:14AM +0900, Yoshihiro Kaneko wrote:
-> Hi Simon-san,
+On Wed, Apr 25, 2018 at 08:57:39AM +0200, Simon Horman wrote:
+> On Wed, Apr 25, 2018 at 02:22:14AM +0900, Yoshihiro Kaneko wrote:
+> > Hi Simon-san,
+> > 
+> > 2018-04-24 17:24 GMT+09:00 Simon Horman <horms@verge.net.au>:
+> > > On Tue, Apr 24, 2018 at 02:31:40AM +0900, Yoshihiro Kaneko wrote:
+> > >> Hi Simon-san,
+> > >>
+> > >> 2018-04-23 19:26 GMT+09:00 Simon Horman <horms@verge.net.au>:
+> > >> > On Thu, Apr 19, 2018 at 05:14:35AM +0900, Yoshihiro Kaneko wrote:
+> > >> >> Sort nodes of the R-Car M3-N (r8a77965), V3M (r8a77970) and D3 (r8a77995) DTs.
+> > >> >>
+> > >> >> This is part of an ongoing effort to provide consistent node
+> > >> >> order in the DT of Renesas SoCs to improve maintainability.
+> > >> >>
+> > >> >> This should not have any run-time effect.
+> > >> >>
+> > >> >> Based on the devel branch of Simon Horman's renesas tree.
+> > >> >>
+> > >> >> Yoshihiro Kaneko (5):
+> > >> >>   arm64: dts: renesas: r8a77995: sort subnodes of the root node
+> > >> >>   arm64: dts: renesas: r8a77995: sort subnodes of the soc node
+> > >> >>   arm64: dts: renesas: r8a77965: sort subnodes of the root node
+> > >> >>   arm64: dts: renesas: r8a77965: sort subnodes of the soc node
+> > >> >>   arm64: dts: renesas: r8a77970: sort subnodes of the soc node
+> > >> >
+> > >> > Thanks, applied.
+> > >> >
+> > >> > There ware a few nodes added to r8a77970 between when you made
+> > >> > this patchset and when I applied it. I think the r8a77970 is still
+> > >> > sorted as desired. Could you double-check once I push a devel
+> > >> > branch later today?
+> > >>
+> > >> Yes, will do.
+> > >
+> > > Thanks, you should now be able to check renesas-devel-20180423-v4.17-rc2
+> > 
+> > fcpvd0 should be after vspd0?
+> > It seems good to me except the above.
 > 
-> 2018-04-24 17:24 GMT+09:00 Simon Horman <horms@verge.net.au>:
-> > On Tue, Apr 24, 2018 at 02:31:40AM +0900, Yoshihiro Kaneko wrote:
-> >> Hi Simon-san,
-> >>
-> >> 2018-04-23 19:26 GMT+09:00 Simon Horman <horms@verge.net.au>:
-> >> > On Thu, Apr 19, 2018 at 05:14:35AM +0900, Yoshihiro Kaneko wrote:
-> >> >> Sort nodes of the R-Car M3-N (r8a77965), V3M (r8a77970) and D3 (r8a77995) DTs.
-> >> >>
-> >> >> This is part of an ongoing effort to provide consistent node
-> >> >> order in the DT of Renesas SoCs to improve maintainability.
-> >> >>
-> >> >> This should not have any run-time effect.
-> >> >>
-> >> >> Based on the devel branch of Simon Horman's renesas tree.
-> >> >>
-> >> >> Yoshihiro Kaneko (5):
-> >> >>   arm64: dts: renesas: r8a77995: sort subnodes of the root node
-> >> >>   arm64: dts: renesas: r8a77995: sort subnodes of the soc node
-> >> >>   arm64: dts: renesas: r8a77965: sort subnodes of the root node
-> >> >>   arm64: dts: renesas: r8a77965: sort subnodes of the soc node
-> >> >>   arm64: dts: renesas: r8a77970: sort subnodes of the soc node
-> >> >
-> >> > Thanks, applied.
-> >> >
-> >> > There ware a few nodes added to r8a77970 between when you made
-> >> > this patchset and when I applied it. I think the r8a77970 is still
-> >> > sorted as desired. Could you double-check once I push a devel
-> >> > branch later today?
-> >>
-> >> Yes, will do.
-> >
-> > Thanks, you should now be able to check renesas-devel-20180423-v4.17-rc2
-> 
-> fcpvd0 should be after vspd0?
-> It seems good to me except the above.
+> Thanks, I have updated the patch.
 
-Thanks, I have updated the patch.
+One more time:
 
 From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Subject: [PATCH] arm64: dts: renesas: r8a77970: sort subnodes of the soc node
@@ -79,14 +83,14 @@ order in the DT of Renesas SoCs to improve maintainability.
 This should not have any run-time effect.
 
 Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-[simon: rebased]
+[simon: rebased; move fcpvd0 to after vspd0]
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 378 +++++++++++++++---------------
- 1 file changed, 189 insertions(+), 189 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 388 +++++++++++++++---------------
+ 1 file changed, 194 insertions(+), 194 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index a194cb8d7d62..265ecf56a6f2 100644
+index a194cb8d7d62..c06d7fbfb7be 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
 @@ -83,23 +83,6 @@
@@ -342,7 +346,7 @@ index a194cb8d7d62..265ecf56a6f2 100644
  		scif0: serial@e6e60000 {
  			compatible = "renesas,scif-r8a77970",
  				     "renesas,rcar-gen3-scif",
-@@ -573,49 +497,120 @@
+@@ -573,57 +497,120 @@
  			status = "disabled";
  		};
  
@@ -414,8 +418,12 @@ index a194cb8d7d62..265ecf56a6f2 100644
 +			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
 +			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
 +			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>;
-+		};
-+
+ 		};
+ 
+-		fcpvd0: fcp@fea27000 {
+-			compatible = "renesas,fcpv";
+-			reg = <0 0xfea27000 0 0x200>;
+-			clocks = <&cpg CPG_MOD 603>;
 +		dmac2: dma-controller@e7310000 {
 +			compatible = "renesas,dmac-r8a77970",
 +				     "renesas,rcar-dmac";
@@ -434,7 +442,8 @@ index a194cb8d7d62..265ecf56a6f2 100644
 +					  "ch4", "ch5", "ch6", "ch7";
 +			clocks = <&cpg CPG_MOD 217>;
 +			clock-names = "fck";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+ 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+-			resets = <&cpg 603>;
 +			resets = <&cpg 217>;
 +			#dma-cells = <1>;
 +			dma-channels = <8>;
@@ -504,7 +513,22 @@ index a194cb8d7d62..265ecf56a6f2 100644
 +			resets = <&cpg 408>;
  		};
  
- 		fcpvd0: fcp@fea27000 {
+ 		vspd0: vsp@fea20000 {
+@@ -636,6 +623,14 @@
+ 			renesas,fcp = <&fcpvd0>;
+ 		};
+ 
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++		};
++
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a77970";
+ 			reg = <0 0xfeb00000 0 0x80000>;
 @@ -692,6 +687,11 @@
  				};
  			};
