@@ -1,49 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45270 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753543AbeDSOHK (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:10 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Wed, 25 Apr 2018 14:48:58 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org
-Subject: [PATCH 47/61] staging: greybus: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:17 +0200
-Message-Id: <20180419140641.27926-48-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] dmaengine: shdmac: Change platform check to
+ CONFIG_ARCH_RENESAS
+Message-ID: <20180425091858.GN6014@localhost>
+References: <1524230914-10175-1-git-send-email-geert+renesas@glider.be>
+ <1524230914-10175-3-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524230914-10175-3-git-send-email-geert+renesas@glider.be>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Fri, Apr 20, 2018 at 03:28:28PM +0200, Geert Uytterhoeven wrote:
+> Since commit 9b5ba0df4ea4f940 ("ARM: shmobile: Introduce ARCH_RENESAS")
+> is CONFIG_ARCH_RENESAS a more appropriate platform check than the legacy
+> CONFIG_ARCH_SHMOBILE, hence use the former.
+> 
+> Renesas SuperH SH-Mobile SoCs are still covered by the CONFIG_CPU_SH4
+> check, just like before support for Renesas ARM SoCs was added.
+> 
+> Instead of blindly changing all the #ifdefs, switch the main code block
+> in sh_dmae_probe() to IS_ENABLED(), as this allows to remove all the
+> remaining #ifdefs.
+> 
+> This will allow to drop ARCH_SHMOBILE on ARM in the near future.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Applied, thanks
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/staging/greybus/arche-platform.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
-index 83254a72a7bb..8fe8b6e35432 100644
---- a/drivers/staging/greybus/arche-platform.c
-+++ b/drivers/staging/greybus/arche-platform.c
-@@ -315,8 +315,7 @@ static ssize_t state_store(struct device *dev,
- 			   struct device_attribute *attr,
- 			   const char *buf, size_t count)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct arche_platform_drvdata *arche_pdata = platform_get_drvdata(pdev);
-+	struct arche_platform_drvdata *arche_pdata = dev_get_drvdata(dev);
- 	int ret = 0;
- 
- 	mutex_lock(&arche_pdata->platform_state_mutex);
 -- 
-2.11.0
+~Vinod
