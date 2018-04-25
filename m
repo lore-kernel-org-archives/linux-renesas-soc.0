@@ -1,74 +1,105 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45342 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753375AbeDSOHI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:08 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 43/61] pwm: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:13 +0200
-Message-Id: <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "frowand.list@gmail.com" <frowand.list@gmail.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH/RFC 04/11] of: platform: add device connection parsing
+Date: Wed, 25 Apr 2018 08:59:11 +0000
+Message-ID: <OSBPR01MB22939C555DB92B225D693142D88F0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524039005-30618-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20180424123344.GC25723@kuha.fi.intel.com>
+In-Reply-To: <20180424123344.GC25723@kuha.fi.intel.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+Hi Heikki,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> From: Heikki Krogerus, Sent: Tuesday, April 24, 2018 9:34 PM
+>=20
+> Hi Yoshihiro,
+>=20
+> On Wed, Apr 18, 2018 at 05:09:58PM +0900, Yoshihiro Shimoda wrote:
+<snip>
+> > +		devcon->endpoint[0] =3D dev_name(&pdev->dev);
+> > +		devcon->endpoint[1] =3D dev_name(&remote_pdev->dev);
+> > +
+> > +		/* TODO: How to remove the connection? */
+> > +		device_connection_add(devcon);
+>=20
+> This is wrong. You are converting a connection that is described in
+> graph into a "build-in" one. If the connection is already described in
+> graph there is no need to, actually, we _should not_, add it to the
+> list of "build-in" connection descriptions.
+>=20
+> What should be done is that we parse the graph the moment
+> device_connection_find*() is called. And that should be done in
+> drivers/base/devcon.c .
 
-Build tested only. buildbot is happy. Please apply individually.
+Thank you for the comments! I completely misunderstood which framework I sh=
+ould improve.
+I'll try to improve the devcon.
+However, I'll have a vacation in next week. So, I think I can submit next v=
+ersion in early May.
 
- drivers/pwm/pwm-atmel-tcb.c | 6 ++----
- drivers/pwm/pwm-rcar.c      | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
+Best regards,
+Yoshihiro Shimoda
 
-diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
-index 4fb1be246c44..0d0f8376bc35 100644
---- a/drivers/pwm/pwm-atmel-tcb.c
-+++ b/drivers/pwm/pwm-atmel-tcb.c
-@@ -460,8 +460,7 @@ MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
- #ifdef CONFIG_PM_SLEEP
- static int atmel_tcb_pwm_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
- 	void __iomem *base = tcbpwm->tc->regs;
- 	int i;
- 
-@@ -478,8 +477,7 @@ static int atmel_tcb_pwm_suspend(struct device *dev)
- 
- static int atmel_tcb_pwm_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
-+	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
- 	void __iomem *base = tcbpwm->tc->regs;
- 	int i;
- 
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 91d11f2e2fef..748f614d5375 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -261,8 +261,7 @@ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
- #ifdef CONFIG_PM_SLEEP
- static struct pwm_device *rcar_pwm_dev_to_pwm_dev(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
-+	struct rcar_pwm_chip *rcar_pwm = dev_get_drvdata(dev);
- 	struct pwm_chip *chip = &rcar_pwm->chip;
- 
- 	return &chip->pwms[0];
--- 
-2.11.0
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  /**
+> >   * of_platform_bus_create() - Create a device for a node and its child=
+ren.
+> >   * @bus: device node of the bus to instantiate
+> > @@ -477,6 +535,14 @@ int of_platform_populate(struct device_node *root,
+> >  	}
+> >  	of_node_set_flag(root, OF_POPULATED_BUS);
+> >
+> > +	for_each_child_of_node(root, child) {
+> > +		rc =3D of_parse_device_connection(child);
+> > +		if (rc) {
+> > +			of_node_put(child);
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> >  	of_node_put(root);
+> >  	return rc;
+> >  }
+> > diff --git a/include/linux/of.h b/include/linux/of.h
+> > index 4d25e4f..30aa103 100644
+> > --- a/include/linux/of.h
+> > +++ b/include/linux/of.h
+> > @@ -143,6 +143,7 @@ static inline void of_node_put(struct device_node *=
+node) { }
+> >  #define OF_DETACHED	2 /* node has been detached from the device tree *=
+/
+> >  #define OF_POPULATED	3 /* device already created for the node */
+> >  #define OF_POPULATED_BUS	4 /* of_platform_populate recursed to childre=
+n of this node */
+> > +#define OF_DEVICE_CONNECTED	5 /* checked devcon on of_platform_populat=
+e */
+> >
+> >  #define OF_BAD_ADDR	((u64)-1)
+>=20
+>=20
+> Thanks,
+>=20
+> --
+> heikki
