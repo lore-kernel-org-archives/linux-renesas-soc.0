@@ -1,91 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58038 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754553AbeDZQxw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:53:52 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 00/17] r8a77965: M3-N DU Enablement
-Date: Thu, 26 Apr 2018 17:53:29 +0100
-Message-Id: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH/RFC 0/4] Implement standard color keying properties
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: Thomas Hellstrom <thellstrom@vmware.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-renesas-soc@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20171217001724.1348-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <fc704d59-eee5-c3cd-090d-b5cdd71186be@gmail.com>
+Date: Wed, 25 Apr 2018 22:27:41 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20171217001724.1348-1-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series enables the DU for the M3-N R8A77965 SoC, and provides
-output on the VGA and HDMI connectors.
+Hello Laurent,
 
-LVDS is not yet supported or tested.
+On 17.12.2017 03:17, Laurent Pinchart wrote:
+> Hello,
+> 
+> This patch series is an attempt at implementing standard properties for color
+> keying support in the KMS API.
 
-Patch 13 has the following checkpatch.pl warnings of which I have
-ignored:
+I was looking at implementing colorkey support for NVIDIA Tegra (older Tegra's
+in particular) and Daniel Vetter suggested that colorkey should be implemented
+as a generic plane property, instead of a custom one that I had in the patch
+[0]. I've applied your RFC patch and replaced custom property with the generic,
+it works well.
 
-================================================================================
-WARNING: DT compatible string "renesas,r8a77965-hdmi" appears un-documented --
-check ./Documentation/devicetree/bindings/
+Very likely that all HW should be capable of making pixel completely transparent
+when it matches a specified color, that could be one of common modes. Though
+there could be limitations, like Tegra's aren't able to do blending-over of
+planes if colorkey'ing is enabled. The 'colorkey.mode' property allows driver to
+expose both common properties and a custom ones. In case of Tegra we could
+implement a common property such that atomic commit will be rejected if planes
+blending mode aren't compatible with the enabled colorkey'ing, and have a custom
+property for a custom HW-aware application that won't be rejected (for example
+Opentegra's Xv extension). The common modes could be derived later, once generic
+property will get more usage by a variety of drivers. For now I don't see any
+issues with your approach and hope to see this series applied in upstream to get
+use of them, please continue your effort.
 
-#27: FILE: arch/arm64/boot/dts/renesas/r8a77965.dtsi:1109:
-+                       compatible = "renesas,r8a77965-hdmi",
-
-WARNING: line over 80 characters
-#44: FILE: arch/arm64/boot/dts/renesas/r8a77965.dtsi:1126:
-+                                               remote-endpoint = <&du_out_hdmi0>;
-
-WARNING: line over 80 characters
-#60: FILE: arch/arm64/boot/dts/renesas/r8a77965.dtsi:1164:
-+                                               remote-endpoint = <&dw_hdmi0_in>;
-
-total: 0 errors, 3 warnings, 40 lines checked
-================================================================================
-
-I don't think the remote endpoints can be shorter unless the <&phandles>
-are on a line on their own and that seems silly.
-
-I have not made any changes to the HDMI binding documentation as we will
-match on the generic case, and I do not believe I am allowed to modify
-files related to the HDMI driver.
-
-
-Kieran Bingham (13):
-  dt-bindings: display: renesas: du: Increase indent in output table
-  dt-bindings: display: renesas: du: Document the R8A77965 bindings
-  pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and
-    functions
-  drm: rcar-du: Use the correct naming for ODPM fields in DEFR6
-  drm: rcar-du: Split CRTC handling to support hardware indexing
-  drm: rcar-du: Allow DU groups to work with hardware indexing
-  drm: rcar-du: Add R8A77965 support
-  arm64: dts: r8a77965: Provide sysc header definitions
-  arm64: dts: r8a77965: Use the correct CPG header
-  arm64: dts: r8a77965: Add FCPF and FCPV instances
-  arm64: dts: r8a77965: Add VSP instances
-  arm64: dts: r8a77965: Populate the DU instance placeholder
-  arm64: dts: r8a77965: Add HDMI encoder instance
-
-Takeshi Kihara (4):
-  arm64: dts: r8a77965-salvator-x: Add DU external dot clocks
-  arm64: dts: r8a77965-salvator-x: Enable HDMI output
-  arm64: dts: r8a77965-salvator-xs: Add DU external dot clocks
-  arm64: dts: r8a77965-salvator-xs: Enable HDMI output
-
- .../bindings/display/renesas,du.txt           |  28 ++--
- .../boot/dts/renesas/r8a77965-salvator-x.dts  |  29 ++++
- .../boot/dts/renesas/r8a77965-salvator-xs.dts |  29 ++++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi     | 129 +++++++++++++++++-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c        |  26 ++--
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h        |   3 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c         |  49 +++++--
- drivers/gpu/drm/rcar-du/rcar_du_drv.h         |   4 +-
- drivers/gpu/drm/rcar-du/rcar_du_group.c       |  16 ++-
- drivers/gpu/drm/rcar-du/rcar_du_group.h       |   2 +
- drivers/gpu/drm/rcar-du/rcar_du_kms.c         |  22 ++-
- drivers/gpu/drm/rcar-du/rcar_du_regs.h        |  16 +--
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c         | 116 ++++++++++++++++
- 13 files changed, 409 insertions(+), 60 deletions(-)
-
--- 
-2.17.0
+[0] https://patchwork.kernel.org/patch/10342849/
