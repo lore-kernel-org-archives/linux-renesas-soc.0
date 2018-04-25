@@ -1,127 +1,521 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45416 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753566AbeDSOHP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36624 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753119AbeDZGNE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:15 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH 57/61] video: fbdev: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:27 +0200
-Message-Id: <20180419140641.27926-58-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Thu, 26 Apr 2018 02:13:04 -0400
+Date: Wed, 25 Apr 2018 08:57:40 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/5] arm64: dts: renesas: r8a779xx: sort nodes
+Message-ID: <20180425065739.ol4y3lai2anlcgvi@verge.net.au>
+References: <1524082480-18163-1-git-send-email-ykaneko0929@gmail.com>
+ <20180423102658.ezofcrgzzwvzdfor@verge.net.au>
+ <CAH1o70+1wfa1Vc1B_fjofhk4CALXtT-eyvXznDsDNypNOVfG1A@mail.gmail.com>
+ <20180424082443.svxfrb2lhzjh3g3z@verge.net.au>
+ <CAH1o70+o2-Jb=s5GOkn1e0BJ8yLpz=rAowYBcgBD80m34u4bYg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH1o70+o2-Jb=s5GOkn1e0BJ8yLpz=rAowYBcgBD80m34u4bYg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Wed, Apr 25, 2018 at 02:22:14AM +0900, Yoshihiro Kaneko wrote:
+> Hi Simon-san,
+> 
+> 2018-04-24 17:24 GMT+09:00 Simon Horman <horms@verge.net.au>:
+> > On Tue, Apr 24, 2018 at 02:31:40AM +0900, Yoshihiro Kaneko wrote:
+> >> Hi Simon-san,
+> >>
+> >> 2018-04-23 19:26 GMT+09:00 Simon Horman <horms@verge.net.au>:
+> >> > On Thu, Apr 19, 2018 at 05:14:35AM +0900, Yoshihiro Kaneko wrote:
+> >> >> Sort nodes of the R-Car M3-N (r8a77965), V3M (r8a77970) and D3 (r8a77995) DTs.
+> >> >>
+> >> >> This is part of an ongoing effort to provide consistent node
+> >> >> order in the DT of Renesas SoCs to improve maintainability.
+> >> >>
+> >> >> This should not have any run-time effect.
+> >> >>
+> >> >> Based on the devel branch of Simon Horman's renesas tree.
+> >> >>
+> >> >> Yoshihiro Kaneko (5):
+> >> >>   arm64: dts: renesas: r8a77995: sort subnodes of the root node
+> >> >>   arm64: dts: renesas: r8a77995: sort subnodes of the soc node
+> >> >>   arm64: dts: renesas: r8a77965: sort subnodes of the root node
+> >> >>   arm64: dts: renesas: r8a77965: sort subnodes of the soc node
+> >> >>   arm64: dts: renesas: r8a77970: sort subnodes of the soc node
+> >> >
+> >> > Thanks, applied.
+> >> >
+> >> > There ware a few nodes added to r8a77970 between when you made
+> >> > this patchset and when I applied it. I think the r8a77970 is still
+> >> > sorted as desired. Could you double-check once I push a devel
+> >> > branch later today?
+> >>
+> >> Yes, will do.
+> >
+> > Thanks, you should now be able to check renesas-devel-20180423-v4.17-rc2
+> 
+> fcpvd0 should be after vspd0?
+> It seems good to me except the above.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Thanks, I have updated the patch.
+
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: [PATCH] arm64: dts: renesas: r8a77970: sort subnodes of the soc node
+
+Sort subnodes of the soc node.
+- The primary key is the bus address.
+- The secondary key is the IP block.
+- The tertiary key is the node name.
+
+This is part of an ongoing effort to provide consistent node
+order in the DT of Renesas SoCs to improve maintainability.
+
+This should not have any run-time effect.
+
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+[simon: rebased]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 378 +++++++++++++++---------------
+ 1 file changed, 189 insertions(+), 189 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/video/fbdev/auo_k190x.c        | 12 ++++--------
- drivers/video/fbdev/sh_mobile_lcdcfb.c |  6 ++----
- drivers/video/fbdev/sh_mobile_meram.c  |  6 ++----
- 3 files changed, 8 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/video/fbdev/auo_k190x.c b/drivers/video/fbdev/auo_k190x.c
-index 9d24d1b3e9ef..9bf6a6e02342 100644
---- a/drivers/video/fbdev/auo_k190x.c
-+++ b/drivers/video/fbdev/auo_k190x.c
-@@ -776,8 +776,7 @@ static void auok190x_recover(struct auok190xfb_par *par)
-  */
- static int __maybe_unused auok190x_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct fb_info *info = platform_get_drvdata(pdev);
-+	struct fb_info *info = dev_get_drvdata(dev);
- 	struct auok190xfb_par *par = info->par;
- 	struct auok190x_board *board = par->board;
- 	u16 standby_param;
-@@ -823,8 +822,7 @@ static int __maybe_unused auok190x_runtime_suspend(struct device *dev)
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index a194cb8d7d62..265ecf56a6f2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -83,23 +83,6 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
- static int __maybe_unused auok190x_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct fb_info *info = platform_get_drvdata(pdev);
-+	struct fb_info *info = dev_get_drvdata(dev);
- 	struct auok190xfb_par *par = info->par;
- 	struct auok190x_board *board = par->board;
+-		gic: interrupt-controller@f1010000 {
+-			compatible = "arm,gic-400";
+-			#interrupt-cells = <3>;
+-			#address-cells = <0>;
+-			interrupt-controller;
+-			reg = <0 0xf1010000 0 0x1000>,
+-			      <0 0xf1020000 0 0x20000>,
+-			      <0 0xf1040000 0 0x20000>,
+-			      <0 0xf1060000 0 0x20000>;
+-			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
+-				      IRQ_TYPE_LEVEL_HIGH)>;
+-			clocks = <&cpg CPG_MOD 408>;
+-			clock-names = "clk";
+-			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+-			resets = <&cpg 408>;
+-		};
+-
+ 		rwdt: watchdog@e6020000 {
+ 			compatible = "renesas,r8a77970-wdt",
+ 				     "renesas,rcar-gen3-wdt";
+@@ -110,75 +93,6 @@
+ 			status = "disabled";
+ 		};
  
-@@ -857,8 +855,7 @@ static int __maybe_unused auok190x_runtime_resume(struct device *dev)
+-		cpg: clock-controller@e6150000 {
+-			compatible = "renesas,r8a77970-cpg-mssr";
+-			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>, <&extalr_clk>;
+-			clock-names = "extal", "extalr";
+-			#clock-cells = <2>;
+-			#power-domain-cells = <0>;
+-			#reset-cells = <1>;
+-		};
+-
+-		rst: reset-controller@e6160000 {
+-			compatible = "renesas,r8a77970-rst";
+-			reg = <0 0xe6160000 0 0x200>;
+-		};
+-
+-		sysc: system-controller@e6180000 {
+-			compatible = "renesas,r8a77970-sysc";
+-			reg = <0 0xe6180000 0 0x440>;
+-			#power-domain-cells = <1>;
+-		};
+-
+-		ipmmu_vi0: mmu@febd0000 {
+-			compatible = "renesas,ipmmu-r8a77970";
+-			reg = <0 0xfebd0000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 9>;
+-			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-			status = "disabled";
+-		};
+-
+-		ipmmu_ir: mmu@ff8b0000 {
+-			compatible = "renesas,ipmmu-r8a77970";
+-			reg = <0 0xff8b0000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 3>;
+-			power-domains = <&sysc R8A77970_PD_A3IR>;
+-			#iommu-cells = <1>;
+-			status = "disabled";
+-		};
+-
+-		ipmmu_rt: mmu@ffc80000 {
+-			compatible = "renesas,ipmmu-r8a77970";
+-			reg = <0 0xffc80000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 7>;
+-			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		ipmmu_ds1: mmu@e7740000 {
+-			compatible = "renesas,ipmmu-r8a77970";
+-			reg = <0 0xe7740000 0 0x1000>;
+-			renesas,ipmmu-main = <&ipmmu_mm 0>;
+-			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		ipmmu_mm: mmu@e67b0000 {
+-			compatible = "renesas,ipmmu-r8a77970";
+-			reg = <0 0xe67b0000 0 0x1000>;
+-			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+-			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+-			#iommu-cells = <1>;
+-		};
+-
+-		pfc: pin-controller@e6060000 {
+-			compatible = "renesas,pfc-r8a77970";
+-			reg = <0 0xe6060000 0 0x504>;
+-		};
+-
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a77970",
+ 				     "renesas,rcar-gen3-gpio";
+@@ -269,6 +183,32 @@
+ 			resets = <&cpg 907>;
+ 		};
  
- static int __maybe_unused auok190x_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct fb_info *info = platform_get_drvdata(pdev);
-+	struct fb_info *info = dev_get_drvdata(dev);
- 	struct auok190xfb_par *par = info->par;
- 	struct auok190x_board *board = par->board;
- 	int ret;
-@@ -897,8 +894,7 @@ static int __maybe_unused auok190x_suspend(struct device *dev)
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a77970";
++			reg = <0 0xe6060000 0 0x504>;
++		};
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a77970-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>, <&extalr_clk>;
++			clock-names = "extal", "extalr";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++			#reset-cells = <1>;
++		};
++
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a77970-rst";
++			reg = <0 0xe6160000 0 0x200>;
++		};
++
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a77970-sysc";
++			reg = <0 0xe6180000 0 0x440>;
++			#power-domain-cells = <1>;
++		};
++
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a77970", "renesas,irqc";
+ 			#interrupt-cells = <2>;
+@@ -285,67 +225,6 @@
+ 			resets = <&cpg 407>;
+ 		};
  
- static int __maybe_unused auok190x_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct fb_info *info = platform_get_drvdata(pdev);
-+	struct fb_info *info = dev_get_drvdata(dev);
- 	struct auok190xfb_par *par = info->par;
- 	struct auok190x_board *board = par->board;
+-		prr: chipid@fff00044 {
+-			compatible = "renesas,prr";
+-			reg = <0 0xfff00044 0 4>;
+-		};
+-
+-		dmac1: dma-controller@e7300000 {
+-			compatible = "renesas,dmac-r8a77970",
+-				     "renesas,rcar-dmac";
+-			reg = <0 0xe7300000 0 0x10000>;
+-			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "error",
+-					  "ch0", "ch1", "ch2", "ch3",
+-					  "ch4", "ch5", "ch6", "ch7";
+-			clocks = <&cpg CPG_MOD 218>;
+-			clock-names = "fck";
+-			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+-			resets = <&cpg 218>;
+-			#dma-cells = <1>;
+-			dma-channels = <8>;
+-			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
+-			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
+-			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
+-			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>;
+-		};
+-
+-		dmac2: dma-controller@e7310000 {
+-			compatible = "renesas,dmac-r8a77970",
+-				     "renesas,rcar-dmac";
+-			reg = <0 0xe7310000 0 0x10000>;
+-			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
+-				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "error",
+-					  "ch0", "ch1", "ch2", "ch3",
+-					  "ch4", "ch5", "ch6", "ch7";
+-			clocks = <&cpg CPG_MOD 217>;
+-			clock-names = "fck";
+-			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+-			resets = <&cpg 217>;
+-			#dma-cells = <1>;
+-			dma-channels = <8>;
+-			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
+-			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
+-			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
+-			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
+-		};
+-
+ 		i2c0: i2c@e6500000 {
+ 			compatible = "renesas,i2c-r8a77970",
+ 				     "renesas,rcar-gen3-i2c";
+@@ -502,6 +381,51 @@
+ 			status = "disabled";
+ 		};
  
-diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-index c3a46506e47e..86bd4090b011 100644
---- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
-+++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-@@ -2354,8 +2354,7 @@ static int sh_mobile_lcdc_resume(struct device *dev)
++		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a77970",
++				     "renesas,etheravb-rcar-gen3";
++			reg = <0 0xe6800000 0 0x800>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15",
++					  "ch16", "ch17", "ch18", "ch19",
++					  "ch20", "ch21", "ch22", "ch23",
++					  "ch24";
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 812>;
++			phy-mode = "rgmii";
++			iommus = <&ipmmu_rt 3>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		scif0: serial@e6e60000 {
+ 			compatible = "renesas,scif-r8a77970",
+ 				     "renesas,rcar-gen3-scif",
+@@ -573,49 +497,120 @@
+ 			status = "disabled";
+ 		};
  
- static int sh_mobile_lcdc_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct sh_mobile_lcdc_priv *priv = platform_get_drvdata(pdev);
-+	struct sh_mobile_lcdc_priv *priv = dev_get_drvdata(dev);
+-		avb: ethernet@e6800000 {
+-			compatible = "renesas,etheravb-r8a77970",
+-				     "renesas,etheravb-rcar-gen3";
+-			reg = <0 0xe6800000 0 0x800>;
+-			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "ch0", "ch1", "ch2", "ch3",
+-					  "ch4", "ch5", "ch6", "ch7",
+-					  "ch8", "ch9", "ch10", "ch11",
+-					  "ch12", "ch13", "ch14", "ch15",
+-					  "ch16", "ch17", "ch18", "ch19",
+-					  "ch20", "ch21", "ch22", "ch23",
+-					  "ch24";
+-			clocks = <&cpg CPG_MOD 812>;
++		dmac1: dma-controller@e7300000 {
++			compatible = "renesas,dmac-r8a77970",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe7300000 0 0x10000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7";
++			clocks = <&cpg CPG_MOD 218>;
++			clock-names = "fck";
+ 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
+-			resets = <&cpg 812>;
+-			phy-mode = "rgmii";
+-			iommus = <&ipmmu_rt 3>;
+-			#address-cells = <1>;
+-			#size-cells = <0>;
++			resets = <&cpg 218>;
++			#dma-cells = <1>;
++			dma-channels = <8>;
++			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
++			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
++			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
++			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>;
++		};
++
++		dmac2: dma-controller@e7310000 {
++			compatible = "renesas,dmac-r8a77970",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe7310000 0 0x10000>;
++			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7";
++			clocks = <&cpg CPG_MOD 217>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 217>;
++			#dma-cells = <1>;
++			dma-channels = <8>;
++			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
++			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
++			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
++			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>;
++		};
++
++		ipmmu_ds1: mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xe7740000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 0>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_ir: mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xff8b0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 3>;
++			power-domains = <&sysc R8A77970_PD_A3IR>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mm: mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xe67b0000 0 0x1000>;
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_rt: mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xffc80000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 7>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++		};
++
++		ipmmu_vi0: mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a77970";
++			reg = <0 0xfebd0000 0 0x1000>;
++			renesas,ipmmu-main = <&ipmmu_mm 9>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		gic: interrupt-controller@f1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0xf1010000 0 0x1000>,
++			      <0 0xf1020000 0 0x20000>,
++			      <0 0xf1040000 0 0x20000>,
++			      <0 0xf1060000 0 0x20000>;
++			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
++				      IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 408>;
+ 		};
  
- 	/* turn off LCDC hardware */
- 	lcdc_write(priv, _LDCNT1R, 0);
-@@ -2365,8 +2364,7 @@ static int sh_mobile_lcdc_runtime_suspend(struct device *dev)
+ 		fcpvd0: fcp@fea27000 {
+@@ -692,6 +687,11 @@
+ 				};
+ 			};
+ 		};
++
++		prr: chipid@fff00044 {
++			compatible = "renesas,prr";
++			reg = <0 0xfff00044 0 4>;
++		};
+ 	};
  
- static int sh_mobile_lcdc_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct sh_mobile_lcdc_priv *priv = platform_get_drvdata(pdev);
-+	struct sh_mobile_lcdc_priv *priv = dev_get_drvdata(dev);
- 
- 	__sh_mobile_lcdc_start(priv);
- 
-diff --git a/drivers/video/fbdev/sh_mobile_meram.c b/drivers/video/fbdev/sh_mobile_meram.c
-index baadfb207b2e..f5d8bd7ef509 100644
---- a/drivers/video/fbdev/sh_mobile_meram.c
-+++ b/drivers/video/fbdev/sh_mobile_meram.c
-@@ -572,8 +572,7 @@ EXPORT_SYMBOL_GPL(sh_mobile_meram_cache_update);
- #ifdef CONFIG_PM
- static int sh_mobile_meram_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct sh_mobile_meram_priv *priv = platform_get_drvdata(pdev);
-+	struct sh_mobile_meram_priv *priv = dev_get_drvdata(dev);
- 	unsigned int i, j;
- 
- 	for (i = 0; i < MERAM_REGS_SIZE; i++)
-@@ -596,8 +595,7 @@ static int sh_mobile_meram_suspend(struct device *dev)
- 
- static int sh_mobile_meram_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct sh_mobile_meram_priv *priv = platform_get_drvdata(pdev);
-+	struct sh_mobile_meram_priv *priv = dev_get_drvdata(dev);
- 	unsigned int i, j;
- 
- 	for (i = 0; i < 32; i++) {
+ 	timer {
 -- 
 2.11.0
