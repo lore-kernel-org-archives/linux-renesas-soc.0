@@ -1,43 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39050 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753232AbeDZInE (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:40121 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755345AbeDYQPg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:43:04 -0400
-Date: Thu, 26 Apr 2018 10:43:01 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Wed, 25 Apr 2018 12:15:36 -0400
+Received: by mail-lf0-f67.google.com with SMTP id j16-v6so9074179lfb.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 Apr 2018 09:15:35 -0700 (PDT)
 Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77990: Revise the cache
  controller node
-Message-ID: <20180426084300.b43pcz5cdaepzy57@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        horms@verge.net.au, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org
+References: <1524644410-12465-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524644410-12465-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <32b91531-20a4-4831-faaf-e03a35238db3@cogentembedded.com>
+Date: Wed, 25 Apr 2018 19:15:31 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32b91531-20a4-4831-faaf-e03a35238db3@cogentembedded.com>
- <CAMuHMdUZ7p+9Qb9F37EdOz_C4HaMzVkW1ahHtaKUDAD4iw8nQQ@mail.gmail.com>
+In-Reply-To: <1524644410-12465-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 11:13:23AM +0200, Geert Uytterhoeven wrote:
-> On Wed, Apr 25, 2018 at 10:20 AM, Yoshihiro Shimoda
-> <yoshihiro.shimoda.uh@renesas.com> wrote:
-> > The cache controller node should not have unit-addresses and reg
-> > properties. So, this patch revises them.
-> >
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 04/25/2018 11:20 AM, Yoshihiro Shimoda wrote:
 
-On Wed, Apr 25, 2018 at 07:15:31PM +0300, Sergei Shtylyov wrote:
-> On 04/25/2018 11:20 AM, Yoshihiro Shimoda wrote:
-> 
-> > The cache controller node should not have unit-addresses and reg
-> > properties. So, this patch revises them.
-> 
->    Removes?
+> The cache controller node should not have unit-addresses and reg
+> properties. So, this patch revises them.
 
-Thanks, applied with Geert's tag and Sergei's suggestion.
+   Removes?
+
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> index 3a19b9e..ba902a2 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> @@ -27,9 +27,8 @@
+>  			enable-method = "psci";
+>  		};
+>  
+> -		L2_CA53: cache-controller@0 {
+> +		L2_CA53: cache-controller-0 {
+>  			compatible = "cache";
+> -			reg = <0>;
+>  			power-domains = <&sysc 21>;
+>  			cache-unified;
+>  			cache-level = <2>;
+> 
+
+MBR, Sergei
