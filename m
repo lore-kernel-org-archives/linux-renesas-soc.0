@@ -1,177 +1,187 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] arm64: dts: renesas: Add Renesas R8A77990 SoC support
-Date: Wed, 11 Apr 2018 18:37:41 +0900
-Message-Id: <1523439462-1130-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523439462-1130-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523439462-1130-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:43652 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750949AbeDYHQY (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 25 Apr 2018 03:16:24 -0400
+Subject: Re: [PATCH v4 5/5] drm: adv7511: Add support for
+ i2c_new_secondary_device
+To: Kieran Bingham <kbingham@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+ <1518544137-2742-6-git-send-email-kbingham@kernel.org>
+From: Archit Taneja <architt@codeaurora.org>
+Message-ID: <9d9acfa8-aa5d-c60f-3858-4847b80f1690@codeaurora.org>
+Date: Wed, 25 Apr 2018 12:46:17 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1518544137-2742-6-git-send-email-kbingham@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds basic support for the Renesas R-Car E3 (R8A77990) SoC:
-  - PSCI
-  - CPU (single)
-  - Cache controller
-  - Main clocks and controller
-  - Interrupt controller
-  - Timer
-  - PMU
-  - Reset controller
-  - Product register
-  - System controller
-  - UART for console
 
-Inspried by a patch by Takeshi Kihara in the BSP.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 131 ++++++++++++++++++++++++++++++
- 1 file changed, 131 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77990.dtsi
+On Tuesday 13 February 2018 11:18 PM, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The ADV7511 has four 256-byte maps that can be accessed via the main I2C
+> ports. Each map has it own I2C address and acts as a standard slave
+> device on the I2C bus.
+> 
+> Allow a device tree node to override the default addresses so that
+> address conflicts with other devices on the same bus may be resolved at
+> the board description level.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-new file mode 100644
-index 0000000..310bfd9
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -0,0 +1,131 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Device Tree Source for the r8a77990 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "renesas,r8a77990";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* 1 core only at this point */
-+		a53_0: cpu@0 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0>;
-+			device_type = "cpu";
-+			power-domains = <&sysc 5>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
-+
-+		L2_CA53: cache-controller@0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			power-domains = <&sysc 21>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1010000 0 0x1000>,
-+			      <0x0 0xf1020000 0 0x20000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9
-+					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv8-timer";
-+			interrupts = <GIC_PPI 13
-+					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 14
-+					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 11
-+					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 10
-+					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		pmu_a53 {
-+			compatible = "arm,cortex-a53-pmu";
-+			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-affinity = <&a53_0>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a77990-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>;
-+			clock-names = "extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a77990-rst";
-+			reg = <0 0xe6160000 0 0x0200>;
-+		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a77990-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		scif2: serial@e6e88000 {
-+			compatible = "renesas,scif-r8a77990",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e88000 0 64>;
-+			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 310>;
-+			clock-names = "fck";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 310>;
-+			status = "disabled";
-+		};
-+	};
-+};
--- 
-1.9.1
+Queued to drm-misc-next
 
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> v2:
+>   - Update missing edid-i2c address setting
+>   - Split out DT bindings
+>   - Rename and move the I2C default addresses to their own section
+> 
+> v3:
+>   - No change
+> 
+> v4:
+>   - Change registration order of packet/cec to fix error path and
+>     simplify code change.
+>   - Collect Laurent's RB tag
+> 
+>   drivers/gpu/drm/bridge/adv7511/adv7511.h     |  6 ++++
+>   drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 42 ++++++++++++++++++----------
+>   2 files changed, 33 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> index d034b2cb5eee..73d8ccb97742 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> @@ -93,6 +93,11 @@
+>   #define ADV7511_REG_CHIP_ID_HIGH		0xf5
+>   #define ADV7511_REG_CHIP_ID_LOW			0xf6
+>   
+> +/* Hardware defined default addresses for I2C register maps */
+> +#define ADV7511_CEC_I2C_ADDR_DEFAULT		0x3c
+> +#define ADV7511_EDID_I2C_ADDR_DEFAULT		0x3f
+> +#define ADV7511_PACKET_I2C_ADDR_DEFAULT		0x38
+> +
+>   #define ADV7511_CSC_ENABLE			BIT(7)
+>   #define ADV7511_CSC_UPDATE_MODE			BIT(5)
+>   
+> @@ -321,6 +326,7 @@ enum adv7511_type {
+>   struct adv7511 {
+>   	struct i2c_client *i2c_main;
+>   	struct i2c_client *i2c_edid;
+> +	struct i2c_client *i2c_packet;
+>   	struct i2c_client *i2c_cec;
+>   
+>   	struct regmap *regmap;
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> index efa29db5fc2b..802bc433f54a 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> @@ -586,7 +586,7 @@ static int adv7511_get_modes(struct adv7511 *adv7511,
+>   	/* Reading the EDID only works if the device is powered */
+>   	if (!adv7511->powered) {
+>   		unsigned int edid_i2c_addr =
+> -					(adv7511->i2c_main->addr << 1) + 4;
+> +					(adv7511->i2c_edid->addr << 1);
+>   
+>   		__adv7511_power_on(adv7511);
+>   
+> @@ -969,10 +969,10 @@ static int adv7511_init_cec_regmap(struct adv7511 *adv)
+>   {
+>   	int ret;
+>   
+> -	adv->i2c_cec = i2c_new_dummy(adv->i2c_main->adapter,
+> -				     adv->i2c_main->addr - 1);
+> +	adv->i2c_cec = i2c_new_secondary_device(adv->i2c_main, "cec",
+> +					ADV7511_CEC_I2C_ADDR_DEFAULT);
+>   	if (!adv->i2c_cec)
+> -		return -ENOMEM;
+> +		return -EINVAL;
+>   	i2c_set_clientdata(adv->i2c_cec, adv);
+>   
+>   	adv->regmap_cec = devm_regmap_init_i2c(adv->i2c_cec,
+> @@ -1082,8 +1082,6 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+>   	struct adv7511_link_config link_config;
+>   	struct adv7511 *adv7511;
+>   	struct device *dev = &i2c->dev;
+> -	unsigned int main_i2c_addr = i2c->addr << 1;
+> -	unsigned int edid_i2c_addr = main_i2c_addr + 4;
+>   	unsigned int val;
+>   	int ret;
+>   
+> @@ -1153,23 +1151,34 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+>   	if (ret)
+>   		goto uninit_regulators;
+>   
+> -	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR, edid_i2c_addr);
+> -	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
+> -		     main_i2c_addr - 0xa);
+> -	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
+> -		     main_i2c_addr - 2);
+> -
+>   	adv7511_packet_disable(adv7511, 0xffff);
+>   
+> -	adv7511->i2c_edid = i2c_new_dummy(i2c->adapter, edid_i2c_addr >> 1);
+> +	adv7511->i2c_edid = i2c_new_secondary_device(i2c, "edid",
+> +					ADV7511_EDID_I2C_ADDR_DEFAULT);
+>   	if (!adv7511->i2c_edid) {
+> -		ret = -ENOMEM;
+> +		ret = -EINVAL;
+>   		goto uninit_regulators;
+>   	}
+>   
+> +	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR,
+> +		     adv7511->i2c_edid->addr << 1);
+> +
+> +	adv7511->i2c_packet = i2c_new_secondary_device(i2c, "packet",
+> +					ADV7511_PACKET_I2C_ADDR_DEFAULT);
+> +	if (!adv7511->i2c_packet) {
+> +		ret = -EINVAL;
+> +		goto err_i2c_unregister_edid;
+> +	}
+> +
+> +	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
+> +		     adv7511->i2c_packet->addr << 1);
+> +
+>   	ret = adv7511_init_cec_regmap(adv7511);
+>   	if (ret)
+> -		goto err_i2c_unregister_edid;
+> +		goto err_i2c_unregister_packet;
+> +
+> +	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
+> +		     adv7511->i2c_cec->addr << 1);
+>   
+>   	INIT_WORK(&adv7511->hpd_work, adv7511_hpd_work);
+>   
+> @@ -1207,6 +1216,8 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+>   	i2c_unregister_device(adv7511->i2c_cec);
+>   	if (adv7511->cec_clk)
+>   		clk_disable_unprepare(adv7511->cec_clk);
+> +err_i2c_unregister_packet:
+> +	i2c_unregister_device(adv7511->i2c_packet);
+>   err_i2c_unregister_edid:
+>   	i2c_unregister_device(adv7511->i2c_edid);
+>   uninit_regulators:
+> @@ -1233,6 +1244,7 @@ static int adv7511_remove(struct i2c_client *i2c)
+>   
+>   	cec_unregister_adapter(adv7511->cec_adap);
+>   
+> +	i2c_unregister_device(adv7511->i2c_packet);
+>   	i2c_unregister_device(adv7511->i2c_edid);
+>   
+>   	return 0;
+> 
