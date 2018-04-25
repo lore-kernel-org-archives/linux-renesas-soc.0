@@ -1,110 +1,36 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 20/33] rcar-vin: add function to manipulate Gen3 chsel value
-Date: Sat, 14 Apr 2018 13:57:13 +0200
-Message-Id: <20180414115726.5075-21-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36624 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751528AbeDZGNH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Apr 2018 02:13:07 -0400
+Date: Wed, 25 Apr 2018 08:02:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH] arm64: renesas_defconfig: enable R8A77980 SoC
+Message-ID: <20180425060224.bk6ibdecnjcuju5m@verge.net.au>
+References: <20180423104635.18129-1-horms+renesas@verge.net.au>
+ <CAMuHMdXMZ3bb6qFSeQhb5tmqHXwJQt8Pni4=aHYtYTRDXGZgHQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXMZ3bb6qFSeQhb5tmqHXwJQt8Pni4=aHYtYTRDXGZgHQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Gen3 the CSI-2 routing is controlled by the VnCSI_IFMD register. One
-feature of this register is that it's only present in the VIN0 and VIN4
-instances. The register in VIN0 controls the routing for VIN0-3 and the
-register in VIN4 controls routing for VIN4-7.
+On Tue, Apr 24, 2018 at 04:51:50PM +0200, Geert Uytterhoeven wrote:
+> On Mon, Apr 23, 2018 at 12:46 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Enable the Renesas R-Car V3H (R8A77980) SoC in the ARM64 renesas_defconfig.
+> 
+> "E3 (R8A77990)", also in the one-line summary.
+> 
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> With the above fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-To be able to control routing from a media device this function is need
-to control runtime PM for the subgroup master (VIN0 and VIN4). The
-subgroup master must be switched on before the register is manipulated,
-once the operation is complete it's safe to switch the master off and
-the new routing will still be in effect.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-
----
-
-* Changes since v13
-- Do not set the VNCSI_IFMD_DES2 bit in the VNCSI_IFMD register as that
-  bit have been removed from later versions of the datasheet.
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 37 ++++++++++++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h |  2 ++
- 2 files changed, 39 insertions(+)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 482d89bae657a88e..905d975b2909a867 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-+#include <linux/pm_runtime.h>
- 
- #include <media/videobuf2-dma-contig.h>
- 
-@@ -1157,3 +1158,39 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
- 
- 	return ret;
- }
-+
-+/* -----------------------------------------------------------------------------
-+ * Gen3 CHSEL manipulation
-+ */
-+
-+/*
-+ * There is no need to have locking around changing the routing
-+ * as it's only possible to do so when no VIN in the group is
-+ * streaming so nothing can race with the VNMC register.
-+ */
-+int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
-+{
-+	u32 ifmd, vnmc;
-+	int ret;
-+
-+	ret = pm_runtime_get_sync(vin->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Make register writes take effect immediately. */
-+	vnmc = rvin_read(vin, VNMC_REG);
-+	rvin_write(vin, vnmc & ~VNMC_VUP, VNMC_REG);
-+
-+	ifmd = VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 | VNCSI_IFMD_CSI_CHSEL(chsel);
-+
-+	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
-+
-+	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
-+
-+	/* Restore VNMC. */
-+	rvin_write(vin, vnmc, VNMC_REG);
-+
-+	pm_runtime_put(vin->dev);
-+
-+	return ret;
-+}
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 321283f1618ae0b9..c19ddc5e08cbbea4 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -169,4 +169,6 @@ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- /* Cropping, composing and scaling */
- void rvin_crop_scale_comp(struct rvin_dev *vin);
- 
-+int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
-+
- #endif
--- 
-2.16.2
+Thanks, applied with that fixed.
