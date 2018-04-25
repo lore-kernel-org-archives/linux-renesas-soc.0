@@ -1,87 +1,34 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v2 6/6] arm64: dts: renesas: r8a7795: add OF graph for usb role switch
-Date: Thu, 26 Apr 2018 20:26:46 +0900
-Message-Id: <1524742006-17984-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36624 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753050AbeDZGNA (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Apr 2018 02:13:00 -0400
+Date: Wed, 25 Apr 2018 08:50:45 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH 3/4] ARM: dts: renesas: r8a7793: Add FDP1 instances
+Message-ID: <20180425065044.6n554m6dvxf26oge@verge.net.au>
+References: <20180422103528.3402-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180422103528.3402-4-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdX3nFMvK7doPRT6qRiP_zUm6bBkfRB9rbxi9jvwz=HPNw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX3nFMvK7doPRT6qRiP_zUm6bBkfRB9rbxi9jvwz=HPNw@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds OF graph properties for usb role switch in r8a7795.
+On Tue, Apr 24, 2018 at 05:02:10PM +0200, Geert Uytterhoeven wrote:
+> On Sun, Apr 22, 2018 at 12:35 PM, Laurent Pinchart
+> <laurent.pinchart+renesas@ideasonboard.com> wrote:
+> > The r8a7793 has two FDP1 instances.
+> >
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-TODO:
- - separate a few patches to add new properties into each node.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 38 ++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 5ae85d8..2e52835 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2206,6 +2206,12 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 328>;
- 			status = "disabled";
-+
-+			port {
-+				usb3_host_ep: endpoint {
-+					remote-endpoint = <&usb3_host_ep>;
-+				};
-+			};
- 		};
- 
- 		usb3_peri0: usb@ee020000 {
-@@ -2217,6 +2223,38 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 328>;
- 			status = "disabled";
-+
-+			port {
-+				usb3_peri_ep: endpoint {
-+					remote-endpoint = <&usb3_peri_sw>;
-+				};
-+			};
-+
-+			usb3_role_sw0: usb3-role-sw {
-+				compatible = "renesas,rcar-usb3-role-switch";
-+				renesas,host = <&xhci0>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						usb3_host_sw: endpoint {
-+							remote-endpoint = <&usb3_host_ep>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						usb3_peri_sw: endpoint {
-+							remote-endpoint = <&usb3_peri_ep>;
-+						};
-+					};
-+				};
-+			};
- 		};
- 
- 		ohci0: usb@ee080000 {
--- 
-1.9.1
-
+Thanks, tag added.
