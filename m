@@ -1,66 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:54924 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751940AbeDJPx6 (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54524 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755232AbeDYPtl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:53:58 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] vfio: platform: Improve reset support
-Date: Tue, 10 Apr 2018 17:53:45 +0200
-Message-Id: <1523375627-23746-1-git-send-email-geert+renesas@glider.be>
+        Wed, 25 Apr 2018 11:49:41 -0400
+Subject: Re: [PATCH 1/2] PCI: rcar: Poll more often in rcar_pcie_wait_for_dl()
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+References: <20180318105253.30532-1-marek.vasut+renesas@gmail.com>
+ <20180425141329.GA20923@e107981-ln.cambridge.arm.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <2b9d300b-09d7-d2ad-a22d-4f532276ae4c@gmail.com>
+Date: Wed, 25 Apr 2018 17:49:37 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180425141329.GA20923@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+On 04/25/2018 04:13 PM, Lorenzo Pieralisi wrote:
+> Hi Marek,
+> 
+> On Sun, Mar 18, 2018 at 11:52:52AM +0100, Marek Vasut wrote:
+>> The data link active signal usually takes ~20 uSec to be asserted,
+>> poll the bit more often to avoid useless delays in this function.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>> Cc: Wolfram Sang <wsa@the-dreams.de>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> ---
+>>  drivers/pci/host/pcie-rcar.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> I assume this patch is still a valid change, I noticed you split this
+> series but I think this patch was not updated so I should take it as-is.
+> 
+> Please let me know.
 
-This patch series improves reset support for vfio-platform:
-  - The first patch fixes a bug I ran into while working on this.
-  - The second patch implements generic DT reset controller support, for
-    devices that are connected to an SoC-internal reset controller and
-    can be reset in a generic way.  This avoids having to write/change a
-    vfio-specific reset driver for each and every device to be
-    passed-through to a guest.
-
-Changes compared to v1:
-  - Add Reviewed-by,
-  - Don't store error values in vdev->reset_control,
-  - Use of_reset_control_get_exclusive() instead of
-    __of_reset_control_get(),
-  - Improve description.
-
-This has been tested on R-Car H3/Salvator-XS by exporting a GPIO module
-to a QEMU+KWM guest: the GPIO module is reset before QEMU opens the vfio
-device, and reset again after QEMU has released it, as can be witnessed
-by the LEDs connected to the GPIOs.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  vfio: platform: Fix reset module leak in error path
-  vfio: platform: Add generic DT reset controller support
-
- drivers/vfio/platform/vfio_platform_common.c  | 41 ++++++++++++++++++++++-----
- drivers/vfio/platform/vfio_platform_private.h |  1 +
- 2 files changed, 35 insertions(+), 7 deletions(-)
+The discussion from a month ago would indicate that I need to resubmit it.
 
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Best regards,
+Marek Vasut
