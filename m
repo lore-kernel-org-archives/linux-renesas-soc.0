@@ -1,57 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45350 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753378AbeDSOG7 (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:43500 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750949AbeDYHQN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:06:59 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Subject: [PATCH 23/61] input: touchscreen: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:53 +0200
-Message-Id: <20180419140641.27926-24-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Wed, 25 Apr 2018 03:16:13 -0400
+Subject: Re: [PATCH v4 2/5] dt-bindings: adv7511: Extend bindings to allow
+ specifying slave map addresses
+To: Kieran Bingham <kbingham@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jean-Michel Hautbois <jean-michel.hautbois@vodalys.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+References: <1518544137-2742-1-git-send-email-kbingham@kernel.org>
+ <1518544137-2742-3-git-send-email-kbingham@kernel.org>
+From: Archit Taneja <architt@codeaurora.org>
+Message-ID: <aeef36f9-cd59-2b83-829e-8b0c3127b838@codeaurora.org>
+Date: Wed, 25 Apr 2018 12:46:04 +0530
+MIME-Version: 1.0
+In-Reply-To: <1518544137-2742-3-git-send-email-kbingham@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
 
-Build tested only. buildbot is happy. Please apply individually.
+On Tuesday 13 February 2018 11:18 PM, Kieran Bingham wrote:
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> The ADV7511 has four 256-byte maps that can be accessed via the main I2C
+> ports. Each map has it own I2C address and acts as a standard slave
+> device on the I2C bus.
+> 
+> Extend the device tree node bindings to be able to override the default
+> addresses so that address conflicts with other devices on the same bus
+> may be resolved at the board description level.
+> 
 
- drivers/input/touchscreen/imx6ul_tsc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Queued to drm-misc-next
 
-diff --git a/drivers/input/touchscreen/imx6ul_tsc.c b/drivers/input/touchscreen/imx6ul_tsc.c
-index ee82a975bfd2..da9e0a774e4b 100644
---- a/drivers/input/touchscreen/imx6ul_tsc.c
-+++ b/drivers/input/touchscreen/imx6ul_tsc.c
-@@ -515,8 +515,7 @@ static int imx6ul_tsc_probe(struct platform_device *pdev)
- 
- static int __maybe_unused imx6ul_tsc_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx6ul_tsc *tsc = platform_get_drvdata(pdev);
-+	struct imx6ul_tsc *tsc = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = tsc->input;
- 
- 	mutex_lock(&input_dev->mutex);
-@@ -535,8 +534,7 @@ static int __maybe_unused imx6ul_tsc_suspend(struct device *dev)
- 
- static int __maybe_unused imx6ul_tsc_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx6ul_tsc *tsc = platform_get_drvdata(pdev);
-+	struct imx6ul_tsc *tsc = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = tsc->input;
- 	int retval = 0;
- 
--- 
-2.11.0
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> v2:
+>   - Fixed up reg: property description to account for multiple optional
+>     addresses.
+>   - Minor reword to commit message to account for DT only change
+>   - Collected Robs RB tag
+> 
+> v3:
+>   - Split map register addresses into individual declarations.
+> 
+> v4:
+>   - Update commit title
+>   - Collect Laurent's RB tag
+>   - Fix nitpickings
+>   - Normalise I2C usage (I²C is harder to grep for)
+> 
+>   .../devicetree/bindings/display/bridge/adi,adv7511.txt | 18 ++++++++++++++++--
+>   1 file changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+> index 0047b1394c70..2c887536258c 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+> @@ -14,7 +14,13 @@ Required properties:
+>   		"adi,adv7513"
+>   		"adi,adv7533"
+>   
+> -- reg: I2C slave address
+> +- reg: I2C slave addresses
+> +  The ADV7511 internal registers are split into four pages exposed through
+> +  different I2C addresses, creating four register maps. Each map has it own
+> +  I2C address and acts as a standard slave device on the I2C bus. The main
+> +  address is mandatory, others are optional and revert to defaults if not
+> +  specified.
+> +
+>   
+>   The ADV7511 supports a large number of input data formats that differ by their
+>   color depth, color format, clock mode, bit justification and random
+> @@ -70,6 +76,9 @@ Optional properties:
+>     rather than generate its own timings for HDMI output.
+>   - clocks: from common clock binding: reference to the CEC clock.
+>   - clock-names: from common clock binding: must be "cec".
+> +- reg-names : Names of maps with programmable addresses.
+> +	It can contain any map needing a non-default address.
+> +	Possible maps names are : "main", "edid", "cec", "packet"
+>   
+>   Required nodes:
+>   
+> @@ -88,7 +97,12 @@ Example
+>   
+>   	adv7511w: hdmi@39 {
+>   		compatible = "adi,adv7511w";
+> -		reg = <39>;
+> +		/*
+> +		 * The EDID page will be accessible on address 0x66 on the I2C
+> +		 * bus. All other maps continue to use their default addresses.
+> +		 */
+> +		reg = <0x39>, <0x66>;
+> +		reg-names = "main", "edid";
+>   		interrupt-parent = <&gpio3>;
+>   		interrupts = <29 IRQ_TYPE_EDGE_FALLING>;
+>   		clocks = <&cec_clock>;
+> 
