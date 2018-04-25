@@ -1,46 +1,34 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Subject: Re: [PATCH/RFC 1/4] drm: Add colorkey properties
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-References: <20171217001724.1348-1-laurent.pinchart+renesas@ideasonboard.com>
- <20171217001724.1348-2-laurent.pinchart+renesas@ideasonboard.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2cf83ece-fc42-02ee-9234-10645eec1cb1@gmail.com>
-Date: Wed, 25 Apr 2018 22:33:21 +0300
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:34255 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751027AbeDYIUe (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 25 Apr 2018 04:20:34 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] arm64: dts: renesas: r8a77990: Revise some nodes
+Date: Wed, 25 Apr 2018 17:20:08 +0900
+Message-Id: <1524644410-12465-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20171217001724.1348-2-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 17.12.2017 03:17, Laurent Pinchart wrote:
-> Color keying is the action of replacing pixels matching a given color
-> (or range of colors) with transparent pixels in an overlay when
-> performing blitting. Depending on the hardware capabilities, the
-> matching pixel can either become fully transparent, or gain a
-> programmable alpha value.
-> 
-> Color keying is found in a large number of devices whose capabilities
-> often differ, but they still have enough common features in range to
-> standardize color key properties. This commit adds four properties
-> related to color keying named colorkey.min, colorkey.max, colorkey.alpha
-> and colorkey.mode. Additional properties can be defined by drivers to
-> expose device-specific features.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This patch set is based on the renesas-devel-20180424-v4.17-rc2 tag
+of renesas.git.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
+This patch set is from https://patchwork.kernel.org/patch/10352549/.
+About scif node, I'll submit such a revising patch later (maybe at adding
+other scif nodes timing).
 
-Note that this patch needs to be rebased now.
+Yoshihiro Shimoda (2):
+  arm64: dts: renesas: r8a77990: Revise the cache controller node
+  arm64: dts: renesas: r8a77990: Revise the psci node
+
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+-- 
+1.9.1
