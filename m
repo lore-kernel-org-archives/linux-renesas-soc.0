@@ -1,46 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46182 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754591AbeDTLZu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36624 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753084AbeDZGNK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:25:50 -0400
-Received: by mail-lf0-f68.google.com with SMTP id j68-v6so4621861lfg.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Apr 2018 04:25:49 -0700 (PDT)
-Subject: Re: [PATCH v2] arm64: dts: renesas: eagle: add EtherAVB pins
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+        Thu, 26 Apr 2018 02:13:10 -0400
+Date: Wed, 25 Apr 2018 09:20:06 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <382aeecb-c484-ec27-1ef1-8da1673c2c14@cogentembedded.com>
-Message-ID: <8495a934-62f1-3b2e-3125-78844aef04e1@cogentembedded.com>
-Date: Fri, 20 Apr 2018 14:25:46 +0300
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 1/2] arm64: dts: renesas: Add Renesas R8A77990 SoC
+ support
+Message-ID: <20180425072005.zstbvoipuzapjxgm@verge.net.au>
+References: <1524227297-24955-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524227297-24955-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdUx8CGoC=kMbAVUDO807g9BJ80w-TFdZ2vJZ9d0B6rbdA@mail.gmail.com>
+ <20180424083633.ypkamflp3v6zlsz7@verge.net.au>
+ <OSBPR01MB22938B6E2585810AEBCD9341D88F0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <382aeecb-c484-ec27-1ef1-8da1673c2c14@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB22938B6E2585810AEBCD9341D88F0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
-
-On 03/14/2018 10:58 PM, Sergei Shtylyov wrote:
-
-> Add the (previously omitted) EtherAVB pin data to the Eagle board's
-> device tree.
+On Wed, Apr 25, 2018 at 02:47:41AM +0000, Yoshihiro Shimoda wrote:
+> Hi, Simon-san,
 > 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > From: Simon Horman, Sent: Tuesday, April 24, 2018 5:37 PM
+> > 
+> > On Tue, Apr 24, 2018 at 10:26:37AM +0200, Geert Uytterhoeven wrote:
+> > > Hi Shimoda-san,
+> > >
+> > > On Fri, Apr 20, 2018 at 2:28 PM, Yoshihiro Shimoda
+> > > <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > > > This patch adds basic support for the Renesas R-Car E3 (R8A77990) SoC:
+> > > >   - PSCI
+> > > >   - CPU (single)
+> > > >   - Cache controller
+> > > >   - Main clocks and controller
+> > > >   - Interrupt controller
+> > > >   - Timer
+> > > >   - PMU
+> > > >   - Reset controller
+> > > >   - Product register
+> > > >   - System controller
+> > > >   - UART for console
+> > > >
+> > > > Inspried by a patch by Takeshi Kihara in the BSP.
+> > > >
+> > > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > >
+> > > Thanks for you patch!
+> > 
+> > Thanks for your review.
+> > 
+> > As I've already applied this patch I'd like to ask Shimoda-san
+> > to send incremental patches to address the issues you raise below.
 > 
-> ---
-> The patch is against the 'renesas-devel-20180314-v4.16-rc5' tag of Simon's
-> 'renesas.git repo. It depends on the R8A77970 PFC driver patch adding EtherAVB
-> pin groups (posted yesterday) in order to work properly...
+> I got it. I'll send incremental patches.
 
-   The dependency has been now met, please merge this patch.
-
-MBR, Sergei
+Thanks, much appreciated.
