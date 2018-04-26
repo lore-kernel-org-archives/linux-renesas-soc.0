@@ -1,37 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37974 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753569AbeD0WC3 (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44961 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754559AbeDZKk6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 18:02:29 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 0/6] arm: dts: r8a77965 DU enablement
-Date: Fri, 27 Apr 2018 23:02:14 +0100
-Message-Id: <20180427220220.31286-1-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 26 Apr 2018 06:40:58 -0400
+Received: by mail-lf0-f65.google.com with SMTP id h197-v6so2593970lfg.11
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Apr 2018 03:40:57 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/2] Use R8A77980 CPG core clock and SYSC power domain macros
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Message-ID: <ea6d3e8a-71a9-9998-f364-7dc82b97c2c0@cogentembedded.com>
+Date: Thu, 26 Apr 2018 13:40:53 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide the required DT updates to enable the DU and, VGA and HDMI
-outputs on the M3-N Salvator-X(S) platforms.
+Hello!
 
-Driver updates and binding updates are sent separately.
+Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20180425-v4.17-rc2' tag. Now that the R8A77980 CPG core clock
+and SYSC power domain #define's have hit Linus' tree, we can replace the bare
+numbers (we had to use to avoid a cross tree dependencies) with these #define's,
+at last...
 
-Kieran Bingham (6):
-  arm64: dts: r8a77965: Add FCPF and FCPV instances
-  arm64: dts: r8a77965: Add VSP instances
-  arm64: dts: r8a77965: Populate the DU instance placeholder
-  arm64: dts: r8a77965: Add HDMI encoder instance
-  arm64: dts: r8a77965-salvator-x: Enable DU external clocks and HDMI
-  arm64: dts: r8a77965-salvator-xs: Enable DU external clocks and HDMI
+[1/2] arm64: dts: renesas: r8a77980: use CPG core clock macros
+[2/2] arm64: dts: renesas: r8a77978: use SYSC power domain macros
 
- .../boot/dts/renesas/r8a77965-salvator-x.dts  |  28 ++++
- .../boot/dts/renesas/r8a77965-salvator-xs.dts |  28 ++++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi     | 131 +++++++++++++++++-
- 3 files changed, 183 insertions(+), 4 deletions(-)
-
--- 
-2.17.0
+WBR, Sergei
