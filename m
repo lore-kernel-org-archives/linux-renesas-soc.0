@@ -1,56 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:29173 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751875AbeDJFjM (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33594 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752991AbeDZXOr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 01:39:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 6/6] usb: gadget: udc: renesas_usb3: disable the controller's irqs for reconnecting
-Date: Tue, 10 Apr 2018 14:38:54 +0900
-Message-Id: <1523338734-20474-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523338734-20474-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 26 Apr 2018 19:14:47 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] rcar-vin: enable field toggle after a set number of lines for Gen3
+Date: Fri, 27 Apr 2018 02:15:01 +0300
+Message-ID: <11739225.3l7zkTrcbQ@avalon>
+In-Reply-To: <20180424235652.24672-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180424235652.24672-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that reconnection is possible to fail
-because unexpected state handling happens by the irqs. To fix the issue,
-the driver disables the controller's irqs when disconnected.
+Hi Niklas,
 
-Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
-Cc: <stable@vger.kernel.org> # v4.5+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
+Thank you for the patch.
 
-Remarks:
- - A new file in v2
+On Wednesday, 25 April 2018 02:56:52 EEST Niklas S=F6derlund wrote:
+> The VIN Gen3 hardware don't have Line Post-Clip capabilities as VIN Gen2
+> hardware have. To protect against writing outside the capture window
+> enable field toggle after a set number of lines have been captured.
+>=20
+> Capturing outside the allocated capture buffer where observed on R-Car
 
- drivers/usb/gadget/udc/renesas_usb3.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+s/Capturing/Capture/
+s/where/has been/
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 0e70163..5caf78b 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -623,6 +623,13 @@ static void usb3_disconnect(struct renesas_usb3 *usb3)
- 	usb3_usb2_pullup(usb3, 0);
- 	usb3_clear_bit(usb3, USB30_CON_B3_CONNECT, USB3_USB30_CON);
- 	usb3_reset_epc(usb3);
-+	usb3_disable_irq_1(usb3, USB_INT_1_B2_RSUM | USB_INT_1_B3_PLLWKUP |
-+			   USB_INT_1_B3_LUPSUCS | USB_INT_1_B3_DISABLE |
-+			   USB_INT_1_SPEED | USB_INT_1_B3_WRMRST |
-+			   USB_INT_1_B3_HOTRST | USB_INT_1_B2_SPND |
-+			   USB_INT_1_B2_L1SPND | USB_INT_1_B2_USBRST);
-+	usb3_clear_bit(usb3, USB_COM_CON_SPD_MODE, USB3_USB_COM_CON);
-+	usb3_init_epc_registers(usb3);
- 
- 	if (usb3->driver)
- 		usb3->driver->disconnect(&usb3->gadget);
--- 
-1.9.1
+> Gen3 Salvator-XS H3 from the CVBS input if the standard is
+> misconfigured. That is if a PAL source is connected to the system but
+> the adv748x standard is set to NTSC. In this case the format reported by
+> the adv748x is 720x480 and that is what is used for the media pipeline.
+> The PAL source generates frames in the format of 720x576 and the field
+> is not toggled until the VSYNC is detected and at that time data have
+> already been written outside the allocated capture buffer.
+>=20
+> With this change the capture in the situation described above results in
+> garbage frames but that is far better then writing outside the capture
+
+s/then/than/
+
+> buffer.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c | 20 +++++++++++++++-----
+>  1 file changed, 15 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> b/drivers/media/platform/rcar-vin/rcar-dma.c index
+> ac07f99e3516a620..b41ba9a4a2b3ac90 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -124,7 +124,9 @@
+>  #define VNDMR2_VPS		(1 << 30)
+>  #define VNDMR2_HPS		(1 << 29)
+>  #define VNDMR2_FTEV		(1 << 17)
+> +#define VNDMR2_FTEH		(1 << 16)
+>  #define VNDMR2_VLV(n)		((n & 0xf) << 12)
+> +#define VNDMR2_HLV(n)		((n) & 0xfff)
+>=20
+>  /* Video n CSI2 Interface Mode Register (Gen3) */
+>  #define VNCSI_IFMD_DES1		(1 << 26)
+> @@ -612,8 +614,9 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+>=20
+>  static int rvin_setup(struct rvin_dev *vin)
+>  {
+> -	u32 vnmc, dmr, dmr2, interrupts;
+> +	u32 vnmc, dmr, dmr2, interrupts, lines;
+>  	bool progressive =3D false, output_is_yuv =3D false, input_is_yuv =3D f=
+alse;
+> +	bool halfsize =3D false;
+>=20
+>  	switch (vin->format.field) {
+>  	case V4L2_FIELD_TOP:
+> @@ -628,12 +631,15 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		/* Use BT if video standard can be read and is 60 Hz format */
+>  		if (!vin->info->use_mc && vin->std & V4L2_STD_525_60)
+>  			vnmc =3D VNMC_IM_FULL | VNMC_FOC;
+> +		halfsize =3D true;
+>  		break;
+>  	case V4L2_FIELD_INTERLACED_TB:
+>  		vnmc =3D VNMC_IM_FULL;
+> +		halfsize =3D true;
+>  		break;
+>  	case V4L2_FIELD_INTERLACED_BT:
+>  		vnmc =3D VNMC_IM_FULL | VNMC_FOC;
+> +		halfsize =3D true;
+>  		break;
+>  	case V4L2_FIELD_NONE:
+>  		vnmc =3D VNMC_IM_ODD_EVEN;
+> @@ -676,11 +682,15 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		break;
+>  	}
+>=20
+> -	/* Enable VSYNC Field Toogle mode after one VSYNC input */
+> -	if (vin->info->model =3D=3D RCAR_GEN3)
+> -		dmr2 =3D VNDMR2_FTEV;
+> -	else
+> +	if (vin->info->model =3D=3D RCAR_GEN3) {
+> +		/* Enable HSYNC Field Toggle mode after height HSYNC inputs. */
+> +		lines =3D vin->format.height / (halfsize ? 2 : 1);
+> +		dmr2 =3D VNDMR2_FTEH | VNDMR2_HLV(lines);
+> +		vin_dbg(vin, "Field Toogle after %u lines\n", lines);
+> +	} else {
+> +		/* Enable VSYNC Field Toogle mode after one VSYNC input. */
+>  		dmr2 =3D VNDMR2_FTEV | VNDMR2_VLV(1);
+> +	}
+>=20
+>  	/* Hsync Signal Polarity Select */
+>  	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
