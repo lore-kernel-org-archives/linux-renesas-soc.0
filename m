@@ -1,93 +1,87 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-he1eur01on0132.outbound.protection.outlook.com ([104.47.0.132]:61408
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756585AbeDZWdO (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:33:14 -0400
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Peter Senna Tschudin <peter.senna@collabora.com>,
-        Martin Donnelly <martin.donnelly@ge.com>,
-        Martyn Welch <martyn.welch@collabora.co.uk>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Jyri Sarha <jsarha@ti.com>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 22/24] drm/bridge: remove the .of_node member
-Date: Fri, 27 Apr 2018 00:31:37 +0200
-Message-Id: <20180426223139.16740-23-peda@axentia.se>
-In-Reply-To: <20180426223139.16740-1-peda@axentia.se>
-References: <20180426223139.16740-1-peda@axentia.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC v2 6/6] arm64: dts: renesas: r8a7795: add OF graph for usb role switch
+Date: Thu, 26 Apr 2018 20:26:46 +0900
+Message-Id: <1524742006-17984-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It is unused.
+This patch adds OF graph properties for usb role switch in r8a7795.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
+TODO:
+ - separate a few patches to add new properties into each node.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/gpu/drm/drm_bridge.c | 3 +--
- include/drm/drm_bridge.h     | 4 ----
- 2 files changed, 1 insertion(+), 6 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 38 ++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 67147673fdeb..9f023bd84d56 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -365,8 +365,7 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
- 	mutex_lock(&bridge_lock);
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 5ae85d8..2e52835 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2206,6 +2206,12 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 328>;
+ 			status = "disabled";
++
++			port {
++				usb3_host_ep: endpoint {
++					remote-endpoint = <&usb3_host_ep>;
++				};
++			};
+ 		};
  
- 	list_for_each_entry(bridge, &bridge_list, list) {
--		if ((bridge->owner && bridge->owner->of_node == np) ||
--		    bridge->of_node == np) {
-+		if (bridge->owner->of_node == np) {
- 			mutex_unlock(&bridge_lock);
- 			return bridge;
- 		}
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index c28a75ad0ae2..3bc659f3e7d2 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -258,7 +258,6 @@ struct drm_bridge_timings {
-  * @dev: DRM device this bridge belongs to
-  * @encoder: encoder to which this bridge is connected
-  * @next: the next bridge in the encoder chain
-- * @of_node: device node pointer to the bridge
-  * @list: to keep track of all added bridges
-  * @timings: the timing specification for the bridge, if any (may
-  * be NULL)
-@@ -270,9 +269,6 @@ struct drm_bridge {
- 	struct drm_device *dev;
- 	struct drm_encoder *encoder;
- 	struct drm_bridge *next;
--#ifdef CONFIG_OF
--	struct device_node *of_node;
--#endif
- 	struct list_head list;
- 	const struct drm_bridge_timings *timings;
+ 		usb3_peri0: usb@ee020000 {
+@@ -2217,6 +2223,38 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 328>;
+ 			status = "disabled";
++
++			port {
++				usb3_peri_ep: endpoint {
++					remote-endpoint = <&usb3_peri_sw>;
++				};
++			};
++
++			usb3_role_sw0: usb3-role-sw {
++				compatible = "renesas,rcar-usb3-role-switch";
++				renesas,host = <&xhci0>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++
++						usb3_host_sw: endpoint {
++							remote-endpoint = <&usb3_host_ep>;
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++
++						usb3_peri_sw: endpoint {
++							remote-endpoint = <&usb3_peri_ep>;
++						};
++					};
++				};
++			};
+ 		};
  
+ 		ohci0: usb@ee080000 {
 -- 
-2.11.0
+1.9.1
+
