@@ -1,24 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35193 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755511AbeDZOll (ORCPT
+Received: from merlin.infradead.org ([205.233.59.134]:48072 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753942AbeDZLsp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:41:41 -0400
-Received: by mail-lf0-f66.google.com with SMTP id r125-v6so31128111lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Apr 2018 07:41:40 -0700 (PDT)
-Date: Thu, 26 Apr 2018 16:41:38 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
+        Thu, 26 Apr 2018 07:48:45 -0400
+Date: Thu, 26 Apr 2018 13:48:35 +0200
+From: Peter Zijlstra <peterz@infradead.org>
 To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+Cc: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Ingo Molnar <mingo@redhat.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: Potential problem with 31e77c93e432dec7 ("sched/fair: Update
  blocked load when newly idle")
-Message-ID: <20180426144137.GC3315@bigcity.dyn.berto.se>
+Message-ID: <20180426114835.GI4064@hirez.programming.kicks-ass.net>
 References: <CAKfTPtAE3qeWcTdT-WL8nrbZmP_+OaxPyyjUfVCzn=rax9tQZQ@mail.gmail.com>
  <20180412111519.GH12256@bigcity.dyn.berto.se>
  <20180412133031.GA551@linaro.org>
@@ -37,49 +35,7 @@ In-Reply-To: <20180426103133.GA6953@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Vincent,
-
-Thanks for all your help.
-
-On 2018-04-26 12:31:33 +0200, Vincent Guittot wrote:
-> Hi Niklas,
-> 
-> Le Thursday 26 Apr 2018 � 00:56:03 (+0200), Niklas S�derlund a �crit :
-> > Hi Vincent,
-> > 
-> > Here are the result, sorry for the delay.
-> > 
-> > On 2018-04-23 11:54:20 +0200, Vincent Guittot wrote:
-> > 
-> > [snip]
-> > 
-> > > 
-> > > Thanks for the report. Can you re run with the following trace-cmd sequence ? My previous sequence disables ftrace events
-> > > 
-> > > trace-cmd reset > /dev/null
-> > > trace-cmd start -b 40000 -p function -l dump_backtrace:traceoff -e sched -e cpu_idle -e cpu_frequency -e timer -e ipi -e irq -e printk
-> > > trace-cmd start -b 40000 -p function -l dump_backtrace -e sched -e cpu_idle -e cpu_frequency -e timer -e ipi -e irq -e printk
-> > > 
-> > > I have updated the patch and added traces to check that scheduler returns from idle_balance function and doesn't stay stuck
-> > 
-> > Once more I applied the change bellow on-top of c18bb396d3d261eb ("Merge 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/davem/net").
-> > 
-> > This time the result of 'trace-cmd report' is so large I do not include 
-> > it here, but I attach the trace.dat file. Not sure why but the timing of 
-> > sending the NMI to the backtrace print is different (but content the 
-> > same AFIK) so in the odd change it can help figure this out:
-> > 
-> 
-> Thanks for the trace, I have been able to catch a problem with it.
-> Could you test the patch below to confirm that the problem is solved ?
-> The patch apply on-top of
-> c18bb396d3d261eb ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")
-
-I can confirm that with the patch bellow I can no longer produce the 
-problem. Thanks!
-
-> 
+On Thu, Apr 26, 2018 at 12:31:33PM +0200, Vincent Guittot wrote:
 > From: Vincent Guittot <vincent.guittot@linaro.org>
 > Date: Thu, 26 Apr 2018 12:19:32 +0200
 > Subject: [PATCH] sched/fair: fix the update of blocked load when newly idle
@@ -92,7 +48,10 @@ problem. Thanks!
 > a time window during which another CPU can add a task to this CPU's cfs_rq.
 > The check for newly added task of idle_balance() is not in the common path.
 > Move the out label to include this check.
-> 
+
+Ah quite so indeed. This could result in us running idle even though
+there is a runnable task around -- which is bad.
+
 > Fixes: 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
 > Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
 > Reported-by: Niklas S�derlund <niklas.soderlund@ragnatech.se>
@@ -121,14 +80,3 @@ problem. Thanks!
 >  	/* Move the next balance forward */
 >  	if (time_after(this_rq->next_balance, next_balance))
 >  		this_rq->next_balance = next_balance;
-> -- 
-> 2.7.4
-> 
-> 
-> 
-> [snip]
-> 
-
--- 
-Regards,
-Niklas S�derlund
