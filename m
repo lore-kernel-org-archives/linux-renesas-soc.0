@@ -1,57 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45448 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752958AbeDSOHJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754081AbeDZKaH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:09 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 45/61] slimbus: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:15 +0200
-Message-Id: <20180419140641.27926-46-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Thu, 26 Apr 2018 06:30:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/10] ARM: dts: gose: Drop unnecessary address properties from port nodes
+Date: Thu, 26 Apr 2018 12:29:44 +0200
+Message-Id: <20180426102951.8683-4-horms+renesas@verge.net.au>
+In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
+References: <20180426102951.8683-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+The vin port nodes does not have an address and thus does not need
+address-cells or address size-properties.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ arch/arm/boot/dts/r8a7793-gose.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+ arch/arm/boot/dts/r8a7793-gose.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef1000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7793-gose.dts | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/slimbus/qcom-ctrl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
-index ffb46f915334..45c38fff15d2 100644
---- a/drivers/slimbus/qcom-ctrl.c
-+++ b/drivers/slimbus/qcom-ctrl.c
-@@ -655,8 +655,7 @@ static int qcom_slim_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM
- static int qcom_slim_runtime_suspend(struct device *device)
- {
--	struct platform_device *pdev = to_platform_device(device);
--	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
-+	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
- 	int ret;
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 4c10285d769a..aa209f6e5d71 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -763,9 +763,6 @@
+ 	pinctrl-names = "default";
  
- 	dev_dbg(device, "pm_runtime: suspending...\n");
-@@ -673,8 +672,7 @@ static int qcom_slim_runtime_suspend(struct device *device)
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin0ep2: endpoint {
+ 			remote-endpoint = <&adv7612_out>;
+ 			bus-width = <24>;
+@@ -785,9 +782,6 @@
+ 	status = "okay";
  
- static int qcom_slim_runtime_resume(struct device *device)
- {
--	struct platform_device *pdev = to_platform_device(device);
--	struct qcom_slim_ctrl *ctrl = platform_get_drvdata(pdev);
-+	struct qcom_slim_ctrl *ctrl = dev_get_drvdata(device);
- 	int ret = 0;
- 
- 	dev_dbg(device, "pm_runtime: resuming...\n");
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin1ep: endpoint {
+ 			remote-endpoint = <&adv7180_out>;
+ 			bus-width = <8>;
 -- 
 2.11.0
