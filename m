@@ -1,142 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:33061 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755209AbeDZL1R (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:54462 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeDZTtR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 07:27:17 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v2 5/6] usb: gadget: udc: renesas_usb3: add support for a usb role switch
-Date: Thu, 26 Apr 2018 20:26:45 +0900
-Message-Id: <1524742006-17984-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 26 Apr 2018 15:49:17 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Simon Horman <horms@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2] arm64: dts: r8a77965: Add R-Car Gen3 thermal support
+Date: Thu, 26 Apr 2018 21:49:06 +0200
+Message-Id: <20180426194906.338-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for a usb role switch driver. And then,
-this driver uses the usb role switch APIs instead of hardware
-access to initialize usb host side at specific timings.
+Based on previous work by Ryo Kataoka <ryo.kataoka.wt@renesas.com>.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
 ---
- drivers/usb/gadget/udc/Kconfig        |  1 +
- drivers/usb/gadget/udc/renesas_usb3.c | 34 ++++++++++++++++++++++++++++------
- 2 files changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index 0875d38..7e4a5dd 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -193,6 +193,7 @@ config USB_RENESAS_USB3
- 	tristate 'Renesas USB3.0 Peripheral controller'
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	depends on EXTCON && HAS_DMA
-+	select USB_ROLE_SWITCH
- 	help
- 	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
- 	   that supports super, high, and full speed USB 3.0 data transfers.
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 409cde4..5b7b1ce 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -23,6 +23,7 @@
- #include <linux/uaccess.h>
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
-+#include <linux/usb/role.h>
+Hi Simon,
+
+The compatibility string 'renesas,r8a77965-thermal' is accepted but not 
+yet picked up, see '[PATCH v2 0/2] thermal: rcar_gen3_thermal: add 
+r8a77965 support'.
+
+* Changes since v1
+- Rebased to devel branch of Simons tree.
+- Switch to R8A77965_PD_ALWAYS_ON instead of 32 in power-domains as the
+  constant is present in v4.17-rc1. This makes this patch depend on
+  '[PATCH] arm64: dts: renesas: r8a77965: use r8a77965-sysc binding
+  definitions' which adds the r8a77965-sysc.h include to the dtsi file.
+---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 59 +++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 054ac6be43fac6f3..37c38b0f8f435645 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -136,6 +136,21 @@
+ 			/* placeholder */
+ 		};
  
- /* register definitions */
- #define USB3_AXI_INT_STA	0x008
-@@ -330,6 +331,7 @@ struct renesas_usb3 {
- 
- 	struct usb_gadget gadget;
- 	struct usb_gadget_driver *driver;
-+	struct usb_role_switch *role_sw;	/* Optional */
- 	struct extcon_dev *extcon;
- 	struct work_struct extcon_work;
- 	struct phy *phy;
-@@ -454,7 +456,11 @@ static void usb3_disable_pipe_irq(struct renesas_usb3 *usb3, int num)
- 
- static bool usb3_is_host(struct renesas_usb3 *usb3)
- {
--	return !(usb3_read(usb3, USB3_DRD_CON) & DRD_CON_PERI_CON);
-+	if (usb3->role_sw)
-+		return usb_role_switch_get_role(usb3->role_sw) ==
-+						USB_ROLE_HOST ? true : false;
-+	else
-+		return !(usb3_read(usb3, USB3_DRD_CON) & DRD_CON_PERI_CON);
- }
- 
- static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
-@@ -645,10 +651,16 @@ static void usb3_check_vbus(struct renesas_usb3 *usb3)
- 
- static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
- {
--	if (host)
--		usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
--	else
--		usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	if (usb3->role_sw) {
-+		enum usb_role role = host ? USB_ROLE_HOST : USB_ROLE_DEVICE;
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a77965-thermal";
++			reg = <0 0xe6198000 0 0x100>,
++			      <0 0xe61a0000 0 0x100>,
++			      <0 0xe61a8000 0 0x100>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 522>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
 +
-+		usb_role_switch_set_role(usb3->role_sw, role);
-+	} else {
-+		if (host)
-+			usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+		else
-+			usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-+	}
- }
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a77965",
+ 				     "renesas,rcar-gen3-gpio";
+@@ -1062,6 +1077,50 @@
+ 				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
  
- static void usb3_vbus_out(struct renesas_usb3 *usb3, bool enable)
-@@ -663,8 +675,8 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
- {
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&usb3->lock, flags);
- 	usb3_set_mode(usb3, host);
-+	spin_lock_irqsave(&usb3->lock, flags);
- 	usb3_vbus_out(usb3, a_dev);
- 	/* for A-Peripheral or forced B-device mode */
- 	if ((!host && a_dev) ||
-@@ -2238,6 +2250,10 @@ static int renesas_usb3_start(struct usb_gadget *gadget,
- 	/* hook up the driver */
- 	usb3->driver = driver;
- 
-+	usb3->role_sw = usb_role_switch_get_by_graph(usb3_to_dev(usb3), 0, 0);
-+	if (IS_ERR_OR_NULL(usb3->role_sw))
-+		usb3->role_sw = NULL;
++	thermal-zones {
++		sensor_thermal1: sensor-thermal1 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 0>;
 +
- 	if (usb3->phy)
- 		phy_init(usb3->phy);
- 
-@@ -2260,6 +2276,8 @@ static int renesas_usb3_stop(struct usb_gadget *gadget)
- 	if (usb3->phy)
- 		phy_exit(usb3->phy);
- 
-+	usb_role_switch_put(usb3->role_sw);
++			trips {
++				sensor1_crit: sensor1-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
 +
- 	pm_runtime_put(usb3_to_dev(usb3));
- 
- 	return 0;
-@@ -2632,6 +2650,10 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_add_udc;
- 
-+	ret = devm_of_platform_populate(&pdev->dev);
-+	if (ret < 0)
-+		goto err_dev_create;
++		sensor_thermal2: sensor-thermal2 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 1>;
 +
- 	ret = device_create_file(&pdev->dev, &dev_attr_role);
- 	if (ret < 0)
- 		goto err_dev_create;
++			trips {
++				sensor2_crit: sensor2-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++
++		sensor_thermal3: sensor-thermal3 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 2>;
++
++			trips {
++				sensor3_crit: sensor3-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++	};
++
+ 	/* External USB clocks - can be overridden by the board */
+ 	usb3s0_clk: usb3s0 {
+ 		compatible = "fixed-clock";
 -- 
-1.9.1
+2.17.0
