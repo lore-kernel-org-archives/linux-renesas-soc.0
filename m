@@ -1,225 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:43958 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750898AbeDNMC5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755402AbeDZKaL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:02:57 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 30/33] rcar-vin: extend {start,stop}_streaming to work with media controller
-Date: Sat, 14 Apr 2018 13:57:23 +0200
-Message-Id: <20180414115726.5075-31-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 26 Apr 2018 06:30:11 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/10] arm64: dts: renesas: r8a7796: Add address properties to rcar_sound port nodes
+Date: Thu, 26 Apr 2018 12:29:50 +0200
+Message-Id: <20180426102951.8683-10-horms+renesas@verge.net.au>
+In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
+References: <20180426102951.8683-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The procedure to start or stop streaming using the non-MC single
-subdevice and the MC graph and multiple subdevices are quite different.
-Create a new function to abstract which method is used based on which
-mode the driver is running in and add logic to start the MC graph.
+The rcar_sound port nodes have unit names and thus should have register
+properties.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ ...
+ DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@1: node has a unit name, but no reg property
+ ...
+ DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@1: node has a unit name, but no reg property
 
+Prior to this patch the port nodes only defined in board DTS files.
+As the register properties are common this patch defines the port nodes
+and provides register properties in the SoC DTS file.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-* Changes since v12
-- Rebase to latest media-tree/master changed a 'return ret' to a 'goto
-  out' in rvin_start_streaming().
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 135 +++++++++++++++++++++++++++--
- 1 file changed, 127 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index d70a689d9dd3713f..4a3a195e7f59047c 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -996,10 +996,126 @@ static void rvin_buffer_queue(struct vb2_buffer *vb)
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index f41bc25b3933..3fbd86590fb0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1594,6 +1594,17 @@
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 			};
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++				};
++				port@1 {
++					reg = <1>;
++				};
++			};
+ 		};
  
-+static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
-+				   struct media_pad *pad)
-+{
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+
-+	fmt.pad = pad->index;
-+	if (v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt))
-+		return -EPIPE;
-+
-+	switch (fmt.format.code) {
-+	case MEDIA_BUS_FMT_YUYV8_1X16:
-+	case MEDIA_BUS_FMT_UYVY8_2X8:
-+	case MEDIA_BUS_FMT_UYVY10_2X10:
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+		vin->mbus_code = fmt.format.code;
-+		break;
-+	default:
-+		return -EPIPE;
-+	}
-+
-+	switch (fmt.format.field) {
-+	case V4L2_FIELD_TOP:
-+	case V4L2_FIELD_BOTTOM:
-+	case V4L2_FIELD_NONE:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+	case V4L2_FIELD_INTERLACED:
-+	case V4L2_FIELD_SEQ_TB:
-+	case V4L2_FIELD_SEQ_BT:
-+		/* Supported natively */
-+		break;
-+	case V4L2_FIELD_ALTERNATE:
-+		switch (vin->format.field) {
-+		case V4L2_FIELD_TOP:
-+		case V4L2_FIELD_BOTTOM:
-+		case V4L2_FIELD_NONE:
-+			break;
-+		case V4L2_FIELD_INTERLACED_TB:
-+		case V4L2_FIELD_INTERLACED_BT:
-+		case V4L2_FIELD_INTERLACED:
-+		case V4L2_FIELD_SEQ_TB:
-+		case V4L2_FIELD_SEQ_BT:
-+			/* Use VIN hardware to combine the two fields */
-+			fmt.format.height *= 2;
-+			break;
-+		default:
-+			return -EPIPE;
-+		}
-+		break;
-+	default:
-+		return -EPIPE;
-+	}
-+
-+	if (fmt.format.width != vin->format.width ||
-+	    fmt.format.height != vin->format.height ||
-+	    fmt.format.code != vin->mbus_code)
-+		return -EPIPE;
-+
-+	return 0;
-+}
-+
-+static int rvin_set_stream(struct rvin_dev *vin, int on)
-+{
-+	struct media_pipeline *pipe;
-+	struct media_device *mdev;
-+	struct v4l2_subdev *sd;
-+	struct media_pad *pad;
-+	int ret;
-+
-+	/* No media controller used, simply pass operation to subdevice. */
-+	if (!vin->info->use_mc) {
-+		ret = v4l2_subdev_call(vin->digital->subdev, video, s_stream,
-+				       on);
-+
-+		return ret == -ENOIOCTLCMD ? 0 : ret;
-+	}
-+
-+	pad = media_entity_remote_pad(&vin->pad);
-+	if (!pad)
-+		return -EPIPE;
-+
-+	sd = media_entity_to_v4l2_subdev(pad->entity);
-+
-+	if (!on) {
-+		media_pipeline_stop(&vin->vdev.entity);
-+		return v4l2_subdev_call(sd, video, s_stream, 0);
-+	}
-+
-+	ret = rvin_mc_validate_format(vin, sd, pad);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * The graph lock needs to be taken to protect concurrent
-+	 * starts of multiple VIN instances as they might share
-+	 * a common subdevice down the line and then should use
-+	 * the same pipe.
-+	 */
-+	mdev = vin->vdev.entity.graph_obj.mdev;
-+	mutex_lock(&mdev->graph_mutex);
-+	pipe = sd->entity.pipe ? sd->entity.pipe : &vin->vdev.pipe;
-+	ret = __media_pipeline_start(&vin->vdev.entity, pipe);
-+	mutex_unlock(&mdev->graph_mutex);
-+	if (ret)
-+		return ret;
-+
-+	ret = v4l2_subdev_call(sd, video, s_stream, 1);
-+	if (ret == -ENOIOCTLCMD)
-+		ret = 0;
-+	if (ret)
-+		media_pipeline_stop(&vin->vdev.entity);
-+
-+	return ret;
-+}
-+
- static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int ret;
- 
-@@ -1014,8 +1130,13 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 		return -ENOMEM;
- 	}
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 1);
-+	ret = rvin_set_stream(vin, 1);
-+	if (ret) {
-+		spin_lock_irqsave(&vin->qlock, flags);
-+		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
-+		spin_unlock_irqrestore(&vin->qlock, flags);
-+		goto out;
-+	}
- 
- 	spin_lock_irqsave(&vin->qlock, flags);
- 
-@@ -1024,11 +1145,11 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	ret = rvin_capture_start(vin);
- 	if (ret) {
- 		return_all_buffers(vin, VB2_BUF_STATE_QUEUED);
--		v4l2_subdev_call(sd, video, s_stream, 0);
-+		rvin_set_stream(vin, 0);
- 	}
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
--
-+out:
- 	if (ret)
- 		dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
- 				  vin->scratch_phys);
-@@ -1039,7 +1160,6 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
- static void rvin_stop_streaming(struct vb2_queue *vq)
- {
- 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
--	struct v4l2_subdev *sd;
- 	unsigned long flags;
- 	int retries = 0;
- 
-@@ -1078,8 +1198,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
- 
- 	spin_unlock_irqrestore(&vin->qlock, flags);
- 
--	sd = vin_to_source(vin);
--	v4l2_subdev_call(sd, video, s_stream, 0);
-+	rvin_set_stream(vin, 0);
- 
- 	/* disable interrupts */
- 	rvin_disable_interrupts(vin);
+ 		audma0: dma-controller@ec700000 {
 -- 
-2.16.2
+2.11.0
