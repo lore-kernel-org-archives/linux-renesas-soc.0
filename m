@@ -1,7 +1,11 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH 15/17] arm64: dts: r8a77965-salvator-x: Enable HDMI output
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59930 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751496AbeDZVVn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Apr 2018 17:21:43 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Simon Horman <horms@verge.net.au>,
@@ -15,80 +19,71 @@ Cc: linux-renesas-soc@vger.kernel.org,
         "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
         <linux-arm-kernel@lists.infradead.org>,
         open list <linux-kernel@vger.kernel.org>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
- <20180426165346.494-16-kieran.bingham+renesas@ideasonboard.com>
- <2345148.J1marZVneP@avalon>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <5af7b6a6-8a40-880d-3346-8c90bd700957@ideasonboard.com>
-Date: Fri, 27 Apr 2018 17:22:06 +0100
+Subject: Re: [PATCH 15/17] arm64: dts: r8a77965-salvator-x: Enable HDMI output
+Date: Fri, 27 Apr 2018 00:21:55 +0300
+Message-ID: <2345148.J1marZVneP@avalon>
+In-Reply-To: <20180426165346.494-16-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-16-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <2345148.J1marZVneP@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Kieran,
 
-On 26/04/18 22:21, Laurent Pinchart wrote:
-> Hi Kieran,
-> 
-> Thank you for the patch.
-> 
-> On Thursday, 26 April 2018 19:53:44 EEST Kieran Bingham wrote:
->> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->>
->> Enable the HDMI encoder for the M3N Salvator-X board and hook it up to
->> the HDMI connector.
->>
->> Based on a similar patches of the the Salvator-X board
->> on the R8A7796 SoC device tree
->> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Thank you for the patch.
 
-Thanks, collected.
-
+On Thursday, 26 April 2018 19:53:44 EEST Kieran Bingham wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> How about adding the VGA output too ? I think you can add both VGA and HDMI in 
-> a single patch that enables display in one go for the board. Same comment for 
-> the Salvator-XS.
-
-I believe the VGA output is handled by the salvator-common.dtsi, and thus
-doesn't need to be included in this patch.
-
+> Enable the HDMI encoder for the M3N Salvator-X board and hook it up to
+> the HDMI connector.
 > 
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>  .../boot/dts/renesas/r8a77965-salvator-x.dts    | 17 +++++++++++++++++
->>  1 file changed, 17 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
->> b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts index
->> a2b8fb20fef8..11e8d43e9e11 100644
->> --- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
->> +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
->> @@ -31,3 +31,20 @@
->>  	clock-names = "du.0", "du.1", "du.3", "lvds.0",
->>  		      "dclkin.0", "dclkin.1", "dclkin.3";
->>  };
->> +
->> +&hdmi0 {
->> +	status = "okay";
->> +
->> +	ports {
->> +		port@1 {
->> +			reg = <1>;
->> +			rcar_dw_hdmi0_out: endpoint {
->> +				remote-endpoint = <&hdmi0_con>;
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&hdmi0_con {
->> +	remote-endpoint = <&rcar_dw_hdmi0_out>;
->> +};
+> Based on a similar patches of the the Salvator-X board
+> on the R8A7796 SoC device tree
+> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+How about adding the VGA output too ? I think you can add both VGA and HDMI in 
+a single patch that enables display in one go for the board. Same comment for 
+the Salvator-XS.
+
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  .../boot/dts/renesas/r8a77965-salvator-x.dts    | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 > 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts index
+> a2b8fb20fef8..11e8d43e9e11 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> @@ -31,3 +31,20 @@
+>  	clock-names = "du.0", "du.1", "du.3", "lvds.0",
+>  		      "dclkin.0", "dclkin.1", "dclkin.3";
+>  };
+> +
+> +&hdmi0 {
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@1 {
+> +			reg = <1>;
+> +			rcar_dw_hdmi0_out: endpoint {
+> +				remote-endpoint = <&hdmi0_con>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&hdmi0_con {
+> +	remote-endpoint = <&rcar_dw_hdmi0_out>;
+> +};
+
+-- 
+Regards,
+
+Laurent Pinchart
