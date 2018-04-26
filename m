@@ -1,226 +1,270 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:59111 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751137AbeDNMBB (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:01:01 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v14 19/33] rcar-vin: enable Gen3 hardware configuration
-Date: Sat, 14 Apr 2018 13:57:12 +0200
-Message-Id: <20180414115726.5075-20-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180414115726.5075-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC v2 4/6] usb: role: rcar-usb3-role-switch: add support for R-Car SoCs
+Date: Thu, 26 Apr 2018 20:26:44 +0900
+Message-Id: <1524742006-17984-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the register needed to work with Gen3 hardware. This patch adds
-the logic for how to work with the Gen3 hardware. More work is required
-to enable the subdevice structure needed to configure capturing.
+This patch adds role switch support for R-Car SoCs. Some R-Car SoCs
+(e.g. R-Car H3) have USB 3.0 dual-role device controller which has
+the USB 3.0 xHCI host and Renesas USB 3.0 peripheral.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Unfortunately, the mode change register contains the USB 3.0 peripheral
+controller side only. So, the USB 3.0 peripheral driver (renesas_usb3)
+manages this register. However, in peripheral mode, the host should
+stop. Also the host hardware needs to reinitialize its own registers
+when the mode changes from peripheral to host mode. Otherwise,
+the host cannot work correctly (e.g. detect a device as high-speed).
 
+To achieve this by a driver, this role switch driver manages
+the mode change register and attach/release the xhci-plat driver.
+The renesas_usb3 udc driver should call devm_of_platform_populate()
+to probe this driver.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
+ drivers/usb/roles/Kconfig                 |  13 ++
+ drivers/usb/roles/Makefile                |   1 +
+ drivers/usb/roles/rcar-usb3-role-switch.c | 190 ++++++++++++++++++++++++++++++
+ 3 files changed, 204 insertions(+)
+ create mode 100644 drivers/usb/roles/rcar-usb3-role-switch.c
 
-* Changes since v13
-- Remove VNCSI_IFMD_DES2 define as the later versions of the datasheet
-  have been updated to remove the register as pointed out by Koji
-  Matsuoka.
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 93 ++++++++++++++++++++----------
- drivers/media/platform/rcar-vin/rcar-vin.h |  1 +
- 2 files changed, 63 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 41907a200037d5d5..482d89bae657a88e 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -33,21 +33,23 @@
- #define VNELPRC_REG	0x10	/* Video n End Line Pre-Clip Register */
- #define VNSPPRC_REG	0x14	/* Video n Start Pixel Pre-Clip Register */
- #define VNEPPRC_REG	0x18	/* Video n End Pixel Pre-Clip Register */
--#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
--#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
--#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
--#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
- #define VNIS_REG	0x2C	/* Video n Image Stride Register */
- #define VNMB_REG(m)	(0x30 + ((m) << 2)) /* Video n Memory Base m Register */
- #define VNIE_REG	0x40	/* Video n Interrupt Enable Register */
- #define VNINTS_REG	0x44	/* Video n Interrupt Status Register */
- #define VNSI_REG	0x48	/* Video n Scanline Interrupt Register */
- #define VNMTC_REG	0x4C	/* Video n Memory Transfer Control Register */
--#define VNYS_REG	0x50	/* Video n Y Scale Register */
--#define VNXS_REG	0x54	/* Video n X Scale Register */
- #define VNDMR_REG	0x58	/* Video n Data Mode Register */
- #define VNDMR2_REG	0x5C	/* Video n Data Mode Register 2 */
- #define VNUVAOF_REG	0x60	/* Video n UV Address Offset Register */
+diff --git a/drivers/usb/roles/Kconfig b/drivers/usb/roles/Kconfig
+index f5a5e6f..a44cbc7 100644
+--- a/drivers/usb/roles/Kconfig
++++ b/drivers/usb/roles/Kconfig
+@@ -11,4 +11,17 @@ config USB_ROLES_INTEL_XHCI
+ 	  To compile the driver as a module, choose M here: the module will
+ 	  be called intel-xhci-usb-role-switch.
+ 
++config USB_ROLES_RCAR_USB3
++	tristate "Renesas R-Car USB3.0 Role Switch"
++	depends on OF
++	depends on ARCH_RENESAS || COMPILE_TEST
++	help
++	  Driver for the internal USB role switch for switching the USB data
++	  lines between the xHCI host controller and the Renesas gadget
++	  controller (by using renesas_usb3 driver) found on various Renesas
++	  R-Car SoCs.
 +
-+/* Register offsets specific for Gen2 */
-+#define VNSLPOC_REG	0x1C	/* Video n Start Line Post-Clip Register */
-+#define VNELPOC_REG	0x20	/* Video n End Line Post-Clip Register */
-+#define VNSPPOC_REG	0x24	/* Video n Start Pixel Post-Clip Register */
-+#define VNEPPOC_REG	0x28	/* Video n End Pixel Post-Clip Register */
-+#define VNYS_REG	0x50	/* Video n Y Scale Register */
-+#define VNXS_REG	0x54	/* Video n X Scale Register */
- #define VNC1A_REG	0x80	/* Video n Coefficient Set C1A Register */
- #define VNC1B_REG	0x84	/* Video n Coefficient Set C1B Register */
- #define VNC1C_REG	0x88	/* Video n Coefficient Set C1C Register */
-@@ -73,9 +75,13 @@
- #define VNC8B_REG	0xF4	/* Video n Coefficient Set C8B Register */
- #define VNC8C_REG	0xF8	/* Video n Coefficient Set C8C Register */
- 
-+/* Register offsets specific for Gen3 */
-+#define VNCSI_IFMD_REG		0x20 /* Video n CSI2 Interface Mode Register */
- 
- /* Register bit fields for R-Car VIN */
- /* Video n Main Control Register bits */
-+#define VNMC_DPINE		(1 << 27) /* Gen3 specific */
-+#define VNMC_SCLE		(1 << 26) /* Gen3 specific */
- #define VNMC_FOC		(1 << 21)
- #define VNMC_YCAL		(1 << 19)
- #define VNMC_INF_YUV8_BT656	(0 << 16)
-@@ -119,6 +125,12 @@
- #define VNDMR2_FTEV		(1 << 17)
- #define VNDMR2_VLV(n)		((n & 0xf) << 12)
- 
-+/* Video n CSI2 Interface Mode Register (Gen3) */
-+#define VNCSI_IFMD_DES1		(1 << 26)
-+#define VNCSI_IFMD_DES0		(1 << 25)
-+#define VNCSI_IFMD_CSI_CHSEL(n) (((n) & 0xf) << 0)
-+#define VNCSI_IFMD_CSI_CHSEL_MASK 0xf
++	  To compile the driver as a module, choose M here: the module will
++	  be called rcar-usb3-role-switch.
 +
- struct rvin_buffer {
- 	struct vb2_v4l2_buffer vb;
- 	struct list_head list;
-@@ -514,28 +526,10 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
- 	rvin_write(vin, p_set->coeff_set[23], VNC8C_REG);
- }
- 
--void rvin_crop_scale_comp(struct rvin_dev *vin)
-+static void rvin_crop_scale_comp_gen2(struct rvin_dev *vin)
- {
- 	u32 xs, ys;
- 
--	/* Set Start/End Pixel/Line Pre-Clip */
--	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
--	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
--	switch (vin->format.field) {
--	case V4L2_FIELD_INTERLACED:
--	case V4L2_FIELD_INTERLACED_TB:
--	case V4L2_FIELD_INTERLACED_BT:
--		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
--		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
--			   VNELPRC_REG);
--		break;
--	default:
--		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
--		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
--			   VNELPRC_REG);
--		break;
--	}
--
- 	/* Set scaling coefficient */
- 	ys = 0;
- 	if (vin->crop.height != vin->compose.height)
-@@ -573,11 +567,6 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
- 		break;
- 	}
- 
--	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
--		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
--	else
--		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
--
- 	vin_dbg(vin,
- 		"Pre-Clip: %ux%u@%u:%u YS: %d XS: %d Post-Clip: %ux%u@%u:%u\n",
- 		vin->crop.width, vin->crop.height, vin->crop.left,
-@@ -585,6 +574,37 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
- 		0, 0);
- }
- 
-+void rvin_crop_scale_comp(struct rvin_dev *vin)
+ endif # USB_ROLE_SWITCH
+diff --git a/drivers/usb/roles/Makefile b/drivers/usb/roles/Makefile
+index e44b179..7ce3be3 100644
+--- a/drivers/usb/roles/Makefile
++++ b/drivers/usb/roles/Makefile
+@@ -1 +1,2 @@
+ obj-$(CONFIG_USB_ROLES_INTEL_XHCI) += intel-xhci-usb-role-switch.o
++obj-$(CONFIG_USB_ROLES_RCAR_USB3) += rcar-usb3-role-switch.o
+diff --git a/drivers/usb/roles/rcar-usb3-role-switch.c b/drivers/usb/roles/rcar-usb3-role-switch.c
+new file mode 100644
+index 0000000..2bcab60
+--- /dev/null
++++ b/drivers/usb/roles/rcar-usb3-role-switch.c
+@@ -0,0 +1,190 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Renesas R-Car USB 3.0 role switch driver
++ *
++ * Copyright (C) 2018  Renesas Electronics Corporation
++ */
++
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/slab.h>
++#include <linux/usb/role.h>
++
++#define USB3_DRD_CON		0x218
++#define DRD_CON_PERI_CON	BIT(24)
++
++struct rcar_usb3_role_switch {
++	struct usb_role_switch *role_sw;
++	void __iomem *reg;
++	struct device *host_dev;
++	enum usb_role save_role;	/* for suspend/resume */
++};
++
++static enum usb_role
++rcar_usb3_role_switch_get_mode(struct rcar_usb3_role_switch *rcar_sw)
 +{
-+	/* Set Start/End Pixel/Line Pre-Clip */
-+	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
-+	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
++	u32 val = readl(rcar_sw->reg + USB3_DRD_CON);
 +
-+	switch (vin->format.field) {
-+	case V4L2_FIELD_INTERLACED:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
-+		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
-+			   VNELPRC_REG);
-+		break;
-+	default:
-+		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
-+		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
-+			   VNELPRC_REG);
-+		break;
-+	}
++	if (val & DRD_CON_PERI_CON)
++		return USB_ROLE_DEVICE;
 +
-+	/* TODO: Add support for the UDS scaler. */
-+	if (vin->info->model != RCAR_GEN3)
-+		rvin_crop_scale_comp_gen2(vin);
-+
-+	if (vin->format.pixelformat == V4L2_PIX_FMT_NV16)
-+		rvin_write(vin, ALIGN(vin->format.width, 0x20), VNIS_REG);
-+	else
-+		rvin_write(vin, ALIGN(vin->format.width, 0x10), VNIS_REG);
++	return USB_ROLE_HOST;
 +}
 +
- /* -----------------------------------------------------------------------------
-  * Hardware setup
-  */
-@@ -652,7 +672,10 @@ static int rvin_setup(struct rvin_dev *vin)
- 	}
- 
- 	/* Enable VSYNC Field Toogle mode after one VSYNC input */
--	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
-+	if (vin->info->model == RCAR_GEN3)
-+		dmr2 = VNDMR2_FTEV;
++static void
++rcar_usb3_role_switch_set_mode(struct rcar_usb3_role_switch *rcar_sw,
++			       bool host)
++{
++	void __iomem *drd_con = rcar_sw->reg + USB3_DRD_CON;
++
++	if (host)
++		writel(readl(drd_con) & ~DRD_CON_PERI_CON, drd_con);
 +	else
-+		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
- 	/* Hsync Signal Polarity Select */
- 	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-@@ -704,6 +727,14 @@ static int rvin_setup(struct rvin_dev *vin)
- 	if (input_is_yuv == output_is_yuv)
- 		vnmc |= VNMC_BPS;
- 
-+	if (vin->info->model == RCAR_GEN3) {
-+		/* Select between CSI-2 and Digital input */
-+		if (vin->mbus_cfg.type == V4L2_MBUS_CSI2)
-+			vnmc &= ~VNMC_DPINE;
-+		else
-+			vnmc |= VNMC_DPINE;
++		writel(readl(drd_con) | DRD_CON_PERI_CON, drd_con);
++}
++
++static int rcar_usb3_role_switch_set_role(struct device *dev,
++					  enum usb_role role)
++{
++	struct rcar_usb3_role_switch *rcar_sw = dev_get_drvdata(dev);
++	struct device *host = rcar_sw->host_dev;
++	enum usb_role cur_role;
++
++	pm_runtime_get_sync(dev->parent);
++
++	cur_role = rcar_usb3_role_switch_get_mode(rcar_sw);
++	if (cur_role == USB_ROLE_HOST && role == USB_ROLE_DEVICE) {
++		device_release_driver(host);
++		rcar_usb3_role_switch_set_mode(rcar_sw, false);
++	} else if (cur_role == USB_ROLE_DEVICE && role == USB_ROLE_HOST) {
++		/* Must set the mode before device_attach of the host */
++		rcar_usb3_role_switch_set_mode(rcar_sw, true);
++		if (device_attach(host) < 0)
++			dev_err(dev, "device_attach(usb3_port) failed\n");
 +	}
 +
- 	/* Progressive or interlaced mode */
- 	interrupts = progressive ? VNIE_FIE : VNIE_EFE;
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 952d57f32873388d..321283f1618ae0b9 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -33,6 +33,7 @@ enum model_id {
- 	RCAR_H1,
- 	RCAR_M1,
- 	RCAR_GEN2,
-+	RCAR_GEN3,
- };
- 
- /**
++	pm_runtime_put(dev->parent);
++
++	return 0;
++}
++
++static enum usb_role rcar_usb3_role_switch_get_role(struct device *dev)
++{
++	struct rcar_usb3_role_switch *rcar_sw = dev_get_drvdata(dev);
++	enum usb_role cur_role;
++
++	pm_runtime_get(dev->parent);
++	cur_role = rcar_usb3_role_switch_get_mode(rcar_sw);
++	pm_runtime_put(dev->parent);
++
++	return cur_role;
++}
++
++static struct usb_role_switch_desc rcar_usb3_role_switch_desc = {
++	.set = rcar_usb3_role_switch_set_role,
++	.get = rcar_usb3_role_switch_get_role,
++};
++
++static const struct of_device_id rcar_usb3_role_switch_of_match[] = {
++	{ .compatible = "renesas,rcar-usb3-role-switch" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rcar_usb3_role_switch_of_match);
++
++static int rcar_usb3_role_switch_remove(struct platform_device *pdev)
++{
++	struct rcar_usb3_role_switch *rcar_sw = platform_get_drvdata(pdev);
++
++	usb_role_switch_unregister(rcar_sw->role_sw);
++	pm_runtime_disable(pdev->dev.parent);
++
++	return 0;
++}
++
++static int rcar_usb3_role_switch_probe(struct platform_device *pdev)
++{
++	struct rcar_usb3_role_switch *rcar_sw;
++	struct resource *res;
++
++	rcar_sw = devm_kzalloc(&pdev->dev, sizeof(*rcar_sw), GFP_KERNEL);
++	if (!rcar_sw)
++		return -ENOMEM;
++
++	res = platform_get_resource(to_platform_device(pdev->dev.parent),
++				    IORESOURCE_MEM, 0);
++	if (!res)
++		return -ENODEV;
++
++	rcar_sw->reg = devm_ioremap_nocache(&pdev->dev, res->start,
++					    resource_size(res));
++	if (IS_ERR(rcar_sw->reg))
++		return PTR_ERR(rcar_sw->reg);
++
++	platform_set_drvdata(pdev, rcar_sw);
++	pm_runtime_enable(pdev->dev.parent);
++
++	rcar_usb3_role_switch_desc.allow_userspace_control = true;
++	rcar_sw->role_sw = usb_role_switch_register(&pdev->dev,
++						&rcar_usb3_role_switch_desc);
++	if (IS_ERR(rcar_sw->role_sw)) {
++		pm_runtime_disable(pdev->dev.parent);
++		return PTR_ERR(rcar_sw->role_sw);
++	}
++
++	rcar_sw->host_dev = device_connection_find_by_graph(&pdev->dev, 0, 0);
++	if (!IS_ERR_OR_NULL(rcar_sw->host_dev)) {
++		dev_info(&pdev->dev, "%s: host_dev = %p (%s)\n", __func__,
++			 rcar_sw->host_dev, dev_name(rcar_sw->host_dev));
++	} else {
++		usb_role_switch_unregister(rcar_sw->role_sw);
++		pm_runtime_disable(pdev->dev.parent);
++		return PTR_ERR(rcar_sw->host_dev);
++	}
++
++	return 0;
++}
++
++static int __maybe_unused rcar_usb3_role_switch_suspend(struct device *dev)
++{
++	struct rcar_usb3_role_switch *rcar_sw = dev_get_drvdata(dev);
++
++	pm_runtime_get_sync(dev->parent);
++	rcar_sw->save_role = rcar_usb3_role_switch_get_mode(rcar_sw);
++	pm_runtime_put(dev->parent);
++
++	return 0;
++}
++
++static int __maybe_unused rcar_usb3_role_switch_resume(struct device *dev)
++{
++	struct rcar_usb3_role_switch *rcar_sw = dev_get_drvdata(dev);
++	bool host = rcar_sw->save_role == USB_ROLE_HOST ? true : false;
++
++	pm_runtime_get_sync(dev->parent);
++	rcar_usb3_role_switch_set_mode(rcar_sw, host);
++	pm_runtime_put(dev->parent);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(rcar_usb3_role_switch_pm_ops,
++			 rcar_usb3_role_switch_suspend,
++			 rcar_usb3_role_switch_resume);
++
++static struct platform_driver rcar_usb3_role_switch_driver = {
++	.probe		= rcar_usb3_role_switch_probe,
++	.remove		= rcar_usb3_role_switch_remove,
++	.driver		= {
++		.name =	"rcar_usb3_role_switch",
++		.pm		= &rcar_usb3_role_switch_pm_ops,
++		.of_match_table = rcar_usb3_role_switch_of_match,
++	},
++};
++module_platform_driver(rcar_usb3_role_switch_driver);
++
++MODULE_DESCRIPTION("Renesas USB3.0 role switch driver");
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>");
 -- 
-2.16.2
+1.9.1
+
