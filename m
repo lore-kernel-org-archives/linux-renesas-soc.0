@@ -1,80 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58080 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59900 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755871AbeDZQx7 (ORCPT
+        with ESMTP id S1752000AbeDZVSa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:53:59 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 07/17] drm: rcar-du: Add R8A77965 support
-Date: Thu, 26 Apr 2018 17:53:36 +0100
-Message-Id: <20180426165346.494-8-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 26 Apr 2018 17:18:30 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 14/17] arm64: dts: r8a77965-salvator-x: Add DU external dot clocks
+Date: Fri, 27 Apr 2018 00:18:43 +0300
+Message-ID: <2252433.qtOjIrpDLV@avalon>
+In-Reply-To: <20180426165346.494-15-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-15-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R8A77965 (M3-N) SoC provides VGA, HDMI and LVDS output.
+Hi Kieran,
 
-This platform is unusual in that the VGA is connected to DU3 leaving DU2
-unpopulated. This is reflected by the channel_mask accordingly.
+Thank you for the patch.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 29 +++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+On Thursday, 26 April 2018 19:53:43 EEST Kieran Bingham wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> The DU1 external dot clock is provided by the fixed frequency clock
+> generator X21, while the DU0 and DU3 clocks are provided by the
+> programmable Versaclock5 clock generator.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index d6ebc628fc22..4d195ff8c569 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -246,6 +246,34 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
- 	.dpll_ch =  BIT(1),
- };
- 
-+static const struct rcar_du_device_info rcar_du_r8a77965_info = {
-+	.gen = 3,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+	.channel_mask = BIT(0) | BIT(1) | BIT(3),
-+	.routes = {
-+		/*
-+		 * R8A77965 has one RGB output, one LVDS output and one HDMI
-+		 * output.
-+		 */
-+		[RCAR_DU_OUTPUT_DPAD0] = {
-+			.possible_crtcs = BIT(2),
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_HDMI0] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
-+		[RCAR_DU_OUTPUT_LVDS0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 2,
-+		},
-+	},
-+	.num_lvds = 1,
-+	.dpll_ch =  BIT(1),
-+};
-+
- static const struct rcar_du_device_info rcar_du_r8a77970_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-@@ -277,6 +305,7 @@ static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7794", .data = &rcar_du_r8a7794_info },
- 	{ .compatible = "renesas,du-r8a7795", .data = &rcar_du_r8a7795_info },
- 	{ .compatible = "renesas,du-r8a7796", .data = &rcar_du_r8a7796_info },
-+	{ .compatible = "renesas,du-r8a77965", .data = &rcar_du_r8a77965_info },
- 	{ .compatible = "renesas,du-r8a77970", .data = &rcar_du_r8a77970_info },
- 	{ }
- };
+I think you can squash this with patch 15/17.
+
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts index
+> 75d890d91df9..a2b8fb20fef8 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> @@ -19,3 +19,15 @@
+>  		reg = <0x0 0x48000000 0x0 0x78000000>;
+>  	};
+>  };
+> +
+> +&du {
+> +	clocks = <&cpg CPG_MOD 724>,
+> +		 <&cpg CPG_MOD 723>,
+> +		 <&cpg CPG_MOD 721>,
+> +		 <&cpg CPG_MOD 727>,
+> +		 <&versaclock5 1>,
+> +		 <&x21_clk>,
+> +		 <&versaclock5 2>;
+> +	clock-names = "du.0", "du.1", "du.3", "lvds.0",
+> +		      "dclkin.0", "dclkin.1", "dclkin.3";
+> +};
+
 -- 
-2.17.0
+Regards,
+
+Laurent Pinchart
