@@ -1,42 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:40593 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753362AbeDZIHa (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38177 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754220AbeDZHnn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:07:30 -0400
-MIME-Version: 1.0
-In-Reply-To: <1524669685-8265-1-git-send-email-vladimir_zapolskiy@mentor.com>
-References: <1524669685-8265-1-git-send-email-vladimir_zapolskiy@mentor.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Apr 2018 10:07:29 +0200
-Message-ID: <CAMuHMdWzq-iMtXfSBwCDcnuBomjHutjzm5YAFXCOXL2aV9RVEg@mail.gmail.com>
-Subject: Re: [PATCH] PCI: rcar: Reuse generic pci_parse_request_of_pci_ranges()
- function
+        Thu, 26 Apr 2018 03:43:43 -0400
+Date: Thu, 26 Apr 2018 09:43:39 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar: Reuse generic
+ pci_parse_request_of_pci_ranges() function
+Message-ID: <20180426074336.po7lmeg24ptswqwr@verge.net.au>
+References: <1524669685-8265-1-git-send-email-vladimir_zapolskiy@mentor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524669685-8265-1-git-send-email-vladimir_zapolskiy@mentor.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 5:21 PM, Vladimir Zapolskiy
-<vladimir_zapolskiy@mentor.com> wrote:
+On Wed, Apr 25, 2018 at 06:21:25PM +0300, Vladimir Zapolskiy wrote:
 > The non-functional change removes a custom function to parse and
 > allocate PCI resources in favour of pci_parse_request_of_pci_ranges().
->
+> 
 > Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
