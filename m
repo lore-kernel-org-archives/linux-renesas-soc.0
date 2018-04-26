@@ -1,58 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38906 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752327AbeDJJit (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40680 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754081AbeDZKaD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:38:49 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
-Subject: [PATCH 4/5] mmc: renesas_sdhi_internal_dmac: use more generic whitelisting
-Date: Tue, 10 Apr 2018 11:38:30 +0200
-Message-Id: <20180410093831.1759-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
-References: <20180410093831.1759-1-wsa+renesas@sang-engineering.com>
+        Thu, 26 Apr 2018 06:30:03 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 00/10] ARM, arm64: dts: renesas: update register properties
+Date: Thu, 26 Apr 2018 12:29:41 +0200
+Message-Id: <20180426102951.8683-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Whitelisting every ES version does not scale. So, we whitelist whole
-SoCs independent of ES version. If we need specific handling for an ES
-version, we put it to the front, so it will be matched first.
+Hi,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+this series:
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 32b8be4c0b81..06b4e0004ca4 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -272,12 +272,15 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
-  * implementation as others may use a different implementation.
-  */
- static const struct soc_device_attribute gen3_soc_whitelist[] = {
-+	/* specific ones */
-         { .soc_id = "r8a7795", .revision = "ES1.*",
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
--        { .soc_id = "r8a7795", .revision = "ES2.0" },
-         { .soc_id = "r8a7796", .revision = "ES1.0",
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
--        { .soc_id = "r8a77995", .revision = "ES1.0" },
-+	/* generic ones */
-+        { .soc_id = "r8a7795" },
-+        { .soc_id = "r8a7796" },
-+        { .soc_id = "r8a77995" },
-         { /* sentinel */ }
- };
- 
+1. Drops unnecessary address properties from VIN port nodes
+   on Renesas R-Car Gen2 SoC board DTSes. These are unnecessary
+   as the nodes to not have bus addresses.
+
+2. And adds address properties to R-Car Sound port nodes on
+   Renesas R-Car Gen2 SoC DTSes. These are necessary as the nodes
+   have unit names.
+
+Simon Horman (10):
+  ARM: dts: lager: Drop unnecessary address properties from port node
+  ARM: dts: porter: Drop unnecessary address properties from vin port
+    node
+  ARM: dts: gose: Drop unnecessary address properties from port nodes
+  ARM: dts: koelsch: Drop unnecessary address properties from port nodes
+  ARM: dts: alt: Drop unnecessary address properties from vin port node
+  ARM: dts: silk: Drop unnecessary address properties from vin port node
+  ARM: dts: kzm9d: Drop unnecessary address properties from gpio_keys
+    node
+  arm64: dts: renesas: r8a7795: Add address properties to rcar_sound
+    port nodes
+  arm64: dts: renesas: r8a7796: Add address properties to rcar_sound
+    port nodes
+  arm64: dts: renesas: r8a77965: Add address properties to rcar_sound
+    port nodes
+
+ arch/arm/boot/dts/emev2-kzm9d.dts         |  3 ---
+ arch/arm/boot/dts/r8a7790-lager.dts       |  3 ---
+ arch/arm/boot/dts/r8a7791-koelsch.dts     |  6 ------
+ arch/arm/boot/dts/r8a7791-porter.dts      |  3 ---
+ arch/arm/boot/dts/r8a7793-gose.dts        |  6 ------
+ arch/arm/boot/dts/r8a7794-alt.dts         |  3 ---
+ arch/arm/boot/dts/r8a7794-silk.dts        |  3 ---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 14 ++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 11 +++++++++++
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi |  8 ++++++++
+ 10 files changed, 33 insertions(+), 27 deletions(-)
+
 -- 
 2.11.0
