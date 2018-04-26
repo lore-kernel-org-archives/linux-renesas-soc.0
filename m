@@ -1,202 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:52418 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756506AbeDZQTz (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:48703 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755207AbeDZNPF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:19:55 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Hoan Tran <hotran@apm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v5] gpio: dwapb: Add support for 1 interrupt per port A GPIO
-Date: Thu, 26 Apr 2018 17:19:47 +0100
-Message-Id: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+        Thu, 26 Apr 2018 09:15:05 -0400
+Date: Thu, 26 Apr 2018 15:14:53 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>,
+        Vaishali Thakkar <vthakkar1994@gmail.com>,
+        alexander.deucher@amd.com, linux-renesas-soc@vger.kernel.org,
+        heiko@sntech.de, airlied@linux.ie, linus.walleij@linaro.org,
+        stefan@agner.ch, hjc@rock-chips.com, kraxel@redhat.com,
+        benjamin.gaignard@linaro.org, nouveau@lists.freedesktop.org,
+        marex@denx.de, David1.Zhou@amd.com,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        linux-rockchip@lists.infradead.org, tomi.valkeinen@ti.com,
+        linux@armlinux.org.uk, krzk@kernel.org, jonathanh@nvidia.com,
+        z.liuxinliang@hisilicon.com, maxime.ripard@bootlin.com,
+        kong.kongxinwei@hisilicon.com, kgene@kernel.org,
+        bskeggs@redhat.com, linux-arm-msm@vger.kernel.org,
+        ck.hu@mediatek.com, airlied@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, puck.chen@hisilicon.com,
+        intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        brodkin@synopsys.com, dri-devel@lists.freedesktop.org,
+        rodrigo.vivi@intel.com, matthias.bgg@gmail.com, wens@csie.org,
+        vincent.abriou@st.com, linux-arm-kernel@lists.infradead.org,
+        inki.dae@samsung.com, amd-gfx@lists.freedesktop.org,
+        alison.wang@freescale.com, freedreno@lists.freedesktop.org,
+        sw0312.kim@samsung.com, nicolas.ferre@microchip.com,
+        philippe.cornu@st.com, linux-kernel@vger.kernel.org,
+        yannick.fertre@st.com, kyungmin.park@samsung.com,
+        noralf@tronnes.org, p.zabel@pengutronix.de, zourongrong@gmail.com,
+        linux-mediatek@lists.infradead.org, shawnguo@kernel.org,
+        christian.koenig@amd.com, l.stach@pengutronix.de
+Subject: Re: [Intel-gfx] [PATCH] drm/core: Remove drm_dev_unref() and it's
+ uses
+Message-ID: <20180426131404.GP4813@piout.net>
+References: <20180426102819.6985-1-vthakkar1994@gmail.com>
+ <20180426123615.GA12521@phenom.ffwll.local>
+ <1556510.Xu6NnhyFGZ@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1556510.Xu6NnhyFGZ@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DesignWare GPIO IP can be configured for either 1 interrupt or 1
-per GPIO in port A, but the driver currently only supports 1 interrupt.
-See the DesignWare DW_apb_gpio Databook description of the
-'GPIO_INTR_IO' parameter.
+Hi,
 
-This change allows the driver to work with up to 32 interrupts, it will
-get as many interrupts as specified in the DT 'interrupts' property.
-It doesn't do anything clever with the different interrupts, it just calls
-the same handler used for single interrupt hardware.
+On 26/04/2018 15:45:44+0300, Laurent Pinchart wrote:
+> Hi Daniel,
+> 
+> On Thursday, 26 April 2018 15:36:15 EEST Daniel Vetter wrote:
+> > On Thu, Apr 26, 2018 at 03:58:19PM +0530, Vaishali Thakkar wrote:
+> > > It's been a while since we introduced drm_dev{get/put} functions
+> > > to replace reference/unreference in drm subsystem for the
+> > > consistency purpose. So, with this patch, let's just replace
+> > > all current use cases of drm_dev_unref() with drm_dev_put and remove
+> > > the function itself.
+> > > 
+> > > Coccinelle was used for mass-patching.
+> > > 
+> > > Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+> > 
+> > Thanks for doing this. Unfortunately drm moves pretty fast, so already a
+> > conflict when I tried to apply this. Some drivers are also in their own
+> > trees, so this might lead to more fun :-/
+> > 
+> > Can you pls split it up per-driver (just the directories under
+> > drivers/gpu/drm/ is enough)? Final patch to remove the function might then
+> > get stalled a bit ofc.
+> 
+> I requested a single patch instead of splitting it per driver, you might want 
+> to blame me for that.
+> 
 
-ACPI companion code provided by Hoan Tran <hotran@apm.com>. This was tested
-on X-Gene by Hoan.
+Doesn't splitting the change per driver break bisectability unless there
+is a guarantee that the change in include/drm/drm_drv.h is applied after
+all the driver trees have been merged?
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
-One point to mention is that I have made it possible for users to have
-unconncted interrupts by specifying holes in the list of interrupts. This is
-done by supporting the interrupts-extended DT prop.
-However, I have no use for this and had to hack some test case for this.
-Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
 
-v5:
- - Rolled ACPI companion code provided by Hoan Tran into this patch.
-v4:
- - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
-v3:
- - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
-v2:
- - Replaced interrupt-mask DT prop with support for the interrupts-extended
-   prop. This means replacing the call to irq_of_parse_and_map() with calls
-   to of_irq_parse_one() and irq_create_of_mapping().
-
-Note: There are a few *code* lines over 80 chars, but this is just guidance,
-   right? Especially as there are already some lines over 80 chars.
----
- .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 ++++-
- drivers/gpio/gpio-dwapb.c                          | 46 +++++++++++++++++-----
- drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
- include/linux/platform_data/gpio-dwapb.h           |  3 +-
- 4 files changed, 48 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-index 4a75da7..3c1118b 100644
---- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-@@ -26,8 +26,13 @@ controller.
-   the second encodes the triger flags encoded as described in
-   Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
- - interrupt-parent : The parent interrupt controller.
--- interrupts : The interrupt to the parent controller raised when GPIOs
--  generate the interrupts.
-+- interrupts : The interrupts to the parent controller raised when GPIOs
-+  generate the interrupts. If the controller provides one combined interrupt
-+  for all GPIOs, specify a single interrupt. If the controller provides one
-+  interrupt for each GPIO, provide a list of interrupts that correspond to each
-+  of the GPIO pins. When specifying multiple interrupts, if any are unconnected,
-+  use the interrupts-extended property to specify the interrupts and set the
-+  interrupt controller handle for unused interrupts to 0.
- - snps,nr-gpios : The number of pins in the port, a single cell.
- - resets : Reset line for the controller.
- 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 226977f..7dcd06b 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -441,14 +441,19 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 	irq_gc->chip_types[1].handler = handle_edge_irq;
- 
- 	if (!pp->irq_shared) {
--		irq_set_chained_handler_and_data(pp->irq, dwapb_irq_handler,
--						 gpio);
-+		int i;
-+
-+		for (i = 0; i < pp->ngpio; i++) {
-+			if (pp->irq[i])
-+				irq_set_chained_handler_and_data(pp->irq[i],
-+						dwapb_irq_handler, gpio);
-+		}
- 	} else {
- 		/*
- 		 * Request a shared IRQ since where MFD would have devices
- 		 * using the same irq pin
- 		 */
--		err = devm_request_irq(gpio->dev, pp->irq,
-+		err = devm_request_irq(gpio->dev, pp->irq[0],
- 				       dwapb_irq_handler_mfd,
- 				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
- 		if (err) {
-@@ -524,7 +529,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	if (pp->idx == 0)
- 		port->gc.set_config = dwapb_gpio_set_config;
- 
--	if (pp->irq)
-+	if (pp->has_irq)
- 		dwapb_configure_irqs(gpio, port, pp);
- 
- 	err = gpiochip_add_data(&port->gc, port);
-@@ -535,7 +540,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 		port->is_registered = true;
- 
- 	/* Add GPIO-signaled ACPI event support */
--	if (pp->irq)
-+	if (pp->has_irq)
- 		acpi_gpiochip_request_interrupts(&port->gc);
- 
- 	return err;
-@@ -601,13 +606,36 @@ dwapb_gpio_get_pdata(struct device *dev)
- 		if (dev->of_node && pp->idx == 0 &&
- 			fwnode_property_read_bool(fwnode,
- 						  "interrupt-controller")) {
--			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
--			if (!pp->irq)
-+			struct device_node *np = to_of_node(fwnode);
-+			unsigned int j;
-+
-+			/*
-+			 * The IP has configuration options to allow a single
-+			 * combined interrupt or one per gpio. If one per gpio,
-+			 * some might not be used.
-+			 */
-+			for (j = 0; j < pp->ngpio; j++) {
-+				int irq = of_irq_get(np, j);
-+				if (irq < 0)
-+					continue;
-+
-+				pp->irq[j] = irq;
-+				pp->has_irq = true;
-+			}
-+
-+			if (!pp->has_irq)
- 				dev_warn(dev, "no irq for port%d\n", pp->idx);
- 		}
- 
--		if (has_acpi_companion(dev) && pp->idx == 0)
--			pp->irq = platform_get_irq(to_platform_device(dev), 0);
-+		if (has_acpi_companion(dev) && pp->idx == 0) {
-+			unsigned int j;
-+
-+			for (j = 0; j < pp->ngpio; j++) {
-+				pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
-+				if (pp->irq[j])
-+					pp->has_irq = true;
-+			}
-+		}
- 
- 		pp->irq_shared	= false;
- 		pp->gpio_base	= -1;
-diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
-index 90e35de..5bddb84 100644
---- a/drivers/mfd/intel_quark_i2c_gpio.c
-+++ b/drivers/mfd/intel_quark_i2c_gpio.c
-@@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
- 	pdata->properties->idx		= 0;
- 	pdata->properties->ngpio	= INTEL_QUARK_MFD_NGPIO;
- 	pdata->properties->gpio_base	= INTEL_QUARK_MFD_GPIO_BASE;
--	pdata->properties->irq		= pdev->irq;
-+	pdata->properties->irq[0]	= pdev->irq;
-+	pdata->properties->has_irq	= true;
- 	pdata->properties->irq_shared	= true;
- 
- 	cell->platform_data = pdata;
-diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-index 2dc7f4a..5a52d69 100644
---- a/include/linux/platform_data/gpio-dwapb.h
-+++ b/include/linux/platform_data/gpio-dwapb.h
-@@ -19,7 +19,8 @@ struct dwapb_port_property {
- 	unsigned int	idx;
- 	unsigned int	ngpio;
- 	unsigned int	gpio_base;
--	unsigned int	irq;
-+	unsigned int	irq[32];
-+	bool		has_irq;
- 	bool		irq_shared;
- };
- 
 -- 
-2.7.4
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
