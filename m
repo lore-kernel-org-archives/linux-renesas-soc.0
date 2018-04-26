@@ -1,93 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Hoan Tran <hotran@apm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Michel Pollet" <michel.pollet@bp.renesas.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] gpio: dwapb: Add support for 32 interrupts
-Date: Thu, 5 Apr 2018 09:42:46 +0000
-Message-ID: <TY1PR01MB1769064C77AE3E5ABA4993DAF5BB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
- <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
-In-Reply-To: <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754081AbeDZKaI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Apr 2018 06:30:08 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/10] ARM: dts: lager: Drop unnecessary address properties from port node
+Date: Thu, 26 Apr 2018 12:29:42 +0200
+Message-Id: <20180426102951.8683-2-horms+renesas@verge.net.au>
+In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
+References: <20180426102951.8683-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgQW5keSwNCg0KT24gMzAgTWFyY2ggMjAxOCAyMjoyNiBBbmR5IFNoZXZjaGVua28gd3JvdGU6
-DQo+IE9uIFdlZCwgTWFyIDI4LCAyMDE4IGF0IDU6MjIgUE0sIFBoaWwgRWR3b3J0aHkgd3JvdGU6
-DQo+ID4gVGhlIERlc2lnbldhcmUgR1BJTyBJUCBjYW4gYmUgY29uZmlndXJlZCBmb3IgZWl0aGVy
-IDEgb3IgMzINCj4gPiBpbnRlcnJ1cHRzLA0KPiANCj4gMSB0byAzMiwgb3IganVzdCBhIGNob2lj
-ZSBiZXR3ZWVuIHR3bz8NCkp1c3QgYSBjaG9pY2Ugb2YgMSBvciAzMi4NCk5vdGUgdGhhdCBieSAn
-Y29uZmlndXJlZCcgSSBhbSB0YWxraW5nIGFib3V0IHRoZSBoYXJkd2FyZSBiZWluZyBjb25maWd1
-cmVkIGluDQpSVEwgcHJpb3IgdG8gbWFudWZhY3R1cmluZyBhIGRldmljZS4gT25jZSBtYWRlLCB5
-b3UgY2Fubm90IGNoYW5nZSBpdC4NClRoaXMgY29uZmlndXJhdGlvbiBhZmZlY3RzIHRoZSBudW1i
-ZXIgb2Ygb3V0cHV0IGludGVycnVwdCBzaWduYWxzIGZyb20gdGhlIEdQSU8NCkNvbnRyb2xsZXIg
-YmxvY2sgdGhhdCBhcmUgY29ubmVjdGVkIHRvIGFuIGludGVycnVwdCBjb250cm9sbGVyLg0KDQo+
-ID4gYnV0IHRoZSBkcml2ZXIgY3VycmVudGx5IG9ubHkgc3VwcG9ydHMgMSBpbnRlcnJ1cHQuIFNl
-ZSB0aGUgRGVzaWduV2FyZQ0KPiA+IERXX2FwYl9ncGlvIERhdGFib29rIGRlc2NyaXB0aW9uIG9m
-IHRoZSAnR1BJT19JTlRSX0lPJyBwYXJhbWV0ZXIuDQo+IA0KPiBXaWxsIHNlZSBhZnRlciBob2xp
-ZGF5IGFuZCBwZXJoYXBzIG1ha2UgbW9yZSBjb21tZW50cy4gSGVyZSBpcyBqdXN0IGEgYnJpZWYN
-Cj4gcmV2aWV3Lg0KPiANCj4gPiArLSBpbnRlcnJ1cHRzIDogVGhlIGludGVycnVwdHMgdG8gdGhl
-IHBhcmVudCBjb250cm9sbGVyIHJhaXNlZCB3aGVuDQo+ID4gK0dQSU9zDQo+ID4gKyAgZ2VuZXJh
-dGUgdGhlIGludGVycnVwdHMuIElmIHRoZSBjb250cm9sbGVyIHByb3ZpZGVzIG9uZSBjb21iaW5l
-ZA0KPiA+ICtpbnRlcnJ1cHQNCj4gPiArICBmb3IgYWxsIEdQSU9zLCBzcGVjaWZ5IGEgc2luZ2xl
-IGludGVycnVwdC4gSWYgdGhlIGNvbnRyb2xsZXINCj4gPiArcHJvdmlkZXMgb25lDQo+ID4gKyAg
-aW50ZXJydXB0IGZvciBlYWNoIEdQSU8sIHByb3ZpZGUgYSBsaXN0IG9mIGludGVycnVwdHMgdGhh
-dA0KPiA+ICtjb3JyZXNwb25kIHRvIGVhY2gNCj4gPiArICBvZiB0aGUgR1BJTyBwaW5zLiBXaGVu
-IHNwZWNpZnlpbmcgbXVsdGlwbGUgaW50ZXJydXB0cywgaWYgYW55IG9mDQo+ID4gK3RoZSBHUElP
-cyBhcmUNCj4gPiArICBub3QgY29ubmVjdGVkIHRvIGFuIGludGVycnVwdCwgdXNlIHRoZSBpbnRl
-cnJ1cHQtbWFzayBwcm9wZXJ0eS4NCj4gPiArLSBpbnRlcnJ1cHQtbWFzayA6IGEgMzItYml0IGJp
-dCBtYXNrIHRoYXQgc3BlY2lmaWVzIHdoaWNoIGludGVycnVwdHMNCj4gPiAraW4gdGhlIGxpc3QN
-Cj4gPiArICBvZiBpbnRlcnJ1cHRzIGlzIHZhbGlkLCBiaXQgaXMgMSBmb3IgYSB2YWxpZCBpcnEu
-DQo+IA0KPiBTbywgYnV0IHdoeSBvbmUgd2lsbCBuZWVkIHRoYXQgaW4gcHJhY3RpY2U/IEdQSU8g
-ZHJpdmVyIHVzdWFsbHkgcHJvdmlkZXMgYSBwaW4NCj4gYmFzZWQgSVJRIGNoaXAgd2hpY2ggbWFw
-cyBlYWNoIHBpbiB0byB0aGUgY29ycmVzcG9uZGluZyBvZmZzZXQgaW5zaWRlDQo+IHNwZWNpZmlj
-IElSUSBkb21haW4uDQpPbiBhbiBBUk0gZGV2aWNlIHdlIGhhdmUgdGhpcyBHUElPIGJsb2NrIGNv
-bm5lY3RlZCB0byB0aGUgR0lDIGludGVycnVwdA0KY29udHJvbGxlciwgaS5lLiB0aGUgU3lub3Bz
-eXMgR1BJTyBjb250cm9sbGVyIGludGVycnVwdHMgY2FuKiBoYXZlIGEgMSB0byAxDQptYXBwaW5n
-IHRvIHRoZSBHSUMgaW50ZXJydXB0cy4gQXQgdGhlIG1vbWVudCwgdGhlIEdQSU8gZHJpdmVyIG9u
-bHkgYWxsb3dzIGENCnNpbmdsZSBpcnEgc2lnbmFsIHRvIHNwZWNpZmllZC4NCiogdGhpcyBpcyBu
-b3Qgc3RyaWN0bHkgYWNjdXJhdGUgb24gdGhlIGRldmljZSBJIGFtIHdvcmtpbmcgb24sIHRoZXJl
-IGlzIGFub3RoZXINCmJsb2NrIG9mIElQIGJldHdlZW4gdGhlIHR3bywgYnV0IHRoYXQgZG9lc24n
-dCBtYXR0ZXIgaW4gdGhpcyBjYXNlLg0KDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgc3Ry
-dWN0IGRldmljZV9ub2RlICpucCA9IHRvX29mX25vZGUoZndub2RlKTsNCj4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICB1MzIgaXJxX21hc2sgPSAweEZGRkZGRkZGOw0KPiANCj4gV2h5PyBTaG91
-bGRuJ3QgaXQgYmUgZGVwZW5kZW50IHRvIHRoZSBhbW91bnQgb2YgYWN0dWFsIHBpbnMgLyBwb3J0
-cz8NCj4gSW50ZWwgUXVhcmsgaGFzIG9ubHkgOCBBRkFJUi4NCkl0J3MganVzdCBhIGRlZmF1bHQg
-d2hpY2ggY2FuIGJlIG92ZXJyaWRkZW4gdmlhIGRldmljZSB0cmVlLg0KRm9yIFF1YXJrLCBzaW5j
-ZSB5b3UgY3VycmVudGx5IG9ubHkgdXNlIGEgc2luZ2xlIGlycSwgSSBndWVzcyB0aGUgSFcgd2Fz
-DQpjb25maWd1cmVkIHRoYXQgd2F5LiBJbiB3aGljaCBjYXNlLCB5b3Ugd291bGRuJ3QgdXNlIGFu
-eSBvZiB0aGlzLg0KDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgaW50IGo7DQo+ID4gKw0K
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIC8qIE9wdGlvbmFsIGlycSBtYXNrICovDQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgZndub2RlX3Byb3BlcnR5X3JlYWRfdTMyKGZ3bm9kZSwN
-Cj4gPiArICJpbnRlcnJ1cHQtbWFzayIsICZpcnFfbWFzayk7DQo+ID4gKw0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIC8qDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICogVGhlIElQ
-IGhhcyBjb25maWd1cmF0aW9uIG9wdGlvbnMgdG8gYWxsb3cgYSBzaW5nbGUNCj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgICAgKiBjb21iaW5lZCBpbnRlcnJ1cHQgb3Igb25lIHBlciBncGlvLiBJ
-ZiBvbmUgcGVyIGdwaW8sDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICogc29tZSBtaWdo
-dCBub3QgYmUgdXNlZC4NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgKi8NCj4gDQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgZm9yIChqID0gMDsgaiA8IHBwLT5uZ3BpbzsgaisrKSB7
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoaXJxX21hc2sgJiBCSVQo
-aikpIHsNCj4gDQo+IGZvcl9lYWNoX3NldF9iaXQoKSBpcyBpbiBrZXJuZWwgZm9yIGFnZXMhDQpU
-aGVyZSdzIGxvdCBvZiBzdHVmZiBpbiB0aGUga2VybmVsIGZvciBhZ2VzIHRoYXQgSSBjYW4ndCBy
-ZW1lbWJlciENCkknbGwgZml4IHRoaXMgOikNCg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBwcC0+aXJxW2pdID0gaXJxX29mX3BhcnNlX2FuZF9tYXAobnAsIGop
-Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAocHAtPmly
-cVtqXSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBwcC0+aGFzX2lycSA9IHRydWU7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICB9DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiANCj4gDQo+IFNvLCBvbiB0aGUg
-Zmlyc3QgZ2xhbmNlIHRoZSBwYXRjaCBsb29rcyBlaXRoZXIgc3VwZXJmbHVvdXMgb3IgdGFraW5n
-IHdyb25nDQo+IGFwcHJvYWNoLiBQbGVhc2UsIGVsYWJvcmF0ZSBtb3JlIHdoeSBpdCdzIGRvbmUg
-aW4gdGhpcyB3YXkgYW5kIHdoYXQgdGhlDQo+IGNhc2UgZm9yIGFsbCB0aGlzIGluIHByYWN0aWNl
-Lg0KSG9wZWZ1bGx5IEkgaGF2ZSBleHBsYWluZWQgaXQgYSBiaXQgYmV0dGVyIGFib3ZlLg0KDQpU
-aGFua3MgZm9yIHlvdXIgY29tbWVudHMNClBoaWwNCg==
+The vin port node does not have an address and thus does not need
+address-cells or address size-properties.
+
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ arch/arm/boot/dts/r8a7790-lager.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef1000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 7576f9f9bdba..092610e3f953 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -902,9 +902,6 @@
+ 	status = "okay";
+ 
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin1ep0: endpoint {
+ 			remote-endpoint = <&adv7180>;
+ 			bus-width = <8>;
+-- 
+2.11.0
