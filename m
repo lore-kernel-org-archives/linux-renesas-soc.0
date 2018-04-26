@@ -1,68 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:60224 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751251AbeDXXrE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754811AbeDZKaR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 19:47:04 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] rcar-vin: add support for MEDIA_BUS_FMT_UYVY8_1X16
-Date: Wed, 25 Apr 2018 01:46:07 +0200
-Message-Id: <20180424234607.22867-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 26 Apr 2018 06:30:17 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/10] arm64: dts: renesas: r8a77965: Add address properties to rcar_sound port nodes
+Date: Thu, 26 Apr 2018 12:29:51 +0200
+Message-Id: <20180426102951.8683-11-horms+renesas@verge.net.au>
+In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
+References: <20180426102951.8683-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-By setting VNMC_YCAL rcar-vin can support input video in
-MEDIA_BUS_FMT_UYVY8_1X16 format.
+The rcar_sound port nodes have unit names and thus should have register
+properties.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ ...
+ DTC     arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb
+arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
+ DTC     arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dtb
+arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
+
+Prior to this patch the port nodes only defined in board DTS files.
+As the register properties are common this patch defines the port nodes
+and provides register properties in the SoC DTS file.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 1 +
- drivers/media/platform/rcar-vin/rcar-dma.c  | 5 +++++
- 2 files changed, 6 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 55b745ac86a5884d..7bc2774a11232362 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -404,6 +404,7 @@ static int rvin_digital_subdevice_attach(struct rvin_dev *vin,
- 		code.index++;
- 		switch (code.code) {
- 		case MEDIA_BUS_FMT_YUYV8_1X16:
-+		case MEDIA_BUS_FMT_UYVY8_1X16:
- 		case MEDIA_BUS_FMT_UYVY8_2X8:
- 		case MEDIA_BUS_FMT_UYVY10_2X10:
- 		case MEDIA_BUS_FMT_RGB888_1X24:
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 4a3a195e7f59047c..ac07f99e3516a620 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -653,6 +653,10 @@ static int rvin_setup(struct rvin_dev *vin)
- 		vnmc |= VNMC_INF_YUV16;
- 		input_is_yuv = true;
- 		break;
-+	case MEDIA_BUS_FMT_UYVY8_1X16:
-+		vnmc |= VNMC_INF_YUV16 | VNMC_YCAL;
-+		input_is_yuv = true;
-+		break;
- 	case MEDIA_BUS_FMT_UYVY8_2X8:
- 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
- 		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
-@@ -1009,6 +1013,7 @@ static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index b12f41755aea..88202eff6e12 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -856,6 +856,14 @@
+ 				ssi1: ssi-1 {
+ 				};
+ 			};
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++				};
++			};
+ 		};
  
- 	switch (fmt.format.code) {
- 	case MEDIA_BUS_FMT_YUYV8_1X16:
-+	case MEDIA_BUS_FMT_UYVY8_1X16:
- 	case MEDIA_BUS_FMT_UYVY8_2X8:
- 	case MEDIA_BUS_FMT_UYVY10_2X10:
- 	case MEDIA_BUS_FMT_RGB888_1X24:
+ 		xhci0: usb@ee000000 {
 -- 
-2.17.0
+2.11.0
