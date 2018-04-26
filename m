@@ -1,45 +1,93 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: gpio: Add support for r8a77965
-Date: Mon, 16 Apr 2018 20:55:56 +0200
-Message-Id: <1523904956-18239-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59242 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755376AbeDZUH6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Apr 2018 16:07:58 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/17] dt-bindings: display: renesas: du: Increase indent in output table
+Date: Thu, 26 Apr 2018 23:08:11 +0300
+Message-ID: <2616564.acR4Iy4qTH@avalon>
+In-Reply-To: <20180426165346.494-2-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-2-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+Hi Kieran,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+Thank you for the patch.
 
-Renesas R-Car M3-N support has been merged for v4.17.
-Document the missing device tree bindings.
+On Thursday, 26 April 2018 19:53:30 EEST Kieran Bingham wrote:
+> The DU output table lists the port combinations for each supported DU
+> type.  Newer models of R-Car Gen3 platforms have an increased string
+> length.
+> 
+> Increase the table indentation in preparation for supporting new target
+> types.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-v1 -> v2:
-- Add Simon and Rob Reviewed-by tags
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
----
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+and applied to my tree.
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 9474138..f2af897 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -14,6 +14,7 @@ Required Properties:
-     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
-     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
-     - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
-+    - "renesas,gpio-r8a77965": for R8A77965 (R-Car M3-N) compatible GPIO controller.
-     - "renesas,gpio-r8a77970": for R8A77970 (R-Car V3M) compatible GPIO controller.
-     - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
-     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
---
-2.7.4
+> ---
+>  .../bindings/display/renesas,du.txt           | 26 +++++++++----------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt
+> b/Documentation/devicetree/bindings/display/renesas,du.txt index
+> c9cd17f99702..a36a6e7ee54f 100644
+> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+> @@ -47,20 +47,20 @@ bindings specified in
+> Documentation/devicetree/bindings/graph.txt. The following table lists for
+> each supported model the port number corresponding to each DU output.
+> 
+> -                      Port0          Port1          Port2          Port3
+> +                        Port0          Port1          Port2          Port3
+>  ---------------------------------------------------------------------------
+> -- - R8A7743 (RZ/G1M)     DPAD 0         LVDS 0         -              - -
+> R8A7745 (RZ/G1E)     DPAD 0         DPAD 1         -              - -
+> R8A7779 (R-Car H1)   DPAD 0         DPAD 1         -              - -
+> R8A7790 (R-Car H2)   DPAD 0         LVDS 0         LVDS 1         - -
+> R8A7791 (R-Car M2-W) DPAD 0         LVDS 0         -              - -
+> R8A7792 (R-Car V2H)  DPAD 0         DPAD 1         -              - -
+> R8A7793 (R-Car M2-N) DPAD 0         LVDS 0         -              - -
+> R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              - -
+> R8A7795 (R-Car H3)   DPAD 0         HDMI 0         HDMI 1         LVDS 0 -
+> R8A7796 (R-Car M3-W) DPAD 0         HDMI 0         LVDS 0         - -
+> R8A77970 (R-Car V3M) DPAD 0         LVDS 0         -              - -
+> R8A77995 (R-Car D3)  DPAD 0         LVDS 0         LVDS 1         - +
+> R8A7743 (RZ/G1M)       DPAD 0         LVDS 0         -              - +
+> R8A7745 (RZ/G1E)       DPAD 0         DPAD 1         -              - +
+> R8A7779 (R-Car H1)     DPAD 0         DPAD 1         -              - +
+> R8A7790 (R-Car H2)     DPAD 0         LVDS 0         LVDS 1         - +
+> R8A7791 (R-Car M2-W)   DPAD 0         LVDS 0         -              - +
+> R8A7792 (R-Car V2H)    DPAD 0         DPAD 1         -              - +
+> R8A7793 (R-Car M2-N)   DPAD 0         LVDS 0         -              - +
+> R8A7794 (R-Car E2)     DPAD 0         DPAD 1         -              - +
+> R8A7795 (R-Car H3)     DPAD 0         HDMI 0         HDMI 1         LVDS 0
+> + R8A7796 (R-Car M3-W)   DPAD 0         HDMI 0         LVDS 0         - +
+> R8A77970 (R-Car V3M)   DPAD 0         LVDS 0         -              - +
+> R8A77995 (R-Car D3)    DPAD 0         LVDS 0         LVDS 1         -
+> 
+> 
+>  Example: R8A7795 (R-Car H3) ES2.0 DU
 
+
+-- 
+Regards,
+
+Laurent Pinchart
