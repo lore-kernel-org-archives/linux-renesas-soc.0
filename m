@@ -1,80 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35031 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752941AbeDFNIj (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39050 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753232AbeDZInE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Apr 2018 09:08:39 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 4/7] arm64: dts: renesas: r8a77970: add the LVDS instance
-Date: Fri,  6 Apr 2018 15:08:09 +0200
-Message-Id: <1523020092-25540-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523020092-25540-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 26 Apr 2018 04:43:04 -0400
+Date: Thu, 26 Apr 2018 10:43:01 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77990: Revise the cache
+ controller node
+Message-ID: <20180426084300.b43pcz5cdaepzy57@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <32b91531-20a4-4831-faaf-e03a35238db3@cogentembedded.com>
+ <CAMuHMdUZ7p+9Qb9F37EdOz_C4HaMzVkW1ahHtaKUDAD4iw8nQQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Wed, Apr 25, 2018 at 11:13:23AM +0200, Geert Uytterhoeven wrote:
+> On Wed, Apr 25, 2018 at 10:20 AM, Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > The cache controller node should not have unit-addresses and reg
+> > properties. So, this patch revises them.
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
-the it to the LVDS output of the DU. While at it align the endpoint name
-of the du to du_out_lvds0 which is used in other Renesas DTS files to
-describe this link.
+On Wed, Apr 25, 2018 at 07:15:31PM +0300, Sergei Shtylyov wrote:
+> On 04/25/2018 11:20 AM, Yoshihiro Shimoda wrote:
+> 
+> > The cache controller node should not have unit-addresses and reg
+> > properties. So, this patch revises them.
+> 
+>    Removes?
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index e649e86..b48d62c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -658,7 +658,34 @@
- 
- 				port@1 {
- 					reg = <1>;
--					du_out_lvds: endpoint {
-+					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a77970-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
--- 
-2.7.4
+Thanks, applied with Geert's tag and Sergei's suggestion.
