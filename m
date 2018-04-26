@@ -1,35 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37181 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758984AbeD0UGs (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 16:06:48 -0400
-Date: Fri, 27 Apr 2018 15:06:46 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: geert@linux-m68k.org, horms@verge.net.au, mark.rutland@arm.com,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: media: renesas-ceu: Add R-Mobile
- R8A7740
-Message-ID: <20180427200646.fdvswcnvglkx4j7u@rob-hp-laptop>
+Subject: [PATCH v2 1/2] dt-bindings: media: renesas-ceu: Add R-Mobile R8A7740
+Date: Thu, 26 Apr 2018 20:24:42 +0200
+Message-Id: <1524767083-19862-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524767083-19862-2-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524767083-19862-2-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 08:24:42PM +0200, Jacopo Mondi wrote:
-> Add R-Mobile A1 R8A7740 SoC to the list of compatible values for the CEU
-> unit.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  Documentation/devicetree/bindings/media/renesas,ceu.txt | 7 ++++---
->  drivers/media/platform/renesas-ceu.c                    | 1 +
->  2 files changed, 5 insertions(+), 3 deletions(-)
+Add R-Mobile A1 R8A7740 SoC to the list of compatible values for the CEU
+unit.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ Documentation/devicetree/bindings/media/renesas,ceu.txt | 7 ++++---
+ drivers/media/platform/renesas-ceu.c                    | 1 +
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+index 3fc66df..8a7a616 100644
+--- a/Documentation/devicetree/bindings/media/renesas,ceu.txt
++++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+@@ -2,14 +2,15 @@ Renesas Capture Engine Unit (CEU)
+ ----------------------------------------------
+ 
+ The Capture Engine Unit is the image capture interface found in the Renesas
+-SH Mobile and RZ SoCs.
++SH Mobile, R-Mobile and RZ SoCs.
+ 
+ The interface supports a single parallel input with data bus width of 8 or 16
+ bits.
+ 
+ Required properties:
+-- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
+-  and RZ/A1M SoCs.
++- compatible: Shall be one of the following values:
++	"renesas,r7s72100-ceu" for CEU units found in RZ/A1H and RZ/A1M SoCs
++	"renesas,r8a7740-ceu" for CEU units found in R-Mobile A1 R8A7740 SoCs
+ - reg: Registers address base and size.
+ - interrupts: The interrupt specifier.
+ 
+diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
+index 6599dba..c964a56 100644
+--- a/drivers/media/platform/renesas-ceu.c
++++ b/drivers/media/platform/renesas-ceu.c
+@@ -1545,6 +1545,7 @@ static const struct ceu_data ceu_data_sh4 = {
+ #if IS_ENABLED(CONFIG_OF)
+ static const struct of_device_id ceu_of_match[] = {
+ 	{ .compatible = "renesas,r7s72100-ceu", .data = &ceu_data_rz },
++	{ .compatible = "renesas,r8a7740-ceu", .data = &ceu_data_rz },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ceu_of_match);
+-- 
+2.7.4
+
