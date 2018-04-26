@@ -1,49 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33836 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758376AbeD0Sxh (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:40593 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753362AbeDZIHa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 14:53:37 -0400
-Received: by mail-lf0-f68.google.com with SMTP id h4-v6so4102691lfc.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Apr 2018 11:53:36 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] DT: net: can: rcar_canfd: document R8A77980 bindings
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Wolfgang Grandegger <wg@grandegger.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org
-Message-ID: <556f1f23-19bc-e7bd-47b1-f22e086e2b69@cogentembedded.com>
-Date: Fri, 27 Apr 2018 21:53:33 +0300
+        Thu, 26 Apr 2018 04:07:30 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1524669685-8265-1-git-send-email-vladimir_zapolskiy@mentor.com>
+References: <1524669685-8265-1-git-send-email-vladimir_zapolskiy@mentor.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Apr 2018 10:07:29 +0200
+Message-ID: <CAMuHMdWzq-iMtXfSBwCDcnuBomjHutjzm5YAFXCOXL2aV9RVEg@mail.gmail.com>
+Subject: Re: [PATCH] PCI: rcar: Reuse generic pci_parse_request_of_pci_ranges()
+ function
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the R-Car V3H (R8A77980) SoC support in the R-Car CAN-FD bindings.
+On Wed, Apr 25, 2018 at 5:21 PM, Vladimir Zapolskiy
+<vladimir_zapolskiy@mentor.com> wrote:
+> The non-functional change removes a custom function to parse and
+> allocate PCI resources in favour of pci_parse_request_of_pci_ranges().
+>
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
----
-The patch is against the 'linux-can-next.git' repo plus the R8A77970 bindings
-patch posted yesterday. Although I wouldn't object if they're both merged to
-the 'linux-can.git' repo instead. :-)
+Gr{oetje,eeting}s,
 
- Documentation/devicetree/bindings/net/can/rcar_canfd.txt |    1 +
- 1 file changed, 1 insertion(+)
+                        Geert
 
-Index: linux-can-next/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-===================================================================
---- linux-can-next.orig/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-+++ linux-can-next/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-@@ -7,6 +7,7 @@ Required properties:
-   - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
-   - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3) compatible controller.
-   - "renesas,r8a77970-canfd" for R8A77970 (R-Car V3M) compatible controller.
-+  - "renesas,r8a77980-canfd" for R8A77980 (R-Car V3H) compatible controller.
- 
-   When compatible with the generic version, nodes must list the
-   SoC-specific version corresponding to the platform first, followed by the
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
