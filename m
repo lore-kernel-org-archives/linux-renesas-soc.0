@@ -1,12 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34412 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753973AbeDZVXb (ORCPT
+Received: from sauhun.de ([88.99.104.3]:44024 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756871AbeDZUEE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:23:31 -0400
-Date: Thu, 26 Apr 2018 14:23:27 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Wolfram Sang <wsa@the-dreams.de>
+        Thu, 26 Apr 2018 16:04:04 -0400
+Date: Thu, 26 Apr 2018 22:04:01 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         kernel-janitors@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
@@ -18,49 +18,65 @@ Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-tegra@vger.kernel.org
 Subject: Re: [PATCH 20/61] input: keyboard: simplify getting .drvdata
-Message-ID: <20180426212327.GB210716@dtor-ws>
+Message-ID: <20180426200401.lvqiy4gnchkwr4qw@ninjato>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
  <20180419140641.27926-21-wsa+renesas@sang-engineering.com>
  <20180426191947.GC162443@dtor-ws>
- <20180426200401.lvqiy4gnchkwr4qw@ninjato>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ue3i4hheqebajblj"
 Content-Disposition: inline
-In-Reply-To: <20180426200401.lvqiy4gnchkwr4qw@ninjato>
+In-Reply-To: <20180426191947.GC162443@dtor-ws>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 10:04:01PM +0200, Wolfram Sang wrote:
-> Hi Dmitry,
-> 
-> > > We should get drvdata from struct device directly. Going via
-> > > platform_device is an unneeded step back and forth.
-> > 
-> > I consider the fact that platform device's driver data is accessible via
-> > device driver data being implementation detail that may or may not change
-> 
-> Isn't it actually the other way around? platform_get_drvdata() is a
-> convenience function to access driver_data which is embedded in struct
-> device?
 
-I guess it depends on how you read it. I always considered it separate
-because none (?) of the bus implementation assert this in comments to
-XXX_get_drvdata().
+--ue3i4hheqebajblj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> > in the future, so I'd prefer keep using the proper accessors for the
-> > objects we are dealing with.
-> 
-> Exactly. I'd just argue, the object we are dealing with, declared in the
-> PM functions, is a struct device.
+Hi Dmitry,
 
-No, the driver does not create a generic device, it actually creates a
-platform device, or i2c client, or spi, or something else. The fact that
-suspend and resume routines have generic device as their argument has
-more to do with the language limitation rather than reflection of true
-type of the objects we are dealing with.
+> > We should get drvdata from struct device directly. Going via
+> > platform_device is an unneeded step back and forth.
+>=20
+> I consider the fact that platform device's driver data is accessible via
+> device driver data being implementation detail that may or may not change
 
-Thanks.
+Isn't it actually the other way around? platform_get_drvdata() is a
+convenience function to access driver_data which is embedded in struct
+device?
 
--- 
-Dmitry
+> in the future, so I'd prefer keep using the proper accessors for the
+> objects we are dealing with.
+
+Exactly. I'd just argue, the object we are dealing with, declared in the
+PM functions, is a struct device.
+
+Thanks for the comment,
+
+   Wolfram
+
+
+--ue3i4hheqebajblj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlriMK0ACgkQFA3kzBSg
+KbaSAQ/+J0GQoNKASnC4aHI+yQlS055LEKJU1zAt79xAcepud8GupA7hLnkfweqc
+hPzTjzNvV6KzpHM/kqp2nORkTr9alb0bhWjeSp52J3ihawsHC37FHgZy51yjdabo
+HNcrOwmz/NuZqQVUwk+SYwUy+amKbuZSqjG71qqUKV6cOUyp2FLiKyWMZPviVv3R
+MpXzvF9upPhqA/z/Ls6I7D3f2Jraun/NWFGnE4IpWhngjrBtCQ7aQZb93YKy5r4/
+MxDpQZ5xHdJjy/QLSZJjajnP1J13DcyAspriE8jdhwEi2QSgJB7dz50Q0zYxU9bZ
+N8nPnrTrIg2Zapwp8EISovruTrC8rjry4G0Ace5QkWi9JSXnL1DyfHUejyeRpUw5
+bP/XW0RPsoDg4jEvVlbEYOZSQGriO+CWK2IxayJq1HVVyKrE3syTZWJYqOVVBX8Z
+40y+Hsug2fDtmSlKM8jErlFjXYhdcb9XYVlBSioTPeMRmBVr6O7PInm2nVNZm+wQ
+333O2th9GH84FaPxYzTlCFb8p65BqnYJZjCpvUw+eUbNANiFi9B6dRPhDpltCW6G
+/3s5yTsRoNbMNxUZlq7GFuHWnGxRM0agaZhYZoSf5Lxd4RTFjxJH0rUJAP59r84E
+rJnCM3PzZFzqzQE+y56fyhE1nZRTM+D1l3VtbFDE2tJB1DEAWmE=
+=aN5S
+-----END PGP SIGNATURE-----
+
+--ue3i4hheqebajblj--
