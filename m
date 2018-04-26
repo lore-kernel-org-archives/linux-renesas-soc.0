@@ -1,135 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:45022 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755337AbeDCLRC (ORCPT
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:53446 "EHLO
+        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751647AbeDZTFQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:17:02 -0400
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX7t9eZQ+3rhzZBKBjETqC7EUgZ4D+dxwhrwiMxvF3Wdw@mail.gmail.com>
-References: <1522379583-4503-1-git-send-email-ykaneko0929@gmail.com>
- <1522379583-4503-2-git-send-email-ykaneko0929@gmail.com> <CAMuHMdX7t9eZQ+3rhzZBKBjETqC7EUgZ4D+dxwhrwiMxvF3Wdw@mail.gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Date: Tue, 3 Apr 2018 20:17:01 +0900
-Message-ID: <CAH1o70JGht863MYjRQzyhXyjm60LL_xGO19iSqZas3Fiu6Z6CQ@mail.gmail.com>
-Subject: Re: [PATCH/RFT v2 1/3] thermal: rcar_thermal: add r8a77995 support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 26 Apr 2018 15:05:16 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] ARM: dts: r8a7740: Add CEU0
+Date: Thu, 26 Apr 2018 20:24:43 +0200
+Message-Id: <1524767083-19862-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert-san,
+Describe CEU0 peripheral for Renesas R-Mobile A1 R8A7740 Soc.
 
-2018-03-30 18:25 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
-> Hi Kaneko-san,
->
-> On Fri, Mar 30, 2018 at 5:13 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->> Add support for R-Car D3 (r8a77995) thermal sensor.
->>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->
-> Thanks for your patch!
->
->> --- a/drivers/thermal/rcar_thermal.c
->> +++ b/drivers/thermal/rcar_thermal.c
->> @@ -58,10 +58,35 @@ struct rcar_thermal_common {
->>         spinlock_t lock;
->>  };
->>
->> +enum rcar_thermal_type {
->> +       RCAR_THERMAL,
->> +       RCAR_GEN2_THERMAL,
->> +       RCAR_GEN3_THERMAL,
->> +};
->> +
->> +struct rcar_thermal_chip {
->> +       int use_of_thermal;
->
-> This can be a single bit:
->
->     unsigned int use_of_thermal : 1;
->
->> +       enum rcar_thermal_type type;
->
-> If you would add feature bits, you can get rid of rcar_thermal_type:
->
->     unsigned int has_filonoff : 1;
->     unsigned int has_enr : 1;
->     unsigned int needs_suspend_resume : 1;
->
-> The number of interrupts can be stored here, too.
+Reported-by: Geert Uytterhoeven <geert@glider.be>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-It's nice!
-
->
->> +};
->> +
->> +static const struct rcar_thermal_chip rcar_thermal = {
->> +       .use_of_thermal = 0,
->> +       .type = RCAR_THERMAL,
->
-> .has_filonoff = 1,
-> .has_enr = 0,
-> ...
-> .nirqs = 1,
->
->> @@ -190,7 +222,8 @@ static int rcar_thermal_update_temp(struct rcar_thermal_priv *priv)
->>          * enable IRQ
->>          */
->>         if (rcar_has_irq_support(priv)) {
->> -               rcar_thermal_write(priv, FILONOFF, 0);
->> +               if (priv->chip->type != RCAR_GEN3_THERMAL)
->
-> if (priv->chip->has_filonoff)
->
->> @@ -438,6 +471,9 @@ static int rcar_thermal_probe(struct platform_device *pdev)
->>         struct rcar_thermal_priv *priv;
->>         struct device *dev = &pdev->dev;
->>         struct resource *res, *irq;
->> +       struct rcar_thermal_chip *chip = ((struct rcar_thermal_chip *)
->
-> I don't think the cast is needed.
-
-I will make 'chip' a const variable.
-
->
->> @@ -457,19 +493,35 @@ static int rcar_thermal_probe(struct platform_device *pdev)
->>         pm_runtime_enable(dev);
->>         pm_runtime_get_sync(dev);
->>
->> -       irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
->> -       if (irq) {
->> -               /*
->> -                * platform has IRQ support.
->> -                * Then, driver uses common registers
->> -                * rcar_has_irq_support() will be enabled
->> -                */
->> -               res = platform_get_resource(pdev, IORESOURCE_MEM, mres++);
->> -               common->base = devm_ioremap_resource(dev, res);
->> -               if (IS_ERR(common->base))
->> -                       return PTR_ERR(common->base);
->> +       for (i = 0; i < nirq; i++) {
->
-> for (i = 0; i < priv->nirqs; i++) {
-
-
-Best regards,
-Kaneko
-
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+index afd3bc5..508d934 100644
+--- a/arch/arm/boot/dts/r8a7740.dtsi
++++ b/arch/arm/boot/dts/r8a7740.dtsi
+@@ -67,6 +67,16 @@
+ 		power-domains = <&pd_d4>;
+ 	};
+ 
++	ceu0: ceu@fe910000 {
++		reg = <0xfe910000 0x3000>;
++		compatible = "renesas,r8a7740-ceu";
++		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
++		clock-names = "ceu20";
++		power-domains = <&pd_a4r>;
++		status = "disabled";
++	};
++
+ 	cmt1: timer@e6138000 {
+ 		compatible = "renesas,cmt-48-r8a7740", "renesas,cmt-48";
+ 		reg = <0xe6138000 0x170>;
+-- 
+2.7.4
