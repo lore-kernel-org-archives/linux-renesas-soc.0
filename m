@@ -1,110 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45270 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752682AbeDSOHQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755238AbeDZKaT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:16 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 59/61] watchdog: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:29 +0200
-Message-Id: <20180419140641.27926-60-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Thu, 26 Apr 2018 06:30:19 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/10] ARM: dts: alt: Drop unnecessary address properties from vin port node
+Date: Thu, 26 Apr 2018 12:29:46 +0200
+Message-Id: <20180426102951.8683-6-horms+renesas@verge.net.au>
+In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
+References: <20180426102951.8683-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+The vin port node does not have an address and thus does not need
+address-cells or address size-properties.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ arch/arm/boot/dts/r8a7794-alt.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7794-alt.dts | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/watchdog/cadence_wdt.c   | 6 ++----
- drivers/watchdog/of_xilinx_wdt.c | 6 ++----
- drivers/watchdog/wdat_wdt.c      | 6 ++----
- 3 files changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/watchdog/cadence_wdt.c b/drivers/watchdog/cadence_wdt.c
-index 3ec1f418837d..c3924356d173 100644
---- a/drivers/watchdog/cadence_wdt.c
-+++ b/drivers/watchdog/cadence_wdt.c
-@@ -418,8 +418,7 @@ static void cdns_wdt_shutdown(struct platform_device *pdev)
-  */
- static int __maybe_unused cdns_wdt_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct cdns_wdt *wdt = platform_get_drvdata(pdev);
-+	struct cdns_wdt *wdt = dev_get_drvdata(dev);
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 1ecc5b9135f3..c210412f80ec 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -380,9 +380,6 @@
+ 	pinctrl-names = "default";
  
- 	if (watchdog_active(&wdt->cdns_wdt_device)) {
- 		cdns_wdt_stop(&wdt->cdns_wdt_device);
-@@ -438,8 +437,7 @@ static int __maybe_unused cdns_wdt_suspend(struct device *dev)
- static int __maybe_unused cdns_wdt_resume(struct device *dev)
- {
- 	int ret;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct cdns_wdt *wdt = platform_get_drvdata(pdev);
-+	struct cdns_wdt *wdt = dev_get_drvdata(dev);
- 
- 	if (watchdog_active(&wdt->cdns_wdt_device)) {
- 		ret = clk_prepare_enable(wdt->clk);
-diff --git a/drivers/watchdog/of_xilinx_wdt.c b/drivers/watchdog/of_xilinx_wdt.c
-index 4acbe05e27bb..d3f7eb046678 100644
---- a/drivers/watchdog/of_xilinx_wdt.c
-+++ b/drivers/watchdog/of_xilinx_wdt.c
-@@ -268,8 +268,7 @@ static int xwdt_remove(struct platform_device *pdev)
-  */
- static int __maybe_unused xwdt_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct xwdt_device *xdev = platform_get_drvdata(pdev);
-+	struct xwdt_device *xdev = dev_get_drvdata(dev);
- 
- 	if (watchdog_active(&xdev->xilinx_wdt_wdd))
- 		xilinx_wdt_stop(&xdev->xilinx_wdt_wdd);
-@@ -285,8 +284,7 @@ static int __maybe_unused xwdt_suspend(struct device *dev)
-  */
- static int __maybe_unused xwdt_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct xwdt_device *xdev = platform_get_drvdata(pdev);
-+	struct xwdt_device *xdev = dev_get_drvdata(dev);
- 	int ret = 0;
- 
- 	if (watchdog_active(&xdev->xilinx_wdt_wdd))
-diff --git a/drivers/watchdog/wdat_wdt.c b/drivers/watchdog/wdat_wdt.c
-index 0da9943d405f..56ad19608a9b 100644
---- a/drivers/watchdog/wdat_wdt.c
-+++ b/drivers/watchdog/wdat_wdt.c
-@@ -447,8 +447,7 @@ static int wdat_wdt_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int wdat_wdt_suspend_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct wdat_wdt *wdat = platform_get_drvdata(pdev);
-+	struct wdat_wdt *wdat = dev_get_drvdata(dev);
- 	int ret;
- 
- 	if (!watchdog_active(&wdat->wdd))
-@@ -475,8 +474,7 @@ static int wdat_wdt_suspend_noirq(struct device *dev)
- 
- static int wdat_wdt_resume_noirq(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct wdat_wdt *wdat = platform_get_drvdata(pdev);
-+	struct wdat_wdt *wdat = dev_get_drvdata(dev);
- 	int ret;
- 
- 	if (!watchdog_active(&wdat->wdd))
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin0ep: endpoint {
+ 			remote-endpoint = <&adv7180>;
+ 			bus-width = <8>;
 -- 
 2.11.0
