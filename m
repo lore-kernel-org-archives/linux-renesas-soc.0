@@ -1,54 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755136AbeDZKaJ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 26 Apr 2018 06:30:09 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  1/2] ARM: dts: r8a77470: Add EtherAVB support
-Date: Tue, 24 Apr 2018 16:37:32 +0100
-Message-Id: <1524584253-52936-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1524584253-52936-1-git-send-email-biju.das@bp.renesas.com>
-References: <1524584253-52936-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/10] ARM: dts: silk: Drop unnecessary address properties from vin port node
+Date: Thu, 26 Apr 2018 12:29:47 +0200
+Message-Id: <20180426102951.8683-7-horms+renesas@verge.net.au>
+In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
+References: <20180426102951.8683-1-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77470 part of the EtherAVB device node.
+The vin port node does not have an address and thus does not need
+address-cells or address size-properties.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ arch/arm/boot/dts/r8a7794-silk.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/r8a7794-silk.dts | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index baec3ca..c85032f 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -190,6 +190,19 @@
- 			dma-channels = <15>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index e2642d2c2eed..7808aaee6644 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -475,9 +475,6 @@
+ 	pinctrl-names = "default";
  
-+		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a77470",
-+				     "renesas,etheravb-rcar-gen2";
-+			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-+			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 812>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 812>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a77470",
- 				     "renesas,rcar-gen2-scif", "renesas,scif";
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin0ep: endpoint {
+ 			remote-endpoint = <&adv7180>;
+ 			bus-width = <8>;
 -- 
-2.7.4
-
+2.11.0
