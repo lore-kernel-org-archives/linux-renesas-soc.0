@@ -1,77 +1,220 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:27443 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754927AbeDCKOa (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51681 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756431AbeDZQdl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:14:30 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 1/5] clk: renesas: r8a7743: Fix LB clock divider
-Date: Tue, 3 Apr 2018 10:14:25 +0000
-Message-ID: <TY1PR01MB1770350AFC4BA351D2A19B87C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
- <1522344790-20061-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-2-git-send-email-geert+renesas@glider.be>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 26 Apr 2018 12:33:41 -0400
+Received: by mail-it0-f67.google.com with SMTP id o20-v6so25152656itc.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Apr 2018 09:33:41 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+References: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+From: Hoan Tran <hotran@apm.com>
+Date: Thu, 26 Apr 2018 09:33:40 -0700
+Message-ID: <CAFHUOYxW6C9F-etiPSw5WBH7UDc6nia+5m9bqMND=SdfteJCPg@mail.gmail.com>
+Subject: Re: [PATCH v5] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        linux-gpio@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi,
 
-> Subject: [PATCH 1/5] clk: renesas: r8a7743: Fix LB clock divider
+On Thu, Apr 26, 2018 at 9:19 AM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
 >
-> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-> the LB clock divider depends on the value of the MD18 pin.
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
 >
-> On RZ/G1M, the LB clock divider is fixed to 24.  Hence model the clock
-> as a fixed factor clock instead.
+> ACPI companion code provided by Hoan Tran <hotran@apm.com>. This was tested
+> on X-Gene by Hoan.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 > ---
->  drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> One point to mention is that I have made it possible for users to have
+> unconncted interrupts by specifying holes in the list of interrupts. This is
+> done by supporting the interrupts-extended DT prop.
+> However, I have no use for this and had to hack some test case for this.
+> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
 >
-> diff --git a/drivers/clk/renesas/r8a7743-cpg-mssr.c b/drivers/clk/renesas=
-/r8a7743-cpg-mssr.c
-> index d3c8b1e2969fd305..011c170ec3f95d65 100644
-> --- a/drivers/clk/renesas/r8a7743-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7743-cpg-mssr.c
-> @@ -52,7 +52,6 @@ static const struct cpg_core_clk r8a7743_core_clks[] __=
-initconst =3D {
+> v5:
+>  - Rolled ACPI companion code provided by Hoan Tran into this patch.
+> v4:
+>  - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
+> v3:
+>  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
+> v2:
+>  - Replaced interrupt-mask DT prop with support for the interrupts-extended
+>    prop. This means replacing the call to irq_of_parse_and_map() with calls
+>    to of_irq_parse_one() and irq_create_of_mapping().
 >
->  /* Core Clock Outputs */
->  DEF_BASE("z",    R8A7743_CLK_Z,    CLK_TYPE_GEN2_Z,CLK_PLL0),
-> -DEF_BASE("lb",   R8A7743_CLK_LB,   CLK_TYPE_GEN2_LB,CLK_PLL1),
->  DEF_BASE("sdh",  R8A7743_CLK_SDH,  CLK_TYPE_GEN2_SDH,CLK_PLL1),
->  DEF_BASE("sd0",  R8A7743_CLK_SD0,  CLK_TYPE_GEN2_SD0,CLK_PLL1),
->  DEF_BASE("qspi", R8A7743_CLK_QSPI, CLK_TYPE_GEN2_QSPI,CLK_PLL1_DIV2),
-> @@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7743_core_clks[] __=
-initconst =3D {
->  DEF_FIXED("zs",    R8A7743_CLK_ZS,CLK_PLL1,    6, 1),
->  DEF_FIXED("hp",    R8A7743_CLK_HP,CLK_PLL1,   12, 1),
->  DEF_FIXED("b",     R8A7743_CLK_B,CLK_PLL1,   12, 1),
-> +DEF_FIXED("lb",    R8A7743_CLK_LB,CLK_PLL1,   24, 1),
->  DEF_FIXED("p",     R8A7743_CLK_P,CLK_PLL1,   24, 1),
->  DEF_FIXED("cl",    R8A7743_CLK_CL,CLK_PLL1,   48, 1),
->  DEF_FIXED("m2",    R8A7743_CLK_M2,CLK_PLL1,    8, 1),
+> Note: There are a few *code* lines over 80 chars, but this is just guidance,
+>    right? Especially as there are already some lines over 80 chars.
+> ---
+>  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 ++++-
+>  drivers/gpio/gpio-dwapb.c                          | 46 +++++++++++++++++-----
+>  drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+>  include/linux/platform_data/gpio-dwapb.h           |  3 +-
+>  4 files changed, 48 insertions(+), 13 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> index 4a75da7..3c1118b 100644
+> --- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> @@ -26,8 +26,13 @@ controller.
+>    the second encodes the triger flags encoded as described in
+>    Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+>  - interrupt-parent : The parent interrupt controller.
+> -- interrupts : The interrupt to the parent controller raised when GPIOs
+> -  generate the interrupts.
+> +- interrupts : The interrupts to the parent controller raised when GPIOs
+> +  generate the interrupts. If the controller provides one combined interrupt
+> +  for all GPIOs, specify a single interrupt. If the controller provides one
+> +  interrupt for each GPIO, provide a list of interrupts that correspond to each
+> +  of the GPIO pins. When specifying multiple interrupts, if any are unconnected,
+> +  use the interrupts-extended property to specify the interrupts and set the
+> +  interrupt controller handle for unused interrupts to 0.
+>  - snps,nr-gpios : The number of pins in the port, a single cell.
+>  - resets : Reset line for the controller.
+>
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index 226977f..7dcd06b 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -441,14 +441,19 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>         irq_gc->chip_types[1].handler = handle_edge_irq;
+>
+>         if (!pp->irq_shared) {
+> -               irq_set_chained_handler_and_data(pp->irq, dwapb_irq_handler,
+> -                                                gpio);
+> +               int i;
+> +
+> +               for (i = 0; i < pp->ngpio; i++) {
+> +                       if (pp->irq[i])
+> +                               irq_set_chained_handler_and_data(pp->irq[i],
+> +                                               dwapb_irq_handler, gpio);
+> +               }
+>         } else {
+>                 /*
+>                  * Request a shared IRQ since where MFD would have devices
+>                  * using the same irq pin
+>                  */
+> -               err = devm_request_irq(gpio->dev, pp->irq,
+> +               err = devm_request_irq(gpio->dev, pp->irq[0],
+>                                        dwapb_irq_handler_mfd,
+>                                        IRQF_SHARED, "gpio-dwapb-mfd", gpio);
+>                 if (err) {
+> @@ -524,7 +529,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+>         if (pp->idx == 0)
+>                 port->gc.set_config = dwapb_gpio_set_config;
+>
+> -       if (pp->irq)
+> +       if (pp->has_irq)
+>                 dwapb_configure_irqs(gpio, port, pp);
+>
+>         err = gpiochip_add_data(&port->gc, port);
+> @@ -535,7 +540,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+>                 port->is_registered = true;
+>
+>         /* Add GPIO-signaled ACPI event support */
+> -       if (pp->irq)
+> +       if (pp->has_irq)
+>                 acpi_gpiochip_request_interrupts(&port->gc);
+>
+>         return err;
+> @@ -601,13 +606,36 @@ dwapb_gpio_get_pdata(struct device *dev)
+>                 if (dev->of_node && pp->idx == 0 &&
+>                         fwnode_property_read_bool(fwnode,
+>                                                   "interrupt-controller")) {
+> -                       pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
+> -                       if (!pp->irq)
+> +                       struct device_node *np = to_of_node(fwnode);
+> +                       unsigned int j;
+> +
+> +                       /*
+> +                        * The IP has configuration options to allow a single
+> +                        * combined interrupt or one per gpio. If one per gpio,
+> +                        * some might not be used.
+> +                        */
+> +                       for (j = 0; j < pp->ngpio; j++) {
+> +                               int irq = of_irq_get(np, j);
+> +                               if (irq < 0)
+> +                                       continue;
+> +
+> +                               pp->irq[j] = irq;
+> +                               pp->has_irq = true;
+> +                       }
+> +
+> +                       if (!pp->has_irq)
+>                                 dev_warn(dev, "no irq for port%d\n", pp->idx);
+>                 }
+>
+> -               if (has_acpi_companion(dev) && pp->idx == 0)
+> -                       pp->irq = platform_get_irq(to_platform_device(dev), 0);
+> +               if (has_acpi_companion(dev) && pp->idx == 0) {
+> +                       unsigned int j;
+> +
+> +                       for (j = 0; j < pp->ngpio; j++) {
+> +                               pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
+> +                               if (pp->irq[j])
+> +                                       pp->has_irq = true;
+> +                       }
+> +               }
+>
+>                 pp->irq_shared  = false;
+>                 pp->gpio_base   = -1;
+> diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
+> index 90e35de..5bddb84 100644
+> --- a/drivers/mfd/intel_quark_i2c_gpio.c
+> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+> @@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
+>         pdata->properties->idx          = 0;
+>         pdata->properties->ngpio        = INTEL_QUARK_MFD_NGPIO;
+>         pdata->properties->gpio_base    = INTEL_QUARK_MFD_GPIO_BASE;
+> -       pdata->properties->irq          = pdev->irq;
+> +       pdata->properties->irq[0]       = pdev->irq;
+> +       pdata->properties->has_irq      = true;
+>         pdata->properties->irq_shared   = true;
+>
+>         cell->platform_data = pdata;
+> diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
+> index 2dc7f4a..5a52d69 100644
+> --- a/include/linux/platform_data/gpio-dwapb.h
+> +++ b/include/linux/platform_data/gpio-dwapb.h
+> @@ -19,7 +19,8 @@ struct dwapb_port_property {
+>         unsigned int    idx;
+>         unsigned int    ngpio;
+>         unsigned int    gpio_base;
+> -       unsigned int    irq;
+> +       unsigned int    irq[32];
+> +       bool            has_irq;
+>         bool            irq_shared;
+>  };
+>
+
+Acked-by: Hoan Tran <hotran@apm.com>
+
+Thanks
+Hoan
+
 > --
 > 2.7.4
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+>
