@@ -1,66 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58344 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757092AbeDZQ5h (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40695 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754081AbeDZKaE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:57:37 -0400
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH 02/17] dt-bindings: display: renesas: du: Document the
- R8A77965 bindings
+        Thu, 26 Apr 2018 06:30:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
- <20180426165346.494-3-kieran.bingham+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Message-ID: <e94ae62f-30bb-5056-9646-03941d74ae75@ideasonboard.com>
-Date: Thu, 26 Apr 2018 17:57:32 +0100
-MIME-Version: 1.0
-In-Reply-To: <20180426165346.494-3-kieran.bingham+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/10] ARM: dts: koelsch: Drop unnecessary address properties from port nodes
+Date: Thu, 26 Apr 2018 12:29:45 +0200
+Message-Id: <20180426102951.8683-5-horms+renesas@verge.net.au>
+In-Reply-To: <20180426102951.8683-1-horms+renesas@verge.net.au>
+References: <20180426102951.8683-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Ahem - this one seems to have lost it's commit message.
+The vin port nodes does not have an address and thus does not need
+address-cells or address size-properties.
 
-Apologies :)
+This is flagged by dtc as follows:
+ # make dtbs W=1
+ arch/arm/boot/dts/r8a7791-koelsch.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef0000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+ arch/arm/boot/dts/r8a7791-koelsch.dtb: Warning (avoid_unnecessary_addr_size): /soc/video@e6ef1000/port: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 
---
-Kieran
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 6 ------
+ 1 file changed, 6 deletions(-)
 
-
-On 26/04/18 17:53, Kieran Bingham wrote:
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
->  Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-> index a36a6e7ee54f..7c6854bd0a04 100644
-> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
-> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-> @@ -13,6 +13,7 @@ Required Properties:
->      - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
->      - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
->      - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
-> +    - "renesas,du-r8a77965" for R8A77965 (R-Car M3-N) compatible DU
->      - "renesas,du-r8a77970" for R8A77970 (R-Car V3M) compatible DU
->      - "renesas,du-r8a77995" for R8A77995 (R-Car D3) compatible DU
->  
-> @@ -59,6 +60,7 @@ corresponding to each DU output.
->   R8A7794 (R-Car E2)     DPAD 0         DPAD 1         -              -
->   R8A7795 (R-Car H3)     DPAD 0         HDMI 0         HDMI 1         LVDS 0
->   R8A7796 (R-Car M3-W)   DPAD 0         HDMI 0         LVDS 0         -
-> + R8A77965 (R-Car M3-N)  DPAD 0         HDMI 0         LVDS 0         -
->   R8A77970 (R-Car V3M)   DPAD 0         LVDS 0         -              -
->   R8A77995 (R-Car D3)    DPAD 0         LVDS 0         LVDS 1         -
->  
-> 
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index e394e0487416..8ab793d8b2fd 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -855,9 +855,6 @@
+ 	pinctrl-names = "default";
+ 
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin0ep2: endpoint {
+ 			remote-endpoint = <&adv7612_out>;
+ 			bus-width = <24>;
+@@ -876,9 +873,6 @@
+ 	pinctrl-names = "default";
+ 
+ 	port {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+ 		vin1ep: endpoint {
+ 			remote-endpoint = <&adv7180>;
+ 			bus-width = <8>;
+-- 
+2.11.0
