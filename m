@@ -1,60 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37728 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59694 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759305AbeD0Vqh (ORCPT
+        with ESMTP id S1755014AbeDZUxp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 17:46:37 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
+        Thu, 26 Apr 2018 16:53:45 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.yj@renesas.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] v4l: vsp1: Fix vsp1_regs.h license header
-Date: Sat, 28 Apr 2018 00:46:47 +0300
-Message-Id: <20180427214647.892-1-laurent.pinchart+renesas@ideasonboard.com>
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 08/17] arm64: dts: r8a77965: Provide sysc header definitions
+Date: Thu, 26 Apr 2018 23:53:57 +0300
+Message-ID: <2073410.9lt478HeGL@avalon>
+In-Reply-To: <20180426165346.494-9-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-9-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All source files of the vsp1 driver are licensed under the GPLv2+ except
-for vsp1_regs.h which is licensed under GPLv2. This is caused by a bad
-copy&paste that dates back from the initial version of the driver. Fix
-it.
+Hi Kieran,
 
-Cc: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.yj@renesas.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Iwamatsu-san, Kieran, Sergei, Niklas, Wolfram,
+Thank you for the patch.
 
-While working on the VSP1 driver I noticed that all source files are
-licensed under the GPLv2+ except for vsp1_regs.h which is licensed under
-GPLv2. I'd like to fix this inconsistency. As you have all contributed
-to that file, could you please provide your explicit ack if you agree to
-this change ?
----
- drivers/media/platform/vsp1/vsp1_regs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thursday, 26 April 2018 19:53:37 EEST Kieran Bingham wrote:
+> Include the r8a77965-sysc header to provide power domain enumerations
+> and definitions.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index 0d249ff9f564..e82661216c1d 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * vsp1_regs.h  --  R-Car VSP1 Registers Definitions
-  *
+I think you can squash this with the first patch that will use the header.
+
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a77965.dtsi index
+> b12f41755aea..02de36b9e581 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> @@ -10,6 +10,7 @@
+> 
+>  #include <dt-bindings/clock/renesas-cpg-mssr.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/power/r8a77965-sysc.h>
+> 
+>  #define CPG_AUDIO_CLK_I		10
+
 -- 
 Regards,
 
