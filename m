@@ -1,76 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58050 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755871AbeDZQxx (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:59718 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751587AbeDZTmo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:53:53 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 01/17] dt-bindings: display: renesas: du: Increase indent in output table
-Date: Thu, 26 Apr 2018 17:53:30 +0100
-Message-Id: <20180426165346.494-2-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 26 Apr 2018 15:42:44 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Rob Herring <robh+dt@kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/2] dt-bindings: thermal: rcar-gen3-thermal: add r8a77965
+Date: Thu, 26 Apr 2018 21:42:01 +0200
+Message-Id: <20180426194202.31662-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180426194202.31662-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180426194202.31662-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DU output table lists the port combinations for each supported DU
-type.  Newer models of R-Car Gen3 platforms have an increased string
-length.
+Based on previous work by Ryo Kataoka <ryo.kataoka.wt@renesas.com>.
 
-Increase the table indentation in preparation for supporting new target
-types.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- .../bindings/display/renesas,du.txt           | 26 +++++++++----------
- 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index c9cd17f99702..a36a6e7ee54f 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -47,20 +47,20 @@ bindings specified in Documentation/devicetree/bindings/graph.txt.
- The following table lists for each supported model the port number
- corresponding to each DU output.
+* Changes since v1
+- s/H3 and M3-W, M3-N/H3, M3-W and M3-N/
+- Add review tags.
+---
+ .../devicetree/bindings/thermal/rcar-gen3-thermal.txt          | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+index fdf5caa6229b4fff..32c63ffef2e3a3ff 100644
+--- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+@@ -9,6 +9,7 @@ Required properties:
+ 			  Examples with soctypes are:
+ 			    - "renesas,r8a7795-thermal" (R-Car H3)
+ 			    - "renesas,r8a7796-thermal" (R-Car M3-W)
++			    - "renesas,r8a77965-thermal" (R-Car M3-N)
+ - reg			: Address ranges of the thermal registers. Each sensor
+ 			  needs one address range. Sorting must be done in
+ 			  increasing order according to datasheet, i.e.
+@@ -18,7 +19,7 @@ Required properties:
  
--                      Port0          Port1          Port2          Port3
-+                        Port0          Port1          Port2          Port3
- -----------------------------------------------------------------------------
-- R8A7743 (RZ/G1M)     DPAD 0         LVDS 0         -              -
-- R8A7745 (RZ/G1E)     DPAD 0         DPAD 1         -              -
-- R8A7779 (R-Car H1)   DPAD 0         DPAD 1         -              -
-- R8A7790 (R-Car H2)   DPAD 0         LVDS 0         LVDS 1         -
-- R8A7791 (R-Car M2-W) DPAD 0         LVDS 0         -              -
-- R8A7792 (R-Car V2H)  DPAD 0         DPAD 1         -              -
-- R8A7793 (R-Car M2-N) DPAD 0         LVDS 0         -              -
-- R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              -
-- R8A7795 (R-Car H3)   DPAD 0         HDMI 0         HDMI 1         LVDS 0
-- R8A7796 (R-Car M3-W) DPAD 0         HDMI 0         LVDS 0         -
-- R8A77970 (R-Car V3M) DPAD 0         LVDS 0         -              -
-- R8A77995 (R-Car D3)  DPAD 0         LVDS 0         LVDS 1         -
-+ R8A7743 (RZ/G1M)       DPAD 0         LVDS 0         -              -
-+ R8A7745 (RZ/G1E)       DPAD 0         DPAD 1         -              -
-+ R8A7779 (R-Car H1)     DPAD 0         DPAD 1         -              -
-+ R8A7790 (R-Car H2)     DPAD 0         LVDS 0         LVDS 1         -
-+ R8A7791 (R-Car M2-W)   DPAD 0         LVDS 0         -              -
-+ R8A7792 (R-Car V2H)    DPAD 0         DPAD 1         -              -
-+ R8A7793 (R-Car M2-N)   DPAD 0         LVDS 0         -              -
-+ R8A7794 (R-Car E2)     DPAD 0         DPAD 1         -              -
-+ R8A7795 (R-Car H3)     DPAD 0         HDMI 0         HDMI 1         LVDS 0
-+ R8A7796 (R-Car M3-W)   DPAD 0         HDMI 0         LVDS 0         -
-+ R8A77970 (R-Car V3M)   DPAD 0         LVDS 0         -              -
-+ R8A77995 (R-Car D3)    DPAD 0         LVDS 0         LVDS 1         -
+ Optional properties:
  
- 
- Example: R8A7795 (R-Car H3) ES2.0 DU
+-- interrupts           : interrupts routed to the TSC (3 for H3 and M3-W)
++- interrupts           : interrupts routed to the TSC (3 for H3, M3-W and M3-N)
+ - power-domain		: Must contain a reference to the power domain. This
+ 			  property is mandatory if the thermal sensor instance
+ 			  is part of a controllable power domain.
 -- 
 2.17.0
