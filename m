@@ -1,191 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53190 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33034 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758554AbeD0Q53 (ORCPT
+        with ESMTP id S1752991AbeDZXJL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:57:29 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 02/11] pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and functions
-Date: Fri, 27 Apr 2018 17:57:13 +0100
-Message-Id: <20180427165722.19445-3-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 26 Apr 2018 19:09:11 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] rcar-vin: remove generic gen3 compatible string
+Date: Fri, 27 Apr 2018 02:09:24 +0300
+Message-ID: <2062313.TSG5ePb3Hm@avalon>
+In-Reply-To: <20180424234321.22367-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180424234321.22367-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds pins, groups and functions for parallel RGB output
-signals from DU. The HDMI and TCON pins are added to separate groups.
+Hi Niklas,
 
-Based on a similar patch of the R8A7796 PFC driver by Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se>.
+Thank you for the patch.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Kieran: Rebase on top of tree]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Wednesday, 25 April 2018 02:43:21 EEST Niklas S=F6derlund wrote:
+> The compatible string "renesas,rcar-gen3-vin" was added before the
+> Gen3 driver code was added but it's not possible to use. Each SoC in the
+> Gen3 series require SoC specific knowledge in the driver to function.
+> Remove it before it is added to any device tree descriptions.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 116 ++++++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 3771b2d10f39..f5a37d3ea753 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1662,6 +1662,102 @@ static const unsigned int avb_avtp_capture_b_mux[] = {
- 	AVB_AVTP_CAPTURE_B_MARK,
- };
- 
-+/* - DU --------------------------------------------------------------------- */
-+static const unsigned int du_rgb666_pins[] = {
-+	/* R[7:2], G[7:2], B[7:2] */
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-+	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-+	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-+};
-+
-+static const unsigned int du_rgb666_mux[] = {
-+	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-+	DU_DR3_MARK, DU_DR2_MARK,
-+	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-+	DU_DG3_MARK, DU_DG2_MARK,
-+	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-+	DU_DB3_MARK, DU_DB2_MARK,
-+};
-+
-+static const unsigned int du_rgb888_pins[] = {
-+	/* R[7:0], G[7:0], B[7:0] */
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(0, 9),  RCAR_GP_PIN(0, 8),
-+	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-+	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-+	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16),
-+	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-+	RCAR_GP_PIN(1, 1),  RCAR_GP_PIN(1, 0),
-+};
-+
-+static const unsigned int du_rgb888_mux[] = {
-+	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-+	DU_DR3_MARK, DU_DR2_MARK, DU_DR1_MARK, DU_DR0_MARK,
-+	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-+	DU_DG3_MARK, DU_DG2_MARK, DU_DG1_MARK, DU_DG0_MARK,
-+	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-+	DU_DB3_MARK, DU_DB2_MARK, DU_DB1_MARK, DU_DB0_MARK,
-+};
-+
-+static const unsigned int du_clk_out_0_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(1, 27),
-+};
-+
-+static const unsigned int du_clk_out_0_mux[] = {
-+	DU_DOTCLKOUT0_MARK
-+};
-+
-+static const unsigned int du_clk_out_1_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(2, 3),
-+};
-+
-+static const unsigned int du_clk_out_1_mux[] = {
-+	DU_DOTCLKOUT1_MARK
-+};
-+
-+static const unsigned int du_sync_pins[] = {
-+	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
-+	RCAR_GP_PIN(2, 5), RCAR_GP_PIN(2, 4),
-+};
-+
-+static const unsigned int du_sync_mux[] = {
-+	DU_EXVSYNC_DU_VSYNC_MARK, DU_EXHSYNC_DU_HSYNC_MARK
-+};
-+
-+static const unsigned int du_oddf_pins[] = {
-+	/* EXDISP/EXODDF/EXCDE */
-+	RCAR_GP_PIN(2, 2),
-+};
-+
-+static const unsigned int du_oddf_mux[] = {
-+	DU_EXODDF_DU_ODDF_DISP_CDE_MARK,
-+};
-+
-+static const unsigned int du_cde_pins[] = {
-+	/* CDE */
-+	RCAR_GP_PIN(2, 0),
-+};
-+
-+static const unsigned int du_cde_mux[] = {
-+	DU_CDE_MARK,
-+};
-+
-+static const unsigned int du_disp_pins[] = {
-+	/* DISP */
-+	RCAR_GP_PIN(2, 1),
-+};
-+
-+static const unsigned int du_disp_mux[] = {
-+	DU_DISP_MARK,
-+};
-+
- /* - INTC-EX ---------------------------------------------------------------- */
- static const unsigned int intc_ex_irq0_pins[] = {
- 	/* IRQ0 */
-@@ -2756,6 +2852,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
- 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
-+	SH_PFC_PIN_GROUP(du_rgb666),
-+	SH_PFC_PIN_GROUP(du_rgb888),
-+	SH_PFC_PIN_GROUP(du_clk_out_0),
-+	SH_PFC_PIN_GROUP(du_clk_out_1),
-+	SH_PFC_PIN_GROUP(du_sync),
-+	SH_PFC_PIN_GROUP(du_oddf),
-+	SH_PFC_PIN_GROUP(du_cde),
-+	SH_PFC_PIN_GROUP(du_disp),
- 	SH_PFC_PIN_GROUP(intc_ex_irq0),
- 	SH_PFC_PIN_GROUP(intc_ex_irq1),
- 	SH_PFC_PIN_GROUP(intc_ex_irq2),
-@@ -2922,6 +3026,17 @@ static const char * const avb_groups[] = {
- 	"avb_avtp_capture_b",
- };
- 
-+static const char * const du_groups[] = {
-+	"du_rgb666",
-+	"du_rgb888",
-+	"du_clk_out_0",
-+	"du_clk_out_1",
-+	"du_sync",
-+	"du_oddf",
-+	"du_cde",
-+	"du_disp",
-+};
-+
- static const char * const intc_ex_groups[] = {
- 	"intc_ex_irq0",
- 	"intc_ex_irq1",
-@@ -3139,6 +3254,7 @@ static const char * const usb30_groups[] = {
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(du),
- 	SH_PFC_FUNCTION(intc_ex),
- 	SH_PFC_FUNCTION(msiof0),
- 	SH_PFC_FUNCTION(msiof1),
--- 
-2.17.0
+> ---
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> b/Documentation/devicetree/bindings/media/rcar_vin.txt index
+> ba31431d4b1fbdbb..a19517e1c669eb35 100644
+> --- a/Documentation/devicetree/bindings/media/rcar_vin.txt
+> +++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+> @@ -24,7 +24,6 @@ on Gen3 platforms to a CSI-2 receiver.
+>     - "renesas,vin-r8a77970" for the R8A77970 device
+>     - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
+>       device.
+> -   - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
+>=20
+>     When compatible with the generic version nodes must list the
+>     SoC-specific version corresponding to the platform first
+
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
