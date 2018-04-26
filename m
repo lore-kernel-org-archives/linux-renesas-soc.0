@@ -1,11 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43103 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755405AbeDZMHB (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:55796 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754559AbeDZKnA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 08:07:01 -0400
-Date: Thu, 26 Apr 2018 14:06:57 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
+        Thu, 26 Apr 2018 06:43:00 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Vaishali Thakkar <vthakkar1994@gmail.com>
 Cc: alexander.deucher@amd.com, christian.koenig@amd.com,
         David1.Zhou@amd.com, airlied@linux.ie, brodkin@synopsys.com,
@@ -23,15 +22,14 @@ Cc: alexander.deucher@amd.com, christian.koenig@amd.com,
         rodrigo.vivi@intel.com, p.zabel@pengutronix.de, ck.hu@mediatek.com,
         matthias.bgg@gmail.com, robdclark@gmail.com, marex@denx.de,
         bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
-        airlied@redhat.com, kraxel@redhat.com,
-        laurent.pinchart@ideasonboard.com, hjc@rock-chips.com,
+        airlied@redhat.com, kraxel@redhat.com, hjc@rock-chips.com,
         heiko@sntech.de, benjamin.gaignard@linaro.org,
         vincent.abriou@st.com, yannick.fertre@st.com,
         philippe.cornu@st.com, maxime.ripard@bootlin.com, wens@csie.org,
-        jonathanh@nvidia.com, noralf@tronnes.org, linus.walleij@linaro.org,
-        shawnguo@kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, noralf@tronnes.org,
+        linus.walleij@linaro.org, shawnguo@kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         intel-gfx@lists.freedesktop.org,
         linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
@@ -40,55 +38,80 @@ Cc: alexander.deucher@amd.com, christian.koenig@amd.com,
         linux-renesas-soc@vger.kernel.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
 Subject: Re: [PATCH] drm/core: Remove drm_dev_unref() and it's uses
-Message-ID: <20180426120657.GB11985@ulmo>
+Date: Thu, 26 Apr 2018 13:43:09 +0300
+Message-ID: <2767328.18DNhHKilX@avalon>
+In-Reply-To: <20180426102819.6985-1-vthakkar1994@gmail.com>
 References: <20180426102819.6985-1-vthakkar1994@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
-Content-Disposition: inline
-In-Reply-To: <20180426102819.6985-1-vthakkar1994@gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Vaishali,
 
---2B/JsCI69OhZNC5r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch.
 
-On Thu, Apr 26, 2018 at 03:58:19PM +0530, Vaishali Thakkar wrote:
+On Thursday, 26 April 2018 13:28:19 EEST Vaishali Thakkar wrote:
 > It's been a while since we introduced drm_dev{get/put} functions
 > to replace reference/unreference in drm subsystem for the
 > consistency purpose. So, with this patch, let's just replace
 > all current use cases of drm_dev_unref() with drm_dev_put and remove
 > the function itself.
->=20
+> 
 > Coccinelle was used for mass-patching.
->=20
+> 
 > Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
 
-Yes, please.
+I love seeing deprecated functions go.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
---2B/JsCI69OhZNC5r
-Content-Type: application/pgp-signature; name="signature.asc"
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |  4 ++--
+>  drivers/gpu/drm/arc/arcpgu_drv.c                   |  4 ++--
+>  drivers/gpu/drm/armada/armada_drv.c                |  6 +++---
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c       |  4 ++--
+>  drivers/gpu/drm/drm_drv.c                          | 13 -------------
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.c              |  4 ++--
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c            |  4 ++--
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c          |  4 ++--
+>  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c    |  4 ++--
+>  drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c    |  8 ++++----
+>  drivers/gpu/drm/i915/selftests/huge_pages.c        |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c   |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_gem_evict.c    |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_gem_gtt.c      |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_gem_object.c   |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_request.c      |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_vma.c          |  2 +-
+>  drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c |  2 +-
+>  drivers/gpu/drm/imx/imx-drm-core.c                 |  4 ++--
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c             |  6 +++---
+>  drivers/gpu/drm/msm/msm_drv.c                      |  8 ++++----
+>  drivers/gpu/drm/mxsfb/mxsfb_drv.c                  |  4 ++--
+>  drivers/gpu/drm/nouveau/nouveau_platform.c         |  2 +-
+>  drivers/gpu/drm/omapdrm/omap_drv.c                 |  4 ++--
+>  drivers/gpu/drm/pl111/pl111_drv.c                  |  4 ++--
+>  drivers/gpu/drm/qxl/qxl_drv.c                      |  2 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |  4 ++--
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.c           |  4 ++--
+>  drivers/gpu/drm/sti/sti_drv.c                      |  8 ++++----
+>  drivers/gpu/drm/stm/drv.c                          |  4 ++--
+>  drivers/gpu/drm/sun4i/sun4i_drv.c                  |  4 ++--
+>  drivers/gpu/drm/tegra/drm.c                        |  4 ++--
+>  drivers/gpu/drm/tinydrm/core/tinydrm-core.c        |  6 +++---
+>  drivers/gpu/drm/tve200/tve200_drv.c                |  4 ++--
+>  drivers/gpu/drm/udl/udl_drv.c                      |  2 +-
+>  drivers/gpu/drm/vc4/vc4_drv.c                      |  4 ++--
+>  drivers/gpu/drm/vgem/vgem_drv.c                    |  2 +-
+>  drivers/gpu/drm/virtio/virtgpu_drm_bus.c           |  2 +-
+>  drivers/gpu/drm/zte/zx_drm_drv.c                   |  4 ++--
+>  include/drm/drm_drv.h                              |  1 -
+>  41 files changed, 73 insertions(+), 87 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+Regards,
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrhwOAACgkQ3SOs138+
-s6EGqg/+JmUt+aqBk15/OXUKzwedusn2nurTmzPRqGoZEK54C7+31kYWTZJrfyn8
-0YB/LnpBFLPsv0n2h5NAxTqdrk3XwnZnsh74EFMWWLT0xj05ieLMg/TfbQmwM8p/
-keZqR/h1C6MpS5KXblD2tM7Gx7Nsp35RdhchLobvvXR2yUDxZO4afSKCehyeVnuv
-57JIN5zMp+bQkuBMwjIEcCIqOxjQv5ISLzifNFdmHWLIJ3RO6W17MyrFYJzzQEqe
-x2PLjnaaSashIqtezCM8y3K04QvclybTHT9uQ1SB7YmEj+R4U/ywLLWkDr346hNL
-uVsx2P4Rgnj9y0hqaf5f37Z0peThUWU0vcNRcHCfNPrzJhZa1EQDXkeLItACiSNO
-+qJFncLsqNYuV/Pq5gcPLaQe3C88Uh//dL3HKN3b/3OfmXmQbVVH7XKRWng2U0Fm
-oTxpOG1l/GSEwkr/gjpuebN2VkxmITYLHjKc2QYZtD2j49gB0CPEsK/pPC5vmdso
-/OmBBSlkvG6wqmCwW7FfXD+m+rtV5s3pFTL99/37lKE6jLqteXbZB1eXWjCktDSG
-SA8grVw8+LiTmKyNAhg+B85bgGm7TVuym+DqkzUaMjkdQlISjMGCX6jMHtjila0+
-skm7Hqo/qwKR+I3JOa0TMtFKmKero2xpRcSk8EFI2fnUy1UBwoo=
-=nKx9
------END PGP SIGNATURE-----
-
---2B/JsCI69OhZNC5r--
+Laurent Pinchart
