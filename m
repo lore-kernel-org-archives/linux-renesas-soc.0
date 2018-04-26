@@ -1,32 +1,188 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:63797 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1757312AbeD0Ge4 (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36043 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754743AbeDZKpZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 02:34:56 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/3] arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 channel 3
-Date: Fri, 27 Apr 2018 15:34:29 +0900
-Message-Id: <1524810872-8442-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 26 Apr 2018 06:45:25 -0400
+Received: by mail-lf0-f68.google.com with SMTP id d20-v6so30008912lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Apr 2018 03:45:24 -0700 (PDT)
+Subject: [PATCH 2/2] arm64: dts: renesas: r8a77980: use SYSC power domain
+ macros
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <ea6d3e8a-71a9-9998-f364-7dc82b97c2c0@cogentembedded.com>
+Message-ID: <df17ca8f-7942-3cdb-04d5-5d73e0259be5@cogentembedded.com>
+Date: Thu, 26 Apr 2018 13:45:21 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <ea6d3e8a-71a9-9998-f364-7dc82b97c2c0@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the renesas-devel-20180426-v4.17-rc2 tag
-of renesas.git.
+Now that the commit 7755b40d07a8 ("dt-bindings: power: add R8A77980 SYSC
+power domain definitions") has hit Linus' tree, we can replace  the bare
+numbers (we had to use to avoid a cross tree dependency) with these macro
+definitions...
 
-Yoshihiro Shimoda (3):
-  arm64: dts: renesas: r8a7795: salvator-xs: enable usb2_phy3 node
-  arm64: dts: renesas: r8a7795: salvator-xs: enable hsusb channel 3 node
-  arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 host channel
-    3
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 39 ++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |   31 +++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
--- 
-1.9.1
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/clock/r8a77980-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/power/r8a77980-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a77980";
+@@ -24,14 +25,14 @@
+ 			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0>;
+ 			clocks = <&cpg CPG_CORE R8A77980_CLK_Z2>;
+-			power-domains = <&sysc 5>;
++			power-domains = <&sysc R8A77980_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 		};
+ 
+ 		L2_CA53: cache-controller {
+ 			compatible = "cache";
+-			power-domains = <&sysc 21>;
++			power-domains = <&sysc R8A77980_PD_CA53_SCU>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
+@@ -110,7 +111,7 @@
+ 			dmas = <&dmac1 0x31>, <&dmac1 0x30>,
+ 			       <&dmac2 0x31>, <&dmac2 0x30>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 520>;
+ 			status = "disabled";
+ 		};
+@@ -128,7 +129,7 @@
+ 			dmas = <&dmac1 0x33>, <&dmac1 0x32>,
+ 			       <&dmac2 0x33>, <&dmac2 0x32>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 519>;
+ 			status = "disabled";
+ 		};
+@@ -146,7 +147,7 @@
+ 			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
+ 			       <&dmac2 0x35>, <&dmac2 0x34>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 518>;
+ 			status = "disabled";
+ 		};
+@@ -164,7 +165,7 @@
+ 			dmas = <&dmac1 0x37>, <&dmac1 0x36>,
+ 			       <&dmac2 0x37>, <&dmac2 0x36>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 517>;
+ 			status = "disabled";
+ 		};
+@@ -206,7 +207,7 @@
+ 					  "ch20", "ch21", "ch22", "ch23",
+ 					  "ch24";
+ 			clocks = <&cpg CPG_MOD 812>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 812>;
+ 			phy-mode = "rgmii";
+ 			#address-cells = <1>;
+@@ -226,7 +227,7 @@
+ 			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
+ 			       <&dmac2 0x51>, <&dmac2 0x50>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 207>;
+ 			status = "disabled";
+ 		};
+@@ -244,7 +245,7 @@
+ 			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
+ 			       <&dmac2 0x53>, <&dmac2 0x52>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 206>;
+ 			status = "disabled";
+ 		};
+@@ -262,7 +263,7 @@
+ 			dmas = <&dmac1 0x57>, <&dmac1 0x56>,
+ 			       <&dmac2 0x57>, <&dmac2 0x56>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 204>;
+ 			status = "disabled";
+ 		};
+@@ -280,7 +281,7 @@
+ 			dmas = <&dmac1 0x59>, <&dmac1 0x58>,
+ 			       <&dmac2 0x59>, <&dmac2 0x58>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 203>;
+ 			status = "disabled";
+ 		};
+@@ -313,7 +314,7 @@
+ 					  "ch12", "ch13", "ch14", "ch15";
+ 			clocks = <&cpg CPG_MOD 218>;
+ 			clock-names = "fck";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 218>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
+@@ -347,7 +348,7 @@
+ 					  "ch12", "ch13", "ch14", "ch15";
+ 			clocks = <&cpg CPG_MOD 217>;
+ 			clock-names = "fck";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 217>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
+@@ -359,7 +360,7 @@
+ 			reg = <0 0xee140000 0 0x2000>;
+ 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 314>;
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 314>;
+ 			max-frequency = <200000000>;
+ 			status = "disabled";
+@@ -378,7 +379,7 @@
+ 				      IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+-			power-domains = <&sysc 32>;
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 408>;
+ 		};
+ 
