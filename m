@@ -1,168 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:50662 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753753AbeD3PSI (ORCPT
+Received: from mail-eopbgr30104.outbound.protection.outlook.com ([40.107.3.104]:15796
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1757171AbeD0Hv5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:18:08 -0400
-Received: by mail-wm0-f41.google.com with SMTP id t11so13834811wmt.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 Apr 2018 08:18:07 -0700 (PDT)
-Date: Mon, 30 Apr 2018 17:18:03 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Peter Rosin <peda@axentia.se>,
-        Martyn Welch <martyn.welch@collabora.co.uk>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kern,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Peter Senna Tschudin <peter.senna@collabora.com>,
-        Martin Donnelly <martin.donnelly@ge.com>,
-        linux-arm-msm@vger.kernel.org, Jyri Sarha <jsarha@ti.com>,
-        el.org@freedesktop.org, Matthias Brugger <matthias.bgg@gmail.com>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org
+        Fri, 27 Apr 2018 03:51:57 -0400
 Subject: Re: [PATCH 00/24] device link, bridge supplier <-> drm device
-Message-ID: <20180430151803.GN12521@phenom.ffwll.local>
-References: <20180426223139.16740-1-peda@axentia.se>
- <1881012.XPHlTWYXH6@avalon>
+From: Peter Rosin <peda@axentia.se>
+To: Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Jyri Sarha <jsarha@ti.com>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <CGME20180426223215epcas2p38fe3b0b7b1ea1c8190805f9e2a89e11e@epcas2p3.samsung.com>
+ <20180426223139.16740-1-peda@axentia.se>
+ <25d8e621-b3f8-094f-32a2-d22efc2163a4@samsung.com>
+ <7d4bceeb-9611-cbf9-3906-fef5db88aad8@axentia.se>
+Message-ID: <8d747088-3214-97af-4616-bf5d2602892a@axentia.se>
+Date: Fri, 27 Apr 2018 09:51:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1881012.XPHlTWYXH6@avalon>
+In-Reply-To: <7d4bceeb-9611-cbf9-3906-fef5db88aad8@axentia.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 01:40:21AM +0300, Laurent Pinchart wrote:
-> Hi Peter,
+On 2018-04-27 09:37, Peter Rosin wrote:
+> On 2018-04-27 09:11, Andrzej Hajda wrote:
+>> Hi Peter,
+>>
+>> On 27.04.2018 00:31, Peter Rosin wrote:
+>>> Hi!
+>>>
+>>> It was noted by Russel King [1] that bridges (not using components)
+>>> might disappear unexpectedly if the owner of the bridge was unbound.
+>>> Jyri Sarha had previously noted the same thing with panels [2]. Jyri
+>>> came up with using device links to resolve the panel issue, which
+>>> was also my (independent) reaction to the note from Russel.
+>>>
+>>> This series builds up to the addition of that link in the last
+>>> patch, but in my opinion the other 23 patches do have merit on their
+>>> own.
+>>>
+>>> The last patch needs testing, while the others look trivial. That
+>>> said, I might have missed some subtlety.
+>>
+>> of_node is used as an identifier of the bridge in the kernel. If you
+>> replace it with device pointer there will be potential problem with
+>> devices having two or more bridges, how do you differentiate bridges if
+>> the owner is the same? If I remember correctly current bridge code does
+>> not allow to have multiple bridges in one device, but that should be
+>> quite easy to fix if necessary. After this change it will become more
+>> difficult.
 > 
-> Thank you for the patches.
+> I don't see how it will be more difficult?
 > 
-> On Friday, 27 April 2018 01:31:15 EEST Peter Rosin wrote:
-> > Hi!
-> > 
-> > It was noted by Russel King [1] that bridges (not using components)
-> > might disappear unexpectedly if the owner of the bridge was unbound.
-> > Jyri Sarha had previously noted the same thing with panels [2]. Jyri
-> > came up with using device links to resolve the panel issue, which
-> > was also my (independent) reaction to the note from Russel.
-> > 
-> > This series builds up to the addition of that link in the last
-> > patch, but in my opinion the other 23 patches do have merit on their
-> > own.
-> > 
-> > The last patch needs testing, while the others look trivial. That
-> > said, I might have missed some subtlety.
+>> Anyway I remember discussion that in DT world bridge should be
+>> identified rather by of_graph port node, not by parent node as it is
+>> now. If you want to translate this relation to device owner, you should
+>> add also port number to have full identification of the bridge, ie pair
+>> (owner, port_number) would be equivalent of port node.
 > 
-> I don't think this is the way to go. We have a real lifetime management 
-> problem with bridges, and device links are just trying to hide the problem 
-> under the carpet. They will further corner us by making a real fix much more 
-> difficult to implement. I'll try to comment further in the next few days on 
-> what I think a better solution would be, but in a nutshell I believe that 
-> drm_bridge objects need to be refcounted, with a .release() operation to free 
-> the bridge resources when the reference count drops to zero. This shouldn't be 
-> difficult to implement and I'm willing to help.
+> You even state the trivial solution here, just add the port/endpoint ID
+> when/if it is needed. So, what is the significant difference?
 
-I agree that refcounting is the proper fix if bridges can be
-hot-unplugged, independently of the overall drm_device.
+Or, since this is apparently a rare requirement, you could make the owners
+that do need it fix it themselves. E.g. by embedding the struct drm_bridge
+in another struct that contains the needed ID, and use container_of to get
+to that containing struct with the ID.
 
-And yes retro-shoehorning refcounting is "fun", but it's also not
-impossible. I've done it a few times by now in drm.
-
-Otoh, refcounting has a pretty serious cost - we're still blowing up
-drm_framebuffer refcounting in corner cases at shocking regularity, and
-that's something that's been refcounted for years by now. As long as we
-don't have a clearly defined need to make bridges hotpluggable then I
-think not paying the hefty bill just yet is the correct technical
-decision. This patch series here looks like a reasonable way to tie the
-lifetimes together a bit more closely and should fix the bugs we have
-right now.
-
-Cheers, Daniel
-
-PS: Yes there's cases where you can hotplug display blocks on a SoC. To my
-knowledge they're all covered by hotplugging the entire drm_device (plus
-all the statically associated bits like drm_bridge/crtc/plane/encoder).
-And we're already working on fixing up drm_device to at least make it
-possible to write a correct hot-unpluggable driver in theory. We'll see
-whether anyone manages to pull that off in practice :-)
-
-> 
-> > [1] https://lkml.org/lkml/2018/4/23/769
-> > [2] https://www.spinics.net/lists/dri-devel/msg174275.html
-> > 
-> > Peter Rosin (24):
-> >   drm/bridge: allow optionally specifying an .owner device
-> >   drm/bridge: adv7511: provide an .owner device
-> >   drm/bridge/analogix: core: specify the .owner of the bridge
-> >   drm/bridge: analogix-anx78xx: provide an .owner device
-> >   drm/bridge: vga-dac: provide an .owner device
-> >   drm/bridge: lvds-encoder: provide an .owner device
-> >   drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: provide an .owner device
-> >   drm/bridge: nxp-ptn3460: provide an .owner device
-> >   drm/bridge: panel: provide an .owner device
-> >   drm/bridge: ps8622: provide an .owner device
-> >   drm/bridge: sii902x: provide an .owner device
-> >   drm/bridge: sii9234: provide an .owner device
-> >   drm/bridge: sii8620: provide an .owner device
-> >   drm/bridge: synopsys: provide an .owner device for the bridges
-> >   drm/bridge: tc358767: provide an .owner device
-> >   drm/bridge: ti-tfp410: provide an .owner device
-> >   drm/exynos: mic: provide an .owner device for the bridge
-> >   drm/mediatek: hdmi: provide an .owner device for the bridge
-> >   drm/msm: specify the .owner of the bridges
-> >   drm/rcar-du: lvds: provide an .owner device for the bridge
-> >   drm/sti: provide an .owner device for the bridges
-> >   drm/bridge: remove the .of_node member
-> >   drm/bridge: require the .owner to be filled in on drm_bridge_attach
-> >   drm/bridge: establish a link between the bridge supplier and consumer
-> > 
-> >  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       |  2 +-
-> >  drivers/gpu/drm/bridge/analogix-anx78xx.c          |  5 +----
-> >  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  1 +
-> >  drivers/gpu/drm/bridge/dumb-vga-dac.c              |  2 +-
-> >  drivers/gpu/drm/bridge/lvds-encoder.c              |  2 +-
-> >  .../drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c   |  2 +-
-> >  drivers/gpu/drm/bridge/nxp-ptn3460.c               |  2 +-
-> >  drivers/gpu/drm/bridge/panel.c                     |  4 +---
-> >  drivers/gpu/drm/bridge/parade-ps8622.c             |  2 +-
-> >  drivers/gpu/drm/bridge/sii902x.c                   |  2 +-
-> >  drivers/gpu/drm/bridge/sii9234.c                   |  2 +-
-> >  drivers/gpu/drm/bridge/sil-sii8620.c               |  2 +-
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  4 +---
-> >  drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c      |  4 +---
-> >  drivers/gpu/drm/bridge/tc358767.c                  |  2 +-
-> >  drivers/gpu/drm/bridge/ti-tfp410.c                 |  2 +-
-> >  drivers/gpu/drm/drm_bridge.c                       | 23 ++++++++++++++++++-
-> >  drivers/gpu/drm/exynos/exynos_drm_mic.c            |  2 +-
-> >  drivers/gpu/drm/mediatek/mtk_hdmi.c                |  2 +-
-> >  drivers/gpu/drm/msm/dsi/dsi_manager.c              |  1 +
-> >  drivers/gpu/drm/msm/edp/edp_bridge.c               |  1 +
-> >  drivers/gpu/drm/msm/hdmi/hdmi_bridge.c             |  1 +
-> >  drivers/gpu/drm/rcar-du/rcar_lvds.c                |  2 +-
-> >  drivers/gpu/drm/sti/sti_dvo.c                      |  2 +-
-> >  drivers/gpu/drm/sti/sti_hda.c                      |  1 +
-> >  drivers/gpu/drm/sti/sti_hdmi.c                     |  1 +
-> >  include/drm/drm_bridge.h                           |  8 ++++----
-> >  27 files changed, 51 insertions(+), 33 deletions(-)
-> 
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
-> 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Cheers,
+Peter
