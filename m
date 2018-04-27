@@ -1,20 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38262 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53204 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753569AbeD0WWD (ORCPT
+        with ESMTP id S1758871AbeD0Q5d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 18:22:03 -0400
+        Fri, 27 Apr 2018 12:57:33 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        geert@glider.be
-Subject: [PATCH v3 5/5] drm: rcar-du: Add R8A77965 support
-Date: Fri, 27 Apr 2018 23:21:54 +0100
-Message-Id: <20180427222154.21664-6-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
+        dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 05/11] drm: rcar-du: Add R8A77965 support
+Date: Fri, 27 Apr 2018 17:57:16 +0100
+Message-Id: <20180427165722.19445-6-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -33,7 +34,7 @@ v2:
  1 file changed, 29 insertions(+)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 2aa392b03e73..02aee6cb0e53 100644
+index 0062186d7df8..56f947240375 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
 @@ -246,6 +246,34 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
