@@ -1,58 +1,38 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v5 2/6] dt-bindings: reset: renesas,rzn1-reboot: document RZ/N1 reboot driver
-Date: Tue, 17 Apr 2018 12:04:17 +0100
-Message-Id: <1523963101-56725-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33019 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757614AbeD0Naj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 27 Apr 2018 09:30:39 -0400
+Received: by mail-it0-f66.google.com with SMTP id x144-v6so2509081itc.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Apr 2018 06:30:38 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180419140641.27926-4-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-4-wsa+renesas@sang-engineering.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 27 Apr 2018 15:30:37 +0200
+Message-ID: <CACRpkdbZC8-V4fOmyCSzgvXoxFg35vN1VdNq_VbKTK3QXo2Btg@mail.gmail.com>
+Subject: Re: [PATCH 03/61] auxdisplay: simplify getting .drvdata
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-as part of the sysctrl MFD to handle rebooting the CA7 cores.
-This documents the driver bindings.
+On Thu, Apr 19, 2018 at 4:05 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- .../devicetree/bindings/power/renesas,rzn1-reboot.txt   | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-new file mode 100644
-index 0000000..a553864
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-@@ -0,0 +1,17 @@
-+DT bindings for the Renesas RZ/N1 Reboot Driver
-+
-+== Reboot Driver Node ==
-+
-+The reboot driver allows restarting the RZ/N1.
-+
-+Bindings:
-++ Required:
-+	compatible = "renesas,r9a06g032-reboot", "renesas,rzn1-reboot";
-+
-+Example:
-+	reboot@4000c120 {
-+		compatible = "renesas,r9a06g032-reboot",
-+				"renesas,rzn1-reboot";
-+		reg = <0x4000c120 4>,
-+			<0x4000c198 4>;
-+	};
--- 
-2.7.4
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+Sorry for slow reply.
+
+Yours,
+Linus Walleij
