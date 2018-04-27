@@ -1,447 +1,343 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:45342 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753357AbeDSOG6 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38262 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759307AbeD0WWC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:06:58 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Rakesh Iyer <riyer@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH 20/61] input: keyboard: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:50 +0200
-Message-Id: <20180419140641.27926-21-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        Fri, 27 Apr 2018 18:22:02 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        geert@glider.be
+Subject: [PATCH v3 3/5] drm: rcar-du: Split CRTC handling to support hardware indexing
+Date: Fri, 27 Apr 2018 23:21:52 +0100
+Message-Id: <20180427222154.21664-4-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+The DU CRTC driver does not support distinguishing between a hardware
+index, and a software (CRTC) index in the event that a DU channel might
+not be populated by the hardware.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Support this by adapting the rcar_du_device_info structure to store a
+bitmask of available channels rather than a count of CRTCs. The count
+can then be obtained by determining the hamming weight of the bitmask.
+
+This allows the rcar_du_crtc_create() function to distinguish between
+both index types, and non-populated DU channels will be skipped without
+leaving a gap in the software CRTC indexes.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 ---
+v2:
+ - devm_clk_get error message adapted to display Du channel
+ - rgrp->planes for gen2 now uses swindex instead of hwindex
+ - channel_mask -> channels_mask
+ - channel_mask set in LE bit order.
+ - (.dpll_ch corrected to LE bit order)
 
-Build tested only. buildbot is happy. Please apply individually.
+v3:
+ - update channels_mask description to 'available' channels instead of
+   supported channels
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 26 ++++++++++++++------------
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  3 ++-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 22 +++++++++++-----------
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  4 ++--
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c  | 18 +++++++++++++-----
+ 5 files changed, 42 insertions(+), 31 deletions(-)
 
- drivers/input/keyboard/ep93xx_keypad.c   | 10 ++++------
- drivers/input/keyboard/imx_keypad.c      | 10 ++++------
- drivers/input/keyboard/lpc32xx-keys.c    |  6 ++----
- drivers/input/keyboard/matrix_keypad.c   | 10 ++++------
- drivers/input/keyboard/omap4-keypad.c    | 10 ++++------
- drivers/input/keyboard/pmic8xxx-keypad.c |  6 ++----
- drivers/input/keyboard/pxa27x_keypad.c   | 10 ++++------
- drivers/input/keyboard/samsung-keypad.c  | 12 ++++--------
- drivers/input/keyboard/snvs_pwrkey.c     | 10 ++++------
- drivers/input/keyboard/spear-keyboard.c  | 10 ++++------
- drivers/input/keyboard/st-keyscan.c      |  6 ++----
- drivers/input/keyboard/tegra-kbc.c       | 10 ++++------
- 12 files changed, 42 insertions(+), 68 deletions(-)
-
-diff --git a/drivers/input/keyboard/ep93xx_keypad.c b/drivers/input/keyboard/ep93xx_keypad.c
-index f77b295e0123..7584a03db4b3 100644
---- a/drivers/input/keyboard/ep93xx_keypad.c
-+++ b/drivers/input/keyboard/ep93xx_keypad.c
-@@ -185,8 +185,7 @@ static void ep93xx_keypad_close(struct input_dev *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int ep93xx_keypad_suspend(struct device *dev)
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index c4420538ec85..f2a0bd1e5119 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -767,7 +767,8 @@ static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
+  * Initialization
+  */
+ 
+-int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index)
++int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
++			unsigned int hwindex)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = keypad->input_dev;
+ 	static const unsigned int mmio_offsets[] = {
+ 		DU0_REG_OFFSET, DU1_REG_OFFSET, DU2_REG_OFFSET, DU3_REG_OFFSET
+@@ -775,7 +776,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index)
  
- 	mutex_lock(&input_dev->mutex);
-@@ -198,7 +197,7 @@ static int ep93xx_keypad_suspend(struct device *dev)
+ 	struct rcar_du_device *rcdu = rgrp->dev;
+ 	struct platform_device *pdev = to_platform_device(rcdu->dev);
+-	struct rcar_du_crtc *rcrtc = &rcdu->crtcs[index];
++	struct rcar_du_crtc *rcrtc = &rcdu->crtcs[swindex];
+ 	struct drm_crtc *crtc = &rcrtc->crtc;
+ 	struct drm_plane *primary;
+ 	unsigned int irqflags;
+@@ -787,7 +788,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index)
  
- 	mutex_unlock(&input_dev->mutex);
- 
--	if (device_may_wakeup(&pdev->dev))
-+	if (device_may_wakeup(dev))
- 		enable_irq_wake(keypad->irq);
- 
- 	return 0;
-@@ -206,11 +205,10 @@ static int ep93xx_keypad_suspend(struct device *dev)
- 
- static int ep93xx_keypad_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = keypad->input_dev;
- 
--	if (device_may_wakeup(&pdev->dev))
-+	if (device_may_wakeup(dev))
- 		disable_irq_wake(keypad->irq);
- 
- 	mutex_lock(&input_dev->mutex);
-diff --git a/drivers/input/keyboard/imx_keypad.c b/drivers/input/keyboard/imx_keypad.c
-index 25d61d8d4fc4..56328ced81e2 100644
---- a/drivers/input/keyboard/imx_keypad.c
-+++ b/drivers/input/keyboard/imx_keypad.c
-@@ -532,8 +532,7 @@ static int imx_keypad_probe(struct platform_device *pdev)
- 
- static int __maybe_unused imx_kbd_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx_keypad *kbd = platform_get_drvdata(pdev);
-+	struct imx_keypad *kbd = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = kbd->input_dev;
- 
- 	/* imx kbd can wake up system even clock is disabled */
-@@ -544,7 +543,7 @@ static int __maybe_unused imx_kbd_suspend(struct device *dev)
- 
- 	mutex_unlock(&input_dev->mutex);
- 
--	if (device_may_wakeup(&pdev->dev))
-+	if (device_may_wakeup(dev))
- 		enable_irq_wake(kbd->irq);
- 
- 	return 0;
-@@ -552,12 +551,11 @@ static int __maybe_unused imx_kbd_suspend(struct device *dev)
- 
- static int __maybe_unused imx_kbd_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct imx_keypad *kbd = platform_get_drvdata(pdev);
-+	struct imx_keypad *kbd = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = kbd->input_dev;
- 	int ret = 0;
- 
--	if (device_may_wakeup(&pdev->dev))
-+	if (device_may_wakeup(dev))
- 		disable_irq_wake(kbd->irq);
- 
- 	mutex_lock(&input_dev->mutex);
-diff --git a/drivers/input/keyboard/lpc32xx-keys.c b/drivers/input/keyboard/lpc32xx-keys.c
-index 1dd57ac0e7a2..0831a6f2a9d4 100644
---- a/drivers/input/keyboard/lpc32xx-keys.c
-+++ b/drivers/input/keyboard/lpc32xx-keys.c
-@@ -279,8 +279,7 @@ static int lpc32xx_kscan_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int lpc32xx_kscan_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct lpc32xx_kscan_drv *kscandat = platform_get_drvdata(pdev);
-+	struct lpc32xx_kscan_drv *kscandat = dev_get_drvdata(dev);
- 	struct input_dev *input = kscandat->input;
- 
- 	mutex_lock(&input->mutex);
-@@ -297,8 +296,7 @@ static int lpc32xx_kscan_suspend(struct device *dev)
- 
- static int lpc32xx_kscan_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct lpc32xx_kscan_drv *kscandat = platform_get_drvdata(pdev);
-+	struct lpc32xx_kscan_drv *kscandat = dev_get_drvdata(dev);
- 	struct input_dev *input = kscandat->input;
- 	int retval = 0;
- 
-diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
-index 41614c185918..73ca55e4babe 100644
---- a/drivers/input/keyboard/matrix_keypad.c
-+++ b/drivers/input/keyboard/matrix_keypad.c
-@@ -276,12 +276,11 @@ static void matrix_keypad_disable_wakeup(struct matrix_keypad *keypad)
- 
- static int matrix_keypad_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct matrix_keypad *keypad = platform_get_drvdata(pdev);
-+	struct matrix_keypad *keypad = dev_get_drvdata(dev);
- 
- 	matrix_keypad_stop(keypad->input_dev);
- 
--	if (device_may_wakeup(&pdev->dev))
-+	if (device_may_wakeup(dev))
- 		matrix_keypad_enable_wakeup(keypad);
- 
- 	return 0;
-@@ -289,10 +288,9 @@ static int matrix_keypad_suspend(struct device *dev)
- 
- static int matrix_keypad_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct matrix_keypad *keypad = platform_get_drvdata(pdev);
-+	struct matrix_keypad *keypad = dev_get_drvdata(dev);
- 
--	if (device_may_wakeup(&pdev->dev))
-+	if (device_may_wakeup(dev))
- 		matrix_keypad_disable_wakeup(keypad);
- 
- 	matrix_keypad_start(keypad->input_dev);
-diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
-index 940d38b08e6b..13578b884ace 100644
---- a/drivers/input/keyboard/omap4-keypad.c
-+++ b/drivers/input/keyboard/omap4-keypad.c
-@@ -422,11 +422,10 @@ MODULE_DEVICE_TABLE(of, omap_keypad_dt_match);
- #ifdef CONFIG_PM_SLEEP
- static int omap4_keypad_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
-+	struct omap4_keypad *keypad_data = dev_get_drvdata(dev);
- 	int error;
- 
--	if (device_may_wakeup(&pdev->dev)) {
-+	if (device_may_wakeup(dev)) {
- 		error = enable_irq_wake(keypad_data->irq);
- 		if (!error)
- 			keypad_data->irq_wake_enabled = true;
-@@ -437,10 +436,9 @@ static int omap4_keypad_suspend(struct device *dev)
- 
- static int omap4_keypad_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct omap4_keypad *keypad_data = platform_get_drvdata(pdev);
-+	struct omap4_keypad *keypad_data = dev_get_drvdata(dev);
- 
--	if (device_may_wakeup(&pdev->dev) && keypad_data->irq_wake_enabled) {
-+	if (device_may_wakeup(dev) && keypad_data->irq_wake_enabled) {
- 		disable_irq_wake(keypad_data->irq);
- 		keypad_data->irq_wake_enabled = false;
- 	}
-diff --git a/drivers/input/keyboard/pmic8xxx-keypad.c b/drivers/input/keyboard/pmic8xxx-keypad.c
-index 98b24ed18752..048a39321298 100644
---- a/drivers/input/keyboard/pmic8xxx-keypad.c
-+++ b/drivers/input/keyboard/pmic8xxx-keypad.c
-@@ -636,8 +636,7 @@ static int pmic8xxx_kp_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int pmic8xxx_kp_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct pmic8xxx_kp *kp = platform_get_drvdata(pdev);
-+	struct pmic8xxx_kp *kp = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = kp->input;
- 
- 	if (device_may_wakeup(dev)) {
-@@ -656,8 +655,7 @@ static int pmic8xxx_kp_suspend(struct device *dev)
- 
- static int pmic8xxx_kp_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct pmic8xxx_kp *kp = platform_get_drvdata(pdev);
-+	struct pmic8xxx_kp *kp = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = kp->input;
- 
- 	if (device_may_wakeup(dev)) {
-diff --git a/drivers/input/keyboard/pxa27x_keypad.c b/drivers/input/keyboard/pxa27x_keypad.c
-index d0bdaeadf86d..1f54a3162124 100644
---- a/drivers/input/keyboard/pxa27x_keypad.c
-+++ b/drivers/input/keyboard/pxa27x_keypad.c
-@@ -666,14 +666,13 @@ static void pxa27x_keypad_close(struct input_dev *dev)
- #ifdef CONFIG_PM_SLEEP
- static int pxa27x_keypad_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct pxa27x_keypad *keypad = platform_get_drvdata(pdev);
-+	struct pxa27x_keypad *keypad = dev_get_drvdata(dev);
- 
- 	/*
- 	 * If the keypad is used a wake up source, clock can not be disabled.
- 	 * Or it can not detect the key pressing.
- 	 */
--	if (device_may_wakeup(&pdev->dev))
-+	if (device_may_wakeup(dev))
- 		enable_irq_wake(keypad->irq);
- 	else
- 		clk_disable_unprepare(keypad->clk);
-@@ -683,8 +682,7 @@ static int pxa27x_keypad_suspend(struct device *dev)
- 
- static int pxa27x_keypad_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct pxa27x_keypad *keypad = platform_get_drvdata(pdev);
-+	struct pxa27x_keypad *keypad = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = keypad->input_dev;
- 	int ret = 0;
- 
-@@ -692,7 +690,7 @@ static int pxa27x_keypad_resume(struct device *dev)
- 	 * If the keypad is used as wake up source, the clock is not turned
- 	 * off. So do not need configure it again.
- 	 */
--	if (device_may_wakeup(&pdev->dev)) {
-+	if (device_may_wakeup(dev)) {
- 		disable_irq_wake(keypad->irq);
+ 	/* Get the CRTC clock and the optional external clock. */
+ 	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CRTC_IRQ_CLOCK)) {
+-		sprintf(clk_name, "du.%u", index);
++		sprintf(clk_name, "du.%u", hwindex);
+ 		name = clk_name;
  	} else {
- 		mutex_lock(&input_dev->mutex);
-diff --git a/drivers/input/keyboard/samsung-keypad.c b/drivers/input/keyboard/samsung-keypad.c
-index 316414465c77..27790a8a44f5 100644
---- a/drivers/input/keyboard/samsung-keypad.c
-+++ b/drivers/input/keyboard/samsung-keypad.c
-@@ -466,8 +466,7 @@ static int samsung_keypad_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM
- static int samsung_keypad_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct samsung_keypad *keypad = platform_get_drvdata(pdev);
-+	struct samsung_keypad *keypad = dev_get_drvdata(dev);
- 	unsigned int val;
- 	int error;
+ 		name = NULL;
+@@ -795,16 +796,16 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index)
  
-@@ -490,8 +489,7 @@ static int samsung_keypad_runtime_suspend(struct device *dev)
+ 	rcrtc->clock = devm_clk_get(rcdu->dev, name);
+ 	if (IS_ERR(rcrtc->clock)) {
+-		dev_err(rcdu->dev, "no clock for CRTC %u\n", index);
++		dev_err(rcdu->dev, "no clock for DU channel %u\n", hwindex);
+ 		return PTR_ERR(rcrtc->clock);
+ 	}
  
- static int samsung_keypad_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct samsung_keypad *keypad = platform_get_drvdata(pdev);
-+	struct samsung_keypad *keypad = dev_get_drvdata(dev);
- 	unsigned int val;
+-	sprintf(clk_name, "dclkin.%u", index);
++	sprintf(clk_name, "dclkin.%u", hwindex);
+ 	clk = devm_clk_get(rcdu->dev, clk_name);
+ 	if (!IS_ERR(clk)) {
+ 		rcrtc->extclock = clk;
+ 	} else if (PTR_ERR(rcrtc->clock) == -EPROBE_DEFER) {
+-		dev_info(rcdu->dev, "can't get external clock %u\n", index);
++		dev_info(rcdu->dev, "can't get external clock %u\n", hwindex);
+ 		return -EPROBE_DEFER;
+ 	}
  
- 	if (keypad->stopped)
-@@ -535,8 +533,7 @@ static void samsung_keypad_toggle_wakeup(struct samsung_keypad *keypad,
+@@ -813,13 +814,13 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index)
+ 	spin_lock_init(&rcrtc->vblank_lock);
  
- static int samsung_keypad_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct samsung_keypad *keypad = platform_get_drvdata(pdev);
-+	struct samsung_keypad *keypad = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = keypad->input_dev;
+ 	rcrtc->group = rgrp;
+-	rcrtc->mmio_offset = mmio_offsets[index];
+-	rcrtc->index = index;
++	rcrtc->mmio_offset = mmio_offsets[hwindex];
++	rcrtc->index = hwindex;
  
- 	mutex_lock(&input_dev->mutex);
-@@ -553,8 +550,7 @@ static int samsung_keypad_suspend(struct device *dev)
+ 	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE))
+ 		primary = &rcrtc->vsp->planes[rcrtc->vsp_pipe].plane;
+ 	else
+-		primary = &rgrp->planes[index % 2].plane;
++		primary = &rgrp->planes[swindex % 2].plane;
  
- static int samsung_keypad_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct samsung_keypad *keypad = platform_get_drvdata(pdev);
-+	struct samsung_keypad *keypad = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = keypad->input_dev;
+ 	ret = drm_crtc_init_with_planes(rcdu->ddev, crtc, primary,
+ 					NULL, &crtc_funcs, NULL);
+@@ -833,7 +834,8 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index)
  
- 	mutex_lock(&input_dev->mutex);
-diff --git a/drivers/input/keyboard/snvs_pwrkey.c b/drivers/input/keyboard/snvs_pwrkey.c
-index 53c768b95939..f439f7bd2f5f 100644
---- a/drivers/input/keyboard/snvs_pwrkey.c
-+++ b/drivers/input/keyboard/snvs_pwrkey.c
-@@ -180,10 +180,9 @@ static int imx_snvs_pwrkey_probe(struct platform_device *pdev)
+ 	/* Register the interrupt handler. */
+ 	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CRTC_IRQ_CLOCK)) {
+-		irq = platform_get_irq(pdev, index);
++		/* The IRQ's are associated with the CRTC (sw)index. */
++		irq = platform_get_irq(pdev, swindex);
+ 		irqflags = 0;
+ 	} else {
+ 		irq = platform_get_irq(pdev, 0);
+@@ -841,7 +843,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index)
+ 	}
  
- static int __maybe_unused imx_snvs_pwrkey_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct pwrkey_drv_data *pdata = platform_get_drvdata(pdev);
-+	struct pwrkey_drv_data *pdata = dev_get_drvdata(dev);
+ 	if (irq < 0) {
+-		dev_err(rcdu->dev, "no IRQ for CRTC %u\n", index);
++		dev_err(rcdu->dev, "no IRQ for CRTC %u\n", swindex);
+ 		return irq;
+ 	}
  
--	if (device_may_wakeup(&pdev->dev))
-+	if (device_may_wakeup(dev))
- 		enable_irq_wake(pdata->irq);
+@@ -849,7 +851,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index)
+ 			       dev_name(rcdu->dev), rcrtc);
+ 	if (ret < 0) {
+ 		dev_err(rcdu->dev,
+-			"failed to register IRQ for CRTC %u\n", index);
++			"failed to register IRQ for CRTC %u\n", swindex);
+ 		return ret;
+ 	}
  
- 	return 0;
-@@ -191,10 +190,9 @@ static int __maybe_unused imx_snvs_pwrkey_suspend(struct device *dev)
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+index fdc2bf99bda1..84b5e23a85b1 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+@@ -80,7 +80,8 @@ enum rcar_du_output {
+ 	RCAR_DU_OUTPUT_MAX,
+ };
  
- static int __maybe_unused imx_snvs_pwrkey_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct pwrkey_drv_data *pdata = platform_get_drvdata(pdev);
-+	struct pwrkey_drv_data *pdata = dev_get_drvdata(dev);
+-int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index);
++int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
++			unsigned int hwindex);
+ void rcar_du_crtc_suspend(struct rcar_du_crtc *rcrtc);
+ void rcar_du_crtc_resume(struct rcar_du_crtc *rcrtc);
  
--	if (device_may_wakeup(&pdev->dev))
-+	if (device_may_wakeup(dev))
- 		disable_irq_wake(pdata->irq);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 3917d839c04c..2aa392b03e73 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -40,7 +40,7 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+-	.num_crtcs = 2,
++	.channels_mask = BIT(1) | BIT(0),
+ 	.routes = {
+ 		/*
+ 		 * R8A7743 has one RGB output and one LVDS output
+@@ -61,7 +61,7 @@ static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+-	.num_crtcs = 2,
++	.channels_mask = BIT(1) | BIT(0),
+ 	.routes = {
+ 		/*
+ 		 * R8A7745 has two RGB outputs
+@@ -80,7 +80,7 @@ static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
+ static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+ 	.gen = 2,
+ 	.features = 0,
+-	.num_crtcs = 2,
++	.channels_mask = BIT(1) | BIT(0),
+ 	.routes = {
+ 		/*
+ 		 * R8A7779 has two RGB outputs and one (currently unsupported)
+@@ -102,7 +102,7 @@ static const struct rcar_du_device_info rcar_du_r8a7790_info = {
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+ 	.quirks = RCAR_DU_QUIRK_ALIGN_128B,
+-	.num_crtcs = 3,
++	.channels_mask = BIT(2) | BIT(1) | BIT(0),
+ 	.routes = {
+ 		/*
+ 		 * R8A7790 has one RGB output, two LVDS outputs and one
+@@ -129,7 +129,7 @@ static const struct rcar_du_device_info rcar_du_r8a7791_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+-	.num_crtcs = 2,
++	.channels_mask = BIT(1) | BIT(0),
+ 	.routes = {
+ 		/*
+ 		 * R8A779[13] has one RGB output, one LVDS output and one
+@@ -151,7 +151,7 @@ static const struct rcar_du_device_info rcar_du_r8a7792_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+-	.num_crtcs = 2,
++	.channels_mask = BIT(1) | BIT(0),
+ 	.routes = {
+ 		/* R8A7792 has two RGB outputs. */
+ 		[RCAR_DU_OUTPUT_DPAD0] = {
+@@ -169,7 +169,7 @@ static const struct rcar_du_device_info rcar_du_r8a7794_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+-	.num_crtcs = 2,
++	.channels_mask = BIT(1) | BIT(0),
+ 	.routes = {
+ 		/*
+ 		 * R8A7794 has two RGB outputs and one (currently unsupported)
+@@ -191,7 +191,7 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+-	.num_crtcs = 4,
++	.channels_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
+ 	.routes = {
+ 		/*
+ 		 * R8A7795 has one RGB output, two HDMI outputs and one
+@@ -215,7 +215,7 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+ 		},
+ 	},
+ 	.num_lvds = 1,
+-	.dpll_ch =  BIT(1) | BIT(2),
++	.dpll_ch =  BIT(2) | BIT(1),
+ };
  
- 	return 0;
-diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
-index 7d25fa338ab4..a0276a3376d2 100644
---- a/drivers/input/keyboard/spear-keyboard.c
-+++ b/drivers/input/keyboard/spear-keyboard.c
-@@ -288,8 +288,7 @@ static int spear_kbd_remove(struct platform_device *pdev)
+ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
+@@ -223,7 +223,7 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+-	.num_crtcs = 3,
++	.channels_mask = BIT(2) | BIT(1) | BIT(0),
+ 	.routes = {
+ 		/*
+ 		 * R8A7796 has one RGB output, one LVDS output and one HDMI
+@@ -251,7 +251,7 @@ static const struct rcar_du_device_info rcar_du_r8a77970_info = {
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_VSP1_SOURCE,
+-	.num_crtcs = 1,
++	.channels_mask = BIT(0),
+ 	.routes = {
+ 		/* R8A77970 has one RGB output and one LVDS output. */
+ 		[RCAR_DU_OUTPUT_DPAD0] = {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+index 5c7ec15818c7..5385bb5f6d00 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+@@ -52,7 +52,7 @@ struct rcar_du_output_routing {
+  * @gen: device generation (2 or 3)
+  * @features: device features (RCAR_DU_FEATURE_*)
+  * @quirks: device quirks (RCAR_DU_QUIRK_*)
+- * @num_crtcs: total number of CRTCs
++ * @channels_mask: bit mask of available DU channels
+  * @routes: array of CRTC to output routes, indexed by output (RCAR_DU_OUTPUT_*)
+  * @num_lvds: number of internal LVDS encoders
+  */
+@@ -60,7 +60,7 @@ struct rcar_du_device_info {
+ 	unsigned int gen;
+ 	unsigned int features;
+ 	unsigned int quirks;
+-	unsigned int num_crtcs;
++	unsigned int channels_mask;
+ 	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
+ 	unsigned int num_lvds;
+ 	unsigned int dpll_ch;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 0c8b7e5686bb..b5e331cb0d1c 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -520,6 +520,8 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 	struct drm_fbdev_cma *fbdev;
+ 	unsigned int num_encoders;
+ 	unsigned int num_groups;
++	unsigned int swindex;
++	unsigned int hwindex;
+ 	unsigned int i;
+ 	int ret;
  
- static int __maybe_unused spear_kbd_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spear_kbd *kbd = platform_get_drvdata(pdev);
-+	struct spear_kbd *kbd = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = kbd->input;
- 	unsigned int rate = 0, mode_ctl_reg, val;
+@@ -532,7 +534,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 	dev->mode_config.funcs = &rcar_du_mode_config_funcs;
+ 	dev->mode_config.helper_private = &rcar_du_mode_config_helper;
  
-@@ -300,7 +299,7 @@ static int __maybe_unused spear_kbd_suspend(struct device *dev)
+-	rcdu->num_crtcs = rcdu->info->num_crtcs;
++	rcdu->num_crtcs = hweight8(rcdu->info->channels_mask);
  
- 	mode_ctl_reg = readl_relaxed(kbd->io_base + MODE_CTL_REG);
+ 	ret = rcar_du_properties_init(rcdu);
+ 	if (ret < 0)
+@@ -542,7 +544,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 	 * Initialize vertical blanking interrupts handling. Start with vblank
+ 	 * disabled for all CRTCs.
+ 	 */
+-	ret = drm_vblank_init(dev, (1 << rcdu->info->num_crtcs) - 1);
++	ret = drm_vblank_init(dev, (1 << rcdu->num_crtcs) - 1);
+ 	if (ret < 0)
+ 		return ret;
  
--	if (device_may_wakeup(&pdev->dev)) {
-+	if (device_may_wakeup(dev)) {
- 		if (!enable_irq_wake(kbd->irq))
- 			kbd->irq_wake_enabled = true;
+@@ -584,10 +586,16 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 	}
  
-@@ -341,13 +340,12 @@ static int __maybe_unused spear_kbd_suspend(struct device *dev)
+ 	/* Create the CRTCs. */
+-	for (i = 0; i < rcdu->num_crtcs; ++i) {
+-		struct rcar_du_group *rgrp = &rcdu->groups[i / 2];
++	for (swindex = 0, hwindex = 0; swindex < rcdu->num_crtcs; ++hwindex) {
++		struct rcar_du_group *rgrp;
++
++		/* Skip unpopulated DU channels. */
++		if (!(rcdu->info->channels_mask & BIT(hwindex)))
++			continue;
++
++		rgrp = &rcdu->groups[hwindex / 2];
  
- static int __maybe_unused spear_kbd_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spear_kbd *kbd = platform_get_drvdata(pdev);
-+	struct spear_kbd *kbd = dev_get_drvdata(dev);
- 	struct input_dev *input_dev = kbd->input;
- 
- 	mutex_lock(&input_dev->mutex);
- 
--	if (device_may_wakeup(&pdev->dev)) {
-+	if (device_may_wakeup(dev)) {
- 		if (kbd->irq_wake_enabled) {
- 			kbd->irq_wake_enabled = false;
- 			disable_irq_wake(kbd->irq);
-diff --git a/drivers/input/keyboard/st-keyscan.c b/drivers/input/keyboard/st-keyscan.c
-index babcfb165e4f..3b4727e4b411 100644
---- a/drivers/input/keyboard/st-keyscan.c
-+++ b/drivers/input/keyboard/st-keyscan.c
-@@ -218,8 +218,7 @@ static int keyscan_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int keyscan_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct st_keyscan *keypad = platform_get_drvdata(pdev);
-+	struct st_keyscan *keypad = dev_get_drvdata(dev);
- 	struct input_dev *input = keypad->input_dev;
- 
- 	mutex_lock(&input->mutex);
-@@ -235,8 +234,7 @@ static int keyscan_suspend(struct device *dev)
- 
- static int keyscan_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct st_keyscan *keypad = platform_get_drvdata(pdev);
-+	struct st_keyscan *keypad = dev_get_drvdata(dev);
- 	struct input_dev *input = keypad->input_dev;
- 	int retval = 0;
- 
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index 875205f445b5..861bfcbd817d 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -744,11 +744,10 @@ static void tegra_kbc_set_keypress_interrupt(struct tegra_kbc *kbc, bool enable)
- 
- static int tegra_kbc_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
-+	struct tegra_kbc *kbc = dev_get_drvdata(dev);
- 
- 	mutex_lock(&kbc->idev->mutex);
--	if (device_may_wakeup(&pdev->dev)) {
-+	if (device_may_wakeup(dev)) {
- 		disable_irq(kbc->irq);
- 		del_timer_sync(&kbc->timer);
- 		tegra_kbc_set_fifo_interrupt(kbc, false);
-@@ -781,12 +780,11 @@ static int tegra_kbc_suspend(struct device *dev)
- 
- static int tegra_kbc_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
-+	struct tegra_kbc *kbc = dev_get_drvdata(dev);
- 	int err = 0;
- 
- 	mutex_lock(&kbc->idev->mutex);
--	if (device_may_wakeup(&pdev->dev)) {
-+	if (device_may_wakeup(dev)) {
- 		disable_irq_wake(kbc->irq);
- 		tegra_kbc_setup_wakekeys(kbc, false);
- 		/* We will use fifo interrupts for key detection. */
+-		ret = rcar_du_crtc_create(rgrp, i);
++		ret = rcar_du_crtc_create(rgrp, swindex++, hwindex);
+ 		if (ret < 0)
+ 			return ret;
+ 	}
 -- 
-2.11.0
+2.17.0
