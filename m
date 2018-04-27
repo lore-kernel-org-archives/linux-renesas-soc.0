@@ -1,44 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:10043 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752309AbeDKJgM (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38256 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759331AbeD0WWD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:36:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/3] dt-bindings: arm: Document R-Car E3 SoC DT bindings
-Date: Wed, 11 Apr 2018 18:35:51 +0900
-Message-Id: <1523439353-980-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523439353-980-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523439353-980-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 27 Apr 2018 18:22:03 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        geert@glider.be
+Subject: [PATCH v3 4/5] drm: rcar-du: Allow DU groups to work with hardware indexing
+Date: Fri, 27 Apr 2018 23:21:53 +0100
+Message-Id: <20180427222154.21664-5-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds device tree bindings documentation for Renesas R-Car
-E3 (r8a77990).
+The group objects assume linear indexing, and more so always assume that
+channel 0 of any active group is used.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Now that the CRTC objects support non-linear indexing, adapt the groups
+to remove assumptions that channel 0 is utilised in each group by using
+the channel mask provided in the device structures.
+
+Finally ensure that the RGB routing is determined from the index of the
+CRTC object (which represents the hardware DU channel index).
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+v2:
+ - channel_mask -> channels_mask
+---
+ drivers/gpu/drm/rcar-du/rcar_du_group.c | 14 +++++++++-----
+ drivers/gpu/drm/rcar-du/rcar_du_group.h |  2 ++
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c   |  5 ++++-
+ 3 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 4401369..5d21d48 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -47,6 +47,8 @@ SoCs:
-     compatible = "renesas,r8a77970"
-   - R-Car V3H (R8A77980)
-     compatible = "renesas,r8a77980"
-+  - R-Car E3 (R8A77990)
-+    compatible = "renesas,r8a77990"
-   - R-Car D3 (R8A77995)
-     compatible = "renesas,r8a77995"
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+index eead202c95c7..d539cb290a35 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+@@ -46,9 +46,12 @@ void rcar_du_group_write(struct rcar_du_group *rgrp, u32 reg, u32 data)
  
+ static void rcar_du_group_setup_pins(struct rcar_du_group *rgrp)
+ {
+-	u32 defr6 = DEFR6_CODE | DEFR6_ODPM02_DISP;
++	u32 defr6 = DEFR6_CODE;
+ 
+-	if (rgrp->num_crtcs > 1)
++	if (rgrp->channels_mask & BIT(0))
++		defr6 |= DEFR6_ODPM02_DISP;
++
++	if (rgrp->channels_mask & BIT(1))
+ 		defr6 |= DEFR6_ODPM12_DISP;
+ 
+ 	rcar_du_group_write(rgrp, DEFR6, defr6);
+@@ -80,10 +83,11 @@ static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
+ 		 * On Gen3 VSPD routing can't be configured, but DPAD routing
+ 		 * needs to be set despite having a single option available.
+ 		 */
+-		u32 crtc = ffs(possible_crtcs) - 1;
++		unsigned int rgb_crtc = ffs(possible_crtcs) - 1;
++		struct rcar_du_crtc *crtc = &rcdu->crtcs[rgb_crtc];
+ 
+-		if (crtc / 2 == rgrp->index)
+-			defr8 |= DEFR8_DRGBS_DU(crtc);
++		if (crtc->index / 2 == rgrp->index)
++			defr8 |= DEFR8_DRGBS_DU(crtc->index);
+ 	}
+ 
+ 	rcar_du_group_write(rgrp, DEFR8, defr8);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.h b/drivers/gpu/drm/rcar-du/rcar_du_group.h
+index 5e3adc6b31b5..42105aedecc8 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.h
+@@ -25,6 +25,7 @@ struct rcar_du_device;
+  * @dev: the DU device
+  * @mmio_offset: registers offset in the device memory map
+  * @index: group index
++ * @channels_mask: bitmask of populated DU channels in this group
+  * @num_crtcs: number of CRTCs in this group (1 or 2)
+  * @use_count: number of users of the group (rcar_du_group_(get|put))
+  * @used_crtcs: number of CRTCs currently in use
+@@ -39,6 +40,7 @@ struct rcar_du_group {
+ 	unsigned int mmio_offset;
+ 	unsigned int index;
+ 
++	unsigned int channels_mask;
+ 	unsigned int num_crtcs;
+ 	unsigned int use_count;
+ 	unsigned int used_crtcs;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index b5e331cb0d1c..34f1c27e9cf9 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -559,7 +559,10 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 		rgrp->dev = rcdu;
+ 		rgrp->mmio_offset = mmio_offsets[i];
+ 		rgrp->index = i;
+-		rgrp->num_crtcs = min(rcdu->num_crtcs - 2 * i, 2U);
++		/* Extract the channel mask for this group only. */
++		rgrp->channels_mask = (rcdu->info->channels_mask >> (2 * i))
++				   & GENMASK(1, 0);
++		rgrp->num_crtcs = hweight8(rgrp->channels_mask);
+ 
+ 		/*
+ 		 * If we have more than one CRTCs in this group pre-associate
 -- 
-1.9.1
+2.17.0
