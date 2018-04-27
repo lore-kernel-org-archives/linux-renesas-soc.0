@@ -1,21 +1,24 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38256 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53190 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753569AbeD0WWB (ORCPT
+        with ESMTP id S1758554AbeD0Q53 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 18:22:01 -0400
+        Fri, 27 Apr 2018 12:57:29 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        geert@glider.be
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH v3 2/5] pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and functions
-Date: Fri, 27 Apr 2018 23:21:51 +0100
-Message-Id: <20180427222154.21664-3-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
+        dri-devel@lists.freedesktop.org
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 02/11] pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and functions
+Date: Fri, 27 Apr 2018 17:57:13 +0100
+Message-Id: <20180427165722.19445-3-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -37,7 +40,7 @@ Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
  1 file changed, 116 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index cea9d0599c12..b52327dae8a2 100644
+index 3771b2d10f39..f5a37d3ea753 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
 @@ -1662,6 +1662,102 @@ static const unsigned int avb_avtp_capture_b_mux[] = {
@@ -143,7 +146,7 @@ index cea9d0599c12..b52327dae8a2 100644
  /* - INTC-EX ---------------------------------------------------------------- */
  static const unsigned int intc_ex_irq0_pins[] = {
  	/* IRQ0 */
-@@ -1959,6 +2055,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+@@ -2756,6 +2852,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
  	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
  	SH_PFC_PIN_GROUP(avb_avtp_match_b),
  	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
@@ -158,7 +161,7 @@ index cea9d0599c12..b52327dae8a2 100644
  	SH_PFC_PIN_GROUP(intc_ex_irq0),
  	SH_PFC_PIN_GROUP(intc_ex_irq1),
  	SH_PFC_PIN_GROUP(intc_ex_irq2),
-@@ -2013,6 +2117,17 @@ static const char * const avb_groups[] = {
+@@ -2922,6 +3026,17 @@ static const char * const avb_groups[] = {
  	"avb_avtp_capture_b",
  };
  
@@ -176,13 +179,13 @@ index cea9d0599c12..b52327dae8a2 100644
  static const char * const intc_ex_groups[] = {
  	"intc_ex_irq0",
  	"intc_ex_irq1",
-@@ -2085,6 +2200,7 @@ static const char * const usb30_groups[] = {
+@@ -3139,6 +3254,7 @@ static const char * const usb30_groups[] = {
  
  static const struct sh_pfc_function pinmux_functions[] = {
  	SH_PFC_FUNCTION(avb),
 +	SH_PFC_FUNCTION(du),
  	SH_PFC_FUNCTION(intc_ex),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(msiof0),
+ 	SH_PFC_FUNCTION(msiof1),
 -- 
 2.17.0
