@@ -1,93 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:58903 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751305AbeDRJm7 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:63797 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1757312AbeD0Ge4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 05:42:59 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: ysato@users.sourceforge.jp, dalias@libc.org,
-        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        sergei.shtylyov@cogentembedded.com,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] sh: mm: Fix unprotected access to struct device
-Date: Wed, 18 Apr 2018 11:42:35 +0200
-Message-Id: <1524044555-20610-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 27 Apr 2018 02:34:56 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/3] arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 channel 3
+Date: Fri, 27 Apr 2018 15:34:29 +0900
+Message-Id: <1524810872-8442-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
-operations observe dev->dma_pfn_offset") the generic DMA allocation
-function on which the SH 'dma_alloc_coherent()' function relies on,
-accesses the 'dma_pfn_offset' field of struct device.
+This patch set is based on the renesas-devel-20180426-v4.17-rc2 tag
+of renesas.git.
 
-Unfortunately the 'dma_generic_alloc_coherent()' function is called from
-several places with a NULL struct device argument, halting the CPU
-during the boot process.
+Yoshihiro Shimoda (3):
+  arm64: dts: renesas: r8a7795: salvator-xs: enable usb2_phy3 node
+  arm64: dts: renesas: r8a7795: salvator-xs: enable hsusb channel 3 node
+  arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 host channel
+    3
 
-This patch fixes the issue by protecting access to dev->dma_pfn_offset,
-with a trivial check for validity. It also passes a valid 'struct device'
-in the 'platform_resource_setup_memory()' function which is the main user
-of 'dma_alloc_coherent()', and inserts a WARN_ON() check to remind to future
-(and existing) bogus users of this function to provide a valid 'struct device'
-whenever possible.
+ .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 39 ++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-Fixes: ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset")
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-
----
-v2 -> v3:
-- remove (now) useless parenthesis around pfn assignement as suggested
-  by Sergei
-- Add changelog to the patch, which I forgot in v2
-
-v1 -> v2:
-- Move WARN_ON() closer to dev validity check as suggested by Geert
-
----
- arch/sh/mm/consistent.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
-index 8ce9869..f1b4469 100644
---- a/arch/sh/mm/consistent.c
-+++ b/arch/sh/mm/consistent.c
-@@ -59,7 +59,9 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
-
- 	split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
-
--	*dma_handle = virt_to_phys(ret) - PFN_PHYS(dev->dma_pfn_offset);
-+	*dma_handle = virt_to_phys(ret);
-+	if (!WARN_ON(!dev))
-+		*dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
-
- 	return ret_nocache;
- }
-@@ -69,9 +71,12 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
- 			       unsigned long attrs)
- {
- 	int order = get_order(size);
--	unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
-+	unsigned long pfn = dma_handle >> PAGE_SHIFT;
- 	int k;
-
-+	if (!WARN_ON(!dev))
-+		pfn += dev->dma_pfn_offset;
-+
- 	for (k = 0; k < (1 << order); k++)
- 		__free_pages(pfn_to_page(pfn + k), 0);
-
-@@ -143,7 +148,7 @@ int __init platform_resource_setup_memory(struct platform_device *pdev,
- 	if (!memsize)
- 		return 0;
-
--	buf = dma_alloc_coherent(NULL, memsize, &dma_handle, GFP_KERNEL);
-+	buf = dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
- 	if (!buf) {
- 		pr_warning("%s: unable to allocate memory\n", name);
- 		return -ENOMEM;
---
-2.7.4
+-- 
+1.9.1
