@@ -1,20 +1,25 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37996 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759215AbeD0WCb (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 18:02:31 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v3 3/6] arm64: dts: r8a77965: Populate the DU instance placeholder
-Date: Fri, 27 Apr 2018 23:02:17 +0100
-Message-Id: <20180427220220.31286-4-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180427220220.31286-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427220220.31286-1-kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 08/11] arm64: dts: r8a77965: Populate the DU instance placeholder
+Date: Fri, 27 Apr 2018 17:57:19 +0100
+Message-Id: <20180427165722.19445-9-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The DU entity node has been previously added but only as a placeholder.
@@ -59,3 +64,4 @@ index 362eddc6b3d1..a35ea2f32da2 100644
  				#address-cells = <1>;
 -- 
 2.17.0
+
