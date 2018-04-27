@@ -1,11 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:45142 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751291AbeD0L3f (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:36328 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751557AbeD0LTN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:29:35 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Fri, 27 Apr 2018 07:19:13 -0400
+Received: by mail-lf0-f46.google.com with SMTP id w8-v6so2159128lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Apr 2018 04:19:12 -0700 (PDT)
+Subject: Re: [PATCH 0/2] Add R8A77970/Eagle CAN-FD support
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -13,32 +15,33 @@ To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC: Magnus Damm <magnus.damm@gmail.com>,
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 0/2] Add R8A77970/Eagle CAN-FD support
-Date: Fri, 27 Apr 2018 11:29:29 +0000
-Message-ID: <TY2PR01MB1962B04B7DEBB17DCD77B3C0C38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
 References: <4e5216bc-5f1b-ace4-1aea-02269cd206ac@cogentembedded.com>
  <TY2PR01MB19620E4689C0B881B540E4D4C38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
- <894de81f-024c-7b1c-7aca-bc7b3b193173@cogentembedded.com>
-In-Reply-To: <894de81f-024c-7b1c-7aca-bc7b3b193173@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <894de81f-024c-7b1c-7aca-bc7b3b193173@cogentembedded.com>
+Date: Fri, 27 Apr 2018 14:19:09 +0300
 MIME-Version: 1.0
+In-Reply-To: <TY2PR01MB19620E4689C0B881B540E4D4C38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gU2VyZ2VpLA0KDQpUaGFua3MuIEkgZGlkIHNlYXJjaCBteSBEVCBmb2xkZXIgYmVmb3Jl
-IHJlc3BvbnNlIGJ1dCBpdCBpcyBxdWV1ZWQgdW5kZXIgZGlmZmVyZW50IGZvbGRlciDimLkNClNv
-cnJ5IGZvciB0aGUgbm9pc2UuDQoNClRoYW5rcywNClJhbWVzaA0KDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggMC8yXSBBZGQgUjhBNzc5NzAvRWFnbGUgQ0FOLUZEIHN1cHBvcnQNCj4gDQo+IEhlbGxv
-IQ0KPiANCj4gT24gMDQvMjcvMjAxOCAxMjo0NiBQTSwgUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0g
-d3JvdGU6DQo+IA0KPiA+IFRoYW5rIHlvdSBmb3IgeW91ciBwYXRjaC4NCj4gPiBDb3VsZCB5b3Ug
-YWxzbyB1cGRhdGUgdGhlIGR0IGJpbmRpbmdzIHBsZWFzZT8gQSBzZXBhcmF0ZSBwYXRjaCBvciBw
-YXJ0DQo+IG9mIHRoaXMgc2VyaWVzLg0KPiANCj4gICAgSSdkIHBvc3RlZCBpdCBqdXN0IGJlZm9y
-ZSB0aGVzZSBwYXRjaGVzLCBzZWU6DQo+IA0KPiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3Jn
-L3BhdGNoLzEwMzY2NzI3Lw0KPiANCj4gTUJSLCBTZXJnZWkNCg==
+Hello!
+
+On 04/27/2018 12:46 PM, Ramesh Shanmugasundaram wrote:
+
+> Thank you for your patch. 
+> Could you also update the dt bindings please? A separate patch or part of this series.
+
+   I'd posted it just before these patches, see:
+
+https://patchwork.kernel.org/patch/10366727/
+
+MBR, Sergei
