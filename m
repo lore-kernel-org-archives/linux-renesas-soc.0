@@ -1,106 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:42592 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753383AbeDQNAC (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:45142 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751291AbeD0L3f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Apr 2018 09:00:02 -0400
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1f8QDI-0008Dx-T4
-        for linux-renesas-soc@vger.kernel.org; Tue, 17 Apr 2018 15:00:00 +0200
-Received: from geert by ramsan with local (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1f8QDI-0007Uh-R7
-        for linux-renesas-soc@vger.kernel.org; Tue, 17 Apr 2018 15:00:00 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2018-04-17-v4.17-rc1
-Date: Tue, 17 Apr 2018 15:00:00 +0200
-Message-Id: <1523970000-28768-1-git-send-email-geert+renesas@glider.be>
+        Fri, 27 Apr 2018 07:29:35 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH 0/2] Add R8A77970/Eagle CAN-FD support
+Date: Fri, 27 Apr 2018 11:29:29 +0000
+Message-ID: <TY2PR01MB1962B04B7DEBB17DCD77B3C0C38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
+References: <4e5216bc-5f1b-ace4-1aea-02269cd206ac@cogentembedded.com>
+ <TY2PR01MB19620E4689C0B881B540E4D4C38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
+ <894de81f-024c-7b1c-7aca-bc7b3b193173@cogentembedded.com>
+In-Reply-To: <894de81f-024c-7b1c-7aca-bc7b3b193173@cogentembedded.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2018-04-17-v4.17-rc1 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
-
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
-
-Today's version is based on renesas-devel-20180416-v4.17-rc1.
-
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/rcar-gen2-wdt-v6
-  - topic/bd9571-ddr-backup-mode-driver-v2
-  - topic/bd9571-ddr-backup-mode-dt-v2
-  - topic/r8a77990-soc-v1
-  - topic/r8a77990-clk-v1
-  - topic/r8a77990-dts-v1
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
-  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
-  - git://linuxtv.org/pinchartl/media.git#tags/vsp1-discom-v1-20171215
-  - git://linuxtv.org/pinchartl/media.git#tags/drm-next-colorkey-v1-20171215
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/tlb-optimise/v7
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#d3/i2c-conflict/drm
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/du/interlaced/v2
-
-Included fixes:
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+SGVsbG8gU2VyZ2VpLA0KDQpUaGFua3MuIEkgZGlkIHNlYXJjaCBteSBEVCBmb2xkZXIgYmVmb3Jl
+IHJlc3BvbnNlIGJ1dCBpdCBpcyBxdWV1ZWQgdW5kZXIgZGlmZmVyZW50IGZvbGRlciDimLkNClNv
+cnJ5IGZvciB0aGUgbm9pc2UuDQoNClRoYW5rcywNClJhbWVzaA0KDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0ggMC8yXSBBZGQgUjhBNzc5NzAvRWFnbGUgQ0FOLUZEIHN1cHBvcnQNCj4gDQo+IEhlbGxv
+IQ0KPiANCj4gT24gMDQvMjcvMjAxOCAxMjo0NiBQTSwgUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0g
+d3JvdGU6DQo+IA0KPiA+IFRoYW5rIHlvdSBmb3IgeW91ciBwYXRjaC4NCj4gPiBDb3VsZCB5b3Ug
+YWxzbyB1cGRhdGUgdGhlIGR0IGJpbmRpbmdzIHBsZWFzZT8gQSBzZXBhcmF0ZSBwYXRjaCBvciBw
+YXJ0DQo+IG9mIHRoaXMgc2VyaWVzLg0KPiANCj4gICAgSSdkIHBvc3RlZCBpdCBqdXN0IGJlZm9y
+ZSB0aGVzZSBwYXRjaGVzLCBzZWU6DQo+IA0KPiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3Jn
+L3BhdGNoLzEwMzY2NzI3Lw0KPiANCj4gTUJSLCBTZXJnZWkNCg==
