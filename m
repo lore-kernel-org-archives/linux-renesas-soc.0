@@ -1,59 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:37790 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751830AbeDRSVH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Apr 2018 14:21:07 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 0/5] mmc: renesas_sdhi_internal_dmac: DMA handling fixes
-Date: Wed, 18 Apr 2018 20:20:56 +0200
-Message-Id: <20180418182101.5723-1-wsa+renesas@sang-engineering.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 27 Apr 2018 10:26:14 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 08/11] ARM: sun9i: smp: Add is_a83t field
+Message-ID: <20180427102614.1558a1ae@dell-desktop.home>
+In-Reply-To: <20180423081423.h7b35sobagypokpe@flea>
+References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+        <20180420211022.11759-9-mylene.josserand@bootlin.com>
+        <20180423081423.h7b35sobagypokpe@flea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have collected the patches floating around for renesas_sdhi_internal_dmac and
-grouped them to avoid dependency issues.
+Hello,
 
-Regarding stable: I think patch 1 is clearly for stable. Patch 3 maybe, but it
-needs patch 2 which is not. Not sure if it is worth the hazzle. Patches 4 & 5
-are not for stable.
+On Mon, 23 Apr 2018 10:14:23 +0200
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-Changes since v2:
-	* fixed checkpatch issues (Thanks Sergei!)
-	* rebased to mmc/next
+> On Fri, Apr 20, 2018 at 11:10:19PM +0200, Mylène Josserand wrote:
+> > To prepare the support of sun8i-a83t, add a field in the smp_data
+> > structure to know if we are on sun9i-a80 or sun8i-a83t.
+> > 
+> > Add also a global variable to retrieve which architecture we are
+> > having.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > ---
+> >  arch/arm/mach-sunxi/mc_smp.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+> > index 03f021d0c73e..48e5f4db64b6 100644
+> > --- a/arch/arm/mach-sunxi/mc_smp.c
+> > +++ b/arch/arm/mach-sunxi/mc_smp.c
+> > @@ -74,6 +74,7 @@ static void __iomem *sram_b_smp_base;
+> >  
+> >  extern void sunxi_mc_smp_secondary_startup(void);
+> >  extern void sunxi_mc_smp_resume(void);
+> > +static int is_a83t;
+> >  
+> >  static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
+> >  {
+> > @@ -624,6 +625,7 @@ struct sunxi_mc_smp_nodes {
+> >  struct sunxi_mc_smp_data {
+> >  	const char *enable_method;
+> >  	int (*get_smp_nodes)(struct sunxi_mc_smp_nodes *nodes);
+> > +	int is_a83t;  
+> 
+> This can be made a boolean.
+> 
+> Maxime
+> 
 
-Changes since v1:
-	* patch 1: drop superfluous NULL check on soc->date
-		   (Thanks Geert!)
-	* patches 2,3,5: added Simon's tag
+ACK. It will be fixed in next version.
 
-Kind regards,
-
-   Wolfram
-
-
-Masaharu Hayakawa (1):
-  mmc: renesas_sdhi: Fix alignment check of sg buffer
-
-Niklas Söderlund (1):
-  mmc: renesas_sdhi: use helpers to access struct scatterlist members
-
-Wolfram Sang (3):
-  mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs
-  mmc: renesas_sdhi_internal_dmac: use more generic whitelisting
-  mmc: renesas_sdhi_internal_dmac: remove superfluous WARN
-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 64 +++++++++++++++++++--------
- 1 file changed, 45 insertions(+), 19 deletions(-)
+Best regards,
 
 -- 
-2.11.0
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
