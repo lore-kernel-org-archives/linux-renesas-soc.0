@@ -1,97 +1,94 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60296 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759077AbeD0UZP (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 16:25:15 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 2/2] tests: Add a legacy mode set test
-Date: Fri, 27 Apr 2018 23:25:24 +0300
-Message-Id: <20180427202524.14225-2-laurent.pinchart@ideasonboard.com>
-In-Reply-To: <20180427202524.14225-1-laurent.pinchart@ideasonboard.com>
-References: <20180427202524.14225-1-laurent.pinchart@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH 15/17] arm64: dts: r8a77965-salvator-x: Enable HDMI output
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180426165346.494-16-kieran.bingham+renesas@ideasonboard.com>
+ <2345148.J1marZVneP@avalon>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <5af7b6a6-8a40-880d-3346-8c90bd700957@ideasonboard.com>
+Date: Fri, 27 Apr 2018 17:22:06 +0100
+MIME-Version: 1.0
+In-Reply-To: <2345148.J1marZVneP@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Perform mode sets through the legacy API to test the DRM core legacy
-code paths, as well as the rcar-du code paths that could be exercised
-differently by the atomic legacy mode set helpers.
+Hi Laurent,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- tests/kms-test-legacy-modeset.py | 60 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100755 tests/kms-test-legacy-modeset.py
+On 26/04/18 22:21, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Thursday, 26 April 2018 19:53:44 EEST Kieran Bingham wrote:
+>> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>>
+>> Enable the HDMI encoder for the M3N Salvator-X board and hook it up to
+>> the HDMI connector.
+>>
+>> Based on a similar patches of the the Salvator-X board
+>> on the R8A7796 SoC device tree
+>> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/tests/kms-test-legacy-modeset.py b/tests/kms-test-legacy-modeset.py
-new file mode 100755
-index 000000000000..eac365f44b64
---- /dev/null
-+++ b/tests/kms-test-legacy-modeset.py
-@@ -0,0 +1,60 @@
-+#!/usr/bin/python3
-+
-+import kmstest
-+import pykms
-+
-+class LegacyModeSetTest(kmstest.KMSTest):
-+    """Test mode setting on all connectors in sequence with the default mode through the legacy mode set API."""
-+
-+    def handle_page_flip(self, frame, time):
-+        self.logger.log("Page flip complete")
-+
-+    def main(self):
-+        for connector in self.card.connectors:
-+            self.start("legacy mode set on connector %s" % connector.fullname)
-+
-+            # Skip disconnected connectors
-+            if not connector.connected():
-+                self.skip("unconnected connector")
-+                continue
-+
-+            # Find a CRTC suitable for the connector
-+            crtc = connector.get_current_crtc()
-+            if not crtc:
-+                crtcs = connector.get_possible_crtcs()
-+                if len(crtcs) == 0:
-+                    pass
-+
-+                crtc = crtcs[0]
-+
-+            # Get the default mode for the connector
-+            try:
-+                mode = connector.get_default_mode()
-+            except ValueError:
-+                self.skip("no mode available")
-+                continue
-+
-+            self.logger.log("Testing connector %s on CRTC %u with mode %s" % \
-+                  (connector.fullname, crtc.id, mode.name))
-+
-+            # Create a frame buffer
-+            fb = pykms.DumbFramebuffer(self.card, mode.hdisplay, mode.vdisplay, "XR24")
-+            pykms.draw_test_pattern(fb)
-+
-+            # Perform a mode set
-+            ret = crtc.set_mode(connector, fb, mode)
-+            if ret < 0:
-+                self.fail("legacy mode set failed with %d" % ret)
-+                continue
-+
-+            self.logger.log("Legacy mode set complete")
-+            self.run(5)
-+
-+            ret = crtc.disable_mode()
-+            if ret < 0:
-+                self.fail("legacy mode set disable failed with %d" % ret)
-+                continue
-+
-+            self.success()
-+
-+LegacyModeSetTest().execute()
--- 
-Regards,
+Thanks, collected.
 
-Laurent Pinchart
+> 
+> How about adding the VGA output too ? I think you can add both VGA and HDMI in 
+> a single patch that enables display in one go for the board. Same comment for 
+> the Salvator-XS.
+
+I believe the VGA output is handled by the salvator-common.dtsi, and thus
+doesn't need to be included in this patch.
+
+> 
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> ---
+>>  .../boot/dts/renesas/r8a77965-salvator-x.dts    | 17 +++++++++++++++++
+>>  1 file changed, 17 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+>> b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts index
+>> a2b8fb20fef8..11e8d43e9e11 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+>> +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+>> @@ -31,3 +31,20 @@
+>>  	clock-names = "du.0", "du.1", "du.3", "lvds.0",
+>>  		      "dclkin.0", "dclkin.1", "dclkin.3";
+>>  };
+>> +
+>> +&hdmi0 {
+>> +	status = "okay";
+>> +
+>> +	ports {
+>> +		port@1 {
+>> +			reg = <1>;
+>> +			rcar_dw_hdmi0_out: endpoint {
+>> +				remote-endpoint = <&hdmi0_con>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&hdmi0_con {
+>> +	remote-endpoint = <&rcar_dw_hdmi0_out>;
+>> +};
+> 
