@@ -1,31 +1,67 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  0/2] Add EtherAVB support
-Date: Tue, 24 Apr 2018 16:37:31 +0100
-Message-Id: <1524584253-52936-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37348 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932373AbeD0VRf (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 27 Apr 2018 17:17:35 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 01/11] dt-bindings: display: renesas: Add R-Car M3-N HDMI TX DT bindings
+Date: Sat, 28 Apr 2018 00:17:48 +0300
+Message-ID: <6846570.vn03TlgmMA@avalon>
+In-Reply-To: <20180427165722.19445-2-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com> <20180427165722.19445-2-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series add EtherAVB support to r8a77470 SoC dtsi and 
-iwg23s-sbc board.
+Hi Kieran,
 
-Biju Das (2):
-  ARM: dts: r8a77470: Add EtherAVB support
-  ARM: dts: iwg23s-sbc: Add EtherAVB support
+Thank you for the patch.
 
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 15 ++++++++++++++-
- arch/arm/boot/dts/r8a77470.dtsi           | 13 +++++++++++++
- 2 files changed, 27 insertions(+), 1 deletion(-)
+On Friday, 27 April 2018 19:57:12 EEST Kieran Bingham wrote:
+> The M3-N HDMI TX controller is compatible with the M3-W and H3. No
+> extension to the DT bindings are needed.
+> 
+> Add an SoC-specific compatible string in case differences between the IP
+> versions are found later and require model-specific handling.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and applied to my tree.
+
+> ---
+>  .../devicetree/bindings/display/bridge/renesas,dw-hdmi.txt       | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+> b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+> index 3a72a103a18a..a41d280c3f9f 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+> @@ -14,6 +14,7 @@ Required properties:
+>  - compatible : Shall contain one or more of
+>    - "renesas,r8a7795-hdmi" for R8A7795 (R-Car H3) compatible HDMI TX
+>    - "renesas,r8a7796-hdmi" for R8A7796 (R-Car M3-W) compatible HDMI TX
+> +  - "renesas,r8a77965-hdmi" for R8A77965 (R-Car M3-N) compatible HDMI TX
+>    - "renesas,rcar-gen3-hdmi" for the generic R-Car Gen3 compatible HDMI TX
+> 
+>      When compatible with generic versions, nodes must list the SoC-specific
+
 
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
