@@ -1,88 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:34854 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754865AbeDZL1M (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37996 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759341AbeD0WCc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Apr 2018 07:27:12 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v2 3/6] usb: common: roles: add a new API to find the graph
-Date: Thu, 26 Apr 2018 20:26:43 +0900
-Message-Id: <1524742006-17984-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 27 Apr 2018 18:02:32 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 5/6] arm64: dts: r8a77965-salvator-x: Enable DU external clocks and HDMI
+Date: Fri, 27 Apr 2018 23:02:19 +0100
+Message-Id: <20180427220220.31286-6-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180427220220.31286-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427220220.31286-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a new API "usb_role_switch_get_by_graph()" to find
-device connection by using graph.
+The DU1 external dot clock is provided by the fixed frequency clock
+generator X21, while the DU0 and DU3 clocks are provided by the
+programmable Versaclock5 clock generator.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Enable the clocks, and the HDMI encoder for the M3-N Salvator-X board
+and hook it up to the HDMI connector.
+
+Based on patches from Takeshi Kihara <takeshi.kihara.df@renesas.com>
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/usb/common/roles.c | 30 ++++++++++++++++++++++++++++++
- include/linux/usb/role.h   |  2 ++
- 2 files changed, 32 insertions(+)
+v2:
+ - Remove LVDS clocks from DU node
+ - Merge DU Clocks and HDMI enablement
+---
+ .../boot/dts/renesas/r8a77965-salvator-x.dts  | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/usb/common/roles.c b/drivers/usb/common/roles.c
-index 15cc76e..9fa26c1 100644
---- a/drivers/usb/common/roles.c
-+++ b/drivers/usb/common/roles.c
-@@ -114,6 +114,36 @@ struct usb_role_switch *usb_role_switch_get(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(usb_role_switch_get);
- 
-+static int by_graph_match(struct device *dev, void *parent)
-+{
-+	return dev->parent == parent;
-+}
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+index 75d890d91df9..340a3c72b65a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+@@ -19,3 +19,31 @@
+ 		reg = <0x0 0x48000000 0x0 0x78000000>;
+ 	};
+ };
 +
-+/**
-+ * usb_role_switch_get_by_graph - Find USB role switch linked with the caller
-+ * @dev: The caller device
-+ * @port: identifier of the @dev port node
-+ * @endpoint: identifier of the @dev endpoint node
-+ *
-+ * Finds and returns role switch linked with @dev, port and endpoint.
-+ * The reference count for the found switch is incremented.
-+ */
-+struct usb_role_switch *usb_role_switch_get_by_graph(struct device *dev,
-+						     u32 port, u32 endpoint)
-+{
-+	struct device *conn;
-+	struct device *sw;
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 721>,
++		 <&versaclock5 1>,
++		 <&x21_clk>,
++		 <&versaclock5 2>;
++	clock-names = "du.0", "du.1", "du.3",
++		      "dclkin.0", "dclkin.1", "dclkin.3";
++};
 +
-+	conn = device_connection_find_by_graph(dev, port, endpoint);
-+	if (IS_ERR_OR_NULL(conn))
-+		return ERR_PTR(-EPROBE_DEFER);
++&hdmi0 {
++	status = "okay";
 +
-+	sw = device_find_child(conn, conn, by_graph_match);
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
 +
-+	return !IS_ERR(sw) ? to_role_switch(sw) : ERR_PTR(-EPROBE_DEFER);
-+}
-+EXPORT_SYMBOL_GPL(usb_role_switch_get_by_graph);
-+
- /**
-  * usb_role_switch_put - Release handle to a switch
-  * @sw: USB Role Switch
-diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
-index edc51be..6573fdd 100644
---- a/include/linux/usb/role.h
-+++ b/include/linux/usb/role.h
-@@ -43,6 +43,8 @@ struct usb_role_switch_desc {
- int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
- enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
- struct usb_role_switch *usb_role_switch_get(struct device *dev);
-+struct usb_role_switch *usb_role_switch_get_by_graph(struct device *dev,
-+						     u32 port, u32 endpoint);
- void usb_role_switch_put(struct usb_role_switch *sw);
- 
- struct usb_role_switch *
++&hdmi0_con {
++	remote-endpoint = <&rcar_dw_hdmi0_out>;
++};
 -- 
-1.9.1
+2.17.0
