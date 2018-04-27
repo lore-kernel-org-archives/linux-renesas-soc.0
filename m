@@ -1,20 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38256 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53190 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759331AbeD0WWD (ORCPT
+        with ESMTP id S1758866AbeD0Q5c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 18:22:03 -0400
+        Fri, 27 Apr 2018 12:57:32 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        geert@glider.be
-Subject: [PATCH v3 4/5] drm: rcar-du: Allow DU groups to work with hardware indexing
-Date: Fri, 27 Apr 2018 23:21:53 +0100
-Message-Id: <20180427222154.21664-5-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
+        dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 04/11] drm: rcar-du: Allow DU groups to work with hardware indexing
+Date: Fri, 27 Apr 2018 17:57:15 +0100
+Message-Id: <20180427165722.19445-5-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -95,10 +96,10 @@ index 5e3adc6b31b5..42105aedecc8 100644
  	unsigned int use_count;
  	unsigned int used_crtcs;
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index b5e331cb0d1c..34f1c27e9cf9 100644
+index dae47c856400..28f0173e1c2d 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -559,7 +559,10 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+@@ -598,7 +598,10 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
  		rgrp->dev = rcdu;
  		rgrp->mmio_offset = mmio_offsets[i];
  		rgrp->index = i;
