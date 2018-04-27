@@ -1,70 +1,37 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH  2/2] ARM: dts: iwg23s-sbc: Add EtherAVB support
-Date: Tue, 24 Apr 2018 16:37:33 +0100
-Message-Id: <1524584253-52936-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1524584253-52936-1-git-send-email-biju.das@bp.renesas.com>
-References: <1524584253-52936-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:46946 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758062AbeD0TK7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:10:59 -0400
+Received: by mail-lf0-f51.google.com with SMTP id v85-v6so4113088lfa.13
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 Apr 2018 12:10:58 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/2] Add R8A77980/Condor CAN-FD support
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <c184f961-2f98-532f-ed02-6f3751256d9c@cogentembedded.com>
+Date: Fri, 27 Apr 2018 22:10:55 +0300
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the iW-RainboW-G23S board dependent part of the
-EtherAVB device node.
+Hello!
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
-* currently u-boot sets the AVB pin configuration.
+Here's the set of 2 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20180426-v4.17-rc2' tag. We're adding the R8A77980 CAN-FD
+device node and then enable single channel CAN-FD support on the Condor board.
 
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+[1/2] arm64: dts: renesas: r8a77980: add CAN-FD support
+[2/2] arm64: dts: renesas: condor: add CAN-FD support
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index d21baad..e3585da 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -12,11 +12,12 @@
- 	compatible = "iwave,g23s", "renesas,r8a77470";
- 
- 	aliases {
-+		ethernet0 = &avb;
- 		serial1 = &scif1;
- 	};
- 
- 	chosen {
--		bootargs = "ignore_loglevel";
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
- 		stdout-path = "serial1:115200n8";
- 	};
- 
-@@ -26,6 +27,18 @@
- 	};
- };
- 
-+&avb {
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy@3 {
-+		reg = <3>;
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <20000000>;
- };
--- 
-2.7.4
-
+WBR, Sergei
