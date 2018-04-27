@@ -1,47 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from cloudserver094114.home.pl ([79.96.170.134]:64281 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754401AbeDWJS0 (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:42303 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758944AbeD0UGA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Apr 2018 05:18:26 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH/RFC 1/2] PM / wakeup: Add callback for wake-up change notification
-Date: Mon, 23 Apr 2018 11:18:17 +0200
-Message-ID: <1792056.cK5O20Fh4U@aspire.rjw.lan>
-In-Reply-To: <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
-References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be> <1521026785-26456-2-git-send-email-geert+renesas@glider.be>
+        Fri, 27 Apr 2018 16:06:00 -0400
+Date: Fri, 27 Apr 2018 15:05:59 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: gregkh@linuxfoundation.org, mark.rutland@arm.com,
+        heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH/RFC v2 1/6] dt-bindings: usb: add Renesas R-Car USB 3.0
+ role switch
+Message-ID: <20180427200559.5kxgetsjzpjlrm2m@rob-hp-laptop>
+References: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524742006-17984-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524742006-17984-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-First, sorry for the huge delay.
-
-On Wednesday, March 14, 2018 12:26:24 PM CEST Geert Uytterhoeven wrote:
-> Add a callback to inform a device that his wake-up setting has been
-> changed.  This allows a device to synchronize device configuration with
-> an external user action.
+On Thu, Apr 26, 2018 at 08:26:41PM +0900, Yoshihiro Shimoda wrote:
+> This patch adds a new documentation for Renesas R-Car USB 3.0 role
+> switch that can change the USB 3.0 role to either host or peripheral
+> by a hardware register that is included in USB3.0 peripheral module.
 > 
-> E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
-> switch, the system suspend procedure is:
->   1. Configure PMIC for DDR backup mode, which changes the role of the
->      accessory power switch from a power to a wake-up switch,
->   2. Switch accessory power switch off, to prepare for system suspend,
->   3. Suspend system.
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  .../bindings/usb/renesas,rcar-usb3-role-sw.txt     | 47 ++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt
 > 
-> Hence step 1 cannot be done in the PMIC's suspend callback,
+> diff --git a/Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt b/Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt
+> new file mode 100644
+> index 0000000..e074c03
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/renesas,rcar-usb3-role-sw.txt
+> @@ -0,0 +1,47 @@
+> +Renesas Electronics R-Car USB 3.0 role switch
+> +
+> +A renesas_usb3's node can contain this node.
+> +
+> +Required properties:
+> + - compatible: Must contain "renesas,rcar-usb3-role-switch".
+> +
+> +Required nodes:
+> + - The connection to a usb3.0 host node needs by using OF graph bindings.
+> +  - port@0 = USB 3.0 host port
+> +  - port@1 = USB 3.0 peripheral port
+> +
+> +Example of R-Car H3 ES2.0:
+> +	usb3_peri0: usb@ee020000 {
+> +		compatible = "renesas,r8a7795-usb3-peri",
+> +			     "renesas,rcar-gen3-usb3-peri";
+> +		reg = <0 0xee020000 0 0x400>;
+> +		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&cpg CPG_MOD 328>;
+> +		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> +		resets = <&cpg 328>;
+> +
+> +		usb3-role-sw {
+> +			compatible = "renesas,rcar-usb3-role-switch";
 
-I don't quite understand this, so can you please explain?
+You don't define any h/w resources. How is this device accessed?
 
-What can't it be done from ->prepare() or even from a suspend notifier?
 
-> but it can be done in the new callback, in response to the user writing "enabled"
-> to the PMIC's wakeup virtual file in sysfs.
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					usb3_host_sw: endpoint {
+> +						remote-endpoint = <&usb3_host_ep>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					usb3_peri_sw: endpoint {
+> +						remote-endpoint = <&usb3_peri_ep>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> -- 
+> 1.9.1
+> 
