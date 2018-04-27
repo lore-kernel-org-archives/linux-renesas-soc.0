@@ -1,265 +1,227 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:47102 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751606AbeDDQQv (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56190 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752553AbeD0LWb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Apr 2018 12:16:51 -0400
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH 11/15] v4l: vsp1: Add per-display list completion
- notification support
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20180226214516.11559-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180226214516.11559-12-laurent.pinchart+renesas@ideasonboard.com>
-Message-ID: <cebc5274-09f7-b352-122d-debee39218fd@ideasonboard.com>
-Date: Wed, 4 Apr 2018 17:16:46 +0100
-MIME-Version: 1.0
-In-Reply-To: <20180226214516.11559-12-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        Fri, 27 Apr 2018 07:22:31 -0400
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com
+Subject: [PATCH 1/3] video: fbdev: sh_mobile_lcdcfb: remove unused MERAM
+ support
+Date: Fri, 27 Apr 2018 13:21:43 +0200
+Message-id: <1524828105-26585-2-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
+References: <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
+        <CGME20180427112227epcas2p4ea3a93a5680d69a62f12cac627ebafbc@epcas2p4.samsung.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Since commit a521422ea4ae  ("ARM: shmobile: mackerel: Remove Legacy C
+board code") MERAM functionality is unused. Remove it.
 
-On 26/02/18 21:45, Laurent Pinchart wrote:
-> Display list completion is already reported to the frame end handler,
-> but that mechanism is global to all display lists. In order to implement
-> BRU and BRS reassignment in DRM pipelines we will need to wait for
-> completion of a particular display list. Extend the display list and
-> frame end handler APIs to support such a notification.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  drivers/media/platform/vsp1/vsp1_dl.c    | 27 +++++++++++++++++++++++++--
->  drivers/media/platform/vsp1/vsp1_dl.h    |  4 ++--
->  drivers/media/platform/vsp1/vsp1_drm.c   |  4 ++--
->  drivers/media/platform/vsp1/vsp1_pipe.c  |  5 +++--
->  drivers/media/platform/vsp1/vsp1_pipe.h  |  3 ++-
->  drivers/media/platform/vsp1/vsp1_video.c |  4 ++--
->  6 files changed, 36 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-> index 0b86ed01e85d..eb2971218e28 100644
-> --- a/drivers/media/platform/vsp1/vsp1_dl.c
-> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-> @@ -72,6 +72,7 @@ struct vsp1_dl_body {
->   * @fragments: list of extra display list bodies
->   * @has_chain: if true, indicates that there's a partition chain
->   * @chain: entry in the display list partition chain
-> + * @notify: whether the display list completion should be notified
->   */
->  struct vsp1_dl_list {
->  	struct list_head list;
-> @@ -85,6 +86,8 @@ struct vsp1_dl_list {
->  
->  	bool has_chain;
->  	struct list_head chain;
-> +
-> +	bool notify;
->  };
->  
->  enum vsp1_dl_mode {
-> @@ -550,8 +553,16 @@ static void vsp1_dl_list_commit_continuous(struct vsp1_dl_list *dl)
->  	 * case we can't replace the queued list by the new one, as we could
->  	 * race with the hardware. We thus mark the update as pending, it will
->  	 * be queued up to the hardware by the frame end interrupt handler.
-> +	 *
-> +	 * If a display list is already pending we simply drop it as the new
-> +	 * display list is assumed to contain a more recent configuration. It is
-> +	 * an error if the already pending list has the notify flag set, as
-> +	 * there is then a process waiting for that list to complete. This
-> +	 * shouldn't happen as the waiting process should perform proper
-> +	 * locking, but warn just in case.
->  	 */
->  	if (vsp1_dl_list_hw_update_pending(dlm)) {
-> +		WARN_ON(dlm->pending && dlm->pending->notify);
->  		__vsp1_dl_list_put(dlm->pending);
->  		dlm->pending = dl;
->  		return;
-> @@ -581,7 +592,7 @@ static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
->  	dlm->active = dl;
->  }
->  
-> -void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
-> +void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool notify)
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/video/fbdev/Kconfig            |  1 -
+ drivers/video/fbdev/sh_mobile_lcdcfb.c | 63 +---------------------------------
+ drivers/video/fbdev/sh_mobile_lcdcfb.h |  1 -
+ include/video/sh_mobile_lcdc.h         |  3 --
+ 4 files changed, 1 insertion(+), 67 deletions(-)
 
-Rather than changing the vsp1_dl_list_commit() function - would it be nicer to
-have an API to request or set the notify property? :
-
-@@..@@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
-...
-+	/* The BRx will be released, without sending an update to DRM */
-+	if (drm_pipe->force_bru_release)
-+		vsp1_dl_list_request_internal_notify(dl);
-
-	vsp1_dl_list_commit(dl);
-...
-
-
->  {
->  	struct vsp1_dl_manager *dlm = dl->dlm;
->  	struct vsp1_dl_list *dl_child;
-> @@ -598,6 +609,8 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
->  		}
->  	}
->  
-> +	dl->notify = notify;
-> +
->  	spin_lock_irqsave(&dlm->lock, flags);
->  
->  	if (dlm->singleshot)
-> @@ -615,16 +628,23 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
->  /**
->   * vsp1_dlm_irq_frame_end - Display list handler for the frame end interrupt
->   * @dlm: the display list manager
-> + * @notify: whether the display list that completed has notification enabled
->   *
->   * Return true if the previous display list has completed at frame end, or false
->   * if it has been delayed by one frame because the display list commit raced
->   * with the frame end interrupt. The function always returns true in header mode
->   * as display list processing is then not continuous and races never occur.
-> + *
-> + * Upon return, the @notify parameter is set to true if the previous display
-> + * list has completed and had been queued with the notify flag, or to false
-> + * otherwise. Notification is only supported for continuous mode.
->   */
-> -bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
-> +bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm, bool *notify)
->  {
->  	bool completed = false;
->  
-> +	*notify = false;
-> +
->  	spin_lock(&dlm->lock);
->  
->  	/*
-> @@ -652,6 +672,9 @@ bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
->  	 * frame end interrupt. The display list thus becomes active.
->  	 */
->  	if (dlm->queued) {
-> +		*notify = dlm->queued->notify;
-> +		dlm->queued->notify = false;
-> +
->  		__vsp1_dl_list_put(dlm->active);
->  		dlm->active = dlm->queued;
->  		dlm->queued = NULL;
-> diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-> index ee3508172f0a..480c6b0dd2e4 100644
-> --- a/drivers/media/platform/vsp1/vsp1_dl.h
-> +++ b/drivers/media/platform/vsp1/vsp1_dl.h
-> @@ -27,12 +27,12 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
->  					unsigned int prealloc);
->  void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm);
->  void vsp1_dlm_reset(struct vsp1_dl_manager *dlm);
-> -bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
-> +bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm, bool *notify);
->  
->  struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
->  void vsp1_dl_list_put(struct vsp1_dl_list *dl);
->  void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data);
-> -void vsp1_dl_list_commit(struct vsp1_dl_list *dl);
-> +void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool notify);
->  
->  struct vsp1_dl_body *vsp1_dl_fragment_alloc(struct vsp1_device *vsp1,
->  					    unsigned int num_entries);
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-> index 1c8adda47440..d705a6e9fa1d 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -34,7 +34,7 @@
->   */
->  
->  static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
-> -				       bool completed)
-> +				       bool completed, bool notify)
->  {
->  	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
->  
-> @@ -370,7 +370,7 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
->  		}
->  	}
->  
-> -	vsp1_dl_list_commit(dl);
-> +	vsp1_dl_list_commit(dl, false);
->  }
->  
->  /* -----------------------------------------------------------------------------
-> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-> index 99ccbac3256a..4d819c9019f4 100644
-> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
-> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-> @@ -316,6 +316,7 @@ bool vsp1_pipeline_ready(struct vsp1_pipeline *pipe)
->  void vsp1_pipeline_frame_end(struct vsp1_pipeline *pipe)
->  {
->  	bool completed;
-> +	bool notify;
->  
->  	if (pipe == NULL)
->  		return;
-> @@ -325,7 +326,7 @@ void vsp1_pipeline_frame_end(struct vsp1_pipeline *pipe)
->  	 * up being postponed by one frame. @completed represents whether the
->  	 * active frame was finished or postponed.
->  	 */
-> -	completed = vsp1_dlm_irq_frame_end(pipe->output->dlm);
-> +	completed = vsp1_dlm_irq_frame_end(pipe->output->dlm, &notify);
->  
-
-Eugh ... two return values, one passed back through the return, and the other
-passed as a pointer.
-
-What about converting this to some flags which get passed into the
-pipe->frame_end() instead?
-
->  	if (pipe->hgo)
->  		vsp1_hgo_frame_end(pipe->hgo);
-> @@ -338,7 +339,7 @@ void vsp1_pipeline_frame_end(struct vsp1_pipeline *pipe)
->  	 * frame_end to account for vblank events.
->  	 */
->  	if (pipe->frame_end)
-> -		pipe->frame_end(pipe, completed);
-> +		pipe->frame_end(pipe, completed, notify);
->  
->  	pipe->sequence++;
->  }
-> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-> index dfff9b5685fe..482711024fa2 100644
-> --- a/drivers/media/platform/vsp1/vsp1_pipe.h
-> +++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-> @@ -118,7 +118,8 @@ struct vsp1_pipeline {
->  	enum vsp1_pipeline_state state;
->  	wait_queue_head_t wq;
->  
-> -	void (*frame_end)(struct vsp1_pipeline *pipe, bool completed);
-> +	void (*frame_end)(struct vsp1_pipeline *pipe, bool completed,
-> +			  bool notify);
->  
->  	struct mutex lock;
->  	struct kref kref;
-> diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-> index cdd53d6cc408..483b4259e1b4 100644
-> --- a/drivers/media/platform/vsp1/vsp1_video.c
-> +++ b/drivers/media/platform/vsp1/vsp1_video.c
-> @@ -437,14 +437,14 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
->  	}
->  
->  	/* Complete, and commit the head display list. */
-> -	vsp1_dl_list_commit(pipe->dl);
-> +	vsp1_dl_list_commit(pipe->dl, false);
->  	pipe->dl = NULL;
->  
->  	vsp1_pipeline_run(pipe);
->  }
->  
->  static void vsp1_video_pipeline_frame_end(struct vsp1_pipeline *pipe,
-> -					  bool completed)
-> +					  bool completed, bool notify)
->  {
->  	struct vsp1_device *vsp1 = pipe->output->entity.vsp1;
->  	enum vsp1_pipeline_state state;
-> 
-
---
-Kieran
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 434e95b..1e0b9515 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -1888,7 +1888,6 @@ config FB_W100
+ config FB_SH_MOBILE_LCDC
+ 	tristate "SuperH Mobile LCDC framebuffer support"
+ 	depends on FB && (SUPERH || ARCH_RENESAS) && HAVE_CLK
+-	depends on FB_SH_MOBILE_MERAM || !FB_SH_MOBILE_MERAM
+ 	select FB_SYS_FILLRECT
+ 	select FB_SYS_COPYAREA
+ 	select FB_SYS_IMAGEBLIT
+diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+index 929b1c5..dc46be3 100644
+--- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
++++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+@@ -29,7 +29,6 @@
+ #include <linux/vmalloc.h>
+ 
+ #include <video/sh_mobile_lcdc.h>
+-#include <video/sh_mobile_meram.h>
+ 
+ #include "sh_mobile_lcdcfb.h"
+ 
+@@ -217,7 +216,6 @@ struct sh_mobile_lcdc_priv {
+ 	struct notifier_block notifier;
+ 	int started;
+ 	int forced_fourcc; /* 2 channel LCDC must share fourcc setting */
+-	struct sh_mobile_meram_info *meram_dev;
+ };
+ 
+ /* -----------------------------------------------------------------------------
+@@ -346,16 +344,12 @@ static void sh_mobile_lcdc_clk_on(struct sh_mobile_lcdc_priv *priv)
+ 		if (priv->dot_clk)
+ 			clk_prepare_enable(priv->dot_clk);
+ 		pm_runtime_get_sync(priv->dev);
+-		if (priv->meram_dev && priv->meram_dev->pdev)
+-			pm_runtime_get_sync(&priv->meram_dev->pdev->dev);
+ 	}
+ }
+ 
+ static void sh_mobile_lcdc_clk_off(struct sh_mobile_lcdc_priv *priv)
+ {
+ 	if (atomic_sub_return(1, &priv->hw_usecnt) == -1) {
+-		if (priv->meram_dev && priv->meram_dev->pdev)
+-			pm_runtime_put_sync(&priv->meram_dev->pdev->dev);
+ 		pm_runtime_put(priv->dev);
+ 		if (priv->dot_clk)
+ 			clk_disable_unprepare(priv->dot_clk);
+@@ -1073,7 +1067,6 @@ static void __sh_mobile_lcdc_start(struct sh_mobile_lcdc_priv *priv)
+ 
+ static int sh_mobile_lcdc_start(struct sh_mobile_lcdc_priv *priv)
+ {
+-	struct sh_mobile_meram_info *mdev = priv->meram_dev;
+ 	struct sh_mobile_lcdc_chan *ch;
+ 	unsigned long tmp;
+ 	int ret;
+@@ -1106,9 +1099,6 @@ static int sh_mobile_lcdc_start(struct sh_mobile_lcdc_priv *priv)
+ 
+ 	/* Compute frame buffer base address and pitch for each channel. */
+ 	for (k = 0; k < ARRAY_SIZE(priv->ch); k++) {
+-		int pixelformat;
+-		void *cache;
+-
+ 		ch = &priv->ch[k];
+ 		if (!ch->enabled)
+ 			continue;
+@@ -1117,45 +1107,6 @@ static int sh_mobile_lcdc_start(struct sh_mobile_lcdc_priv *priv)
+ 		ch->base_addr_c = ch->dma_handle
+ 				+ ch->xres_virtual * ch->yres_virtual;
+ 		ch->line_size = ch->pitch;
+-
+-		/* Enable MERAM if possible. */
+-		if (mdev == NULL || ch->cfg->meram_cfg == NULL)
+-			continue;
+-
+-		/* Free the allocated MERAM cache. */
+-		if (ch->cache) {
+-			sh_mobile_meram_cache_free(mdev, ch->cache);
+-			ch->cache = NULL;
+-		}
+-
+-		switch (ch->format->fourcc) {
+-		case V4L2_PIX_FMT_NV12:
+-		case V4L2_PIX_FMT_NV21:
+-		case V4L2_PIX_FMT_NV16:
+-		case V4L2_PIX_FMT_NV61:
+-			pixelformat = SH_MOBILE_MERAM_PF_NV;
+-			break;
+-		case V4L2_PIX_FMT_NV24:
+-		case V4L2_PIX_FMT_NV42:
+-			pixelformat = SH_MOBILE_MERAM_PF_NV24;
+-			break;
+-		case V4L2_PIX_FMT_RGB565:
+-		case V4L2_PIX_FMT_BGR24:
+-		case V4L2_PIX_FMT_BGR32:
+-		default:
+-			pixelformat = SH_MOBILE_MERAM_PF_RGB;
+-			break;
+-		}
+-
+-		cache = sh_mobile_meram_cache_alloc(mdev, ch->cfg->meram_cfg,
+-					ch->pitch, ch->yres, pixelformat,
+-					&ch->line_size);
+-		if (!IS_ERR(cache)) {
+-			sh_mobile_meram_cache_update(mdev, cache,
+-					ch->base_addr_y, ch->base_addr_c,
+-					&ch->base_addr_y, &ch->base_addr_c);
+-			ch->cache = cache;
+-		}
+ 	}
+ 
+ 	for (k = 0; k < ARRAY_SIZE(priv->overlays); ++k) {
+@@ -1223,13 +1174,6 @@ static void sh_mobile_lcdc_stop(struct sh_mobile_lcdc_priv *priv)
+ 		}
+ 
+ 		sh_mobile_lcdc_display_off(ch);
+-
+-		/* Free the MERAM cache. */
+-		if (ch->cache) {
+-			sh_mobile_meram_cache_free(priv->meram_dev, ch->cache);
+-			ch->cache = NULL;
+-		}
+-
+ 	}
+ 
+ 	/* stop the lcdc */
+@@ -1851,11 +1795,6 @@ static int sh_mobile_lcdc_pan(struct fb_var_screeninfo *var,
+ 	base_addr_c = ch->dma_handle + ch->xres_virtual * ch->yres_virtual
+ 		    + c_offset;
+ 
+-	if (ch->cache)
+-		sh_mobile_meram_cache_update(priv->meram_dev, ch->cache,
+-					     base_addr_y, base_addr_c,
+-					     &base_addr_y, &base_addr_c);
+-
+ 	ch->base_addr_y = base_addr_y;
+ 	ch->base_addr_c = base_addr_c;
+ 	ch->pan_y_offset = y_offset;
+@@ -2718,7 +2657,7 @@ static int sh_mobile_lcdc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	priv->dev = &pdev->dev;
+-	priv->meram_dev = pdata->meram_dev;
++
+ 	for (i = 0; i < ARRAY_SIZE(priv->ch); i++)
+ 		mutex_init(&priv->ch[i].open_lock);
+ 	platform_set_drvdata(pdev, priv);
+diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.h b/drivers/video/fbdev/sh_mobile_lcdcfb.h
+index cc52c74..b8e47a8 100644
+--- a/drivers/video/fbdev/sh_mobile_lcdcfb.h
++++ b/drivers/video/fbdev/sh_mobile_lcdcfb.h
+@@ -61,7 +61,6 @@ struct sh_mobile_lcdc_chan {
+ 	unsigned long *reg_offs;
+ 	unsigned long ldmt1r_value;
+ 	unsigned long enabled; /* ME and SE in LDCNT2R */
+-	void *cache;
+ 
+ 	struct mutex open_lock;		/* protects the use counter */
+ 	int use_count;
+diff --git a/include/video/sh_mobile_lcdc.h b/include/video/sh_mobile_lcdc.h
+index f706b0fe..84aa976 100644
+--- a/include/video/sh_mobile_lcdc.h
++++ b/include/video/sh_mobile_lcdc.h
+@@ -3,7 +3,6 @@
+ #define __ASM_SH_MOBILE_LCDC_H__
+ 
+ #include <linux/fb.h>
+-#include <video/sh_mobile_meram.h>
+ 
+ /* Register definitions */
+ #define _LDDCKR			0x410
+@@ -184,7 +183,6 @@ struct sh_mobile_lcdc_chan_cfg {
+ 	struct sh_mobile_lcdc_panel_cfg panel_cfg;
+ 	struct sh_mobile_lcdc_bl_info bl_info;
+ 	struct sh_mobile_lcdc_sys_bus_cfg sys_bus_cfg; /* only for SYSn I/F */
+-	const struct sh_mobile_meram_cfg *meram_cfg;
+ 
+ 	struct platform_device *tx_dev;	/* HDMI/DSI transmitter device */
+ };
+@@ -193,7 +191,6 @@ struct sh_mobile_lcdc_info {
+ 	int clock_source;
+ 	struct sh_mobile_lcdc_chan_cfg ch[2];
+ 	struct sh_mobile_lcdc_overlay_cfg overlays[4];
+-	struct sh_mobile_meram_info *meram_dev;
+ };
+ 
+ #endif /* __ASM_SH_MOBILE_LCDC_H__ */
+-- 
+1.9.1
