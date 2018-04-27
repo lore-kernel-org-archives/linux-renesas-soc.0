@@ -1,42 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42154 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751759AbeD3HbE (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37996 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759215AbeD0WCb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Apr 2018 03:31:04 -0400
-Date: Mon, 30 Apr 2018 09:30:59 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 08/11] arm64: dts: r8a77965: Populate the DU instance
- placeholder
-Message-ID: <20180430073059.o6vrdljslhvnp762@verge.net.au>
-References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
- <20180427165722.19445-9-kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180427165722.19445-9-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 27 Apr 2018 18:02:31 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 3/6] arm64: dts: r8a77965: Populate the DU instance placeholder
+Date: Fri, 27 Apr 2018 23:02:17 +0100
+Message-Id: <20180427220220.31286-4-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180427220220.31286-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427220220.31286-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 05:57:19PM +0100, Kieran Bingham wrote:
-> The DU entity node has been previously added but only as a placeholder.
-> Populate the node with the properties to use the device.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+The DU entity node has been previously added but only as a placeholder.
+Populate the node with the properties to use the device.
 
-Thanks, applied.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+---
+v2:
+ - Remove LVDS references from DU
+---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 362eddc6b3d1..a35ea2f32da2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -1106,9 +1106,19 @@
+ 		};
+ 
+ 		du: display@feb00000 {
+-			reg = <0 0xfeb00000 0 0x80000>,
+-			      <0 0xfeb90000 0 0x14>;
+-			/* placeholder */
++			compatible = "renesas,du-r8a77965";
++			reg = <0 0xfeb00000 0 0x80000>;
++			reg-names = "du";
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>,
++				 <&cpg CPG_MOD 723>,
++				 <&cpg CPG_MOD 721>;
++			clock-names = "du.0", "du.1", "du.3";
++			status = "disabled";
++
++			vsps = <&vspd0 0 &vspd1 0 &vspd0 1>;
+ 
+ 			ports {
+ 				#address-cells = <1>;
+-- 
+2.17.0
