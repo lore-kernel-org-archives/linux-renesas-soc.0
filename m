@@ -1,34 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:34255 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751027AbeDYIUe (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:34490 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759697AbeD1JgL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Apr 2018 04:20:34 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
+        Sat, 28 Apr 2018 05:36:11 -0400
+Received: by mail-lf0-f50.google.com with SMTP id h4-v6so6029250lfc.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Apr 2018 02:36:11 -0700 (PDT)
+Subject: Re: [PATCH] v4l: vsp1: Fix vsp1_regs.h license header
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] arm64: dts: renesas: r8a77990: Revise some nodes
-Date: Wed, 25 Apr 2018 17:20:08 +0900
-Message-Id: <1524644410-12465-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.yj@renesas.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20180427214647.892-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <5a84b774-581c-77fe-085b-7e4d841daa97@cogentembedded.com>
+Date: Sat, 28 Apr 2018 12:36:09 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180427214647.892-1-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the renesas-devel-20180424-v4.17-rc2 tag
-of renesas.git.
+Hello!
 
-This patch set is from https://patchwork.kernel.org/patch/10352549/.
-About scif node, I'll submit such a revising patch later (maybe at adding
-other scif nodes timing).
+On 4/28/2018 12:46 AM, Laurent Pinchart wrote:
 
-Yoshihiro Shimoda (2):
-  arm64: dts: renesas: r8a77990: Revise the cache controller node
-  arm64: dts: renesas: r8a77990: Revise the psci node
+> All source files of the vsp1 driver are licensed under the GPLv2+ except
+> for vsp1_regs.h which is licensed under GPLv2. This is caused by a bad
+> copy&paste that dates back from the initial version of the driver. Fix
+> it.
+> 
+> Cc: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.yj@renesas.com>
+> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Cc: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+[...]
 
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Acked-by: Sergei Shtylyov<sergei.shtylyov@cogentembedded.com>
 
--- 
-1.9.1
+MBR, Sergei
