@@ -1,36 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:34490 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759697AbeD1JgL (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:46451 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759647AbeD1Jbi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 28 Apr 2018 05:36:11 -0400
-Received: by mail-lf0-f50.google.com with SMTP id h4-v6so6029250lfc.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Apr 2018 02:36:11 -0700 (PDT)
-Subject: Re: [PATCH] v4l: vsp1: Fix vsp1_regs.h license header
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
+        Sat, 28 Apr 2018 05:31:38 -0400
+Received: by mail-lf0-f67.google.com with SMTP id v85-v6so5960567lfa.13
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 28 Apr 2018 02:31:38 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Sat, 28 Apr 2018 11:31:34 +0200
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Nobuhiro Iwamatsu <nobuhiro.iwamatsu.yj@renesas.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH] v4l: vsp1: Fix vsp1_regs.h license header
+Message-ID: <20180428093134.GD14242@bigcity.dyn.berto.se>
 References: <20180427214647.892-1-laurent.pinchart+renesas@ideasonboard.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <5a84b774-581c-77fe-085b-7e4d841daa97@cogentembedded.com>
-Date: Sat, 28 Apr 2018 12:36:09 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180427214647.892-1-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180427214647.892-1-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+Hi Laurent,
 
-On 4/28/2018 12:46 AM, Laurent Pinchart wrote:
+Thanks for your patch.
 
+On 2018-04-28 00:46:47 +0300, Laurent Pinchart wrote:
 > All source files of the vsp1 driver are licensed under the GPLv2+ except
 > for vsp1_regs.h which is licensed under GPLv2. This is caused by a bad
 > copy&paste that dates back from the initial version of the driver. Fix
@@ -39,11 +38,12 @@ On 4/28/2018 12:46 AM, Laurent Pinchart wrote:
 > Cc: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.yj@renesas.com>
 > Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Cc: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Cc: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-[...]
 
-Acked-by: Sergei Shtylyov<sergei.shtylyov@cogentembedded.com>
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-MBR, Sergei
+-- 
+Regards,
+Niklas S�derlund
