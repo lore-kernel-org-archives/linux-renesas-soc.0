@@ -1,137 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53108 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753382AbeD1RWu (ORCPT
+Received: from relay11.mail.gandi.net ([217.70.178.231]:57287 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759736AbeD1J4J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 28 Apr 2018 13:22:50 -0400
+        Sat, 28 Apr 2018 05:56:09 -0400
+Date: Sat, 28 Apr 2018 11:56:04 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
 Subject: Re: [PATCH v2 3/8] v4l: vsp1: Reset the crop and compose rectangles
  in the set_fmt helper
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
+Message-ID: <20180428095604.GB18201@w540>
 References: <20180422223430.16407-1-laurent.pinchart+renesas@ideasonboard.com>
  <20180422223430.16407-4-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <def74407-03a7-338f-fcaa-d9b4b21ed4bb@ideasonboard.com>
-Date: Sat, 28 Apr 2018 18:22:46 +0100
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="QKdGvSO+nmPlgiQ/"
+Content-Disposition: inline
 In-Reply-To: <20180422223430.16407-4-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="l0ODmEAIcMb2594JNtll3DxFiTLD5VYSS"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---l0ODmEAIcMb2594JNtll3DxFiTLD5VYSS
-Content-Type: multipart/mixed; boundary="oASLy8PY4hnLiJiK3h6qiJZF3SYwVTZoI";
- protected-headers="v1"
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Message-ID: <def74407-03a7-338f-fcaa-d9b4b21ed4bb@ideasonboard.com>
-Subject: Re: [PATCH v2 3/8] v4l: vsp1: Reset the crop and compose rectangles
- in the set_fmt helper
-References: <20180422223430.16407-1-laurent.pinchart+renesas@ideasonboard.com>
- <20180422223430.16407-4-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20180422223430.16407-4-laurent.pinchart+renesas@ideasonboard.com>
 
---oASLy8PY4hnLiJiK3h6qiJZF3SYwVTZoI
+--QKdGvSO+nmPlgiQ/
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 Hi Laurent,
 
-On 22/04/18 23:34, Laurent Pinchart wrote:
+On Mon, Apr 23, 2018 at 01:34:25AM +0300, Laurent Pinchart wrote:
 > To make vsp1_subdev_set_pad_format() usable by entities that support
 > selection rectangles, we need to reset the crop and compose rectangles
 > when setting the format on the sink pad. Do so and replace the custom
 > set_fmt implementation of the histogram code by a call to
 > vsp1_subdev_set_pad_format().
->=20
+>
 > Resetting the crop and compose rectangles for entities that don't
 > support crop and compose has no adverse effect as the rectangles are
 > ignored anyway.
->=20
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.=
-com>
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-This one looks fairly straight forward.
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
 > ---
 >  drivers/media/platform/vsp1/vsp1_entity.c | 16 +++++++++
->  drivers/media/platform/vsp1/vsp1_histo.c  | 59 +++--------------------=
---------
+>  drivers/media/platform/vsp1/vsp1_histo.c  | 59 +++----------------------------
 >  2 files changed, 20 insertions(+), 55 deletions(-)
->=20
-> diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/=
-platform/vsp1/vsp1_entity.c
+>
+> diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
 > index 239df047efd0..181a583aecad 100644
 > --- a/drivers/media/platform/vsp1/vsp1_entity.c
 > +++ b/drivers/media/platform/vsp1/vsp1_entity.c
-> @@ -335,6 +335,7 @@ int vsp1_subdev_set_pad_format(struct v4l2_subdev *=
-subdev,
->  	struct vsp1_entity *entity =3D to_vsp1_entity(subdev);
+> @@ -335,6 +335,7 @@ int vsp1_subdev_set_pad_format(struct v4l2_subdev *subdev,
+>  	struct vsp1_entity *entity = to_vsp1_entity(subdev);
 >  	struct v4l2_subdev_pad_config *config;
 >  	struct v4l2_mbus_framefmt *format;
 > +	struct v4l2_rect *selection;
 >  	unsigned int i;
->  	int ret =3D 0;
-> =20
-> @@ -377,6 +378,21 @@ int vsp1_subdev_set_pad_format(struct v4l2_subdev =
-*subdev,
->  	format =3D vsp1_entity_get_pad_format(entity, config, 1);
->  	*format =3D fmt->format;
-> =20
+>  	int ret = 0;
+>
+> @@ -377,6 +378,21 @@ int vsp1_subdev_set_pad_format(struct v4l2_subdev *subdev,
+>  	format = vsp1_entity_get_pad_format(entity, config, 1);
+>  	*format = fmt->format;
+>
 > +	/* Reset the crop and compose rectangles */
-> +	selection =3D vsp1_entity_get_pad_selection(entity, config, fmt->pad,=
-
+> +	selection = vsp1_entity_get_pad_selection(entity, config, fmt->pad,
 > +						  V4L2_SEL_TGT_CROP);
-> +	selection->left =3D 0;
-> +	selection->top =3D 0;
-> +	selection->width =3D format->width;
-> +	selection->height =3D format->height;
+> +	selection->left = 0;
+> +	selection->top = 0;
+> +	selection->width = format->width;
+> +	selection->height = format->height;
 > +
-> +	selection =3D vsp1_entity_get_pad_selection(entity, config, fmt->pad,=
-
+> +	selection = vsp1_entity_get_pad_selection(entity, config, fmt->pad,
 > +						  V4L2_SEL_TGT_COMPOSE);
-> +	selection->left =3D 0;
-> +	selection->top =3D 0;
-> +	selection->width =3D format->width;
-> +	selection->height =3D format->height;
+> +	selection->left = 0;
+> +	selection->top = 0;
+> +	selection->width = format->width;
+> +	selection->height = format->height;
 > +
 >  done:
 >  	mutex_unlock(&entity->lock);
 >  	return ret;
-> diff --git a/drivers/media/platform/vsp1/vsp1_histo.c b/drivers/media/p=
-latform/vsp1/vsp1_histo.c
+> diff --git a/drivers/media/platform/vsp1/vsp1_histo.c b/drivers/media/platform/vsp1/vsp1_histo.c
 > index 029181c1fb61..5e15c8ff88d9 100644
 > --- a/drivers/media/platform/vsp1/vsp1_histo.c
 > +++ b/drivers/media/platform/vsp1/vsp1_histo.c
-> @@ -389,65 +389,14 @@ static int histo_set_format(struct v4l2_subdev *s=
-ubdev,
+> @@ -389,65 +389,14 @@ static int histo_set_format(struct v4l2_subdev *subdev,
 >  			    struct v4l2_subdev_format *fmt)
 >  {
->  	struct vsp1_histogram *histo =3D subdev_to_histo(subdev);
+>  	struct vsp1_histogram *histo = subdev_to_histo(subdev);
 > -	struct v4l2_subdev_pad_config *config;
 > -	struct v4l2_mbus_framefmt *format;
 > -	struct v4l2_rect *selection;
 > -	unsigned int i;
-> -	int ret =3D 0;
-> =20
->  	if (fmt->pad !=3D HISTO_PAD_SINK)
+> -	int ret = 0;
+>
+>  	if (fmt->pad != HISTO_PAD_SINK)
 >  		return histo_get_format(subdev, cfg, fmt);
-> =20
+>
 > -	mutex_lock(&histo->entity.lock);
 > -
-> -	config =3D vsp1_entity_get_pad_config(&histo->entity, cfg, fmt->which=
-);
+> -	config = vsp1_entity_get_pad_config(&histo->entity, cfg, fmt->which);
 > -	if (!config) {
-> -		ret =3D -EINVAL;
+> -		ret = -EINVAL;
 > -		goto done;
 > -	}
 > -
@@ -139,41 +114,40 @@ ubdev,
 > -	 * Default to the first format if the requested format is not
 > -	 * supported.
 > -	 */
-> -	for (i =3D 0; i < histo->num_formats; ++i) {
-> -		if (fmt->format.code =3D=3D histo->formats[i])
+> -	for (i = 0; i < histo->num_formats; ++i) {
+> -		if (fmt->format.code == histo->formats[i])
 > -			break;
 > -	}
-> -	if (i =3D=3D histo->num_formats)
-> -		fmt->format.code =3D histo->formats[0];
+> -	if (i == histo->num_formats)
+> -		fmt->format.code = histo->formats[0];
 > -
-> -	format =3D vsp1_entity_get_pad_format(&histo->entity, config, fmt->pa=
-d);
+> -	format = vsp1_entity_get_pad_format(&histo->entity, config, fmt->pad);
 > -
-> -	format->code =3D fmt->format.code;
-> -	format->width =3D clamp_t(unsigned int, fmt->format.width,
+> -	format->code = fmt->format.code;
+> -	format->width = clamp_t(unsigned int, fmt->format.width,
 > -				HISTO_MIN_SIZE, HISTO_MAX_SIZE);
-> -	format->height =3D clamp_t(unsigned int, fmt->format.height,
+> -	format->height = clamp_t(unsigned int, fmt->format.height,
 > -				 HISTO_MIN_SIZE, HISTO_MAX_SIZE);
-> -	format->field =3D V4L2_FIELD_NONE;
-> -	format->colorspace =3D V4L2_COLORSPACE_SRGB;
+> -	format->field = V4L2_FIELD_NONE;
+> -	format->colorspace = V4L2_COLORSPACE_SRGB;
 > -
-> -	fmt->format =3D *format;
+> -	fmt->format = *format;
 > -
 > -	/* Reset the crop and compose rectangles */
-> -	selection =3D vsp1_entity_get_pad_selection(&histo->entity, config,
+> -	selection = vsp1_entity_get_pad_selection(&histo->entity, config,
 > -						  fmt->pad, V4L2_SEL_TGT_CROP);
-> -	selection->left =3D 0;
-> -	selection->top =3D 0;
-> -	selection->width =3D format->width;
-> -	selection->height =3D format->height;
+> -	selection->left = 0;
+> -	selection->top = 0;
+> -	selection->width = format->width;
+> -	selection->height = format->height;
 > -
-> -	selection =3D vsp1_entity_get_pad_selection(&histo->entity, config,
+> -	selection = vsp1_entity_get_pad_selection(&histo->entity, config,
 > -						  fmt->pad,
 > -						  V4L2_SEL_TGT_COMPOSE);
-> -	selection->left =3D 0;
-> -	selection->top =3D 0;
-> -	selection->width =3D format->width;
-> -	selection->height =3D format->height;
+> -	selection->left = 0;
+> -	selection->top = 0;
+> -	selection->width = format->width;
+> -	selection->height = format->height;
 > -
 > -done:
 > -	mutex_unlock(&histo->entity.lock);
@@ -183,33 +157,33 @@ d);
 > +					  HISTO_MIN_SIZE, HISTO_MIN_SIZE,
 > +					  HISTO_MAX_SIZE, HISTO_MAX_SIZE);
 >  }
-> =20
->  static const struct v4l2_subdev_pad_ops histo_pad_ops =3D {
->=20
+>
+>  static const struct v4l2_subdev_pad_ops histo_pad_ops = {
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
 
-
---oASLy8PY4hnLiJiK3h6qiJZF3SYwVTZoI--
-
---l0ODmEAIcMb2594JNtll3DxFiTLD5VYSS
+--QKdGvSO+nmPlgiQ/
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAEBCgAdFiEEkC3XmD+9KP3jctR6oR5GchCkYf0FAlrkreYACgkQoR5GchCk
-Yf3wPw/9G4YvArDo/ob8aUMt9yGzjzqaGwQPzDX6xV21fJmv7TkNhq9ag+225ygY
-9kjrMMd0b6EDIYJjYAzIphqXGNq0I21Kew9dXP1h8zXCSp/FZYDVy0swbboZH17+
-WPcQvPUHJ0H+OZI75H1cL6s/G0ICU6KXIJCjv+VUF5wH36InJxAwNtnFrDCLRme2
-4bK/m+suhujfixoKrKygfoTy3FC65uN3S/5Dpcte93/eFV/x6hRGMVeX0wZLDvwq
-4+k2zvWEd+ZFRSgV0RzvL7XgKaZi1yemvudRd526F9/ZRhtr2qXev4YBgmzhYhgB
-YI8++zfFO5EdcYS9SJ5ntivtYuUt+TGotAI7nExLJYIjtx34L+rvmU5EJLVaEqxK
-Y2z8yerhPe2pE86QkVAe3XKXWiQki/8Pl2/M+M1MkQ1JpxgUGGYKwP74WHB3UVVY
-nkIPHhnucRKRou45B6vqCqOJihAdNuOXg3yx0u+Ze/Pn0h+nypq/Vcjo5RvyK4qC
-Vn4aV+tJLfIkjkSHXwmiO/bFI7cMjG8weBtQxxukSZU/DtAlcz//6LHPp1tOFnps
-UxavzkVKGi80hvohqkiB0oHCUCWuo9QVP0e/4DswtSx5JmL0AmN+7YHXFin2bSey
-GpyjswEJ5+znmGYTTZtsJNG/EM0LVIj6yROq/ZFzxz5+fgikMCk=
-=sr2Z
+iQIcBAEBAgAGBQJa5EU0AAoJEHI0Bo8WoVY8CbQP/irsNP3yMfUr1XtbQB1uYIHr
+pccEOvbxVbnT/yu7Wwu29J67NuZ7zZ4L1IjLN0Odl7tVu78Ptp7kqTOrfMXNnYd7
+f7l6z8t99NTRaazYQwh4lIHA9Z94fc7xtpshMJib6caBXqMil0CiC9rxZ6L1Yapk
+NKiO+KxvXxGJrzwYHPihd2k3GdTUSKm06SJo8c1LhaWVUOrI+pRyErotUKrZE8PZ
+bzDULnmMe3AMtzyGpdKv7E9kv88ElV+5sftzSPy7QhQjrrWWqhUis+mg5c4IaEsX
+QklRTxGrBFf0wxgZkxN9fBDVRJtH+gtdN8T3fnHTwxhJHqFPnnUcEUNCCkFuCkC0
+axJ8vVZVLfh/wXVpstugcxmNV0hkwMxkVI7qwrJ7ZMzg209+7Tw8fZ4ZUQfCjo/y
+e7inc751A+GDlKOOyicp2POv84T3RlDUVBkU5trbCpq/mD610ROy3ewBzWc5J9cJ
+pGOTwn1P7LjS6d++GjTQ2unTzy8ztJioy+ksEQbJWmzKPj6G5smDrghDGUufPV2r
+gfv1OD1MBwmtL4l1kGZPd5w3Sf75HKVXx1B3j3NjR9wEd++N3bLWq32p8iCmPhjK
+GAjiJxRMsM4VcXAYYJ/Nzr4DoVAucWYM7O0uKpPxuKIcX2DFbXO+biKA7N6k9dgo
+Wk8GHxLjlIu4mxbEDxnO
+=iaer
 -----END PGP SIGNATURE-----
 
---l0ODmEAIcMb2594JNtll3DxFiTLD5VYSS--
+--QKdGvSO+nmPlgiQ/--
