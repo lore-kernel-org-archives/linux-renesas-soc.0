@@ -1,106 +1,46 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v6 05/11] ARM: smp: Add initialization of CNTVOFF
-Date: Mon, 16 Apr 2018 23:50:26 +0200
-Message-Id: <20180416215032.5023-6-mylene.josserand@bootlin.com>
-In-Reply-To: <20180416215032.5023-1-mylene.josserand@bootlin.com>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from orcrist.hmeau.com ([104.223.48.154]:32772 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759647AbeD1IZK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 28 Apr 2018 04:25:10 -0400
+Date: Sat, 28 Apr 2018 16:24:58 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Jamie Iles <jamie@jamieiles.com>, linux-crypto@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 06/61] crypto: simplify getting .drvdata
+Message-ID: <20180428082458.cpcftonouzrje6gx@gondor.apana.org.au>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419140641.27926-7-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The CNTVOFF register from arch timer is uninitialized.
-It should be done by the bootloader but it is currently not the case,
-even for boot CPU because this SoC is booting in secure mode.
-It leads to an random offset value meaning that each CPU will have a
-different time, which isn't working very well.
+On Thu, Apr 19, 2018 at 04:05:36PM +0200, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/crypto/exynos-rng.c       | 6 ++----
+>  drivers/crypto/picoxcell_crypto.c | 6 ++----
+>  2 files changed, 4 insertions(+), 8 deletions(-)
 
-Add assembly code used for boot CPU and secondary CPU cores to make
-sure that the CNTVOFF register is initialized. Because this code can
-be used by different platforms, add this assembly file in ARM's common
-folder.
-
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
----
- arch/arm/common/Makefile              |  1 +
- arch/arm/common/secure_cntvoff.S      | 31 +++++++++++++++++++++++++++++++
- arch/arm/include/asm/secure_cntvoff.h |  8 ++++++++
- 3 files changed, 40 insertions(+)
- create mode 100644 arch/arm/common/secure_cntvoff.S
- create mode 100644 arch/arm/include/asm/secure_cntvoff.h
-
-diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-index 70b4a14ed993..1e9f7af8f70f 100644
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
- obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
- obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
- obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
-+obj-$(CONFIG_SMP)		+= secure_cntvoff.o
- obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
- obj-$(CONFIG_MCPM)		+= mcpm_head.o mcpm_entry.o mcpm_platsmp.o vlock.o
- CFLAGS_REMOVE_mcpm_entry.o	= -pg
-diff --git a/arch/arm/common/secure_cntvoff.S b/arch/arm/common/secure_cntvoff.S
-new file mode 100644
-index 000000000000..68a4a8344319
---- /dev/null
-+++ b/arch/arm/common/secure_cntvoff.S
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2014 Renesas Electronics Corporation
-+ *
-+ * Initialization of CNTVOFF register from secure mode
-+ *
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/assembler.h>
-+
-+ENTRY(secure_cntvoff_init)
-+	.arch	armv7-a
-+	/*
-+	 * CNTVOFF has to be initialized either from non-secure Hypervisor
-+	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
-+	 * then it should be handled by the secure code
-+	 */
-+	cps	#MON_MODE
-+	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
-+	orr	r0, r1, #1
-+	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
-+	isb
-+	mov	r0, #0
-+	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
-+	isb
-+	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
-+	isb
-+	cps	#SVC_MODE
-+	ret	lr
-+ENDPROC(secure_cntvoff_init)
-diff --git a/arch/arm/include/asm/secure_cntvoff.h b/arch/arm/include/asm/secure_cntvoff.h
-new file mode 100644
-index 000000000000..1f93aee1f630
---- /dev/null
-+++ b/arch/arm/include/asm/secure_cntvoff.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASMARM_ARCH_CNTVOFF_H
-+#define __ASMARM_ARCH_CNTVOFF_H
-+
-+extern void secure_cntvoff_init(void);
-+
-+#endif
+Patch applied.  Thanks.
 -- 
-2.11.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
