@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33206 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751821AbeD3J3v (ORCPT
+Received: from sauhun.de ([88.99.104.3]:46154 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752566AbeD3JMc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:29:51 -0400
-Date: Mon, 30 Apr 2018 11:29:47 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
+        Mon, 30 Apr 2018 05:12:32 -0400
+Date: Mon, 30 Apr 2018 11:12:29 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -14,6 +14,7 @@ Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
         kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Michal Simek <michal.simek@xilinx.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
@@ -21,71 +22,49 @@ Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
         linux-tegra@vger.kernel.org,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Message-ID: <20180430092947.GC2270@ulmo>
+Message-ID: <20180430091229.qwlqmq67dcx3hbmv@ninjato>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
  <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
  <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
  <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
+        protocol="application/pgp-signature"; boundary="2tlggkq2xllcgudr"
 Content-Disposition: inline
 In-Reply-To: <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---9Ek0hoCL9XbhcSqy
+--2tlggkq2xllcgudr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
-> On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
-> > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
-> >>
-> >> We should get drvdata from struct device directly. Going via
-> >> platform_device is an unneeded step back and forth.
-> >>
-> >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >> ---
-> >>
-> >> Build tested only. buildbot is happy. Please apply individually.
-> >
-> >
-> > for gpio-omap.c:
-> > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
->=20
-> Hm I only see the responses not the actual patch, I guess I will find it
-> sooner or later.
->=20
-> Wolfram: if I don't find it, poke me with something sharp so I get to app=
-ly it.
 
-I had the same problem, turned out this got classified as spam by Google
-for some reason. Maybe try your spam folder?
+> Wolfram: if I don't find it, poke me with something sharp so I get to apply it.
 
-Thierry
+I just bounced it again. Otherwise, it is here, too, downloadable as
+mbox: https://patchwork.kernel.org/patch/10350759/
 
---9Ek0hoCL9XbhcSqy
+
+--2tlggkq2xllcgudr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm4gsACgkQ3SOs138+
-s6E+/Q/9EjphqdxUrnsFSD+/mR1PWKT+wgaYut4Zt8pP0aPfTRABNwbDutpCoz/w
-PTdquuAzoziVhHWLZFYyqEfug3/gB/4rHfl9UspVMirZlLjL/CJCGag79Df2oENl
-C6Q43ql8C5GfosbgL17xjZ5YkboZbPWmbaiODae3XOTRc3EDwCPiw1yn5xFiQxRG
-h16gu6kwhXDoipAXN5ljenWF2QkL1av5/7lY01n6NVtIOMg5ercIfx50NofCPpoi
-eniMXrWziPcryMq2u8e6rZKERXq+iZAMfZSr9s+NDsVrESPDkRM2PiCtRtCKH34g
-UYKK1pG7BikpaQmZKmBllMQ3fPKzsWVdhirioYwv5igTBJ4egwgmnjdjhHq8MOOd
-TV1YAjxFen0gAUTCo2MPUEvN3khqUY3xi0dnOgZOF64Q6D+ZHGltdCZcB5PdL2xE
-qLJ2CDGPxCk9fWI2oCVsZXjzc9T4l06baKF2dcxLdTyoCgB4ru3R4eV7V2CuRnnu
-/0IqZ1wRTWH9GW2VrmD+/CWJqSgknhWRwBVPQaZT87hfWMZC7xmRqAC+cK/OdBX/
-uadYQvwvLJBc3BsjtljiqzvvV8FwoXlhkVt0OPIARKCnBJtenbJfOMwewdVKjvVW
-42PBcd6qBelFBrohpOO3eQ967KJG+Z8c/NkrZ6t0JF8i4GaBT4o=
-=odoW
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrm3f0ACgkQFA3kzBSg
+KbbYlQ/5AZtM+/fi3KINM2J/XyWLOYZBedVxp9P3rTz/Zd+neeNrvTZtUXH//WcB
+LhlRc+WTpIey0Zl7GkGmtjj0+eVlNKEKx2sNfdRR5XGNeMwrCQqXhVe429SeqgW2
+JD4Nau82RAqsJ7tI2whUT13cKj64jd9IslfCtQ4iEXb/pt/U1Bjnv0iGXmcUsZDw
+Q7qf+3WEY/s3fKG0BO9Kr0/AL0kuQ036uEzI6cCzcHrx+AcIk9J8hwnnQesdHLgC
+B+VxRYjMbbRB6ku6F9TOuXdTf09JCKulz8dh9XChe8bJKKUBNoh02U3IcQDWvK7+
+B2G2mfsL7lKVBXWUMCf9XxFhYfNBozvyYpfBMFuGIjEqLBC9fAloGpDuvNjAcPf2
+7Pfv1DzRj98OGfWc5u0ijrpX+tMEO4Qyrugcbo7qRVwk0WJJIKCRnMlrD1H8C0j9
+EaTJBwaOvVPotG5x6OuxNDzMMnN1k2us8G8qFXd//poWKhHMsLwnTyB0t0wE5SDv
+UffhgvBFhq0sVlTrTSLqrHAujKkGP3Jb85ULPIoiH2zxSECUPh8UfjU1OpCwn0AV
+eKJ2lIbM+aFwX6I/plFJVlHwRhjFRpwsScTla+nvDbIOJeDFtIqOW16M6qWi9LbQ
+YoBTuOB1ZpO+s5ZhYXj4yBqdrQ4TX5VBSiwx95PyxjbA6AxIbTk=
+=ZYDY
 -----END PGP SIGNATURE-----
 
---9Ek0hoCL9XbhcSqy--
+--2tlggkq2xllcgudr--
