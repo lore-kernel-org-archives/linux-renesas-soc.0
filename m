@@ -1,48 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:59140 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeDXXoU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41594 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751768AbeD3G77 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Apr 2018 19:44:20 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] rcar-vin: remove generic gen3 compatible string
-Date: Wed, 25 Apr 2018 01:43:21 +0200
-Message-Id: <20180424234321.22367-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 30 Apr 2018 02:59:59 -0400
+Date: Mon, 30 Apr 2018 08:59:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH 1/4] ARM: dts: renesas: r8a7790: Add FDP1 instances
+Message-ID: <20180430065949.my4733iq3cx2ombj@verge.net.au>
+References: <20180422103528.3402-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20180422103528.3402-2-laurent.pinchart+renesas@ideasonboard.com>
+ <20180423110713.klsakgblp4ud7umv@verge.net.au>
+ <3436484.5CPF3kj4Jb@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3436484.5CPF3kj4Jb@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The compatible string "renesas,rcar-gen3-vin" was added before the
-Gen3 driver code was added but it's not possible to use. Each SoC in the
-Gen3 series require SoC specific knowledge in the driver to function.
-Remove it before it is added to any device tree descriptions.
+On Thu, Apr 26, 2018 at 12:29:47PM +0300, Laurent Pinchart wrote:
+> Hi Simon,
+> 
+> On Monday, 23 April 2018 14:07:14 EEST Simon Horman wrote:
+> > On Sun, Apr 22, 2018 at 01:35:25PM +0300, Laurent Pinchart wrote:
+> > > The r8a7790 has three FDP1 instances.
+> > > 
+> > > Signed-off-by: Laurent Pinchart
+> > > <laurent.pinchart+renesas@ideasonboard.com>
+> > 
+> > Hi Laurent,
+> > 
+> > could you rearrange these nodes so they preserve the sorting
+> > of sub-nodes of the soc node by bus address. The other patches
+> > in the series seem fine in this regards and I have applied them.
+> 
+> I would have if you hadn't merged the patch already :-) Would you like me to 
+> submit a follow-up patch ?
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- Documentation/devicetree/bindings/media/rcar_vin.txt | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index ba31431d4b1fbdbb..a19517e1c669eb35 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -24,7 +24,6 @@ on Gen3 platforms to a CSI-2 receiver.
-    - "renesas,vin-r8a77970" for the R8A77970 device
-    - "renesas,rcar-gen2-vin" for a generic R-Car Gen2 or RZ/G1 compatible
-      device.
--   - "renesas,rcar-gen3-vin" for a generic R-Car Gen3 compatible device.
- 
-    When compatible with the generic version nodes must list the
-    SoC-specific version corresponding to the platform first
--- 
-2.17.0
+Sorry about that. Yes, please submit a follow-up patch.
