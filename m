@@ -1,160 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36592 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751738AbeDHSEi (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33206 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751821AbeD3J3v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Apr 2018 14:04:38 -0400
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3] PCI: rcar: Clean up the macros
-Date: Sun,  8 Apr 2018 20:04:31 +0200
-Message-Id: <20180408180431.17323-1-marek.vasut+renesas@gmail.com>
+        Mon, 30 Apr 2018 05:29:51 -0400
+Date: Mon, 30 Apr 2018 11:29:47 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
+Message-ID: <20180430092947.GC2270@ulmo>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+ <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
+ <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
+Content-Disposition: inline
+In-Reply-To: <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch replaces the (1 << n) with BIT(n) and cleans up whitespace,
-no functional change.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-V2: Reword the commit message
-V3: Add bitops.h
----
- drivers/pci/host/pcie-rcar.c | 53 ++++++++++++++++++++++----------------------
- 1 file changed, 27 insertions(+), 26 deletions(-)
+--9Ek0hoCL9XbhcSqy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 25f68305322c..e403c5206b24 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -11,6 +11,7 @@
-  * Author: Phil Edworthy <phil.edworthy@renesas.com>
-  */
- 
-+#include <linux/bitops.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-@@ -30,9 +31,9 @@
- 
- #define PCIECAR			0x000010
- #define PCIECCTLR		0x000018
--#define  CONFIG_SEND_ENABLE	(1 << 31)
-+#define  CONFIG_SEND_ENABLE	BIT(31)
- #define  TYPE0			(0 << 8)
--#define  TYPE1			(1 << 8)
-+#define  TYPE1			BIT(8)
- #define PCIECDR			0x000020
- #define PCIEMSR			0x000028
- #define PCIEINTXR		0x000400
-@@ -44,7 +45,7 @@
- #define PCIETSTR		0x02004
- #define  DATA_LINK_ACTIVE	1
- #define PCIEERRFR		0x02020
--#define  UNSUPPORTED_REQUEST	(1 << 4)
-+#define  UNSUPPORTED_REQUEST	BIT(4)
- #define PCIEMSIFR		0x02044
- #define PCIEMSIALR		0x02048
- #define  MSIFE			1
-@@ -57,17 +58,17 @@
- /* local address reg & mask */
- #define PCIELAR(x)		(0x02200 + ((x) * 0x20))
- #define PCIELAMR(x)		(0x02208 + ((x) * 0x20))
--#define  LAM_PREFETCH		(1 << 3)
--#define  LAM_64BIT		(1 << 2)
--#define  LAR_ENABLE		(1 << 1)
-+#define  LAM_PREFETCH		BIT(3)
-+#define  LAM_64BIT		BIT(2)
-+#define  LAR_ENABLE		BIT(1)
- 
- /* PCIe address reg & mask */
- #define PCIEPALR(x)		(0x03400 + ((x) * 0x20))
- #define PCIEPAUR(x)		(0x03404 + ((x) * 0x20))
- #define PCIEPAMR(x)		(0x03408 + ((x) * 0x20))
- #define PCIEPTCTLR(x)		(0x0340c + ((x) * 0x20))
--#define  PAR_ENABLE		(1 << 31)
--#define  IO_SPACE		(1 << 8)
-+#define  PAR_ENABLE		BIT(31)
-+#define  IO_SPACE		BIT(8)
- 
- /* Configuration */
- #define PCICONF(x)		(0x010000 + ((x) * 0x4))
-@@ -79,23 +80,23 @@
- #define IDSETR1			0x011004
- #define TLCTLR			0x011048
- #define MACSR			0x011054
--#define  SPCHGFIN		(1 << 4)
--#define  SPCHGFAIL		(1 << 6)
--#define  SPCHGSUC		(1 << 7)
-+#define  SPCHGFIN		BIT(4)
-+#define  SPCHGFAIL		BIT(6)
-+#define  SPCHGSUC		BIT(7)
- #define  LINK_SPEED		(0xf << 16)
- #define  LINK_SPEED_2_5GTS	(1 << 16)
- #define  LINK_SPEED_5_0GTS	(2 << 16)
- #define MACCTLR			0x011058
--#define  SPEED_CHANGE		(1 << 24)
--#define  SCRAMBLE_DISABLE	(1 << 27)
-+#define  SPEED_CHANGE		BIT(24)
-+#define  SCRAMBLE_DISABLE	BIT(27)
- #define MACS2R			0x011078
- #define MACCGSPSETR		0x011084
--#define  SPCNGRSN		(1 << 31)
-+#define  SPCNGRSN		BIT(31)
- 
- /* R-Car H1 PHY */
- #define H1_PCIEPHYADRR		0x04000c
--#define  WRITE_CMD		(1 << 16)
--#define  PHY_ACK		(1 << 24)
-+#define  WRITE_CMD		BIT(16)
-+#define  PHY_ACK		BIT(24)
- #define  RATE_POS		12
- #define  LANE_POS		8
- #define  ADR_POS		0
-@@ -107,19 +108,19 @@
- #define GEN2_PCIEPHYDATA	0x784
- #define GEN2_PCIEPHYCTRL	0x78c
- 
--#define INT_PCI_MSI_NR	32
-+#define INT_PCI_MSI_NR		32
- 
--#define RCONF(x)	(PCICONF(0)+(x))
--#define RPMCAP(x)	(PMCAP(0)+(x))
--#define REXPCAP(x)	(EXPCAP(0)+(x))
--#define RVCCAP(x)	(VCCAP(0)+(x))
-+#define RCONF(x)		(PCICONF(0) + (x))
-+#define RPMCAP(x)		(PMCAP(0) + (x))
-+#define REXPCAP(x)		(EXPCAP(0) + (x))
-+#define RVCCAP(x)		(VCCAP(0) + (x))
- 
--#define  PCIE_CONF_BUS(b)	(((b) & 0xff) << 24)
--#define  PCIE_CONF_DEV(d)	(((d) & 0x1f) << 19)
--#define  PCIE_CONF_FUNC(f)	(((f) & 0x7) << 16)
-+#define PCIE_CONF_BUS(b)	(((b) & 0xff) << 24)
-+#define PCIE_CONF_DEV(d)	(((d) & 0x1f) << 19)
-+#define PCIE_CONF_FUNC(f)	(((f) & 0x7) << 16)
- 
--#define RCAR_PCI_MAX_RESOURCES 4
--#define MAX_NR_INBOUND_MAPS 6
-+#define RCAR_PCI_MAX_RESOURCES	4
-+#define MAX_NR_INBOUND_MAPS	6
- 
- struct rcar_msi {
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
--- 
-2.16.2
+On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
+> On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+> > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
+> >>
+> >> We should get drvdata from struct device directly. Going via
+> >> platform_device is an unneeded step back and forth.
+> >>
+> >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> ---
+> >>
+> >> Build tested only. buildbot is happy. Please apply individually.
+> >
+> >
+> > for gpio-omap.c:
+> > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>=20
+> Hm I only see the responses not the actual patch, I guess I will find it
+> sooner or later.
+>=20
+> Wolfram: if I don't find it, poke me with something sharp so I get to app=
+ly it.
+
+I had the same problem, turned out this got classified as spam by Google
+for some reason. Maybe try your spam folder?
+
+Thierry
+
+--9Ek0hoCL9XbhcSqy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm4gsACgkQ3SOs138+
+s6E+/Q/9EjphqdxUrnsFSD+/mR1PWKT+wgaYut4Zt8pP0aPfTRABNwbDutpCoz/w
+PTdquuAzoziVhHWLZFYyqEfug3/gB/4rHfl9UspVMirZlLjL/CJCGag79Df2oENl
+C6Q43ql8C5GfosbgL17xjZ5YkboZbPWmbaiODae3XOTRc3EDwCPiw1yn5xFiQxRG
+h16gu6kwhXDoipAXN5ljenWF2QkL1av5/7lY01n6NVtIOMg5ercIfx50NofCPpoi
+eniMXrWziPcryMq2u8e6rZKERXq+iZAMfZSr9s+NDsVrESPDkRM2PiCtRtCKH34g
+UYKK1pG7BikpaQmZKmBllMQ3fPKzsWVdhirioYwv5igTBJ4egwgmnjdjhHq8MOOd
+TV1YAjxFen0gAUTCo2MPUEvN3khqUY3xi0dnOgZOF64Q6D+ZHGltdCZcB5PdL2xE
+qLJ2CDGPxCk9fWI2oCVsZXjzc9T4l06baKF2dcxLdTyoCgB4ru3R4eV7V2CuRnnu
+/0IqZ1wRTWH9GW2VrmD+/CWJqSgknhWRwBVPQaZT87hfWMZC7xmRqAC+cK/OdBX/
+uadYQvwvLJBc3BsjtljiqzvvV8FwoXlhkVt0OPIARKCnBJtenbJfOMwewdVKjvVW
+42PBcd6qBelFBrohpOO3eQ967KJG+Z8c/NkrZ6t0JF8i4GaBT4o=
+=odoW
+-----END PGP SIGNATURE-----
+
+--9Ek0hoCL9XbhcSqy--
