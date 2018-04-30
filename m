@@ -1,137 +1,70 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, frowand.list@gmail.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, p.zabel@pengutronix.de,
-        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 04/11] of: platform: add device connection parsing
-Date: Wed, 18 Apr 2018 17:09:58 +0900
-Message-Id: <1524039005-30618-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1524039005-30618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ve1eur01on0134.outbound.protection.outlook.com ([104.47.1.134]:48948
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755174AbeD3VNG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 30 Apr 2018 17:13:06 -0400
+Subject: Re: [PATCH 24/24] drm/bridge: establish a link between the bridge
+ supplier and consumer
+To: linux-kernel@vger.kernel.org,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Peter Senna Tschudin <peter.senna@collabora.com>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        linux-arm-msm@vger.kernel.org, Jyri Sarha <jsarha@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org
+References: <20180426223139.16740-1-peda@axentia.se>
+ <20180426223139.16740-25-peda@axentia.se>
+ <20180430153236.GP12521@phenom.ffwll.local>
+From: Peter Rosin <peda@axentia.se>
+Message-ID: <e2562f6f-f7b0-477c-db38-a3bf6c956fa7@axentia.se>
+Date: Mon, 30 Apr 2018 23:12:56 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <20180430153236.GP12521@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds device connection parsing in of_platform_populate().
+On 2018-04-30 17:32, Daniel Vetter wrote:
+> On Fri, Apr 27, 2018 at 12:31:39AM +0200, Peter Rosin wrote:
+>> If the bridge supplier is unbound, this will bring the bridge consumer
+>> down along with the bridge. Thus, there will no longer linger any
+>> dangling pointers from the bridge consumer (the drm_device) to some
+>> non-existent bridge supplier.
+>>
+>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> 
+> Minus the ->owner bikeshed I brought up in the previous patch I agree with
+> this approach as the best way to move forward for now.
+> 
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-TODO:
- - How to free the devcon memories?
- - How to remove the devcon instances?
+Thanks, let's see if Laurent is also on-board...
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/of/platform.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of.h    |  1 +
- 2 files changed, 67 insertions(+)
+> One small suggestion below, for merging I'd say pls get Jyri's
+> review/tested-by too, since you're both working on the same problem it
+> seems.
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index c00d81d..41c018d 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -17,6 +17,7 @@
- #include <linux/slab.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/of_graph.h>
- #include <linux/of_iommu.h>
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
-@@ -326,6 +327,63 @@ static const struct of_dev_auxdata *of_dev_lookup(const struct of_dev_auxdata *l
- 	return NULL;
- }
- 
-+static int of_parse_device_connection(struct device_node *np)
-+{
-+	struct device_node *child_ep, *parent, *remote_parent;
-+	struct platform_device *pdev, *remote_pdev;
-+	struct device_connection *devcon = NULL;
-+	const char *id;
-+
-+	if (of_node_check_flag(np, OF_DEVICE_CONNECTED)) {
-+		pr_debug("%s() - skipping %pOF, already device connected\n",
-+			__func__, np);
-+		return 0;
-+	}
-+
-+	of_node_set_flag(np, OF_DEVICE_CONNECTED);
-+
-+	for_each_endpoint_of_node(np, child_ep) {
-+		if (of_property_read_string(child_ep, "device-connection-id",
-+					    &id) < 0)
-+			continue;
-+
-+		remote_parent = of_graph_get_remote_port_parent(child_ep);
-+		if (!remote_parent)
-+			return 0;
-+
-+		parent = of_graph_get_port_parent(child_ep);
-+		if (!parent)
-+			return 0;
-+
-+		pdev = of_find_device_by_node(parent);
-+		if (!pdev)
-+			return 0;
-+
-+		/*
-+		 * WARN_ON in really_probe() may happen if devm_kzalloc is
-+		 * used. TODO: How to free this?
-+		 */
-+		devcon = kzalloc(sizeof(*devcon), GFP_KERNEL);
-+		if (!devcon)
-+			return -ENOMEM;
-+
-+		devcon->id = id;
-+		remote_pdev = of_find_device_by_node(remote_parent);
-+		if (!remote_pdev) {
-+			kfree(devcon);
-+			return 0;
-+		}
-+
-+		devcon->endpoint[0] = dev_name(&pdev->dev);
-+		devcon->endpoint[1] = dev_name(&remote_pdev->dev);
-+
-+		/* TODO: How to remove the connection? */
-+		device_connection_add(devcon);
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * of_platform_bus_create() - Create a device for a node and its children.
-  * @bus: device node of the bus to instantiate
-@@ -477,6 +535,14 @@ int of_platform_populate(struct device_node *root,
- 	}
- 	of_node_set_flag(root, OF_POPULATED_BUS);
- 
-+	for_each_child_of_node(root, child) {
-+		rc = of_parse_device_connection(child);
-+		if (rc) {
-+			of_node_put(child);
-+			break;
-+		}
-+	}
-+
- 	of_node_put(root);
- 	return rc;
- }
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 4d25e4f..30aa103 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -143,6 +143,7 @@ static inline void of_node_put(struct device_node *node) { }
- #define OF_DETACHED	2 /* node has been detached from the device tree */
- #define OF_POPULATED	3 /* device already created for the node */
- #define OF_POPULATED_BUS	4 /* of_platform_populate recursed to children of this node */
-+#define OF_DEVICE_CONNECTED	5 /* checked devcon on of_platform_populate */
- 
- #define OF_BAD_ADDR	((u64)-1)
- 
--- 
-1.9.1
+Yes, I too would be very happy to see a tested-by from someone.
 
+> Aside: Do you want commit rights to drm-misc to be able to push work like
+> this?
+
+If that makes life easier, sure.
+
+Cheers,
+Peter
