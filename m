@@ -1,304 +1,188 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:28505 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752553AbeD0LWf (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60214 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754881AbeD3QWy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:22:35 -0400
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com
-Subject: [PATCH 2/3] drm: shmobile: remove unused MERAM support
-Date: Fri, 27 Apr 2018 13:21:44 +0200
-Message-id: <1524828105-26585-3-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180427112231epcas1p4cd63e2bf9216d7e8810f49e57bcf50c6@epcas1p4.samsung.com>
+        Mon, 30 Apr 2018 12:22:54 -0400
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v7 6/8] media: vsp1: Refactor display list configure
+ operations
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <cover.636c1ee27fc6973cc312e0f25131a435872a0a35.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <e033c9432b2e86c764f7b1e44da10ba66ea4e030.1520466993.git-series.kieran.bingham+renesas@ideasonboard.com>
+ <2941184.iUo9Gmn1JQ@avalon>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <6f2ebe67-1882-e9fe-89d5-7b2d1137c994@ideasonboard.com>
+Date: Mon, 30 Apr 2018 17:22:49 +0100
+MIME-Version: 1.0
+In-Reply-To: <2941184.iUo9Gmn1JQ@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commit a521422ea4ae  ("ARM: shmobile: mackerel: Remove Legacy C
-board code") MERAM functionality is unused. Remove it.
+Hi Laurent,
 
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/gpu/drm/shmobile/Kconfig           |  1 -
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c  | 42 ------------------------------
- drivers/gpu/drm/shmobile/shmob_drm_crtc.h  |  1 -
- drivers/gpu/drm/shmobile/shmob_drm_drv.h   |  2 --
- drivers/gpu/drm/shmobile/shmob_drm_kms.c   | 11 --------
- drivers/gpu/drm/shmobile/shmob_drm_kms.h   |  1 -
- drivers/gpu/drm/shmobile/shmob_drm_plane.c |  2 --
- include/linux/platform_data/shmob_drm.h    |  4 ---
- 8 files changed, 64 deletions(-)
+On 07/04/18 00:38, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Thursday, 8 March 2018 02:05:29 EEST Kieran Bingham wrote:
+>> The entities provide a single .configure operation which configures the
+>> object into the target display list, based on the vsp1_entity_params
+>> selection.
+>>
+>> This restricts us to a single function prototype for both static
+>> configuration (the pre-stream INIT stage) and the dynamic runtime stages
+>> for both each frame - and each partition therein.
+>>
+>> Split the configure function into two parts, '.configure_stream()' and
+>> '.configure_frame()', merging both the VSP1_ENTITY_PARAMS_RUNTIME and
+>> VSP1_ENTITY_PARAMS_PARTITION stages into a single call through the
+>> .configure_frame(). The configuration for individual partitions is
+>> handled by passing the partition number to the configure call, and
+>> processing any runtime stage actions on the first partition only.
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> ---
+>> v7
+>>  - Fix formatting and white space
+>>  - s/prepare/configure_stream/
+>>  - s/configure/configure_frame/
+>>
+>>  drivers/media/platform/vsp1/vsp1_bru.c    |  12 +-
+>>  drivers/media/platform/vsp1/vsp1_clu.c    |  50 +---
+>>  drivers/media/platform/vsp1/vsp1_dl.h     |   1 +-
+>>  drivers/media/platform/vsp1/vsp1_drm.c    |  21 +--
+>>  drivers/media/platform/vsp1/vsp1_entity.c |  17 +-
+>>  drivers/media/platform/vsp1/vsp1_entity.h |  33 +--
+>>  drivers/media/platform/vsp1/vsp1_hgo.c    |  12 +-
+>>  drivers/media/platform/vsp1/vsp1_hgt.c    |  12 +-
+>>  drivers/media/platform/vsp1/vsp1_hsit.c   |  12 +-
+>>  drivers/media/platform/vsp1/vsp1_lif.c    |  12 +-
+>>  drivers/media/platform/vsp1/vsp1_lut.c    |  32 +-
+>>  drivers/media/platform/vsp1/vsp1_rpf.c    | 164 ++++++-------
+>>  drivers/media/platform/vsp1/vsp1_sru.c    |  12 +-
+>>  drivers/media/platform/vsp1/vsp1_uds.c    |  57 ++--
+>>  drivers/media/platform/vsp1/vsp1_video.c  |  24 +--
+>>  drivers/media/platform/vsp1/vsp1_wpf.c    | 299 ++++++++++++-----------
+>>  16 files changed, 378 insertions(+), 392 deletions(-)
+> 
+> [snip]
+> 
+>> diff --git a/drivers/media/platform/vsp1/vsp1_clu.c
+>> b/drivers/media/platform/vsp1/vsp1_clu.c index b2a39a6ef7e4..b8d8af6d4910
+>> 100644
+>> --- a/drivers/media/platform/vsp1/vsp1_clu.c
+>> +++ b/drivers/media/platform/vsp1/vsp1_clu.c
+>> @@ -213,37 +213,36 @@ static const struct v4l2_subdev_ops clu_ops = {
+>>  /*
+>> ---------------------------------------------------------------------------
+>> -- * VSP1 Entity Operations
+>>   */
+>> +static void clu_configure_stream(struct vsp1_entity *entity,
+>> +				 struct vsp1_pipeline *pipe,
+>> +				 struct vsp1_dl_list *dl)
+>> +{
+>> +	struct vsp1_clu *clu = to_clu(&entity->subdev);
+>> +
+>> +	/*
+>> +	 * The yuv_mode can't be changed during streaming. Cache it internally
+>> +	 * for future runtime configuration calls.
+>> +	 */
+> 
+> I'd move this comment right before the vsp1_entity_get_pad_format() call to 
+> keep all variable declarations together.
 
-diff --git a/drivers/gpu/drm/shmobile/Kconfig b/drivers/gpu/drm/shmobile/Kconfig
-index c987c82..0426d66 100644
---- a/drivers/gpu/drm/shmobile/Kconfig
-+++ b/drivers/gpu/drm/shmobile/Kconfig
-@@ -2,7 +2,6 @@ config DRM_SHMOBILE
- 	tristate "DRM Support for SH Mobile"
- 	depends on DRM && ARM
- 	depends on ARCH_SHMOBILE || COMPILE_TEST
--	depends on FB_SH_MOBILE_MERAM || !FB_SH_MOBILE_MERAM
- 	select BACKLIGHT_CLASS_DEVICE
- 	select BACKLIGHT_LCD_SUPPORT
- 	select DRM_KMS_HELPER
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index e773893..40df888 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -21,8 +21,6 @@
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_plane_helper.h>
- 
--#include <video/sh_mobile_meram.h>
--
- #include "shmob_drm_backlight.h"
- #include "shmob_drm_crtc.h"
- #include "shmob_drm_drv.h"
-@@ -47,20 +45,12 @@ static int shmob_drm_clk_on(struct shmob_drm_device *sdev)
- 		if (ret < 0)
- 			return ret;
- 	}
--#if 0
--	if (sdev->meram_dev && sdev->meram_dev->pdev)
--		pm_runtime_get_sync(&sdev->meram_dev->pdev->dev);
--#endif
- 
- 	return 0;
- }
- 
- static void shmob_drm_clk_off(struct shmob_drm_device *sdev)
- {
--#if 0
--	if (sdev->meram_dev && sdev->meram_dev->pdev)
--		pm_runtime_put_sync(&sdev->meram_dev->pdev->dev);
--#endif
- 	if (sdev->clock)
- 		clk_disable_unprepare(sdev->clock);
- }
-@@ -269,12 +259,6 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
- 	if (!scrtc->started)
- 		return;
- 
--	/* Disable the MERAM cache. */
--	if (scrtc->cache) {
--		sh_mobile_meram_cache_free(sdev->meram, scrtc->cache);
--		scrtc->cache = NULL;
--	}
--
- 	/* Stop the LCDC. */
- 	shmob_drm_crtc_start_stop(scrtc, false);
- 
-@@ -305,7 +289,6 @@ static void shmob_drm_crtc_compute_base(struct shmob_drm_crtc *scrtc,
- {
- 	struct drm_crtc *crtc = &scrtc->crtc;
- 	struct drm_framebuffer *fb = crtc->primary->fb;
--	struct shmob_drm_device *sdev = crtc->dev->dev_private;
- 	struct drm_gem_cma_object *gem;
- 	unsigned int bpp;
- 
-@@ -321,11 +304,6 @@ static void shmob_drm_crtc_compute_base(struct shmob_drm_crtc *scrtc,
- 			      + y / (bpp == 4 ? 2 : 1) * fb->pitches[1]
- 			      + x * (bpp == 16 ? 2 : 1);
- 	}
--
--	if (scrtc->cache)
--		sh_mobile_meram_cache_update(sdev->meram, scrtc->cache,
--					     scrtc->dma[0], scrtc->dma[1],
--					     &scrtc->dma[0], &scrtc->dma[1]);
- }
- 
- static void shmob_drm_crtc_update_base(struct shmob_drm_crtc *scrtc)
-@@ -372,9 +350,7 @@ static int shmob_drm_crtc_mode_set(struct drm_crtc *crtc,
- {
- 	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
- 	struct shmob_drm_device *sdev = crtc->dev->dev_private;
--	const struct sh_mobile_meram_cfg *mdata = sdev->pdata->meram;
- 	const struct shmob_drm_format_info *format;
--	void *cache;
- 
- 	format = shmob_drm_format_info(crtc->primary->fb->format->format);
- 	if (format == NULL) {
-@@ -386,24 +362,6 @@ static int shmob_drm_crtc_mode_set(struct drm_crtc *crtc,
- 	scrtc->format = format;
- 	scrtc->line_size = crtc->primary->fb->pitches[0];
- 
--	if (sdev->meram) {
--		/* Enable MERAM cache if configured. We need to de-init
--		 * configured ICBs before we can re-initialize them.
--		 */
--		if (scrtc->cache) {
--			sh_mobile_meram_cache_free(sdev->meram, scrtc->cache);
--			scrtc->cache = NULL;
--		}
--
--		cache = sh_mobile_meram_cache_alloc(sdev->meram, mdata,
--						    crtc->primary->fb->pitches[0],
--						    adjusted_mode->vdisplay,
--						    format->meram,
--						    &scrtc->line_size);
--		if (!IS_ERR(cache))
--			scrtc->cache = cache;
--	}
--
- 	shmob_drm_crtc_compute_base(scrtc, x, y);
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
-index f152973..c11f421 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
-@@ -28,7 +28,6 @@ struct shmob_drm_crtc {
- 	int dpms;
- 
- 	const struct shmob_drm_format_info *format;
--	void *cache;
- 	unsigned long dma[2];
- 	unsigned int line_size;
- 	bool started;
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.h b/drivers/gpu/drm/shmobile/shmob_drm_drv.h
-index 02ea315..088a6e55 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_drv.h
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.h
-@@ -23,7 +23,6 @@
- struct clk;
- struct device;
- struct drm_device;
--struct sh_mobile_meram_info;
- 
- struct shmob_drm_device {
- 	struct device *dev;
-@@ -31,7 +30,6 @@ struct shmob_drm_device {
- 
- 	void __iomem *mmio;
- 	struct clk *clock;
--	struct sh_mobile_meram_info *meram;
- 	u32 lddckr;
- 	u32 ldmt1r;
- 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-index d36919b..4476385 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-@@ -18,8 +18,6 @@
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- 
--#include <video/sh_mobile_meram.h>
--
- #include "shmob_drm_crtc.h"
- #include "shmob_drm_drv.h"
- #include "shmob_drm_kms.h"
-@@ -35,55 +33,46 @@
- 		.bpp = 16,
- 		.yuv = false,
- 		.lddfr = LDDFR_PKF_RGB16,
--		.meram = SH_MOBILE_MERAM_PF_RGB,
- 	}, {
- 		.fourcc = DRM_FORMAT_RGB888,
- 		.bpp = 24,
- 		.yuv = false,
- 		.lddfr = LDDFR_PKF_RGB24,
--		.meram = SH_MOBILE_MERAM_PF_RGB,
- 	}, {
- 		.fourcc = DRM_FORMAT_ARGB8888,
- 		.bpp = 32,
- 		.yuv = false,
- 		.lddfr = LDDFR_PKF_ARGB32,
--		.meram = SH_MOBILE_MERAM_PF_RGB,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV12,
- 		.bpp = 12,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_420,
--		.meram = SH_MOBILE_MERAM_PF_NV,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV21,
- 		.bpp = 12,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_420,
--		.meram = SH_MOBILE_MERAM_PF_NV,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV16,
- 		.bpp = 16,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_422,
--		.meram = SH_MOBILE_MERAM_PF_NV,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV61,
- 		.bpp = 16,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_422,
--		.meram = SH_MOBILE_MERAM_PF_NV,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV24,
- 		.bpp = 24,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_444,
--		.meram = SH_MOBILE_MERAM_PF_NV24,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV42,
- 		.bpp = 24,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_444,
--		.meram = SH_MOBILE_MERAM_PF_NV24,
- 	},
- };
- 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.h b/drivers/gpu/drm/shmobile/shmob_drm_kms.h
-index 06d5b7c..753e281 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_kms.h
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_kms.h
-@@ -24,7 +24,6 @@ struct shmob_drm_format_info {
- 	unsigned int bpp;
- 	bool yuv;
- 	u32 lddfr;
--	unsigned int meram;
- };
- 
- const struct shmob_drm_format_info *shmob_drm_format_info(u32 fourcc);
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
-index 97f6e4a..1d0359f 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
-@@ -17,8 +17,6 @@
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_gem_cma_helper.h>
- 
--#include <video/sh_mobile_meram.h>
--
- #include "shmob_drm_drv.h"
- #include "shmob_drm_kms.h"
- #include "shmob_drm_plane.h"
-diff --git a/include/linux/platform_data/shmob_drm.h b/include/linux/platform_data/shmob_drm.h
-index 7c686d3..ee495d7 100644
---- a/include/linux/platform_data/shmob_drm.h
-+++ b/include/linux/platform_data/shmob_drm.h
-@@ -18,9 +18,6 @@
- 
- #include <drm/drm_mode.h>
- 
--struct sh_mobile_meram_cfg;
--struct sh_mobile_meram_info;
--
- enum shmob_drm_clk_source {
- 	SHMOB_DRM_CLK_BUS,
- 	SHMOB_DRM_CLK_PERIPHERAL,
-@@ -93,7 +90,6 @@ struct shmob_drm_platform_data {
- 	struct shmob_drm_interface_data iface;
- 	struct shmob_drm_panel_data panel;
- 	struct shmob_drm_backlight_data backlight;
--	const struct sh_mobile_meram_cfg *meram;
- };
- 
- #endif /* __SHMOB_DRM_H__ */
--- 
-1.9.1
+Agreed, Done.
+
+> 
+>> +	struct v4l2_mbus_framefmt *format;
+>> +
+>> +	format = vsp1_entity_get_pad_format(&clu->entity,
+>> +					    clu->entity.config,
+>> +					    CLU_PAD_SINK);
+>> +	clu->yuv_mode = format->code == MEDIA_BUS_FMT_AYUV8_1X32;
+>> +}
+> 
+> [snip]
+> 
+> 
+>> diff --git a/drivers/media/platform/vsp1/vsp1_dl.h
+>> b/drivers/media/platform/vsp1/vsp1_dl.h index 7e820ac6865a..f45083251644
+>> 100644
+>> --- a/drivers/media/platform/vsp1/vsp1_dl.h
+>> +++ b/drivers/media/platform/vsp1/vsp1_dl.h
+>> @@ -41,7 +41,6 @@ vsp1_dl_body_pool_create(struct vsp1_device *vsp1,
+>> unsigned int num_bodies, void vsp1_dl_body_pool_destroy(struct
+>> vsp1_dl_body_pool *pool);
+>>  struct vsp1_dl_body *vsp1_dl_body_get(struct vsp1_dl_body_pool *pool);
+>>  void vsp1_dl_body_put(struct vsp1_dl_body *dlb);
+>> -
+> 
+> This is an unrelated change.
+> 
+
+Removed
+
+>>  void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data);
+>>  int vsp1_dl_list_add_body(struct vsp1_dl_list *dl, struct vsp1_dl_body
+>> *dlb);
+>>  int vsp1_dl_list_add_chain(struct vsp1_dl_list *head, struct vsp1_dl_list
+>>  *dl);
+> 
+> [snip]
+> 
+>> diff --git a/drivers/media/platform/vsp1/vsp1_entity.h
+>> b/drivers/media/platform/vsp1/vsp1_entity.h index
+>> 408602ebeb97..b44ed5414fc3 100644
+>> --- a/drivers/media/platform/vsp1/vsp1_entity.h
+>> +++ b/drivers/media/platform/vsp1/vsp1_entity.h
+> 
+> [snip]
+> 
+>> @@ -80,8 +68,10 @@ struct vsp1_route {
+>>  /**
+>>   * struct vsp1_entity_operations - Entity operations
+>>   * @destroy:	Destroy the entity.
+>> - * @configure:	Setup the hardware based on the entity state (pipeline,
+>> formats,
+>> - *		selection rectangles, ...)
+>> + * @configure_stream:	Setup the initial hardware parameters for the 
+> stream
+>> + *			(pipeline, formats)
+> 
+> Instead of initial I would say "Setup hardware parameters that stay constant 
+> for the whole stream (pipeline, formats)", or possible "that don't vary 
+> between frames" instead.
+> 
+>> + * @configure_frame:	Configure the runtime parameters for each partition
+>> + *			(rectangles, buffer addresses, ...)
+> 
+> Maybe "for each frame and each partition thereof" ?
+> 
+> I think we mentioned, when discussing naming, the option of also having a 
+> configure_partition() operation. Do you think that would make sense ? The 
+> fact that the partition parameter to the .configure_frame() operation is used 
+> for the sole purpose of checking whether to configure frame-related parameters 
+> when partition == 0 makes me think that having two separate operations could 
+> make sense.
+
+OK, I'll give this a go now ...
+
+
+Right ... it's looking good. A good clear separation
+
+
+> 
+>>   * @max_width:	Return the max supported width of data that the entity can
+>>   *		process in a single operation.
+>>   * @partition:	Process the partition construction based on this entity's
+> 
+> [snip]
+> 
