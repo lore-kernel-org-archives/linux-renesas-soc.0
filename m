@@ -1,81 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:31637 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754813AbeDCKRY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42650 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751935AbeD3IB7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:17:24 -0400
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
-Date: Tue, 3 Apr 2018 10:17:19 +0000
-Message-ID: <TY1PR01MB1770B77B715CF949AC551EE9C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
- <1522344790-20061-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-5-git-send-email-geert+renesas@glider.be>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 30 Apr 2018 04:01:59 -0400
+Date: Mon, 30 Apr 2018 10:01:55 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] arm64: dts: renesas: condor: add eMMC support
+Message-ID: <20180430080154.pisu37b5tiuau732@verge.net.au>
+References: <611daf1f-42a2-d463-0814-ebf762871018@cogentembedded.com>
+ <bfa0f1e9-f6e1-c4e2-9c9a-0d25d7f56ad1@cogentembedded.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bfa0f1e9-f6e1-c4e2-9c9a-0d25d7f56ad1@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Geert
-
-> Subject: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
->
-> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-> the LB clock divider depends on the value of the MD18 pin.
->
-> On R-Car V2H, the LB clock divider is fixed to 24.  Hence model the
-> clock as a fixed factor clock instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Apr 24, 2018 at 10:25:24PM +0300, Sergei Shtylyov wrote:
+> Define the Condor board dependent part of the MMC0 (connected to eMMC chip)
+> device node along with the necessary voltage regulators...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
 > ---
->  drivers/clk/renesas/r8a7792-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/r8a7792-cpg-mssr.c b/drivers/clk/renesas=
-/r8a7792-cpg-mssr.c
-> index 609a540804965c40..8b66e6f4b4584de1 100644
-> --- a/drivers/clk/renesas/r8a7792-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7792-cpg-mssr.c
-> @@ -53,7 +53,6 @@ static const struct cpg_core_clk r8a7792_core_clks[] __=
-initconst =3D {
->  DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
->
->  /* Core Clock Outputs */
-> -DEF_BASE("lb",   R8A7792_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
->  DEF_BASE("qspi", R8A7792_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
->
->  DEF_FIXED("z",      R8A7792_CLK_Z,     CLK_PLL0,          1, 1),
-> @@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7792_core_clks[] __=
-initconst =3D {
->  DEF_FIXED("hp",     R8A7792_CLK_HP,    CLK_PLL1,         12, 1),
->  DEF_FIXED("i",      R8A7792_CLK_I,     CLK_PLL1,          3, 1),
->  DEF_FIXED("b",      R8A7792_CLK_B,     CLK_PLL1,         12, 1),
-> +DEF_FIXED("lb",     R8A7792_CLK_B,     CLK_PLL1,         24, 1),
+> This patch is against the 'renesas-devel-20180424-v4.17-rc2' tag of Simon
+> Horman's 'renesas.git' repo.
 
-s/ R8A7792_CLK_B/ R8A7792_CLK_LB/
-
-With that fixed:
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
->  DEF_FIXED("p",      R8A7792_CLK_P,     CLK_PLL1,         24, 1),
->  DEF_FIXED("cl",     R8A7792_CLK_CL,    CLK_PLL1,         48, 1),
->  DEF_FIXED("m2",     R8A7792_CLK_M2,    CLK_PLL1,          8, 1),
-> --
-> 2.7.4
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+Thanks, applied.
