@@ -1,75 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46341 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753097AbeDIQ7a (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42106 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751669AbeD3H27 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Apr 2018 12:59:30 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: laurent.pinchart@ideasonboard.com, robin.murphy@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        ysato@users.sourceforge.jp, dalias@libc.org,
-        iommu@lists.linux-foundation.org, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] base: dma-mapping: Postpone cpu addr translation on mmap()
-Date: Mon,  9 Apr 2018 18:59:08 +0200
-Message-Id: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
+        Mon, 30 Apr 2018 03:28:59 -0400
+Date: Mon, 30 Apr 2018 09:28:55 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 07/11] arm64: dts: r8a77965: Add VSP instances
+Message-ID: <20180430072855.s2acmtnwji6czjc5@verge.net.au>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180427165722.19445-8-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427165722.19445-8-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Postpone calling virt_to_page() translation on memory locations not
-guaranteed to be backed by a struct page.
+On Fri, Apr 27, 2018 at 05:57:18PM +0100, Kieran Bingham wrote:
+> The r8a77965 has 4 VSP instances.
+> 
+> Based on a similar patch of the R8A7796 device tree
+> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [Kieran: Rebased to top of tree, fixed sort orders]
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-This patch fixes a specific issue of SH architecture configured with
-SPARSEMEM memory model, when mapping buffers allocated with the memblock
-APIs at system initialization time, and thus not backed by the page
-infrastructure.
-
-It does apply to the general case though, as an early translation is anyhow
-incorrect and shall be postponed after trying to map memory from the device
-coherent memory pool first.
-
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
----
-Compared to the RFC version I have tried to generalize the commit message,
-please suggest any improvement to that.
-
-I'm still a bit puzzled on what happens if dma_mmap_from_dev_coherent() fails.
-Does a dma_mmap_from_dev_coherent() failure guarantee anyhow that the
-successive virt_to_page() isn't problematic as it is today?
-Or is it the
- 	if (off < count && user_count <= (count - off))
-check that makes the translation safe?
-
-Thanks
-   j
-
----
- drivers/base/dma-mapping.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
-index 3b11835..8b4ec34 100644
---- a/drivers/base/dma-mapping.c
-+++ b/drivers/base/dma-mapping.c
-@@ -226,8 +226,8 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
- 	unsigned long user_count = vma_pages(vma);
- 	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
--	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
- 	unsigned long off = vma->vm_pgoff;
-+	unsigned long pfn;
-
- 	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-
-@@ -235,6 +235,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
- 		return ret;
-
- 	if (off < count && user_count <= (count - off)) {
-+		pfn = page_to_pfn(virt_to_page(cpu_addr));
- 		ret = remap_pfn_range(vma, vma->vm_start,
- 				      pfn + off,
- 				      user_count << PAGE_SHIFT,
---
-2.7.4
+Thanks, applied.
