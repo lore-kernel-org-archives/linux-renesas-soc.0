@@ -1,70 +1,80 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 1/2] vfio: platform: Fix reset module leak in error path
-Date: Wed, 11 Apr 2018 11:15:48 +0200
-Message-Id: <1523438149-16433-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
-References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:42300 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752084AbeD3HkV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 30 Apr 2018 03:40:21 -0400
+Date: Mon, 30 Apr 2018 09:40:17 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: media: renesas-ceu: Add R-Mobile
+ R8A7740
+Message-ID: <20180430074017.sl2uav7hxc4rjsqe@verge.net.au>
+References: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524767083-19862-2-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524767083-19862-2-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the IOMMU group setup fails, the reset module is not released.
+On Thu, Apr 26, 2018 at 08:24:42PM +0200, Jacopo Mondi wrote:
+> Add R-Mobile A1 R8A7740 SoC to the list of compatible values for the CEU
+> unit.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3:
-  - Add Reviewed-by,
 
-v2:
-  - Add Reviewed-by.
----
- drivers/vfio/platform/vfio_platform_common.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+> ---
+>  Documentation/devicetree/bindings/media/renesas,ceu.txt | 7 ++++---
+>  drivers/media/platform/renesas-ceu.c                    | 1 +
+>  2 files changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+> index 3fc66df..8a7a616 100644
+> --- a/Documentation/devicetree/bindings/media/renesas,ceu.txt
+> +++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
+> @@ -2,14 +2,15 @@ Renesas Capture Engine Unit (CEU)
+>  ----------------------------------------------
+>  
+>  The Capture Engine Unit is the image capture interface found in the Renesas
+> -SH Mobile and RZ SoCs.
+> +SH Mobile, R-Mobile and RZ SoCs.
+>  
+>  The interface supports a single parallel input with data bus width of 8 or 16
+>  bits.
+>  
+>  Required properties:
+> -- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
+> -  and RZ/A1M SoCs.
+> +- compatible: Shall be one of the following values:
+> +	"renesas,r7s72100-ceu" for CEU units found in RZ/A1H and RZ/A1M SoCs
+> +	"renesas,r8a7740-ceu" for CEU units found in R-Mobile A1 R8A7740 SoCs
 
-diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-index 35469af87f88678e..b60bb5326668498c 100644
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -680,18 +680,23 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
- 	group = vfio_iommu_group_get(dev);
- 	if (!group) {
- 		pr_err("VFIO: No IOMMU group for device %s\n", vdev->name);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto put_reset;
- 	}
- 
- 	ret = vfio_add_group_dev(dev, &vfio_platform_ops, vdev);
--	if (ret) {
--		vfio_iommu_group_put(group, dev);
--		return ret;
--	}
-+	if (ret)
-+		goto put_iommu;
- 
- 	mutex_init(&vdev->igate);
- 
- 	return 0;
-+
-+put_iommu:
-+	vfio_iommu_group_put(group, dev);
-+put_reset:
-+	vfio_platform_put_reset(vdev);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(vfio_platform_probe_common);
- 
--- 
-2.7.4
+Nit: I think you can drop R8A7740 as I believe that by adding it to
+R-Mobile A1 you have constructed a tautology (I mean "R-Mobile A1" =
+"R8A7740" as far as I know).
 
+>  - reg: Registers address base and size.
+>  - interrupts: The interrupt specifier.
+>  
+> diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
+> index 6599dba..c964a56 100644
+> --- a/drivers/media/platform/renesas-ceu.c
+> +++ b/drivers/media/platform/renesas-ceu.c
+> @@ -1545,6 +1545,7 @@ static const struct ceu_data ceu_data_sh4 = {
+>  #if IS_ENABLED(CONFIG_OF)
+>  static const struct of_device_id ceu_of_match[] = {
+>  	{ .compatible = "renesas,r7s72100-ceu", .data = &ceu_data_rz },
+> +	{ .compatible = "renesas,r8a7740-ceu", .data = &ceu_data_rz },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, ceu_of_match);
+> -- 
+> 2.7.4
+> 
