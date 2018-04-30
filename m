@@ -1,45 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:58314 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754736AbeDTMUx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42154 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751759AbeD3HbE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:20:53 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Mon, 30 Apr 2018 03:31:04 -0400
+Date: Mon, 30 Apr 2018 09:30:59 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] watchdog: renesas-wdt: Remove R-Car M2-W ES2.x from blacklist
-Date: Fri, 20 Apr 2018 14:20:49 +0200
-Message-Id: <1524226849-13301-1-git-send-email-geert+renesas@glider.be>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 08/11] arm64: dts: r8a77965: Populate the DU instance
+ placeholder
+Message-ID: <20180430073059.o6vrdljslhvnp762@verge.net.au>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180427165722.19445-9-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427165722.19445-9-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-System restart triggered by watchdog time-out works fine on a Koelsch
-board with R-Car M2-W ES2.0.
+On Fri, Apr 27, 2018 at 05:57:19PM +0100, Kieran Bingham wrote:
+> The DU entity node has been previously added but only as a placeholder.
+> Populate the node with the properties to use the device.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Thanks to Magnus and Shimoda-san for providing board access!
----
- drivers/watchdog/renesas_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 514db5cc15951125..88d81feba4e60087 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -146,7 +146,7 @@ static const struct soc_device_attribute rwdt_quirks_match[] = {
- 		.data = (void *)1,	/* needs single CPU */
- 	}, {
- 		.soc_id = "r8a7791",
--		.revision = "ES[12].*",
-+		.revision = "ES1.*",
- 		.data = (void *)1,	/* needs single CPU */
- 	}, {
- 		.soc_id = "r8a7792",
--- 
-2.7.4
+Thanks, applied.
