@@ -1,95 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:60244 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751966AbeDJIfY (ORCPT
+Received: from mail-he1eur01on0128.outbound.protection.outlook.com ([104.47.0.128]:55897
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755552AbeD3Uc6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:35:24 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v4 0/8] arm: Base support for Renesas RZN1D-DB Board
-Date: Tue, 10 Apr 2018 09:30:00 +0100
-Message-Id: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+        Mon, 30 Apr 2018 16:32:58 -0400
+Subject: Re: [PATCH 23/24] drm/bridge: require the .owner to be filled in on
+ drm_bridge_attach
+To: linux-kernel@vger.kernel.org,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Peter Senna Tschudin <peter.senna@collabora.com>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        linux-arm-msm@vger.kernel.org, Jyri Sarha <jsarha@ti.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org
+References: <20180426223139.16740-1-peda@axentia.se>
+ <20180426223139.16740-24-peda@axentia.se>
+ <20180430152438.GO12521@phenom.ffwll.local>
+From: Peter Rosin <peda@axentia.se>
+Message-ID: <dabd40ac-408d-22d7-25c8-370c50663989@axentia.se>
+Date: Mon, 30 Apr 2018 22:32:48 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180430152438.GO12521@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series adds the plain basic support for booting a bare
-kernel on the RZ/N1D-DB Board. It's been trimmed to the strict
-minimum as a 'base', further patches that will add the
-rest of the support, pinctrl, clock architecture and quite
-a few others.
+On 2018-04-30 17:24, Daniel Vetter wrote:
+> On Fri, Apr 27, 2018 at 12:31:38AM +0200, Peter Rosin wrote:
+>> The .owner will be handy to have around.
+>>
+>> Signed-off-by: Peter Rosin <peda@axentia.se>
+>> ---
+>>  drivers/gpu/drm/drm_bridge.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+>> index 9f023bd84d56..a038da696802 100644
+>> --- a/drivers/gpu/drm/drm_bridge.c
+>> +++ b/drivers/gpu/drm/drm_bridge.c
+>> @@ -115,6 +115,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+>>  	if (!encoder || !bridge)
+>>  		return -EINVAL;
+>>  
+>> +	if (WARN_ON(!bridge->owner))
+>> +		return -EINVAL;
+> 
+> I think conceptually this is checked at the wrong place, and I think also misnamed
+> a bit. The ->owner is essentially the struct device (and its associated
+> driver) that provides the drm_bridge. As such it should be filled out
+> already at drm_bridge_add() time, and I think the check should be in
+> there. For driver-internal bridges it might make sense to also check this
+> here, not sure. Or just require all bridges get added.
 
-Thanks for the comments on the previous versions!
+The reason for the position is that while I originally had the WARN in
+drm_bridge_add, I found that quite a few bridges never call drm_bridge_add.
+So I moved it. Other options are to start requiring all bridge suppliers to
+call drm_bridge_add or to have the WARN in both function. Too me, it would
+make sense to require all bridge suppliers to call drm_bridge_add, as that
+enables other init stuff later, when needed. But that is a hairy patch to
+get right, and is probably best left as a separate series.
 
-v4:
- + Fixes for suggestions by Simon Horman
- + Fixes for suggestions by Jacopo Mondi
- + Fixes for suggestions by Geert Uytterhoeven
- + Renamed the r9a06g0xx.dtsi file, given up on trying to get a family
-   common file in, so dropped potential RZ/N1S support and now only
-   focus on RZ/N1D for this patchset.
- + Added 'always-on' to the architected timer node, because it is.
- + Added ARCH_R9A06G032, to match others patterns like RCAR
- + Sorted the .dts files, added empty lines as required.
- + Fixed patch prefixes to match git-log for bindings&dts
- + Merged board .dts & Makefile changes together
- + Rebased on next-20180410
-v3:
- + Fixes for suggestions by Geert Uytterhoeven
- + Removed SoC Specific renesas,r9a06g032-xxx, as it's not needed for now.
- + Kept renesas,rzn1 as a family/generic for this family.
- + Fixed a couple of the commit messages.
- + Added Geert's Reviewed-By where appropriate.
-v2:
- + Fixes for suggestions by Simon Horman
- + Fixes for suggestions by Rob Herring
- + Fixes for suggestions by Geert Uytterhoeven
- + Removed the mach file
- + Added a MFD base for the sysctrl block
- + Added a regmap based sub driver for the reboot handler
- + Renamed the files to match shmobile conventions
- + Adapted the compatible= strings to reflect 'family' vs 'part'
-   distinction.
- + Removed the sysctrl.h file entirelly.
- + Fixed every warnings from the DTC compiler on W=12 mode.
- + Split the device-tree patches from the code.
+> Wrt the name, I think we should call this pdev or something. ->owner
+> usually means the module owner. I think in other subsystems ->dev is used,
+> but in drm we use ->dev for the drm_device pointer, so totally different
+> thing. pdev = physical device is the best I came up with. Better
+> suggestions very much welcome.
 
-Michel Pollet (8):
-  arm: shmobile: Add the RZ/N1 arch to the shmobile Kconfig
-  arm: shmobile: Add the RZ/N1D (R9A06G032) to the shmobile Kconfig
-  dt-bindings: mfd: renesas,rzn1-sysctrl: document RZ/N1 sysctrl node
-  dt-bindings: reset: renesas,rzn1-reboot: document RZ/N1 reboot driver
-  dt-bindings: arm: Document the RZN1D-DB board
-  ARM: dts: Renesas RZ/N1 SoC base device tree file
-  ARM: dts: Renesas RZN1D-DB Board base file
-  reset: Renesas RZ/N1 reboot driver
+pdev is about as problematic as owner. To me it reads "platform device".
+And dev for a drm_device is also somewhat problematic, and I think that
+drm would have been better, but dev for drm_device is probably quite
+common. But one way to go is to rename the current dev to drm, so that
+dev is freed up for the owner/supplier device. But that is a tedious
+patch to write (I don't do the cocci thing).
 
- Documentation/devicetree/bindings/arm/shmobile.txt |   5 +-
- .../bindings/mfd/renesas,rzn1-sysctrl.txt          |  23 +++++
- .../bindings/power/renesas,rzn1-reboot.txt         |  23 +++++
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts        |  29 ++++++
- arch/arm/boot/dts/r9a06g032.dtsi                   |  94 ++++++++++++++++++
- arch/arm/mach-shmobile/Kconfig                     |   9 ++
- drivers/power/reset/Kconfig                        |   7 ++
- drivers/power/reset/Makefile                       |   1 +
- drivers/power/reset/rzn1-reboot.c                  | 105 +++++++++++++++++++++
- 10 files changed, 296 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
- create mode 100644 drivers/power/reset/rzn1-reboot.c
+Other suggestions I can think of: odev for owner device, sdev for supplier
+device or just plain supplier.
 
--- 
-2.7.4
+Cheers,
+Peter
+
+> -Daniel
+> 
+>> +
+>>  	if (previous && (!previous->dev || previous->encoder != encoder))
+>>  		return -EINVAL;
+>>  
+>> -- 
+>> 2.11.0
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
