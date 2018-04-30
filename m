@@ -1,61 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52764 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751195AbeDEJk4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42214 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751707AbeD3HeE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Apr 2018 05:40:56 -0400
-Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a77470
- support
-To: Biju Das <biju.das@bp.renesas.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
+        Mon, 30 Apr 2018 03:34:04 -0400
+Date: Mon, 30 Apr 2018 09:34:00 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <1522318628-52821-1-git-send-email-biju.das@bp.renesas.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <45271088-4b7f-d714-d868-417a4c328fd4@arm.com>
-Date: Thu, 5 Apr 2018 10:40:52 +0100
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 10/11] arm64: dts: r8a77965-salvator-x: Enable DU
+ external clocks and HDMI
+Message-ID: <20180430073400.6prb2uvb6esslzqb@verge.net.au>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180427165722.19445-11-kieran.bingham+renesas@ideasonboard.com>
+ <3691864.jEUybrQDu7@avalon>
 MIME-Version: 1.0
-In-Reply-To: <1522318628-52821-1-git-send-email-biju.das@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3691864.jEUybrQDu7@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 29/03/18 11:17, Biju Das wrote:
-> Renesas RZ/G SoC have the R-Car gen2 compatible IRQC interrupt
-> controllers. Document RZ/G1C (also known as R8A77470) SoC bindings.
+On Sat, Apr 28, 2018 at 12:34:26AM +0300, Laurent Pinchart wrote:
+> Hi Kieran,
 > 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Thank you for the patch.
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-> index 20f121d..1d5891a 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-> @@ -7,6 +7,7 @@ Required properties:
->      - "renesas,irqc-r8a73a4" (R-Mobile APE6)
->      - "renesas,irqc-r8a7743" (RZ/G1M)
->      - "renesas,irqc-r8a7745" (RZ/G1E)
-> +    - "renesas,irqc-r8a77470" (RZ/G1C)
->      - "renesas,irqc-r8a7790" (R-Car H2)
->      - "renesas,irqc-r8a7791" (R-Car M2-W)
->      - "renesas,irqc-r8a7792" (R-Car V2H)
+> On Friday, 27 April 2018 19:57:21 EEST Kieran Bingham wrote:
+> > The DU1 external dot clock is provided by the fixed frequency clock
+> > generator X21, while the DU0 and DU3 clocks are provided by the
+> > programmable Versaclock5 clock generator.
+> > 
+> > Enable the clocks, and the HDMI encoder for the M3-N Salvator-X board
+> > and hook it up to the HDMI connector.
+> > 
+> > Based on patches from Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > 
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Queued with Simon and Geert's RB tags.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks, applied.
