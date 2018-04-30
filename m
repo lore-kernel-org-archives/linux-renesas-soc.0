@@ -1,83 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33441 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751251AbeD3ITb (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42261 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751751AbeD3Hh0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Apr 2018 04:19:31 -0400
-Subject: Re: [PATCH] DT: net: can: rcar_canfd: document R8A77980 bindings
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mon, 30 Apr 2018 03:37:26 -0400
+Date: Mon, 30 Apr 2018 09:37:22 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Wolfgang Grandegger <wg@grandegger.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] DT: net: can: rcar_canfd: document R8A77980 bindings
+Message-ID: <20180430073722.tbrd5y3bs5hpq724@verge.net.au>
 References: <556f1f23-19bc-e7bd-47b1-f22e086e2b69@cogentembedded.com>
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Message-ID: <4a4ab37e-1619-e9cd-da88-95cc9e957401@pengutronix.de>
-Date: Mon, 30 Apr 2018 10:18:54 +0200
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <556f1f23-19bc-e7bd-47b1-f22e086e2b69@cogentembedded.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="katTPhnituZ4CmUyqh5y6dbTDMVB2rzGt"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---katTPhnituZ4CmUyqh5y6dbTDMVB2rzGt
-Content-Type: multipart/mixed; boundary="AtIDxxpsXewkE1ZmiKWN3w4XUy5q5KNyQ";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
- Rob Herring <robh+dt@kernel.org>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Wolfgang Grandegger <wg@grandegger.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-renesas-soc@vger.kernel.org
-Message-ID: <4a4ab37e-1619-e9cd-da88-95cc9e957401@pengutronix.de>
-Subject: Re: [PATCH] DT: net: can: rcar_canfd: document R8A77980 bindings
-References: <556f1f23-19bc-e7bd-47b1-f22e086e2b69@cogentembedded.com>
-In-Reply-To: <556f1f23-19bc-e7bd-47b1-f22e086e2b69@cogentembedded.com>
-
---AtIDxxpsXewkE1ZmiKWN3w4XUy5q5KNyQ
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
-
-On 04/27/2018 08:53 PM, Sergei Shtylyov wrote:
-> Document the R-Car V3H (R8A77980) SoC support in the R-Car CAN-FD bindi=
-ngs.
->=20
+On Fri, Apr 27, 2018 at 09:53:33PM +0300, Sergei Shtylyov wrote:
+> Document the R-Car V3H (R8A77980) SoC support in the R-Car CAN-FD bindings.
+> 
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> The patch is against the 'linux-can-next.git' repo plus the R8A77970 bindings
+> patch posted yesterday. Although I wouldn't object if they're both merged to
+> the 'linux-can.git' repo instead. :-)
+> 
+>  Documentation/devicetree/bindings/net/can/rcar_canfd.txt |    1 +
+>  1 file changed, 1 insertion(+)
 
-Applied to linux-can.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-tnx,
-Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---AtIDxxpsXewkE1ZmiKWN3w4XUy5q5KNyQ--
-
---katTPhnituZ4CmUyqh5y6dbTDMVB2rzGt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlrm0W4ACgkQk9IU1zQo
-ZfG+cQf+NvGNIWkpQevHW0vAb1PzYYah4PpkagIFKFpfyDbaVMC+ZJAgaac5c6pj
-l75UuY/Uzu7WDj0wddH3rLCoHfVC8+AJt1aODQM0k43S9Y7TAVjApnLyrctRczei
-RZZONImR0XPTNICIN2zF2n+n+kQASo5bLF061d09FddJ55sLmg5fp77tPG4a8h96
-oHg1Ku1NmPDPqPylRYNWdtPslfnMQtAW9iXlCF2CZpCZvu0wJIknC3IaLmAavtp3
-SM+6feE4SikFplEEav7vN4G/DM8DNY8DVHDuhZYzXpRiqQOjVVfsCeaBOEIUTMEo
-VmWtW7HS3g10dyuIv43o4uI1+KRSJA==
-=ae9W
------END PGP SIGNATURE-----
-
---katTPhnituZ4CmUyqh5y6dbTDMVB2rzGt--
+> 
+> Index: linux-can-next/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+> ===================================================================
+> --- linux-can-next.orig/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+> +++ linux-can-next/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+> @@ -7,6 +7,7 @@ Required properties:
+>    - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
+>    - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3) compatible controller.
+>    - "renesas,r8a77970-canfd" for R8A77970 (R-Car V3M) compatible controller.
+> +  - "renesas,r8a77980-canfd" for R8A77980 (R-Car V3H) compatible controller.
+>  
+>    When compatible with the generic version, nodes must list the
+>    SoC-specific version corresponding to the platform first, followed by the
+> 
