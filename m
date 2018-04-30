@@ -1,112 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:51414 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753058AbeDTVLh (ORCPT
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55557 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752062AbeD3IRi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Apr 2018 17:11:37 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v7 05/11] ARM: smp: Add initialization of CNTVOFF
-Date: Fri, 20 Apr 2018 23:10:16 +0200
-Message-Id: <20180420211022.11759-6-mylene.josserand@bootlin.com>
-In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
-References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+        Mon, 30 Apr 2018 04:17:38 -0400
+Subject: Re: [PATCH] DT: net: can: rcar_canfd: document R8A77970 bindings
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+References: <7a3d170f-1d3a-a807-9256-15fe1a78ca4e@cogentembedded.com>
+ <TY2PR01MB1962E2336D20499CF27134EBC38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <bea94b38-0dba-33c6-46af-9d42ebff3b29@pengutronix.de>
+Date: Mon, 30 Apr 2018 10:16:58 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <TY2PR01MB1962E2336D20499CF27134EBC38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="wa2jzPKmo6SKRBgH8Gbw3kwCSyxSUY90y"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The CNTVOFF register from arch timer is uninitialized.
-It should be done by the bootloader but it is currently not the case,
-even for boot CPU because this SoC is booting in secure mode.
-It leads to an random offset value meaning that each CPU will have a
-different time, which isn't working very well.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--wa2jzPKmo6SKRBgH8Gbw3kwCSyxSUY90y
+Content-Type: multipart/mixed; boundary="tZL5NCDBARHzfiwcm4mxT6EYyUjN1DMNP";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+ Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Message-ID: <bea94b38-0dba-33c6-46af-9d42ebff3b29@pengutronix.de>
+Subject: Re: [PATCH] DT: net: can: rcar_canfd: document R8A77970 bindings
+References: <7a3d170f-1d3a-a807-9256-15fe1a78ca4e@cogentembedded.com>
+ <TY2PR01MB1962E2336D20499CF27134EBC38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB1962E2336D20499CF27134EBC38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
 
-Add assembly code used for boot CPU and secondary CPU cores to make
-sure that the CNTVOFF register is initialized. Because this code can
-be used by different platforms, add this assembly file in ARM's common
-folder.
+--tZL5NCDBARHzfiwcm4mxT6EYyUjN1DMNP
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/common/Makefile              |  1 +
- arch/arm/common/secure_cntvoff.S      | 31 +++++++++++++++++++++++++++++++
- arch/arm/include/asm/secure_cntvoff.h |  8 ++++++++
- 3 files changed, 40 insertions(+)
- create mode 100644 arch/arm/common/secure_cntvoff.S
- create mode 100644 arch/arm/include/asm/secure_cntvoff.h
+On 04/27/2018 01:33 PM, Ramesh Shanmugasundaram wrote:
+> Hello Sergei,
+>=20
+> Thanks for your patch.
+>=20
+>> Subject: [PATCH] DT: net: can: rcar_canfd: document R8A77970 bindings
+>>
+>> Document the R-Car V3M (R8A77970) SoC support in the R-Car CAN-FD
+>> bindings.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>=20
+> Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
+s.com>
 
-diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-index 70b4a14ed993..1e9f7af8f70f 100644
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
- obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
- obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
- obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
-+obj-$(CONFIG_SMP)		+= secure_cntvoff.o
- obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
- obj-$(CONFIG_MCPM)		+= mcpm_head.o mcpm_entry.o mcpm_platsmp.o vlock.o
- CFLAGS_REMOVE_mcpm_entry.o	= -pg
-diff --git a/arch/arm/common/secure_cntvoff.S b/arch/arm/common/secure_cntvoff.S
-new file mode 100644
-index 000000000000..68a4a8344319
---- /dev/null
-+++ b/arch/arm/common/secure_cntvoff.S
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2014 Renesas Electronics Corporation
-+ *
-+ * Initialization of CNTVOFF register from secure mode
-+ *
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/assembler.h>
-+
-+ENTRY(secure_cntvoff_init)
-+	.arch	armv7-a
-+	/*
-+	 * CNTVOFF has to be initialized either from non-secure Hypervisor
-+	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
-+	 * then it should be handled by the secure code
-+	 */
-+	cps	#MON_MODE
-+	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
-+	orr	r0, r1, #1
-+	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
-+	isb
-+	mov	r0, #0
-+	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
-+	isb
-+	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
-+	isb
-+	cps	#SVC_MODE
-+	ret	lr
-+ENDPROC(secure_cntvoff_init)
-diff --git a/arch/arm/include/asm/secure_cntvoff.h b/arch/arm/include/asm/secure_cntvoff.h
-new file mode 100644
-index 000000000000..1f93aee1f630
---- /dev/null
-+++ b/arch/arm/include/asm/secure_cntvoff.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASMARM_ARCH_CNTVOFF_H
-+#define __ASMARM_ARCH_CNTVOFF_H
-+
-+extern void secure_cntvoff_init(void);
-+
-+#endif
--- 
-2.11.0
+Applied to linux-can.
+
+tnx,
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--tZL5NCDBARHzfiwcm4mxT6EYyUjN1DMNP--
+
+--wa2jzPKmo6SKRBgH8Gbw3kwCSyxSUY90y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlrm0PoACgkQk9IU1zQo
+ZfHzbQgAoKEsQJvBYjjsNX87jY6XnSg1jnYJQo7/pSa1kE1JpoXgYCvKBW7aQjVZ
+cbNLifFwIG32hg3DBkCCN1RakFZSZ8jmo52iHW4cw2L+FzheVDmWZsxuBnPr2CrL
+YMAHbDsaruaZmQ4oN+CoftZqfo+NrwZyCi9mGDPc77KEsEQvmqm+Qy/yn6oI/Vjd
+QSPZacE52ZuquiFnPcz7rXbKe/h+eOzNZBbq552AfzfxVCgpwiHVndM5FS9E9cjC
+9e7it4K8SJI3go/t44+qFrVtZ0C6JZUmB4WhLJbw0aJmXF9klAOomFKZCkfQ6yMZ
+fbCMYeXVvY01rKYmArF+QMAe2P9WjQ==
+=ef5E
+-----END PGP SIGNATURE-----
+
+--wa2jzPKmo6SKRBgH8Gbw3kwCSyxSUY90y--
