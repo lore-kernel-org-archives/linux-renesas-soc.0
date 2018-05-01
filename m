@@ -1,72 +1,355 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 2 May 2018 15:14:31 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:46159 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755566AbeEAMcd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 1 May 2018 08:32:33 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
         thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 10/12] ARM: sun8i: smp: Add support for A83T
-Message-ID: <20180502131431.j7jaz74ko5ueotwn@flea>
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v8 10/12] ARM: sun8i: smp: Add support for A83T
+Date: Tue,  1 May 2018 14:31:29 +0200
+Message-Id: <20180501123131.7738-11-mylene.josserand@bootlin.com>
+In-Reply-To: <20180501123131.7738-1-mylene.josserand@bootlin.com>
 References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
- <20180501123131.7738-11-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="v3li36dd5jhn3acu"
-Content-Disposition: inline
-In-Reply-To: <20180501123131.7738-11-mylene.josserand@bootlin.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Add the support for A83T.
 
---v3li36dd5jhn3acu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A83T SoC has an additional register than A80 to handle CPU configurations:
+R_CPUS_CFG. Information about the register comes from Allwinner's BSP
+driver.
+An important difference is the Power Off Gating register for clusters
+which is BIT(4) in case of SUN9I-A80 and BIT(0) in case of SUN8I-A83T.
+There is also a bit swap between sun8i-a83t and sun9i-a80 that must be
+handled.
 
-On Tue, May 01, 2018 at 02:31:29PM +0200, Myl=E8ne Josserand wrote:
-> Add the support for A83T.
->=20
-> A83T SoC has an additional register than A80 to handle CPU configurations:
-> R_CPUS_CFG. Information about the register comes from Allwinner's BSP
-> driver.
-> An important difference is the Power Off Gating register for clusters
-> which is BIT(4) in case of SUN9I-A80 and BIT(0) in case of SUN8I-A83T.
-> There is also a bit swap between sun8i-a83t and sun9i-a80 that must be
-> handled.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+---
+ arch/arm/mach-sunxi/Kconfig  |   2 +-
+ arch/arm/mach-sunxi/mc_smp.c | 151 ++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 137 insertions(+), 16 deletions(-)
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---v3li36dd5jhn3acu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrpubYACgkQ0rTAlCFN
-r3Qqlg//YFe09MMg2NNFb3wlQITSJ7vYVeBfO9MheU8Nf4Zf0wit7OR9f9d1hPxr
-iqlgfBIoXdj3nrdukW4pR+sHBYxhzpICIw79tcFvlhUv+1TzndVdWQf7TYtScvfF
-9cpjv3+kJcytQH+is9+r+KhrQbYTjNNKf1oXOYZupXOEL9KJmeZeRqjyj+AffF+x
-f6K9eQPedtSLrD4QCpoYhn+kLAP+8VN4aun3RymwwDgenKQiOVmME7AYNyeSlW0M
-XqV3xeP4xCGDTYaWh/Q3En6fE28ss0Jwrekzl2e9JU8U88kF606p6i0D2yM8LcHR
-vPIjGSmGdC850pZ3+87b1OlyP5gU4ehHCWO9YvUE5OTm83+Dlbd1aqWOuGcSqGx1
-3goL7QTOEKunZgP/J3GiR88Wwqi4aXC4atlpg3TBewMN1fnR1CxXCjBO1qTYG1ZH
-wfBuNpDs+01dhD5aMX2mgGBQfZz/vD/KNFBS6+ZQeEAl5wJHHk+M95UIGYpezY0L
-PMyqfWhwQN1XSgXFK5d4SiyrRhGUya22C8a9QgZrOPnhVgPfOTHSmjdSiAtpxXyw
-LP/Jh0FL+F8L4qQO3YusZzIBB5zCjcRdqF9oupQuK9GS/NuTmeIwzsxGMewuu2Ew
-V6rwoCoj+H9ONd1e/2rhLJtmFq/AGS4CKyUfpnIZbtoRDdPBj2I=
-=JGi0
------END PGP SIGNATURE-----
-
---v3li36dd5jhn3acu--
+diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+index ce53ceaf4cc5..d9c8ecf88ec6 100644
+--- a/arch/arm/mach-sunxi/Kconfig
++++ b/arch/arm/mach-sunxi/Kconfig
+@@ -51,7 +51,7 @@ config MACH_SUN9I
+ config ARCH_SUNXI_MC_SMP
+ 	bool
+ 	depends on SMP
+-	default MACH_SUN9I
++	default MACH_SUN9I || MACH_SUN8I
+ 	select ARM_CCI400_PORT_CTRL
+ 	select ARM_CPU_SUSPEND
+ 
+diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+index fc10e3a3268f..b4037b603897 100644
+--- a/arch/arm/mach-sunxi/mc_smp.c
++++ b/arch/arm/mach-sunxi/mc_smp.c
+@@ -55,22 +55,31 @@
+ #define CPUCFG_CX_RST_CTRL_L2_RST	BIT(8)
+ #define CPUCFG_CX_RST_CTRL_CX_RST(n)	BIT(4 + (n))
+ #define CPUCFG_CX_RST_CTRL_CORE_RST(n)	BIT(n)
++#define CPUCFG_CX_RST_CTRL_CORE_RST_ALL	(0xf << 0)
+ 
+ #define PRCM_CPU_PO_RST_CTRL(c)		(0x4 + 0x4 * (c))
+ #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
+ #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
+ #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
++/* The power off register for clusters are different from a80 and a83t */
++#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN8I	BIT(0)
+ #define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
+ #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
+ #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
+ #define PRCM_CPU_SOFT_ENTRY_REG		0x164
+ 
++/* R_CPUCFG registers, specific to sun8i-a83t */
++#define R_CPUCFG_CLUSTER_PO_RST_CTRL(c)	(0x30 + (c) * 0x4)
++#define R_CPUCFG_CLUSTER_PO_RST_CTRL_CORE(n)	BIT(n)
++#define R_CPUCFG_CPU_SOFT_ENTRY_REG		0x01a4
++
+ #define CPU0_SUPPORT_HOTPLUG_MAGIC0	0xFA50392F
+ #define CPU0_SUPPORT_HOTPLUG_MAGIC1	0x790DCA3A
+ 
+ static void __iomem *cpucfg_base;
+ static void __iomem *prcm_base;
+ static void __iomem *sram_b_smp_base;
++static void __iomem *r_cpucfg_base;
+ 
+ extern void sunxi_mc_smp_secondary_startup(void);
+ extern void sunxi_mc_smp_resume(void);
+@@ -161,6 +170,16 @@ static int sunxi_cpu_powerup(unsigned int cpu, unsigned int cluster)
+ 	reg &= ~PRCM_CPU_PO_RST_CTRL_CORE(cpu);
+ 	writel(reg, prcm_base + PRCM_CPU_PO_RST_CTRL(cluster));
+ 
++	if (is_a83t) {
++		/* assert cpu power-on reset */
++		reg  = readl(r_cpucfg_base +
++			     R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
++		reg &= ~(R_CPUCFG_CLUSTER_PO_RST_CTRL_CORE(cpu));
++		writel(reg, r_cpucfg_base +
++		       R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
++		udelay(10);
++	}
++
+ 	/* Cortex-A7: hold L1 reset disable signal low */
+ 	if (!sunxi_core_is_cortex_a15(cpu, cluster)) {
+ 		reg = readl(cpucfg_base + CPUCFG_CX_CTRL_REG0(cluster));
+@@ -184,17 +203,38 @@ static int sunxi_cpu_powerup(unsigned int cpu, unsigned int cluster)
+ 	/* open power switch */
+ 	sunxi_cpu_power_switch_set(cpu, cluster, true);
+ 
++	/* Handle A83T bit swap */
++	if (is_a83t) {
++		if (cpu == 0)
++			cpu = 4;
++	}
++
+ 	/* clear processor power gate */
+ 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	reg &= ~PRCM_PWROFF_GATING_REG_CORE(cpu);
+ 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	udelay(20);
+ 
++	/* Handle A83T bit swap */
++	if (is_a83t) {
++		if (cpu == 4)
++			cpu = 0;
++	}
++
+ 	/* de-assert processor power-on reset */
+ 	reg = readl(prcm_base + PRCM_CPU_PO_RST_CTRL(cluster));
+ 	reg |= PRCM_CPU_PO_RST_CTRL_CORE(cpu);
+ 	writel(reg, prcm_base + PRCM_CPU_PO_RST_CTRL(cluster));
+ 
++	if (is_a83t) {
++		reg  = readl(r_cpucfg_base +
++			     R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
++		reg |= R_CPUCFG_CLUSTER_PO_RST_CTRL_CORE(cpu);
++		writel(reg, r_cpucfg_base +
++		       R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
++		udelay(10);
++	}
++
+ 	/* de-assert all processor resets */
+ 	reg = readl(cpucfg_base + CPUCFG_CX_RST_CTRL(cluster));
+ 	reg |= CPUCFG_CX_RST_CTRL_DBG_RST(cpu);
+@@ -216,6 +256,14 @@ static int sunxi_cluster_powerup(unsigned int cluster)
+ 	if (cluster >= SUNXI_NR_CLUSTERS)
+ 		return -EINVAL;
+ 
++	/* For A83T, assert cluster cores resets */
++	if (is_a83t) {
++		reg = readl(cpucfg_base + CPUCFG_CX_RST_CTRL(cluster));
++		reg &= ~CPUCFG_CX_RST_CTRL_CORE_RST_ALL;   /* Core Reset    */
++		writel(reg, cpucfg_base + CPUCFG_CX_RST_CTRL(cluster));
++		udelay(10);
++	}
++
+ 	/* assert ACINACTM */
+ 	reg = readl(cpucfg_base + CPUCFG_CX_CTRL_REG1(cluster));
+ 	reg |= CPUCFG_CX_CTRL_REG1_ACINACTM;
+@@ -226,6 +274,16 @@ static int sunxi_cluster_powerup(unsigned int cluster)
+ 	reg &= ~PRCM_CPU_PO_RST_CTRL_CORE_ALL;
+ 	writel(reg, prcm_base + PRCM_CPU_PO_RST_CTRL(cluster));
+ 
++	/* assert cluster cores resets */
++	if (is_a83t) {
++		reg  = readl(r_cpucfg_base +
++			     R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
++		reg &= ~CPUCFG_CX_RST_CTRL_CORE_RST_ALL;
++		writel(reg, r_cpucfg_base +
++		       R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
++		udelay(10);
++	}
++
+ 	/* assert cluster resets */
+ 	reg = readl(cpucfg_base + CPUCFG_CX_RST_CTRL(cluster));
+ 	reg &= ~CPUCFG_CX_RST_CTRL_DBG_SOC_RST;
+@@ -256,7 +314,10 @@ static int sunxi_cluster_powerup(unsigned int cluster)
+ 
+ 	/* clear cluster power gate */
+ 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+-	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
++	if (is_a83t)
++		reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN8I;
++	else
++		reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+ 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	udelay(20);
+ 
+@@ -453,7 +514,10 @@ static int sunxi_cluster_powerdown(unsigned int cluster)
+ 	/* gate cluster power */
+ 	pr_debug("%s: gate cluster power\n", __func__);
+ 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+-	reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
++	if (is_a83t)
++		reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN8I;
++	else
++		reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+ 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	udelay(20);
+ 
+@@ -535,8 +599,12 @@ static int sunxi_mc_smp_cpu_kill(unsigned int l_cpu)
+ 	return !ret;
+ }
+ 
+-static bool sunxi_mc_smp_cpu_can_disable(unsigned int __unused)
++static bool sunxi_mc_smp_cpu_can_disable(unsigned int cpu)
+ {
++	/* CPU0 hotplug not handled for sun8i-a83t */
++	if (is_a83t)
++		if (cpu == 0)
++			return false;
+ 	return true;
+ }
+ #endif
+@@ -619,6 +687,7 @@ struct sunxi_mc_smp_nodes {
+ 	struct device_node *prcm_node;
+ 	struct device_node *cpucfg_node;
+ 	struct device_node *sram_node;
++	struct device_node *r_cpucfg_node;
+ };
+ 
+ /* This structure holds SoC-specific bits tied to an enable-method string. */
+@@ -633,6 +702,7 @@ static void __init sunxi_mc_smp_put_nodes(struct sunxi_mc_smp_nodes *nodes)
+ 	of_node_put(nodes->prcm_node);
+ 	of_node_put(nodes->cpucfg_node);
+ 	of_node_put(nodes->sram_node);
++	of_node_put(nodes->r_cpucfg_node);
+ 	memset(nodes, 0, sizeof(*nodes));
+ }
+ 
+@@ -662,11 +732,42 @@ static int __init sun9i_a80_get_smp_nodes(struct sunxi_mc_smp_nodes *nodes)
+ 	return 0;
+ }
+ 
++static int __init sun8i_a83t_get_smp_nodes(struct sunxi_mc_smp_nodes *nodes)
++{
++	nodes->prcm_node = of_find_compatible_node(NULL, NULL,
++						   "allwinner,sun8i-a83t-r-ccu");
++	if (!nodes->prcm_node) {
++		pr_err("%s: PRCM not available\n", __func__);
++		return -ENODEV;
++	}
++
++	nodes->cpucfg_node = of_find_compatible_node(NULL, NULL,
++						     "allwinner,sun8i-a83t-cpucfg");
++	if (!nodes->cpucfg_node) {
++		pr_err("%s: CPUCFG not available\n", __func__);
++		return -ENODEV;
++	}
++
++	nodes->r_cpucfg_node = of_find_compatible_node(NULL, NULL,
++						       "allwinner,sun8i-a83t-r-cpucfg");
++	if (!nodes->r_cpucfg_node) {
++		pr_err("%s: RCPUCFG not available\n", __func__);
++		return -ENODEV;
++	}
++
++	return 0;
++}
++
+ static const struct sunxi_mc_smp_data sunxi_mc_smp_data[] __initconst = {
+ 	{
+ 		.enable_method	= "allwinner,sun9i-a80-smp",
+ 		.get_smp_nodes	= sun9i_a80_get_smp_nodes,
+ 	},
++	{
++		.enable_method	= "allwinner,sun8i-a83t-smp",
++		.get_smp_nodes	= sun8i_a83t_get_smp_nodes,
++		.is_a83t	= true,
++	},
+ };
+ 
+ static int __init sunxi_mc_smp_init(void)
+@@ -674,6 +775,7 @@ static int __init sunxi_mc_smp_init(void)
+ 	struct sunxi_mc_smp_nodes nodes = { 0 };
+ 	struct device_node *node;
+ 	struct resource res;
++	void __iomem *addr;
+ 	int i, ret;
+ 
+ 	/*
+@@ -738,12 +840,23 @@ static int __init sunxi_mc_smp_init(void)
+ 		goto err_unmap_prcm;
+ 	}
+ 
+-	sram_b_smp_base = of_io_request_and_map(nodes.sram_node, 0,
+-						"sunxi-mc-smp");
+-	if (IS_ERR(sram_b_smp_base)) {
+-		ret = PTR_ERR(sram_b_smp_base);
+-		pr_err("%s: failed to map secure SRAM\n", __func__);
+-		goto err_unmap_release_cpucfg;
++	if (is_a83t) {
++		r_cpucfg_base = of_io_request_and_map(nodes.r_cpucfg_node,
++						      0, "sunxi-mc-smp");
++		if (IS_ERR(r_cpucfg_base)) {
++			ret = PTR_ERR(r_cpucfg_base);
++			pr_err("%s: failed to map R-CPUCFG registers\n",
++			       __func__);
++			goto err_unmap_release_cpucfg;
++		}
++	} else {
++		sram_b_smp_base = of_io_request_and_map(nodes.sram_node, 0,
++							"sunxi-mc-smp");
++		if (IS_ERR(sram_b_smp_base)) {
++			ret = PTR_ERR(sram_b_smp_base);
++			pr_err("%s: failed to map secure SRAM\n", __func__);
++			goto err_unmap_release_cpucfg;
++		}
+ 	}
+ 
+ 	/* Configure CCI-400 for boot cluster */
+@@ -751,15 +864,18 @@ static int __init sunxi_mc_smp_init(void)
+ 	if (ret) {
+ 		pr_err("%s: failed to configure boot cluster: %d\n",
+ 		       __func__, ret);
+-		goto err_unmap_release_secure_sram;
++		goto err_unmap_release_sram_rcpucfg;
+ 	}
+ 
+ 	/* We don't need the device nodes anymore */
+ 	sunxi_mc_smp_put_nodes(&nodes);
+ 
+ 	/* Set the hardware entry point address */
+-	writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
+-	       prcm_base + PRCM_CPU_SOFT_ENTRY_REG);
++	if (is_a83t)
++		addr = r_cpucfg_base + R_CPUCFG_CPU_SOFT_ENTRY_REG;
++	else
++		addr = prcm_base + PRCM_CPU_SOFT_ENTRY_REG;
++	writel(__pa_symbol(sunxi_mc_smp_secondary_startup), addr);
+ 
+ 	/* Actually enable multi cluster SMP */
+ 	smp_set_ops(&sunxi_mc_smp_smp_ops);
+@@ -768,9 +884,14 @@ static int __init sunxi_mc_smp_init(void)
+ 
+ 	return 0;
+ 
+-err_unmap_release_secure_sram:
+-	iounmap(sram_b_smp_base);
+-	of_address_to_resource(nodes.sram_node, 0, &res);
++err_unmap_release_sram_rcpucfg:
++	if (is_a83t) {
++		iounmap(r_cpucfg_base);
++		of_address_to_resource(nodes.r_cpucfg_node, 0, &res);
++	} else {
++		iounmap(sram_b_smp_base);
++		of_address_to_resource(nodes.sram_node, 0, &res);
++	}
+ 	release_mem_region(res.start, resource_size(&res));
+ err_unmap_release_cpucfg:
+ 	iounmap(cpucfg_base);
+-- 
+2.11.0
