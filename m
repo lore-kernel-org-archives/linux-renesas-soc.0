@@ -1,136 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35959 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752824AbeEUOnk (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:46166 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755670AbeEAMce (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 May 2018 10:43:40 -0400
-Received: by mail-pf0-f194.google.com with SMTP id w129-v6so7201818pfd.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 May 2018 07:43:40 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 21 May 2018 23:44:53 +0900
-Message-Id: <152691389327.29667.11748814522423573308.sendpatchset@little-apple>
-In-Reply-To: <152691388485.29667.16990860330809844193.sendpatchset@little-apple>
-References: <152691388485.29667.16990860330809844193.sendpatchset@little-apple>
-Subject: [PATCH 01/03] arm64: dts: renesas: r8a77965: Add IPMMU devices nodes
+        Tue, 1 May 2018 08:32:34 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v8 11/12] ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
+Date: Tue,  1 May 2018 14:31:30 +0200
+Message-Id: <20180501123131.7738-12-mylene.josserand@bootlin.com>
+In-Reply-To: <20180501123131.7738-1-mylene.josserand@bootlin.com>
+References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Add the use of enable-method property for SMP support which allows
+to handle the SMP support for this specific SoC.
 
-Add IPMMU device nodes for the R-Car M3-N SoC aka r8a77965.
+This commit adds enable-method properties to all CPU nodes.
 
-The r8a77965 IPMMU is quite similar to r8a7796 however VP0
-has been added and PV1 has been removed. Also the IMSSTR
-bit assignment has been reworked.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
 ---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- Developed on top of renesas-devel-20180518-v4.17-rc5
-
- The DT binding for the M3-N IPMMU has earlier been documented in:
- [PATCH] iommu/ipmmu-vmsa: Document R-Car M3-N IPMMU DT bindings
-
-arch/arm64/boot/dts/renesas/r8a77965.dtsi |   89 +++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77965.dtsi	2018-05-21 21:45:17.360607110 +0900
-@@ -611,6 +611,95 @@
- 			dma-channels = <16>;
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 0669b8dc499d..2be23d600957 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -67,6 +67,7 @@
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
+ 			cci-control-port = <&cci_control0>;
++			enable-method = "allwinner,sun8i-a83t-smp";
+ 			reg = <0>;
  		};
  
-+		ipmmu_ds0: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xe6740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xe7740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 1>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_hc: mmu@e6570000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xe6570000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 2>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_ir: mmu@ff8b0000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xff8b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 3>;
-+			power-domains = <&sysc R8A77965_PD_A3IR>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xe67b0000 0 0x1000>;
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_mp: mmu@ec670000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xec670000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 4>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_pv0: mmu@fd800000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xfd800000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 6>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_rt: mmu@ffc80000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xffc80000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 10>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vc0: mmu@fe6b0000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xfe6b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 12>;
-+			power-domains = <&sysc R8A77965_PD_A3VC>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xfebd0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 14>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vp0: mmu@fe990000 {
-+			compatible = "renesas,ipmmu-r8a77965";
-+			reg = <0 0xfe990000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 16>;
-+			power-domains = <&sysc R8A77965_PD_A3VP>;
-+			#iommu-cells = <1>;
-+		};
-+
- 		avb: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a77965",
- 				     "renesas,etheravb-rcar-gen3";
+@@ -75,6 +76,7 @@
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
+ 			cci-control-port = <&cci_control0>;
++			enable-method = "allwinner,sun8i-a83t-smp";
+ 			reg = <1>;
+ 		};
+ 
+@@ -83,6 +85,7 @@
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
+ 			cci-control-port = <&cci_control0>;
++			enable-method = "allwinner,sun8i-a83t-smp";
+ 			reg = <2>;
+ 		};
+ 
+@@ -91,6 +94,7 @@
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
+ 			cci-control-port = <&cci_control0>;
++			enable-method = "allwinner,sun8i-a83t-smp";
+ 			reg = <3>;
+ 		};
+ 
+@@ -101,6 +105,7 @@
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu1_opp_table>;
+ 			cci-control-port = <&cci_control1>;
++			enable-method = "allwinner,sun8i-a83t-smp";
+ 			reg = <0x100>;
+ 		};
+ 
+@@ -109,6 +114,7 @@
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu1_opp_table>;
+ 			cci-control-port = <&cci_control1>;
++			enable-method = "allwinner,sun8i-a83t-smp";
+ 			reg = <0x101>;
+ 		};
+ 
+@@ -117,6 +123,7 @@
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu1_opp_table>;
+ 			cci-control-port = <&cci_control1>;
++			enable-method = "allwinner,sun8i-a83t-smp";
+ 			reg = <0x102>;
+ 		};
+ 
+@@ -125,6 +132,7 @@
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu1_opp_table>;
+ 			cci-control-port = <&cci_control1>;
++			enable-method = "allwinner,sun8i-a83t-smp";
+ 			reg = <0x103>;
+ 		};
+ 	};
+-- 
+2.11.0
