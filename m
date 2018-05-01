@@ -1,46 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47475 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeEBJdF (ORCPT
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:36317 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755828AbeEAOLc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 05:33:05 -0400
-Date: Wed, 2 May 2018 11:33:01 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: eagle: add CAN-FD support
-Message-ID: <20180502093301.tnbrstym7nsoelpp@verge.net.au>
-References: <4e5216bc-5f1b-ace4-1aea-02269cd206ac@cogentembedded.com>
- <87aa94b9-5f5f-f23e-3852-b71caeeae7b5@cogentembedded.com>
- <TY2PR01MB19620A47DBA41A9EC63CF795C38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
+        Tue, 1 May 2018 10:11:32 -0400
+Date: Tue, 1 May 2018 09:11:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] rcar-vin: remove generic gen3 compatible string
+Message-ID: <20180501141130.GA29499@rob-hp-laptop>
+References: <20180424234321.22367-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <TY2PR01MB19620A47DBA41A9EC63CF795C38D0@TY2PR01MB1962.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180424234321.22367-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 12:35:05PM +0000, Ramesh Shanmugasundaram wrote:
-> > Subject: [PATCH 2/2] arm64: dts: renesas: eagle: add CAN-FD support
-> > 
-> > Define the Eagle board dependent part of the CAN-FD device node.
-> > 
-> > Based on the original (and large) patch by Vladimir Barinov.
-> > 
-> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > 
+On Wed, Apr 25, 2018 at 01:43:21AM +0200, Niklas S�derlund wrote:
+> The compatible string "renesas,rcar-gen3-vin" was added before the
+> Gen3 driver code was added but it's not possible to use. Each SoC in the
+> Gen3 series require SoC specific knowledge in the driver to function.
+> Remove it before it is added to any device tree descriptions.
 > 
-> Acked-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  Documentation/devicetree/bindings/media/rcar_vin.txt | 1 -
+>  1 file changed, 1 deletion(-)
 
-Thanks, applied.
+Reviewed-by: Rob Herring <robh@kernel.org>
