@@ -1,241 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay12.mail.gandi.net ([217.70.178.232]:35941 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966170AbeEXWCh (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48364 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755278AbeEAMt3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 18:02:37 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 4/9] media: rcar-vin: Cache the mbus configuration flags
-Date: Fri, 25 May 2018 00:02:14 +0200
-Message-Id: <1527199339-7724-5-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1527199339-7724-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 1 May 2018 08:49:29 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: mchehab@kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v8 2/8] media: vsp1: Protect bodies against overflow
+Date: Tue,  1 May 2018 13:49:14 +0100
+Message-Id: <23f4f857e2e311f2948f6794f793c018e3e62062.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Media bus configuration flags and media bus type were so far a property
-of each VIN instance, as the subdevice they were connected to was
-immutable during the whole system life time.
+The body write function relies on the code never asking it to write more
+than the entries available in the list.
 
-With the forth-coming introduction of parallel input devices support,
-a VIN instance can have the subdevice it is connected to switched at
-runtime, from a CSI-2 subdevice to a parallel one and viceversa, through
-the modification of links between media entities in the media controller
-graph. To avoid discarding the per-subdevice configuration flags retrieved by
-v4l2_fwnode parsing facilities, cache them in the 'rvin_graph_entity'
-member of each VIN instance, opportunely renamed to 'rvin_parallel_entity'.
+Currently with each list body containing 256 entries, this is fine, but
+we can reduce this number greatly saving memory. In preparation of this
+add a level of protection to catch any buffer overflows.
 
-Also modify the register configuration function to take mbus flags into
-account when running on a bus type that supports them.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-The media bus type currently in use will be updated in a follow-up patch
-to the link state change notification function.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 21 ++++++++-----------
- drivers/media/platform/rcar-vin/rcar-dma.c  | 32 +++++++++++++++++++----------
- drivers/media/platform/rcar-vin/rcar-vin.h  | 22 ++++++++++++++------
- 3 files changed, 45 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index d3aadf3..a799684 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -526,30 +526,29 @@ static int rvin_parallel_parse_v4l2(struct device *dev,
- 				    struct v4l2_async_subdev *asd)
- {
- 	struct rvin_dev *vin = dev_get_drvdata(dev);
--	struct rvin_graph_entity *rvge =
--		container_of(asd, struct rvin_graph_entity, asd);
-+	struct rvin_parallel_entity *rvpe =
-+		container_of(asd, struct rvin_parallel_entity, asd);
+v3:
+ - adapt for new 'body' terminology
+ - simplify WARN_ON macro usage
+
+ drivers/media/platform/vsp1/vsp1_dl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 083da4f05c20..51965c30dec2 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -46,6 +46,7 @@ struct vsp1_dl_entry {
+  * @dma: DMA address of the entries
+  * @size: size of the DMA memory in bytes
+  * @num_entries: number of stored entries
++ * @max_entries: number of entries available
+  */
+ struct vsp1_dl_body {
+ 	struct list_head list;
+@@ -56,6 +57,7 @@ struct vsp1_dl_body {
+ 	size_t size;
  
- 	if (vep->base.port || vep->base.id)
- 		return -ENOTCONN;
- 
--	vin->mbus_cfg.type = vep->bus_type;
-+	vin->parallel = rvpe;
-+	vin->parallel->mbus_type = vep->bus_type;
- 
--	switch (vin->mbus_cfg.type) {
-+	switch (vin->parallel->mbus_type) {
- 	case V4L2_MBUS_PARALLEL:
- 		vin_dbg(vin, "Found PARALLEL media bus\n");
--		vin->mbus_cfg.flags = vep->bus.parallel.flags;
-+		vin->parallel->mbus_flags = vep->bus.parallel.flags;
- 		break;
- 	case V4L2_MBUS_BT656:
- 		vin_dbg(vin, "Found BT656 media bus\n");
--		vin->mbus_cfg.flags = 0;
-+		vin->parallel->mbus_flags = 0;
- 		break;
- 	default:
- 		vin_err(vin, "Unknown media bus type\n");
- 		return -EINVAL;
- 	}
- 
--	vin->parallel = rvge;
--
- 	return 0;
- }
- 
-@@ -559,7 +558,7 @@ static int rvin_parallel_graph_init(struct rvin_dev *vin)
- 
- 	ret = v4l2_async_notifier_parse_fwnode_endpoints(
- 		vin->dev, &vin->notifier,
--		sizeof(struct rvin_graph_entity), rvin_parallel_parse_v4l2);
-+		sizeof(struct rvin_parallel_entity), rvin_parallel_parse_v4l2);
- 	if (ret)
- 		return ret;
- 
-@@ -785,10 +784,6 @@ static int rvin_mc_init(struct rvin_dev *vin)
- {
- 	int ret;
- 
--	/* All our sources are CSI-2 */
--	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
--	vin->mbus_cfg.flags = 0;
--
- 	vin->pad.flags = MEDIA_PAD_FL_SINK;
- 	ret = media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
- 	if (ret)
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index f1c3585..d2b7002 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -659,8 +659,12 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY8_2X8:
- 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
--		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
--			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
-+		if (!vin->is_csi &&
-+		    vin->parallel->mbus_type == V4L2_MBUS_BT656)
-+			vnmc |= VNMC_INF_YUV8_BT656;
-+		else
-+			vnmc |= VNMC_INF_YUV8_BT601;
-+
- 		input_is_yuv = true;
- 		break;
- 	case MEDIA_BUS_FMT_RGB888_1X24:
-@@ -668,8 +672,12 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY10_2X10:
- 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
--		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
--			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
-+		if (!vin->is_csi &&
-+		    vin->parallel->mbus_type == V4L2_MBUS_BT656)
-+			vnmc |= VNMC_INF_YUV10_BT656;
-+		else
-+			vnmc |= VNMC_INF_YUV10_BT601;
-+
- 		input_is_yuv = true;
- 		break;
- 	default:
-@@ -682,13 +690,15 @@ static int rvin_setup(struct rvin_dev *vin)
- 	else
- 		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
--	/* Hsync Signal Polarity Select */
--	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
--		dmr2 |= VNDMR2_HPS;
-+	if (!vin->is_csi) {
-+		/* Hsync Signal Polarity Select */
-+		if (!(vin->parallel->mbus_flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-+			dmr2 |= VNDMR2_HPS;
- 
--	/* Vsync Signal Polarity Select */
--	if (!(vin->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
--		dmr2 |= VNDMR2_VPS;
-+		/* Vsync Signal Polarity Select */
-+		if (!(vin->parallel->mbus_flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
-+			dmr2 |= VNDMR2_VPS;
-+	}
- 
- 	/*
- 	 * Output format
-@@ -734,7 +744,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 
- 	if (vin->info->model == RCAR_GEN3) {
- 		/* Select between CSI-2 and parallel input */
--		if (vin->mbus_cfg.type == V4L2_MBUS_CSI2)
-+		if (vin->is_csi)
- 			vnmc &= ~VNMC_DPINE;
- 		else
- 			vnmc |= VNMC_DPINE;
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index ebb480f7..8bc3704 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -73,16 +73,22 @@ struct rvin_video_format {
+ 	unsigned int num_entries;
++	unsigned int max_entries;
  };
  
  /**
-- * struct rvin_graph_entity - Video endpoint from async framework
-+ * struct rvin_parallel_entity - Parallel video input endpoint descriptor
-  * @asd:	sub-device descriptor for async framework
-  * @subdev:	subdevice matched using async framework
-+ * @mbus_type:	media bus type
-+ * @mbus_flags:	media bus configuration flags
-  * @source_pad:	source pad of remote subdevice
-  * @sink_pad:	sink pad of remote subdevice
-+ *
+@@ -138,6 +140,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
+ 
+ 	dlb->vsp1 = vsp1;
+ 	dlb->size = size;
++	dlb->max_entries = num_entries;
+ 
+ 	dlb->entries = dma_alloc_wc(vsp1->bus_master, dlb->size, &dlb->dma,
+ 				    GFP_KERNEL);
+@@ -219,6 +222,10 @@ void vsp1_dl_body_free(struct vsp1_dl_body *dlb)
   */
--struct rvin_graph_entity {
-+struct rvin_parallel_entity {
- 	struct v4l2_async_subdev asd;
- 	struct v4l2_subdev *subdev;
- 
-+	enum v4l2_mbus_type mbus_type;
-+	unsigned int mbus_flags;
+ void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
+ {
++	if (WARN_ONCE(dlb->num_entries >= dlb->max_entries,
++		      "DLB size exceeded (max %u)", dlb->max_entries))
++		return;
 +
- 	unsigned int source_pad;
- 	unsigned int sink_pad;
- };
-@@ -146,7 +152,8 @@ struct rvin_info {
-  * @v4l2_dev:		V4L2 device
-  * @ctrl_handler:	V4L2 control handler
-  * @notifier:		V4L2 asynchronous subdevs notifier
-- * @parallel:		entity in the DT for local parallel subdevice
-+ *
-+ * @parallel:		parallel input subdevice descriptor
-  *
-  * @group:		Gen3 CSI group
-  * @id:			Gen3 group id for this VIN
-@@ -164,7 +171,8 @@ struct rvin_info {
-  * @sequence:		V4L2 buffers sequence number
-  * @state:		keeps track of operation state
-  *
-- * @mbus_cfg:		media bus configuration from DT
-+ * @is_csi:		flag to mark the VIN as using a CSI-2 subdevice
-+ *
-  * @mbus_code:		media bus format code
-  * @format:		active V4L2 pixel format
-  *
-@@ -182,7 +190,8 @@ struct rvin_dev {
- 	struct v4l2_device v4l2_dev;
- 	struct v4l2_ctrl_handler ctrl_handler;
- 	struct v4l2_async_notifier notifier;
--	struct rvin_graph_entity *parallel;
-+
-+	struct rvin_parallel_entity *parallel;
- 
- 	struct rvin_group *group;
- 	unsigned int id;
-@@ -199,7 +208,8 @@ struct rvin_dev {
- 	unsigned int sequence;
- 	enum rvin_dma_state state;
- 
--	struct v4l2_mbus_config mbus_cfg;
-+	bool is_csi;
-+
- 	u32 mbus_code;
- 	struct v4l2_pix_format format;
- 
+ 	dlb->entries[dlb->num_entries].addr = reg;
+ 	dlb->entries[dlb->num_entries].data = data;
+ 	dlb->num_entries++;
 -- 
-2.7.4
+git-series 0.9.1
