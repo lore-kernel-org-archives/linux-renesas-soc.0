@@ -1,38 +1,187 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:32152 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752452AbeEOJqv (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:60188 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753505AbeEANyM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 05:46:51 -0400
-Subject: Re: [PATCH 27/61] media: platform: s5p-mfc: simplify getting
- .drvdata
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kamil Debski <kamil@wypas.org>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <0684984f-6e52-5e91-f6bb-1084c588e1b4@samsung.com>
-Date: Tue, 15 May 2018 11:46:41 +0200
-MIME-version: 1.0
-In-reply-to: <20180419140641.27926-28-wsa+renesas@sang-engineering.com>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-GB
-Content-transfer-encoding: 7bit
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-        <20180419140641.27926-28-wsa+renesas@sang-engineering.com>
-        <CGME20180515094647epcas1p49b3c5d47dcedd034aec9589aab473cc0@epcas1p4.samsung.com>
+        Tue, 1 May 2018 09:54:12 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>
+Subject: RE: [PATCH] irqchip: Add support for Renesas RZ/N1 GPIO interrupt
+ multiplexer
+Date: Tue, 1 May 2018 13:54:02 +0000
+Message-ID: <TY1PR01MB176998F43462BA754D67E635F5810@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1524490386-1544-1-git-send-email-phil.edworthy@renesas.com>
+ <20180501132844.GA8298@rob-hp-laptop>
+In-Reply-To: <20180501132844.GA8298@rob-hp-laptop>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/19/2018 04:05 PM, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Rob,
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On 01 May 2018 14:29 Rob Herring wrote:
+> On Mon, Apr 23, 2018 at 02:33:06PM +0100, Phil Edworthy wrote:
+> > On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+> > configured to have 32 interrupt outputs, so we have a total of 96 GPIO
+> > interrupts. All of these are passed to the GPIO IRQ Muxer, which
+> > selects
+> > 8 of the GPIO interrupts to pass onto the GIC. The interrupt signals
+> > aren't latched, so there is nothing to do in this driver when an
+> > interrupt is received, other than tell the corresponding GPIO block.
+> >
+> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > ---
+> >  .../interrupt-controller/renesas,rzn1-mux.txt      |  85 ++++++++++
+>=20
+> Please split bindings to a separate patch.
+Will do.
+
+> >  drivers/irqchip/Kconfig                            |  10 ++
+> >  drivers/irqchip/Makefile                           |   1 +
+> >  drivers/irqchip/irq-rzn1-irq-mux.c                 | 178
+> +++++++++++++++++++++
+> >  4 files changed, 274 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mu
+> > x.txt  create mode 100644 drivers/irqchip/irq-rzn1-irq-mux.c
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-
+> > mux.txt
+> > b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-
+> > mux.txt
+> > new file mode 100644
+> > index 0000000..f28a365
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,r
+> > +++ zn1-mux.txt
+> > @@ -0,0 +1,85 @@
+> > +* Renesas RZ/N1 GPIO Interrupt Multiplexer
+> > +
+> > +On Renesas RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks
+> > +each configured to have 32 interrupt outputs, so we have a total of
+> > +96 GPIO interrupts. All of these are passed to the GPIO IRQ Muxer,
+> > +which selects
+> > +8 of the GPIO interrupts to pass onto the GIC.
+> > +
+> > +A single node in the device tree is used to describe the GPIO IRQ Muxe=
+r.
+> > +
+> > +Required properties:
+> > +- compatible: the SoC specific name, i.e. "renesas,r9a06g032-gpioirq"
+> > +   or "renesas,r9a06g033-gpioirq" followed by the SoC family name, i.e=
+.
+> > +   "renesas,rzn1-gpioirq".
+> > +- interrupt-controller: Identifies the node as an interrupt controller=
+.
+> > +- #interrupt-cells: should be <1>. The meaning of the cells is the inp=
+ut
+> > +   interrupt index, 0 to 95.
+> > +- reg: Base address and size of GPIO IRQ Muxer registers.
+> > +- interrupts: The list of interrupts generated by the muxer which are =
+then
+> > +   connected to a parent interrupt controller. The format of the inter=
+rupt
+> > +   specifier depends in the interrupt parent controller.
+> > +- gpioirq-#N: One property for each interrupt output from the GPIO IRQ
+> Muxer
+> > +   that specifies the input interrupt to use, #N is from 0 to 7.
+>=20
+> Why do you need this in DT? Can't the driver handle this dynamically?
+> When you request an interrupt on a GPIO line, then connect that GPIO line
+> to a free IRQ line.
+On the SoC that has this block, there is another CPU that runs firmware.
+It's likely that the firmware will use some of these GPIO interrupts and
+so we don't want them to move around. The firmware runs before Linux is
+up, and luckily setting up the registers again won't affect the interrupts.
+
+> If you really need this in DT, then interrupt-map can be used here.
+Ok
+
+> > +
+> > +Optional properties:
+> > +- interrupt-parent: pHandle of the parent interrupt controller, if not
+> > +   inherited from the parent node.
+> > +
+> > +
+> > +Example:
+> > +
+> > +	The following is an example for the RZ/N1D SoC.
+> > +
+> > +	gpioirq: gpioirq@51000480 {
+> > +		compatible =3D "renesas,r9a06g032-gpioirq",
+> > +				"renesas,rzn1-gpioirq";
+> > +		reg =3D <0x51000480 0x20>;
+> > +		interrupts =3D
+> > +			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> > +			<GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+> > +			<GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
+> > +			<GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
+> > +			<GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
+> > +			<GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
+> > +			<GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+> > +			<GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+> > +		interrupt-controller;
+> > +		#interrupt-cells =3D <1>;
+> > +		status =3D "disabled";
+>=20
+> Don't show status in examples.
+Ok
+
+> > +	};
+> > +
+> > +	gpio0: gpio@5000b000 {
+> > +		compatible =3D "snps,dw-apb-gpio";
+> > +		reg =3D <0x5000b000 0x80>;
+> > +		#address-cells =3D <1>;
+> > +		#size-cells =3D <0>;
+> > +		clock-names =3D "bus";
+> > +		clocks =3D <&hclk_gpio0>;
+> > +		status =3D "disabled";
+> > +
+> > +		gpio0a: gpio-controller@0 {
+> > +			compatible =3D "snps,dw-apb-gpio-port";
+> > +			bank-name =3D "gpio0a";
+> > +			gpio-controller;
+> > +			#gpio-cells =3D <2>;
+> > +			snps,nr-gpios =3D <32>;
+> > +			reg =3D <0>;
+> > +
+> > +			interrupt-controller;
+> > +			interrupt-parent =3D <&gpioirq>;
+> > +			interrupts =3D   < 0  1  2  3  4  5  6  7
+> > +					 8  9 10 11 12 13 14 15
+> > +					16 17 18 19 20 21 22 23
+> > +					24 25 26 27 28 29 30 31 >;
+> > +			#interrupt-cells =3D <2>;
+> > +		};
+> > +	};
+> > +
+> > +
+> > +	The following is an example for a board using this.
+>=20
+> Don't show the soc/board split. This is convention, but not part of the
+> binding.
+Ok
+
+> > +
+> > +	&gpioirq {
+> > +		status =3D "okay";
+> > +		gpioirq-0 =3D <24>;	/* gpio0a 24 */
+> > +		gpioirq-4 =3D <3>;	/* gpio0a 3 */
+> > +	};
+
+Thanks for your comments,
+Phil
