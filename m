@@ -1,222 +1,315 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v3 2/4] usb: gadget: udc: renesas_usb3: Add register of usb role switch
-Date: Mon, 14 May 2018 18:15:58 +0900
-Message-Id: <1526289360-3997-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1526289360-3997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1526289360-3997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48344 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754970AbeEAMt1 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 1 May 2018 08:49:27 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: mchehab@kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v8 0/8] vsp1: TLB optimisation and DL caching
+Date: Tue,  1 May 2018 13:49:12 +0100
+Message-Id: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds role switch support for R-Car SoCs into the USB
-3.0 peripheral driver. Some R-Car SoCs (e.g. R-Car H3) have USB
-3.0 dual-role device controller which has the USB 3.0 xHCI host
-and Renesas USB 3.0 peripheral.
+Each display list currently allocates an area of DMA memory to store register
+settings for the VSP1 to process. Each of these allocations adds pressure to
+the IPMMU TLB entries.
 
-Unfortunately, the mode change register contains the USB 3.0 peripheral
-controller side only. So, the USB 3.0 peripheral driver (renesas_usb3)
-manages this register now. However, in peripheral mode, the host
-should stop. Also the host hardware needs to reinitialize its own
-registers when the mode changes from peripheral to host mode.
-Otherwise, the host cannot work correctly (e.g. detect a device as
-high-speed).
+We can reduce the pressure by pre-allocating larger areas and dividing the area
+across multiple bodies represented as a pool.
 
-To achieve this by a driver, this role switch driver manages
-the mode change register and attach/release the xhci-plat driver.
+With this reconfiguration of bodies, we can adapt the configuration code to
+separate out constant hardware configuration and cache it for re-use.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- .../devicetree/bindings/usb/renesas_usb3.txt       | 15 +++++
- drivers/usb/gadget/udc/Kconfig                     |  1 +
- drivers/usb/gadget/udc/renesas_usb3.c              | 68 +++++++++++++++++++++-
- 3 files changed, 83 insertions(+), 1 deletion(-)
+The patches provided in this series can be found at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git  tags/vsp1/tlb-optimise/v8
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-index 2c071bb5..f6105aa 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-@@ -19,6 +19,9 @@ Required properties:
- Optional properties:
-   - phys: phandle + phy specifier pair
-   - phy-names: must be "usb"
-+  - The connection to a usb3.0 host node needs by using OF graph bindings for
-+    usb role switch.
-+   - port@0 = USB3.0 host port.
- 
- Example of R-Car H3 ES1.x:
- 	usb3_peri0: usb@ee020000 {
-@@ -27,6 +30,12 @@ Example of R-Car H3 ES1.x:
- 		reg = <0 0xee020000 0 0x400>;
- 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 328>;
-+
-+		port {
-+			usb3_peri0_ep: endpoint {
-+				remote-endpoint = <&usb3_host0_ep>;
-+			};
-+		};
- 	};
- 
- 	usb3_peri1: usb@ee060000 {
-@@ -35,4 +44,10 @@ Example of R-Car H3 ES1.x:
- 		reg = <0 0xee060000 0 0x400>;
- 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cpg CPG_MOD 327>;
-+
-+		port {
-+			usb3_peri1_ep: endpoint {
-+				remote-endpoint = <&usb3_host1_ep>;
-+			};
-+		};
- 	};
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index 0875d38..7e4a5dd 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -193,6 +193,7 @@ config USB_RENESAS_USB3
- 	tristate 'Renesas USB3.0 Peripheral controller'
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	depends on EXTCON && HAS_DMA
-+	select USB_ROLE_SWITCH
- 	help
- 	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
- 	   that supports super, high, and full speed USB 3.0 data transfers.
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 409cde4..c878449 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -23,6 +23,7 @@
- #include <linux/uaccess.h>
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
-+#include <linux/usb/role.h>
- 
- /* register definitions */
- #define USB3_AXI_INT_STA	0x008
-@@ -334,6 +335,9 @@ struct renesas_usb3 {
- 	struct work_struct extcon_work;
- 	struct phy *phy;
- 
-+	struct usb_role_switch *role_sw;
-+	struct device *host_dev;
-+
- 	struct renesas_usb3_ep *usb3_ep;
- 	int num_usb3_eps;
- 
-@@ -643,7 +647,7 @@ static void usb3_check_vbus(struct renesas_usb3 *usb3)
- 	}
- }
- 
--static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
-+static void _usb3_set_mode(struct renesas_usb3 *usb3, bool host)
- {
- 	if (host)
- 		usb3_clear_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
-@@ -651,6 +655,11 @@ static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
- 		usb3_set_bit(usb3, DRD_CON_PERI_CON, USB3_DRD_CON);
- }
- 
-+static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
-+{
-+	_usb3_set_mode(usb3, host);
-+}
-+
- static void usb3_vbus_out(struct renesas_usb3 *usb3, bool enable)
- {
- 	if (enable)
-@@ -2294,6 +2303,41 @@ static int renesas_usb3_set_selfpowered(struct usb_gadget *gadget, int is_self)
- 	.set_selfpowered	= renesas_usb3_set_selfpowered,
- };
- 
-+static enum usb_role renesas_usb3_role_switch_get(struct device *dev)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
-+	enum usb_role cur_role;
-+
-+	pm_runtime_get_sync(dev);
-+	cur_role = usb3_is_host(usb3) ? USB_ROLE_HOST : USB_ROLE_DEVICE;
-+	pm_runtime_put(dev);
-+
-+	return cur_role;
-+}
-+
-+static int renesas_usb3_role_switch_set(struct device *dev,
-+					enum usb_role role)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
-+	struct device *host = usb3->host_dev;
-+	enum usb_role cur_role = renesas_usb3_role_switch_get(dev);
-+
-+	pm_runtime_get_sync(dev);
-+
-+	if (cur_role == USB_ROLE_HOST && role == USB_ROLE_DEVICE) {
-+		device_release_driver(host);
-+		_usb3_set_mode(usb3, false);
-+	} else if (cur_role == USB_ROLE_DEVICE && role == USB_ROLE_HOST) {
-+		/* Must set the mode before device_attach of the host */
-+		_usb3_set_mode(usb3, true);
-+		if (device_attach(host) < 0)
-+			dev_err(dev, "device_attach(usb3_port) failed\n");
-+	}
-+	pm_runtime_put(dev);
-+
-+	return 0;
-+}
-+
- static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 			  const char *buf, size_t count)
- {
-@@ -2404,6 +2448,8 @@ static int renesas_usb3_remove(struct platform_device *pdev)
- 
- 	device_remove_file(&pdev->dev, &dev_attr_role);
- 
-+	usb_role_switch_unregister(usb3->role_sw);
-+
- 	usb_del_gadget_udc(&usb3->gadget);
- 	renesas_usb3_dma_free_prd(usb3, &pdev->dev);
- 
-@@ -2562,6 +2608,12 @@ static void renesas_usb3_init_ram(struct renesas_usb3 *usb3, struct device *dev,
- 	EXTCON_NONE,
- };
- 
-+static struct usb_role_switch_desc renesas_usb3_role_switch_desc = {
-+	.set = renesas_usb3_role_switch_set,
-+	.get = renesas_usb3_role_switch_get,
-+	.allow_userspace_control = true,
-+};
-+
- static int renesas_usb3_probe(struct platform_device *pdev)
- {
- 	struct renesas_usb3 *usb3;
-@@ -2644,6 +2696,20 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (IS_ERR(usb3->phy))
- 		usb3->phy = NULL;
- 
-+	usb3->role_sw = usb_role_switch_register(&pdev->dev,
-+					&renesas_usb3_role_switch_desc);
-+	if (!IS_ERR(usb3->role_sw)) {
-+		usb3->host_dev = device_connection_find_by_graph(&pdev->dev,
-+								 0, 0);
-+		if (IS_ERR_OR_NULL(usb3->host_dev)) {
-+			/* If not found, this driver will not use a role sw */
-+			usb_role_switch_unregister(usb3->role_sw);
-+			usb3->role_sw = NULL;
-+		}
-+	} else {
-+		usb3->role_sw = NULL;
-+	}
-+
- 	usb3->workaround_for_vbus = priv->workaround_for_vbus;
- 
- 	renesas_usb3_debugfs_init(usb3, &pdev->dev);
+Changelog:
+----------
+v8:
+ - Fix formatting and white space
+ - Reword vsp1_dl_list_add_body() documentation
+ - Update commit message on "Provide a body pool"
+ - No longer pass unnecessary dlm->pool through vsp1_dl_list_alloc()
+ - Add support for the new UIF entity
+ - Fix comment location for clu_configure_stream()
+ - Implement configure_partition separation
+ - Rename video->pipe_config to video->stream_config
+
+v7:
+ - Rebased on to linux-media/master (v4.16-rc4)
+ - Clean up the formatting of the vsp1_dl_list_add_body()
+ - Fix formatting and white space
+ -  s/prepare/configure_stream/
+ -  s/configure/configure_frame/
+
+v6:
+ - Rebased on to linux-media/master (v4.16-rc1)
+ - Removed DRM/UIF (DISCOM/ColorKey) updates
+
+v5:
+ - Rebased on to renesas-drivers-2018-01-09-v4.15-rc7 to fix conflicts
+   with DRM and UIF updates on VSP1 driver
+
+v4:
+ - Rebased to v4.14
+ * v4l: vsp1: Use reference counting for bodies
+   - Fix up reference handling comments
+
+ * v4l: vsp1: Provide a body pool
+   - Provide comment explaining extra allocation on body pool
+     highlighting area for optimisation later.
+
+ * v4l: vsp1: Refactor display list configure operations
+   - Fix up comment to describe yuv_mode caching rather than format
+
+ * vsp1: Adapt entities to configure into a body
+   - Rename vsp1_dl_list_get_body() to vsp1_dl_list_get_body0()
+
+ * v4l: vsp1: Move video configuration to a cached dlb
+   - Adjust pipe configured flag to be reset on resume rather than suspend
+   - rename dl_child, dl_next
+
+Testing:
+--------
+The VSP unit tests have been run on this patch set with the following results:
+
+--- Test loop 1 ---
+- vsp-unit-test-0000.sh
+Test Conditions:
+  Platform          Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+
+  Kernel release    4.17.0-rc1-arm64-renesas
+  convert           /usr/bin/convert
+  compare           /usr/bin/compare
+  killall           /usr/bin/killall
+  raw2rgbpnm        /usr/bin/raw2rgbpnm
+  stress            /usr/bin/stress
+  yavta             /usr/bin/yavta
+- vsp-unit-test-0001.sh
+Testing WPF packing in RGB332: pass
+Testing WPF packing in ARGB555: pass
+Testing WPF packing in XRGB555: pass
+Testing WPF packing in RGB565: pass
+Testing WPF packing in BGR24: pass
+Testing WPF packing in RGB24: pass
+Testing WPF packing in ABGR32: pass
+Testing WPF packing in ARGB32: pass
+Testing WPF packing in XBGR32: pass
+Testing WPF packing in XRGB32: pass
+- vsp-unit-test-0002.sh
+Testing WPF packing in NV12M: pass
+Testing WPF packing in NV16M: pass
+Testing WPF packing in NV21M: pass
+Testing WPF packing in NV61M: pass
+Testing WPF packing in UYVY: pass
+Testing WPF packing in VYUY: skip
+Testing WPF packing in YUV420M: pass
+Testing WPF packing in YUV422M: pass
+Testing WPF packing in YUV444M: pass
+Testing WPF packing in YVU420M: pass
+Testing WPF packing in YVU422M: pass
+Testing WPF packing in YVU444M: pass
+Testing WPF packing in YUYV: pass
+Testing WPF packing in YVYU: pass
+- vsp-unit-test-0003.sh
+Testing scaling from 640x640 to 640x480 in RGB24: pass
+Testing scaling from 1024x768 to 640x480 in RGB24: pass
+Testing scaling from 640x480 to 1024x768 in RGB24: pass
+Testing scaling from 640x640 to 640x480 in YUV444M: pass
+Testing scaling from 1024x768 to 640x480 in YUV444M: pass
+Testing scaling from 640x480 to 1024x768 in YUV444M: pass
+- vsp-unit-test-0004.sh
+Testing histogram in RGB24: pass
+Testing histogram in YUV444M: pass
+- vsp-unit-test-0005.sh
+Testing RPF.0: pass
+Testing RPF.1: pass
+Testing RPF.2: pass
+Testing RPF.3: pass
+Testing RPF.4: pass
+- vsp-unit-test-0006.sh
+Testing invalid pipeline with no RPF: pass
+Testing invalid pipeline with no WPF: pass
+- vsp-unit-test-0007.sh
+Testing BRU in RGB24 with 1 inputs: pass
+Testing BRU in RGB24 with 2 inputs: pass
+Testing BRU in RGB24 with 3 inputs: pass
+Testing BRU in RGB24 with 4 inputs: pass
+Testing BRU in RGB24 with 5 inputs: pass
+Testing BRU in YUV444M with 1 inputs: pass
+Testing BRU in YUV444M with 2 inputs: pass
+Testing BRU in YUV444M with 3 inputs: pass
+Testing BRU in YUV444M with 4 inputs: pass
+Testing BRU in YUV444M with 5 inputs: pass
+- vsp-unit-test-0008.sh
+Test requires unavailable feature set `bru rpf.0 uds wpf.0': skipped
+- vsp-unit-test-0009.sh
+Test requires unavailable feature set `rpf.0 wpf.0 wpf.1': skipped
+- vsp-unit-test-0010.sh
+Testing CLU in RGB24 with zero configuration: pass
+Testing CLU in RGB24 with identity configuration: pass
+Testing CLU in RGB24 with wave configuration: pass
+Testing CLU in YUV444M with zero configuration: pass
+Testing CLU in YUV444M with identity configuration: pass
+Testing CLU in YUV444M with wave configuration: pass
+Testing LUT in RGB24 with zero configuration: pass
+Testing LUT in RGB24 with identity configuration: pass
+Testing LUT in RGB24 with gamma configuration: pass
+Testing LUT in YUV444M with zero configuration: pass
+Testing LUT in YUV444M with identity configuration: pass
+Testing LUT in YUV444M with gamma configuration: pass
+- vsp-unit-test-0011.sh
+Testing  hflip=0 vflip=0 rotate=0: pass
+Testing  hflip=1 vflip=0 rotate=0: pass
+Testing  hflip=0 vflip=1 rotate=0: pass
+Testing  hflip=1 vflip=1 rotate=0: pass
+Testing  hflip=0 vflip=0 rotate=90: pass
+Testing  hflip=1 vflip=0 rotate=90: pass
+Testing  hflip=0 vflip=1 rotate=90: pass
+Testing  hflip=1 vflip=1 rotate=90: pass
+- vsp-unit-test-0012.sh
+Testing hflip: pass
+Testing vflip: pass
+- vsp-unit-test-0013.sh
+Testing RPF unpacking in RGB332: pass
+Testing RPF unpacking in ARGB555: pass
+Testing RPF unpacking in XRGB555: pass
+Testing RPF unpacking in RGB565: pass
+Testing RPF unpacking in BGR24: pass
+Testing RPF unpacking in RGB24: pass
+Testing RPF unpacking in ABGR32: pass
+Testing RPF unpacking in ARGB32: pass
+Testing RPF unpacking in XBGR32: pass
+Testing RPF unpacking in XRGB32: pass
+- vsp-unit-test-0014.sh
+Testing RPF unpacking in NV12M: pass
+Testing RPF unpacking in NV16M: pass
+Testing RPF unpacking in NV21M: pass
+Testing RPF unpacking in NV61M: pass
+Testing RPF unpacking in UYVY: pass
+Testing RPF unpacking in VYUY: skip
+Testing RPF unpacking in YUV420M: pass
+Testing RPF unpacking in YUV422M: pass
+Testing RPF unpacking in YUV444M: pass
+Testing RPF unpacking in YVU420M: pass
+Testing RPF unpacking in YVU422M: pass
+Testing RPF unpacking in YVU444M: pass
+Testing RPF unpacking in YUYV: pass
+Testing RPF unpacking in YVYU: pass
+- vsp-unit-test-0015.sh
+Testing SRU scaling from 1024x768 to 1024x768 in RGB24: pass
+Testing SRU scaling from 1024x768 to 2048x1536 in RGB24: pass
+Testing SRU scaling from 1024x768 to 1024x768 in YUV444M: pass
+Testing SRU scaling from 1024x768 to 2048x1536 in YUV444M: pass
+- vsp-unit-test-0016.sh
+Testing  hflip=0 vflip=0 rotate=0 640x480 -> 640x480: pass
+Testing  hflip=0 vflip=0 rotate=0 640x480 -> 1024x768: pass
+Testing  hflip=0 vflip=0 rotate=0 1024x768 -> 640x480: pass
+Testing  hflip=1 vflip=0 rotate=0 640x480 -> 640x480: pass
+Testing  hflip=1 vflip=0 rotate=0 640x480 -> 1024x768: pass
+Testing  hflip=1 vflip=0 rotate=0 1024x768 -> 640x480: pass
+Testing  hflip=0 vflip=1 rotate=0 640x480 -> 640x480: pass
+Testing  hflip=0 vflip=1 rotate=0 640x480 -> 1024x768: pass
+Testing  hflip=0 vflip=1 rotate=0 1024x768 -> 640x480: pass
+Testing  hflip=1 vflip=1 rotate=0 640x480 -> 640x480: pass
+Testing  hflip=1 vflip=1 rotate=0 640x480 -> 1024x768: pass
+Testing  hflip=1 vflip=1 rotate=0 1024x768 -> 640x480: pass
+Testing  hflip=0 vflip=0 rotate=90 640x480 -> 640x480: pass
+Testing  hflip=0 vflip=0 rotate=90 640x480 -> 1024x768: pass
+Testing  hflip=0 vflip=0 rotate=90 1024x768 -> 640x480: pass
+Testing  hflip=1 vflip=0 rotate=90 640x480 -> 640x480: pass
+Testing  hflip=1 vflip=0 rotate=90 640x480 -> 1024x768: pass
+Testing  hflip=1 vflip=0 rotate=90 1024x768 -> 640x480: pass
+Testing  hflip=0 vflip=1 rotate=90 640x480 -> 640x480: pass
+Testing  hflip=0 vflip=1 rotate=90 640x480 -> 1024x768: pass
+Testing  hflip=0 vflip=1 rotate=90 1024x768 -> 640x480: pass
+Testing  hflip=1 vflip=1 rotate=90 640x480 -> 640x480: pass
+Testing  hflip=1 vflip=1 rotate=90 640x480 -> 1024x768: pass
+Testing  hflip=1 vflip=1 rotate=90 1024x768 -> 640x480: pass
+- vsp-unit-test-0017.sh
+- vsp-unit-test-0018.sh
+Testing RPF crop from (0,0)/512x384: pass
+Testing RPF crop from (32,32)/512x384: pass
+Testing RPF crop from (32,64)/512x384: pass
+Testing RPF crop from (64,32)/512x384: pass
+- vsp-unit-test-0019.sh
+Testing non-active pipeline suspend/resume in suspend:freezer: passed
+Testing non-active pipeline suspend/resume in suspend:devices: passed
+Testing non-active pipeline suspend/resume in suspend:platform: passed
+Testing non-active pipeline suspend/resume in suspend:processors: passed
+Testing non-active pipeline suspend/resume in suspend:core: passed
+- vsp-unit-test-0020.sh
+Testing Testing active pipeline suspend/resume in suspend:freezer: pass
+Testing Testing active pipeline suspend/resume in suspend:devices: pass
+Testing Testing active pipeline suspend/resume in suspend:platform: pass
+Testing Testing active pipeline suspend/resume in suspend:processors: pass
+Testing Testing active pipeline suspend/resume in suspend:core: pass
+- vsp-unit-test-0021.sh
+Testing WPF packing in RGB332 during stress testing: pass
+Testing WPF packing in ARGB555 during stress testing: pass
+Testing WPF packing in XRGB555 during stress testing: pass
+Testing WPF packing in RGB565 during stress testing: pass
+Testing WPF packing in BGR24 during stress testing: pass
+Testing WPF packing in RGB24 during stress testing: pass
+Testing WPF packing in ABGR32 during stress testing: pass
+Testing WPF packing in ARGB32 during stress testing: pass
+Testing WPF packing in XBGR32 during stress testing: pass
+Testing WPF packing in XRGB32 during stress testing: pass
+./vsp-unit-test-0021.sh: line 34: 14785 Killed                  stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M
+- vsp-unit-test-0022.sh
+Testing long duration pipelines under stress: pass
+./vsp-unit-test-0022.sh: line 38: 16751 Killed                  stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M
+- vsp-unit-test-0023.sh
+Testing histogram HGT with hue areas 0,255,255,255,255,255,255,255,255,255,255,255: pass
+Testing histogram HGT with hue areas 0,40,40,80,80,120,120,160,160,200,200,255: pass
+Testing histogram HGT with hue areas 220,40,40,80,80,120,120,160,160,200,200,220: pass
+Testing histogram HGT with hue areas 0,10,50,60,100,110,150,160,200,210,250,255: pass
+Testing histogram HGT with hue areas 10,20,50,60,100,110,150,160,200,210,230,240: pass
+Testing histogram HGT with hue areas 240,20,60,80,100,120,140,160,180,200,210,220: pass
+- vsp-unit-test-0024.sh
+Test requires unavailable feature set `rpf.0 rpf.1 brs wpf.0': skipped
+168 tests: 147 passed, 0 failed, 3 skipped
+
+Kieran Bingham (8):
+  media: vsp1: Reword uses of 'fragment' as 'body'
+  media: vsp1: Protect bodies against overflow
+  media: vsp1: Provide a body pool
+  media: vsp1: Convert display lists to use new body pool
+  media: vsp1: Use reference counting for bodies
+  media: vsp1: Refactor display list configure operations
+  media: vsp1: Adapt entities to configure into a body
+  media: vsp1: Move video configuration to a cached dlb
+
+ drivers/media/platform/vsp1/vsp1_brx.c    |  32 +--
+ drivers/media/platform/vsp1/vsp1_clu.c    | 112 ++++---
+ drivers/media/platform/vsp1/vsp1_clu.h    |   1 +-
+ drivers/media/platform/vsp1/vsp1_dl.c     | 388 +++++++++++++----------
+ drivers/media/platform/vsp1/vsp1_dl.h     |  20 +-
+ drivers/media/platform/vsp1/vsp1_drm.c    |  18 +-
+ drivers/media/platform/vsp1/vsp1_entity.c |  33 +-
+ drivers/media/platform/vsp1/vsp1_entity.h |  43 +--
+ drivers/media/platform/vsp1/vsp1_hgo.c    |  26 +--
+ drivers/media/platform/vsp1/vsp1_hgt.c    |  28 +--
+ drivers/media/platform/vsp1/vsp1_hsit.c   |  20 +-
+ drivers/media/platform/vsp1/vsp1_lif.c    |  25 +-
+ drivers/media/platform/vsp1/vsp1_lut.c    |  80 +++--
+ drivers/media/platform/vsp1/vsp1_lut.h    |   1 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c   |  13 +-
+ drivers/media/platform/vsp1/vsp1_pipe.h   |   8 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c    | 187 +++++------
+ drivers/media/platform/vsp1/vsp1_sru.c    |  24 +-
+ drivers/media/platform/vsp1/vsp1_uds.c    |  72 ++--
+ drivers/media/platform/vsp1/vsp1_uds.h    |   2 +-
+ drivers/media/platform/vsp1/vsp1_uif.c    |  35 +--
+ drivers/media/platform/vsp1/vsp1_video.c  |  92 ++---
+ drivers/media/platform/vsp1/vsp1_video.h  |   2 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c    | 326 ++++++++++---------
+ 24 files changed, 878 insertions(+), 710 deletions(-)
+
+base-commit: 22cf3c24e08f6ebff46c3e733991548a5dab25ed
 -- 
-1.9.1
-
+git-series 0.9.1
