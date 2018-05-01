@@ -1,73 +1,241 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:51391 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751020AbeEBNSv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 09:18:51 -0400
-Date: Wed, 2 May 2018 15:18:49 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
         thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 02/12] ARM: sunxi: smp: Move assembly code into a file
-Message-ID: <20180502131849.rwthjkpf7nxojeui@flea>
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v8 02/12] ARM: sunxi: smp: Move assembly code into a file
+Date: Tue,  1 May 2018 14:31:21 +0200
+Message-Id: <20180501123131.7738-3-mylene.josserand@bootlin.com>
+In-Reply-To: <20180501123131.7738-1-mylene.josserand@bootlin.com>
 References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
- <20180501123131.7738-3-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gjbvu2v2ro5cizgo"
-Content-Disposition: inline
-In-Reply-To: <20180501123131.7738-3-mylene.josserand@bootlin.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Move the assembly code for cluster cache enabling and resuming
+into an assembly file instead of having it directly in C code.
 
---gjbvu2v2ro5cizgo
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Remove the CFLAGS because we are using the ARM directive "arch"
+instead.
 
-On Tue, May 01, 2018 at 02:31:21PM +0200, Myl=E8ne Josserand wrote:
-> Move the assembly code for cluster cache enabling and resuming
-> into an assembly file instead of having it directly in C code.
->=20
-> Remove the CFLAGS because we are using the ARM directive "arch"
-> instead.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+---
+ arch/arm/mach-sunxi/Makefile  |  2 +-
+ arch/arm/mach-sunxi/headsmp.S | 80 +++++++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-sunxi/mc_smp.c  | 82 +++----------------------------------------
+ 3 files changed, 85 insertions(+), 79 deletions(-)
+ create mode 100644 arch/arm/mach-sunxi/headsmp.S
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
+index 7de9cc286d53..71429aa85143 100644
+--- a/arch/arm/mach-sunxi/Makefile
++++ b/arch/arm/mach-sunxi/Makefile
+@@ -1,5 +1,5 @@
+ CFLAGS_mc_smp.o	+= -march=armv7-a
+ 
+ obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
+-obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o
++obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o headsmp.o
+ obj-$(CONFIG_SMP) += platsmp.o
+diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+new file mode 100644
+index 000000000000..37dc772701f3
+--- /dev/null
++++ b/arch/arm/mach-sunxi/headsmp.S
+@@ -0,0 +1,80 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (c) 2018 Chen-Yu Tsai
++ * Copyright (c) 2018 Bootlin
++ *
++ * Chen-Yu Tsai <wens@csie.org>
++ * Mylène Josserand <mylene.josserand@bootlin.com>
++ *
++ * SMP support for sunxi based systems with Cortex A7/A15
++ *
++ */
++
++#include <linux/linkage.h>
++#include <asm/assembler.h>
++#include <asm/cputype.h>
++
++ENTRY(sunxi_mc_smp_cluster_cache_enable)
++	.arch	armv7-a
++	/*
++	 * Enable cluster-level coherency, in preparation for turning on the MMU.
++	 *
++	 * Also enable regional clock gating and L2 data latency settings for
++	 * Cortex-A15. These settings are from the vendor kernel.
++	 */
++	mrc	p15, 0, r1, c0, c0, 0
++	movw	r2, #(ARM_CPU_PART_MASK & 0xffff)
++	movt	r2, #(ARM_CPU_PART_MASK >> 16)
++	and	r1, r1, r2
++	movw	r2, #(ARM_CPU_PART_CORTEX_A15 & 0xffff)
++	movt	r2, #(ARM_CPU_PART_CORTEX_A15 >> 16)
++	cmp	r1, r2
++	bne	not_a15
++
++	/* The following is Cortex-A15 specific */
++
++	/* ACTLR2: Enable CPU regional clock gates */
++	mrc p15, 1, r1, c15, c0, 4
++	orr r1, r1, #(0x1 << 31)
++	mcr p15, 1, r1, c15, c0, 4
++
++	/* L2ACTLR */
++	mrc p15, 1, r1, c15, c0, 0
++	/* Enable L2, GIC, and Timer regional clock gates */
++	orr r1, r1, #(0x1 << 26)
++	/* Disable clean/evict from being pushed to external */
++	orr r1, r1, #(0x1<<3)
++	mcr p15, 1, r1, c15, c0, 0
++
++	/* L2CTRL: L2 data RAM latency */
++	mrc p15, 1, r1, c9, c0, 2
++	bic r1, r1, #(0x7 << 0)
++	orr r1, r1, #(0x3 << 0)
++	mcr p15, 1, r1, c9, c0, 2
++
++	/* End of Cortex-A15 specific setup */
++	not_a15:
++
++	/* Get value of sunxi_mc_smp_first_comer */
++	adr	r1, first
++	ldr	r0, [r1]
++	ldr	r0, [r1, r0]
++
++	/* Skip cci_enable_port_for_self if not first comer */
++	cmp	r0, #0
++	bxeq	lr
++	b	cci_enable_port_for_self
++
++	.align 2
++	first: .word sunxi_mc_smp_first_comer - .
++ENDPROC(sunxi_mc_smp_cluster_cache_enable)
++
++ENTRY(sunxi_mc_smp_secondary_startup)
++	bl	sunxi_mc_smp_cluster_cache_enable
++	b	secondary_startup
++ENDPROC(sunxi_mc_smp_secondary_startup)
++
++ENTRY(sunxi_mc_smp_resume)
++	bl	sunxi_mc_smp_cluster_cache_enable
++	b	cpu_resume
++ENDPROC(sunxi_mc_smp_resume)
+diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+index c0246ec54a0a..727968d6a3e5 100644
+--- a/arch/arm/mach-sunxi/mc_smp.c
++++ b/arch/arm/mach-sunxi/mc_smp.c
+@@ -72,6 +72,9 @@ static void __iomem *cpucfg_base;
+ static void __iomem *prcm_base;
+ static void __iomem *sram_b_smp_base;
+ 
++extern void sunxi_mc_smp_secondary_startup(void);
++extern void sunxi_mc_smp_resume(void);
++
+ static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
+ {
+ 	struct device_node *node;
+@@ -300,74 +303,7 @@ static void sunxi_cluster_cache_disable_without_axi(void)
+ }
+ 
+ static int sunxi_mc_smp_cpu_table[SUNXI_NR_CLUSTERS][SUNXI_CPUS_PER_CLUSTER];
+-static int sunxi_mc_smp_first_comer;
+-
+-/*
+- * Enable cluster-level coherency, in preparation for turning on the MMU.
+- *
+- * Also enable regional clock gating and L2 data latency settings for
+- * Cortex-A15. These settings are from the vendor kernel.
+- */
+-static void __naked sunxi_mc_smp_cluster_cache_enable(void)
+-{
+-	asm volatile (
+-		"mrc	p15, 0, r1, c0, c0, 0\n"
+-		"movw	r2, #" __stringify(ARM_CPU_PART_MASK & 0xffff) "\n"
+-		"movt	r2, #" __stringify(ARM_CPU_PART_MASK >> 16) "\n"
+-		"and	r1, r1, r2\n"
+-		"movw	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 & 0xffff) "\n"
+-		"movt	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 >> 16) "\n"
+-		"cmp	r1, r2\n"
+-		"bne	not_a15\n"
+-
+-		/* The following is Cortex-A15 specific */
+-
+-		/* ACTLR2: Enable CPU regional clock gates */
+-		"mrc p15, 1, r1, c15, c0, 4\n"
+-		"orr r1, r1, #(0x1<<31)\n"
+-		"mcr p15, 1, r1, c15, c0, 4\n"
+-
+-		/* L2ACTLR */
+-		"mrc p15, 1, r1, c15, c0, 0\n"
+-		/* Enable L2, GIC, and Timer regional clock gates */
+-		"orr r1, r1, #(0x1<<26)\n"
+-		/* Disable clean/evict from being pushed to external */
+-		"orr r1, r1, #(0x1<<3)\n"
+-		"mcr p15, 1, r1, c15, c0, 0\n"
+-
+-		/* L2CTRL: L2 data RAM latency */
+-		"mrc p15, 1, r1, c9, c0, 2\n"
+-		"bic r1, r1, #(0x7<<0)\n"
+-		"orr r1, r1, #(0x3<<0)\n"
+-		"mcr p15, 1, r1, c9, c0, 2\n"
+-
+-		/* End of Cortex-A15 specific setup */
+-		"not_a15:\n"
+-
+-		/* Get value of sunxi_mc_smp_first_comer */
+-		"adr	r1, first\n"
+-		"ldr	r0, [r1]\n"
+-		"ldr	r0, [r1, r0]\n"
+-
+-		/* Skip cci_enable_port_for_self if not first comer */
+-		"cmp	r0, #0\n"
+-		"bxeq	lr\n"
+-		"b	cci_enable_port_for_self\n"
+-
+-		".align 2\n"
+-		"first: .word sunxi_mc_smp_first_comer - .\n"
+-	);
+-}
+-
+-static void __naked sunxi_mc_smp_secondary_startup(void)
+-{
+-	asm volatile(
+-		"bl	sunxi_mc_smp_cluster_cache_enable\n"
+-		"b	secondary_startup"
+-		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
+-		:: "i" (sunxi_mc_smp_cluster_cache_enable)
+-	);
+-}
++int sunxi_mc_smp_first_comer;
+ 
+ static DEFINE_SPINLOCK(boot_lock);
+ 
+@@ -637,16 +573,6 @@ static bool __init sunxi_mc_smp_cpu_table_init(void)
+  */
+ typedef typeof(cpu_reset) phys_reset_t;
+ 
+-static void __init __naked sunxi_mc_smp_resume(void)
+-{
+-	asm volatile(
+-		"bl	sunxi_mc_smp_cluster_cache_enable\n"
+-		"b	cpu_resume"
+-		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
+-		:: "i" (sunxi_mc_smp_cluster_cache_enable)
+-	);
+-}
+-
+ static int __init nocache_trampoline(unsigned long __unused)
+ {
+ 	phys_reset_t phys_reset;
+-- 
+2.11.0
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---gjbvu2v2ro5cizgo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrpurgACgkQ0rTAlCFN
-r3QZORAAkNl/AqxJTu7X0QkR7XGUf4YhEpUikmjP1wG683jgnMsgf2AQyfkmCJ2W
-ApL3stC0aF/QxZpWfWGP896d0Wb0w4uYPlEwADOlQ4qPjRQA5n5M44Qsz8NyUJ/F
-FNGb3i4ZwfaNtfQLtczxnvxy6tOGvDlkgJc2c53z1l9FGq1SfahA+go0iju+Efmu
-9r/uWUD8iJGw1bFVwqp+OITCAFNpC+OYC8qilc6/12YFrsRjop+mXdPl1hLZ3kvc
-RHQTQvFq+c0iIYER/+OAaJYG1WMt/YMnZVOmVj/h9HGElUzq/nlagn1fixTO9fFY
-TYICnYxECh953zExSYFUeeIL+xfQYTB/InDGzl7sHBBB53mB0DlfQmtARkSl+uw5
-5JsEw3fBEcdp9/d1bN87fgUmqt40pL9QcgseN9B4Ob3bYT3cYkiL7LbtTzciEvEM
-pCcDaAMVFOEJHAzF5dXVjTlPY5tSJh2lpV57XIHk2qvQShUp+w7th/lMfaCVGgsK
-zXlZ46Srfi7zURQOW6GgS2aBl2tY5QKwT2vVlCgIZ+f+e4sH8KuPtuLlEHCK0rJ2
-PybJZPBKz+wBbxGcYvpKnznKirZ18WBcUziq6j5+eG0tonAzKiko/DDpz2YQ7l+s
-J5ffyeDwfokFL0MjgAkdjaqRmRzomuJga/0VcLNNPP9tZqROivo=
-=2HPA
------END PGP SIGNATURE-----
-
---gjbvu2v2ro5cizgo--
