@@ -1,39 +1,55 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH 0/3] enable ccree on Renesas R-Car platform
-Date: Tue, 15 May 2018 13:29:26 +0100
-Message-Id: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:46070 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755378AbeEAMcW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 1 May 2018 08:32:22 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v8 03/12] ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
+Date: Tue,  1 May 2018 14:31:22 +0200
+Message-Id: <20180501123131.7738-4-mylene.josserand@bootlin.com>
+In-Reply-To: <20180501123131.7738-1-mylene.josserand@bootlin.com>
+References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The following patch set enables CryptoCell present in the Renesas
-R-Car SoC.
+As we found in sun9i-a80, CPUCFG is a collection of registers that are
+mapped to the SoC's signals from each individual processor core and
+associated peripherals.
 
-Gilad Ben-Yossef (3):
-  crypto: ccree: drop signature register check
-  clk: renesas: r8a7795: Add ccree clock
-  arm64: dts: renesas: r8a7795: add ccree binding
+These registers are used for SMP bringup and CPU hotplugging.
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |  8 ++++++++
- drivers/clk/renesas/r8a7795-cpg-mssr.c   |  1 +
- drivers/crypto/ccree/cc_driver.c         | 18 +++---------------
- 3 files changed, 12 insertions(+), 15 deletions(-)
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 379981389eea..a50ccb475de8 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -349,6 +349,11 @@
+ 			};
+ 		};
+ 
++		cpucfg@1700000 {
++			compatible = "allwinner,sun8i-a83t-cpucfg";
++			reg = <0x01700000 0x400>;
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-a83t-system-controller",
+ 				"syscon";
 -- 
-2.7.4
-
+2.11.0
