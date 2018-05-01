@@ -1,44 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:43154 "EHLO mail.kernel.org"
+Received: from mail.bootlin.com ([62.4.15.54]:46113 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750849AbeEBIwi (ORCPT
+        id S1755512AbeEAMc1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 04:52:38 -0400
-Date: Wed, 2 May 2018 16:52:22 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, Jun Nie <jun.nie@linaro.org>,
-        Baoyou Xie <baoyou.xie@linaro.org>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 50/61] thermal: simplify getting .drvdata
-Message-ID: <20180502085221.GH3443@dragon>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-51-wsa+renesas@sang-engineering.com>
+        Tue, 1 May 2018 08:32:27 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v8 06/12] ARM: smp: Add initialization of CNTVOFF
+Date: Tue,  1 May 2018 14:31:25 +0200
+Message-Id: <20180501123131.7738-7-mylene.josserand@bootlin.com>
+In-Reply-To: <20180501123131.7738-1-mylene.josserand@bootlin.com>
+References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419140641.27926-51-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 04:06:20PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/thermal/rockchip_thermal.c | 8 +++-----
->  drivers/thermal/spear_thermal.c    | 8 +++-----
->  drivers/thermal/zx2967_thermal.c   | 6 ++----
->  3 files changed, 8 insertions(+), 14 deletions(-)
+The CNTVOFF register from arch timer is uninitialized.
+It should be done by the bootloader but it is currently not the case,
+even for boot CPU because this SoC is booting in secure mode.
+It leads to an random offset value meaning that each CPU will have a
+different time, which isn't working very well.
 
-For zx2967_thermal,
+Add assembly code used for boot CPU and secondary CPU cores to make
+sure that the CNTVOFF register is initialized. Because this code can
+be used by different platforms, add this assembly file in ARM's common
+folder.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/common/Makefile              |  1 +
+ arch/arm/common/secure_cntvoff.S      | 31 +++++++++++++++++++++++++++++++
+ arch/arm/include/asm/secure_cntvoff.h |  8 ++++++++
+ 3 files changed, 40 insertions(+)
+ create mode 100644 arch/arm/common/secure_cntvoff.S
+ create mode 100644 arch/arm/include/asm/secure_cntvoff.h
+
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index 70b4a14ed993..1e9f7af8f70f 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -10,6 +10,7 @@ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
+ obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+ obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
++obj-$(CONFIG_SMP)		+= secure_cntvoff.o
+ obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
+ obj-$(CONFIG_MCPM)		+= mcpm_head.o mcpm_entry.o mcpm_platsmp.o vlock.o
+ CFLAGS_REMOVE_mcpm_entry.o	= -pg
+diff --git a/arch/arm/common/secure_cntvoff.S b/arch/arm/common/secure_cntvoff.S
+new file mode 100644
+index 000000000000..68a4a8344319
+--- /dev/null
++++ b/arch/arm/common/secure_cntvoff.S
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (C) 2014 Renesas Electronics Corporation
++ *
++ * Initialization of CNTVOFF register from secure mode
++ *
++ */
++
++#include <linux/linkage.h>
++#include <asm/assembler.h>
++
++ENTRY(secure_cntvoff_init)
++	.arch	armv7-a
++	/*
++	 * CNTVOFF has to be initialized either from non-secure Hypervisor
++	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
++	 * then it should be handled by the secure code
++	 */
++	cps	#MON_MODE
++	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
++	orr	r0, r1, #1
++	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
++	isb
++	mov	r0, #0
++	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
++	isb
++	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
++	isb
++	cps	#SVC_MODE
++	ret	lr
++ENDPROC(secure_cntvoff_init)
+diff --git a/arch/arm/include/asm/secure_cntvoff.h b/arch/arm/include/asm/secure_cntvoff.h
+new file mode 100644
+index 000000000000..1f93aee1f630
+--- /dev/null
++++ b/arch/arm/include/asm/secure_cntvoff.h
+@@ -0,0 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASMARM_ARCH_CNTVOFF_H
++#define __ASMARM_ARCH_CNTVOFF_H
++
++extern void secure_cntvoff_init(void);
++
++#endif
+-- 
+2.11.0
