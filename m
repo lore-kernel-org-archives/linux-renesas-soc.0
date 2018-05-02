@@ -1,21 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:40540 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750979AbeEDHfl (ORCPT
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34433 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750785AbeEBCcg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 03:35:41 -0400
+        Tue, 1 May 2018 22:32:36 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJ0MJRpQR7ECY0bi_KJuOzD4NvL1KCzjPnjaVeifHxXVQ@mail.gmail.com>
+In-Reply-To: <20180415190934.GX3094@brightrain.aerifal.cx>
 References: <1512047522-16312-1-git-send-email-geert+renesas@glider.be>
  <1512047522-16312-4-git-send-email-geert+renesas@glider.be>
  <20180415003420.GU3094@brightrain.aerifal.cx> <CAMuHMdVKMwe_FHQWdC_R2hEUxyksCg7Vo+0knX2J+oEcEgRpEQ@mail.gmail.com>
- <20180415190934.GX3094@brightrain.aerifal.cx> <CAL_JsqJ0MJRpQR7ECY0bi_KJuOzD4NvL1KCzjPnjaVeifHxXVQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 May 2018 09:35:39 +0200
-Message-ID: <CAMuHMdXbhkVEmrDn1K_nqyp4BQ28j9SFc3jy-PRUB=yrpJt5sA@mail.gmail.com>
+ <20180415190934.GX3094@brightrain.aerifal.cx>
+From: Rob Herring <robherring2@gmail.com>
+Date: Tue, 1 May 2018 21:32:15 -0500
+Message-ID: <CAL_JsqJ0MJRpQR7ECY0bi_KJuOzD4NvL1KCzjPnjaVeifHxXVQ@mail.gmail.com>
 Subject: Re: [PATCH 3/5] tty: serial: sh-sci: Hide earlycon config question
-To: Rob Herring <robherring2@gmail.com>
-Cc: Rich Felker <dalias@libc.org>,
+To: Rich Felker <dalias@libc.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Simon Horman <horms@verge.net.au>,
@@ -26,103 +26,75 @@ Cc: Rich Felker <dalias@libc.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "moderated list:H8/300 ARCHITECTURE"
         <uclinux-h8-devel@lists.sourceforge.jp>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
+        Linux-sh list <linux-sh@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Rob,
-
-On Wed, May 2, 2018 at 4:32 AM, Rob Herring <robherring2@gmail.com> wrote:
-> On Sun, Apr 15, 2018 at 2:09 PM, Rich Felker <dalias@libc.org> wrote:
->> On Sun, Apr 15, 2018 at 08:58:42PM +0200, Geert Uytterhoeven wrote:
->>> On Sun, Apr 15, 2018 at 2:34 AM, Rich Felker <dalias@libc.org> wrote:
->>> > On Thu, Nov 30, 2017 at 02:12:00PM +0100, Geert Uytterhoeven wrote:
->>> >> Renesas H8/300 and ARM platforms use DT and support earlycon, so most
->>> >> users want earlycon support to be enabled.
->>> >>
->>> >> On SuperH platforms, earlycon is not yet supported.
->>> >>
->>> >> Hence follow the above rationale to configure the default, unless
->>> >> CONFIG_EXPERT is enabled.
->>> >>
->>> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> >> ---
->>> >>  drivers/tty/serial/Kconfig | 3 ++-
->>> >>  1 file changed, 2 insertions(+), 1 deletion(-)
->>> >>
->>> >> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
->>> >> index 0c75562d620feb82..952a2c6a9da08fdd 100644
->>> >> --- a/drivers/tty/serial/Kconfig
->>> >> +++ b/drivers/tty/serial/Kconfig
->>> >> @@ -774,10 +774,11 @@ config SERIAL_SH_SCI_CONSOLE
->>> >>       default y
->>> >>
->>> >>  config SERIAL_SH_SCI_EARLYCON
->>> >> -     bool "Support for early console on SuperH SCI(F)"
->>> >> +     bool "Support for early console on SuperH SCI(F)" if EXPERT
->>> >>       depends on SERIAL_SH_SCI=y
->>> >>       select SERIAL_CORE_CONSOLE
->>> >>       select SERIAL_EARLYCON
->>> >> +     default ARCH_RENESAS || H8300
->>> >>
->>> >>  config SERIAL_SH_SCI_DMA
->>> >>       bool "DMA support"
->>> >> --
->>> >
->>> > Can you clarify what the claim that SuperH does not support earlycon
->>> > is based on? My understanding is that users were successfully using
->>> > this option on Renesas SH systems, and I'm using it on J2 with the
->>> > uartlite earlycon support which I added in 7cdcc29e49. I think if you
->>> > want to omit the question it should always default to enabled.
->>>
->>> This is a patch for a Kconfig option for the Renesas sh-sci driver, which
->>> supports the SCI, SCIF, SCIFA, SCIFB, and HSCIF uarts found on various
->>> Renesas SoCs.
->>>
->>> Earlycon is used with DT only. While you are using earlycon on J2, you do
->>> use it with a different uart (uartlite). Currently there's no upstream support
->>> for using DT on Renesas SuperH SoCs. If this changes, the default for
->>> SERIAL_SH_SCI_EARLYCON has to be changed.
->>>
->>> So none of my patch applies to the current state of SuperH Linux support.
+On Sun, Apr 15, 2018 at 2:09 PM, Rich Felker <dalias@libc.org> wrote:
+> On Sun, Apr 15, 2018 at 08:58:42PM +0200, Geert Uytterhoeven wrote:
+>> Hi Rich,
 >>
->> OK, I was under the impression (from users) that it worked on Renesas
->> SH devices without DT. If it really doesn't then it doesn't matter
->> until DT support for them is added. I've got some hardware to
->> experiment with now so I'll see what can be done.
+>> On Sun, Apr 15, 2018 at 2:34 AM, Rich Felker <dalias@libc.org> wrote:
+>> > On Thu, Nov 30, 2017 at 02:12:00PM +0100, Geert Uytterhoeven wrote:
+>> >> Renesas H8/300 and ARM platforms use DT and support earlycon, so most
+>> >> users want earlycon support to be enabled.
+>> >>
+>> >> On SuperH platforms, earlycon is not yet supported.
+>> >>
+>> >> Hence follow the above rationale to configure the default, unless
+>> >> CONFIG_EXPERT is enabled.
+>> >>
+>> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> >> ---
+>> >>  drivers/tty/serial/Kconfig | 3 ++-
+>> >>  1 file changed, 2 insertions(+), 1 deletion(-)
+>> >>
+>> >> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+>> >> index 0c75562d620feb82..952a2c6a9da08fdd 100644
+>> >> --- a/drivers/tty/serial/Kconfig
+>> >> +++ b/drivers/tty/serial/Kconfig
+>> >> @@ -774,10 +774,11 @@ config SERIAL_SH_SCI_CONSOLE
+>> >>       default y
+>> >>
+>> >>  config SERIAL_SH_SCI_EARLYCON
+>> >> -     bool "Support for early console on SuperH SCI(F)"
+>> >> +     bool "Support for early console on SuperH SCI(F)" if EXPERT
+>> >>       depends on SERIAL_SH_SCI=y
+>> >>       select SERIAL_CORE_CONSOLE
+>> >>       select SERIAL_EARLYCON
+>> >> +     default ARCH_RENESAS || H8300
+>> >>
+>> >>  config SERIAL_SH_SCI_DMA
+>> >>       bool "DMA support"
+>> >> --
+>> >
+>> > Can you clarify what the claim that SuperH does not support earlycon
+>> > is based on? My understanding is that users were successfully using
+>> > this option on Renesas SH systems, and I'm using it on J2 with the
+>> > uartlite earlycon support which I added in 7cdcc29e49. I think if you
+>> > want to omit the question it should always default to enabled.
+>>
+>> This is a patch for a Kconfig option for the Renesas sh-sci driver, which
+>> supports the SCI, SCIF, SCIFA, SCIFB, and HSCIF uarts found on various
+>> Renesas SoCs.
+>>
+>> Earlycon is used with DT only. While you are using earlycon on J2, you do
+>> use it with a different uart (uartlite). Currently there's no upstream support
+>> for using DT on Renesas SuperH SoCs. If this changes, the default for
+>> SERIAL_SH_SCI_EARLYCON has to be changed.
+>>
+>> So none of my patch applies to the current state of SuperH Linux support.
 >
-> Yes, it works without DT (but maybe that is UART specific). It was
-> originally an x86 8250 thing.
->
-> The main thing you need is either fixmap support or ioremap has to
-> work before paging_init when early_params are processed.
+> OK, I was under the impression (from users) that it worked on Renesas
+> SH devices without DT. If it really doesn't then it doesn't matter
+> until DT support for them is added. I've got some hardware to
+> experiment with now so I'll see what can be done.
 
-Without DT and its chosen/stdout-path, you need a way to specify which
-UART to use. That's typically done through a UART-specific earlycon=
-extension.
+Yes, it works without DT (but maybe that is UART specific). It was
+originally an x86 8250 thing.
 
-The sh-sci.c driver uses:
+The main thing you need is either fixmap support or ioremap has to
+work before paging_init when early_params are processed.
 
-    OF_EARLYCON_DECLARE(scif, "renesas,scif", scif_early_console_setup);
-    (+ for sci, scifa, scifb, hscif)
-
-So it may actually work with earlycon=scif,0x<addr>?
-
-Anyone who can try on a non-DT SH system?
-
-if it works, the default should be changed to
-
-    default ARCH_RENESAS || H8300 || SUPERH
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
