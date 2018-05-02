@@ -1,83 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRb (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:51391 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751020AbeEBNSv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 080/102] arm64: dts: renesas: ulcb: Add BD9571 PMIC
-Date: Fri, 18 May 2018 13:15:42 +0200
-Message-Id: <786f3cc022f73973eda247a0f80f73971ebda764.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Wed, 2 May 2018 09:18:51 -0400
+Date: Wed, 2 May 2018 15:18:49 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 02/12] ARM: sunxi: smp: Move assembly code into a file
+Message-ID: <20180502131849.rwthjkpf7nxojeui@flea>
+References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
+ <20180501123131.7738-3-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gjbvu2v2ro5cizgo"
+Content-Disposition: inline
+In-Reply-To: <20180501123131.7738-3-mylene.josserand@bootlin.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add a device node for the ROHM BD9571MWV PMIC.
+--gjbvu2v2ro5cizgo
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This was based on the example in the DT binding documentation, but using
-IRQ0 instead of a GPIO interrupt, as that matches the schematics, and
-because INTC-EX is a simpler block.
+On Tue, May 01, 2018 at 02:31:21PM +0200, Myl=E8ne Josserand wrote:
+> Move the assembly code for cluster cache enabling and resuming
+> into an assembly file instead of having it directly in C code.
+>=20
+> Remove the CFLAGS because we are using the ARM directive "arch"
+> instead.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 93402783d52f..ee4249287fbd 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -243,6 +243,30 @@
- 
- &i2c_dvfs {
- 	status = "okay";
-+
-+	pmic: pmic@30 {
-+		pinctrl-0 = <&irq0_pins>;
-+		pinctrl-names = "default";
-+
-+		compatible = "rohm,bd9571mwv";
-+		reg = <0x30>;
-+		interrupt-parent = <&intc_ex>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		regulators {
-+			dvfs: dvfs {
-+				regulator-name = "dvfs";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <1030000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
- };
- 
- &ohci1 {
-@@ -276,6 +300,11 @@
- 		function = "i2c2";
- 	};
- 
-+	irq0_pins: irq0 {
-+		groups = "intc_ex_irq0";
-+		function = "intc_ex";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
--- 
-2.11.0
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--gjbvu2v2ro5cizgo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrpurgACgkQ0rTAlCFN
+r3QZORAAkNl/AqxJTu7X0QkR7XGUf4YhEpUikmjP1wG683jgnMsgf2AQyfkmCJ2W
+ApL3stC0aF/QxZpWfWGP896d0Wb0w4uYPlEwADOlQ4qPjRQA5n5M44Qsz8NyUJ/F
+FNGb3i4ZwfaNtfQLtczxnvxy6tOGvDlkgJc2c53z1l9FGq1SfahA+go0iju+Efmu
+9r/uWUD8iJGw1bFVwqp+OITCAFNpC+OYC8qilc6/12YFrsRjop+mXdPl1hLZ3kvc
+RHQTQvFq+c0iIYER/+OAaJYG1WMt/YMnZVOmVj/h9HGElUzq/nlagn1fixTO9fFY
+TYICnYxECh953zExSYFUeeIL+xfQYTB/InDGzl7sHBBB53mB0DlfQmtARkSl+uw5
+5JsEw3fBEcdp9/d1bN87fgUmqt40pL9QcgseN9B4Ob3bYT3cYkiL7LbtTzciEvEM
+pCcDaAMVFOEJHAzF5dXVjTlPY5tSJh2lpV57XIHk2qvQShUp+w7th/lMfaCVGgsK
+zXlZ46Srfi7zURQOW6GgS2aBl2tY5QKwT2vVlCgIZ+f+e4sH8KuPtuLlEHCK0rJ2
+PybJZPBKz+wBbxGcYvpKnznKirZ18WBcUziq6j5+eG0tonAzKiko/DDpz2YQ7l+s
+J5ffyeDwfokFL0MjgAkdjaqRmRzomuJga/0VcLNNPP9tZqROivo=
+=2HPA
+-----END PGP SIGNATURE-----
+
+--gjbvu2v2ro5cizgo--
