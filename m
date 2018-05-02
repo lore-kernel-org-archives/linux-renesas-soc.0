@@ -1,137 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50654 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752535AbeEQRYL (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:44913 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751436AbeEBHlm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 May 2018 13:24:11 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH v10 5/8] media: vsp1: Use reference counting for bodies
-Date: Thu, 17 May 2018 18:23:58 +0100
-Message-Id: <66525c9827fe90aaa991d3f3ddcb460125593971.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.e217e37c63010c4a78c4022a30a389e5d7627919.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.e217e37c63010c4a78c4022a30a389e5d7627919.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.e217e37c63010c4a78c4022a30a389e5d7627919.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.e217e37c63010c4a78c4022a30a389e5d7627919.1526577622.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Wed, 2 May 2018 03:41:42 -0400
+Date: Wed, 2 May 2018 09:41:33 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: hch@infradead.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sh: mm: Fix unprotected access to struct device
+Message-ID: <20180502074133.GD17527@w540>
+References: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
+ <20180418104703.GA12462@infradead.org>
+ <20180418131314.GC3999@w540>
+ <20180420083147.GC31275@infradead.org>
+ <CAMuHMdWwJrUgOjaAX1oUHd+KFUMuUzcH6g29zC2mJX377oAHiA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="sXc4Kmr5FA7axrvy"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWwJrUgOjaAX1oUHd+KFUMuUzcH6g29zC2mJX377oAHiA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Extend the display list body with a reference count, allowing bodies to
-be kept as long as a reference is maintained. This provides the ability
-to keep a cached copy of bodies which will not change, so that they can
-be re-applied to multiple display lists.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_clu.c |  7 ++++++-
- drivers/media/platform/vsp1/vsp1_dl.c  | 16 ++++++++++++++--
- drivers/media/platform/vsp1/vsp1_lut.c |  7 ++++++-
- 3 files changed, 26 insertions(+), 4 deletions(-)
+--sXc4Kmr5FA7axrvy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-diff --git a/drivers/media/platform/vsp1/vsp1_clu.c b/drivers/media/platform/vsp1/vsp1_clu.c
-index 8efa12f5e53f..ea83f1b7d125 100644
---- a/drivers/media/platform/vsp1/vsp1_clu.c
-+++ b/drivers/media/platform/vsp1/vsp1_clu.c
-@@ -212,8 +212,13 @@ static void clu_configure(struct vsp1_entity *entity,
- 		clu->clu = NULL;
- 		spin_unlock_irqrestore(&clu->lock, flags);
- 
--		if (dlb)
-+		if (dlb) {
- 			vsp1_dl_list_add_body(dl, dlb);
-+
-+			/* Release our local reference. */
-+			vsp1_dl_body_put(dlb);
-+		}
-+
- 		break;
- 	}
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 617c46a03dec..1407c90c6880 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -10,6 +10,7 @@
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
- #include <linux/gfp.h>
-+#include <linux/refcount.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
- 
-@@ -54,6 +55,8 @@ struct vsp1_dl_body {
- 	struct list_head list;
- 	struct list_head free;
- 
-+	refcount_t refcnt;
-+
- 	struct vsp1_dl_body_pool *pool;
- 	struct vsp1_device *vsp1;
- 
-@@ -258,6 +261,7 @@ struct vsp1_dl_body *vsp1_dl_body_get(struct vsp1_dl_body_pool *pool)
- 	if (!list_empty(&pool->free)) {
- 		dlb = list_first_entry(&pool->free, struct vsp1_dl_body, free);
- 		list_del(&dlb->free);
-+		refcount_set(&dlb->refcnt, 1);
- 	}
- 
- 	spin_unlock_irqrestore(&pool->lock, flags);
-@@ -278,6 +282,9 @@ void vsp1_dl_body_put(struct vsp1_dl_body *dlb)
- 	if (!dlb)
- 		return;
- 
-+	if (!refcount_dec_and_test(&dlb->refcnt))
-+		return;
-+
- 	dlb->num_entries = 0;
- 
- 	spin_lock_irqsave(&dlb->pool->lock, flags);
-@@ -463,8 +470,11 @@ void vsp1_dl_list_write(struct vsp1_dl_list *dl, u32 reg, u32 data)
-  * which bodies are added.
-  *
-  * Adding a body to a display list passes ownership of the body to the list. The
-- * caller must not touch the body after this call, and must not release it
-- * explicitly with vsp1_dl_body_put().
-+ * caller retains its reference to the fragment when adding it to the display
-+ * list, but is not allowed to add new entries to the body.
-+ *
-+ * The reference must be explicitly released by a call to vsp1_dl_body_put()
-+ * when the body isn't needed anymore.
-  *
-  * Additional bodies are only usable for display lists in header mode.
-  * Attempting to add a body to a header-less display list will return an error.
-@@ -475,6 +485,8 @@ int vsp1_dl_list_add_body(struct vsp1_dl_list *dl, struct vsp1_dl_body *dlb)
- 	if (dl->dlm->mode != VSP1_DL_MODE_HEADER)
- 		return -EINVAL;
- 
-+	refcount_inc(&dlb->refcnt);
-+
- 	list_add_tail(&dlb->list, &dl->bodies);
- 
- 	return 0;
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
-index 6b358617ce15..b3ea90172439 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/vsp1/vsp1_lut.c
-@@ -168,8 +168,13 @@ static void lut_configure(struct vsp1_entity *entity,
- 		lut->lut = NULL;
- 		spin_unlock_irqrestore(&lut->lock, flags);
- 
--		if (dlb)
-+		if (dlb) {
- 			vsp1_dl_list_add_body(dl, dlb);
-+
-+			/* Release our local reference. */
-+			vsp1_dl_body_put(dlb);
-+		}
-+
- 		break;
- 	}
- }
--- 
-git-series 0.9.1
+Hi Christoph,
+
+On Fri, Apr 20, 2018 at 11:59:13AM +0200, Geert Uytterhoeven wrote:
+> Hi Christoph,
+>
+> On Fri, Apr 20, 2018 at 10:31 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> > On Wed, Apr 18, 2018 at 03:13:14PM +0200, jacopo mondi wrote:
+> >> As long as it goes for arch/sh, the only user of dma_alloc_coherent()
+> >> is platform_resource_setup_memory(), and it has been fixed by this
+> >> patch.
+> >
+> > Great!
+> >
+> >> Unfortunately, as Thomas pointed out, there are drivers which calls
+> >> into this with the wrong 'struct device' as the sh_eth one he had fixed.
+> >
+> > Yes, we'll need fixes there.  Other DMA ops implementations also look
+> > at struct device, so they generally are buggy.
+> >
+> >> I would then say that as long as it goes for the NULL case, we should be
+> >> fine now.
+> >
+> > Then I'd say skil that part, please.
+>
+> The major reason for keeping the NULL WARN_ON() checks is to make it
+> obvious to the developer what is wrong, and fall back to the old behavior.
+>
+> Without the checks, the kernel will just crash during early startup,
+> without a clue in the (missing) kernel output, usually leading to a
+> frustrating bisection experience (if the developer is sufficiently motivated,
+> at all).
+>
+> Hence my vote for keeping the checks.
+
+Gentle ping as I don't see this patch being collected in v4.17-rc3
+
+Thanks
+   j
+
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
+--sXc4Kmr5FA7axrvy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa6WutAAoJEHI0Bo8WoVY8CYYP/2N/7yrUnb3i7cWeEF1OFoLZ
+nXYQlHzmWBkA011mxrHC4dtoJHv+i1N85amPAMHMs6teawOkIR2VCEwMPWr6vmY4
+HegIHIdbf2Qlc14AzIMZ8P0t3BB9zLQoXkzT16saV+PMh019wXN8oD0q1vJBAmN/
+I8eTCptil6FnhJrkGiuJuxzoSX1EdcFOyYC0AB6l1pMG+hc98V4JBphpA8WLTpc7
++S997xBY5Y/WF9K4IGCSdaSFCFcv3S3uTE2GjOIHnDwIKxAJhmsOWDs4xbmBXCWz
+BMTi2llfa10o96WqBQi39CuKT7HcLbc6Oj0fEKm9U9YtF/CCs/vCLUkk6ZCDK2Nv
+Sw3ZnQVZpv6V5Nltuk2mtqn+LqM9JzgjfN7slEnkC4JA8PgK+N/aW8wsnq/2e7QY
+vJSeW3+FXiIrvRdgQbif4EgXLzAiYzyozbq6KG8KInuFvMo82u0BjTiz93e0F6XD
+7udl060h3DfoXVmBVuKPVYpOhJgO+PTEVLm53lQzCucpOePgAflUs9XaTP9AxJ3O
+PSdHIt3RF/Il8NqsDargaIQlq9L15rHYBfK2++zLuHbmrf36DPcRJBCEg0PGwCsY
+RSkP+Tinfi3tV30oPtt3T9WeVlzumlqzCI4SiGKosouAdlU6A2LwpMCM1ZZBjUI/
+mkHWCqa16xsN6SS7A9Es
+=HPqX
+-----END PGP SIGNATURE-----
+
+--sXc4Kmr5FA7axrvy--
