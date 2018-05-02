@@ -1,45 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45620 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751920AbeEAK57 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47621 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbeEBJi0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 06:57:59 -0400
-Date: Tue, 1 May 2018 11:57:55 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Simon Horman <horms@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Add R8A77980 PCIe support & some driver cleanups
-Message-ID: <20180501105754.GC19391@e107981-ln.cambridge.arm.com>
-References: <26e803ca-06b6-28c5-b87c-fc639b322d6f@cogentembedded.com>
- <20180501055553.3zh4ygux7aqvkmvs@verge.net.au>
+        Wed, 2 May 2018 05:38:26 -0400
+Date: Wed, 2 May 2018 11:38:21 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@iguana.be>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [PATCH v5 14/26] ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
+Message-ID: <20180502093821.m276vxqixob47e4p@verge.net.au>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1518457475-4480-15-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180501055553.3zh4ygux7aqvkmvs@verge.net.au>
+In-Reply-To: <1518457475-4480-15-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 01, 2018 at 07:55:53AM +0200, Simon Horman wrote:
-> On Sun, Apr 08, 2018 at 08:57:13PM +0300, Sergei Shtylyov wrote:
-> > Hello!
-> > 
-> > Here's a set of 5 patches against the 'pci/rcar' branch of Lorenzo Pieralisi's
-> > 'pci.git' repo. These are the changes needed for better R-Car gen3 support
-> > (namely for R8A77980 support) plus some PCIe driver re-factoring done in
-> > the process...
-> > 
-> > [1/5] pcie-rcar: poll PHYRDY in rcar_pcie_hw_init()
-> > [2/5] pcie-rcar: remove PHYRDY polling from rcar_pcie_hw_init_h1()
-> > [3/5] pcie-rcar: add R-Car gen3 PHY support
-> > [4/5] pcie-rcar: factor out rcar_pcie_hw_init() call
-> > [5/5] DT: pci: rcar-pci: document R8A77980 bindings
+On Mon, Feb 12, 2018 at 05:44:23PM +0000, Fabrizio Castro wrote:
+> R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
+> its driver by default.
 > 
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Sergei, would you mind rebasing this series against my pci/rcar
-branch please ? I will apply it then.
-
-Thanks,
-Lorenzo
+Thanks, applied.
