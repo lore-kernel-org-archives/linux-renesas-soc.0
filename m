@@ -1,81 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48364 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755278AbeEAMt3 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45326 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750878AbeEBGpD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 08:49:29 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: mchehab@kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v8 2/8] media: vsp1: Protect bodies against overflow
-Date: Tue,  1 May 2018 13:49:14 +0100
-Message-Id: <23f4f857e2e311f2948f6794f793c018e3e62062.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Wed, 2 May 2018 02:45:03 -0400
+Date: Wed, 2 May 2018 08:44:44 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Rob Herring <robh@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: arm: consistently name r8a77965 as M3-N
+Message-ID: <20180502064443.3uifvko5ceyc2jsb@verge.net.au>
+References: <20180424055442.19710-1-horms+renesas@verge.net.au>
+ <20180501134103.GA29214@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180501134103.GA29214@rob-hp-laptop>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The body write function relies on the code never asking it to write more
-than the entries available in the list.
+On Tue, May 01, 2018 at 08:41:03AM -0500, Rob Herring wrote:
+> On Tue, Apr 24, 2018 at 07:54:42AM +0200, Simon Horman wrote:
+> > There is an inconsistency between the use of M3N and M3-N.
+> > This patch resolves this by consistently using the latter.
+> > 
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> > Based on renesas-devel-20180423-v4.17-rc2
+> > ---
+> >  Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Currently with each list body containing 256 entries, this is fine, but
-we can reduce this number greatly saving memory. In preparation of this
-add a level of protection to catch any buffer overflows.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
----
-
-v3:
- - adapt for new 'body' terminology
- - simplify WARN_ON macro usage
-
- drivers/media/platform/vsp1/vsp1_dl.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 083da4f05c20..51965c30dec2 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -46,6 +46,7 @@ struct vsp1_dl_entry {
-  * @dma: DMA address of the entries
-  * @size: size of the DMA memory in bytes
-  * @num_entries: number of stored entries
-+ * @max_entries: number of entries available
-  */
- struct vsp1_dl_body {
- 	struct list_head list;
-@@ -56,6 +57,7 @@ struct vsp1_dl_body {
- 	size_t size;
- 
- 	unsigned int num_entries;
-+	unsigned int max_entries;
- };
- 
- /**
-@@ -138,6 +140,7 @@ static int vsp1_dl_body_init(struct vsp1_device *vsp1,
- 
- 	dlb->vsp1 = vsp1;
- 	dlb->size = size;
-+	dlb->max_entries = num_entries;
- 
- 	dlb->entries = dma_alloc_wc(vsp1->bus_master, dlb->size, &dlb->dma,
- 				    GFP_KERNEL);
-@@ -219,6 +222,10 @@ void vsp1_dl_body_free(struct vsp1_dl_body *dlb)
-  */
- void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
- {
-+	if (WARN_ONCE(dlb->num_entries >= dlb->max_entries,
-+		      "DLB size exceeded (max %u)", dlb->max_entries))
-+		return;
-+
- 	dlb->entries[dlb->num_entries].addr = reg;
- 	dlb->entries[dlb->num_entries].data = data;
- 	dlb->num_entries++;
--- 
-git-series 0.9.1
+Thanks, applied.
