@@ -1,6 +1,7 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77980: add CAN-FD support
-To: Simon Horman <horms@verge.net.au>
+Date: Wed, 2 May 2018 11:36:01 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -8,60 +9,84 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a77980: add CAN-FD support
+Message-ID: <20180502093601.6wokrocz4knh33ds@verge.net.au>
 References: <c184f961-2f98-532f-ed02-6f3751256d9c@cogentembedded.com>
  <f07c00b3-228c-e0d2-f7fe-38b8e9f25a4d@cogentembedded.com>
- <20180502093601.6wokrocz4knh33ds@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <a9fd4c0c-7928-e34e-15b3-350c42f9f5bc@cogentembedded.com>
-Date: Wed, 2 May 2018 12:41:44 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180502093601.6wokrocz4knh33ds@verge.net.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f07c00b3-228c-e0d2-f7fe-38b8e9f25a4d@cogentembedded.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
-
-On 5/2/2018 12:36 PM, Simon Horman wrote:
-
->> Define the generic R8A77980 part of the CAN-FD device node.
->>
->> Based on the original (and large) patch by Vladimir Barinov.
->>
->> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Apr 27, 2018 at 10:12:51PM +0300, Sergei Shtylyov wrote:
+> Define the generic R8A77980 part of the CAN-FD device node.
 > 
-> Thanks applied with the minor update noted below.
-
-    Thank you!
-
->> ---
->>   arch/arm64/boot/dts/renesas/r8a77980.dtsi |   31 ++++++++++++++++++++++++++++++
->>   1 file changed, 31 insertions(+)
->>
->> Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
->> ===================================================================
->> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
->> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-[...]
->> @@ -170,6 +177,30 @@
->>   			status = "disabled";
->>   		};
->>   
->> +		canfd: can@e66c0000 {
->> +			compatible = "renesas,r8a77980-canfd",
->> +				     "renesas,rcar-gen3-canfd";
->> +			reg = <0 0xe66c0000 0 0x8000>;
->> +			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&cpg CPG_MOD 914>,
->> +			         <&cpg CPG_CORE R8A77980_CLK_CANFD>,
+> Based on the original (and large) patch by Vladimir Barinov.
 > 
-> checkpatch tells me that line above uses spaces for indentation where
-> a tab could be used. I fixed that up when applying the patch.
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-    Hum, I thought I fixed that... :-/
+Thanks applied with the minor update noted below.
 
-MBR, Sergei
+> 
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77980.dtsi |   31 ++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> ===================================================================
+> --- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> +++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+> @@ -38,6 +38,13 @@
+>  		};
+>  	};
+>  
+> +	/* External CAN clock - to be overridden by boards that provide it */
+> +	can_clk: can {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <0>;
+> +	};
+> +
+>  	extal_clk: extal {
+>  		compatible = "fixed-clock";
+>  		#clock-cells = <0>;
+> @@ -170,6 +177,30 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		canfd: can@e66c0000 {
+> +			compatible = "renesas,r8a77980-canfd",
+> +				     "renesas,rcar-gen3-canfd";
+> +			reg = <0 0xe66c0000 0 0x8000>;
+> +			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 914>,
+> +			         <&cpg CPG_CORE R8A77980_CLK_CANFD>,
+
+checkpatch tells me that line above uses spaces for indentation where
+a tab could be used. I fixed that up when applying the patch.
+
+> +				 <&can_clk>;
+
+> +			clock-names = "fck", "canfd", "can_clk";
+> +			assigned-clocks = <&cpg CPG_CORE R8A77980_CLK_CANFD>;
+> +			assigned-clock-rates = <40000000>;
+> +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+> +			status = "disabled";
+> +
+> +			channel0 {
+> +				status = "disabled";
+> +			};
+> +
+> +			channel1 {
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+>  		avb: ethernet@e6800000 {
+>  			compatible = "renesas,etheravb-r8a77980",
+>  				     "renesas,etheravb-rcar-gen3";
+> 
