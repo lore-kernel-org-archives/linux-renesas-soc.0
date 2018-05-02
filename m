@@ -1,71 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:58866 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750781AbeECNCp (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59226 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750942AbeEBKNj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 May 2018 09:02:45 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] arm64: dts: renesas: r8a7796: Correct whitespace
-Date: Thu,  3 May 2018 14:38:29 +0200
-Message-Id: <1525351110-13403-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1525351110-13403-1-git-send-email-geert+renesas@glider.be>
-References: <1525351110-13403-1-git-send-email-geert+renesas@glider.be>
+        Wed, 2 May 2018 06:13:39 -0400
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v3 0/5] drm: rcar-du: r8a77965 DU support
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>
+References: <20180427222154.21664-1-kieran.bingham+renesas@ideasonboard.com>
+ <3133347.E1rqC9Dq6Z@avalon>
+ <CAMuHMdVRisZAqt3mEUVoyknatn0oOF1PChwBf7xkEASAaiAQhA@mail.gmail.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <bbfe59c3-67c8-2f2a-1fbf-2d248766a5ad@ideasonboard.com>
+Date: Wed, 2 May 2018 11:13:34 +0100
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVRisZAqt3mEUVoyknatn0oOF1PChwBf7xkEASAaiAQhA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add missing spaces after commas.
+Hi Geert
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Rebased.
+On 02/05/18 09:59, Geert Uytterhoeven wrote:
+> Hi Laurent,
+> 
+> On Sat, Apr 28, 2018 at 12:43 AM, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+>> On Saturday, 28 April 2018 01:21:49 EEST Kieran Bingham wrote:
+>>> The r8a77965 M3-N platform supports a DPAD, HDMI and LVDS output, along
+>>> 3 DU channels. However, DU2 is not available in the hardware, with the
+>>> DPAD instead being routed through DU3.
+>>>
+>>> Provide support for this non-linear indexing with updates to the rcar-du
+>>> driver, before adding the device info structure for the r8a77965.
+>>>
+>>>
+>>> Kieran Bingham (5):
+>>>   dt-bindings: display: renesas: Add R-Car M3-N HDMI TX DT bindings
+>>>   pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and
+>>>     functions
+>>>   drm: rcar-du: Split CRTC handling to support hardware indexing
+>>>   drm: rcar-du: Allow DU groups to work with hardware indexing
+>>>   drm: rcar-du: Add R8A77965 support
+>>
+>> I've taken the whole series in my tree for v4.18.
+> 
+> Shouldn't patch #2 go through sh-pfc?
 
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Yes :-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 3fbd86590fb0ed4c..6ffab2da07cb9d67 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -143,7 +143,7 @@
- 		};
- 
- 		a57_1: cpu@1 {
--			compatible = "arm,cortex-a57","arm,armv8";
-+			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x1>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
-@@ -166,7 +166,7 @@
- 		};
- 
- 		a53_1: cpu@101 {
--			compatible = "arm,cortex-a53","arm,armv8";
-+			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x101>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A7796_PD_CA53_CPU1>;
-@@ -177,7 +177,7 @@
- 		};
- 
- 		a53_2: cpu@102 {
--			compatible = "arm,cortex-a53","arm,armv8";
-+			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x102>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A7796_PD_CA53_CPU2>;
-@@ -188,7 +188,7 @@
- 		};
- 
- 		a53_3: cpu@103 {
--			compatible = "arm,cortex-a53","arm,armv8";
-+			compatible = "arm,cortex-a53", "arm,armv8";
- 			reg = <0x103>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A7796_PD_CA53_CPU3>;
--- 
-2.7.4
+Sorry, It looks like I should have split it out from the series.
+
+--
+Kieran
+
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
