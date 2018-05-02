@@ -1,33 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50427 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:47816 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751662AbeEPG7g (ORCPT
+        with ESMTP id S1750898AbeEBJn7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 May 2018 02:59:36 -0400
-Date: Wed, 16 May 2018 08:59:32 +0200
-From: Simon Horman <horms@verge.net.au>
+        Wed, 2 May 2018 05:43:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable RENESAS_WDT
-Message-ID: <20180516065931.amccl5sr7i6dengd@verge.net.au>
-References: <20180502094353.27488-1-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180502094353.27488-1-horms+renesas@verge.net.au>
+        linux-watchdog@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: multi_v7_defconfig: Enable RENESAS_WDT
+Date: Wed,  2 May 2018 11:43:53 +0200
+Message-Id: <20180502094353.27488-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 02, 2018 at 11:43:53AM +0200, Simon Horman wrote:
-> R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-> its driver by default. It is enabled as a module to avoid increasing
-> the kernel image size.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
+its driver by default. It is enabled as a module to avoid increasing
+the kernel image size.
 
-Applied.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index c6042475bece..374a40945b0f 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -498,6 +498,7 @@ CONFIG_TEGRA_WATCHDOG=m
+ CONFIG_MESON_WATCHDOG=y
+ CONFIG_DW_WATCHDOG=y
+ CONFIG_DIGICOLOR_WATCHDOG=y
++CONFIG_RENESAS_WDT=m
+ CONFIG_BCM2835_WDT=y
+ CONFIG_BCM47XX_WDT=y
+ CONFIG_BCM7038_WDT=m
+-- 
+2.11.0
