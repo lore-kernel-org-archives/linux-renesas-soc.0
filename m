@@ -1,51 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:19778 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751204AbeEKOQk (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44286 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750948AbeEBTyv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 10:16:40 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] rcar-vin: Fix potential buffer overrun root cause
-Date: Fri, 11 May 2018 16:15:39 +0200
-Message-Id: <20180511141541.3164-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 2 May 2018 15:54:51 -0400
+Received: by mail-lf0-f68.google.com with SMTP id h197-v6so22593098lfg.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 May 2018 12:54:50 -0700 (PDT)
+Subject: [PATCH 1/2] sh_eth: use TSU register accessors for TSU_POST<n>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
+References: <4a17ab65-4d9c-897e-c340-7d86e0296f2f@cogentembedded.com>
+Message-ID: <297c4665-de06-ddf2-5c97-4d56c781b299@cogentembedded.com>
+Date: Wed, 2 May 2018 22:54:48 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <4a17ab65-4d9c-897e-c340-7d86e0296f2f@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+There's no particularly good reason TSU_POST<n> registers get accessed
+circumventing sh_eth_tsu_{read|write}() -- start using those, removing
+(badly named) sh_eth_tsu_get_post_reg_offset(),  while at it...
 
-Commit 015060cb7795eac3 ("media: rcar-vin: enable field toggle after a 
-set number of lines for Gen3") was an attempt to fix the issue of 
-writing outside the capture buffer for VIN Gen3. Unfortunately it only 
-fixed a symptom of a problem to such a degree I could no longer 
-reproduce it.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Jacopo on the other hand working on a different setup still ran into the 
-issue. And he even figured out the root cause of the issue. When I 
-submitted the original VIN Gen3 support I had when addressing a review 
-comment missed to keep the crop and compose dimensions in sync with the 
-requested format resulting in the DMA engine not properly stopping 
-before writing outside the buffer.
+---
+ drivers/net/ethernet/renesas/sh_eth.c |   20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-This series reverts the incorrect fix in 1/2 and applies a correct one 
-in 2/2. I think this should be picked up for v4.18.
-
-Niklas Söderlund (2):
-  Revert "media: rcar-vin: enable field toggle after a set number of
-    lines for Gen3"
-  rcar-vin: fix crop and compose handling for Gen3
-
- drivers/media/platform/rcar-vin/rcar-dma.c  | 20 +++++---------------
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  6 ++++++
- 2 files changed, 11 insertions(+), 15 deletions(-)
-
--- 
-2.17.0
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net-next/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2610,12 +2610,6 @@ static int sh_eth_change_mtu(struct net_
+ }
+ 
+ /* For TSU_POSTn. Please refer to the manual about this (strange) bitfields */
+-static void *sh_eth_tsu_get_post_reg_offset(struct sh_eth_private *mdp,
+-					    int entry)
+-{
+-	return sh_eth_tsu_get_offset(mdp, TSU_POST1) + (entry / 8 * 4);
+-}
+-
+ static u32 sh_eth_tsu_get_post_mask(int entry)
+ {
+ 	return 0x0f << (28 - ((entry % 8) * 4));
+@@ -2630,27 +2624,25 @@ static void sh_eth_tsu_enable_cam_entry_
+ 					     int entry)
+ {
+ 	struct sh_eth_private *mdp = netdev_priv(ndev);
++	int reg = TSU_POST1 + entry / 8;
+ 	u32 tmp;
+-	void *reg_offset;
+ 
+-	reg_offset = sh_eth_tsu_get_post_reg_offset(mdp, entry);
+-	tmp = ioread32(reg_offset);
+-	iowrite32(tmp | sh_eth_tsu_get_post_bit(mdp, entry), reg_offset);
++	tmp = sh_eth_tsu_read(mdp, reg);
++	sh_eth_tsu_write(mdp, tmp | sh_eth_tsu_get_post_bit(mdp, entry), reg);
+ }
+ 
+ static bool sh_eth_tsu_disable_cam_entry_post(struct net_device *ndev,
+ 					      int entry)
+ {
+ 	struct sh_eth_private *mdp = netdev_priv(ndev);
++	int reg = TSU_POST1 + entry / 8;
+ 	u32 post_mask, ref_mask, tmp;
+-	void *reg_offset;
+ 
+-	reg_offset = sh_eth_tsu_get_post_reg_offset(mdp, entry);
+ 	post_mask = sh_eth_tsu_get_post_mask(entry);
+ 	ref_mask = sh_eth_tsu_get_post_bit(mdp, entry) & ~post_mask;
+ 
+-	tmp = ioread32(reg_offset);
+-	iowrite32(tmp & ~post_mask, reg_offset);
++	tmp = sh_eth_tsu_read(mdp, reg);
++	sh_eth_tsu_write(mdp, tmp & ~post_mask, reg);
+ 
+ 	/* If other port enables, the function returns "true" */
+ 	return tmp & ref_mask;
