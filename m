@@ -1,69 +1,196 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:43011 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751886AbeEDTHF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47039 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751160AbeEBJGd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 15:07:05 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: f.fainelli@gmail.com, opendmb@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v9 09/12] ARM: sun9i: smp: Add is_a83t field
-Date: Fri,  4 May 2018 21:05:42 +0200
-Message-Id: <20180504190545.5114-10-mylene.josserand@bootlin.com>
-In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+        Wed, 2 May 2018 05:06:33 -0400
+Date: Wed, 2 May 2018 11:06:28 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: r8a77965: Add R-Car Gen3 thermal support
+Message-ID: <20180502090628.yuilaye3nsomgt2z@verge.net.au>
+References: <20180426194906.338-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180426194906.338-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To prepare the support of sun8i-a83t, add a field in the smp_data
-structure to know if we are on sun9i-a80 or sun8i-a83t.
+On Thu, Apr 26, 2018 at 09:49:06PM +0200, Niklas Söderlund wrote:
+> Based on previous work by Ryo Kataoka <ryo.kataoka.wt@renesas.com>.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Add also a global variable to retrieve which architecture we are
-having.
+Thanks, applied with a minor update described below.
+The resulting patch is also below.
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> 
+> ---
+> 
+> Hi Simon,
+> 
+> The compatibility string 'renesas,r8a77965-thermal' is accepted but not 
+> yet picked up, see '[PATCH v2 0/2] thermal: rcar_gen3_thermal: add 
+> r8a77965 support'.
+> 
+> * Changes since v1
+> - Rebased to devel branch of Simons tree.
+> - Switch to R8A77965_PD_ALWAYS_ON instead of 32 in power-domains as the
+>   constant is present in v4.17-rc1. This makes this patch depend on
+>   '[PATCH] arm64: dts: renesas: r8a77965: use r8a77965-sysc binding
+>   definitions' which adds the r8a77965-sysc.h include to the dtsi file.
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 59 +++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> index 054ac6be43fac6f3..37c38b0f8f435645 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> @@ -136,6 +136,21 @@
+>  			/* placeholder */
+>  		};
+>  
+> +		tsc: thermal@e6198000 {
+> +			compatible = "renesas,r8a77965-thermal";
+> +			reg = <0 0xe6198000 0 0x100>,
+> +			      <0 0xe61a0000 0 0x100>,
+> +			      <0 0xe61a8000 0 0x100>;
+> +			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 522>;
+> +			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
+> +			resets = <&cpg 522>;
+> +			#thermal-sensor-cells = <1>;
+> +			status = "okay";
+> +		};
+
+I have moved this node to preserve the ordering of sub-nodes
+of the soc node by bus address.
+
+> +
+>  		gpio0: gpio@e6050000 {
+>  			compatible = "renesas,gpio-r8a77965",
+>  				     "renesas,rcar-gen3-gpio";
+> @@ -1062,6 +1077,50 @@
+>  				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+>  	};
+>  
+> +	thermal-zones {
+> +		sensor_thermal1: sensor-thermal1 {
+> +			polling-delay-passive = <250>;
+> +			polling-delay = <1000>;
+> +			thermal-sensors = <&tsc 0>;
+> +
+> +			trips {
+> +				sensor1_crit: sensor1-crit {
+> +					temperature = <120000>;
+> +					hysteresis = <1000>;
+> +					type = "critical";
+> +				};
+> +			};
+
+Do you plan to follow-up with a patch to add cooling management?
+
+
+> +		};
+
+...
+
+
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Subject: arm64: dts: r8a77965: Add R-Car Gen3 thermal support
+
+Based on previous work by Ryo Kataoka <ryo.kataoka.wt@renesas.com>.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+[simon: moved thermal node to preseve ordering of nodes by bus address]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-sunxi/mc_smp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 59 +++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-index 03f021d0c73e..fc10e3a3268f 100644
---- a/arch/arm/mach-sunxi/mc_smp.c
-+++ b/arch/arm/mach-sunxi/mc_smp.c
-@@ -74,6 +74,7 @@ static void __iomem *sram_b_smp_base;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 536fed8eec6a..b93281affd63 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -282,6 +282,21 @@
+ 			#power-domain-cells = <1>;
+ 		};
  
- extern void sunxi_mc_smp_secondary_startup(void);
- extern void sunxi_mc_smp_resume(void);
-+static bool is_a83t;
- 
- static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
- {
-@@ -624,6 +625,7 @@ struct sunxi_mc_smp_nodes {
- struct sunxi_mc_smp_data {
- 	const char *enable_method;
- 	int (*get_smp_nodes)(struct sunxi_mc_smp_nodes *nodes);
-+	bool is_a83t;
- };
- 
- static void __init sunxi_mc_smp_put_nodes(struct sunxi_mc_smp_nodes *nodes)
-@@ -697,6 +699,8 @@ static int __init sunxi_mc_smp_init(void)
- 			break;
- 	}
- 
-+	is_a83t = sunxi_mc_smp_data[i].is_a83t;
++		tsc: thermal@e6198000 {
++			compatible = "renesas,r8a77965-thermal";
++			reg = <0 0xe6198000 0 0x100>,
++			      <0 0xe61a0000 0 0x100>,
++			      <0 0xe61a8000 0 0x100>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 522>;
++			#thermal-sensor-cells = <1>;
++			status = "okay";
++		};
 +
- 	of_node_put(node);
- 	if (ret)
- 		return -ENODEV;
+ 		intc_ex: interrupt-controller@e61c0000 {
+ 			compatible = "renesas,intc-ex-r8a77965", "renesas,irqc";
+ 			#interrupt-cells = <2>;
+@@ -1192,6 +1207,50 @@
+ 				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
++	thermal-zones {
++		sensor_thermal1: sensor-thermal1 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 0>;
++
++			trips {
++				sensor1_crit: sensor1-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++
++		sensor_thermal2: sensor-thermal2 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 1>;
++
++			trips {
++				sensor2_crit: sensor2-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++
++		sensor_thermal3: sensor-thermal3 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsc 2>;
++
++			trips {
++				sensor3_crit: sensor3-crit {
++					temperature = <120000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++	};
++
+ 	/* External USB clocks - can be overridden by the board */
+ 	usb3s0_clk: usb3s0 {
+ 		compatible = "fixed-clock";
 -- 
 2.11.0
