@@ -1,45 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:16108 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752468AbeEKEbz (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:37438 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750939AbeEBUly (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 00:31:55 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/4] arm64: dts: renesas: r8a77990: Add PFC device node
-Date: Fri, 11 May 2018 13:31:18 +0900
-Message-Id: <1526013081-28005-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1526013081-28005-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1526013081-28005-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 2 May 2018 16:41:54 -0400
+Date: Wed, 02 May 2018 16:41:53 -0400 (EDT)
+Message-Id: <20180502.164153.940230623258227296.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Subject: Re: [PATCH 0/2] sh_eth: complain on access to unimplemented TSU
+ registers
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <4a17ab65-4d9c-897e-c340-7d86e0296f2f@cogentembedded.com>
+References: <4a17ab65-4d9c-897e-c340-7d86e0296f2f@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds PFC device node for r8a77990 (R-Car E3).
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Wed, 2 May 2018 22:53:23 +0300
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+> Here's a set of 2 patches against DaveM's 'net-next.git' repo. The 1st patch
+> routes TSU_POST<n> register accesses thru sh_eth_tsu_{read|write}() and the 2nd
+> added WARN_ON() unimplemented register to those functions. I'm going to deal with
+> TSU_ADR{H|L}<n> registers in a later series...
+> 
+> [1/2] sh_eth: use TSU register accessors for TSU_POST<n>
+> [2/2] sh_eth: WARN_ON() access to unimplemented TSU register
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 4658029..efc3c0b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -60,6 +60,11 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a77990";
-+			reg = <0 0xe6060000 0 0x508>;
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a77990-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
--- 
-1.9.1
+Series applied to net-next, thanks.
