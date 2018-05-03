@@ -1,1017 +1,313 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751971AbeERLS2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:28 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/69] ARM: dts: r7s72100: add soc node
-Date: Fri, 18 May 2018 13:16:35 +0200
-Message-Id: <b1548238b2252199b7ea217abbc3d96b742c7e63.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v9 0/8] vsp1: TLB optimisation and DL caching
+Date: Thu,  3 May 2018 14:35:39 +0100
+Message-Id: <cover.76b8251c2457cea047ecba892cf0d7a351644051.1525354160.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add soc node to represent the bus and move all nodes with a base address
-into this node. This is consistent with handling of R-Car Gen3 and Gen2
-SoCs in mainline. It is intended to migrate other Renesas ARM-based
-SoCs to this scheme.
+Each display list currently allocates an area of DMA memory to store register
+settings for the VSP1 to process. Each of these allocations adds pressure to
+the IPMMU TLB entries.
 
-The ordering is derived from simply moving each node with an address up to
-before any nodes without a base address that occur before the soc node.  To
-improve maintainability follow-up patches will sort subnodes of both the
-new soc node and the root node.
+We can reduce the pressure by pre-allocating larger areas and dividing the area
+across multiple bodies represented as a pool.
 
-This patch should not introduce any functional change.
+With this reconfiguration of bodies, we can adapt the configuration code to
+separate out constant hardware configuration and cache it for re-use.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r7s72100.dtsi | 910 ++++++++++++++++++++--------------------
- 1 file changed, 459 insertions(+), 451 deletions(-)
+The patches provided in this series can be found at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git  tags/vsp1/tlb-optimise/v9
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index bd6366d1800b..0aa74355e24f 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -15,7 +15,6 @@
- 
- / {
- 	compatible = "renesas,r7s72100";
--	interrupt-parent = <&gic>;
- 	#address-cells = <1>;
- 	#size-cells = <1>;
- 
-@@ -87,6 +86,29 @@
- 			clock-mult = <1>;
- 			clock-div = <12>;
- 		};
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0>;
-+			clock-frequency = <400000000>;
-+			clocks = <&cpg_clocks R7S72100_CLK_I>;
-+			next-level-cache = <&L2>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
- 
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@fcfe0000 {
-@@ -192,499 +214,485 @@
- 			>;
- 			clock-output-names = "sdhi00", "sdhi01", "sdhi10", "sdhi11";
- 		};
--	};
--
--	cpus {
--		#address-cells = <1>;
--		#size-cells = <0>;
- 
--		cpu@0 {
--			device_type = "cpu";
--			compatible = "arm,cortex-a9";
--			reg = <0>;
--			clock-frequency = <400000000>;
--			clocks = <&cpg_clocks R7S72100_CLK_I>;
--			next-level-cache = <&L2>;
-+		pinctrl: pin-controller@fcfe3000 {
-+			compatible = "renesas,r7s72100-ports";
-+
-+			reg = <0xfcfe3000 0x4230>;
-+
-+			port0: gpio-0 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 0 6>;
-+			};
-+
-+			port1: gpio-1 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 16 16>;
-+			};
-+
-+			port2: gpio-2 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 32 16>;
-+			};
-+
-+			port3: gpio-3 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 48 16>;
-+			};
-+
-+			port4: gpio-4 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 64 16>;
-+			};
-+
-+			port5: gpio-5 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 80 11>;
-+			};
-+
-+			port6: gpio-6 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 96 16>;
-+			};
-+
-+			port7: gpio-7 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 112 16>;
-+			};
-+
-+			port8: gpio-8 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 128 16>;
-+			};
-+
-+			port9: gpio-9 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 144 8>;
-+			};
-+
-+			port10: gpio-10 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 160 16>;
-+			};
-+
-+			port11: gpio-11 {
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 176 16>;
-+			};
- 		};
--	};
- 
--	pinctrl: pin-controller@fcfe3000 {
--		compatible = "renesas,r7s72100-ports";
--
--		reg = <0xfcfe3000 0x4230>;
--
--		port0: gpio-0 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 0 6>;
-+		scif0: serial@e8007000 {
-+			compatible = "renesas,scif-r7s72100", "renesas,scif";
-+			reg = <0xe8007000 64>;
-+			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R7S72100_CLK_SCIF0>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
--		port1: gpio-1 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 16 16>;
-+		scif1: serial@e8007800 {
-+			compatible = "renesas,scif-r7s72100", "renesas,scif";
-+			reg = <0xe8007800 64>;
-+			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R7S72100_CLK_SCIF1>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
--		port2: gpio-2 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 32 16>;
-+		scif2: serial@e8008000 {
-+			compatible = "renesas,scif-r7s72100", "renesas,scif";
-+			reg = <0xe8008000 64>;
-+			interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R7S72100_CLK_SCIF2>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
--		port3: gpio-3 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 48 16>;
-+		scif3: serial@e8008800 {
-+			compatible = "renesas,scif-r7s72100", "renesas,scif";
-+			reg = <0xe8008800 64>;
-+			interrupts = <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R7S72100_CLK_SCIF3>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
--		port4: gpio-4 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 64 16>;
-+		scif4: serial@e8009000 {
-+			compatible = "renesas,scif-r7s72100", "renesas,scif";
-+			reg = <0xe8009000 64>;
-+			interrupts = <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R7S72100_CLK_SCIF4>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
--		port5: gpio-5 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 80 11>;
-+		scif5: serial@e8009800 {
-+			compatible = "renesas,scif-r7s72100", "renesas,scif";
-+			reg = <0xe8009800 64>;
-+			interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R7S72100_CLK_SCIF5>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
--		port6: gpio-6 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 96 16>;
-+		scif6: serial@e800a000 {
-+			compatible = "renesas,scif-r7s72100", "renesas,scif";
-+			reg = <0xe800a000 64>;
-+			interrupts = <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R7S72100_CLK_SCIF6>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
--		port7: gpio-7 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 112 16>;
-+		scif7: serial@e800a800 {
-+			compatible = "renesas,scif-r7s72100", "renesas,scif";
-+			reg = <0xe800a800 64>;
-+			interrupts = <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R7S72100_CLK_SCIF7>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
--		port8: gpio-8 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 128 16>;
-+		spi0: spi@e800c800 {
-+			compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
-+			reg = <0xe800c800 0x24>;
-+			interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error", "rx", "tx";
-+			clocks = <&mstp10_clks R7S72100_CLK_SPI0>;
-+			power-domains = <&cpg_clocks>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
--		port9: gpio-9 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 144 8>;
-+		spi1: spi@e800d000 {
-+			compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
-+			reg = <0xe800d000 0x24>;
-+			interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error", "rx", "tx";
-+			clocks = <&mstp10_clks R7S72100_CLK_SPI1>;
-+			power-domains = <&cpg_clocks>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
--		port10: gpio-10 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 160 16>;
-+		spi2: spi@e800d800 {
-+			compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
-+			reg = <0xe800d800 0x24>;
-+			interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error", "rx", "tx";
-+			clocks = <&mstp10_clks R7S72100_CLK_SPI2>;
-+			power-domains = <&cpg_clocks>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
--		port11: gpio-11 {
--			gpio-controller;
--			#gpio-cells = <2>;
--			gpio-ranges = <&pinctrl 0 176 16>;
-+		spi3: spi@e800e000 {
-+			compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
-+			reg = <0xe800e000 0x24>;
-+			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error", "rx", "tx";
-+			clocks = <&mstp10_clks R7S72100_CLK_SPI3>;
-+			power-domains = <&cpg_clocks>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
- 		};
--	};
--
--	scif0: serial@e8007000 {
--		compatible = "renesas,scif-r7s72100", "renesas,scif";
--		reg = <0xe8007000 64>;
--		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp4_clks R7S72100_CLK_SCIF0>;
--		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
--
--	scif1: serial@e8007800 {
--		compatible = "renesas,scif-r7s72100", "renesas,scif";
--		reg = <0xe8007800 64>;
--		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp4_clks R7S72100_CLK_SCIF1>;
--		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
--
--	scif2: serial@e8008000 {
--		compatible = "renesas,scif-r7s72100", "renesas,scif";
--		reg = <0xe8008000 64>;
--		interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp4_clks R7S72100_CLK_SCIF2>;
--		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
--
--	scif3: serial@e8008800 {
--		compatible = "renesas,scif-r7s72100", "renesas,scif";
--		reg = <0xe8008800 64>;
--		interrupts = <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp4_clks R7S72100_CLK_SCIF3>;
--		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
--
--	scif4: serial@e8009000 {
--		compatible = "renesas,scif-r7s72100", "renesas,scif";
--		reg = <0xe8009000 64>;
--		interrupts = <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp4_clks R7S72100_CLK_SCIF4>;
--		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
--
--	scif5: serial@e8009800 {
--		compatible = "renesas,scif-r7s72100", "renesas,scif";
--		reg = <0xe8009800 64>;
--		interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp4_clks R7S72100_CLK_SCIF5>;
--		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
--
--	scif6: serial@e800a000 {
--		compatible = "renesas,scif-r7s72100", "renesas,scif";
--		reg = <0xe800a000 64>;
--		interrupts = <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp4_clks R7S72100_CLK_SCIF6>;
--		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
--
--	scif7: serial@e800a800 {
--		compatible = "renesas,scif-r7s72100", "renesas,scif";
--		reg = <0xe800a800 64>;
--		interrupts = <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp4_clks R7S72100_CLK_SCIF7>;
--		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
--
--	spi0: spi@e800c800 {
--		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
--		reg = <0xe800c800 0x24>;
--		interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-names = "error", "rx", "tx";
--		clocks = <&mstp10_clks R7S72100_CLK_SPI0>;
--		power-domains = <&cpg_clocks>;
--		num-cs = <1>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		status = "disabled";
--	};
--
--	spi1: spi@e800d000 {
--		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
--		reg = <0xe800d000 0x24>;
--		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-names = "error", "rx", "tx";
--		clocks = <&mstp10_clks R7S72100_CLK_SPI1>;
--		power-domains = <&cpg_clocks>;
--		num-cs = <1>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		status = "disabled";
--	};
--
--	spi2: spi@e800d800 {
--		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
--		reg = <0xe800d800 0x24>;
--		interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-names = "error", "rx", "tx";
--		clocks = <&mstp10_clks R7S72100_CLK_SPI2>;
--		power-domains = <&cpg_clocks>;
--		num-cs = <1>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		status = "disabled";
--	};
- 
--	spi3: spi@e800e000 {
--		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
--		reg = <0xe800e000 0x24>;
--		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-names = "error", "rx", "tx";
--		clocks = <&mstp10_clks R7S72100_CLK_SPI3>;
--		power-domains = <&cpg_clocks>;
--		num-cs = <1>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		status = "disabled";
--	};
--
--	spi4: spi@e800e800 {
--		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
--		reg = <0xe800e800 0x24>;
--		interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-names = "error", "rx", "tx";
--		clocks = <&mstp10_clks R7S72100_CLK_SPI4>;
--		power-domains = <&cpg_clocks>;
--		num-cs = <1>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		status = "disabled";
--	};
-+		spi4: spi@e800e800 {
-+			compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
-+			reg = <0xe800e800 0x24>;
-+			interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error", "rx", "tx";
-+			clocks = <&mstp10_clks R7S72100_CLK_SPI4>;
-+			power-domains = <&cpg_clocks>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
- 
--	gic: interrupt-controller@e8201000 {
--		compatible = "arm,pl390";
--		#interrupt-cells = <3>;
--		#address-cells = <0>;
--		interrupt-controller;
--		reg = <0xe8201000 0x1000>,
--			<0xe8202000 0x1000>;
--	};
-+		gic: interrupt-controller@e8201000 {
-+			compatible = "arm,pl390";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0xe8201000 0x1000>,
-+				<0xe8202000 0x1000>;
-+		};
- 
--	L2: cache-controller@3ffff000 {
--		compatible = "arm,pl310-cache";
--		reg = <0x3ffff000 0x1000>;
--		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
--		arm,early-bresp-disable;
--		arm,full-line-zero-disable;
--		cache-unified;
--		cache-level = <2>;
--	};
-+		L2: cache-controller@3ffff000 {
-+			compatible = "arm,pl310-cache";
-+			reg = <0x3ffff000 0x1000>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			arm,early-bresp-disable;
-+			arm,full-line-zero-disable;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
- 
--	wdt: watchdog@fcfe0000 {
--		compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
--		reg = <0xfcfe0000 0x6>;
--		interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
--		clocks = <&p0_clk>;
--	};
-+		wdt: watchdog@fcfe0000 {
-+			compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
-+			reg = <0xfcfe0000 0x6>;
-+			interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&p0_clk>;
-+		};
- 
--	i2c0: i2c@fcfee000 {
--		#address-cells = <1>;
--		#size-cells = <0>;
--		compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
--		reg = <0xfcfee000 0x44>;
--		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>,
--			     <GIC_SPI 159 IRQ_TYPE_EDGE_RISING>,
--			     <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R7S72100_CLK_I2C0>;
--		clock-frequency = <100000>;
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
-+		i2c0: i2c@fcfee000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
-+			reg = <0xfcfee000 0x44>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 159 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R7S72100_CLK_I2C0>;
-+			clock-frequency = <100000>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 
--	i2c1: i2c@fcfee400 {
--		#address-cells = <1>;
--		#size-cells = <0>;
--		compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
--		reg = <0xfcfee400 0x44>;
--		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>,
--			     <GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
--			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R7S72100_CLK_I2C1>;
--		clock-frequency = <100000>;
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
-+		i2c1: i2c@fcfee400 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
-+			reg = <0xfcfee400 0x44>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R7S72100_CLK_I2C1>;
-+			clock-frequency = <100000>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 
--	i2c2: i2c@fcfee800 {
--		#address-cells = <1>;
--		#size-cells = <0>;
--		compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
--		reg = <0xfcfee800 0x44>;
--		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 174 IRQ_TYPE_EDGE_RISING>,
--			     <GIC_SPI 175 IRQ_TYPE_EDGE_RISING>,
--			     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R7S72100_CLK_I2C2>;
--		clock-frequency = <100000>;
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
-+		i2c2: i2c@fcfee800 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
-+			reg = <0xfcfee800 0x44>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 174 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 175 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R7S72100_CLK_I2C2>;
-+			clock-frequency = <100000>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 
--	i2c3: i2c@fcfeec00 {
--		#address-cells = <1>;
--		#size-cells = <0>;
--		compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
--		reg = <0xfcfeec00 0x44>;
--		interrupts = <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 182 IRQ_TYPE_EDGE_RISING>,
--			     <GIC_SPI 183 IRQ_TYPE_EDGE_RISING>,
--			     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
--			     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp9_clks R7S72100_CLK_I2C3>;
--		clock-frequency = <100000>;
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
-+		i2c3: i2c@fcfeec00 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
-+			reg = <0xfcfeec00 0x44>;
-+			interrupts = <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 182 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 183 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R7S72100_CLK_I2C3>;
-+			clock-frequency = <100000>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 
--	mtu2: timer@fcff0000 {
--		compatible = "renesas,mtu2-r7s72100", "renesas,mtu2";
--		reg = <0xfcff0000 0x400>;
--		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-names = "tgi0a";
--		clocks = <&mstp3_clks R7S72100_CLK_MTU2>;
--		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
-+		mtu2: timer@fcff0000 {
-+			compatible = "renesas,mtu2-r7s72100", "renesas,mtu2";
-+			reg = <0xfcff0000 0x400>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tgi0a";
-+			clocks = <&mstp3_clks R7S72100_CLK_MTU2>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 
--	ether: ethernet@e8203000 {
--		compatible = "renesas,ether-r7s72100";
--		reg = <0xe8203000 0x800>,
--		      <0xe8204800 0x200>;
--		interrupts = <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R7S72100_CLK_ETHER>;
--		power-domains = <&cpg_clocks>;
--		phy-mode = "mii";
--		#address-cells = <1>;
--		#size-cells = <0>;
--		status = "disabled";
--	};
-+		ether: ethernet@e8203000 {
-+			compatible = "renesas,ether-r7s72100";
-+			reg = <0xe8203000 0x800>,
-+			      <0xe8204800 0x200>;
-+			interrupts = <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R7S72100_CLK_ETHER>;
-+			power-domains = <&cpg_clocks>;
-+			phy-mode = "mii";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
- 
--	mmcif: mmc@e804c800 {
--		compatible = "renesas,mmcif-r7s72100", "renesas,sh-mmcif";
--		reg = <0xe804c800 0x80>;
--		interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH
--			      GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH
--			      GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp8_clks R7S72100_CLK_MMCIF>;
--		power-domains = <&cpg_clocks>;
--		reg-io-width = <4>;
--		bus-width = <8>;
--		status = "disabled";
--	};
-+		mmcif: mmc@e804c800 {
-+			compatible = "renesas,mmcif-r7s72100", "renesas,sh-mmcif";
-+			reg = <0xe804c800 0x80>;
-+			interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R7S72100_CLK_MMCIF>;
-+			power-domains = <&cpg_clocks>;
-+			reg-io-width = <4>;
-+			bus-width = <8>;
-+			status = "disabled";
-+		};
- 
--	sdhi0: sd@e804e000 {
--		compatible = "renesas,sdhi-r7s72100";
--		reg = <0xe804e000 0x100>;
--		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
--			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
--			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
--
--		clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
--			 <&mstp12_clks R7S72100_CLK_SDHI01>;
--		clock-names = "core", "cd";
--		power-domains = <&cpg_clocks>;
--		cap-sd-highspeed;
--		cap-sdio-irq;
--		status = "disabled";
--	};
-+		sdhi0: sd@e804e000 {
-+			compatible = "renesas,sdhi-r7s72100";
-+			reg = <0xe804e000 0x100>;
-+			interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&mstp12_clks R7S72100_CLK_SDHI00>,
-+				 <&mstp12_clks R7S72100_CLK_SDHI01>;
-+			clock-names = "core", "cd";
-+			power-domains = <&cpg_clocks>;
-+			cap-sd-highspeed;
-+			cap-sdio-irq;
-+			status = "disabled";
-+		};
- 
--	sdhi1: sd@e804e800 {
--		compatible = "renesas,sdhi-r7s72100";
--		reg = <0xe804e800 0x100>;
--		interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH
--			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
--			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
--
--		clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
--			 <&mstp12_clks R7S72100_CLK_SDHI11>;
--		clock-names = "core", "cd";
--		power-domains = <&cpg_clocks>;
--		cap-sd-highspeed;
--		cap-sdio-irq;
--		status = "disabled";
--	};
-+		sdhi1: sd@e804e800 {
-+			compatible = "renesas,sdhi-r7s72100";
-+			reg = <0xe804e800 0x100>;
-+			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&mstp12_clks R7S72100_CLK_SDHI10>,
-+				 <&mstp12_clks R7S72100_CLK_SDHI11>;
-+			clock-names = "core", "cd";
-+			power-domains = <&cpg_clocks>;
-+			cap-sd-highspeed;
-+			cap-sdio-irq;
-+			status = "disabled";
-+		};
- 
--	ostm0: timer@fcfec000 {
--		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
--		reg = <0xfcfec000 0x30>;
--		interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
--		clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
-+		ostm0: timer@fcfec000 {
-+			compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+			reg = <0xfcfec000 0x30>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 
--	ostm1: timer@fcfec400 {
--		compatible = "renesas,r7s72100-ostm", "renesas,ostm";
--		reg = <0xfcfec400 0x30>;
--		interrupts = <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
--		clocks = <&mstp5_clks R7S72100_CLK_OSTM1>;
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
-+		ostm1: timer@fcfec400 {
-+			compatible = "renesas,r7s72100-ostm", "renesas,ostm";
-+			reg = <0xfcfec400 0x30>;
-+			interrupts = <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&mstp5_clks R7S72100_CLK_OSTM1>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 
--	rtc: rtc@fcff1000 {
--		compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
--		reg = <0xfcff1000 0x2e>;
--		interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
--			      GIC_SPI 277 IRQ_TYPE_EDGE_RISING
--			      GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
--		interrupt-names = "alarm", "period", "carry";
--		clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
--			 <&rtc_x3_clk>, <&extal_clk>;
--		clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
-+		rtc: rtc@fcff1000 {
-+			compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
-+			reg = <0xfcff1000 0x2e>;
-+			interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
-+				      GIC_SPI 277 IRQ_TYPE_EDGE_RISING
-+				      GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "alarm", "period", "carry";
-+			clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
-+				 <&rtc_x3_clk>, <&extal_clk>;
-+			clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 
--	usbhs0: usb@e8010000 {
--		compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
--		reg = <0xe8010000 0x1a0>;
--		interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R7S72100_CLK_USB0>;
--		renesas,buswait = <4>;
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
--	};
-+		usbhs0: usb@e8010000 {
-+			compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
-+			reg = <0xe8010000 0x1a0>;
-+			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R7S72100_CLK_USB0>;
-+			renesas,buswait = <4>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 
--	usbhs1: usb@e8207000 {
--		compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
--		reg = <0xe8207000 0x1a0>;
--		interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R7S72100_CLK_USB1>;
--		renesas,buswait = <4>;
--		power-domains = <&cpg_clocks>;
--		status = "disabled";
-+		usbhs1: usb@e8207000 {
-+			compatible = "renesas,usbhs-r7s72100", "renesas,rza1-usbhs";
-+			reg = <0xe8207000 0x1a0>;
-+			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R7S72100_CLK_USB1>;
-+			renesas,buswait = <4>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
- 	};
- };
+Changelog:
+----------
+v9:
+ - Pass the DL through configure_partition() calls
+ - Remove redundant reference to gc_bodies
+
+v8:
+ - Fix formatting and white space
+ - Reword vsp1_dl_list_add_body() documentation
+ - Update commit message on "Provide a body pool"
+ - No longer pass unnecessary dlm->pool through vsp1_dl_list_alloc()
+ - Add support for the new UIF entity
+ - Fix comment location for clu_configure_stream()
+ - Implement configure_partition separation
+ - Rename video->pipe_config to video->stream_config
+
+v7:
+ - Rebased on to linux-media/master (v4.16-rc4)
+ - Clean up the formatting of the vsp1_dl_list_add_body()
+ - Fix formatting and white space
+ -  s/prepare/configure_stream/
+ -  s/configure/configure_frame/
+
+v6:
+ - Rebased on to linux-media/master (v4.16-rc1)
+ - Removed DRM/UIF (DISCOM/ColorKey) updates
+
+v5:
+ - Rebased on to renesas-drivers-2018-01-09-v4.15-rc7 to fix conflicts
+   with DRM and UIF updates on VSP1 driver
+
+v4:
+ - Rebased to v4.14
+ * v4l: vsp1: Use reference counting for bodies
+   - Fix up reference handling comments
+
+ * v4l: vsp1: Provide a body pool
+   - Provide comment explaining extra allocation on body pool
+     highlighting area for optimisation later.
+
+ * v4l: vsp1: Refactor display list configure operations
+   - Fix up comment to describe yuv_mode caching rather than format
+
+ * vsp1: Adapt entities to configure into a body
+   - Rename vsp1_dl_list_get_body() to vsp1_dl_list_get_body0()
+
+ * v4l: vsp1: Move video configuration to a cached dlb
+   - Adjust pipe configured flag to be reset on resume rather than suspend
+   - rename dl_child, dl_next
+
+Testing:
+--------
+The VSP unit tests have been run on this patch set with the following results:
+
+--- Test loop 1 ---
+- vsp-unit-test-0000.sh
+Test Conditions:
+  Platform          Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+
+  Kernel release    4.17.0-rc1-arm64-renesas
+  convert           /usr/bin/convert
+  compare           /usr/bin/compare
+  killall           /usr/bin/killall
+  raw2rgbpnm        /usr/bin/raw2rgbpnm
+  stress            /usr/bin/stress
+  yavta             /usr/bin/yavta
+- vsp-unit-test-0001.sh
+Testing WPF packing in RGB332: pass
+Testing WPF packing in ARGB555: pass
+Testing WPF packing in XRGB555: pass
+Testing WPF packing in RGB565: pass
+Testing WPF packing in BGR24: pass
+Testing WPF packing in RGB24: pass
+Testing WPF packing in ABGR32: pass
+Testing WPF packing in ARGB32: pass
+Testing WPF packing in XBGR32: pass
+Testing WPF packing in XRGB32: pass
+- vsp-unit-test-0002.sh
+Testing WPF packing in NV12M: pass
+Testing WPF packing in NV16M: pass
+Testing WPF packing in NV21M: pass
+Testing WPF packing in NV61M: pass
+Testing WPF packing in UYVY: pass
+Testing WPF packing in VYUY: skip
+Testing WPF packing in YUV420M: pass
+Testing WPF packing in YUV422M: pass
+Testing WPF packing in YUV444M: pass
+Testing WPF packing in YVU420M: pass
+Testing WPF packing in YVU422M: pass
+Testing WPF packing in YVU444M: pass
+Testing WPF packing in YUYV: pass
+Testing WPF packing in YVYU: pass
+- vsp-unit-test-0003.sh
+Testing scaling from 640x640 to 640x480 in RGB24: pass
+Testing scaling from 1024x768 to 640x480 in RGB24: pass
+Testing scaling from 640x480 to 1024x768 in RGB24: pass
+Testing scaling from 640x640 to 640x480 in YUV444M: pass
+Testing scaling from 1024x768 to 640x480 in YUV444M: pass
+Testing scaling from 640x480 to 1024x768 in YUV444M: pass
+- vsp-unit-test-0004.sh
+Testing histogram in RGB24: pass
+Testing histogram in YUV444M: pass
+- vsp-unit-test-0005.sh
+Testing RPF.0: pass
+Testing RPF.1: pass
+Testing RPF.2: pass
+Testing RPF.3: pass
+Testing RPF.4: pass
+- vsp-unit-test-0006.sh
+Testing invalid pipeline with no RPF: pass
+Testing invalid pipeline with no WPF: pass
+- vsp-unit-test-0007.sh
+Testing BRU in RGB24 with 1 inputs: pass
+Testing BRU in RGB24 with 2 inputs: pass
+Testing BRU in RGB24 with 3 inputs: pass
+Testing BRU in RGB24 with 4 inputs: pass
+Testing BRU in RGB24 with 5 inputs: pass
+Testing BRU in YUV444M with 1 inputs: pass
+Testing BRU in YUV444M with 2 inputs: pass
+Testing BRU in YUV444M with 3 inputs: pass
+Testing BRU in YUV444M with 4 inputs: pass
+Testing BRU in YUV444M with 5 inputs: pass
+- vsp-unit-test-0008.sh
+Test requires unavailable feature set `bru rpf.0 uds wpf.0': skipped
+- vsp-unit-test-0009.sh
+Test requires unavailable feature set `rpf.0 wpf.0 wpf.1': skipped
+- vsp-unit-test-0010.sh
+Testing CLU in RGB24 with zero configuration: pass
+Testing CLU in RGB24 with identity configuration: pass
+Testing CLU in RGB24 with wave configuration: pass
+Testing CLU in YUV444M with zero configuration: pass
+Testing CLU in YUV444M with identity configuration: pass
+Testing CLU in YUV444M with wave configuration: pass
+Testing LUT in RGB24 with zero configuration: pass
+Testing LUT in RGB24 with identity configuration: pass
+Testing LUT in RGB24 with gamma configuration: pass
+Testing LUT in YUV444M with zero configuration: pass
+Testing LUT in YUV444M with identity configuration: pass
+Testing LUT in YUV444M with gamma configuration: pass
+- vsp-unit-test-0011.sh
+Testing  hflip=0 vflip=0 rotate=0: pass
+Testing  hflip=1 vflip=0 rotate=0: pass
+Testing  hflip=0 vflip=1 rotate=0: pass
+Testing  hflip=1 vflip=1 rotate=0: pass
+Testing  hflip=0 vflip=0 rotate=90: pass
+Testing  hflip=1 vflip=0 rotate=90: pass
+Testing  hflip=0 vflip=1 rotate=90: pass
+Testing  hflip=1 vflip=1 rotate=90: pass
+- vsp-unit-test-0012.sh
+Testing hflip: pass
+Testing vflip: pass
+- vsp-unit-test-0013.sh
+Testing RPF unpacking in RGB332: pass
+Testing RPF unpacking in ARGB555: pass
+Testing RPF unpacking in XRGB555: pass
+Testing RPF unpacking in RGB565: pass
+Testing RPF unpacking in BGR24: pass
+Testing RPF unpacking in RGB24: pass
+Testing RPF unpacking in ABGR32: pass
+Testing RPF unpacking in ARGB32: pass
+Testing RPF unpacking in XBGR32: pass
+Testing RPF unpacking in XRGB32: pass
+- vsp-unit-test-0014.sh
+Testing RPF unpacking in NV12M: pass
+Testing RPF unpacking in NV16M: pass
+Testing RPF unpacking in NV21M: pass
+Testing RPF unpacking in NV61M: pass
+Testing RPF unpacking in UYVY: pass
+Testing RPF unpacking in VYUY: skip
+Testing RPF unpacking in YUV420M: pass
+Testing RPF unpacking in YUV422M: pass
+Testing RPF unpacking in YUV444M: pass
+Testing RPF unpacking in YVU420M: pass
+Testing RPF unpacking in YVU422M: pass
+Testing RPF unpacking in YVU444M: pass
+Testing RPF unpacking in YUYV: pass
+Testing RPF unpacking in YVYU: pass
+- vsp-unit-test-0015.sh
+Testing SRU scaling from 1024x768 to 1024x768 in RGB24: pass
+Testing SRU scaling from 1024x768 to 2048x1536 in RGB24: pass
+Testing SRU scaling from 1024x768 to 1024x768 in YUV444M: pass
+Testing SRU scaling from 1024x768 to 2048x1536 in YUV444M: pass
+- vsp-unit-test-0016.sh
+Testing  hflip=0 vflip=0 rotate=0 640x480 -> 640x480: pass
+Testing  hflip=0 vflip=0 rotate=0 640x480 -> 1024x768: pass
+Testing  hflip=0 vflip=0 rotate=0 1024x768 -> 640x480: pass
+Testing  hflip=1 vflip=0 rotate=0 640x480 -> 640x480: pass
+Testing  hflip=1 vflip=0 rotate=0 640x480 -> 1024x768: pass
+Testing  hflip=1 vflip=0 rotate=0 1024x768 -> 640x480: pass
+Testing  hflip=0 vflip=1 rotate=0 640x480 -> 640x480: pass
+Testing  hflip=0 vflip=1 rotate=0 640x480 -> 1024x768: pass
+Testing  hflip=0 vflip=1 rotate=0 1024x768 -> 640x480: pass
+Testing  hflip=1 vflip=1 rotate=0 640x480 -> 640x480: pass
+Testing  hflip=1 vflip=1 rotate=0 640x480 -> 1024x768: pass
+Testing  hflip=1 vflip=1 rotate=0 1024x768 -> 640x480: pass
+Testing  hflip=0 vflip=0 rotate=90 640x480 -> 640x480: pass
+Testing  hflip=0 vflip=0 rotate=90 640x480 -> 1024x768: pass
+Testing  hflip=0 vflip=0 rotate=90 1024x768 -> 640x480: pass
+Testing  hflip=1 vflip=0 rotate=90 640x480 -> 640x480: pass
+Testing  hflip=1 vflip=0 rotate=90 640x480 -> 1024x768: pass
+Testing  hflip=1 vflip=0 rotate=90 1024x768 -> 640x480: pass
+Testing  hflip=0 vflip=1 rotate=90 640x480 -> 640x480: pass
+Testing  hflip=0 vflip=1 rotate=90 640x480 -> 1024x768: pass
+Testing  hflip=0 vflip=1 rotate=90 1024x768 -> 640x480: pass
+Testing  hflip=1 vflip=1 rotate=90 640x480 -> 640x480: pass
+Testing  hflip=1 vflip=1 rotate=90 640x480 -> 1024x768: pass
+Testing  hflip=1 vflip=1 rotate=90 1024x768 -> 640x480: pass
+- vsp-unit-test-0017.sh
+- vsp-unit-test-0018.sh
+Testing RPF crop from (0,0)/512x384: pass
+Testing RPF crop from (32,32)/512x384: pass
+Testing RPF crop from (32,64)/512x384: pass
+Testing RPF crop from (64,32)/512x384: pass
+- vsp-unit-test-0019.sh
+Testing non-active pipeline suspend/resume in suspend:freezer: passed
+Testing non-active pipeline suspend/resume in suspend:devices: passed
+Testing non-active pipeline suspend/resume in suspend:platform: passed
+Testing non-active pipeline suspend/resume in suspend:processors: passed
+Testing non-active pipeline suspend/resume in suspend:core: passed
+- vsp-unit-test-0020.sh
+Testing Testing active pipeline suspend/resume in suspend:freezer: pass
+Testing Testing active pipeline suspend/resume in suspend:devices: pass
+Testing Testing active pipeline suspend/resume in suspend:platform: pass
+Testing Testing active pipeline suspend/resume in suspend:processors: pass
+Testing Testing active pipeline suspend/resume in suspend:core: pass
+- vsp-unit-test-0021.sh
+Testing WPF packing in RGB332 during stress testing: pass
+Testing WPF packing in ARGB555 during stress testing: pass
+Testing WPF packing in XRGB555 during stress testing: pass
+Testing WPF packing in RGB565 during stress testing: pass
+Testing WPF packing in BGR24 during stress testing: pass
+Testing WPF packing in RGB24 during stress testing: pass
+Testing WPF packing in ABGR32 during stress testing: pass
+Testing WPF packing in ARGB32 during stress testing: pass
+Testing WPF packing in XBGR32 during stress testing: pass
+Testing WPF packing in XRGB32 during stress testing: pass
+./vsp-unit-test-0021.sh: line 34: 14785 Killed                  stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M
+- vsp-unit-test-0022.sh
+Testing long duration pipelines under stress: pass
+./vsp-unit-test-0022.sh: line 38: 16751 Killed                  stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M
+- vsp-unit-test-0023.sh
+Testing histogram HGT with hue areas 0,255,255,255,255,255,255,255,255,255,255,255: pass
+Testing histogram HGT with hue areas 0,40,40,80,80,120,120,160,160,200,200,255: pass
+Testing histogram HGT with hue areas 220,40,40,80,80,120,120,160,160,200,200,220: pass
+Testing histogram HGT with hue areas 0,10,50,60,100,110,150,160,200,210,250,255: pass
+Testing histogram HGT with hue areas 10,20,50,60,100,110,150,160,200,210,230,240: pass
+Testing histogram HGT with hue areas 240,20,60,80,100,120,140,160,180,200,210,220: pass
+- vsp-unit-test-0024.sh
+Test requires unavailable feature set `rpf.0 rpf.1 brs wpf.0': skipped
+168 tests: 147 passed, 0 failed, 3 skipped
+
+Kieran Bingham (8):
+  media: vsp1: Reword uses of 'fragment' as 'body'
+  media: vsp1: Protect bodies against overflow
+  media: vsp1: Provide a body pool
+  media: vsp1: Convert display lists to use new body pool
+  media: vsp1: Use reference counting for bodies
+  media: vsp1: Refactor display list configure operations
+  media: vsp1: Adapt entities to configure into a body
+  media: vsp1: Move video configuration to a cached dlb
+
+ drivers/media/platform/vsp1/vsp1_brx.c    |  32 +--
+ drivers/media/platform/vsp1/vsp1_clu.c    | 112 ++++---
+ drivers/media/platform/vsp1/vsp1_clu.h    |   1 +-
+ drivers/media/platform/vsp1/vsp1_dl.c     | 388 +++++++++++++----------
+ drivers/media/platform/vsp1/vsp1_dl.h     |  20 +-
+ drivers/media/platform/vsp1/vsp1_drm.c    |  18 +-
+ drivers/media/platform/vsp1/vsp1_entity.c |  34 +-
+ drivers/media/platform/vsp1/vsp1_entity.h |  45 +--
+ drivers/media/platform/vsp1/vsp1_hgo.c    |  26 +--
+ drivers/media/platform/vsp1/vsp1_hgt.c    |  28 +--
+ drivers/media/platform/vsp1/vsp1_hsit.c   |  20 +-
+ drivers/media/platform/vsp1/vsp1_lif.c    |  25 +-
+ drivers/media/platform/vsp1/vsp1_lut.c    |  80 +++--
+ drivers/media/platform/vsp1/vsp1_lut.h    |   1 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c   |  13 +-
+ drivers/media/platform/vsp1/vsp1_pipe.h   |   8 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c    | 188 +++++------
+ drivers/media/platform/vsp1/vsp1_sru.c    |  24 +-
+ drivers/media/platform/vsp1/vsp1_uds.c    |  73 ++--
+ drivers/media/platform/vsp1/vsp1_uds.h    |   2 +-
+ drivers/media/platform/vsp1/vsp1_uif.c    |  35 +--
+ drivers/media/platform/vsp1/vsp1_video.c  |  92 ++---
+ drivers/media/platform/vsp1/vsp1_video.h  |   2 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c    | 327 ++++++++++---------
+ 24 files changed, 884 insertions(+), 710 deletions(-)
+
+base-commit: 22cf3c24e08f6ebff46c3e733991548a5dab25ed
 -- 
-2.11.0
+git-series 0.9.1
