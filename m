@@ -1,104 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33906 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752519AbeESVCk (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:35834 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750947AbeECNCp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 19 May 2018 17:02:40 -0400
-Received: by mail-lf0-f68.google.com with SMTP id x145-v6so6732262lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 19 May 2018 14:02:39 -0700 (PDT)
-Subject: [PATCH 1/3] sh_eth: fix typo in EESR.TRO bit name
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-Cc: linux-renesas-soc@vger.kernel.org
-References: <d47afee4-6fd5-af6d-885c-5b07996749fc@cogentembedded.com>
-Message-ID: <0de7581f-dea5-7773-32f6-5bd6256358d5@cogentembedded.com>
-Date: Sun, 20 May 2018 00:02:36 +0300
-MIME-Version: 1.0
-In-Reply-To: <d47afee4-6fd5-af6d-885c-5b07996749fc@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Thu, 3 May 2018 09:02:45 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] arm64: dts: renesas: r8a7795: Correct whitespace
+Date: Thu,  3 May 2018 14:38:28 +0200
+Message-Id: <1525351110-13403-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525351110-13403-1-git-send-email-geert+renesas@glider.be>
+References: <1525351110-13403-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The  correct name of the EESR bit 8 is TRO (transmit retry over), not RTO.
-Note that EESIPR bit 8, TROIP remained correct...
+Add missing spaces after commas.
+Replace 8 consecutive spaces by a TAB.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |   10 +++++-----
- drivers/net/ethernet/renesas/sh_eth.h |    4 ++--
- 2 files changed, 7 insertions(+), 7 deletions(-)
+v2:
+  - Rebased.
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -706,7 +706,7 @@ static struct sh_eth_cpu_data rcar_gen1_
- 			  EESIPR_RTLFIP | EESIPR_RTSFIP |
- 			  EESIPR_PREIP | EESIPR_CERFIP,
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 9b080a864ea1ebe4..91486b4910cee3d7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -132,7 +132,7 @@
+ 		};
  
--	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
-+	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_TRO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
- 			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE,
- 	.fdr_value	= 0x00000f0f,
-@@ -738,7 +738,7 @@ static struct sh_eth_cpu_data rcar_gen2_
- 			  EESIPR_RTLFIP | EESIPR_RTSFIP |
- 			  EESIPR_PREIP | EESIPR_CERFIP,
+ 		a57_1: cpu@1 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x1>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
+@@ -144,7 +144,7 @@
+ 		};
  
--	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
-+	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_TRO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
- 			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE,
- 	.fdr_value	= 0x00000f0f,
-@@ -774,7 +774,7 @@ static struct sh_eth_cpu_data r8a77980_d
- 			  EESIPR_RTLFIP | EESIPR_RTSFIP |
- 			  EESIPR_PREIP | EESIPR_CERFIP,
+ 		a57_2: cpu@2 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x2>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
+@@ -156,7 +156,7 @@
+ 		};
  
--	.tx_check       = EESR_FTC | EESR_CD | EESR_RTO,
-+	.tx_check       = EESR_FTC | EESR_CD | EESR_TRO,
- 	.eesr_err_check = EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
- 			  EESR_RFE | EESR_RDE | EESR_RFRMER |
- 			  EESR_TFE | EESR_TDE | EESR_ECI,
-@@ -831,7 +831,7 @@ static struct sh_eth_cpu_data sh7724_dat
- 			  EESIPR_RTLFIP | EESIPR_RTSFIP |
- 			  EESIPR_PREIP | EESIPR_CERFIP,
+ 		a57_3: cpu@3 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x3>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
+@@ -179,7 +179,7 @@
+ 		};
  
--	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
-+	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_TRO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
- 			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE,
+ 		a53_1: cpu@101 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x101>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
+@@ -190,7 +190,7 @@
+ 		};
  
-@@ -876,7 +876,7 @@ static struct sh_eth_cpu_data sh7757_dat
- 			  EESIPR_RRFIP | EESIPR_RTLFIP | EESIPR_RTSFIP |
- 			  EESIPR_PREIP | EESIPR_CERFIP,
+ 		a53_2: cpu@102 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x102>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
+@@ -201,7 +201,7 @@
+ 		};
  
--	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_RTO,
-+	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_TRO,
- 	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
- 			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE,
- 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.h
-@@ -243,7 +243,7 @@ enum EESR_BIT {
- 	EESR_CND	= 0x00000800,
- 	EESR_DLC	= 0x00000400,
- 	EESR_CD		= 0x00000200,
--	EESR_RTO	= 0x00000100,
-+	EESR_TRO	= 0x00000100,
- 	EESR_RMAF	= 0x00000080,
- 	EESR_CEEF	= 0x00000040,
- 	EESR_CELF	= 0x00000020,
-@@ -263,7 +263,7 @@ enum EESR_BIT {
- 				 EESR_CERF)  /* Recv frame CRC error */
- 
- #define DEFAULT_TX_CHECK	(EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | \
--				 EESR_RTO)
-+				 EESR_TRO)
- #define DEFAULT_EESR_ERR_CHECK	(EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE | \
- 				 EESR_RDE | EESR_RFRMER | EESR_ADE | \
- 				 EESR_TFE | EESR_TDE)
+ 		a53_3: cpu@103 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x103>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
+@@ -262,7 +262,7 @@
+ 	pmu_a57 {
+ 		compatible = "arm,cortex-a57-pmu";
+ 		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+-		                      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+ 				      <&gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+ 				      <&gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-affinity = <&a57_0>,
+-- 
+2.7.4
