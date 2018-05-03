@@ -1,137 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:35347 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750920AbeEBHqx (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:45148 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750978AbeECNCp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 03:46:53 -0400
-Date: Wed, 2 May 2018 09:46:31 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: ysato@users.sourceforge.jp, dalias@libc.org,
-        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com,
-        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] sh: mm: Fix unprotected access to struct device
-Message-ID: <20180502074600.GC27261@w540>
-References: <1524044555-20610-1-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UnaWdueM1EBWVRzC"
-Content-Disposition: inline
-In-Reply-To: <1524044555-20610-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 3 May 2018 09:02:45 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/3] arm64: dts: renesas: r8a77965: Correct whitespace
+Date: Thu,  3 May 2018 14:38:30 +0200
+Message-Id: <1525351110-13403-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525351110-13403-1-git-send-email-geert+renesas@glider.be>
+References: <1525351110-13403-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Add missing space after comma.
 
---UnaWdueM1EBWVRzC
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Rebased.
 
-Hi again Christoph,
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    The gentle ping actually applies to this version of the patch.
-
-Sorry for the confusion.
-Thanks
-   j
-
-On Wed, Apr 18, 2018 at 11:42:35AM +0200, Jacopo Mondi wrote:
-> With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
-> operations observe dev->dma_pfn_offset") the generic DMA allocation
-> function on which the SH 'dma_alloc_coherent()' function relies on,
-> accesses the 'dma_pfn_offset' field of struct device.
->
-> Unfortunately the 'dma_generic_alloc_coherent()' function is called from
-> several places with a NULL struct device argument, halting the CPU
-> during the boot process.
->
-> This patch fixes the issue by protecting access to dev->dma_pfn_offset,
-> with a trivial check for validity. It also passes a valid 'struct device'
-> in the 'platform_resource_setup_memory()' function which is the main user
-> of 'dma_alloc_coherent()', and inserts a WARN_ON() check to remind to future
-> (and existing) bogus users of this function to provide a valid 'struct device'
-> whenever possible.
->
-> Fixes: ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset")
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
->
-> ---
-> v2 -> v3:
-> - remove (now) useless parenthesis around pfn assignement as suggested
->   by Sergei
-> - Add changelog to the patch, which I forgot in v2
->
-> v1 -> v2:
-> - Move WARN_ON() closer to dev validity check as suggested by Geert
->
-> ---
->  arch/sh/mm/consistent.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
-> index 8ce9869..f1b4469 100644
-> --- a/arch/sh/mm/consistent.c
-> +++ b/arch/sh/mm/consistent.c
-> @@ -59,7 +59,9 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
->
->  	split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
->
-> -	*dma_handle = virt_to_phys(ret) - PFN_PHYS(dev->dma_pfn_offset);
-> +	*dma_handle = virt_to_phys(ret);
-> +	if (!WARN_ON(!dev))
-> +		*dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
->
->  	return ret_nocache;
->  }
-> @@ -69,9 +71,12 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
->  			       unsigned long attrs)
->  {
->  	int order = get_order(size);
-> -	unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
-> +	unsigned long pfn = dma_handle >> PAGE_SHIFT;
->  	int k;
->
-> +	if (!WARN_ON(!dev))
-> +		pfn += dev->dma_pfn_offset;
-> +
->  	for (k = 0; k < (1 << order); k++)
->  		__free_pages(pfn_to_page(pfn + k), 0);
->
-> @@ -143,7 +148,7 @@ int __init platform_resource_setup_memory(struct platform_device *pdev,
->  	if (!memsize)
->  		return 0;
->
-> -	buf = dma_alloc_coherent(NULL, memsize, &dma_handle, GFP_KERNEL);
-> +	buf = dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
->  	if (!buf) {
->  		pr_warning("%s: unable to allocate memory\n", name);
->  		return -ENOMEM;
-> --
-> 2.7.4
->
-
---UnaWdueM1EBWVRzC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJa6WzXAAoJEHI0Bo8WoVY8VHgQAJ+f+VrWABtAj1hPotWX8Mxb
-GbTWMa5uMBOrDckb3bSTWqpIu4cW+nKfLbLSWFNNNZiy2VfzyH95sqqYQdgt0XZB
-X/iAduQx5bfLxPziOiYSrzB8AAN7L8MQ5ZEvCXkoSo1Lx6vKoLgbdpGgYSrdhjZQ
-iz4cUu/MxFHt3MbPwlFTeNqMQg55ZwCh1QHC9RlqcpAWXRkz07Mbox9L0Wl+9F/S
-Zwlbo6i/K1QRzmoCCq+RAAmHAAw2nCQwUNB/FyCXQgntACHVpSsDFdRT8sAzqmoL
-v7MkpXUXEZqvNF6dWLUIWlo8+Cw8jZBctFZb4QqvTGnwY7qVj65x1OBnffHDvER1
-2L25LOBVN+VaoD00SmgIz2pLFl0CcOfwJBRqfPsRro0dxChvmxjWQOJ3Tp4a2/D1
-q+PW8h6tj1AyyytkVJgi0VM5cimj4TcbBtufm/QQqVQUtghqUeLk6XRwb4JtvwQx
-t9qnbNo5ch/Ox1k7foYQrHEymgac+GVuuEfX5P1R8X54QrQ9VeiFoPS+lOUd/Qxj
-iWxzBKG3egX1zyodYuJK4cs/kcjWh8HSL8cro9LkznEqcjlTXW2SMlnQTG6wPjnQ
-o2kDJDjPfKxEGxgB0PioALF5Ha9qiciw2HARleNdoL3mcvVZiqViLJVGkbc8Kg6I
-24PCZUT1CSudq2qg4xT6
-=WEro
------END PGP SIGNATURE-----
-
---UnaWdueM1EBWVRzC--
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index b93281affd6399d5..ba0edda431a59fd1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -67,7 +67,7 @@
+ 		};
+ 
+ 		a57_1: cpu@1 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x1>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A77965_PD_CA57_CPU1>;
+-- 
+2.7.4
