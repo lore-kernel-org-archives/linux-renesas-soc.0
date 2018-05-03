@@ -1,21 +1,21 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34892 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59476 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751551AbeECNgc (ORCPT
+        with ESMTP id S1751336AbeECIoe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 May 2018 09:36:32 -0400
+        Thu, 3 May 2018 04:44:34 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 07/11] media: vsp1: Use header display lists for all WPF outputs linked to the DU
-Date: Thu,  3 May 2018 14:36:18 +0100
-Message-Id: <00cebb6a515fd30c47b703270cec5e40f48ae266.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 07/11] media: vsp1: Use header display lists for all WPF outputs linked to the DU
+Date: Thu,  3 May 2018 09:44:18 +0100
+Message-Id: <f8f51f23252ef29e61bdd1fe532946786f5b593b.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -32,7 +32,7 @@ Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
  1 file changed, 27 insertions(+), 80 deletions(-)
 
 diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index fbffbd407b29..56514cd51c51 100644
+index 07ebadec5639..eafe93a3b4d9 100644
 --- a/drivers/media/platform/vsp1/vsp1_dl.c
 +++ b/drivers/media/platform/vsp1/vsp1_dl.c
 @@ -94,7 +94,7 @@ struct vsp1_dl_body_pool {
@@ -59,7 +59,7 @@ index fbffbd407b29..56514cd51c51 100644
 - * @mode: display list operation mode (header or headerless)
   * @singleshot: execute the display list in single-shot mode
   * @vsp1: the VSP1 device
-  * @lock: protects the free, active, queued, and pending lists
+  * @lock: protects the free, active, queued, pending and gc_bodies lists
 @@ -138,7 +132,6 @@ enum vsp1_dl_mode {
   */
  struct vsp1_dl_manager {
