@@ -1,164 +1,146 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48439 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751045AbeEBKSc (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:45608 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751178AbeECTnQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 06:18:32 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] ARM: dts: r8a7791: Convert to new LVDS DT bindings
-Date: Wed,  2 May 2018 12:18:23 +0200
-Message-Id: <e5c3f4707f3956a2f34b8c16daad07a16873c498.1525256178.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1525256178.git.horms+renesas@verge.net.au>
-References: <cover.1525256178.git.horms+renesas@verge.net.au>
+        Thu, 3 May 2018 15:43:16 -0400
+Received: by mail-lf0-f65.google.com with SMTP id y14-v6so27327789lfy.12
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 May 2018 12:43:15 -0700 (PDT)
+Subject: [PATCH v3 4/5] pcie-rcar: factor out rcar_pcie_hw_init() call
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
+Message-ID: <8cd69bd4-b244-766e-9c3e-d4cd5999c1b0@cogentembedded.com>
+Date: Thu, 3 May 2018 22:43:13 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+We now have rcar_pcie_hw_init_{h1|gen2|gen3}() differing only in the PCIe
+PHY init code and all ending with a call to rcar_pcie_hw_init(), thus it
+makes  sense to move that call into the driver's probe() method and then
+rename those functions to rcar_pcie_phy_init_{h1|gen2|gen3}() -- doing
+this saves 48 bytes of object code (AArch64 gcc 4.8.5)...
 
-The internal LVDS encoder now has DT bindings separate from the DU. Port
-the device tree over to the new model.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driver")
-Fixes: bb21803ea440 ("ARM: dts: r8a7791: add soc node")
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 12 +++++++++---
- arch/arm/boot/dts/r8a7791-porter.dts  | 16 +++++++++++++---
- arch/arm/boot/dts/r8a7791.dtsi        | 36 +++++++++++++++++++++++++++++------
- 3 files changed, 52 insertions(+), 12 deletions(-)
+Changes in version 3:
+- added Simon's tag;
+- refreshed atop of the recent driver patches.
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index f40321a1c917..9d7213a0b8b8 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -468,10 +468,9 @@
- 	pinctrl-names = "default";
- 	status = "okay";
+ drivers/pci/host/pcie-rcar.c |   42 ++++++++++++++++++++++--------------------
+ 1 file changed, 22 insertions(+), 20 deletions(-)
+
+Index: pci/drivers/pci/host/pcie-rcar.c
+===================================================================
+--- pci.orig/drivers/pci/host/pcie-rcar.c
++++ pci/drivers/pci/host/pcie-rcar.c
+@@ -626,7 +626,7 @@ static int rcar_pcie_hw_init(struct rcar
+ 	return 0;
+ }
  
--	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
-+	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 		 <&x13_clk>, <&x2_clk>;
--	clock-names = "du.0", "du.1", "lvds.0",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
+-static int rcar_pcie_hw_init_h1(struct rcar_pcie *pcie)
++static int rcar_pcie_phy_init_h1(struct rcar_pcie *pcie)
+ {
+ 	/* Initialize the phy */
+ 	phy_write_reg(pcie, 0, 0x42, 0x1, 0x0EC34191);
+@@ -646,10 +646,10 @@ static int rcar_pcie_hw_init_h1(struct r
+ 	phy_write_reg(pcie, 0, 0x64, 0x1, 0x3F0F1F0F);
+ 	phy_write_reg(pcie, 0, 0x66, 0x1, 0x00008000);
  
- 	ports {
- 		port@0 {
-@@ -479,6 +478,13 @@
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
- 		port@1 {
- 			lvds_connector: endpoint {
- 			};
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index c14e6fe9e4f6..ae9ed9ff53ef 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -441,10 +441,9 @@
- 	pinctrl-names = "default";
- 	status = "okay";
+-	return rcar_pcie_hw_init(pcie);
++	return 0;
+ }
  
--	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 726>,
-+	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 		 <&x3_clk>, <&x16_clk>;
--	clock-names = "du.0", "du.1", "lvds.0",
--		      "dclkin.0", "dclkin.1";
-+	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
+-static int rcar_pcie_hw_init_gen2(struct rcar_pcie *pcie)
++static int rcar_pcie_phy_init_gen2(struct rcar_pcie *pcie)
+ {
+ 	/*
+ 	 * These settings come from the R-Car Series, 2nd Generation User's
+@@ -666,10 +666,10 @@ static int rcar_pcie_hw_init_gen2(struct
+ 	rcar_pci_write_reg(pcie, 0x00000001, GEN2_PCIEPHYCTRL);
+ 	rcar_pci_write_reg(pcie, 0x00000006, GEN2_PCIEPHYCTRL);
  
- 	ports {
- 		port@0 {
-@@ -455,6 +454,17 @@
- 	};
+-	return rcar_pcie_hw_init(pcie);
++	return 0;
+ }
+ 
+-static int rcar_pcie_hw_init_gen3(struct rcar_pcie *pcie)
++static int rcar_pcie_phy_init_gen3(struct rcar_pcie *pcie)
+ {
+ 	int err;
+ 
+@@ -677,11 +677,7 @@ static int rcar_pcie_hw_init_gen3(struct
+ 	if (err)
+ 		return err;
+ 
+-	err = phy_power_on(pcie->phy);
+-	if (err)
+-		return err;
+-
+-	return rcar_pcie_hw_init(pcie);
++	return phy_power_on(pcie->phy);
+ }
+ 
+ static int rcar_msi_alloc(struct rcar_msi *chip)
+@@ -1070,17 +1066,18 @@ static int rcar_pcie_parse_map_dma_range
+ }
+ 
+ static const struct of_device_id rcar_pcie_of_match[] = {
+-	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
++	{ .compatible = "renesas,pcie-r8a7779",
++	  .data = rcar_pcie_phy_init_h1 },
+ 	{ .compatible = "renesas,pcie-r8a7790",
+-	  .data = rcar_pcie_hw_init_gen2 },
++	  .data = rcar_pcie_phy_init_gen2 },
+ 	{ .compatible = "renesas,pcie-r8a7791",
+-	  .data = rcar_pcie_hw_init_gen2 },
++	  .data = rcar_pcie_phy_init_gen2 },
+ 	{ .compatible = "renesas,pcie-rcar-gen2",
+-	  .data = rcar_pcie_hw_init_gen2 },
++	  .data = rcar_pcie_phy_init_gen2 },
+ 	{ .compatible = "renesas,pcie-r8a7795",
+-	  .data = rcar_pcie_hw_init_gen3 },
++	  .data = rcar_pcie_phy_init_gen3 },
+ 	{ .compatible = "renesas,pcie-rcar-gen3",
+-	  .data = rcar_pcie_hw_init_gen3 },
++	  .data = rcar_pcie_phy_init_gen3 },
+ 	{},
  };
  
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds_connector: endpoint {
-+			};
-+		};
-+	};
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&ssi_pins &audio_clk_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index f11dab71b03a..506b20885413 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1633,15 +1633,12 @@
+@@ -1128,7 +1125,7 @@ static int rcar_pcie_probe(struct platfo
+ 	struct rcar_pcie *pcie;
+ 	unsigned int data;
+ 	int err;
+-	int (*hw_init_fn)(struct rcar_pcie *);
++	int (*phy_init_fn)(struct rcar_pcie *);
+ 	struct pci_host_bridge *bridge;
  
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7791";
--			reg = <0 0xfeb00000 0 0x40000>,
--			      <0 0xfeb90000 0 0x1c>;
--			reg-names = "du", "lvds.0";
-+			reg = <0 0xfeb00000 0 0x40000>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>,
--				 <&cpg CPG_MOD 723>,
--				 <&cpg CPG_MOD 726>;
--			clock-names = "du.0", "du.1", "lvds.0";
-+				 <&cpg CPG_MOD 723>;
-+			clock-names = "du.0", "du.1";
- 			status = "disabled";
+ 	bridge = pci_alloc_host_bridge(sizeof(*pcie));
+@@ -1162,10 +1159,15 @@ static int rcar_pcie_probe(struct platfo
+ 	if (err)
+ 		goto err_pm_put;
  
- 			ports {
-@@ -1656,6 +1653,33 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
+-	/* Failure to get a link might just be that no cards are inserted */
+-	hw_init_fn = of_device_get_match_data(dev);
+-	err = hw_init_fn(pcie);
++	phy_init_fn = of_device_get_match_data(dev);
++	err = phy_init_fn(pcie);
+ 	if (err) {
++		dev_err(dev, "failed to init PCIe PHY\n");
++		goto err_pm_put;
++	}
 +
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a7791-lvds";
-+			reg = <0 0xfeb90000 0 0x1c>;
-+			clocks = <&cpg CPG_MOD 726>;
-+			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-+			resets = <&cpg 726>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
--- 
-2.11.0
++	/* Failure to get a link might just be that no cards are inserted */
++	if (rcar_pcie_hw_init(pcie)) {
+ 		dev_info(dev, "PCIe link down\n");
+ 		err = -ENODEV;
+ 		goto err_pm_put;
