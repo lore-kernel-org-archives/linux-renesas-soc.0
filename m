@@ -1,88 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:29593 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752509AbeEKEb6 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:58866 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750781AbeECNCp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 00:31:58 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: horms@verge.net.au, magnus.damm@gmail.com
+        Thu, 3 May 2018 09:02:45 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4/4] arm64: dts: renesas: r8a77990: ebisu: Enable EthernetAVB
-Date: Fri, 11 May 2018 13:31:21 +0900
-Message-Id: <1526013081-28005-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1526013081-28005-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1526013081-28005-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/3] arm64: dts: renesas: r8a7796: Correct whitespace
+Date: Thu,  3 May 2018 14:38:29 +0200
+Message-Id: <1525351110-13403-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525351110-13403-1-git-send-email-geert+renesas@glider.be>
+References: <1525351110-13403-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch enables EthernetAVB for r8a77990 Ebisu board.
+Add missing spaces after commas.
 
-Based on a patch from Takeshi Kihara <takeshi.kihara.df@renesas.com>
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 28 ++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+v2:
+  - Rebased.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 63ee134..7a09d05 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -7,6 +7,7 @@
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 3fbd86590fb0ed4c..6ffab2da07cb9d67 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -143,7 +143,7 @@
+ 		};
  
- /dts-v1/;
- #include "r8a77990.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
+ 		a57_1: cpu@1 {
+-			compatible = "arm,cortex-a57","arm,armv8";
++			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x1>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
+@@ -166,7 +166,7 @@
+ 		};
  
- / {
- 	model = "Renesas Ebisu board based on r8a77990";
-@@ -14,6 +15,7 @@
+ 		a53_1: cpu@101 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x101>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU1>;
+@@ -177,7 +177,7 @@
+ 		};
  
- 	aliases {
- 		serial0 = &scif2;
-+		ethernet0 = &avb;
- 	};
+ 		a53_2: cpu@102 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x102>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU2>;
+@@ -188,7 +188,7 @@
+ 		};
  
- 	chosen {
-@@ -28,10 +30,36 @@
- 	};
- };
- 
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-txid";
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <48000000>;
- };
- 
-+&pfc {
-+	avb_pins: avb {
-+		mux {
-+			groups = "avb_link", "avb_mii";
-+			function = "avb";
-+		};
-+	};
-+};
-+
- &scif2 {
- 	status = "okay";
- };
+ 		a53_3: cpu@103 {
+-			compatible = "arm,cortex-a53","arm,armv8";
++			compatible = "arm,cortex-a53", "arm,armv8";
+ 			reg = <0x103>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU3>;
 -- 
-1.9.1
+2.7.4
