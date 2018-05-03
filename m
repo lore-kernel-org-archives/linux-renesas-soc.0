@@ -1,70 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 063/102] arm64: dts: renesas: r8a7796: Add address properties to rcar_sound port nodes
-Date: Fri, 18 May 2018 13:15:25 +0200
-Message-Id: <78bc93b3ffb2cd71341a3373fd14b62847091b7e.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Thu, 3 May 2018 14:53:00 +0200
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [bug report] media: rcar-vin: add group allocator functions
+Message-ID: <20180503125300.GB9120@bigcity.dyn.berto.se>
+References: <20180503123630.GA19539@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20180503123630.GA19539@mwanda>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar_sound port nodes have unit names and thus should have register
-properties.
+Hi Dan,
 
-This is flagged by dtc as follows:
- # make dtbs W=1
- ...
- DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@1: node has a unit name, but no reg property
- ...
- DTC     arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb
- arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0: node has a unit name, but no reg property
- arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dtb: Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@1: node has a unit name, but no reg property
+Thanks for your report. A proposed fix to this is available [1], 
+awaiting inclusion in the media-tree :-)
 
-Prior to this patch the port nodes only defined in board DTS files.
-As the register properties are common this patch defines the port nodes
-and provides register properties in the SoC DTS file.
+1. https://patchwork.linuxtv.org/patch/49025/
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On 2018-05-03 15:36:30 +0300, Dan Carpenter wrote:
+> Hello Niklas S�derlund,
+> 
+> The patch 3bb4c3bc85bf: "media: rcar-vin: add group allocator
+> functions" from Apr 14, 2018, leads to the following static checker
+> warning:
+> 
+> 	drivers/media/platform/rcar-vin/rcar-core.c:346 rvin_group_put()
+> 	error: potential NULL dereference 'vin->group'.
+> 
+> drivers/media/platform/rcar-vin/rcar-core.c
+>    339  static void rvin_group_put(struct rvin_dev *vin)
+>    340  {
+>    341          mutex_lock(&vin->group->lock);
+>    342  
+>    343          vin->group = NULL;
+>                 ^^^^^^^^^^^^^^^^^
+> Set to NULL.
+> 
+>    344          vin->v4l2_dev.mdev = NULL;
+>    345  
+>    346          if (WARN_ON(vin->group->vin[vin->id] != vin))
+>                             ^^^^^^^^^^^^^^^^^^^^^^^^
+>    347                  goto out;
+>    348  
+>    349          vin->group->vin[vin->id] = NULL;
+>                 ^^^^^^^^^^^^^^^^^^^^^^^^
+>    350  out:
+>    351          mutex_unlock(&vin->group->lock);
+>                               ^^^^^^^^^^^^^^^^
+>    352  
+>    353          kref_put(&vin->group->refcount, rvin_group_release);
+>                           ^^^^^^^^^^^^^^^^^^^^
+> 
+> There are a bunch of NULL dereferences here...
+> 
+>    354  }
+> 
+> regards,
+> dan carpenter
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index f41bc25b3933..3fbd86590fb0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -1594,6 +1594,17 @@
- 					dma-names = "rx", "tx", "rxu", "txu";
- 				};
- 			};
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
- 		};
- 
- 		audma0: dma-controller@ec700000 {
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
