@@ -1,63 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44618 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032454AbeEXKvl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 06:51:41 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 04/11] media: vsp1: Remove unused display list structure field
-Date: Thu, 24 May 2018 13:51:37 +0300
-Message-ID: <4994134.peM4qCLYyD@avalon>
-In-Reply-To: <9266418a78e00b185bb5ff131b54f289c7d8b016.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com> <9266418a78e00b185bb5ff131b54f289c7d8b016.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 04/11] media: vsp1: Remove unused display list structure field
+Date: Thu,  3 May 2018 14:36:15 +0100
+Message-Id: <9266418a78e00b185bb5ff131b54f289c7d8b016.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+The vsp1 reference in the vsp1_dl_body structure is not used.
+Remove it.
 
-Thank you for the patch.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_dl.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-On Thursday, 3 May 2018 16:36:15 EEST Kieran Bingham wrote:
-> The vsp1 reference in the vsp1_dl_body structure is not used.
-> Remove it.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/media/platform/vsp1/vsp1_dl.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c
-> b/drivers/media/platform/vsp1/vsp1_dl.c index ec6fc21fabe0..b23e88cda49f
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_dl.c
-> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-> @@ -44,7 +44,6 @@ struct vsp1_dl_entry {
->   * @list: entry in the display list list of bodies
->   * @free: entry in the pool free body list
->   * @pool: pool to which this body belongs
-> - * @vsp1: the VSP1 device
->   * @entries: array of entries
->   * @dma: DMA address of the entries
->   * @size: size of the DMA memory in bytes
-> @@ -58,7 +57,6 @@ struct vsp1_dl_body {
->  	refcount_t refcnt;
-> 
->  	struct vsp1_dl_body_pool *pool;
-> -	struct vsp1_device *vsp1;
-> 
->  	struct vsp1_dl_entry *entries;
->  	dma_addr_t dma;
-
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index ec6fc21fabe0..b23e88cda49f 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -44,7 +44,6 @@ struct vsp1_dl_entry {
+  * @list: entry in the display list list of bodies
+  * @free: entry in the pool free body list
+  * @pool: pool to which this body belongs
+- * @vsp1: the VSP1 device
+  * @entries: array of entries
+  * @dma: DMA address of the entries
+  * @size: size of the DMA memory in bytes
+@@ -58,7 +57,6 @@ struct vsp1_dl_body {
+ 	refcount_t refcnt;
+ 
+ 	struct vsp1_dl_body_pool *pool;
+-	struct vsp1_device *vsp1;
+ 
+ 	struct vsp1_dl_entry *entries;
+ 	dma_addr_t dma;
 -- 
-Regards,
-
-Laurent Pinchart
+git-series 0.9.1
