@@ -1,70 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48413 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751036AbeEBKS2 (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:43348 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751185AbeECMXV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 06:18:28 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Thu, 3 May 2018 08:23:21 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC Fixes for v4.17
-Date: Wed,  2 May 2018 12:18:14 +0200
-Message-Id: <cover.1525256178.git.horms+renesas@verge.net.au>
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 50/61] thermal: simplify getting .drvdata
+Date: Thu, 03 May 2018 14:23:07 +0200
+Message-ID: <3499277.H47n29vZV6@phil>
+In-Reply-To: <20180419140641.27926-51-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-51-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Am Donnerstag, 19. April 2018, 16:06:20 CEST schrieb Wolfram Sang:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/thermal/rockchip_thermal.c | 8 +++-----
+>  drivers/thermal/spear_thermal.c    | 8 +++-----
+>  drivers/thermal/zx2967_thermal.c   | 6 ++----
+>  3 files changed, 8 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+> index f36375d5a16c..9c7643d62ed7 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -1327,8 +1327,7 @@ static int rockchip_thermal_remove(struct platform_device *pdev)
+>  
+>  static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+> +	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
+>  	int i;
+>  
+>  	for (i = 0; i < thermal->chip->chn_num; i++)
+> @@ -1346,8 +1345,7 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>  
+>  static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+> +	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
+>  	int i;
+>  	int error;
+>  
+> @@ -1376,7 +1374,7 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>  					      id, thermal->regs,
+>  					      thermal->tshut_temp);
+>  		if (error)
+> -			dev_err(&pdev->dev, "%s: invalid tshut=%d, error=%d\n",
+> +			dev_err(dev, "%s: invalid tshut=%d, error=%d\n",
+>  				__func__, thermal->tshut_temp, error);
+>  	}
+>  
 
-Please consider these Renesas ARM based SoC fixes for v4.17.
-
-
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes-for-v4.17
-
-for you to fetch changes up to edb0c3affe5214a21d71ffb82ca92ed068e828df:
-
-  ARM: dts: r8a7793: Convert to new LVDS DT bindings (2018-04-23 12:31:42 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Fixes for v4.17
-
-Fix LVDS output on Gen2 boards
-
-Laurent Pincart says "This patch series fixes LVDS output support on the
-Lager, Koelsh, Porter and Gose boards that broke in v4.17-rc1 due to the
-combination of the R-Car DU LVDS driver rework and the DT move of all
-on-SoC peripherals to a /soc node.
-
-We could handle the problem in the R-Car DU LVDS DT backward compatibility
-code, but that fix would only be used for v4.17 as in v4.18 the Gen2 DT
-will move to the new LVDS DT bindings. I thus propose merging these three
-patches in v4.17 already to fix the problem as this is the simplest
-solution."
-
-----------------------------------------------------------------
-Laurent Pinchart (3):
-      ARM: dts: r8a7790: Convert to new LVDS DT bindings
-      ARM: dts: r8a7791: Convert to new LVDS DT bindings
-      ARM: dts: r8a7793: Convert to new LVDS DT bindings
-
- arch/arm/boot/dts/r8a7790-lager.dts   | 22 +++++++++---
- arch/arm/boot/dts/r8a7790.dtsi        | 65 ++++++++++++++++++++++++++++++-----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 12 +++++--
- arch/arm/boot/dts/r8a7791-porter.dts  | 16 +++++++--
- arch/arm/boot/dts/r8a7791.dtsi        | 36 +++++++++++++++----
- arch/arm/boot/dts/r8a7793-gose.dts    | 10 ++++--
- arch/arm/boot/dts/r8a7793.dtsi        | 37 ++++++++++++++++----
- 7 files changed, 164 insertions(+), 34 deletions(-)
+for the Rockchip-part
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
