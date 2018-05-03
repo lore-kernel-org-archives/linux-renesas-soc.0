@@ -1,17 +1,22 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59476 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751277AbeECIoa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 3 May 2018 04:44:30 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v4 03/11] media: vsp1: Rename dl_child to dl_next
-Date: Thu,  3 May 2018 14:36:14 +0100
-Message-Id: <6de8b0a020738df7775fdcae22adccc0e97d8a96.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-References: <cover.bd2eb66d11f8094114941107dbc78dc02c9c7fdd.1525354194.git-series.kieran.bingham+renesas@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 03/11] media: vsp1: Rename dl_child to dl_next
+Date: Thu,  3 May 2018 09:44:14 +0100
+Message-Id: <84f92b0a7131bcb182a571c98f7065d4972b4953.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.a15c17beeb074afaf226d19ff3c4fdba2f647500.1525336865.git-series.kieran.bingham+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Both vsp1_dl_list_commit() and __vsp1_dl_list_put() walk the display
@@ -27,7 +32,7 @@ Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
  1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index f4cede9b9b43..ec6fc21fabe0 100644
+index b6288ead24ae..09c29a4ed118 100644
 --- a/drivers/media/platform/vsp1/vsp1_dl.c
 +++ b/drivers/media/platform/vsp1/vsp1_dl.c
 @@ -398,7 +398,7 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm)
