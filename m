@@ -1,49 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:45150 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750954AbeECNCp (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:38255 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750962AbeECUJU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 May 2018 09:02:45 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] arm64: dts: renesas: Correct whitespace
-Date: Thu,  3 May 2018 14:38:27 +0200
-Message-Id: <1525351110-13403-1-git-send-email-geert+renesas@glider.be>
+        Thu, 3 May 2018 16:09:20 -0400
+Date: Thu, 3 May 2018 22:09:08 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Joshua Kinard <kumba@gentoo.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 44/61] rtc: simplify getting .drvdata
+Message-ID: <20180503200908.GA10960@piout.net>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-45-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419140641.27926-45-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
-
-This patch series fixes a few whitespace issues in DTS files.
-
-Changes compared to v1:
-  - Rebased.
-
-Thanks!
-
-Geert Uytterhoeven (3):
-  arm64: dts: renesas: r8a7795: Correct whitespace
-  arm64: dts: renesas: r8a7796: Correct whitespace
-  arm64: dts: renesas: r8a77965: Correct whitespace
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 14 +++++++-------
- arch/arm64/boot/dts/renesas/r8a7796.dtsi  |  8 ++++----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi |  2 +-
- 3 files changed, 12 insertions(+), 12 deletions(-)
+On 19/04/2018 16:06:14+0200, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/rtc/rtc-bq4802.c   |  6 ++----
+>  drivers/rtc/rtc-ds1216.c   |  6 ++----
+>  drivers/rtc/rtc-ds1511.c   |  9 +++------
+>  drivers/rtc/rtc-ds1553.c   | 15 +++++----------
+>  drivers/rtc/rtc-ds1685.c   | 21 +++++++--------------
+>  drivers/rtc/rtc-ds1742.c   |  6 ++----
+>  drivers/rtc/rtc-lpc32xx.c  | 16 ++++++----------
+>  drivers/rtc/rtc-m48t59.c   | 41 ++++++++++++++++-------------------------
+>  drivers/rtc/rtc-mv.c       |  3 +--
+>  drivers/rtc/rtc-mxc.c      | 21 +++++++--------------
+>  drivers/rtc/rtc-pcap.c     | 15 +++++----------
+>  drivers/rtc/rtc-sh.c       | 15 +++++----------
+>  drivers/rtc/rtc-stk17ta8.c | 15 +++++----------
+>  drivers/rtc/rtc-test.c     |  3 +--
+>  drivers/rtc/rtc-zynqmp.c   | 10 ++++------
+>  15 files changed, 71 insertions(+), 131 deletions(-)
+> 
+Applied, thanks.
 
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
