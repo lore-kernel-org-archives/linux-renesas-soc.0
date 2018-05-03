@@ -1,174 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:47477 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751090AbeEAI6F (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35540 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeECTgl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 04:58:05 -0400
-Subject: Re: igt trouble with planes shared between multiple CRTCs (Re: [PATCH
- v2 0/8] R-Car DU: Support CRC calculation)
-To: Daniel Vetter <daniel@ffwll.ch>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Ulrich Hecht <ulrich.hecht@gmail.com>,
-        IGT development <igt-dev@lists.freedesktop.org>
-References: <20180422223430.16407-1-laurent.pinchart+renesas@ideasonboard.com>
- <3482108.jirjkbZynl@avalon> <20180430145524.GJ12521@phenom.ffwll.local>
- <20180430145640.GK12521@phenom.ffwll.local>
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Message-ID: <0f7c2e60-23d0-b222-c8c0-36b17f1e7c25@linux.intel.com>
-Date: Tue, 1 May 2018 10:58:02 +0200
+        Thu, 3 May 2018 15:36:41 -0400
+Received: by mail-lf0-f66.google.com with SMTP id y72-v6so13921269lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 May 2018 12:36:40 -0700 (PDT)
+Subject: [PATCH v3 1/5] pcie-rcar: poll PHYRDY in rcar_pcie_hw_init()
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
+Message-ID: <89f4bb11-918a-397d-0dd8-5a6e630504f7@cogentembedded.com>
+Date: Thu, 3 May 2018 22:36:37 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180430145640.GK12521@phenom.ffwll.local>
+In-Reply-To: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hey,
+In  all the R-Car gen1/2/3 manuals, we are instructed to poll PCIEPHYSR
+for PHYRDY=1  at  an early stage of the PCIEC initialization -- while
+the driver only does this on R-Car H1 (polling a PHY specific register).
+Add the PHYRDY polling to rcar_pcie_hw_init(). Note that without the
+special PHY driver on the R-Car V3H (R8A77980) the PCIEC initialization
+just freezes the kernel -- adding the PHYRDY polling allows the init code
+to exit gracefully on timeout (PHY starts powered down after reset on this
+SoC).
 
-Op 30-04-18 om 16:56 schreef Daniel Vetter:
-> On Mon, Apr 30, 2018 at 04:55:24PM +0200, Daniel Vetter wrote:
->> On Sat, Apr 28, 2018 at 12:07:04AM +0300, Laurent Pinchart wrote:
->>> Hi Daniel,
->>>
->>> (Removing the linux-media mailing list from CC as it is out of scope)
->>>
->>> You enquired on IRC whether this patch series passes the igt CRC tests.
->>>
->>> # ./kms_pipe_crc_basic --run-subtest read-crc-pipe-A
->>> IGT-Version: 1.22-gf447f5fc531d (aarch64) (Linux: 4.17.0-rc1-00085-g56e849d93cc9 aarch64)
->>> read-crc-pipe-A: Testing connector LVDS-1 using pipe A
->>> (kms_pipe_crc_basic:1638) igt-debugfs-CRITICAL: Test assertion failure function igt_pipe_crc_start, file igt_debugfs.c:764:
->>> (kms_pipe_crc_basic:1638) igt-debugfs-CRITICAL: Failed assertion: pipe_crc->crc_fd != -1
->>> (kms_pipe_crc_basic:1638) igt-debugfs-CRITICAL: Last errno: 5, Input/output error
->>> Stack trace:
->>> Subtest read-crc-pipe-A failed.
->>> **** DEBUG ****
->>> (kms_pipe_crc_basic:1638) DEBUG: Test requirement passed: !(pipe >= data->display.n_pipes)
->>> (kms_pipe_crc_basic:1638) INFO: read-crc-pipe-A: Testing connector LVDS-1 using pipe A
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display: LVDS-1: set_pipe(A)
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display: LVDS-1: Selecting pipe A
->>> (kms_pipe_crc_basic:1638) DEBUG: Clearing the fb with color (0.00,1.00,0.00)
->>> (kms_pipe_crc_basic:1638) igt-fb-DEBUG: igt_create_fb_with_bo_size(width=1024, height=768, format=0x34325258, tiling=0x0, size=0)
->>> (kms_pipe_crc_basic:1638) igt-fb-DEBUG: igt_create_fb_with_bo_size(handle=1, pitch=4096)
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: Test requirement passed: plane_idx >= 0 && plane_idx < pipe->n_planes
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display: A.0: plane_set_fb(140)
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display: A.0: plane_set_size (1024x768)
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display: A.0: fb_set_position(0,0)
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display: A.0: fb_set_size(1024x768)
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display: commit {
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     LVDS-1: SetCrtc pipe A, fb 140, src (0, 0), mode 1024x768
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetCrtc pipe A, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe A, plane 2, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe A, plane 3, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe A, plane 4, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetCrtc pipe B, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe B, plane 1, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe B, plane 2, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe B, plane 3, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe B, plane 4, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetCrtc pipe C, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe C, plane 1, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe C, plane 2, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe C, plane 3, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe C, plane 4, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetCrtc pipe D, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetCrtc pipe D, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe D, plane 2, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe D, plane 3, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display:     SetPlane pipe D, plane 4, disabling
->>> (kms_pipe_crc_basic:1638) igt-kms-DEBUG: display: }
->>> (kms_pipe_crc_basic:1638) igt-debugfs-DEBUG: Opening debugfs directory '/sys/kernel/debug/dri/0'
->>> (kms_pipe_crc_basic:1638) igt-debugfs-DEBUG: Opening debugfs directory '/sys/kernel/debug/dri/0'
->>> (kms_pipe_crc_basic:1638) igt-debugfs-CRITICAL: Test assertion failure function igt_pipe_crc_start, file igt_debugfs.c:764:
->>> (kms_pipe_crc_basic:1638) igt-debugfs-CRITICAL: Failed assertion: pipe_crc->crc_fd != -1
->>> (kms_pipe_crc_basic:1638) igt-debugfs-CRITICAL: Last errno: 5, Input/output error
->>> (kms_pipe_crc_basic:1638) igt-core-INFO: Stack trace:
->>> ****  END  ****
->>> Subtest read-crc-pipe-A: FAIL (0.061s)
->>>
->>> I think the answer is no, but I don't think it's the fault of this patch
->>> series. Opening the CRC data file returns -EIO because the CRTC is not active,
->>> and I'm trying to find out why that is the case. The debug log shows a commit
->>> that seems strange to me, enabling pipe A and immediately disabling right
->>> afterwards. After some investigation I believe that this is caused by sharing
->>> primary planes between CRTCs.
->>>
->>> The R-Car DU groups CRTCs by two and shares 5 planes between the two CRTCs of
->>> the group. This specific SoC has two groups of two CRTCs, but that's not
->>> relevant here, so we can ignore pipes C and D.
->>>
->>> Pipes A and B thus shared 5 planes that I will number 0 to 4 for simplicity.
->>> The driver sets plane 0 as the primary plane for CRTC A and plane 1 as the
->>> primary plane for CRTC B. Planes 2, 3 and 4 are created as overlay planes.
->>>
->>> When igt iterates over all planes for pipe A, it will first encounter plane 0
->>> that has a framebuffer, and thus enables the pipe. It then iterates over
->>> plane 1, recognizes it as a primary plane without a framebuffer, and thus
->>> disables the pipe. Planes 2, 3 and 4 are recognized as overlay planes and thus
->>> don't affect the pipe active state. Pipe B is handled the same way, and igt
->>> disables it twice as planes 0 and 1 are primary.
->>>
->>> I don't know if the fault here is with igt that doesn't properly support this
->>> architecture, or with the driver that shouldn't have two primary planes
->>> available for a CRTC. In the former case, I'm not sure how to fix it, as I'm
->>> not familiar enough with igt to rearchitecture the commit helpers. In the
->>> latter case, how would you recommend fixing it on the driver side ?
->> I guess thus far no one did run igt on a chip which did have reassignable
->> primary planes. The problem here is that it's pretty hard to figure out
->> which one is the real primary plane, since with possible CRTCs you could
->> have multiple primary planes on 1 CRTC. There's no property or anything
->> that explicitly tells you this. Two fixes:
->>
->> 1. Change drivers to limit primary planes to 1 crtc. Same for cursor
->>    overlays. There's probably other userspace than igt that gets confused
->>    by this, but this has the ugly downside that we artifically limit plane
->>    usage - if only 1 CRTC is on, we want to use all the available planes
->>    on that one.
->>
->> 2. Add some implicit or explicit uapi to allow userspace to figure out
->>    which primary plane is the primary plane for this crtc.
->>
->>    a) Explicit option: We add a PRIMARY_ID property (and CURSOR_ID prop
->>       while at it) on the CRTC which points at the primary/cursor plane.
->>
->>    b) Implicit option: We require primary planes are assigned to CRTC in the
->>       same order as they're created. So first primary plane you encouter
->>       is the one for the first CRTC, 2nd primary plane is the one for the
->>       2nd CRTC and so on. If we go with this we probably should add a bit
->>       of code to the kernel to check that invariant (by making sure the
->>       primary plane has the corresponding CRTC included in its
->>       possible_crtc mask).
->>
->> Either way igt needs to be patched to not treat any primary plane that
->> could work on a CRTC as the primary plane for that CRTC.
->>
->> Personally I'm leaning towards 2b).
-> Adding Maarten and igt-dev.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-We should first make the plane array global, instead of per crtc.
+---
+Changes in version 3:
+- used the BIT() macro in #define PHYRDY;
+- added the SoC model # to the patch description;
+- added Rob's and Simon's tags;
+- refreshed atop of Marek's patch.
 
-That means removing plane->pipe and plane->index.
+ drivers/pci/host/pcie-rcar.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-And pipe_obj->planes and pipe_obj->n_planes need to be gone too. I think it's
-easiest to make
-
-There is one problem. Most of the tests are not aware of the limitations.
-If we make the plane array global it should be possible to make
-a for_each_possible_plane_on_pipe enumerate all planes that could be assigned
-to a certain pipe. We need to sort by z order somehow, but if we then add
-igt_plane_set_pipe() which updates the IGT_PLANE_CRTC_ID property, we should
-be good.
-
-Only thing we don't see is how the default crtc->primary and crtc->cursor are
-assigned. For the calls with COMMIT_LEGACY we need to know the mappings, but
-I don't think the kernel exposes them?
-I guess we could put it in a FIFO way, first enumerated plane with PRIMARY type
-is bound to the first crtc, same for cursor.
-
-This will hopefully allow legacy tests to keep working, while atomic plane aware
-tests will be able to use all planes.
-
-~Maarten
+Index: pci/drivers/pci/host/pcie-rcar.c
+===================================================================
+--- pci.orig/drivers/pci/host/pcie-rcar.c
++++ pci/drivers/pci/host/pcie-rcar.c
+@@ -37,6 +37,8 @@
+ #define PCIECDR			0x000020
+ #define PCIEMSR			0x000028
+ #define PCIEINTXR		0x000400
++#define PCIEPHYSR		0x0007f0
++#define  PHYRDY			BIT(0)
+ #define PCIEMSITXR		0x000840
+ 
+ /* Transfer control */
+@@ -527,6 +529,20 @@ static void phy_write_reg(struct rcar_pc
+ 	phy_wait_for_ack(pcie);
+ }
+ 
++static int rcar_pcie_wait_for_phyrdy(struct rcar_pcie *pcie)
++{
++	unsigned int timeout = 10;
++
++	while (timeout--) {
++		if (rcar_pci_read_reg(pcie, PCIEPHYSR) & PHYRDY)
++			return 0;
++
++		msleep(5);
++	}
++
++	return -ETIMEDOUT;
++}
++
+ static int rcar_pcie_wait_for_dl(struct rcar_pcie *pcie)
+ {
+ 	unsigned int timeout = 10;
+@@ -551,6 +567,10 @@ static int rcar_pcie_hw_init(struct rcar
+ 	/* Set mode */
+ 	rcar_pci_write_reg(pcie, 1, PCIEMSR);
+ 
++	err = rcar_pcie_wait_for_phyrdy(pcie);
++	if (err)
++		return err;
++
+ 	/*
+ 	 * Initial header for port config space is type 1, set the device
+ 	 * class to match. Hardware takes care of propagating the IDSETR
