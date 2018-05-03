@@ -1,72 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRZ (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:41802 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751019AbeECNCp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:25 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 074/102] arm64: dts: renesas: r8a7795: salvator-xs: enable usb2_phy3 node
-Date: Fri, 18 May 2018 13:15:36 +0200
-Message-Id: <cd49f631dd7dc2dcd08a22c0f78197aa7970fe5d.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Thu, 3 May 2018 09:02:45 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 1/3] arm64: dts: renesas: ulcb: Add BD9571 PMIC
+Date: Thu,  3 May 2018 14:30:49 +0200
+Message-Id: <1525350651-12471-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525350651-12471-1-git-send-email-geert+renesas@glider.be>
+References: <1525350651-12471-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add a device node for the ROHM BD9571MWV PMIC.
 
-This patch enables usb2_phy3 node for r8a7795 with Salvator-XS.
-You must change the SW31 to OFF-OFF-ON-ON-ON-ON on the board.
+This was based on the example in the DT binding documentation, but using
+IRQ0 instead of a GPIO interrupt, as that matches the schematics, and
+because INTC-EX is a simpler block.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+v3:
+  - No changes,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 83676684c6b4..622b2a22ab0f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -145,6 +145,23 @@
- 		groups = "usb2";
- 		function = "usb2";
- 	};
+v2:
+  - New.
+---
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index 6f814845f8b665f3..bb21ae335e8b8489 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -243,6 +243,30 @@
+ 
+ &i2c_dvfs {
+ 	status = "okay";
 +
-+	/*
-+	 * - On Salvator-X[S], GP6_3[01] are connected to ADV7482 as irq pins
-+	 *   (when SW31 is the default setting on Salvator-XS).
-+	 * - If SW31 is the default setting, you cannot use USB2.0 ch3 on
-+	 *   r8a7795 with Salvator-XS.
-+	 *   Hence the SW31 setting must be changed like 2) below.
-+	 *   1) Default setting of SW31: ON-ON-OFF-OFF-OFF-OFF:
-+	 *	- Connect GP6_3[01] to ADV7842.
-+	 *   2) Changed setting of SW31: OFF-OFF-ON-ON-ON-ON:
-+	 *	- Connect GP6_3[01] to BD082065 (USB2.0 ch3's host power).
-+	 *	- Connect GP6_{04,21} to ADV7842.
-+	 */
-+	usb2_ch3_pins: usb2_ch3 {
-+		groups = "usb2_ch3";
-+		function = "usb2_ch3";
++	pmic: pmic@30 {
++		pinctrl-0 = <&irq0_pins>;
++		pinctrl-names = "default";
++
++		compatible = "rohm,bd9571mwv";
++		reg = <0x30>;
++		interrupt-parent = <&intc_ex>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		regulators {
++			dvfs: dvfs {
++				regulator-name = "dvfs";
++				regulator-min-microvolt = <750000>;
++				regulator-max-microvolt = <1030000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
 +	};
  };
  
- &usb2_phy2 {
-@@ -153,3 +170,10 @@
+ &ohci1 {
+@@ -276,6 +300,11 @@
+ 		function = "i2c2";
+ 	};
  
- 	status = "okay";
- };
++	irq0_pins: irq0 {
++		groups = "intc_ex_irq0";
++		function = "intc_ex";
++	};
 +
-+&usb2_phy3 {
-+	pinctrl-0 = <&usb2_ch3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+ 	scif2_pins: scif2 {
+ 		groups = "scif2_data_a";
+ 		function = "scif2";
 -- 
-2.11.0
+2.7.4
