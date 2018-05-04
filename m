@@ -1,130 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34010 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755492AbeEAPaF (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:42522 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751382AbeEDIoa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 11:30:05 -0400
-Date: Tue, 1 May 2018 17:30:01 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH/RFT 3/3] arm64: dts: r8a77965: Add SDHI device nodes
-Message-ID: <20180501153000.eruobrrxh43mzurs@verge.net.au>
-References: <1525031296-16512-1-git-send-email-ykaneko0929@gmail.com>
- <1525031296-16512-4-git-send-email-ykaneko0929@gmail.com>
+        Fri, 4 May 2018 04:44:30 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525031296-16512-4-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <CAMuHMdUuiXjBrAaV7U1Zauf8GT1AAV6_7n7uE2ytwjSYEe0RaA@mail.gmail.com>
+References: <1525031296-16512-1-git-send-email-ykaneko0929@gmail.com>
+ <1525031296-16512-2-git-send-email-ykaneko0929@gmail.com> <CAMuHMdXx87yu-Q-9AghGr73ynSryXLBnrKATbTH7YiwD5v8WKA@mail.gmail.com>
+ <CAH1o70K+T+B=mVWWZLqqRTcRVR3Uw7+Vyszm3vXewjpyb6mrcQ@mail.gmail.com> <CAMuHMdUuiXjBrAaV7U1Zauf8GT1AAV6_7n7uE2ytwjSYEe0RaA@mail.gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Date: Fri, 4 May 2018 17:44:29 +0900
+Message-ID: <CAH1o70+OOyqNZ=GNTVPr7EKa9aP9jtKYjOUktNbMZqQiB46jOA@mail.gmail.com>
+Subject: Re: [PATCH/RFT 1/3] pinctrl: sh-pfc: r8a77965: Add SDHI pins, groups
+ and functions
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Apr 30, 2018 at 04:48:16AM +0900, Yoshihiro Kaneko wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> Add SDHI nodes to the DT of the r8a77965 SoC.
-> 
-> Based on several similar patches of the R8A7796 device tree
-> by Simon Horman <horms+renesas@verge.net.au>.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Hi Geert-san,
 
-This patch needs to be rebased on top of the devel branch of the renesas
-tree. Otherwise it looks good to me.
+2018-05-04 17:30 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+> Hi Kaneko-san,
+>
+> On Fri, May 4, 2018 at 10:28 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+>> 2018-05-02 18:16 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
+>>> On Sun, Apr 29, 2018 at 9:48 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+>>>> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>>>>
+>>>> This patch adds SDHI{0,1,2,3} pins, groups and functions to the R8A77965
+>>>> SoC.
+>>>>
+>>>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>>>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>>>
+>>> Thanks for your patch!
+>>>
+>>> The pins, groups, and functions are correct, so
+>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>.
+>>> i.e. queuing in sh-pfc-for-v4.18, after fixing up the below.
+>>
+>> Thanks for your review!
+>> I will fix up the below in V2.
+>
+> There's no need to send a v2, as I have already fixed and applied your patch.
 
-> ---
->  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 68 ++++++++++++++++++++++---------
->  1 file changed, 48 insertions(+), 20 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> index f0871fc..6860704 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> @@ -834,26 +834,6 @@
->  			};
->  		};
->  
-> -		sdhi0: sd@ee100000 {
-> -			reg = <0 0xee100000 0 0x2000>;
-> -			/* placeholder */
-> -		};
-> -
-> -		sdhi1: sd@ee120000 {
-> -			reg = <0 0xee120000 0 0x2000>;
-> -			/* placeholder */
-> -		};
-> -
-> -		sdhi2: sd@ee140000 {
-> -			reg = <0 0xee140000 0 0x2000>;
-> -			/* placeholder */
-> -		};
-> -
-> -		sdhi3: sd@ee160000 {
-> -			reg = <0 0xee160000 0 0x2000>;
-> -			/* placeholder */
-> -		};
-> -
->  		usb3_phy0: usb-phy@e65ee000 {
->  			reg = <0 0xe65ee000 0 0x90>;
->  			#phy-cells = <0>;
-> @@ -874,5 +854,53 @@
->  			reg = <0 0xe6020000 0 0x0c>;
->  			/* placeholder */
->  		};
-> +
-> +		sdhi0: sd@ee100000 {
-> +			compatible = "renesas,sdhi-r8a77965",
-> +				     "renesas,rcar-gen3-sdhi";
-> +			reg = <0 0xee100000 0 0x2000>;
-> +			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 314>;
-> +			max-frequency = <200000000>;
-> +			power-domains = <&sysc 32>;
-> +			resets = <&cpg 314>;
-> +			status = "disabled";
-> +		};
-> +
-> +		sdhi1: sd@ee120000 {
-> +			compatible = "renesas,sdhi-r8a77965",
-> +				     "renesas,rcar-gen3-sdhi";
-> +			reg = <0 0xee120000 0 0x2000>;
-> +			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 313>;
-> +			max-frequency = <200000000>;
-> +			power-domains = <&sysc 32>;
-> +			resets = <&cpg 313>;
-> +			status = "disabled";
-> +		};
-> +
-> +		sdhi2: sd@ee140000 {
-> +			compatible = "renesas,sdhi-r8a77965",
-> +				     "renesas,rcar-gen3-sdhi";
-> +			reg = <0 0xee140000 0 0x2000>;
-> +			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 312>;
-> +			max-frequency = <200000000>;
-> +			power-domains = <&sysc 32>;
-> +			resets = <&cpg 312>;
-> +			status = "disabled";
-> +		};
-> +
-> +		sdhi3: sd@ee160000 {
-> +			compatible = "renesas,sdhi-r8a77965",
-> +				     "renesas,rcar-gen3-sdhi";
-> +			reg = <0 0xee160000 0 0x2000>;
-> +			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 311>;
-> +			max-frequency = <200000000>;
-> +			power-domains = <&sysc 32>;
-> +			resets = <&cpg 311>;
-> +			status = "disabled";
-> +		};
->  	};
->  };
-> -- 
-> 1.9.1
-> 
+Okay, Thanks!
+
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
