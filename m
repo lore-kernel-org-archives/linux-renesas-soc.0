@@ -1,43 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56371 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752377AbeERLSQ (ORCPT
+        with ESMTP id S1751172AbeEDNmF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/6] dt-bindings: arm: consistently name r8a77965 as M3-N
-Date: Fri, 18 May 2018 13:16:46 +0200
-Message-Id: <519df0e05d2796805ee6d6e396423e60f3743b97.1526549153.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526549153.git.horms+renesas@verge.net.au>
-References: <cover.1526549153.git.horms+renesas@verge.net.au>
+        Fri, 4 May 2018 09:42:05 -0400
+Date: Fri, 4 May 2018 15:42:01 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] Add R8A77980 PCIe support & some driver cleanups
+Message-ID: <20180504134201.lmtpamgty2a6p6pp@verge.net.au>
+References: <b98130a7-b128-9fc3-aee1-1a5a2590b320@cogentembedded.com>
+ <20180504132259.GB8759@e107981-ln.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504132259.GB8759@e107981-ln.cambridge.arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There is an inconsistency between the use of M3N and M3-N.
-This patch resolves this by consistently using the latter.
+On Fri, May 04, 2018 at 02:22:59PM +0100, Lorenzo Pieralisi wrote:
+> On Thu, May 03, 2018 at 10:32:41PM +0300, Sergei Shtylyov wrote:
+> > Hello!
+> > 
+> > Here's a set of 5 patches against the 'pci/rcar' branch of Lorenzo Pieralisi's
+> > 'pci.git' repo. These are the changes needed for better R-Car gen3 support
+> > (namely for R8A77980 support) plus some PCIe driver re-factoring done in
+> > the process...
+> > 
+> > [1/5] pcie-rcar: poll PHYRDY in rcar_pcie_hw_init()
+> > [2/5] pcie-rcar: remove PHYRDY polling from rcar_pcie_hw_init_h1()
+> > [3/5] pcie-rcar: add R-Car gen3 PHY support
+> > [4/5] pcie-rcar: factor out rcar_pcie_hw_init() call
+> > [5/5] DT: pci: rcar-pci: document R8A77980 bindings
+> 
+> I applied the series, with some commit log changes, I can comment
+> on those please have a look at my updated pci/rcar branch.
+> 
+> Thanks,
+> Lorenzo
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 804f1d7c1f2b..0da876784dd5 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -114,7 +114,7 @@ Boards:
-     compatible = "renesas,salvator-x", "renesas,r8a7795"
-   - Salvator-X (RTP0RC7796SIPB0011S)
-     compatible = "renesas,salvator-x", "renesas,r8a7796"
--  - Salvator-X (RTP0RC7796SIPB0011S (M3N))
-+  - Salvator-X (RTP0RC7796SIPB0011S (M3-N))
-     compatible = "renesas,salvator-x", "renesas,r8a77965"
-   - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
-     compatible = "renesas,salvator-xs", "renesas,r8a7795"
--- 
-2.11.0
+Thanks, much appreciated.
