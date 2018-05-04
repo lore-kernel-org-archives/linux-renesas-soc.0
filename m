@@ -1,89 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:16366 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752563AbeEKOQm (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:43000 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751891AbeEDTHD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 10:16:42 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] Revert "media: rcar-vin: enable field toggle after a set number of lines for Gen3"
-Date: Fri, 11 May 2018 16:15:40 +0200
-Message-Id: <20180511141541.3164-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180511141541.3164-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180511141541.3164-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 4 May 2018 15:07:03 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: f.fainelli@gmail.com, opendmb@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v9 08/12] ARM: sun9i: smp: Rename clusters's power-off
+Date: Fri,  4 May 2018 21:05:41 +0200
+Message-Id: <20180504190545.5114-9-mylene.josserand@bootlin.com>
+In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This reverts commit 015060cb7795eac34454696cc9c9f8b76926a401.
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+To prepare the support for sun8i-a83t, rename the macro that handles
+the power-off of clusters because it is different from sun9i-a80 to
+sun8i-a83t.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index b41ba9a4a2b3ac90..ac07f99e3516a620 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -124,9 +124,7 @@
- #define VNDMR2_VPS		(1 << 30)
- #define VNDMR2_HPS		(1 << 29)
- #define VNDMR2_FTEV		(1 << 17)
--#define VNDMR2_FTEH		(1 << 16)
- #define VNDMR2_VLV(n)		((n & 0xf) << 12)
--#define VNDMR2_HLV(n)		((n) & 0xfff)
+The power off register for clusters are different from a80 and a83t.
+
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/mach-sunxi/mc_smp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+index 727968d6a3e5..03f021d0c73e 100644
+--- a/arch/arm/mach-sunxi/mc_smp.c
++++ b/arch/arm/mach-sunxi/mc_smp.c
+@@ -60,7 +60,7 @@
+ #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
+ #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
+ #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
+-#define PRCM_PWROFF_GATING_REG_CLUSTER	BIT(4)
++#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
+ #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
+ #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
+ #define PRCM_CPU_SOFT_ENTRY_REG		0x164
+@@ -255,7 +255,7 @@ static int sunxi_cluster_powerup(unsigned int cluster)
  
- /* Video n CSI2 Interface Mode Register (Gen3) */
- #define VNCSI_IFMD_DES1		(1 << 26)
-@@ -614,9 +612,8 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+ 	/* clear cluster power gate */
+ 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+-	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER;
++	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+ 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	udelay(20);
  
- static int rvin_setup(struct rvin_dev *vin)
- {
--	u32 vnmc, dmr, dmr2, interrupts, lines;
-+	u32 vnmc, dmr, dmr2, interrupts;
- 	bool progressive = false, output_is_yuv = false, input_is_yuv = false;
--	bool halfsize = false;
+@@ -452,7 +452,7 @@ static int sunxi_cluster_powerdown(unsigned int cluster)
+ 	/* gate cluster power */
+ 	pr_debug("%s: gate cluster power\n", __func__);
+ 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+-	reg |= PRCM_PWROFF_GATING_REG_CLUSTER;
++	reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+ 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	udelay(20);
  
- 	switch (vin->format.field) {
- 	case V4L2_FIELD_TOP:
-@@ -631,15 +628,12 @@ static int rvin_setup(struct rvin_dev *vin)
- 		/* Use BT if video standard can be read and is 60 Hz format */
- 		if (!vin->info->use_mc && vin->std & V4L2_STD_525_60)
- 			vnmc = VNMC_IM_FULL | VNMC_FOC;
--		halfsize = true;
- 		break;
- 	case V4L2_FIELD_INTERLACED_TB:
- 		vnmc = VNMC_IM_FULL;
--		halfsize = true;
- 		break;
- 	case V4L2_FIELD_INTERLACED_BT:
- 		vnmc = VNMC_IM_FULL | VNMC_FOC;
--		halfsize = true;
- 		break;
- 	case V4L2_FIELD_NONE:
- 		vnmc = VNMC_IM_ODD_EVEN;
-@@ -682,15 +676,11 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	}
- 
--	if (vin->info->model == RCAR_GEN3) {
--		/* Enable HSYNC Field Toggle mode after height HSYNC inputs. */
--		lines = vin->format.height / (halfsize ? 2 : 1);
--		dmr2 = VNDMR2_FTEH | VNDMR2_HLV(lines);
--		vin_dbg(vin, "Field Toogle after %u lines\n", lines);
--	} else {
--		/* Enable VSYNC Field Toogle mode after one VSYNC input. */
-+	/* Enable VSYNC Field Toogle mode after one VSYNC input */
-+	if (vin->info->model == RCAR_GEN3)
-+		dmr2 = VNDMR2_FTEV;
-+	else
- 		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
--	}
- 
- 	/* Hsync Signal Polarity Select */
- 	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
 -- 
-2.17.0
+2.11.0
