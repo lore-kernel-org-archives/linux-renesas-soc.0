@@ -1,55 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751815AbeERLR7 (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:42944 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751794AbeEDTGy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 032/102] arm64: dts: renesas: r8a77970: Enable IPMMU devices
-Date: Fri, 18 May 2018 13:14:54 +0200
-Message-Id: <344aa8f37ebf2a028fb5a1d7fac68b9b1817a2c3.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Fri, 4 May 2018 15:06:54 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: f.fainelli@gmail.com, opendmb@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v9 03/12] ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
+Date: Fri,  4 May 2018 21:05:36 +0200
+Message-Id: <20180504190545.5114-4-mylene.josserand@bootlin.com>
+In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+As we found in sun9i-a80, CPUCFG is a collection of registers that are
+mapped to the SoC's signals from each individual processor core and
+associated peripherals.
 
-Remove 'status = "disabled"' to make sure all IPMMU devices are enabled
-in DT on the r8a77970 SoC.
+These registers are used for SMP bringup and CPU hotplugging.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[simon: rebased]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index c06d7fbfb7be..6ed2e95eb53d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -567,7 +567,6 @@
- 			renesas,ipmmu-main = <&ipmmu_mm 3>;
- 			power-domains = <&sysc R8A77970_PD_A3IR>;
- 			#iommu-cells = <1>;
--			status = "disabled";
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 379981389eea..a50ccb475de8 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -349,6 +349,11 @@
+ 			};
  		};
  
- 		ipmmu_mm: mmu@e67b0000 {
-@@ -593,7 +592,6 @@
- 			renesas,ipmmu-main = <&ipmmu_mm 9>;
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			#iommu-cells = <1>;
--			status = "disabled";
- 		};
- 
- 		gic: interrupt-controller@f1010000 {
++		cpucfg@1700000 {
++			compatible = "allwinner,sun8i-a83t-cpucfg";
++			reg = <0x01700000 0x400>;
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-a83t-system-controller",
+ 				"syscon";
 -- 
 2.11.0
