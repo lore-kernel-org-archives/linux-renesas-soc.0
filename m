@@ -1,151 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:46001 "EHLO mail.bootlin.com"
+Received: from mail.bootlin.com ([62.4.15.54]:43040 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755148AbeEAMcE (ORCPT
+        id S1751891AbeEDTHK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 08:32:04 -0400
+        Fri, 4 May 2018 15:07:10 -0400
 From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
 To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
         marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
         horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+Cc: f.fainelli@gmail.com, opendmb@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
         thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v8 00/12] Sunxi: Add SMP support on A83T
-Date: Tue,  1 May 2018 14:31:19 +0200
-Message-Id: <20180501123131.7738-1-mylene.josserand@bootlin.com>
+Subject: [PATCH v9 12/12] ARM: shmobile: Convert file to use cntvoff
+Date: Fri,  4 May 2018 21:05:45 +0200
+Message-Id: <20180504190545.5114-13-mylene.josserand@bootlin.com>
+In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello everyone,
+Now that a common function is available for CNTVOFF's
+initialization, let's convert shmobile-apmu code to use
+this function.
 
-This is a V8 of my series that adds SMP support for Allwinner sun8i-a83t.
-Based on sunxi's tree, sunxi/for-next branch.
-Depends on a patch from Doug Berger that allows to include the "cpu-type"
-header on assembly files that I included in my series (patch 01).
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/common.h          |  1 -
+ arch/arm/mach-shmobile/headsmp-apmu.S    | 22 +---------------------
+ arch/arm/mach-shmobile/setup-rcar-gen2.c |  3 ++-
+ 3 files changed, 3 insertions(+), 23 deletions(-)
 
-If you have any remarks/questions, let me know.
-Thank you in advance,
-Mylène
-
-Changes from v7:
-    - Add the patch of Doug Berger in my series.
-    - Rename the machine name to start secure_cntvoff into "sun8i-a83t",
-    according to Maxime's review.
-    - Change the type of is_a83t field from integer into boolean.
-
-Changes from v6:
-    - Correct the commit log on patch 07 according to Sergei Shtylyov's
-    review.
-    - Rename the field "is_sun8i" into "is_a83t".
-    - Add all Tested-by and Reviewed-by from previous version.
-
-Changes from v5:
-    - Remove my patch 01 and use the patch of Doug Berger to be able to
-    include the cpu-type header on assembly files.
-    - Rename smp_init_cntvoff function into secure_cntvoff_init according
-    to Marc Zyngier's review.
-    - According to Chen-Yu and Maxime's reviews, remove the patch that was
-    moving structures. Instead of using an index to retrieve which
-    architecture we are having, use a global variable.
-    - Merge the 2 patches that move assembly code from C to assembly file.
-    - Use a sun8i field instead of sun9i to know on which architecture we
-    are using because many modifications/additions of the code are for
-    sun8i-a83t.
-    - Rework the patch "add is_sun8i field" to add only this field in this
-    patch. The part of the patch that was starting to handle the differences
-    between sun8i-a83t and sun9i-a80 is merged in the patch that adds the
-    support of sun8i-a83t.
-    - Add a new patch that refactor the shmobile code to use the new function
-    secure_cntvoff_init introduced in this series.
-
-Changes from v4:
-    - Rebased my series according to new Chen-Yu series:
-       "ARM: sunxi: Clean and improvements for multi-cluster SMP"
-       https://lkml.org/lkml/2018/3/8/886
-    - Updated my series according to Marc Zyngier's reviews to add CNTVOFF
-    initialization's function into ARM's common part. Thanks to that, other
-    platforms such as Renesa can use this function.
-    - For boot CPU, create a new machine to handle the CNTVOFF initialization
-    using "init_early" callback.
-
-Changes from v3:
-    - Take into account Maxime's reviews:
-	- split the first patch into 4 new patches: add sun9i device tree
-	parsing, rename some variables, add a83t support and finally,
-	add hotplug support.
-	- Move the code of previous patch 07 (to disable CPU0 disabling)
-	into hotplug support patch (see patch 04)
-	- Remove the patch that added PRCM register because it is already
-	available. Because of that, update the device tree parsing to use
-	"sun8i-a83t-r-ccu".
-	- Use a variable to know which SoC we currently have
-    - Take into account Chen-Yu's reviews: create two iounmap functions
-    to release the resources of the device tree parsing.
-    - Take into account Marc's review: Update the code to initialize CNTVOFF
-    register. As there is already assembly code in the driver, I decided
-    to create an assembly file not to mix assembly and C code.
-    For that, I create 3 new patches: move the current assembly code that
-    handles the cluster cache enabling into a file, move the cpu_resume entry
-    in this file and finally, add a new assembly entry to initialize the timer
-    offset for boot CPU and secondary CPUs.
-
-Changes from v2:
-    - Rebased my modifications according to new Chen Yu's patch series
-    that adds SMP support for sun9i-a80 (without MCPM).
-    - Split the device-tree patches into 3 patches for CPUCFG, R_CPUCFG
-    and PRCM registers for more visibility.
-    - The hotplug of CPU0 is currently not working (even after trying what
-    Allwinner's code is doing) so remove the possibility of disabling
-    this CPU. Created a new patch for it.
-
-Changes from v1:
-    - Add Chen Yu's patch in my series (see path 01)
-    - Add new compatibles for prcm and cpucfg registers for sun8i-a83t.
-    Create two functions to separate the DT parsing of sun9i-a80 and
-    sun8i-a83t.
-    - Thanks to Maxime's review: order device tree's nodes according
-    to physical addresses, remove unused label and fix registers' sizes.
-    Update the commit log and commit title of my last patch (see
-    patch 05).
-
-Doug Berger (1):
-  ARM: Allow this header to be included by assembly files
-
-Mylène Josserand (11):
-  ARM: sunxi: smp: Move assembly code into a file
-  ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
-  ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
-  ARM: dts: sun8i: a83t: Add CCI-400 node
-  ARM: smp: Add initialization of CNTVOFF
-  ARM: sunxi: Add initialization of CNTVOFF
-  ARM: sun9i: smp: Rename clusters's power-off
-  ARM: sun9i: smp: Add is_a83t field
-  ARM: sun8i: smp: Add support for A83T
-  ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
-  ARM: shmobile: Convert file to use cntvoff
-
- arch/arm/boot/dts/sun8i-a83t.dtsi        |  59 ++++++++
- arch/arm/common/Makefile                 |   1 +
- arch/arm/common/secure_cntvoff.S         |  31 ++++
- arch/arm/include/asm/cputype.h           |  10 +-
- arch/arm/include/asm/secure_cntvoff.h    |   8 ++
- arch/arm/mach-shmobile/common.h          |   1 -
- arch/arm/mach-shmobile/headsmp-apmu.S    |  22 +--
- arch/arm/mach-shmobile/setup-rcar-gen2.c |   3 +-
- arch/arm/mach-sunxi/Kconfig              |   2 +-
- arch/arm/mach-sunxi/Makefile             |   2 +-
- arch/arm/mach-sunxi/headsmp.S            |  81 +++++++++++
- arch/arm/mach-sunxi/mc_smp.c             | 239 +++++++++++++++++++------------
- arch/arm/mach-sunxi/sunxi.c              |  20 ++-
- 13 files changed, 356 insertions(+), 123 deletions(-)
- create mode 100644 arch/arm/common/secure_cntvoff.S
- create mode 100644 arch/arm/include/asm/secure_cntvoff.h
- create mode 100644 arch/arm/mach-sunxi/headsmp.S
-
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index 43c1ac696274..2109f123bdfb 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -2,7 +2,6 @@
+ #ifndef __ARCH_MACH_COMMON_H
+ #define __ARCH_MACH_COMMON_H
+ 
+-extern void shmobile_init_cntvoff(void);
+ extern void shmobile_init_delay(void);
+ extern void shmobile_boot_vector(void);
+ extern unsigned long shmobile_boot_fn;
+diff --git a/arch/arm/mach-shmobile/headsmp-apmu.S b/arch/arm/mach-shmobile/headsmp-apmu.S
+index 5672b5849401..d49ab194766a 100644
+--- a/arch/arm/mach-shmobile/headsmp-apmu.S
++++ b/arch/arm/mach-shmobile/headsmp-apmu.S
+@@ -11,29 +11,9 @@
+ #include <linux/linkage.h>
+ #include <asm/assembler.h>
+ 
+-ENTRY(shmobile_init_cntvoff)
+-	/*
+-	 * CNTVOFF has to be initialized either from non-secure Hypervisor
+-	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
+-	 * then it should be handled by the secure code
+-	 */
+-	cps	#MON_MODE
+-	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
+-	orr	r0, r1, #1
+-	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
+-	instr_sync
+-	mov	r0, #0
+-	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
+-	instr_sync
+-	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
+-	instr_sync
+-	cps	#SVC_MODE
+-	ret	lr
+-ENDPROC(shmobile_init_cntvoff)
+-
+ #ifdef CONFIG_SMP
+ ENTRY(shmobile_boot_apmu)
+-	bl	shmobile_init_cntvoff
++	bl	secure_cntvoff_init
+ 	b	secondary_startup
+ ENDPROC(shmobile_boot_apmu)
+ #endif
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 5561dbed7a33..4a881026d740 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -26,6 +26,7 @@
+ #include <linux/of_fdt.h>
+ #include <linux/of_platform.h>
+ #include <asm/mach/arch.h>
++#include <asm/secure_cntvoff.h>
+ #include "common.h"
+ #include "rcar-gen2.h"
+ 
+@@ -70,7 +71,7 @@ void __init rcar_gen2_timer_init(void)
+ 	void __iomem *base;
+ 	u32 freq;
+ 
+-	shmobile_init_cntvoff();
++	secure_cntvoff_init();
+ 
+ 	if (of_machine_is_compatible("renesas,r8a7745") ||
+ 	    of_machine_is_compatible("renesas,r8a7792") ||
 -- 
 2.11.0
