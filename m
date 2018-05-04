@@ -1,47 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751473AbeERLUI (ORCPT
+Received: from mail-eopbgr20091.outbound.protection.outlook.com ([40.107.2.91]:36544
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751792AbeEDNxj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:20:08 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/14] arm: shmobile: Add the RZ/N1D (R9A06G032) to the shmobile Kconfig
-Date: Fri, 18 May 2018 13:18:10 +0200
-Message-Id: <d9dcd6c1c646496e5e306baabce330457cdf478c.1526639075.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526639075.git.horms+renesas@verge.net.au>
-References: <cover.1526639075.git.horms+renesas@verge.net.au>
+        Fri, 4 May 2018 09:53:39 -0400
+From: Peter Rosin <peda@axentia.se>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v2 22/26] drm/rcar-du: lvds: provide an owner .odev device for the bridge
+Date: Fri,  4 May 2018 15:52:08 +0200
+Message-Id: <20180504135212.26977-23-peda@axentia.se>
+In-Reply-To: <20180504135212.26977-1-peda@axentia.se>
+References: <20180504135212.26977-1-peda@axentia.se>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Michel Pollet <michel.pollet@bp.renesas.com>
+The .of_node member is going away.
 
-Add the RZ/N1D SoC to the reset of the Renesas SoC Collection.
-
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- arch/arm/mach-shmobile/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 96672da02f5f..fcc273f127bf 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -114,6 +114,10 @@ config ARCH_R8A7794
- 	bool "R-Car E2 (R8A77940)"
- 	select ARCH_RCAR_GEN2
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 3d2d3bbd1342..efda02f55c95 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -463,9 +463,9 @@ static int rcar_lvds_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
  
-+config ARCH_R9A06G032
-+	bool "RZ/N1D (R9A06G032)"
-+	select ARCH_RZN1
-+
- config ARCH_RZN1
- 	bool "RZ/N1 (R9A06G0xx) Family"
- 	select ARM_AMBA
++	lvds->bridge.odev = &pdev->dev;
+ 	lvds->bridge.driver_private = lvds;
+ 	lvds->bridge.funcs = &rcar_lvds_bridge_ops;
+-	lvds->bridge.of_node = pdev->dev.of_node;
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	lvds->mmio = devm_ioremap_resource(&pdev->dev, mem);
 -- 
 2.11.0
