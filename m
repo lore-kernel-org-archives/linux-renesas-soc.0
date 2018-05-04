@@ -1,56 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:42944 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751794AbeEDTGy (ORCPT
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:40021 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750709AbeEDHoN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 15:06:54 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: f.fainelli@gmail.com, opendmb@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v9 03/12] ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
-Date: Fri,  4 May 2018 21:05:36 +0200
-Message-Id: <20180504190545.5114-4-mylene.josserand@bootlin.com>
-In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+        Fri, 4 May 2018 03:44:13 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1524828105-26585-2-git-send-email-b.zolnierkie@samsung.com>
+References: <CGME20180427112227epcas2p4ea3a93a5680d69a62f12cac627ebafbc@epcas2p4.samsung.com>
+ <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com> <1524828105-26585-2-git-send-email-b.zolnierkie@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 May 2018 09:44:11 +0200
+Message-ID: <CAMuHMdWY_rwtG2vTy5R_P=37vk59+D+7ro+MgobPnEm1nJ_YXQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] video: fbdev: sh_mobile_lcdcfb: remove unused MERAM support
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As we found in sun9i-a80, CPUCFG is a collection of registers that are
-mapped to the SoC's signals from each individual processor core and
-associated peripherals.
+On Fri, Apr 27, 2018 at 1:21 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> Since commit a521422ea4ae  ("ARM: shmobile: mackerel: Remove Legacy C
+> board code") MERAM functionality is unused. Remove it.
+>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-These registers are used for SMP bringup and CPU hotplugging.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 379981389eea..a50ccb475de8 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -349,6 +349,11 @@
- 			};
- 		};
- 
-+		cpucfg@1700000 {
-+			compatible = "allwinner,sun8i-a83t-cpucfg";
-+			reg = <0x01700000 0x400>;
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun8i-a83t-system-controller",
- 				"syscon";
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
