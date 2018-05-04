@@ -1,74 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:9683 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751309AbeEPCCw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 22:02:52 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 7/7] arm64: dts: renesas: salvator-common: enable VIN
-Date: Wed, 16 May 2018 03:58:54 +0200
-Message-Id: <20180516015854.19432-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: f.fainelli@gmail.com, opendmb@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v9 04/12] ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
+Date: Fri,  4 May 2018 21:05:37 +0200
+Message-Id: <20180504190545.5114-5-mylene.josserand@bootlin.com>
+In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- .../boot/dts/renesas/salvator-common.dtsi     | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
+The R_CPUCFG is a collection of registers needed for SMP bringup
+on clusters and cluster's reset.
+For the moment, documentation about this register is found in
+Allwinner's code only.
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 2709df989847e889..9256fbaaab7f3297 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -806,6 +806,38 @@
- 	clock-frequency = <100000000>;
- };
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index a50ccb475de8..53ace066b7dc 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -938,6 +938,11 @@
+ 			#reset-cells = <1>;
+ 		};
  
-+&vin0 {
-+	status = "okay";
-+};
++		r_cpucfg@1f01c00 {
++			compatible = "allwinner,sun8i-a83t-r-cpucfg";
++			reg = <0x1f01c00 0x400>;
++		};
 +
-+&vin1 {
-+	status = "okay";
-+};
-+
-+&vin2 {
-+	status = "okay";
-+};
-+
-+&vin3 {
-+	status = "okay";
-+};
-+
-+&vin4 {
-+	status = "okay";
-+};
-+
-+&vin5 {
-+	status = "okay";
-+};
-+
-+&vin6 {
-+	status = "okay";
-+};
-+
-+&vin7 {
-+	status = "okay";
-+};
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
+ 		r_pio: pinctrl@1f02c00 {
+ 			compatible = "allwinner,sun8i-a83t-r-pinctrl";
+ 			reg = <0x01f02c00 0x400>;
 -- 
-2.17.0
+2.11.0
+
