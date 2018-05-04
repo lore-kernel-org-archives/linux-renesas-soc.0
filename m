@@ -1,315 +1,247 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48344 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754970AbeEAMt1 (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:42938 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751760AbeEDTGw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 08:49:27 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: mchehab@kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v8 0/8] vsp1: TLB optimisation and DL caching
-Date: Tue,  1 May 2018 13:49:12 +0100
-Message-Id: <cover.bc315239d58449d3e395904b87af6c747a9f612c.1525178613.git-series.kieran.bingham+renesas@ideasonboard.com>
+        Fri, 4 May 2018 15:06:52 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: f.fainelli@gmail.com, opendmb@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v9 02/12] ARM: sunxi: smp: Move assembly code into a file
+Date: Fri,  4 May 2018 21:05:35 +0200
+Message-Id: <20180504190545.5114-3-mylene.josserand@bootlin.com>
+In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Each display list currently allocates an area of DMA memory to store register
-settings for the VSP1 to process. Each of these allocations adds pressure to
-the IPMMU TLB entries.
+Move the assembly code for cluster cache enabling and resuming
+into an assembly file instead of having it directly in C code.
 
-We can reduce the pressure by pre-allocating larger areas and dividing the area
-across multiple bodies represented as a pool.
+Remove the CFLAGS because we are using the ARM directive "arch"
+instead.
 
-With this reconfiguration of bodies, we can adapt the configuration code to
-separate out constant hardware configuration and cache it for re-use.
+Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+ arch/arm/mach-sunxi/Makefile  |  2 +-
+ arch/arm/mach-sunxi/headsmp.S | 80 +++++++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-sunxi/mc_smp.c  | 82 +++----------------------------------------
+ 3 files changed, 85 insertions(+), 79 deletions(-)
+ create mode 100644 arch/arm/mach-sunxi/headsmp.S
 
-The patches provided in this series can be found at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git  tags/vsp1/tlb-optimise/v8
-
-Changelog:
-----------
-v8:
- - Fix formatting and white space
- - Reword vsp1_dl_list_add_body() documentation
- - Update commit message on "Provide a body pool"
- - No longer pass unnecessary dlm->pool through vsp1_dl_list_alloc()
- - Add support for the new UIF entity
- - Fix comment location for clu_configure_stream()
- - Implement configure_partition separation
- - Rename video->pipe_config to video->stream_config
-
-v7:
- - Rebased on to linux-media/master (v4.16-rc4)
- - Clean up the formatting of the vsp1_dl_list_add_body()
- - Fix formatting and white space
- -  s/prepare/configure_stream/
- -  s/configure/configure_frame/
-
-v6:
- - Rebased on to linux-media/master (v4.16-rc1)
- - Removed DRM/UIF (DISCOM/ColorKey) updates
-
-v5:
- - Rebased on to renesas-drivers-2018-01-09-v4.15-rc7 to fix conflicts
-   with DRM and UIF updates on VSP1 driver
-
-v4:
- - Rebased to v4.14
- * v4l: vsp1: Use reference counting for bodies
-   - Fix up reference handling comments
-
- * v4l: vsp1: Provide a body pool
-   - Provide comment explaining extra allocation on body pool
-     highlighting area for optimisation later.
-
- * v4l: vsp1: Refactor display list configure operations
-   - Fix up comment to describe yuv_mode caching rather than format
-
- * vsp1: Adapt entities to configure into a body
-   - Rename vsp1_dl_list_get_body() to vsp1_dl_list_get_body0()
-
- * v4l: vsp1: Move video configuration to a cached dlb
-   - Adjust pipe configured flag to be reset on resume rather than suspend
-   - rename dl_child, dl_next
-
-Testing:
---------
-The VSP unit tests have been run on this patch set with the following results:
-
---- Test loop 1 ---
-- vsp-unit-test-0000.sh
-Test Conditions:
-  Platform          Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+
-  Kernel release    4.17.0-rc1-arm64-renesas
-  convert           /usr/bin/convert
-  compare           /usr/bin/compare
-  killall           /usr/bin/killall
-  raw2rgbpnm        /usr/bin/raw2rgbpnm
-  stress            /usr/bin/stress
-  yavta             /usr/bin/yavta
-- vsp-unit-test-0001.sh
-Testing WPF packing in RGB332: pass
-Testing WPF packing in ARGB555: pass
-Testing WPF packing in XRGB555: pass
-Testing WPF packing in RGB565: pass
-Testing WPF packing in BGR24: pass
-Testing WPF packing in RGB24: pass
-Testing WPF packing in ABGR32: pass
-Testing WPF packing in ARGB32: pass
-Testing WPF packing in XBGR32: pass
-Testing WPF packing in XRGB32: pass
-- vsp-unit-test-0002.sh
-Testing WPF packing in NV12M: pass
-Testing WPF packing in NV16M: pass
-Testing WPF packing in NV21M: pass
-Testing WPF packing in NV61M: pass
-Testing WPF packing in UYVY: pass
-Testing WPF packing in VYUY: skip
-Testing WPF packing in YUV420M: pass
-Testing WPF packing in YUV422M: pass
-Testing WPF packing in YUV444M: pass
-Testing WPF packing in YVU420M: pass
-Testing WPF packing in YVU422M: pass
-Testing WPF packing in YVU444M: pass
-Testing WPF packing in YUYV: pass
-Testing WPF packing in YVYU: pass
-- vsp-unit-test-0003.sh
-Testing scaling from 640x640 to 640x480 in RGB24: pass
-Testing scaling from 1024x768 to 640x480 in RGB24: pass
-Testing scaling from 640x480 to 1024x768 in RGB24: pass
-Testing scaling from 640x640 to 640x480 in YUV444M: pass
-Testing scaling from 1024x768 to 640x480 in YUV444M: pass
-Testing scaling from 640x480 to 1024x768 in YUV444M: pass
-- vsp-unit-test-0004.sh
-Testing histogram in RGB24: pass
-Testing histogram in YUV444M: pass
-- vsp-unit-test-0005.sh
-Testing RPF.0: pass
-Testing RPF.1: pass
-Testing RPF.2: pass
-Testing RPF.3: pass
-Testing RPF.4: pass
-- vsp-unit-test-0006.sh
-Testing invalid pipeline with no RPF: pass
-Testing invalid pipeline with no WPF: pass
-- vsp-unit-test-0007.sh
-Testing BRU in RGB24 with 1 inputs: pass
-Testing BRU in RGB24 with 2 inputs: pass
-Testing BRU in RGB24 with 3 inputs: pass
-Testing BRU in RGB24 with 4 inputs: pass
-Testing BRU in RGB24 with 5 inputs: pass
-Testing BRU in YUV444M with 1 inputs: pass
-Testing BRU in YUV444M with 2 inputs: pass
-Testing BRU in YUV444M with 3 inputs: pass
-Testing BRU in YUV444M with 4 inputs: pass
-Testing BRU in YUV444M with 5 inputs: pass
-- vsp-unit-test-0008.sh
-Test requires unavailable feature set `bru rpf.0 uds wpf.0': skipped
-- vsp-unit-test-0009.sh
-Test requires unavailable feature set `rpf.0 wpf.0 wpf.1': skipped
-- vsp-unit-test-0010.sh
-Testing CLU in RGB24 with zero configuration: pass
-Testing CLU in RGB24 with identity configuration: pass
-Testing CLU in RGB24 with wave configuration: pass
-Testing CLU in YUV444M with zero configuration: pass
-Testing CLU in YUV444M with identity configuration: pass
-Testing CLU in YUV444M with wave configuration: pass
-Testing LUT in RGB24 with zero configuration: pass
-Testing LUT in RGB24 with identity configuration: pass
-Testing LUT in RGB24 with gamma configuration: pass
-Testing LUT in YUV444M with zero configuration: pass
-Testing LUT in YUV444M with identity configuration: pass
-Testing LUT in YUV444M with gamma configuration: pass
-- vsp-unit-test-0011.sh
-Testing  hflip=0 vflip=0 rotate=0: pass
-Testing  hflip=1 vflip=0 rotate=0: pass
-Testing  hflip=0 vflip=1 rotate=0: pass
-Testing  hflip=1 vflip=1 rotate=0: pass
-Testing  hflip=0 vflip=0 rotate=90: pass
-Testing  hflip=1 vflip=0 rotate=90: pass
-Testing  hflip=0 vflip=1 rotate=90: pass
-Testing  hflip=1 vflip=1 rotate=90: pass
-- vsp-unit-test-0012.sh
-Testing hflip: pass
-Testing vflip: pass
-- vsp-unit-test-0013.sh
-Testing RPF unpacking in RGB332: pass
-Testing RPF unpacking in ARGB555: pass
-Testing RPF unpacking in XRGB555: pass
-Testing RPF unpacking in RGB565: pass
-Testing RPF unpacking in BGR24: pass
-Testing RPF unpacking in RGB24: pass
-Testing RPF unpacking in ABGR32: pass
-Testing RPF unpacking in ARGB32: pass
-Testing RPF unpacking in XBGR32: pass
-Testing RPF unpacking in XRGB32: pass
-- vsp-unit-test-0014.sh
-Testing RPF unpacking in NV12M: pass
-Testing RPF unpacking in NV16M: pass
-Testing RPF unpacking in NV21M: pass
-Testing RPF unpacking in NV61M: pass
-Testing RPF unpacking in UYVY: pass
-Testing RPF unpacking in VYUY: skip
-Testing RPF unpacking in YUV420M: pass
-Testing RPF unpacking in YUV422M: pass
-Testing RPF unpacking in YUV444M: pass
-Testing RPF unpacking in YVU420M: pass
-Testing RPF unpacking in YVU422M: pass
-Testing RPF unpacking in YVU444M: pass
-Testing RPF unpacking in YUYV: pass
-Testing RPF unpacking in YVYU: pass
-- vsp-unit-test-0015.sh
-Testing SRU scaling from 1024x768 to 1024x768 in RGB24: pass
-Testing SRU scaling from 1024x768 to 2048x1536 in RGB24: pass
-Testing SRU scaling from 1024x768 to 1024x768 in YUV444M: pass
-Testing SRU scaling from 1024x768 to 2048x1536 in YUV444M: pass
-- vsp-unit-test-0016.sh
-Testing  hflip=0 vflip=0 rotate=0 640x480 -> 640x480: pass
-Testing  hflip=0 vflip=0 rotate=0 640x480 -> 1024x768: pass
-Testing  hflip=0 vflip=0 rotate=0 1024x768 -> 640x480: pass
-Testing  hflip=1 vflip=0 rotate=0 640x480 -> 640x480: pass
-Testing  hflip=1 vflip=0 rotate=0 640x480 -> 1024x768: pass
-Testing  hflip=1 vflip=0 rotate=0 1024x768 -> 640x480: pass
-Testing  hflip=0 vflip=1 rotate=0 640x480 -> 640x480: pass
-Testing  hflip=0 vflip=1 rotate=0 640x480 -> 1024x768: pass
-Testing  hflip=0 vflip=1 rotate=0 1024x768 -> 640x480: pass
-Testing  hflip=1 vflip=1 rotate=0 640x480 -> 640x480: pass
-Testing  hflip=1 vflip=1 rotate=0 640x480 -> 1024x768: pass
-Testing  hflip=1 vflip=1 rotate=0 1024x768 -> 640x480: pass
-Testing  hflip=0 vflip=0 rotate=90 640x480 -> 640x480: pass
-Testing  hflip=0 vflip=0 rotate=90 640x480 -> 1024x768: pass
-Testing  hflip=0 vflip=0 rotate=90 1024x768 -> 640x480: pass
-Testing  hflip=1 vflip=0 rotate=90 640x480 -> 640x480: pass
-Testing  hflip=1 vflip=0 rotate=90 640x480 -> 1024x768: pass
-Testing  hflip=1 vflip=0 rotate=90 1024x768 -> 640x480: pass
-Testing  hflip=0 vflip=1 rotate=90 640x480 -> 640x480: pass
-Testing  hflip=0 vflip=1 rotate=90 640x480 -> 1024x768: pass
-Testing  hflip=0 vflip=1 rotate=90 1024x768 -> 640x480: pass
-Testing  hflip=1 vflip=1 rotate=90 640x480 -> 640x480: pass
-Testing  hflip=1 vflip=1 rotate=90 640x480 -> 1024x768: pass
-Testing  hflip=1 vflip=1 rotate=90 1024x768 -> 640x480: pass
-- vsp-unit-test-0017.sh
-- vsp-unit-test-0018.sh
-Testing RPF crop from (0,0)/512x384: pass
-Testing RPF crop from (32,32)/512x384: pass
-Testing RPF crop from (32,64)/512x384: pass
-Testing RPF crop from (64,32)/512x384: pass
-- vsp-unit-test-0019.sh
-Testing non-active pipeline suspend/resume in suspend:freezer: passed
-Testing non-active pipeline suspend/resume in suspend:devices: passed
-Testing non-active pipeline suspend/resume in suspend:platform: passed
-Testing non-active pipeline suspend/resume in suspend:processors: passed
-Testing non-active pipeline suspend/resume in suspend:core: passed
-- vsp-unit-test-0020.sh
-Testing Testing active pipeline suspend/resume in suspend:freezer: pass
-Testing Testing active pipeline suspend/resume in suspend:devices: pass
-Testing Testing active pipeline suspend/resume in suspend:platform: pass
-Testing Testing active pipeline suspend/resume in suspend:processors: pass
-Testing Testing active pipeline suspend/resume in suspend:core: pass
-- vsp-unit-test-0021.sh
-Testing WPF packing in RGB332 during stress testing: pass
-Testing WPF packing in ARGB555 during stress testing: pass
-Testing WPF packing in XRGB555 during stress testing: pass
-Testing WPF packing in RGB565 during stress testing: pass
-Testing WPF packing in BGR24 during stress testing: pass
-Testing WPF packing in RGB24 during stress testing: pass
-Testing WPF packing in ABGR32 during stress testing: pass
-Testing WPF packing in ARGB32 during stress testing: pass
-Testing WPF packing in XBGR32 during stress testing: pass
-Testing WPF packing in XRGB32 during stress testing: pass
-./vsp-unit-test-0021.sh: line 34: 14785 Killed                  stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M
-- vsp-unit-test-0022.sh
-Testing long duration pipelines under stress: pass
-./vsp-unit-test-0022.sh: line 38: 16751 Killed                  stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M
-- vsp-unit-test-0023.sh
-Testing histogram HGT with hue areas 0,255,255,255,255,255,255,255,255,255,255,255: pass
-Testing histogram HGT with hue areas 0,40,40,80,80,120,120,160,160,200,200,255: pass
-Testing histogram HGT with hue areas 220,40,40,80,80,120,120,160,160,200,200,220: pass
-Testing histogram HGT with hue areas 0,10,50,60,100,110,150,160,200,210,250,255: pass
-Testing histogram HGT with hue areas 10,20,50,60,100,110,150,160,200,210,230,240: pass
-Testing histogram HGT with hue areas 240,20,60,80,100,120,140,160,180,200,210,220: pass
-- vsp-unit-test-0024.sh
-Test requires unavailable feature set `rpf.0 rpf.1 brs wpf.0': skipped
-168 tests: 147 passed, 0 failed, 3 skipped
-
-Kieran Bingham (8):
-  media: vsp1: Reword uses of 'fragment' as 'body'
-  media: vsp1: Protect bodies against overflow
-  media: vsp1: Provide a body pool
-  media: vsp1: Convert display lists to use new body pool
-  media: vsp1: Use reference counting for bodies
-  media: vsp1: Refactor display list configure operations
-  media: vsp1: Adapt entities to configure into a body
-  media: vsp1: Move video configuration to a cached dlb
-
- drivers/media/platform/vsp1/vsp1_brx.c    |  32 +--
- drivers/media/platform/vsp1/vsp1_clu.c    | 112 ++++---
- drivers/media/platform/vsp1/vsp1_clu.h    |   1 +-
- drivers/media/platform/vsp1/vsp1_dl.c     | 388 +++++++++++++----------
- drivers/media/platform/vsp1/vsp1_dl.h     |  20 +-
- drivers/media/platform/vsp1/vsp1_drm.c    |  18 +-
- drivers/media/platform/vsp1/vsp1_entity.c |  33 +-
- drivers/media/platform/vsp1/vsp1_entity.h |  43 +--
- drivers/media/platform/vsp1/vsp1_hgo.c    |  26 +--
- drivers/media/platform/vsp1/vsp1_hgt.c    |  28 +--
- drivers/media/platform/vsp1/vsp1_hsit.c   |  20 +-
- drivers/media/platform/vsp1/vsp1_lif.c    |  25 +-
- drivers/media/platform/vsp1/vsp1_lut.c    |  80 +++--
- drivers/media/platform/vsp1/vsp1_lut.h    |   1 +-
- drivers/media/platform/vsp1/vsp1_pipe.c   |  13 +-
- drivers/media/platform/vsp1/vsp1_pipe.h   |   8 +-
- drivers/media/platform/vsp1/vsp1_rpf.c    | 187 +++++------
- drivers/media/platform/vsp1/vsp1_sru.c    |  24 +-
- drivers/media/platform/vsp1/vsp1_uds.c    |  72 ++--
- drivers/media/platform/vsp1/vsp1_uds.h    |   2 +-
- drivers/media/platform/vsp1/vsp1_uif.c    |  35 +--
- drivers/media/platform/vsp1/vsp1_video.c  |  92 ++---
- drivers/media/platform/vsp1/vsp1_video.h  |   2 +-
- drivers/media/platform/vsp1/vsp1_wpf.c    | 326 ++++++++++---------
- 24 files changed, 878 insertions(+), 710 deletions(-)
-
-base-commit: 22cf3c24e08f6ebff46c3e733991548a5dab25ed
+diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
+index 7de9cc286d53..71429aa85143 100644
+--- a/arch/arm/mach-sunxi/Makefile
++++ b/arch/arm/mach-sunxi/Makefile
+@@ -1,5 +1,5 @@
+ CFLAGS_mc_smp.o	+= -march=armv7-a
+ 
+ obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
+-obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o
++obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o headsmp.o
+ obj-$(CONFIG_SMP) += platsmp.o
+diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+new file mode 100644
+index 000000000000..37dc772701f3
+--- /dev/null
++++ b/arch/arm/mach-sunxi/headsmp.S
+@@ -0,0 +1,80 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (c) 2018 Chen-Yu Tsai
++ * Copyright (c) 2018 Bootlin
++ *
++ * Chen-Yu Tsai <wens@csie.org>
++ * Mylène Josserand <mylene.josserand@bootlin.com>
++ *
++ * SMP support for sunxi based systems with Cortex A7/A15
++ *
++ */
++
++#include <linux/linkage.h>
++#include <asm/assembler.h>
++#include <asm/cputype.h>
++
++ENTRY(sunxi_mc_smp_cluster_cache_enable)
++	.arch	armv7-a
++	/*
++	 * Enable cluster-level coherency, in preparation for turning on the MMU.
++	 *
++	 * Also enable regional clock gating and L2 data latency settings for
++	 * Cortex-A15. These settings are from the vendor kernel.
++	 */
++	mrc	p15, 0, r1, c0, c0, 0
++	movw	r2, #(ARM_CPU_PART_MASK & 0xffff)
++	movt	r2, #(ARM_CPU_PART_MASK >> 16)
++	and	r1, r1, r2
++	movw	r2, #(ARM_CPU_PART_CORTEX_A15 & 0xffff)
++	movt	r2, #(ARM_CPU_PART_CORTEX_A15 >> 16)
++	cmp	r1, r2
++	bne	not_a15
++
++	/* The following is Cortex-A15 specific */
++
++	/* ACTLR2: Enable CPU regional clock gates */
++	mrc p15, 1, r1, c15, c0, 4
++	orr r1, r1, #(0x1 << 31)
++	mcr p15, 1, r1, c15, c0, 4
++
++	/* L2ACTLR */
++	mrc p15, 1, r1, c15, c0, 0
++	/* Enable L2, GIC, and Timer regional clock gates */
++	orr r1, r1, #(0x1 << 26)
++	/* Disable clean/evict from being pushed to external */
++	orr r1, r1, #(0x1<<3)
++	mcr p15, 1, r1, c15, c0, 0
++
++	/* L2CTRL: L2 data RAM latency */
++	mrc p15, 1, r1, c9, c0, 2
++	bic r1, r1, #(0x7 << 0)
++	orr r1, r1, #(0x3 << 0)
++	mcr p15, 1, r1, c9, c0, 2
++
++	/* End of Cortex-A15 specific setup */
++	not_a15:
++
++	/* Get value of sunxi_mc_smp_first_comer */
++	adr	r1, first
++	ldr	r0, [r1]
++	ldr	r0, [r1, r0]
++
++	/* Skip cci_enable_port_for_self if not first comer */
++	cmp	r0, #0
++	bxeq	lr
++	b	cci_enable_port_for_self
++
++	.align 2
++	first: .word sunxi_mc_smp_first_comer - .
++ENDPROC(sunxi_mc_smp_cluster_cache_enable)
++
++ENTRY(sunxi_mc_smp_secondary_startup)
++	bl	sunxi_mc_smp_cluster_cache_enable
++	b	secondary_startup
++ENDPROC(sunxi_mc_smp_secondary_startup)
++
++ENTRY(sunxi_mc_smp_resume)
++	bl	sunxi_mc_smp_cluster_cache_enable
++	b	cpu_resume
++ENDPROC(sunxi_mc_smp_resume)
+diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+index c0246ec54a0a..727968d6a3e5 100644
+--- a/arch/arm/mach-sunxi/mc_smp.c
++++ b/arch/arm/mach-sunxi/mc_smp.c
+@@ -72,6 +72,9 @@ static void __iomem *cpucfg_base;
+ static void __iomem *prcm_base;
+ static void __iomem *sram_b_smp_base;
+ 
++extern void sunxi_mc_smp_secondary_startup(void);
++extern void sunxi_mc_smp_resume(void);
++
+ static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
+ {
+ 	struct device_node *node;
+@@ -300,74 +303,7 @@ static void sunxi_cluster_cache_disable_without_axi(void)
+ }
+ 
+ static int sunxi_mc_smp_cpu_table[SUNXI_NR_CLUSTERS][SUNXI_CPUS_PER_CLUSTER];
+-static int sunxi_mc_smp_first_comer;
+-
+-/*
+- * Enable cluster-level coherency, in preparation for turning on the MMU.
+- *
+- * Also enable regional clock gating and L2 data latency settings for
+- * Cortex-A15. These settings are from the vendor kernel.
+- */
+-static void __naked sunxi_mc_smp_cluster_cache_enable(void)
+-{
+-	asm volatile (
+-		"mrc	p15, 0, r1, c0, c0, 0\n"
+-		"movw	r2, #" __stringify(ARM_CPU_PART_MASK & 0xffff) "\n"
+-		"movt	r2, #" __stringify(ARM_CPU_PART_MASK >> 16) "\n"
+-		"and	r1, r1, r2\n"
+-		"movw	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 & 0xffff) "\n"
+-		"movt	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 >> 16) "\n"
+-		"cmp	r1, r2\n"
+-		"bne	not_a15\n"
+-
+-		/* The following is Cortex-A15 specific */
+-
+-		/* ACTLR2: Enable CPU regional clock gates */
+-		"mrc p15, 1, r1, c15, c0, 4\n"
+-		"orr r1, r1, #(0x1<<31)\n"
+-		"mcr p15, 1, r1, c15, c0, 4\n"
+-
+-		/* L2ACTLR */
+-		"mrc p15, 1, r1, c15, c0, 0\n"
+-		/* Enable L2, GIC, and Timer regional clock gates */
+-		"orr r1, r1, #(0x1<<26)\n"
+-		/* Disable clean/evict from being pushed to external */
+-		"orr r1, r1, #(0x1<<3)\n"
+-		"mcr p15, 1, r1, c15, c0, 0\n"
+-
+-		/* L2CTRL: L2 data RAM latency */
+-		"mrc p15, 1, r1, c9, c0, 2\n"
+-		"bic r1, r1, #(0x7<<0)\n"
+-		"orr r1, r1, #(0x3<<0)\n"
+-		"mcr p15, 1, r1, c9, c0, 2\n"
+-
+-		/* End of Cortex-A15 specific setup */
+-		"not_a15:\n"
+-
+-		/* Get value of sunxi_mc_smp_first_comer */
+-		"adr	r1, first\n"
+-		"ldr	r0, [r1]\n"
+-		"ldr	r0, [r1, r0]\n"
+-
+-		/* Skip cci_enable_port_for_self if not first comer */
+-		"cmp	r0, #0\n"
+-		"bxeq	lr\n"
+-		"b	cci_enable_port_for_self\n"
+-
+-		".align 2\n"
+-		"first: .word sunxi_mc_smp_first_comer - .\n"
+-	);
+-}
+-
+-static void __naked sunxi_mc_smp_secondary_startup(void)
+-{
+-	asm volatile(
+-		"bl	sunxi_mc_smp_cluster_cache_enable\n"
+-		"b	secondary_startup"
+-		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
+-		:: "i" (sunxi_mc_smp_cluster_cache_enable)
+-	);
+-}
++int sunxi_mc_smp_first_comer;
+ 
+ static DEFINE_SPINLOCK(boot_lock);
+ 
+@@ -637,16 +573,6 @@ static bool __init sunxi_mc_smp_cpu_table_init(void)
+  */
+ typedef typeof(cpu_reset) phys_reset_t;
+ 
+-static void __init __naked sunxi_mc_smp_resume(void)
+-{
+-	asm volatile(
+-		"bl	sunxi_mc_smp_cluster_cache_enable\n"
+-		"b	cpu_resume"
+-		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
+-		:: "i" (sunxi_mc_smp_cluster_cache_enable)
+-	);
+-}
+-
+ static int __init nocache_trampoline(unsigned long __unused)
+ {
+ 	phys_reset_t phys_reset;
 -- 
-git-series 0.9.1
+2.11.0
