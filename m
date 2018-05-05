@@ -1,192 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:22573 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751309AbeEPCCP (ORCPT
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:53742 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750830AbeEEUpy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 22:02:15 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/7] arm64: dts: renesas: r8a7795-es1: add CSI-2 node
-Date: Wed, 16 May 2018 03:58:49 +0200
-Message-Id: <20180516015854.19432-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
+        Sat, 5 May 2018 16:45:54 -0400
+Date: Sat, 5 May 2018 16:45:13 -0400
+From: Rich Felker <dalias@libc.org>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Christoph Hellwig <hch@infradead.org>, ysato@users.sourceforge.jp,
+        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com,
+        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] sh: mm: Fix unprotected access to struct device
+Message-ID: <20180505204513.GF1392@brightrain.aerifal.cx>
+References: <1524044555-20610-1-git-send-email-jacopo+renesas@jmondi.org>
+ <20180502074600.GC27261@w540>
+ <20180502123909.GA9546@infradead.org>
+ <20180503071539.GA19612@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180503071539.GA19612@w540>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas H3 ES1.0 have one extra CSI-2 node, CSI21 which is not present
-for later ES versions of H3.
+On Thu, May 03, 2018 at 09:15:39AM +0200, jacopo mondi wrote:
+> Hi Christoph,
+> 
+> On Wed, May 02, 2018 at 05:39:09AM -0700, Christoph Hellwig wrote:
+> > On Wed, May 02, 2018 at 09:46:31AM +0200, jacopo mondi wrote:
+> > > Hi again Christoph,
+> > >
+> > >     The gentle ping actually applies to this version of the patch.
+> > >
+> > > Sorry for the confusion.
+> >
+> > I'd expect this to go in through the sh tree, but if the sh maintainers
+> > are fine with it I can take it through the dma-mapping tree.
+> 
+> Oh, that's fine then. I'll let Rich comment if he plans to send a pull
+> requets for v4.17 fixes or not.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 143 +++++++++++++++++++
- 1 file changed, 143 insertions(+)
+OK, I'll prepare a pull request with this and another fix I just made.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 0177f5e60e5a5430..e19dcd6cb76793d7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -107,6 +107,61 @@
- 		resets = <&cpg 117>;
- 		renesas,fcp = <&fcpf2>;
- 	};
-+
-+	csi21: csi2@fea90000 {
-+		compatible = "renesas,r8a7795-csi2";
-+		reg = <0 0xfea90000 0 0x10000>;
-+		interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 713>;
-+		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+		resets = <&cpg 713>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@1 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				reg = <1>;
-+
-+				csi21vin0: endpoint@0 {
-+					reg = <0>;
-+					remote-endpoint = <&vin0csi21>;
-+				};
-+				csi21vin1: endpoint@1 {
-+					reg = <1>;
-+					remote-endpoint = <&vin1csi21>;
-+				};
-+				csi21vin2: endpoint@2 {
-+					reg = <2>;
-+					remote-endpoint = <&vin2csi21>;
-+				};
-+				csi21vin3: endpoint@3 {
-+					reg = <3>;
-+					remote-endpoint = <&vin3csi21>;
-+				};
-+				csi21vin4: endpoint@4 {
-+					reg = <4>;
-+					remote-endpoint = <&vin4csi21>;
-+				};
-+				csi21vin5: endpoint@5 {
-+					reg = <5>;
-+					remote-endpoint = <&vin5csi21>;
-+				};
-+				csi21vin6: endpoint@6 {
-+					reg = <6>;
-+					remote-endpoint = <&vin6csi21>;
-+				};
-+				csi21vin7: endpoint@7 {
-+					reg = <7>;
-+					remote-endpoint = <&vin7csi21>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &gpio1 {
-@@ -174,3 +229,91 @@
- &du {
- 	vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
- };
-+
-+&vin0 {
-+	ports {
-+		port@1 {
-+			vin0csi21: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint= <&csi21vin0>;
-+			};
-+		};
-+	};
-+};
-+
-+&vin1 {
-+	ports {
-+		port@1 {
-+			vin1csi21: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint= <&csi21vin1>;
-+			};
-+		};
-+	};
-+};
-+
-+&vin2 {
-+	ports {
-+		port@1 {
-+			vin2csi21: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint= <&csi21vin2>;
-+			};
-+		};
-+	};
-+};
-+
-+&vin3 {
-+	ports {
-+		port@1 {
-+			vin3csi21: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint= <&csi21vin3>;
-+			};
-+		};
-+	};
-+};
-+
-+&vin4 {
-+	ports {
-+		port@1 {
-+			vin4csi21: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint= <&csi21vin4>;
-+			};
-+		};
-+	};
-+};
-+
-+&vin5 {
-+	ports {
-+		port@1 {
-+			vin5csi21: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint= <&csi21vin5>;
-+			};
-+		};
-+	};
-+};
-+
-+&vin6 {
-+	ports {
-+		port@1 {
-+			vin6csi21: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint= <&csi21vin6>;
-+			};
-+		};
-+	};
-+};
-+
-+&vin7 {
-+	ports {
-+		port@1 {
-+			vin7csi21: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint= <&csi21vin7>;
-+			};
-+		};
-+	};
-+};
--- 
-2.17.0
+Rich
