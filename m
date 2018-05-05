@@ -1,87 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:45798 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163675AbeE1NPh (ORCPT
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54119 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751086AbeEEN5J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 May 2018 09:15:37 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: renesas: r8a77965: Use r8a77965-cpg-mssr binding definitions
-Date: Mon, 28 May 2018 15:15:29 +0200
-Message-Id: <1527513329-18780-1-git-send-email-geert+renesas@glider.be>
+        Sat, 5 May 2018 09:57:09 -0400
+Subject: Re: [PATCH] dt-bindings: can: rcar_can: Fix R8A7796 SoC name
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Chris Paterson <chris.paterson2@renesas.com>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <1525352553-17045-1-git-send-email-geert+renesas@glider.be>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <acc8da27-7104-ced5-d5cb-cbffec45d461@pengutronix.de>
+Date: Sat, 5 May 2018 15:56:56 +0200
+MIME-Version: 1.0
+In-Reply-To: <1525352553-17045-1-git-send-email-geert+renesas@glider.be>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="YWhJI30ImLKzwekH92bgfUNNxAcGbEHrZ"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the hardcoded clock indices by R8A77965_CLK_* symbols.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--YWhJI30ImLKzwekH92bgfUNNxAcGbEHrZ
+Content-Type: multipart/mixed; boundary="IWpdNVKVpjjD6Tqpx3EK90WhJQdvxDx6Z";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Wolfgang Grandegger <wg@grandegger.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+Cc: Chris Paterson <chris.paterson2@renesas.com>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+Message-ID: <acc8da27-7104-ced5-d5cb-cbffec45d461@pengutronix.de>
+Subject: Re: [PATCH] dt-bindings: can: rcar_can: Fix R8A7796 SoC name
+References: <1525352553-17045-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525352553-17045-1-git-send-email-geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Commit 7ce36da900c0a2ff ("clk: renesas: cpg-mssr: Add support for R-Car
-M3-N") providing the definitions is in v4.17-rc1.
+--IWpdNVKVpjjD6Tqpx3EK90WhJQdvxDx6Z
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On 05/03/2018 03:02 PM, Geert Uytterhoeven wrote:
+> R8A7796 is R-Car M3-W.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 486aecacb22abcf2..fad98ba6742e220b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -732,7 +732,7 @@
- 			reg = <0 0xe6e60000 0 64>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 207>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
-@@ -749,7 +749,7 @@
- 			reg = <0 0xe6e68000 0 64>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 206>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
-@@ -766,7 +766,7 @@
- 			reg = <0 0xe6e88000 0 64>;
- 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 310>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-@@ -780,7 +780,7 @@
- 			reg = <0 0xe6c50000 0 64>;
- 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 204>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
-@@ -796,7 +796,7 @@
- 			reg = <0 0xe6c40000 0 64>;
- 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 203>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
-@@ -812,7 +812,7 @@
- 			reg = <0 0xe6f30000 0 64>;
- 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 202>,
--				 <&cpg CPG_CORE 20>,
-+				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
--- 
-2.7.4
+Applied to linux-can.
+
+thnx,
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--IWpdNVKVpjjD6Tqpx3EK90WhJQdvxDx6Z--
+
+--YWhJI30ImLKzwekH92bgfUNNxAcGbEHrZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlrtuCgACgkQk9IU1zQo
+ZfHUyAf9FEZAO4BEPG1Xt/W8Exm8Y6nKp37slAE1P4bnGZQNpFRzAWgogMtsya4I
+GThljY7AkJle2YlM1uP/bdIan9nagsXfaFbeZ4J3BHChRkMou7bGiXKKtcc5XlbR
+o8rhpWD2bA0ULCvX484S7UmSBMyxm0PnGzZMEycbEZXpLC2ps1CX27L4n+N4NFOz
+FPbSypvEJTcuOUF9RnyLC9w5RFV+VAJdlWUb0H+00x+MRb5zrCoAFeKquCK2HUZh
+YX3iqWiDuV0e9g67EGWE3JV4zBnzBBpTrZmjP/z8hhT7L0/O/2A9jaf7QBvQkSJX
+IRLXKbzd15Wt23qehQIKRW1qR+MBLA==
+=iZtd
+-----END PGP SIGNATURE-----
+
+--YWhJI30ImLKzwekH92bgfUNNxAcGbEHrZ--
