@@ -1,32 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56040 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751107AbeEDNLN (ORCPT
+Received: from sauhun.de ([88.99.104.3]:37666 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751810AbeEFLY0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 09:11:13 -0400
-Date: Fri, 4 May 2018 15:11:09 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/3] arm64: dts: renesas: r8a7795: salvator-xs: enable
- USB2.0 channel 3
-Message-ID: <20180504131108.56fhjxwskmexaac5@verge.net.au>
-References: <1524810872-8442-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524810872-8442-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Sun, 6 May 2018 07:24:26 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: trivial@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 7/9] reiserfs: journal: fix typo 'can by' to 'can be'
+Date: Sun,  6 May 2018 13:23:51 +0200
+Message-Id: <20180506112404.24872-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
+References: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 03:34:29PM +0900, Yoshihiro Shimoda wrote:
-> This patch set is based on the renesas-devel-20180426-v4.17-rc2 tag
-> of renesas.git.
-> 
-> Yoshihiro Shimoda (3):
->   arm64: dts: renesas: r8a7795: salvator-xs: enable usb2_phy3 node
->   arm64: dts: renesas: r8a7795: salvator-xs: enable hsusb channel 3 node
->   arm64: dts: renesas: r8a7795: salvator-xs: enable USB2.0 host channel
->     3
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ fs/reiserfs/journal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, series applied.
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 23148c3ed67560..55704f57f78f82 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -968,7 +968,7 @@ static int reiserfs_async_progress_wait(struct super_block *s)
+  * if this journal list still has commit blocks unflushed, send them to disk.
+  *
+  * log areas must be flushed in order (transaction 2 can't commit before
+- * transaction 1) Before the commit block can by written, every other log
++ * transaction 1) Before the commit block can be written, every other log
+  * block must be safely on disk
+  */
+ static int flush_commit_list(struct super_block *s,
+-- 
+2.11.0
