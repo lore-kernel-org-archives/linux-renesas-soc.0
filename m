@@ -1,36 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54915 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932145AbeEHNfo (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:52442 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752486AbeEGNUC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 May 2018 09:35:44 -0400
-Date: Tue, 8 May 2018 15:35:40 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
+        Mon, 7 May 2018 09:20:02 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/2] ARM: dts: renesas: Correct mask for GIC PPI
- interrupts
-Message-ID: <20180508133540.rxzqxulzagmnz2kc@verge.net.au>
-References: <1525699193-5589-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525699193-5589-1-git-send-email-geert+renesas@glider.be>
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/2] ARM: dts: renesas: Correct mask for GIC PPI interrupts
+Date: Mon,  7 May 2018 15:19:51 +0200
+Message-Id: <1525699193-5589-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 07, 2018 at 03:19:51PM +0200, Geert Uytterhoeven wrote:
->         Hi Simon, Magnus,
-> 
-> R-Car H2 and R-Mobile APE6 contain four Cortex-A15 and four Cortex-A7
-> cores, hence the second interrupt specifier cell for Private Peripheral
-> Interrupts should use "GIC_CPU_MASK_SIMPLE(8)", to make sure interrupts
-> can be delivered to all 8 processor cores.
-> 
-> This brings the predecessors of R-Car Gen3 in line with what we're doing
-> on other big.LITTLE SoCs, like R-Car H3 and M3-W.
+        Hi Simon, Magnus,
 
-Thanks, applied.
+R-Car H2 and R-Mobile APE6 contain four Cortex-A15 and four Cortex-A7
+cores, hence the second interrupt specifier cell for Private Peripheral
+Interrupts should use "GIC_CPU_MASK_SIMPLE(8)", to make sure interrupts
+can be delivered to all 8 processor cores.
+
+This brings the predecessors of R-Car Gen3 in line with what we're doing
+on other big.LITTLE SoCs, like R-Car H3 and M3-W.
+
+Changes compared to v2:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Fast-forward by 3 years,
+  - Rebase.
+
+Changes compared to v1:
+  - Drop RFC status after receiving confirmation from Liviu Dudau.
+
+Thanks for applying!
+
+P.S. Feel free to take a ride on your unicorn, to test on a legendary
+     system that boots all 8 cores.
+
+Geert Uytterhoeven (2):
+  ARM: dts: r8a7790: Correct mask for GIC PPI interrupts
+  ARM: dts: r8a73a4: Correct mask for GIC PPI interrupts
+
+ arch/arm/boot/dts/r8a73a4.dtsi | 10 +++++-----
+ arch/arm/boot/dts/r8a7790.dtsi | 10 +++++-----
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
