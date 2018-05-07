@@ -1,38 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45508 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750859AbeEBHDp (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:34550 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752158AbeEGNT6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 03:03:45 -0400
-Date: Wed, 2 May 2018 09:03:26 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a77980: use SYSC power domain
- macros
-Message-ID: <20180502070326.h52wsmbexs4p3z44@verge.net.au>
-References: <ea6d3e8a-71a9-9998-f364-7dc82b97c2c0@cogentembedded.com>
- <df17ca8f-7942-3cdb-04d5-5d73e0259be5@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df17ca8f-7942-3cdb-04d5-5d73e0259be5@cogentembedded.com>
+        Mon, 7 May 2018 09:19:58 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 1/2] ARM: dts: r8a7790: Correct mask for GIC PPI interrupts
+Date: Mon,  7 May 2018 15:19:52 +0200
+Message-Id: <1525699193-5589-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525699193-5589-1-git-send-email-geert+renesas@glider.be>
+References: <1525699193-5589-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 01:45:21PM +0300, Sergei Shtylyov wrote:
-> Now that the commit 7755b40d07a8 ("dt-bindings: power: add R8A77980 SYSC
-> power domain definitions") has hit Linus' tree, we can replace  the bare
-> numbers (we had to use to avoid a cross tree dependency) with these macro
-> definitions...
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+R-Car H2 (r8a7790) contains four Cortex-A15 and four Cortex-A7 cores,
+hence the second interrupt specifier cell for Private Peripheral
+Interrupts should use "GIC_CPU_MASK_SIMPLE(8)", to make sure interrupts
+can be delivered to all 8 processor cores.
 
-Thanks, applied.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Rebase,
+
+v2:
+  - Drop RFC status after receiving confirmation from Liviu Dudau.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index b66a18af28f1659a..47a51cd71434e7d2 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1554,7 +1554,7 @@
+ 			interrupt-controller;
+ 			reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
+ 			      <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
+-			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+ 			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+@@ -1810,10 +1810,10 @@
+ 
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+-		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
+ 	/* External USB clock - can be overridden by the board */
+-- 
+2.7.4
