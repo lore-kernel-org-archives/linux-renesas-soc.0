@@ -1,139 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:50976 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeEHK5z (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:36764 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751794AbeEGNkI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 May 2018 06:57:55 -0400
-Date: Tue, 8 May 2018 11:57:32 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: maxime.ripard@bootlin.com, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 05/11] ARM: smp: Add initialization of CNTVOFF
-Message-ID: <20180508105732.GZ16141@n2100.armlinux.org.uk>
-References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
- <20180420211022.11759-6-mylene.josserand@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180420211022.11759-6-mylene.josserand@bootlin.com>
+        Mon, 7 May 2018 09:40:08 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ARM: dts: sh73a0: Add missing interrupt-affinity to PMU node
+Date: Mon,  7 May 2018 15:40:04 +0200
+Message-Id: <1525700405-7993-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525700405-7993-1-git-send-email-geert+renesas@glider.be>
+References: <1525700405-7993-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 20, 2018 at 11:10:16PM +0200, Myl�ne Josserand wrote:
-> The CNTVOFF register from arch timer is uninitialized.
-> It should be done by the bootloader but it is currently not the case,
-> even for boot CPU because this SoC is booting in secure mode.
-> It leads to an random offset value meaning that each CPU will have a
-> different time, which isn't working very well.
-> 
-> Add assembly code used for boot CPU and secondary CPU cores to make
-> sure that the CNTVOFF register is initialized. Because this code can
-> be used by different platforms, add this assembly file in ARM's common
-> folder.
-> 
-> Signed-off-by: Myl�ne Josserand <mylene.josserand@bootlin.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  arch/arm/common/Makefile              |  1 +
->  arch/arm/common/secure_cntvoff.S      | 31 +++++++++++++++++++++++++++++++
->  arch/arm/include/asm/secure_cntvoff.h |  8 ++++++++
->  3 files changed, 40 insertions(+)
->  create mode 100644 arch/arm/common/secure_cntvoff.S
->  create mode 100644 arch/arm/include/asm/secure_cntvoff.h
-> 
-> diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-> index 70b4a14ed993..1e9f7af8f70f 100644
-> --- a/arch/arm/common/Makefile
-> +++ b/arch/arm/common/Makefile
-> @@ -10,6 +10,7 @@ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
->  obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
->  obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
->  obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
-> +obj-$(CONFIG_SMP)		+= secure_cntvoff.o
->  obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
->  obj-$(CONFIG_MCPM)		+= mcpm_head.o mcpm_entry.o mcpm_platsmp.o vlock.o
->  CFLAGS_REMOVE_mcpm_entry.o	= -pg
-> diff --git a/arch/arm/common/secure_cntvoff.S b/arch/arm/common/secure_cntvoff.S
-> new file mode 100644
-> index 000000000000..68a4a8344319
-> --- /dev/null
-> +++ b/arch/arm/common/secure_cntvoff.S
-> @@ -0,0 +1,31 @@
-> +/* SPDX-License-Identifier: GPL-2.0
+The PMU node references two interrupts, but lacks the interrupt-affinity
+property, which is required in that case:
 
-For assembly files, the SPDX specifier is of this format:
+    hw perfevents: no interrupt-affinity property for /pmu, guessing.
 
-/* SPDX-License-Identifier: <SPDX License Expression> */
+Add the missing property to fix this.
 
-Please see Documentation/process/license-rules.rst for more
-information, and fix your specifier to conform to the requirements.
-Thanks.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/sh73a0.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> + *
-> + * Copyright (C) 2014 Renesas Electronics Corporation
-> + *
-> + * Initialization of CNTVOFF register from secure mode
-> + *
-> + */
-> +
-> +#include <linux/linkage.h>
-> +#include <asm/assembler.h>
-> +
-> +ENTRY(secure_cntvoff_init)
-> +	.arch	armv7-a
-> +	/*
-> +	 * CNTVOFF has to be initialized either from non-secure Hypervisor
-> +	 * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
-> +	 * then it should be handled by the secure code
-
-This should also state that this code must not be executed if
-virtualisation extensions are not present (which should be obvious)
-as the mcrr instruction becomes unpredictable in that case.
-
-> +	 */
-> +	cps	#MON_MODE
-> +	mrc	p15, 0, r1, c1, c1, 0		/* Get Secure Config */
-> +	orr	r0, r1, #1
-> +	mcr	p15, 0, r0, c1, c1, 0		/* Set Non Secure bit */
-> +	isb
-> +	mov	r0, #0
-> +	mcrr	p15, 4, r0, r0, c14		/* CNTVOFF = 0 */
-> +	isb
-> +	mcr	p15, 0, r1, c1, c1, 0		/* Set Secure bit */
-> +	isb
-> +	cps	#SVC_MODE
-> +	ret	lr
-> +ENDPROC(secure_cntvoff_init)
-> diff --git a/arch/arm/include/asm/secure_cntvoff.h b/arch/arm/include/asm/secure_cntvoff.h
-> new file mode 100644
-> index 000000000000..1f93aee1f630
-> --- /dev/null
-> +++ b/arch/arm/include/asm/secure_cntvoff.h
-> @@ -0,0 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-
-This one conforms.
-
-> +
-> +#ifndef __ASMARM_ARCH_CNTVOFF_H
-> +#define __ASMARM_ARCH_CNTVOFF_H
-> +
-> +extern void secure_cntvoff_init(void);
-> +
-> +#endif
-> -- 
-> 2.11.0
-> 
-
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index 2bcd6a276734c527..c8d45425c3393880 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -22,7 +22,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
+@@ -31,7 +31,7 @@
+ 			power-domains = <&pd_a2sl>;
+ 			next-level-cache = <&L2>;
+ 		};
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+@@ -96,6 +96,7 @@
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
+ 	};
+ 
+ 	cmt1: timer@e6138000 {
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+2.7.4
