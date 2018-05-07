@@ -1,72 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:43000 "EHLO mail.bootlin.com"
+Received: from sauhun.de ([88.99.104.3]:46764 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751891AbeEDTHD (ORCPT
+        id S1751948AbeEGM0T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 15:07:03 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: f.fainelli@gmail.com, opendmb@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v9 08/12] ARM: sun9i: smp: Rename clusters's power-off
-Date: Fri,  4 May 2018 21:05:41 +0200
-Message-Id: <20180504190545.5114-9-mylene.josserand@bootlin.com>
-In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+        Mon, 7 May 2018 08:26:19 -0400
+Date: Mon, 7 May 2018 14:26:16 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [v2] watchdog: renesas-wdt: Add support for the R8A77965 WDT
+Message-ID: <20180507122616.kobh5buuvw3nedw7@ninjato>
+References: <20180414101858.3208-1-wsa+renesas@sang-engineering.com>
+ <20180506055902.GA3711@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="owbllm5epiuhjoqk"
+Content-Disposition: inline
+In-Reply-To: <20180506055902.GA3711@roeck-us.net>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To prepare the support for sun8i-a83t, rename the macro that handles
-the power-off of clusters because it is different from sun9i-a80 to
-sun8i-a83t.
 
-The power off register for clusters are different from a80 and a83t.
+--owbllm5epiuhjoqk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/mach-sunxi/mc_smp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-index 727968d6a3e5..03f021d0c73e 100644
---- a/arch/arm/mach-sunxi/mc_smp.c
-+++ b/arch/arm/mach-sunxi/mc_smp.c
-@@ -60,7 +60,7 @@
- #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
- #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
- #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
--#define PRCM_PWROFF_GATING_REG_CLUSTER	BIT(4)
-+#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
- #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
- #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
- #define PRCM_CPU_SOFT_ENTRY_REG		0x164
-@@ -255,7 +255,7 @@ static int sunxi_cluster_powerup(unsigned int cluster)
- 
- 	/* clear cluster power gate */
- 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
--	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER;
-+	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
- 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
- 	udelay(20);
- 
-@@ -452,7 +452,7 @@ static int sunxi_cluster_powerdown(unsigned int cluster)
- 	/* gate cluster power */
- 	pr_debug("%s: gate cluster power\n", __func__);
- 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
--	reg |= PRCM_PWROFF_GATING_REG_CLUSTER;
-+	reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
- 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
- 	udelay(20);
- 
--- 
-2.11.0
+> Unfortunately this patch isn't based on anything recognized by git,
+> and even though it is simple I can't get it to apply. Can someone please
+> rebase it to mainline and resend ?
+
+Will do. Sorry, it seems like not all of the Gen2 Watchdog support
+patches did make it upstream this cycle like I assumed.
+
+
+--owbllm5epiuhjoqk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrwReQACgkQFA3kzBSg
+KbY7SA/2NUnlefsMXPf7ptolF+P9dfUufvytY18qS5GrzonwTJgJnGw/ILYYoLcq
+1Usg9UOsV2B/JAoCpvAJCgLE4Fxcc7s/iYdKEei7XPjiH/ZPPk21DOzCs0nshnBd
+QL6pgJzuWI7vPaqdgT0vcBZfZDnVxY7pGNnGhbK83ta8y1i10Ghn02IyvfJ4dHDY
+EsdlUTKBQf/QaW0JdxYJ/fwU8hE2MVmHcEUan8lCeN7MKakqRynWLyU6kMe2mVz9
+AUu9y6RJdwZUdcdAXtQGE8jSH+BG6MoX7mrHhyLbTgLjz7IjCdZ2/jRUaDbTUPNP
+NO6utzKFrVzeNgjrHj/J9gHYR/kqFSMsAeS8u0YBkoI3F0mlr44b6UUIEKiZbMyc
+krtz5QIoVD5hPEBJVMqJ4y/AlUnkEkAEc/OfGt7hxOkHksIb2wE/4D5mBwFZOvtR
+z0m2qlQz0gbz3sx0NQa6gLJFxr6gUzFXb4xqUp+VUu7OjORC+V6drMCfiwU5leqJ
+nJQsORrqSNFLn/uTvnsgaS9YNVKhLhUq0uD8c69mgKn4jBYGbCKkwpFvo274SfpN
+M6ZOYHfLKehUA7d0Dvd9bGxNPYG/atNV3eFaUxLIkB8VbFcH8FzjEuocL2RkcrNv
+ZnKW7KyG6MLcn05fN6UXWjpFRQizNMPhC6rUMAA9nzOmba7bFQ==
+=Ihyy
+-----END PGP SIGNATURE-----
+
+--owbllm5epiuhjoqk--
