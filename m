@@ -1,46 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48194 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751702AbeEBJ6R (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:36878 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752396AbeEGN5J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 05:58:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] Revert "cpufreq: rcar: Add support for R8A7795 SoC"
-Date: Wed,  2 May 2018 11:58:06 +0200
-Message-Id: <20180502095806.30341-3-horms+renesas@verge.net.au>
-In-Reply-To: <20180502095806.30341-1-horms+renesas@verge.net.au>
-References: <20180502095806.30341-1-horms+renesas@verge.net.au>
+        Mon, 7 May 2018 09:57:09 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/8] ARM: dts: r8a7793: Add PMU device node
+Date: Mon,  7 May 2018 15:57:04 +0200
+Message-Id: <1525701427-12914-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
+References: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This reverts commit 034def597bb73cbf29ffade7d8aec8408af8c743.
+Enable support for the ARM Performance Monitor Units in the Cortex-A15
+CPU cores on R-Car M2-N by adding a device node for the PMU.
 
-This is no longer needed since the flowing commit and to the best
-of my knowledge is not relied on by any upstream DTS:
-edeec420de24 ("cpufreq: dt-platdev: Automatically create cpufreq device with OPP v2")
+New Linux output:
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+    hw perfevents: enabled with armv7_cortex_a15 PMU driver, 7 counters available
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 206ae7460f4a..c2165edadd41 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -66,7 +66,6 @@ static const struct of_device_id whitelist[] __initconst = {
- 	{ .compatible = "renesas,r8a7792", },
- 	{ .compatible = "renesas,r8a7793", },
- 	{ .compatible = "renesas,r8a7794", },
--	{ .compatible = "renesas,r8a7795", },
- 	{ .compatible = "renesas,sh73a0", },
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 2fa052200495caef..4abecfc0ca98c483 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -110,6 +110,13 @@
+ 		clock-frequency = <0>;
+ 	};
  
- 	{ .compatible = "rockchip,rk2928", },
++	pmu {
++		compatible = "arm,cortex-a15-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
++	};
++
+ 	/* External SCIF clock */
+ 	scif_clk: scif {
+ 		compatible = "fixed-clock";
 -- 
-2.11.0
+2.7.4
