@@ -1,40 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay12.mail.gandi.net ([217.70.178.232]:33521 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752984AbeEKKBV (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:52444 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752487AbeEGNUC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 06:01:21 -0400
-From: Jacopo Mondi <jacopo@jmondi.org>
-To: niklas.soderlund@ragnatech.se
-Cc: Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5/5] convert: Accept destination format as parameter
-Date: Fri, 11 May 2018 12:00:39 +0200
-Message-Id: <1526032839-14536-6-git-send-email-jacopo@jmondi.org>
-In-Reply-To: <1526032839-14536-1-git-send-email-jacopo@jmondi.org>
-References: <1526032839-14536-1-git-send-email-jacopo@jmondi.org>
+        Mon, 7 May 2018 09:20:02 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 2/2] ARM: dts: r8a73a4: Correct mask for GIC PPI interrupts
+Date: Mon,  7 May 2018 15:19:53 +0200
+Message-Id: <1525699193-5589-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525699193-5589-1-git-send-email-geert+renesas@glider.be>
+References: <1525699193-5589-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Accept the destination image format as thrid parameter of the convert
-function.
+R-Mobile APE6 (r8a73a4) contains four Cortex-A15 and four Cortex-A7
+cores, hence the second interrupt specifier cell for Private Peripheral
+Interrupts should use "GIC_CPU_MASK_SIMPLE(8)", so GIC interrupts are
+delivered to all 8 processor cores.
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- convert.sh | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v3:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Rebased,
 
-diff --git a/convert.sh b/convert.sh
-index 4059868..878ac63 100755
---- a/convert.sh
-+++ b/convert.sh
-@@ -2,6 +2,7 @@
+v2:
+  - Drop RFC status after receiving confirmation from Liviu Dudau.
+---
+ arch/arm/boot/dts/r8a73a4.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index 8e48090e4fdc1412..080d037f5733a8c3 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -57,10 +57,10 @@
  
- F=$(dirname $1)/$(basename $1 .bin)
- FRAME_SIZE=${2:-1280x720}
-+FORMAT=${3:-RGB565}
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+-		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+-			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+-			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+-			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
  
--raw2rgbpnm -f RGB565 -s $FRAME_SIZE $F.bin $F.pnm
-+raw2rgbpnm -f $FORMAT -s $FRAME_SIZE $F.bin $F.pnm
- convert $F.pnm $F.png
+ 	dbsc1: memory-controller@e6790000 {
+@@ -464,7 +464,7 @@
+ 			<0 0xf1002000 0 0x2000>,
+ 			<0 0xf1004000 0 0x2000>,
+ 			<0 0xf1006000 0 0x2000>;
+-		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		clocks = <&mstp4_clks R8A73A4_CLK_INTC_SYS>;
+ 		clock-names = "clk";
+ 		power-domains = <&pd_c4>;
 -- 
 2.7.4
