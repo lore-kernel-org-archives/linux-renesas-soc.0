@@ -1,40 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:37616 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751572AbeEFLYQ (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:37882 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752256AbeEGNkJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 May 2018 07:24:16 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: trivial@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] base: core: fix typo 'can by' to 'can be'
-Date: Sun,  6 May 2018 13:23:47 +0200
-Message-Id: <20180506112404.24872-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
-References: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
+        Mon, 7 May 2018 09:40:09 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] ARM: dts: emev2: Add missing interrupt-affinity to PMU node
+Date: Mon,  7 May 2018 15:40:05 +0200
+Message-Id: <1525700405-7993-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525700405-7993-1-git-send-email-geert+renesas@glider.be>
+References: <1525700405-7993-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/base/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The PMU node references two interrupts, but lacks the interrupt-affinity
+property, which is required in that case:
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index b610816eb887f9..4993bd8dfc52c5 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2684,7 +2684,7 @@ static int device_move_class_links(struct device *dev,
- /**
-  * device_move - moves a device to a new parent
-  * @dev: the pointer to the struct device to be moved
-- * @new_parent: the new parent of the device (can by NULL)
-+ * @new_parent: the new parent of the device (can be NULL)
-  * @dpm_order: how to reorder the dpm_list
-  */
- int device_move(struct device *dev, struct device *new_parent,
+    hw perfevents: no interrupt-affinity property for /pmu, guessing.
+
+Add the missing property to fix this.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/emev2.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
+index 42ea246e71cb4e20..fec1241b858ff96f 100644
+--- a/arch/arm/boot/dts/emev2.dtsi
++++ b/arch/arm/boot/dts/emev2.dtsi
+@@ -31,13 +31,13 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0>;
+ 			clock-frequency = <533000000>;
+ 		};
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+@@ -57,6 +57,7 @@
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
+ 	};
+ 
+ 	clocks@e0110000 {
 -- 
-2.11.0
+2.7.4
