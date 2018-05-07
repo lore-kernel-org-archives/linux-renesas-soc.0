@@ -1,43 +1,48 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f171.google.com ([74.125.82.171]:38248 "EHLO
-        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755271AbeEHQDH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 May 2018 12:03:07 -0400
-Received: by mail-ot0-f171.google.com with SMTP id n3-v6so377811ota.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 May 2018 09:03:07 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <14824305.yKoR7O8rpT@avalon>
-References: <1521125144-28614-1-git-send-email-ulrich.hecht+renesas@gmail.com> <14824305.yKoR7O8rpT@avalon>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Date: Tue, 8 May 2018 18:03:05 +0200
-Message-ID: <CAO3366zOFVyNsu2vmzfOsgtBuUYfb1gv9kjJgfwTU8Xw=xagxg@mail.gmail.com>
-Subject: Re: [PATCH igt 0/8] Non-Intel test suite fixes
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: intel-gfx@lists.freedesktop.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/8] ARM: dts: r8a7791: Add PMU device node
+Date: Mon,  7 May 2018 15:57:02 +0200
+Message-Id: <1525701427-12914-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
+References: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 6:03 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> Hi Ulrich,
->
-> On Thursday, 15 March 2018 16:45:36 EEST Ulrich Hecht wrote:
->> Hi!
->>
->> I have run the tests on a Renesas R-Car M3-W's DU device, and have found a
->> number of false negatives that mostly stem from use of Intel-specifics
->> without checking if that makes sense first. So here's a bunch of fixes for
->> those, hope they are generic enough for upstreaming.
->
-> I'm looking for instructions on how to compile and use igt on elinux.org but
-> can't find them. Could you please point me to the relevant page ?
+Enable support for the ARM Performance Monitor Units in the Cortex-A15
+CPU cores on R-Car M2-W by adding a device node for the PMU.
 
-Here's a wikified version of what I have sent to our QA people:
+New Linux output:
 
-https://elinux.org/R-Car/Tests:igt
+    hw perfevents: enabled with armv7_cortex_a15 PMU driver, 7 counters available
 
-CU
-Uli
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 58f694eb411b0e3d..6e1dd7ad7bd647e7 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -126,6 +126,13 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a15-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
++	};
++
+ 	/* External SCIF clock */
+ 	scif_clk: scif {
+ 		compatible = "fixed-clock";
+-- 
+2.7.4
+
