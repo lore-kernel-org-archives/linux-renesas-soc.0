@@ -1,48 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-he1eur01on0090.outbound.protection.outlook.com ([104.47.0.90]:36556
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753447AbeEPKQk (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45950 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752007AbeEGNYy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 May 2018 06:16:40 -0400
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v3 22/26] drm/rcar-du: lvds: provide an owner .odev device for the bridge
-Date: Wed, 16 May 2018 12:15:06 +0200
-Message-Id: <20180516101510.13215-23-peda@axentia.se>
-In-Reply-To: <20180516101510.13215-1-peda@axentia.se>
-References: <20180516101510.13215-1-peda@axentia.se>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 7 May 2018 09:24:54 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] ARM: dts: r7s72100: Correct RTC interrupt types
+Date: Mon,  7 May 2018 15:24:49 +0200
+Message-Id: <1525699489-6172-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525699489-6172-1-git-send-email-geert+renesas@glider.be>
+References: <1525699489-6172-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The .of_node member is going away.
+According to table 7.3 ("List of Interrupt IDs") in the RZ/A1H Hardware
+User's Manual rev. 3.00, the realtime clock interrupts are level not
+edge interrupts.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r7s72100.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 3d2d3bbd1342..efda02f55c95 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -463,9 +463,9 @@ static int rcar_lvds_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
-+	lvds->bridge.odev = &pdev->dev;
- 	lvds->bridge.driver_private = lvds;
- 	lvds->bridge.funcs = &rcar_lvds_bridge_ops;
--	lvds->bridge.of_node = pdev->dev.of_node;
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	lvds->mmio = devm_ioremap_resource(&pdev->dev, mem);
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index c7b3dca6d81cc3f9..eb2e6f95a2e85862 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -682,9 +682,9 @@
+ 		rtc: rtc@fcff1000 {
+ 			compatible = "renesas,r7s72100-rtc", "renesas,sh-rtc";
+ 			reg = <0xfcff1000 0x2e>;
+-			interrupts = <GIC_SPI 276 IRQ_TYPE_EDGE_RISING
+-				      GIC_SPI 277 IRQ_TYPE_EDGE_RISING
+-				      GIC_SPI 278 IRQ_TYPE_EDGE_RISING>;
++			interrupts = <GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "alarm", "period", "carry";
+ 			clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
+ 				 <&rtc_x3_clk>, <&extal_clk>;
 -- 
-2.11.0
+2.7.4
