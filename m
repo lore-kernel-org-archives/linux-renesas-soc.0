@@ -1,55 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34691 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeEKUXa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 16:23:30 -0400
-Received: by mail-lf0-f67.google.com with SMTP id r25-v6so9648672lfd.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 May 2018 13:23:29 -0700 (PDT)
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a77980: disable EtherAVB
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <5844eef7-0f5e-6366-4d3d-a3a658e7f988@cogentembedded.com>
-Message-ID: <8924a536-9f97-da8a-fd6f-bb53f433d55d@cogentembedded.com>
-Date: Fri, 11 May 2018 23:23:26 +0300
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v9 06/12] ARM: smp: Add initialization of CNTVOFF
+To: =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
+        linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: f.fainelli@gmail.com, opendmb@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+ <20180504190545.5114-7-mylene.josserand@bootlin.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <0a377a75-d99c-b00c-ec96-bf5a7daf721a@arm.com>
+Date: Tue, 8 May 2018 09:06:26 +0100
 MIME-Version: 1.0
-In-Reply-To: <5844eef7-0f5e-6366-4d3d-a3a658e7f988@cogentembedded.com>
+In-Reply-To: <20180504190545.5114-7-mylene.josserand@bootlin.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When adding the R8A77980 EtherAVB device I failed to notice that it does
-not have the usual "status" property disabling the described devices in
-anticipation that the board device trees enable the devices according to
-their needs. This causes the EtherAVB driver to successfully probe despite
-e.g. the needed pins not having been configured -- luckily, "eth<n>" device
-can't be opened anyway...
+On 04/05/18 20:05, Mylène Josserand wrote:
+> The CNTVOFF register from arch timer is uninitialized.
+> It should be done by the bootloader but it is currently not the case,
+> even for boot CPU because this SoC is booting in secure mode.
+> It leads to an random offset value meaning that each CPU will have a
+> different time, which isn't working very well.
+> 
+> Add assembly code used for boot CPU and secondary CPU cores to make
+> sure that the CNTVOFF register is initialized. Because this code can
+> be used by different platforms, add this assembly file in ARM's common
+> folder.
+> 
+> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: bf6f90832f81 ("arm64: dts: renesas: r8a77980: add EtherAVB support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |    1 +
- 1 file changed, 1 insertion(+)
-
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -244,6 +244,7 @@
- 			phy-mode = "rgmii";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
- 		scif0: serial@e6e60000 {
+	M.
+-- 
+Jazz is not dead. It just smells funny...
