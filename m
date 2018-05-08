@@ -1,49 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:45562 "EHLO foss.arm.com"
+Received: from foss.arm.com ([217.140.101.70]:56670 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751920AbeEAKx2 (ORCPT
+        id S1752777AbeEHLXW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 06:53:28 -0400
-Date: Tue, 1 May 2018 11:53:21 +0100
+        Tue, 8 May 2018 07:23:22 -0400
+Date: Tue, 8 May 2018 12:23:15 +0100
 From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Marek Vasut <marek.vasut@gmail.com>, linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V3] PCI: rcar: Clean up the macros
-Message-ID: <20180501105321.GA19391@e107981-ln.cambridge.arm.com>
-References: <20180408180431.17323-1-marek.vasut+renesas@gmail.com>
- <20180501055319.irtspgcupxac32bd@verge.net.au>
+Subject: Re: [PATCH] PCI: rcar: Reuse generic
+ pci_parse_request_of_pci_ranges() function
+Message-ID: <20180508112315.GA9920@e107981-ln.cambridge.arm.com>
+References: <1524669685-8265-1-git-send-email-vladimir_zapolskiy@mentor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180501055319.irtspgcupxac32bd@verge.net.au>
+In-Reply-To: <1524669685-8265-1-git-send-email-vladimir_zapolskiy@mentor.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 01, 2018 at 07:53:19AM +0200, Simon Horman wrote:
-> On Sun, Apr 08, 2018 at 08:04:31PM +0200, Marek Vasut wrote:
-> > This patch replaces the (1 << n) with BIT(n) and cleans up whitespace,
-> > no functional change.
-> > 
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> > Cc: Simon Horman <horms+renesas@verge.net.au>
-> > Cc: Wolfram Sang <wsa@the-dreams.de>
-> > Cc: linux-renesas-soc@vger.kernel.org
-> > Reviewed-by: Niklas S??derlund <niklas.soderlund+renesas@ragnatech.se>
+On Wed, Apr 25, 2018 at 06:21:25PM +0300, Vladimir Zapolskiy wrote:
+> The non-functional change removes a custom function to parse and
+> allocate PCI resources in favour of pci_parse_request_of_pci_ranges().
 > 
-> Marek, thanks for your patch.
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> ---
+>  drivers/pci/host/pcie-rcar.c | 42 +-----------------------------------------
+>  1 file changed, 1 insertion(+), 41 deletions(-)
 > 
-> Lorenzo, this seems pretty well baked.
-> Could you consider applying it?
-> 
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index 6ab28f29ac6a..66863b587380 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -1063,44 +1063,6 @@ static const struct of_device_id rcar_pcie_of_match[] = {
+>  	{},
+>  };
 
 Applied to pci/rcar for v4.18, thanks.
 
 Lorenzo
+
+> -static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
+> -{
+> -	int err;
+> -	struct device *dev = pci->dev;
+> -	struct device_node *np = dev->of_node;
+> -	resource_size_t iobase;
+> -	struct resource_entry *win, *tmp;
+> -
+> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources,
+> -					       &iobase);
+> -	if (err)
+> -		return err;
+> -
+> -	err = devm_request_pci_bus_resources(dev, &pci->resources);
+> -	if (err)
+> -		goto out_release_res;
+> -
+> -	resource_list_for_each_entry_safe(win, tmp, &pci->resources) {
+> -		struct resource *res = win->res;
+> -
+> -		if (resource_type(res) == IORESOURCE_IO) {
+> -			err = pci_remap_iospace(res, iobase);
+> -			if (err) {
+> -				dev_warn(dev, "error %d: failed to map resource %pR\n",
+> -					 err, res);
+> -
+> -				resource_list_destroy_entry(win);
+> -			}
+> -		}
+> -	}
+> -
+> -	return 0;
+> -
+> -out_release_res:
+> -	pci_free_resource_list(&pci->resources);
+> -	return err;
+> -}
+> -
+>  static int rcar_pcie_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1118,9 +1080,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  
+>  	pcie->dev = dev;
+>  
+> -	INIT_LIST_HEAD(&pcie->resources);
+> -
+> -	err = rcar_pcie_parse_request_of_pci_ranges(pcie);
+> +	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
+>  	if (err)
+>  		goto err_free_bridge;
+>  
+> -- 
+> 2.8.1
+> 
