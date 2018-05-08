@@ -1,68 +1,86 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:52444 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752487AbeEGNUC (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 May 2018 09:20:02 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Liviu Dudau <liviu.dudau@arm.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/2] ARM: dts: r8a73a4: Correct mask for GIC PPI interrupts
-Date: Mon,  7 May 2018 15:19:53 +0200
-Message-Id: <1525699193-5589-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1525699193-5589-1-git-send-email-geert+renesas@glider.be>
-References: <1525699193-5589-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 8 May 2018 13:42:00 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: maxime.ripard@bootlin.com, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com, f.fainelli@gmail.com,
+        opendmb@gmail.com, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, clabbe.montjoie@gmail.com,
+        quentin.schulz@bootlin.com, thomas.petazzoni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 01/12] ARM: Allow this header to be included by
+ assembly files
+Message-ID: <20180508124200.GM16141@n2100.armlinux.org.uk>
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+ <20180504190545.5114-2-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180504190545.5114-2-mylene.josserand@bootlin.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Mobile APE6 (r8a73a4) contains four Cortex-A15 and four Cortex-A7
-cores, hence the second interrupt specifier cell for Private Peripheral
-Interrupts should use "GIC_CPU_MASK_SIMPLE(8)", so GIC interrupts are
-delivered to all 8 processor cores.
+On Fri, May 04, 2018 at 09:05:34PM +0200, Myl�ne Josserand wrote:
+> From: Doug Berger <opendmb@gmail.com>
+> 
+> The constants defined in this file are equally useful in assembly and C
+> source files. The arm64 architecture version of this file allows
+> inclusion in both assembly and C source files, so this this commit adds
+> that capability to the arm architecture version so that the constants
+> don't need to be defined in multiple places.
+> 
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Myl�ne Josserand <mylene.josserand@bootlin.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Rebased,
+Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
 
-v2:
-  - Drop RFC status after receiving confirmation from Liviu Dudau.
----
- arch/arm/boot/dts/r8a73a4.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Thanks.
 
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 8e48090e4fdc1412..080d037f5733a8c3 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -57,10 +57,10 @@
- 
- 	timer {
- 		compatible = "arm,armv7-timer";
--		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
- 	dbsc1: memory-controller@e6790000 {
-@@ -464,7 +464,7 @@
- 			<0 0xf1002000 0 0x2000>,
- 			<0 0xf1004000 0 0x2000>,
- 			<0 0xf1006000 0 0x2000>;
--		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 		clocks = <&mstp4_clks R8A73A4_CLK_INTC_SYS>;
- 		clock-names = "clk";
- 		power-domains = <&pd_c4>;
+> ---
+>  arch/arm/include/asm/cputype.h | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/cputype.h b/arch/arm/include/asm/cputype.h
+> index cb546425da8a..e7632f536633 100644
+> --- a/arch/arm/include/asm/cputype.h
+> +++ b/arch/arm/include/asm/cputype.h
+> @@ -2,9 +2,6 @@
+>  #ifndef __ASM_ARM_CPUTYPE_H
+>  #define __ASM_ARM_CPUTYPE_H
+>  
+> -#include <linux/stringify.h>
+> -#include <linux/kernel.h>
+> -
+>  #define CPUID_ID	0
+>  #define CPUID_CACHETYPE	1
+>  #define CPUID_TCM	2
+> @@ -98,6 +95,11 @@
+>  /* Qualcomm implemented cores */
+>  #define ARM_CPU_PART_SCORPION		0x510002d0
+>  
+> +#ifndef __ASSEMBLY__
+> +
+> +#include <linux/stringify.h>
+> +#include <linux/kernel.h>
+> +
+>  extern unsigned int processor_id;
+>  
+>  #ifdef CONFIG_CPU_CP15
+> @@ -326,4 +328,6 @@ static inline int __attribute_const__ cpuid_feature_extract_field(u32 features,
+>  #define cpuid_feature_extract(reg, field) \
+>  	cpuid_feature_extract_field(read_cpuid_ext(reg), field)
+>  
+> +#endif /* __ASSEMBLY__ */
+> +
+>  #endif
+> -- 
+> 2.11.0
+> 
+
 -- 
-2.7.4
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
