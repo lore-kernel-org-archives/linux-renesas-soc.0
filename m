@@ -1,13 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42416 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754232AbeEHJDX (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:33436 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752214AbeEHGgV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 May 2018 05:03:23 -0400
+        Tue, 8 May 2018 02:36:21 -0400
 Subject: Re: [PATCH v2 26/26] drm/bridge: establish a link between the
  bridge supplier and consumer
-To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Cc: Archit Taneja <architt@codeaurora.org>,
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         David Airlie <airlied@linux.ie>,
         Peter Senna Tschudin <peter.senna@collabora.com>,
@@ -35,13 +35,12 @@ Cc: Archit Taneja <architt@codeaurora.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
-        Daniel Vetter <daniel@ffwll.ch>
+        linux-rockchip@lists.infradead.org, Jyri Sarha <jsarha@ti.com>
 From: Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <4284b38f-2c1e-1abd-8a0f-b3b6c90ceeed@samsung.com>
-Date: Tue, 8 May 2018 11:03:14 +0200
+Message-ID: <c0835e31-cdfe-e398-5991-f25a556e6e09@samsung.com>
+Date: Tue, 8 May 2018 08:36:12 +0200
 MIME-Version: 1.0
-In-Reply-To: <9751c1c5-f2fa-f24e-64f3-71019f253332@axentia.se>
+In-Reply-To: <20180507135341.GI12521@phenom.ffwll.local>
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Content-Type: text/plain; charset="utf-8"
@@ -49,12 +48,12 @@ References: <20180504135212.26977-1-peda@axentia.se>
         <CGME20180504135358epcas3p2bd9c2f5c9a8295152f2c96fdbb2ea8b1@epcas3p2.samsung.com>
         <20180504135212.26977-27-peda@axentia.se>
         <4cdcd215-8caf-e045-a478-f438f128c9f2@samsung.com>
-        <9751c1c5-f2fa-f24e-64f3-71019f253332@axentia.se>
+        <20180507135341.GI12521@phenom.ffwll.local>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07.05.2018 15:43, Peter Rosin wrote:
-> On 2018-05-07 14:59, Andrzej Hajda wrote:
+On 07.05.2018 15:53, Daniel Vetter wrote:
+> On Mon, May 07, 2018 at 02:59:45PM +0200, Andrzej Hajda wrote:
 >> On 04.05.2018 15:52, Peter Rosin wrote:
 >>> If the bridge supplier is unbound, this will bring the bridge consumer
 >>> down along with the bridge. Thus, there will no longer linger any
@@ -62,57 +61,52 @@ On 07.05.2018 15:43, Peter Rosin wrote:
 >>> non-existent bridge supplier.
 >> I understand rationales behind this patch, but it is another step into
 >> making drm_dev one big driver with subcomponents, where drm will work
->> only if every subcomponent is working/loaded.
-> The step is very small IMHO. Just a device-link, which is very easy to
-> remove once whatever other solution is ready.
->
->>                                               Do we need to go this way?
-> If the drivers expect the parts to be there, and there is no other safety
-> net in place if they are not, what is the (short-term) alternative?
->
+>> only if every subcomponent is working/loaded. Do we need to go this way?
 >> In case of many platforms such approach results in display turned on
 >> very late on boot for example due to late initialization of some
 >> regulator exposed by some i2c device, which is used by hdmi bridge. And
 >> this hdmi bridge is just to provide alternative(rarely used) display
 >> path, the main display path would work anyway.
-> This patch does not contribute to any late init and any such delay is not
-> affected by this. At all.
->
+>>
 >> So the main question to drm maintainers is about evolution of bridges,
 >> if drm_bridges should become mandatory components of drm device or they
 >> could be added/removed dynamically?
-> That is a much bigger question than this patch/series. Conflating the
-> two is not fair IMHO. You could run this very same argument for every
-> driver that gets added, since any additional driver will just make it
-> harder to make everything dynamic. Should we stop development right
-> away?
->
-> Besides, as long as the drm devices are in fact acting as big static
-> drivers (built from smaller parts), 
+> This is already the case. You currently cannot hotplug a drm_bridge,
+> everything must be present.
 
-not true
+Are you sure? DRM core is changing quite fast, so maybe I have missed
+something, but AFAIK core calls bridge code only if full display
+pipeline is created and connector is in connected state.
+So adding and removing bridges from inactive pipelines should work if
+coded properly.
 
-> this should be considered a bug-fix
-> that will prevent dereference of stale pointers.
->
-> Or will some other solution appear and magically make all bridges and
-> drm drivers capable of dynamic reconfiguration in the next few weeks?
-> Yeah, right...
+>  I don't think it makes sense to change that
+> until we have physically hotpluggable drm_bridges in real hardware.
 
-You are not changing single driver, you are changing framework and it
-affects all the drivers using it, being more cautious about such patches
-seems quite natural.
+But kernel core already assumes that device drivers are hot-pluggable
+:), even this patch is created to solve issues regarding driver hot
+unplugging.
 
-Anyway, I have realized that since drm_bridge_detach will remove the
-link, so with properly written dynamic bridge removal, your patch should
-not be a blocker.
+>  I
+> definitely don't want to refcount stuff to work around driver load
+> bonghits on DT platforms, because refcounting is way too hard to get right
+> :-)
+
+I am not sure about bridges, but I have successfully (IMO) experimented
+with hot (un)plugging panel driver, see panel-samsung-s6e8aa0.c driver
+and exynos_drm_dsi.c, panel driver can be safely
+plugged/unplugged/replugged without any refcounting (but with help of
+mipi_dsi attach/detach callbacks, which are not available for
+non-mipi-dsi drivers).
 
 Regards
 Andrzej
 
 >
-> Cheers,
-> Peter
+> Afaik there's out-of-tree patches to solve 99% of the driver load fun on
+> DT platforms, but because it's not a 100% solution it's blocked since
+> forever.
+> -Daniel
 >
 >> Regards
 >> Andrzej
@@ -194,6 +188,3 @@ Andrzej
 >>>  	const struct drm_bridge_funcs *funcs;
 >>>  	void *driver_private;
 >>
->
->
->
