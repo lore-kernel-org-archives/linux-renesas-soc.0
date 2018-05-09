@@ -1,65 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:58920 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935391AbeEIPX1 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 May 2018 11:23:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 9 May 2018 21:12:39 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] arm64: dts: renesas: r8a77970: Add SMP Support
-Date: Wed,  9 May 2018 17:23:21 +0200
-Message-Id: <1525879403-12207-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/8] ARM: dts: renesas: Add PMU device nodes
+Message-ID: <20180509191238.rmcmq6ls3bmosxjb@verge.net.au>
+References: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525701427-12914-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-        Hi Simon, Magnus,
+On Mon, May 07, 2018 at 03:56:59PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series enables support for the ARM Performance Monitor Units
+> in Cortex-A7, Cortex-A9, and Cortex-A15 CPU cores on Renesas RZ/A1,
+> R-Car Gen2, and RZ/G1 SoCs.  This allows for better performance analysis
+> using the "perf" tool.
+> 
+> Sample output of "perf stat echo" on r8a7791/koelsch:
+> 
+>   - Before:
+> 
+>      Performance counter stats for 'echo':
+> 
+> 	      2,636300      task-clock (msec)         #    0,265 CPUs utilized
+> 		     8      context-switches          #    0,003 M/sec
+> 		     0      cpu-migrations            #    0,000 K/sec
+> 		    43      page-faults               #    0,016 M/sec
+>        <not supported>      cycles
+>        <not supported>      stalled-cycles-frontend
+>        <not supported>      stalled-cycles-backend
+>        <not supported>      instructions
+>        <not supported>      branches
+>        <not supported>      branch-misses
+> 
+> 	   0,009960300 seconds time elapsed
+> 
+>   - After:
+> 
+>      Performance counter stats for 'echo':
+> 
+> 	      2,455400      task-clock (msec)         #    0,273 CPUs utilized
+> 		     3      context-switches          #    0,001 M/sec
+> 		     0      cpu-migrations            #    0,000 K/sec
+> 		    45      page-faults               #    0,018 M/sec
+> 	     3.556.784      cycles                    #    1,449 GHz
+>        <not supported>      stalled-cycles-frontend
+>        <not supported>      stalled-cycles-backend
+> 	     1.350.480      instructions              #    0,38  insns per cycle
+> 	       335.542      branches                  #  136,655 M/sec
+> 		18.075      branch-misses             #    5,39% of all branches
+> 
+> 	   0,008987900 seconds time elapsed
+> 
+> Still missing:
+>   - R-Mobile APE6 (no PMU interrupt documented),
+>   - R-Car M1A and H1 (the PMU interrupt seems to be routed to the legacy
+>     SH INTC only?),
+>   - RZ/G1C (SMP support not yet upstream).
+> 
+> This has been tested on r8a7791/koelsch, and boot-tested on
+> r7s72100/genmai, r8a7790/lager, r8a7792/blanche, and r8a7794/silk.
 
-This patch series enables SMP support on the R-Car V3M SoC, by adding
-the second Cortex-A53 CPU core.  It also adds the performance monitor
-unit, and links it to both CPU cores.
-
-Changes compared to v1:
-  - Adjust GIC_CPU_MASK_SIMPLE(),
-  - Use symbolic core clock and power domain indices,
-  - Move the pmu node from the soc subnode to the root node, as it
-    doesn't have registers.
-
-Note that the PSCI implementation on Eagle may be a preliminary version
-with some familiar quirks:
-  - SMP bringup works, and both CPUs can be used,
-  - Offlining CPU0 crashes the system,
-  - CPU1 can be offlined, but trying to bring it online again crashes
-    the system, too.
-
-I'm confident these will be fixed in future firmware versions, just like
-on H3/Salvator-X.  Note that
-git@github.com:renesas-rcar/arm-trusted-firmware.git does not have
-support for R-Car V3M, V3H, and D3.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  arm64: dts: renesas: r8a77970: Add secondary CA53 CPU core
-  arm64: dts: renesas: r8a77970: Add Cortex-A53 PMU node
-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks, applied.
