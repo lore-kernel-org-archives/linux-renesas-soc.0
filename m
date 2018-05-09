@@ -1,82 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:35689 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeEROlv (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:16719 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751052AbeEIMLc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 10:41:51 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 6/9] media: rcar-vin: Link parallel input media entities
-Date: Fri, 18 May 2018 16:40:42 +0200
-Message-Id: <1526654445-10702-7-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526654445-10702-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526654445-10702-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 9 May 2018 08:11:32 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Hoan Tran <hotran@apm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Date: Wed, 9 May 2018 12:11:27 +0000
+Message-ID: <TY1PR01MB1769D461E888BA9F9537678EF5990@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+ <CAHp75Vc3qBOYjUAgxZCkpXAdg=ueM2KApPynPdpkEmOoMR7sQQ@mail.gmail.com>
+In-Reply-To: <CAHp75Vc3qBOYjUAgxZCkpXAdg=ueM2KApPynPdpkEmOoMR7sQQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When running with media-controller link the parallel input
-media entities with the VIN entities at 'complete' callback time.
-
-To create media links the v4l2_device should be registered first.
-Check if the device is already registered, to avoid double registrations.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 745e8ee..d13bbcf 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -478,6 +478,8 @@ static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
- static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
- {
- 	struct rvin_dev *vin = notifier_to_vin(notifier);
-+	struct media_entity *source;
-+	struct media_entity *sink;
- 	int ret;
- 
- 	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
-@@ -486,7 +488,26 @@ static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
- 		return ret;
- 	}
- 
--	return rvin_v4l2_register(vin);
-+	if (!video_is_registered(&vin->vdev)) {
-+		ret = rvin_v4l2_register(vin);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (!vin->info->use_mc)
-+		return 0;
-+
-+	/* If we're running with media-controller, link the subdevs. */
-+	source = &vin->parallel->subdev->entity;
-+	sink = &vin->vdev.entity;
-+
-+	ret = media_create_pad_link(source, vin->parallel->source_pad,
-+				    sink, vin->parallel->sink_pad, 0);
-+	if (ret)
-+		vin_err(vin, "Error adding link from %s to %s: %d\n",
-+			source->name, sink->name, ret);
-+
-+	return ret;
- }
- 
- static void rvin_parallel_notify_unbind(struct v4l2_async_notifier *notifier,
-@@ -611,7 +632,8 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
- 
- 	/* Register all video nodes for the group. */
- 	for (i = 0; i < RCAR_VIN_NUM; i++) {
--		if (vin->group->vin[i]) {
-+		if (vin->group->vin[i] &&
-+		    !video_is_registered(&vin->group->vin[i]->vdev)) {
- 			ret = rvin_v4l2_register(vin->group->vin[i]);
- 			if (ret)
- 				return ret;
--- 
-2.7.4
+SGkgQW5keSwNCg0KT24gMDUgTWF5IDIwMTggMTE6NDkgQW5keSBTaGV2Y2hlbmtvIHdyb3RlOg0K
+PiBPbiBUaHUsIEFwciAyNiwgMjAxOCBhdCA3OjE5IFBNLCBQaGlsIEVkd29ydGh5IHdyb3RlOg0K
+PiANCj4gU290dHkgZm8gYSBsYXRlIHJlc3BvbnNlLiBDb25zaWRlciBmb2xsb3cgdXAgZml4ZXMg
+Zm9yIGJlbG93Lg0KPiANCj4gPiAgICAgICAgIGlmICghcHAtPmlycV9zaGFyZWQpIHsNCj4gPiAr
+ICAgICAgICAgICAgICAgaW50IGk7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBmb3IgKGkg
+PSAwOyBpIDwgcHAtPm5ncGlvOyBpKyspIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBp
+ZiAocHAtPmlycVtpXSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlycV9z
+ZXRfY2hhaW5lZF9oYW5kbGVyX2FuZF9kYXRhKHBwLT5pcnFbaV0sDQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZHdhcGJfaXJxX2hhbmRsZXIsIGdw
+aW8pOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gICAgICAgICB9IGVsc2Ugew0KPiA+ICAg
+ICAgICAgICAgICAgICAvKg0KPiA+ICAgICAgICAgICAgICAgICAgKiBSZXF1ZXN0IGEgc2hhcmVk
+IElSUSBzaW5jZSB3aGVyZSBNRkQgd291bGQgaGF2ZSBkZXZpY2VzDQo+ID4gICAgICAgICAgICAg
+ICAgICAqIHVzaW5nIHRoZSBzYW1lIGlycSBwaW4NCj4gPiAgICAgICAgICAgICAgICAgICovDQo+
+ID4gKyAgICAgICAgICAgICAgIGVyciA9IGRldm1fcmVxdWVzdF9pcnEoZ3Bpby0+ZGV2LCBwcC0+
+aXJxWzBdLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGR3YXBi
+X2lycV9oYW5kbGVyX21mZCwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBJUlFGX1NIQVJFRCwgImdwaW8tZHdhcGItbWZkIiwNCj4gPiBncGlvKTsNCj4gDQo+ID4g
+KyAgICAgICBpZiAocHAtPmhhc19pcnEpDQo+ID4gICAgICAgICAgICAgICAgIGR3YXBiX2NvbmZp
+Z3VyZV9pcnFzKGdwaW8sIHBvcnQsIHBwKTsNCj4gDQo+IEkgd291bGQgcmF0aGVyIG1ha2UgaXJx
+IGFycmF5IGEgdHlwZSBvZiBzaWduZWQgaW50IGFuZCBtb3ZlIGNvbmRpdGlvbmFsIGludG8NCj4g
+dGhlIGZ1bmN0aW9uIHRvIHRlc3QgcGVyIElSUSBiYXNlZC4NCk9rLCB0aG91Z2ggc2luY2UgdGhl
+IGRyaXZlciBjYW4gYmUgdXNlZCB3aXRob3V0IGludGVycnVwdHMsIGl0IGhhcyB0byBjaGVjaw0K
+aWYgYW55IGFyZSB1c2VkIGJlZm9yZSB0aGUgZHJpdmVyIGRvZXMgYWxsIHRoZSBvdGhlciBpbnRl
+cnJ1cHQgcmVsYXRlZCB0aGluZ3MuDQogDQo+ID4gICAgICAgICAvKiBBZGQgR1BJTy1zaWduYWxl
+ZCBBQ1BJIGV2ZW50IHN1cHBvcnQgKi8NCj4gPiArICAgICAgIGlmIChwcC0+aGFzX2lycSkNCj4g
+PiAgICAgICAgICAgICAgICAgYWNwaV9ncGlvY2hpcF9yZXF1ZXN0X2ludGVycnVwdHMoJnBvcnQt
+PmdjKTsNCj4gDQo+IFBlcmhhcHMgc29tZXRoaW5nIHNpbWlsYXIuDQo+IA0KPiA+ICAgICAgICAg
+ICAgICAgICBpZiAoZGV2LT5vZl9ub2RlICYmIHBwLT5pZHggPT0gMCAmJg0KPiA+ICAgICAgICAg
+ICAgICAgICAgICAgICAgIGZ3bm9kZV9wcm9wZXJ0eV9yZWFkX2Jvb2woZndub2RlLA0KPiA+DQo+
+ID4gImludGVycnVwdC1jb250cm9sbGVyIikpIHsNCj4gDQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgc3RydWN0IGRldmljZV9ub2RlICpucCA9IHRvX29mX25vZGUoZndub2RlKTsNCj4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgajsNCj4gPiArDQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgLyoNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgKiBUaGUg
+SVAgaGFzIGNvbmZpZ3VyYXRpb24gb3B0aW9ucyB0byBhbGxvdyBhIHNpbmdsZQ0KPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICAqIGNvbWJpbmVkIGludGVycnVwdCBvciBvbmUgcGVyIGdwaW8u
+IElmIG9uZSBwZXIgZ3BpbywNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgKiBzb21lIG1p
+Z2h0IG5vdCBiZSB1c2VkLg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAqLw0KPiA+ICsg
+ICAgICAgICAgICAgICAgICAgICAgIGZvciAoaiA9IDA7IGogPCBwcC0+bmdwaW87IGorKykgew0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50IGlycSA9IG9mX2lycV9nZXQo
+bnAsIGopOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKGlycSA8IDAp
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOw0K
+PiA+ICsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBwLT5pcnFbal0gPSBp
+cnE7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwcC0+aGFzX2lycSA9IHRy
+dWU7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiANCj4gZm9yICguLi4pDQo+ICBw
+cC0+aXJxID0gb2ZfaXJxX2dldCgpOw0KPiANCj4gPiAgICAgICAgICAgICAgICAgfQ0KPiANCj4g
+PiArICAgICAgICAgICAgICAgaWYgKGhhc19hY3BpX2NvbXBhbmlvbihkZXYpICYmIHBwLT5pZHgg
+PT0gMCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBqOw0KPiA+
+ICsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBmb3IgKGogPSAwOyBqIDwgcHAtPm5ncGlv
+OyBqKyspIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBwLT5pcnFbal0g
+PSBwbGF0Zm9ybV9nZXRfaXJxKHRvX3BsYXRmb3JtX2RldmljZShkZXYpLCBqKTsNCj4gPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChwcC0+aXJxW2pdKQ0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwcC0+aGFzX2lycSA9IHRydWU7DQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiANCj4gRGl0dG8uDQo+IE1vcmVvdmVyIHlvdSBo
+YXZlIGEgYnVnIGhlcmUuIFNlZSBteSBwcm9wb3NhbCBhdCB0aGUgdG9wIG9mIHRoaXMgbWVzc2Fn
+ZS4NCkkgZ3Vlc3MgeW91IG1lYW4gdGhhdCBpdCBkb2VzbuKAmXQgY2hlY2sgZm9yIGVycm9ycyBy
+ZXR1cm5lZD8NCg0KPiBBbmQgbm93IGV2ZW4gYmV0dGVyIHRvIGFzaywgd2h5IHBsYXRmb3JtX2dl
+dF9pcnEoKSB3b3VsZG4ndCB3b3JrIGZvciBEVA0KPiBjYXNlPw0KVGhlIHByb2JsZW0gaXMgdGhh
+dCB0aGUgaW50ZXJydXB0cyBhcmUgZGVmaW5lZCBpbiB0aGUgcG9ydCBzdWItbm9kZSBpbiBEVCwN
+Cm5vdCBpbiB0aGUgZ3BpbyBjb250cm9sbGVyIG5vZGUsIGNhdXNpbmcgcGxhdGZvcm1fZ2V0X2ly
+cSgpIHRvIGZhaWwuIFRoZQ0KcG9ydCBzdWItbm9kZSBkb2VzbuKAmXQgaGF2ZSBhbiBhc3NvY2lh
+dGVkIHBsYXRmb3JtIGRldmljZS4gSSBkb27igJl0IHRoaW5rDQp0aGVyZSBpcyBhIHdheSBhcm91
+bmQgdGhpcy4uLg0KDQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGlmICghcHAt
+Pmhhc19pcnEpDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZXZfd2Fybihk
+ZXYsICJubyBpcnEgZm9yIHBvcnQlZFxuIiwNCj4gPiBwcC0+aWR4KTsNCj4gDQo+IFRoaXMgY291
+bGQgYmUgaXNzdWVkIGluIHRoZSBhY3R1YWwgZnVuY3Rpb24gd2hpY2ggd2lsbCB0cnkgdG8gYWxs
+b2NhdGUgSVJRcw0KPiAocGVyaGFwcyBvbiBkZWJ1ZyBsZXZlbCkNCj4gDQo+IA0KPiBQLlMuIEp1
+c3QgdGhpbmsgYWJvdXQgaXQsIHBlcmhhcHMgeW91IGZpbmQgZXZlbiBiZXR0ZXIgc29sdXRpb25z
+Lg0KVGhlcmUncyBjZXJ0YWlubHkgc29tZSBkdXBsaWNhdGlvbiBiZXR3ZWVuIERUIGFuZCBBQ1BJ
+IHRoYXQgY2FuIGJlIHJlbW92ZWQuDQoNClRoYW5rcw0KUGhpbA0K
