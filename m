@@ -1,231 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:60200 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965664AbeEXJeJ (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:38144 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935483AbeEIQwr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 May 2018 05:34:09 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 1/5] dt-bindings: Add the r9a06g032-sysctrl.h file
-Date: Thu, 24 May 2018 10:28:39 +0100
-Message-Id: <1527154169-32380-2-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+        Wed, 9 May 2018 12:52:47 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.17 (take two)
+Date: Wed,  9 May 2018 18:52:44 +0200
+Message-Id: <1525884764-21337-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds the constants necessary to use the renesas,r9a06g032-sysctrl node.
+	Hi Linus,
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- include/dt-bindings/clock/r9a06g032-sysctrl.h | 187 ++++++++++++++++++++++++++
- 1 file changed, 187 insertions(+)
- create mode 100644 include/dt-bindings/clock/r9a06g032-sysctrl.h
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-diff --git a/include/dt-bindings/clock/r9a06g032-sysctrl.h b/include/dt-bindings/clock/r9a06g032-sysctrl.h
-new file mode 100644
-index 0000000..e3fe69e
---- /dev/null
-+++ b/include/dt-bindings/clock/r9a06g032-sysctrl.h
-@@ -0,0 +1,187 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * R9A06G032 sysctrl IDs
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from zx-reboot.c
-+ */
-+
-+#ifndef __DT_BINDINGS_R9A06G032_SYSCTRL_H__
-+#define __DT_BINDINGS_R9A06G032_SYSCTRL_H__
-+
-+#define R9A06G032_CLKOUT			0
-+#define R9A06G032_CLK_PLL_USB			1
-+#define R9A06G032_CLK_48			1 /* AKA CLK_PLL_USB */
-+#define R9A06G032_CLKOUT_D10			2
-+#define R9A06G032_CLKOUT_D16			3
-+#define R9A06G032_MSEBIS_CLK			3 /* AKA CLKOUT_D16 */
-+#define R9A06G032_MSEBIM_CLK			3 /* AKA CLKOUT_D16 */
-+#define R9A06G032_CLKOUT_D160			4
-+#define R9A06G032_CLKOUT_D1OR2			5
-+#define R9A06G032_CLK_DDRPHY_PLLCLK		5 /* AKA CLKOUT_D1OR2 */
-+#define R9A06G032_CLKOUT_D20			6
-+#define R9A06G032_CLK50				6 /* AKA CLKOUT_D20 */
-+#define R9A06G032_CLKOUT_D40			7
-+#define R9A06G032_CLK25				7 /* AKA CLKOUT_D40 */
-+#define R9A06G032_CLKOUT_D5			8
-+#define R9A06G032_CLKOUT_D8			9
-+#define R9A06G032_CLK125			9 /* AKA CLKOUT_D8 */
-+#define R9A06G032_DIV_ADC			10
-+#define R9A06G032_DIV_I2C			11
-+#define R9A06G032_DIV_NAND			12
-+#define R9A06G032_DIV_P1_PG			13
-+#define R9A06G032_DIV_P2_PG			14
-+#define R9A06G032_DIV_P3_PG			15
-+#define R9A06G032_DIV_P4_PG			16
-+#define R9A06G032_DIV_P5_PG			17
-+#define R9A06G032_CLK_P5_PG1			17 /* AKA DIV_P5_PG */
-+#define R9A06G032_DIV_P6_PG			18
-+#define R9A06G032_DIV_QSPI0			19
-+#define R9A06G032_DIV_QSPI1			20
-+#define R9A06G032_DIV_REF_SYNC			21
-+#define R9A06G032_CLK_REF_SYNC			21 /* AKA DIV_REF_SYNC */
-+#define R9A06G032_DIV_SDIO0			22
-+#define R9A06G032_DIV_SDIO1			23
-+#define R9A06G032_DIV_SWITCH			24
-+#define R9A06G032_DIV_UART			25
-+#define R9A06G032_CLK_25_PG4			26
-+#define R9A06G032_CLK_25_PG5			27
-+#define R9A06G032_CLK_25_PG6			28
-+#define R9A06G032_CLK_25_PG7			29
-+#define R9A06G032_CLK_25_PG8			30
-+#define R9A06G032_CLK_ADC			31
-+#define R9A06G032_CLK_ECAT100			32
-+#define R9A06G032_CLK_HSR100			33
-+#define R9A06G032_CLK_I2C0			34
-+#define R9A06G032_CLK_I2C1			35
-+#define R9A06G032_CLK_MII_REF			36
-+#define R9A06G032_CLK_NAND			37
-+#define R9A06G032_CLK_NOUSBP2_PG6		38
-+#define R9A06G032_CLK_P1_PG2			39
-+#define R9A06G032_CLK_P1_PG3			40
-+#define R9A06G032_CLK_P1_PG4			41
-+#define R9A06G032_CLK_P4_PG3			42
-+#define R9A06G032_CLK_P4_PG4			43
-+#define R9A06G032_CLK_P6_PG1			44
-+#define R9A06G032_CLK_P6_PG2			45
-+#define R9A06G032_CLK_P6_PG3			46
-+#define R9A06G032_CLK_P6_PG4			47
-+#define R9A06G032_CLK_PCI_USB			48
-+#define R9A06G032_CLK_QSPI0			49
-+#define R9A06G032_CLK_QSPI1			50
-+#define R9A06G032_CLK_RGMII_REF			51
-+#define R9A06G032_CLK_RMII_REF			52
-+#define R9A06G032_CLK_SDIO0			53
-+#define R9A06G032_CLK_SDIO1			54
-+#define R9A06G032_CLK_SERCOS100			55
-+#define R9A06G032_CLK_SLCD			56
-+#define R9A06G032_CLK_SPI0			57
-+#define R9A06G032_CLK_SPI1			58
-+#define R9A06G032_CLK_SPI2			59
-+#define R9A06G032_CLK_SPI3			60
-+#define R9A06G032_CLK_SPI4			61
-+#define R9A06G032_CLK_SPI5			62
-+#define R9A06G032_CLK_SWITCH			63
-+#define R9A06G032_DIV_MOTOR			64
-+#define R9A06G032_HCLK_ECAT125			65
-+#define R9A06G032_HCLK_PINCONFIG		66
-+#define R9A06G032_HCLK_SERCOS			67
-+#define R9A06G032_HCLK_SGPIO2			68
-+#define R9A06G032_HCLK_SGPIO3			69
-+#define R9A06G032_HCLK_SGPIO4			70
-+#define R9A06G032_HCLK_TIMER0			71
-+#define R9A06G032_HCLK_TIMER1			72
-+#define R9A06G032_HCLK_USBF			73
-+#define R9A06G032_HCLK_USBH			74
-+#define R9A06G032_HCLK_USBPM			75
-+#define R9A06G032_CLK_48_PG_F			76
-+#define R9A06G032_CLK_48_PG4			77
-+#define R9A06G032_CLK_DDRPHY_PLLCLK_D4		78
-+#define R9A06G032_CLK_ECAT100_D4		79
-+#define R9A06G032_CLK_HSR100_D2			80
-+#define R9A06G032_CLK_REF_SYNC_D4		81
-+#define R9A06G032_CLK_DDRPHY_PCLK		81 /* AKA CLK_REF_SYNC_D4 */
-+#define R9A06G032_CLK_FW			81 /* AKA CLK_REF_SYNC_D4 */
-+#define R9A06G032_CLK_CRYPTO			81 /* AKA CLK_REF_SYNC_D4 */
-+#define R9A06G032_CLK_REF_SYNC_D8		82
-+#define R9A06G032_CLK_SERCOS100_D2		83
-+#define R9A06G032_DIV_CA7			84
-+#define R9A06G032_CLK_A7MP			84 /* AKA DIV_CA7 */
-+#define R9A06G032_HCLK_CAN0			85
-+#define R9A06G032_HCLK_CAN1			86
-+#define R9A06G032_HCLK_DELTASIGMA		87
-+#define R9A06G032_HCLK_PWMPTO			88
-+#define R9A06G032_HCLK_RSV			89
-+#define R9A06G032_HCLK_SGPIO0			90
-+#define R9A06G032_HCLK_SGPIO1			91
-+#define R9A06G032_RTOS_MDC			92
-+#define R9A06G032_CLK_CM3			93
-+#define R9A06G032_CLK_DDRC			94
-+#define R9A06G032_CLK_ECAT25			95
-+#define R9A06G032_CLK_HSR50			96
-+#define R9A06G032_CLK_HW_RTOS			97
-+#define R9A06G032_CLK_SERCOS50			98
-+#define R9A06G032_HCLK_ADC			99
-+#define R9A06G032_HCLK_CM3			100
-+#define R9A06G032_HCLK_CRYPTO_EIP150		101
-+#define R9A06G032_HCLK_CRYPTO_EIP93		102
-+#define R9A06G032_HCLK_DDRC			103
-+#define R9A06G032_HCLK_DMA0			104
-+#define R9A06G032_HCLK_DMA1			105
-+#define R9A06G032_HCLK_GMAC0			106
-+#define R9A06G032_HCLK_GMAC1			107
-+#define R9A06G032_HCLK_GPIO0			108
-+#define R9A06G032_HCLK_GPIO1			109
-+#define R9A06G032_HCLK_GPIO2			110
-+#define R9A06G032_HCLK_HSR			111
-+#define R9A06G032_HCLK_I2C0			112
-+#define R9A06G032_HCLK_I2C1			113
-+#define R9A06G032_HCLK_LCD			114
-+#define R9A06G032_HCLK_MSEBI_M			115
-+#define R9A06G032_HCLK_MSEBI_S			116
-+#define R9A06G032_HCLK_NAND			117
-+#define R9A06G032_HCLK_PG_I			118
-+#define R9A06G032_HCLK_PG19			119
-+#define R9A06G032_HCLK_PG20			120
-+#define R9A06G032_HCLK_PG3			121
-+#define R9A06G032_HCLK_PG4			122
-+#define R9A06G032_HCLK_QSPI0			123
-+#define R9A06G032_HCLK_QSPI1			124
-+#define R9A06G032_HCLK_ROM			125
-+#define R9A06G032_HCLK_RTC			126
-+#define R9A06G032_HCLK_SDIO0			127
-+#define R9A06G032_HCLK_SDIO1			128
-+#define R9A06G032_HCLK_SEMAP			129
-+#define R9A06G032_HCLK_SPI0			130
-+#define R9A06G032_HCLK_SPI1			131
-+#define R9A06G032_HCLK_SPI2			132
-+#define R9A06G032_HCLK_SPI3			133
-+#define R9A06G032_HCLK_SPI4			134
-+#define R9A06G032_HCLK_SPI5			135
-+#define R9A06G032_HCLK_SWITCH			136
-+#define R9A06G032_HCLK_SWITCH_RG		137
-+#define R9A06G032_HCLK_UART0			138
-+#define R9A06G032_HCLK_UART1			139
-+#define R9A06G032_HCLK_UART2			140
-+#define R9A06G032_HCLK_UART3			141
-+#define R9A06G032_HCLK_UART4			142
-+#define R9A06G032_HCLK_UART5			143
-+#define R9A06G032_HCLK_UART6			144
-+#define R9A06G032_HCLK_UART7			145
-+#define R9A06G032_CLK_UART0			146
-+#define R9A06G032_CLK_UART1			147
-+#define R9A06G032_CLK_UART2			148
-+#define R9A06G032_CLK_UART3			149
-+#define R9A06G032_CLK_UART4			150
-+#define R9A06G032_CLK_UART5			151
-+#define R9A06G032_CLK_UART6			152
-+#define R9A06G032_CLK_UART7			153
-+
-+#define R9A06G032_UART_GROUP_012		154
-+#define R9A06G032_UART_GROUP_34567		155
-+
-+#define R9A06G032_CLOCK_COUNT		(R9A06G032_UART_GROUP_34567 + 1)
-+
-+#endif /* __DT_BINDINGS_R9A06G032_SYSCTRL_H__ */
--- 
-2.7.4
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.18-tag1
+
+for you to fetch changes up to f18fab4bcb4f85db806048b2ee44c885b46b5a0f:
+
+  pinctrl: sh-pfc: Add r8a77470 PFC support (2018-05-04 11:42:54 +0200)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.18
+
+  - Add DU, MSIOF, PWM, and SDHI pin groups on R-Car M3-N,
+  - Add support for the new RZ/G1C SoC,
+  - Add support for I/O voltage control on R-Car V3M and V3H,
+  - Small fixes and cleanups.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (2):
+      dt-bindings: pinctrl: sh-pfc: Document r8a77470 PFC support
+      pinctrl: sh-pfc: Add r8a77470 PFC support
+
+Geert Uytterhoeven (2):
+      pinctrl: sh-pfc: r8a7795: Fix comment for MSIOF3 SS2_E pin
+      pinctrl: sh-pfc: r8a7796: Fix comment for MSIOF3 SS2_E pin
+
+Kieran Bingham (1):
+      pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and functions
+
+Sergei Shtylyov (2):
+      pinctrl: sh-pfc: r8a77980: Add pin I/O voltage control support
+      pinctrl: sh-pfc: r8a77970: Fix pin I/O voltage control support
+
+Takeshi Kihara (3):
+      pinctrl: sh-pfc: r8a77965: Add MSIOF pins, groups and functions
+      pinctrl: sh-pfc: r8a77965: Add PWM pins, groups and functions
+      pinctrl: sh-pfc: r8a77965: Add SDHI pins, groups and functions
+
+Thomas Gleixner (1):
+      pinctrl: sh-pfc: r8a77965: Fixup incorrect SPDX identifier
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 2343 ++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |    2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |    2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c              | 1509 ++++++++++++-
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c              |   32 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c              |   52 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
+ 11 files changed, 3940 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
