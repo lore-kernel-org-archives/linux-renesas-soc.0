@@ -1,62 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34676 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751156AbeERTpk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 15:45:40 -0400
-Received: by mail-lf0-f68.google.com with SMTP id x145-v6so3576649lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 May 2018 12:45:39 -0700 (PDT)
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a77980: add GEther support
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <a4230699-e46f-0782-e3b1-22d58b9033c8@cogentembedded.com>
-Message-ID: <8910c197-cf1b-9ee9-9ddb-5d2f705a4b26@cogentembedded.com>
-Date: Fri, 18 May 2018 22:45:36 +0300
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a4230699-e46f-0782-e3b1-22d58b9033c8@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1524227264-24896-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524227264-24896-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524227264-24896-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 9 May 2018 18:56:44 +0200
+Message-ID: <CAMuHMdW52m=N4mTbdnQGT=O-vH3AMdbQ_H8b+PsxVZ_nukxrcw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: renesas: cpg-mssr: Add support for R-Car E3
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A77980 part of the GEther device node.
+Hi Shimoda-san,
 
-Based on the original (and large) patch by Vladimir Barinov.
+On Fri, Apr 20, 2018 at 2:27 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+> @@ -0,0 +1,289 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+For the record: SPDX lines in C source files should use C++-style comments,
+as recent checkpatch complains about.
 
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+Fixed for the pull request.
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -417,6 +417,17 @@
- 			dma-channels = <16>;
- 		};
- 
-+		gether: ethernet@e7400000 {
-+			compatible = "renesas,gether-r8a77980";
-+			reg = <0 0xe7400000 0 0x1000>;
-+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 813>;
-+			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		mmc0: mmc@ee140000 {
- 			compatible = "renesas,sdhi-r8a77980",
- 				     "renesas,rcar-gen3-sdhi";
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
