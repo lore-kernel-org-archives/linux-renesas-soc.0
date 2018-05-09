@@ -1,107 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:5094 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752974AbeEKOEy (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45247 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964945AbeEITIY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 10:04:54 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wed, 9 May 2018 15:08:24 -0400
+Date: Wed, 9 May 2018 21:08:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] media: i2c: adv748x: Fix pixel rate values
-Date: Fri, 11 May 2018 16:04:34 +0200
-Message-Id: <20180511140434.19274-1-niklas.soderlund+renesas@ragnatech.se>
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] arm64: dts: renesas: r8a77970: Add SMP Support
+Message-ID: <20180509190804.l6luktwhrfeasspc@verge.net.au>
+References: <1525879403-12207-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525879403-12207-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Wed, May 09, 2018 at 05:23:21PM +0200, Geert Uytterhoeven wrote:
+>         Hi Simon, Magnus,
+> 
+> This patch series enables SMP support on the R-Car V3M SoC, by adding
+> the second Cortex-A53 CPU core.  It also adds the performance monitor
+> unit, and links it to both CPU cores.
+> 
+> Changes compared to v1:
+>   - Adjust GIC_CPU_MASK_SIMPLE(),
+>   - Use symbolic core clock and power domain indices,
+>   - Move the pmu node from the soc subnode to the root node, as it
+>     doesn't have registers.
+> 
+> Note that the PSCI implementation on Eagle may be a preliminary version
+> with some familiar quirks:
+>   - SMP bringup works, and both CPUs can be used,
+>   - Offlining CPU0 crashes the system,
+>   - CPU1 can be offlined, but trying to bring it online again crashes
+>     the system, too.
+> 
+> I'm confident these will be fixed in future firmware versions, just like
+> on H3/Salvator-X.  Note that
+> git@github.com:renesas-rcar/arm-trusted-firmware.git does not have
+> support for R-Car V3M, V3H, and D3.
+> 
+> Thanks!
+> 
+> Geert Uytterhoeven (2):
+>   arm64: dts: renesas: r8a77970: Add secondary CA53 CPU core
+>   arm64: dts: renesas: r8a77970: Add Cortex-A53 PMU node
 
-The pixel rate, as reported by the V4L2_CID_PIXEL_RATE control, must
-include both horizontal and vertical blanking. Both the AFE and HDMI
-receiver program it incorrectly:
-
-- The HDMI receiver goes to the trouble of removing blanking to compute
-the rate of active pixels. This is easy to fix by removing the
-computation and returning the incoming pixel clock rate directly.
-
-- The AFE performs similar calculation, while it should simply return
-the fixed pixel rate for analog sources, mandated by the ADV748x to be
-14.3180180 MHz.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-[Niklas: Update AFE fixed pixel rate]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
----
-
-* Changes since v1
-- Update AFE fixed pixel rate.
----
- drivers/media/i2c/adv748x/adv748x-afe.c  | 12 ++++++------
- drivers/media/i2c/adv748x/adv748x-hdmi.c |  8 +-------
- 2 files changed, 7 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
-index 61514bae7e5ceb42..edd25e895e5dec3c 100644
---- a/drivers/media/i2c/adv748x/adv748x-afe.c
-+++ b/drivers/media/i2c/adv748x/adv748x-afe.c
-@@ -321,17 +321,17 @@ static const struct v4l2_subdev_video_ops adv748x_afe_video_ops = {
- static int adv748x_afe_propagate_pixelrate(struct adv748x_afe *afe)
- {
- 	struct v4l2_subdev *tx;
--	unsigned int width, height, fps;
- 
- 	tx = adv748x_get_remote_sd(&afe->pads[ADV748X_AFE_SOURCE]);
- 	if (!tx)
- 		return -ENOLINK;
- 
--	width = 720;
--	height = afe->curr_norm & V4L2_STD_525_60 ? 480 : 576;
--	fps = afe->curr_norm & V4L2_STD_525_60 ? 30 : 25;
--
--	return adv748x_csi2_set_pixelrate(tx, width * height * fps);
-+	/*
-+	 * The ADV748x ADC sampling frequency is twice the externally supplied
-+	 * clock whose frequency is required to be 28.63636 MHz. It oversamples
-+	 * with a factor of 4 resulting in a pixel rate of 14.3180180 MHz.
-+	 */
-+	return adv748x_csi2_set_pixelrate(tx, 14318180);
- }
- 
- static int adv748x_afe_enum_mbus_code(struct v4l2_subdev *sd,
-diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-index 10d229a4f08868f7..aecc2a84dfecbec8 100644
---- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
-+++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
-@@ -402,8 +402,6 @@ static int adv748x_hdmi_propagate_pixelrate(struct adv748x_hdmi *hdmi)
- {
- 	struct v4l2_subdev *tx;
- 	struct v4l2_dv_timings timings;
--	struct v4l2_bt_timings *bt = &timings.bt;
--	unsigned int fps;
- 
- 	tx = adv748x_get_remote_sd(&hdmi->pads[ADV748X_HDMI_SOURCE]);
- 	if (!tx)
-@@ -411,11 +409,7 @@ static int adv748x_hdmi_propagate_pixelrate(struct adv748x_hdmi *hdmi)
- 
- 	adv748x_hdmi_query_dv_timings(&hdmi->sd, &timings);
- 
--	fps = DIV_ROUND_CLOSEST_ULL(bt->pixelclock,
--				    V4L2_DV_BT_FRAME_WIDTH(bt) *
--				    V4L2_DV_BT_FRAME_HEIGHT(bt));
--
--	return adv748x_csi2_set_pixelrate(tx, bt->width * bt->height * fps);
-+	return adv748x_csi2_set_pixelrate(tx, timings.bt.pixelclock);
- }
- 
- static int adv748x_hdmi_enum_mbus_code(struct v4l2_subdev *sd,
--- 
-2.17.0
+Thanks, applied.
