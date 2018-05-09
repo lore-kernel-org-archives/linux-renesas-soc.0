@@ -1,42 +1,76 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752577AbeERLSH (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:18:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/6] ARM: multi_v7_defconfig: Enable RENESAS_WDT
-Date: Fri, 18 May 2018 13:16:32 +0200
-Message-Id: <eedd7902366b17f95f4fe687c54dcfa186a53158.1526548577.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526548577.git.horms+renesas@verge.net.au>
-References: <cover.1526548577.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/2] arm64: dts: renesas: r8a77970: Add secondary CA53 CPU core
+Date: Wed,  9 May 2018 17:23:22 +0200
+Message-Id: <1525879403-12207-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1525879403-12207-1-git-send-email-geert+renesas@glider.be>
+References: <1525879403-12207-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-its driver by default. It is enabled as a module to avoid increasing
-the kernel image size.
+Add a device node for the second Cortex-A53 CPU core on the Renesas
+R-Car V3M (r8a77970) SoC, and adjust the interrupt delivery masks for
+ARM Generic Interrupt Controller and Architectured Timer.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+v2:
+  - Adjust GIC_CPU_MASK_SIMPLE(),
+  - Use symbolic core clock and power domain indices.
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index c6042475bece..374a40945b0f 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -498,6 +498,7 @@ CONFIG_TEGRA_WATCHDOG=m
- CONFIG_MESON_WATCHDOG=y
- CONFIG_DW_WATCHDOG=y
- CONFIG_DIGICOLOR_WATCHDOG=y
-+CONFIG_RENESAS_WDT=m
- CONFIG_BCM2835_WDT=y
- CONFIG_BCM47XX_WDT=y
- CONFIG_BCM7038_WDT=m
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+index 6ed2e95eb53dbb15..ccc955e89cea4d32 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -41,6 +41,16 @@
+ 			enable-method = "psci";
+ 		};
+ 
++		a53_1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <1>;
++			clocks = <&cpg CPG_CORE R8A77970_CLK_Z2>;
++			power-domains = <&sysc R8A77970_PD_CA53_CPU1>;
++			next-level-cache = <&L2_CA53>;
++			enable-method = "psci";
++		};
++
+ 		L2_CA53: cache-controller {
+ 			compatible = "cache";
+ 			power-domains = <&sysc R8A77970_PD_CA53_SCU>;
+@@ -603,7 +613,7 @@
+ 			      <0 0xf1020000 0 0x20000>,
+ 			      <0 0xf1040000 0 0x20000>,
+ 			      <0 0xf1060000 0 0x20000>;
+-			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(1) |
++			interrupts = <GIC_PPI 9	(GIC_CPU_MASK_SIMPLE(2) |
+ 				      IRQ_TYPE_LEVEL_HIGH)>;
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+@@ -694,9 +704,9 @@
+ 
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+-		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
+-				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ };
 -- 
-2.11.0
+2.7.4
+
