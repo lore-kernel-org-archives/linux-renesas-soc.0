@@ -1,105 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47607 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45474 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932335AbeENOfz (ORCPT
+        with ESMTP id S965097AbeEITYL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 May 2018 10:35:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: renesas: r8a77995: don't use deprecated renesas,gpio-rcar
-Date: Mon, 14 May 2018 16:35:43 +0200
-Message-Id: <20180514143543.16590-1-horms+renesas@verge.net.au>
+        Wed, 9 May 2018 15:24:11 -0400
+Date: Wed, 9 May 2018 21:23:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77980: add resets property
+ CAN-FD node
+Message-ID: <20180509192351.ubealepswr4i6pik@verge.net.au>
+References: <20180509175409.10507-1-horms+renesas@verge.net.au>
+ <CAMuHMdXWHXtO1-0FucCsPTE22U_k+vdqCrDHgBFrM4+yEgXYcQ@mail.gmail.com>
+ <20180509191435.vm2zfuuixbyd3drm@verge.net.au>
+ <2889c7ff-1748-e435-c03c-cb36cf930b1d@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2889c7ff-1748-e435-c03c-cb36cf930b1d@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The compat string renesas,gpio-rcar has been deprecated since v4.14,
-the same release that r8a77990 SoC support was added. Thus
-renesas,gpio-rcar can safely be removed without any risk of behaviour
-changes between old and new mainline kernels and DTBs.
+On Wed, May 09, 2018 at 10:18:47PM +0300, Sergei Shtylyov wrote:
+> On 5/9/2018 10:14 PM, Simon Horman wrote:
+> 
+> > > > Add resets property to CAN-FD node to describe it in the reset topology of
+> > > > on-SoC devices.  This allows to reset the CAN-FD device using the Reset
+> > > > Controller API.
+> > > > 
+> > > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > > 
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > 
+> > Thanks, applied.
+> 
+>    You're too quick (and I'm on holiday today). Need "to| before "CAN-FD" in
+> the subject. ;-)
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
-
- Based on renesas-devel-20180511-v4.17-rc4
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 2506f46293e8..f3426266b5ea 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -88,8 +88,7 @@
- 
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6050000 0 0x50>;
- 			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -104,8 +103,7 @@
- 
- 		gpio1: gpio@e6051000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6051000 0 0x50>;
- 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -120,8 +118,7 @@
- 
- 		gpio2: gpio@e6052000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6052000 0 0x50>;
- 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -136,8 +133,7 @@
- 
- 		gpio3: gpio@e6053000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6053000 0 0x50>;
- 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -152,8 +148,7 @@
- 
- 		gpio4: gpio@e6054000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6054000 0 0x50>;
- 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -168,8 +163,7 @@
- 
- 		gpio5: gpio@e6055000 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055000 0 0x50>;
- 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
-@@ -184,8 +178,7 @@
- 
- 		gpio6: gpio@e6055400 {
- 			compatible = "renesas,gpio-r8a77995",
--				     "renesas,rcar-gen3-gpio",
--				     "renesas,gpio-rcar";
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055400 0 0x50>;
- 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
--- 
-2.11.0
+Thanks, fixed.
