@@ -1,247 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:42938 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751760AbeEDTGw (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45130 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756582AbeEJHN1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 May 2018 15:06:52 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: f.fainelli@gmail.com, opendmb@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v9 02/12] ARM: sunxi: smp: Move assembly code into a file
-Date: Fri,  4 May 2018 21:05:35 +0200
-Message-Id: <20180504190545.5114-3-mylene.josserand@bootlin.com>
-In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+        Thu, 10 May 2018 03:13:27 -0400
+Subject: Re: [PATCH v2 25/26] drm/bridge: require the owner .odev to be
+ filled in on drm_bridge_add/attach
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Peter Senna Tschudin <peter.senna@collabora.com>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <6278e7a4-c67a-6198-364e-526042acc393@samsung.com>
+Date: Thu, 10 May 2018 09:13:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180504135212.26977-26-peda@axentia.se>
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+References: <20180504135212.26977-1-peda@axentia.se>
+        <CGME20180504135352epcas5p48cd98762cd4476621f98b0356b891f7e@epcas5p4.samsung.com>
+        <20180504135212.26977-26-peda@axentia.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the assembly code for cluster cache enabling and resuming
-into an assembly file instead of having it directly in C code.
+On 04.05.2018 15:52, Peter Rosin wrote:
+> The .odev owner device will be handy to have around.
+>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Remove the CFLAGS because we are using the ARM directive "arch"
-instead.
-
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
----
- arch/arm/mach-sunxi/Makefile  |  2 +-
- arch/arm/mach-sunxi/headsmp.S | 80 +++++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-sunxi/mc_smp.c  | 82 +++----------------------------------------
- 3 files changed, 85 insertions(+), 79 deletions(-)
- create mode 100644 arch/arm/mach-sunxi/headsmp.S
-
-diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
-index 7de9cc286d53..71429aa85143 100644
---- a/arch/arm/mach-sunxi/Makefile
-+++ b/arch/arm/mach-sunxi/Makefile
-@@ -1,5 +1,5 @@
- CFLAGS_mc_smp.o	+= -march=armv7-a
- 
- obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
--obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o
-+obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o headsmp.o
- obj-$(CONFIG_SMP) += platsmp.o
-diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-new file mode 100644
-index 000000000000..37dc772701f3
---- /dev/null
-+++ b/arch/arm/mach-sunxi/headsmp.S
-@@ -0,0 +1,80 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2018 Chen-Yu Tsai
-+ * Copyright (c) 2018 Bootlin
-+ *
-+ * Chen-Yu Tsai <wens@csie.org>
-+ * Mylène Josserand <mylene.josserand@bootlin.com>
-+ *
-+ * SMP support for sunxi based systems with Cortex A7/A15
-+ *
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/assembler.h>
-+#include <asm/cputype.h>
-+
-+ENTRY(sunxi_mc_smp_cluster_cache_enable)
-+	.arch	armv7-a
-+	/*
-+	 * Enable cluster-level coherency, in preparation for turning on the MMU.
-+	 *
-+	 * Also enable regional clock gating and L2 data latency settings for
-+	 * Cortex-A15. These settings are from the vendor kernel.
-+	 */
-+	mrc	p15, 0, r1, c0, c0, 0
-+	movw	r2, #(ARM_CPU_PART_MASK & 0xffff)
-+	movt	r2, #(ARM_CPU_PART_MASK >> 16)
-+	and	r1, r1, r2
-+	movw	r2, #(ARM_CPU_PART_CORTEX_A15 & 0xffff)
-+	movt	r2, #(ARM_CPU_PART_CORTEX_A15 >> 16)
-+	cmp	r1, r2
-+	bne	not_a15
-+
-+	/* The following is Cortex-A15 specific */
-+
-+	/* ACTLR2: Enable CPU regional clock gates */
-+	mrc p15, 1, r1, c15, c0, 4
-+	orr r1, r1, #(0x1 << 31)
-+	mcr p15, 1, r1, c15, c0, 4
-+
-+	/* L2ACTLR */
-+	mrc p15, 1, r1, c15, c0, 0
-+	/* Enable L2, GIC, and Timer regional clock gates */
-+	orr r1, r1, #(0x1 << 26)
-+	/* Disable clean/evict from being pushed to external */
-+	orr r1, r1, #(0x1<<3)
-+	mcr p15, 1, r1, c15, c0, 0
-+
-+	/* L2CTRL: L2 data RAM latency */
-+	mrc p15, 1, r1, c9, c0, 2
-+	bic r1, r1, #(0x7 << 0)
-+	orr r1, r1, #(0x3 << 0)
-+	mcr p15, 1, r1, c9, c0, 2
-+
-+	/* End of Cortex-A15 specific setup */
-+	not_a15:
-+
-+	/* Get value of sunxi_mc_smp_first_comer */
-+	adr	r1, first
-+	ldr	r0, [r1]
-+	ldr	r0, [r1, r0]
-+
-+	/* Skip cci_enable_port_for_self if not first comer */
-+	cmp	r0, #0
-+	bxeq	lr
-+	b	cci_enable_port_for_self
-+
-+	.align 2
-+	first: .word sunxi_mc_smp_first_comer - .
-+ENDPROC(sunxi_mc_smp_cluster_cache_enable)
-+
-+ENTRY(sunxi_mc_smp_secondary_startup)
-+	bl	sunxi_mc_smp_cluster_cache_enable
-+	b	secondary_startup
-+ENDPROC(sunxi_mc_smp_secondary_startup)
-+
-+ENTRY(sunxi_mc_smp_resume)
-+	bl	sunxi_mc_smp_cluster_cache_enable
-+	b	cpu_resume
-+ENDPROC(sunxi_mc_smp_resume)
-diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-index c0246ec54a0a..727968d6a3e5 100644
---- a/arch/arm/mach-sunxi/mc_smp.c
-+++ b/arch/arm/mach-sunxi/mc_smp.c
-@@ -72,6 +72,9 @@ static void __iomem *cpucfg_base;
- static void __iomem *prcm_base;
- static void __iomem *sram_b_smp_base;
- 
-+extern void sunxi_mc_smp_secondary_startup(void);
-+extern void sunxi_mc_smp_resume(void);
-+
- static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
- {
- 	struct device_node *node;
-@@ -300,74 +303,7 @@ static void sunxi_cluster_cache_disable_without_axi(void)
- }
- 
- static int sunxi_mc_smp_cpu_table[SUNXI_NR_CLUSTERS][SUNXI_CPUS_PER_CLUSTER];
--static int sunxi_mc_smp_first_comer;
--
--/*
-- * Enable cluster-level coherency, in preparation for turning on the MMU.
-- *
-- * Also enable regional clock gating and L2 data latency settings for
-- * Cortex-A15. These settings are from the vendor kernel.
-- */
--static void __naked sunxi_mc_smp_cluster_cache_enable(void)
--{
--	asm volatile (
--		"mrc	p15, 0, r1, c0, c0, 0\n"
--		"movw	r2, #" __stringify(ARM_CPU_PART_MASK & 0xffff) "\n"
--		"movt	r2, #" __stringify(ARM_CPU_PART_MASK >> 16) "\n"
--		"and	r1, r1, r2\n"
--		"movw	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 & 0xffff) "\n"
--		"movt	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 >> 16) "\n"
--		"cmp	r1, r2\n"
--		"bne	not_a15\n"
--
--		/* The following is Cortex-A15 specific */
--
--		/* ACTLR2: Enable CPU regional clock gates */
--		"mrc p15, 1, r1, c15, c0, 4\n"
--		"orr r1, r1, #(0x1<<31)\n"
--		"mcr p15, 1, r1, c15, c0, 4\n"
--
--		/* L2ACTLR */
--		"mrc p15, 1, r1, c15, c0, 0\n"
--		/* Enable L2, GIC, and Timer regional clock gates */
--		"orr r1, r1, #(0x1<<26)\n"
--		/* Disable clean/evict from being pushed to external */
--		"orr r1, r1, #(0x1<<3)\n"
--		"mcr p15, 1, r1, c15, c0, 0\n"
--
--		/* L2CTRL: L2 data RAM latency */
--		"mrc p15, 1, r1, c9, c0, 2\n"
--		"bic r1, r1, #(0x7<<0)\n"
--		"orr r1, r1, #(0x3<<0)\n"
--		"mcr p15, 1, r1, c9, c0, 2\n"
--
--		/* End of Cortex-A15 specific setup */
--		"not_a15:\n"
--
--		/* Get value of sunxi_mc_smp_first_comer */
--		"adr	r1, first\n"
--		"ldr	r0, [r1]\n"
--		"ldr	r0, [r1, r0]\n"
--
--		/* Skip cci_enable_port_for_self if not first comer */
--		"cmp	r0, #0\n"
--		"bxeq	lr\n"
--		"b	cci_enable_port_for_self\n"
--
--		".align 2\n"
--		"first: .word sunxi_mc_smp_first_comer - .\n"
--	);
--}
--
--static void __naked sunxi_mc_smp_secondary_startup(void)
--{
--	asm volatile(
--		"bl	sunxi_mc_smp_cluster_cache_enable\n"
--		"b	secondary_startup"
--		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
--		:: "i" (sunxi_mc_smp_cluster_cache_enable)
--	);
--}
-+int sunxi_mc_smp_first_comer;
- 
- static DEFINE_SPINLOCK(boot_lock);
- 
-@@ -637,16 +573,6 @@ static bool __init sunxi_mc_smp_cpu_table_init(void)
-  */
- typedef typeof(cpu_reset) phys_reset_t;
- 
--static void __init __naked sunxi_mc_smp_resume(void)
--{
--	asm volatile(
--		"bl	sunxi_mc_smp_cluster_cache_enable\n"
--		"b	cpu_resume"
--		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
--		:: "i" (sunxi_mc_smp_cluster_cache_enable)
--	);
--}
--
- static int __init nocache_trampoline(unsigned long __unused)
- {
- 	phys_reset_t phys_reset;
--- 
-2.11.0
+ --
+Regards
+Andrzej
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index df084db33494..78d186b6831b 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -70,6 +70,9 @@ static LIST_HEAD(bridge_list);
+>   */
+>  void drm_bridge_add(struct drm_bridge *bridge)
+>  {
+> +	if (WARN_ON(!bridge->odev))
+> +		return;
+> +
+>  	mutex_lock(&bridge_lock);
+>  	list_add_tail(&bridge->list, &bridge_list);
+>  	mutex_unlock(&bridge_lock);
+> @@ -115,6 +118,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+>  	if (!encoder || !bridge)
+>  		return -EINVAL;
+>  
+> +	if (WARN_ON(!bridge->odev))
+> +		return -EINVAL;
+> +
+>  	if (previous && (!previous->dev || previous->encoder != encoder))
+>  		return -EINVAL;
+>  
