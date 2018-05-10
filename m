@@ -1,57 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752647AbeERLTF (ORCPT
+Received: from sauhun.de ([88.99.104.3]:45266 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757045AbeEJKlh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:19:05 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 43/69] ARM: dts: r8a77470: Add EtherAVB support
-Date: Fri, 18 May 2018 13:17:16 +0200
-Message-Id: <f70b0958c044a73188056a231d40a8af55c04dd2.1526641667.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526641667.git.horms+renesas@verge.net.au>
-References: <cover.1526641667.git.horms+renesas@verge.net.au>
+        Thu, 10 May 2018 06:41:37 -0400
+Date: Thu, 10 May 2018 12:41:35 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: trivial@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] dt-bindings: i2c: fix typo 'can by' to 'can be'
+Message-ID: <20180510104135.cj6em2n34lwwzgm2@ninjato>
+References: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
+ <20180506112404.24872-2-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yvjvf7crypp62h6k"
+Content-Disposition: inline
+In-Reply-To: <20180506112404.24872-2-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-Define the generic R8A77470 part of the EtherAVB device node.
+--yvjvf7crypp62h6k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On Sun, May 06, 2018 at 01:23:45PM +0200, Wolfram Sang wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index baec3cae49d5..c85032f9605b 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -190,6 +190,19 @@
- 			dma-channels = <15>;
- 		};
- 
-+		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a77470",
-+				     "renesas,etheravb-rcar-gen2";
-+			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-+			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 812>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 812>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a77470",
- 				     "renesas,rcar-gen2-scif", "renesas,scif";
--- 
-2.11.0
+Applied to for-next, thanks!
+
+
+--yvjvf7crypp62h6k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr0Id8ACgkQFA3kzBSg
+KbaSnw/7BOVHCjcSyFnEXN+NkI/Rh0b8yN6wIAYW+UDfu2C5cAFXI2zf5GVDxoP5
+0gBDZHKtKpFfY03e0UpgWigRbjRaRzQtdRHKysIxhv8xSEx/en02fPI59PeBT1bA
+L/6P3QrYK+08rVzzhyV705JgPdAJO+xHW5qarAIvFC+KIcRQPjAI7mIno5sbGEy0
+tpJnV8p1tk9ZHqLkfDeJ/NvLzNmgmHQTQHbdIHkMmaVZe+xVlOSHUp7czMubLxL7
+5jHBcMuIhMSspuFes/YoF8+vDus95ncakH+QCk/4btEuxjVRR6ZYUaRqPUW9YeRf
+ori8DVE80woRu18tknw1BxslYdDLdVm61H6EZE5JIeF7NoEzfLwjSDA+mkRyBsZr
+oRycOFPotjwdv5BipTmgWxR5Xipsvr3LOjZlAGmU4EnkdDGSMw3f8Kx5UPa9rD/m
+bistd8ZZorM0krjjF4H9Fdg4XjPHjaPZsnNrMrBPM+CYefeAL4lutJIX2s1tywrj
+Os89345lp8eDTO/rjJ7F9/eZRmdHt83tVxo8Xn4MM5S6eLXrBlqu98UgImJqXvQR
+Vaad84ki+WfQdaUa4bvAlqGjqVDNhu9/9pMKIaGqq0VWyp1EdodccyU9SSe9GAo7
+DevXIJsxhG9qxSXbvuRjkEwa1ZauSJVcfgcGirFsaU4xGKiqH+A=
+=oVlN
+-----END PGP SIGNATURE-----
+
+--yvjvf7crypp62h6k--
