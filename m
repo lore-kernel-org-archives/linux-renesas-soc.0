@@ -1,41 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55658 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751022AbeEMIHX (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:47082 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeEJSMd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 May 2018 04:07:23 -0400
-Date: Sun, 13 May 2018 10:07:04 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
+        Thu, 10 May 2018 14:12:33 -0400
+Received: by mail-lf0-f66.google.com with SMTP id x7-v6so4226695lff.13
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 May 2018 11:12:33 -0700 (PDT)
+Subject: [PATCH 2/2] arm64: dts: renesas: initial V3HSK board device tree
+To: Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: initial V3HSK board device tree
-Message-ID: <20180513080704.yeypjjtv7hdmqajt@verge.net.au>
 References: <3923fc5f-103c-94c9-57ba-cb29e8c55d05@cogentembedded.com>
- <50de037c-7560-c261-f96a-f86065674c9b@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <50de037c-7560-c261-f96a-f86065674c9b@cogentembedded.com>
+Date: Thu, 10 May 2018 21:12:30 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <50de037c-7560-c261-f96a-f86065674c9b@cogentembedded.com>
+In-Reply-To: <3923fc5f-103c-94c9-57ba-cb29e8c55d05@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 10, 2018 at 09:12:30PM +0300, Sergei Shtylyov wrote:
-> Add the initial device  tree for  the V3H Starter Kit board.
-> The board has 1 debug serial port (SCIF0); include support for it,
-> so that the serial console can work.
-> 
-> Based on the original (and large) patch by Vladimir Barinov.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add the initial device  tree for  the V3H Starter Kit board.
+The board has 1 debug serial port (SCIF0); include support for it,
+so that the serial console can work.
 
-This looks fine but I will wait to see if there are other reviews before
-applying.
+Based on the original (and large) patch by Vladimir Barinov.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+ arch/arm64/boot/dts/renesas/Makefile           |    2 
+ arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts |   60 +++++++++++++++++++++++++
+ 2 files changed, 61 insertions(+), 1 deletion(-)
+
+Index: renesas/arch/arm64/boot/dts/renesas/Makefile
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/Makefile
++++ renesas/arch/arm64/boot/dts/renesas/Makefile
+@@ -9,6 +9,6 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77970) += r8a77970-eagle.dtb r8a77970-v3msk.dtb
+-dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb
++dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-condor.dtb r8a77980-v3hsk.dtb
+ dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+===================================================================
+--- /dev/null
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the V3H Starter Kit board
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ */
++
++/dts-v1/;
++#include "r8a77980.dtsi"
++
++/ {
++	model = "Renesas V3H Starter Kit board";
++	compatible = "renesas,v3hsk", "renesas,r8a77980";
++
++	aliases {
++		serial0 = &scif0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0 0x48000000 0 0x78000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
++&pfc {
++	scif0_pins: scif0 {
++		groups = "scif0_data";
++		function = "scif0";
++	};
++
++	scif_clk_pins: scif_clk {
++		groups = "scif_clk_b";
++		function = "scif_clk";
++	};
++};
++
++&scif0 {
++	pinctrl-0 = <&scif0_pins>, <&scif_clk_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&scif_clk {
++	clock-frequency = <14745600>;
++};
