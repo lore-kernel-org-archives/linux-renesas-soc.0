@@ -1,33 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56716 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751165AbeEMJQf (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:29593 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752474AbeEKEb4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 May 2018 05:16:35 -0400
-Date: Sun, 13 May 2018 11:16:16 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64: dts: renesas: r8a77990: Add EthernetAVB
- device nodes
-Message-ID: <20180513091616.wtvoyxxmumwk6hl3@verge.net.au>
+        Fri, 11 May 2018 00:31:56 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/4] arm64: dts: renesas: r8a77990: Add EthernetAVB device nodes
+Date: Fri, 11 May 2018 13:31:20 +0900
+Message-Id: <1526013081-28005-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1526013081-28005-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1526013081-28005-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1526013081-28005-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526013081-28005-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, May 11, 2018 at 01:31:20PM +0900, Yoshihiro Shimoda wrote:
-> This patch adds EthernetAVB node for r8a77990 (R-Car E3).
-> 
-> Based on a patch from Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch adds EthernetAVB node for r8a77990 (R-Car E3).
 
-This looks fine but I will wait to see if there are other reviews before
-applying.
+Based on a patch from Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index d94e047..37d57fd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -198,6 +198,51 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a77990",
++				     "renesas,etheravb-rcar-gen3";
++			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15",
++					  "ch16", "ch17", "ch18", "ch19",
++					  "ch20", "ch21", "ch22", "ch23",
++					  "ch24";
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 812>;
++			phy-mode = "rgmii";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a77990",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
+-- 
+1.9.1
