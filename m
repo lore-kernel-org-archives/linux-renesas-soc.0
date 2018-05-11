@@ -1,38 +1,55 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] rcar-vin: fix crop and compose handling for Gen3
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:24077 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753177AbeEKOmI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 11 May 2018 10:42:08 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 2/2] rcar-vin: fix crop and compose handling for Gen3
+Date: Fri, 11 May 2018 16:41:26 +0200
+Message-Id: <20180511144126.24804-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180511144126.24804-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20180511144126.24804-1-niklas.soderlund+renesas@ragnatech.se>
- <20180511144126.24804-3-niklas.soderlund+renesas@ragnatech.se>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <2fdeeccf-3418-3a1d-0be2-95e999974f19@cogentembedded.com>
-Date: Fri, 11 May 2018 18:19:35 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180511144126.24804-3-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+When refactoring the Gen3 enablement series crop and compose handling
+where broken. This went unnoticed but can result in writing out side the
+capture buffer. Fix this by restoring the crop and compose to reflect
+the format dimensions as we have not yet enabled the scaler for Gen3.
 
-On 05/11/2018 05:41 PM, Niklas Söderlund wrote:
+Fixes: 5e7c623632fcf8f5 ("media: rcar-vin: use different v4l2 operations in media controller mode")
+Reported-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> When refactoring the Gen3 enablement series crop and compose handling
-> where broken. This went unnoticed but can result in writing out side the
-
-   s/Where/Were/?
-
-> capture buffer. Fix this by restoring the crop and compose to reflect
-> the format dimensions as we have not yet enabled the scaler for Gen3.
-> 
-> Fixes: 5e7c623632fcf8f5 ("media: rcar-vin: use different v4l2 operations in media controller mode")
-> Reported-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 2fb8587116f25a4f..e78fba84d59028ef 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -702,6 +702,12 @@ static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
+ 
+ 	vin->format = f->fmt.pix;
+ 
++	vin->crop.top = 0;
++	vin->crop.left = 0;
++	vin->crop.width = vin->format.width;
++	vin->crop.height = vin->format.height;
++	vin->compose = vin->crop;
++
+ 	return 0;
+ }
+ 
+-- 
+2.17.0
