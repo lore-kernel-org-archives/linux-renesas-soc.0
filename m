@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:24077 "EHLO
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:63246 "EHLO
         bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753177AbeEKOmI (ORCPT
+        by vger.kernel.org with ESMTP id S1751204AbeEKOQn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 10:42:08 -0400
+        Fri, 11 May 2018 10:16:43 -0400
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -11,11 +11,11 @@ To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc: linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/2] rcar-vin: fix crop and compose handling for Gen3
-Date: Fri, 11 May 2018 16:41:26 +0200
-Message-Id: <20180511144126.24804-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180511144126.24804-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180511144126.24804-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] rcar-vin: fix crop and compose handling for Gen3
+Date: Fri, 11 May 2018 16:15:41 +0200
+Message-Id: <20180511141541.3164-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180511141541.3164-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180511141541.3164-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
