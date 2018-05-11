@@ -1,125 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:34265 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751962AbeENJQn (ORCPT
+Received: from relay12.mail.gandi.net ([217.70.178.232]:43113 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752232AbeEKJ7t (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 May 2018 05:16:43 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
-        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v3 1/4] base: devcon: add a new API to find the graph
-Date: Mon, 14 May 2018 18:15:57 +0900
-Message-Id: <1526289360-3997-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1526289360-3997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1526289360-3997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 11 May 2018 05:59:49 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/5] rcar-vin: Add support for digital input on Gen3
+Date: Fri, 11 May 2018 11:59:36 +0200
+Message-Id: <1526032781-14319-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a new API "device_connection_find_by_graph()" to
-find device connection by using graph.
+Hello,
+   this series add support for 'digital' input to the Gen3 version of rcar-vin
+driver.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/driver-api/device_connection.rst |  4 +--
- drivers/base/devcon.c                          | 43 ++++++++++++++++++++++++++
- include/linux/device.h                         |  2 ++
- 3 files changed, 47 insertions(+), 2 deletions(-)
+'Digital' inputs (the terms comes from the existing Gen2 version of the driver)
+describe parallel video input sources connected to a VIN instance. So far, the
+Gen3-version of the driver (the media-controller compliant one) only supported
+CSI-2 inputs.
 
-diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
-index affbc556..2e2d26f 100644
---- a/Documentation/driver-api/device_connection.rst
-+++ b/Documentation/driver-api/device_connection.rst
-@@ -19,7 +19,7 @@ Device connections alone do not create a dependency between the two devices.
- They are only descriptions which are not tied to either of the devices directly.
- A dependency between the two devices exists only if one of the two endpoint
- devices requests a reference to the other. The descriptions themselves can be
--defined in firmware (not yet supported) or they can be built-in.
-+defined in firmware or they can be built-in.
- 
- Usage
- -----
-@@ -40,4 +40,4 @@ API
- ---
- 
- .. kernel-doc:: drivers/base/devcon.c
--   : functions: device_connection_find_match device_connection_find device_connection_add device_connection_remove
-+   : functions: device_connection_find_match device_connection_find device_connection_add device_connection_remove device_connection_find_by_graph
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index d427e80..5a0da33 100644
---- a/drivers/base/devcon.c
-+++ b/drivers/base/devcon.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/device.h>
-+#include <linux/property.h>
- 
- static DEFINE_MUTEX(devcon_lock);
- static LIST_HEAD(devcon_list);
-@@ -134,3 +135,45 @@ void device_connection_remove(struct device_connection *con)
- 	mutex_unlock(&devcon_lock);
- }
- EXPORT_SYMBOL_GPL(device_connection_remove);
-+
-+static int generic_graph_match(struct device *dev, void *fwnode)
-+{
-+	return dev->fwnode == fwnode;
-+}
-+
-+/**
-+ * device_connection_find_by_graph - Find two devices connected together
-+ * @dev: Device to find connected device
-+ * @port: identifier of the @dev port node
-+ * @endpoint: identifier of the @dev endpoint node
-+ *
-+ * Find a connection with @port and @endpoint by using graph between @dev and
-+ * another device. On success returns handle to the device that is connected
-+ * to @dev, with the reference count for the found device incremented. Returns
-+ * NULL if no matching connection was found, or ERR_PTR(-EPROBE_DEFER) when
-+ * a connection was found but the other device has not been enumerated yet.
-+ */
-+struct device *device_connection_find_by_graph(struct device *dev, u32 port,
-+					       u32 endpoint)
-+{
-+	struct bus_type *bus;
-+	struct fwnode_handle *remote;
-+	struct device *conn;
-+
-+	remote = fwnode_graph_get_remote_node(dev_fwnode(dev), port, endpoint);
-+	if (!remote)
-+		return NULL;
-+
-+	for (bus = generic_match_buses[0]; bus; bus++) {
-+		conn = bus_find_device(bus, NULL, remote, generic_graph_match);
-+		if (conn)
-+			return conn;
-+	}
-+
-+	/*
-+	 * We only get called if a connection was found, tell the caller to
-+	 * wait for the other device to show up.
-+	 */
-+	return ERR_PTR(-EPROBE_DEFER);
-+}
-+EXPORT_SYMBOL_GPL(device_connection_find_by_graph);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 0059b99..58f8544 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -751,6 +751,8 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
- 
- void device_connection_add(struct device_connection *con);
- void device_connection_remove(struct device_connection *con);
-+struct device *device_connection_find_by_graph(struct device *dev, u32 port,
-+					       u32 endpoint);
- 
- /**
-  * enum device_link_state - Device link states.
--- 
-1.9.1
+This series extends the device tree parsing to accept a connection on port@0,
+and parses the 'digital' subdevice, as implemented in patches [2/5] and [3/5].
+
+The series has been tested on D3 Draak platform, which has an HDMI decoder
+connected to the parallel input of VIN4. To have capture operations working
+properly two additional patches have been added to the series.
+[4/5] is a general fix which should imo be included regardless of this series.
+[5/5] won't please Niklas, as it discards buffer overflow protection for
+the digital capture operations. As explained in the commit message, I had to
+fall back to use field toggling on VSYNC input to have images correctly
+captured. A possible protection against buffer overflow may be enabling
+interrupt for the FIFO overflow and stop capture at that point, but this have to
+be discussed later.
+
+A separate series for the VIN4 and HDMI input enabling on Draak board has been
+sent to renesas-soc list.
+
+The vin-tests repository patches to automate capture testing have been extended
+to support D3 board and capture from HDMI output, and patches have been sent
+to Niklas.
+
+The series is based on the media-master tree, where VIN patches have been
+recently merged.
+
+Tested capturing HDMI input images on D3 and for backward compatibility on
+Salvator-X M3-W too (seems like I didn't break anything there).
+
+Patches for testing on D3 are available at:
+git://jmondi.org/linux d3/media-master/driver
+git://jmondi.org/linux d3/media-master/dts
+git://jmondi.org/linux d3/media-master/test
+git://jmondi.org/vin-tests d3
+
+Patches to test on M3-W (based on latest renesas drivers, which includes an
+older version of VIN series, but has CSI-2 driver) available at:
+git://jmondi.org/linux d3/renesas-drivers/test
+
+Thanks
+    j
+
+Jacopo Mondi (5):
+  media: rcar-vin: Add support for R-Car R8A77995 SoC
+  media: rcar-vin: Add digital input subdevice parsing
+  media: rcar-vin: [un]bind and link digital subdevice
+  media: rcar-vin: Do not use crop if not configured
+  media: rcar-vin: Use FTEV for digital input
+
+ drivers/media/platform/rcar-vin/rcar-core.c | 315 +++++++++++++++++++++++-----
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  33 ++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  13 ++
+ 3 files changed, 305 insertions(+), 56 deletions(-)
+
+--
+2.7.4
