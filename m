@@ -1,44 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:41608 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751923AbeEGNYx (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36774 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753106AbeEKLWE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 May 2018 09:24:53 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] ARM: dts: r7s72100: Correct watchdog timer interrupt type
-Date: Mon,  7 May 2018 15:24:48 +0200
-Message-Id: <1525699489-6172-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1525699489-6172-1-git-send-email-geert+renesas@glider.be>
-References: <1525699489-6172-1-git-send-email-geert+renesas@glider.be>
+        Fri, 11 May 2018 07:22:04 -0400
+Received: by mail-lf0-f66.google.com with SMTP id t129-v6so7407426lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 May 2018 04:22:03 -0700 (PDT)
+Date: Fri, 11 May 2018 13:22:01 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo@jmondi.org>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 5/5] convert: Accept destination format as parameter
+Message-ID: <20180511112201.GI18974@bigcity.dyn.berto.se>
+References: <1526032839-14536-1-git-send-email-jacopo@jmondi.org>
+ <1526032839-14536-6-git-send-email-jacopo@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526032839-14536-6-git-send-email-jacopo@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to table 7.3 ("List of Interrupt IDs") in the RZ/A1H Hardware
-User's Manual rev. 3.00, the watchdog timer interrupt is a level
-interrupt.
+Hi Jacopo,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r7s72100.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for your work.
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 4a1aade0e751c3ff..c7b3dca6d81cc3f9 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -387,7 +387,7 @@
- 		wdt: watchdog@fcfe0000 {
- 			compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
- 			reg = <0xfcfe0000 0x6>;
--			interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
-+			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&p0_clk>;
- 		};
- 
+On 2018-05-11 12:00:39 +0200, Jacopo Mondi wrote:
+> Accept the destination image format as thrid parameter of the convert
+> function.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  convert.sh | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/convert.sh b/convert.sh
+> index 4059868..878ac63 100755
+> --- a/convert.sh
+> +++ b/convert.sh
+> @@ -2,6 +2,7 @@
+>  
+>  F=$(dirname $1)/$(basename $1 .bin)
+>  FRAME_SIZE=${2:-1280x720}
+> +FORMAT=${3:-RGB565}
+>  
+> -raw2rgbpnm -f RGB565 -s $FRAME_SIZE $F.bin $F.pnm
+> +raw2rgbpnm -f $FORMAT -s $FRAME_SIZE $F.bin $F.pnm
+>  convert $F.pnm $F.png
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.7.4
+Regards,
+Niklas S�derlund
