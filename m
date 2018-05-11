@@ -1,117 +1,104 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLQ2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:16:28 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 014/102] arm64: dts: renesas: r8a77965: Add PWM device nodes
-Date: Fri, 18 May 2018 13:14:36 +0200
-Message-Id: <e3ddf00f87d998e81ac1e5c925145c24bb10411d.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Fri, 11 May 2018 13:34:20 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 4/5] media: rcar-vin: Do not use crop if not configured
+Message-ID: <20180511113420.GL18974@bigcity.dyn.berto.se>
+References: <1526032781-14319-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526032781-14319-5-git-send-email-jacopo+renesas@jmondi.org>
+ <20180511111037.GD18974@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180511111037.GD18974@bigcity.dyn.berto.se>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hi again,
 
-This patch adds PWM device nodes for r8a77965.
+On 2018-05-11 13:10:37 +0200, Niklas S�derlund wrote:
+> Hi Jacopo,
+> 
+> Thanks for your work.
+> 
+> On 2018-05-11 11:59:40 +0200, Jacopo Mondi wrote:
+> > The crop_scale routine uses the crop rectangle memebers to configure the
+> > VIN clipping rectangle. When crop is not configured all its fields are
+> > 0s, and setting the clipping rectangle vertical and horizontal extensions
+> > to (0 - 1) causes the registers to be written with an incorrect
+> > 0xffffffff value.
+> 
+> This is an interesting find and a clear bug in my code. But I can't see 
+> how crop ever could be 0. When s_fmt is called it always resets the crop 
+> and compose width's to the requested format size.
+> 
+> I'm curious how you found this bug, I tried to reproduce it but could 
+> not. 
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 48 ++++++++++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 7 deletions(-)
+My bad I was looking at the wrong thing, yes I can reproduce this on 
+CSI-2 capture as well. Really nice find!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 4371be3e869a..a41f91653d93 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -770,39 +770,73 @@
- 		};
- 
- 		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
- 			reg = <0 0xe6e30000 0 8>;
--			/* placeholder */
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
- 		};
- 
- 		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
- 			reg = <0 0xe6e31000 0 8>;
- 			#pwm-cells = <2>;
--			/* placeholder */
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
- 		};
- 
- 		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
- 			reg = <0 0xe6e32000 0 8>;
--			/* placeholder */
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
- 		};
- 
- 		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
- 			reg = <0 0xe6e33000 0 8>;
--			/* placeholder */
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
- 		};
- 
- 		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
- 			reg = <0 0xe6e34000 0 8>;
--			/* placeholder */
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
- 		};
- 
- 		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
- 			reg = <0 0xe6e35000 0 8>;
--			/* placeholder */
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
- 		};
- 
- 		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a77965", "renesas,pwm-rcar";
- 			reg = <0 0xe6e36000 0 8>;
--			/* placeholder */
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			resets = <&cpg 523>;
-+			power-domains = <&sysc 32>;
-+			status = "disabled";
- 		};
- 
- 		msiof0: spi@e6e90000 {
+> This is indeed something we should fix! But I think the proper fix is 
+>not allowing crop to be 0 and not treating the symptom in 
+>rvin_crop_scale_comp().
+> 
+> > 
+> > Fix this by using the actual format width and height when no crop
+> > rectangle has been programmed.
+> > 
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-dma.c | 15 +++++++++------
+> >  1 file changed, 9 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> > index b41ba9a..ea7a120 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> > @@ -579,22 +579,25 @@ static void rvin_crop_scale_comp_gen2(struct rvin_dev *vin)
+> >  
+> >  void rvin_crop_scale_comp(struct rvin_dev *vin)
+> >  {
+> > -	/* Set Start/End Pixel/Line Pre-Clip */
+> > +	u32 width = vin->crop.width ? vin->crop.left + vin->crop.width :
+> > +				      vin->format.width;
+> > +	u32 height = vin->crop.height ? vin->crop.top + vin->crop.height :
+> > +					vin->format.height;
+> > +
+> > +	/* Set Start/End Pixel/Line Pre-Clip if crop is configured. */
+> >  	rvin_write(vin, vin->crop.left, VNSPPRC_REG);
+> > -	rvin_write(vin, vin->crop.left + vin->crop.width - 1, VNEPPRC_REG);
+> > +	rvin_write(vin, width - 1, VNEPPRC_REG);
+> >  
+> >  	switch (vin->format.field) {
+> >  	case V4L2_FIELD_INTERLACED:
+> >  	case V4L2_FIELD_INTERLACED_TB:
+> >  	case V4L2_FIELD_INTERLACED_BT:
+> >  		rvin_write(vin, vin->crop.top / 2, VNSLPRC_REG);
+> > -		rvin_write(vin, (vin->crop.top + vin->crop.height) / 2 - 1,
+> > -			   VNELPRC_REG);
+> > +		rvin_write(vin, height / 2 - 1, VNELPRC_REG);
+> >  		break;
+> >  	default:
+> >  		rvin_write(vin, vin->crop.top, VNSLPRC_REG);
+> > -		rvin_write(vin, vin->crop.top + vin->crop.height - 1,
+> > -			   VNELPRC_REG);
+> > +		rvin_write(vin, height - 1, VNELPRC_REG);
+> >  		break;
+> >  	}
+> >  
+> > -- 
+> > 2.7.4
+> > 
+> 
+> -- 
+> Regards,
+> Niklas S�derlund
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
