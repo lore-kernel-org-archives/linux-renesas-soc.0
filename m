@@ -1,51 +1,51 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/3] arm64: dts: renesas: ulcb: Add PMIC DDR Backup Power config
-Date: Thu,  3 May 2018 14:30:51 +0200
-Message-Id: <1525350651-12471-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1525350651-12471-1-git-send-email-geert+renesas@glider.be>
-References: <1525350651-12471-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:19778 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751204AbeEKOQk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 11 May 2018 10:16:40 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/2] rcar-vin: Fix potential buffer overrun root cause
+Date: Fri, 11 May 2018 16:15:39 +0200
+Message-Id: <20180511141541.3164-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On the R-Car Starter Kit Premier/Pro, all of the DDR0, DDR1, DDR0C, and
-DDR1C power rails need to be kept powered when backup mode is enabled.
-Reflect this in the "rohm,ddr-backup-power" property for the BD9571MWV
-PMIC node.
+Hi,
 
-The accessory power switch (SW8) is a momentary switch, hense specify
-"rohm,rstbmode-pulse".
+Commit 015060cb7795eac3 ("media: rcar-vin: enable field toggle after a 
+set number of lines for Gen3") was an attempt to fix the issue of 
+writing outside the capture buffer for VIN Gen3. Unfortunately it only 
+fixed a symptom of a problem to such a degree I could no longer 
+reproduce it.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Use a hex value for the bit mask,
+Jacopo on the other hand working on a different setup still ran into the 
+issue. And he even figured out the root cause of the issue. When I 
+submitted the original VIN Gen3 support I had when addressing a review 
+comment missed to keep the crop and compose dimensions in sync with the 
+requested format resulting in the DMA engine not properly stopping 
+before writing outside the buffer.
 
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+This series reverts the incorrect fix in 1/2 and applies a correct one 
+in 2/2. I think this should be picked up for v4.18.
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index bb21ae335e8b8489..432a4e9752f2b923 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -256,6 +256,8 @@
- 		#interrupt-cells = <2>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		rohm,ddr-backup-power = <0xf>;
-+		rohm,rstbmode-pulse;
- 
- 		regulators {
- 			dvfs: dvfs {
+Niklas Söderlund (2):
+  Revert "media: rcar-vin: enable field toggle after a set number of
+    lines for Gen3"
+  rcar-vin: fix crop and compose handling for Gen3
+
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 20 +++++---------------
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  6 ++++++
+ 2 files changed, 11 insertions(+), 15 deletions(-)
+
 -- 
-2.7.4
-
+2.17.0
