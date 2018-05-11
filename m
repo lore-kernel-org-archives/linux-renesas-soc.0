@@ -1,43 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:37575 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750927AbeEKDNr (ORCPT
+Received: from mx1.redhat.com ([209.132.183.28]:22935 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751381AbeEKTpp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 May 2018 23:13:47 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] dt-bindings: net: ravb: Add support for r8a77990 SoC
-Date: Fri, 11 May 2018 12:13:06 +0900
-Message-Id: <1526008386-26420-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1526008386-26420-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1526008386-26420-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 11 May 2018 15:45:45 -0400
+Date: Fri, 11 May 2018 13:45:44 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] vfio: platform: Fix reset module leak in error
+ path
+Message-ID: <20180511134544.72b46acb@w520.home>
+In-Reply-To: <1523438149-16433-3-git-send-email-geert+renesas@glider.be>
+References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
+        <1523438149-16433-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add documentation for r8a77990 compatible string to renesas ravb device
-tree bindings documentation.
+On Wed, 11 Apr 2018 11:15:48 +0200
+Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
- 1 file changed, 1 insertion(+)
+> If the IOMMU group setup fails, the reset module is not released.
+> 
+> Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> v3:
+>   - Add Reviewed-by,
+> 
+> v2:
+>   - Add Reviewed-by.
+> ---
+>  drivers/vfio/platform/vfio_platform_common.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-index 890526d..fac897d 100644
---- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-+++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-@@ -21,6 +21,7 @@ Required properties:
-       - "renesas,etheravb-r8a77965" for the R8A77965 SoC.
-       - "renesas,etheravb-r8a77970" for the R8A77970 SoC.
-       - "renesas,etheravb-r8a77980" for the R8A77980 SoC.
-+      - "renesas,etheravb-r8a77990" for the R8A77990 SoC.
-       - "renesas,etheravb-r8a77995" for the R8A77995 SoC.
-       - "renesas,etheravb-rcar-gen3" as a fallback for the above
- 		R-Car Gen3 devices.
--- 
-1.9.1
+Applied to next branch for v4.18 with Eric's ack.  Thanks,
+
+Alex
