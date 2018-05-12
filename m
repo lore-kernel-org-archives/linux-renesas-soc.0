@@ -1,37 +1,48 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45829 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750939AbeEBHhJ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 03:37:09 -0400
-Date: Wed, 2 May 2018 09:08:56 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77965: use r8a77965-sysc binding
- definitions
-Message-ID: <20180502070856.bbmt75cqkqpar3kv@verge.net.au>
-References: <20180426193447.29565-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH 5/5] media: rcar-vin: Use FTEV for digital input
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <1526032781-14319-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526032781-14319-6-git-send-email-jacopo+renesas@jmondi.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <b6dc7ab8-7995-8146-943d-702ce1800121@cogentembedded.com>
+Date: Sat, 12 May 2018 12:32:00 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180426193447.29565-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1526032781-14319-6-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 09:34:47PM +0200, Niklas Söderlund wrote:
-> Replace the hardcoded power domain indices by R8A77965_PD_* symbols.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 95 ++++++++++++-----------
->  1 file changed, 48 insertions(+), 47 deletions(-)
-> 
-> Hi Simon,
-> 
-> This is based on top of your trees devel branch from earlier today.
+Hello!
 
-Thanks, applied.
+On 5/11/2018 12:59 PM, Jacopo Mondi wrote:
+
+> Since commit (015060cb
+
+    Need 12 digits here, and SHA1 ID should be cited outside the parens.
+
+> "media: rcar-vin: enable field toggle after a set
+> number of lines for Gen3)
+
+    The commit summary must be enclosed in ("").
+    And I think Niklas has posted the patches reverting that commit and fixing 
+the driver properly.
+
+> the VIN generates an internal field signal
+> toggle after a fixed number of received lines, and uses the internal
+> field signal to drive capture operations. When capturing from digital
+> input, using FTEH driven field signal toggling messes up the received
+> image sizes. Fall back to use FTEV driven signal toggling when capturing
+> from digital input.
+> 
+> As explained in the comment, this disables buffer overflow protection
+> for digital input capture, for which the FOE overflow might be used in
+> future.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+[...]
+
+MBR, Sergei
