@@ -1,142 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:17998 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752441AbeEQObI (ORCPT
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49164 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751438AbeEMC1p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 May 2018 10:31:08 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/2] v4l2-ioctl: create helper to fill in v4l2_standard for ENUMSTD
-Date: Thu, 17 May 2018 16:30:15 +0200
-Message-Id: <20180517143016.13501-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180517143016.13501-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180517143016.13501-1-niklas.soderlund+renesas@ragnatech.se>
+        Sat, 12 May 2018 22:27:45 -0400
+Date: Sun, 13 May 2018 11:27:26 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH/RFC 0/2] regulator: bd9571mwv: Add support for toggle
+ power switches
+Message-ID: <20180513022726.GI949@sirena.org.uk>
+References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
+ <CAMuHMdXyWs1v_D4EUd-H75Q3cpQv6yD2V_MptjJP7FjYhu5c3g@mail.gmail.com>
+ <20180418140041.GD10061@sirena.org.uk>
+ <20180419201356.GC25034@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2xeD/fx0+7k8I/QN"
+Content-Disposition: inline
+In-Reply-To: <20180419201356.GC25034@amd>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Prepare for adding a new IOCTL VIDIOC_SUBDEV_ENUMSTD which would
-enumerate the standards for a subdevice by breaking out the code which
-could be shared between the video and subdevice versions of this IOCTL.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/v4l2-core/v4l2-ioctl.c | 66 ++++++++++++++++------------
- include/media/v4l2-ioctl.h           | 11 +++++
- 2 files changed, 48 insertions(+), 29 deletions(-)
+--2xeD/fx0+7k8I/QN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index a40dbec271f1d9fe..1b5893373358ad5e 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -125,6 +125,42 @@ int v4l2_video_std_construct(struct v4l2_standard *vs,
- }
- EXPORT_SYMBOL(v4l2_video_std_construct);
- 
-+/* Fill in the fields of a v4l2_standard structure according to the
-+ * 'id' and 'vs->index' parameters. Returns negative on error. */
-+int v4l_video_std_enumstd(struct v4l2_standard *vs, v4l2_std_id id)
-+{
-+	v4l2_std_id curr_id = 0;
-+	unsigned int index = vs->index, i, j = 0;
-+	const char *descr = "";
-+
-+	/* Return -ENODATA if the id for the current input
-+	   or output is 0, meaning that it doesn't support this API. */
-+	if (id == 0)
-+		return -ENODATA;
-+
-+	/* Return norm array in a canonical way */
-+	for (i = 0; i <= index && id; i++) {
-+		/* last std value in the standards array is 0, so this
-+		   while always ends there since (id & 0) == 0. */
-+		while ((id & standards[j].std) != standards[j].std)
-+			j++;
-+		curr_id = standards[j].std;
-+		descr = standards[j].descr;
-+		j++;
-+		if (curr_id == 0)
-+			break;
-+		if (curr_id != V4L2_STD_PAL &&
-+				curr_id != V4L2_STD_SECAM &&
-+				curr_id != V4L2_STD_NTSC)
-+			id &= ~curr_id;
-+	}
-+	if (i <= index)
-+		return -EINVAL;
-+
-+	v4l2_video_std_construct(vs, curr_id, descr);
-+	return 0;
-+}
-+
- /* ----------------------------------------------------------------- */
- /* some arrays for pretty-printing debug messages of enum types      */
- 
-@@ -1753,36 +1789,8 @@ static int v4l_enumstd(const struct v4l2_ioctl_ops *ops,
- {
- 	struct video_device *vfd = video_devdata(file);
- 	struct v4l2_standard *p = arg;
--	v4l2_std_id id = vfd->tvnorms, curr_id = 0;
--	unsigned int index = p->index, i, j = 0;
--	const char *descr = "";
--
--	/* Return -ENODATA if the tvnorms for the current input
--	   or output is 0, meaning that it doesn't support this API. */
--	if (id == 0)
--		return -ENODATA;
- 
--	/* Return norm array in a canonical way */
--	for (i = 0; i <= index && id; i++) {
--		/* last std value in the standards array is 0, so this
--		   while always ends there since (id & 0) == 0. */
--		while ((id & standards[j].std) != standards[j].std)
--			j++;
--		curr_id = standards[j].std;
--		descr = standards[j].descr;
--		j++;
--		if (curr_id == 0)
--			break;
--		if (curr_id != V4L2_STD_PAL &&
--				curr_id != V4L2_STD_SECAM &&
--				curr_id != V4L2_STD_NTSC)
--			id &= ~curr_id;
--	}
--	if (i <= index)
--		return -EINVAL;
--
--	v4l2_video_std_construct(p, curr_id, descr);
--	return 0;
-+	return v4l_video_std_enumstd(p, vfd->tvnorms);
- }
- 
- static int v4l_s_std(const struct v4l2_ioctl_ops *ops,
-diff --git a/include/media/v4l2-ioctl.h b/include/media/v4l2-ioctl.h
-index a7b3f7c75d628b06..fa0463a1b19dc880 100644
---- a/include/media/v4l2-ioctl.h
-+++ b/include/media/v4l2-ioctl.h
-@@ -642,6 +642,17 @@ void v4l2_video_std_frame_period(int id, struct v4l2_fract *frameperiod);
- int v4l2_video_std_construct(struct v4l2_standard *vs,
- 				    int id, const char *name);
- 
-+/**
-+ * v4l_video_std_enumstd - Ancillary routine that fills in the fields of
-+ *	a &v4l2_standard structure according to the @id and @vs->index
-+ *	parameters.
-+ *
-+ * @vs: struct &v4l2_standard pointer to be filled.
-+ * @id: analog TV sdandard ID.
-+ *
-+ */
-+int v4l_video_std_enumstd(struct v4l2_standard *vs, v4l2_std_id id);
-+
- /**
-  * v4l_printk_ioctl - Ancillary routine that prints the ioctl in a
-  *	human-readable format.
--- 
-2.17.0
+On Thu, Apr 19, 2018 at 10:13:56PM +0200, Pavel Machek wrote:
+> On Wed 2018-04-18 15:00:41, Mark Brown wrote:
+
+> > Please don't send content free pings and please allow a reasonable time
+> > for review.  People get busy, go on holiday, attend conferences and so=
+=20
+
+> If I follow the logs right, there was one month before ping. That
+> seems pretty reasonable time.
+
+Right, but the content free bit still applies (as does the bit about
+resending which is the main actionable bit for people).  The two go hand
+in hand so often that I just wrote the one thing for both.
+
+> > Sending content free pings adds to the mail volume (if they are seen at
+> > all) which is often the problem and since they can't be reviewed
+
+> Yep, and sending content free complains about pings also adds to the
+> main volume :-(.
+
+They're not content free.  They're telling people that if it looks like
+their patch has fallen through the cracks then they need to resend their
+patch and why, without that people (especially newer contributors) might
+not be clear about what to do.
+
+> Anyway, last time I sent you a patch... you _had_ time to complain
+> that I'm pinging too often, but you apparently did not have time to
+> look at the patch. That patch would have been in time for v4.16-rc1
+> IIRC.
+
+If that's the tlv320dac33 patch you sent a followup in the middle of the
+thread with what you said was a current version or something but never
+actually sent that version as a regular patch submission.  You'd also
+managed to not have the ASoC on the front of the patch which pushes it
+to the bottom of the review queue, it won't turn up when I look in in my
+inbox for ASoC patches.
+
+Now, I for whatever reason didn't explicitly tell you I was expecting a
+resend so you didn't explicitly know that this was what was going on
+which is a good example of why letting people know what's going on is a
+good idea.
+
+--2xeD/fx0+7k8I/QN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlr3oo0ACgkQJNaLcl1U
+h9CS8wf6ApsNWMYuWBEkqkstpUS9gBhwblIChDzGTN9pCR+q3NecEWlBqFCQpk7q
+LtjULLle6h9CJAh2+ECSLHkaLAVT5Gh1aTU6YcvGabU37dqUUMdLx7cCFetfSWX9
+XmRedqvm6O1KsSrr4zCg9jUNZakjRg1A7mw1+nvsQKHlxuecx5514I8L8n5A2Is9
+M8UDI+TtaDJMZzmQWoK8/2Z5lkI1krrDXAH5zLhpEmJaV7vwNI9kCFmP/E9Sxswg
+99nh4mdin2w5j0akKNCariNLv3FmaVAVbEMtp+cv8NnyaMvAgkjpfZMtRF1wB6T/
+A8DkJ+qqVEebHes1voGfo1JxwePDdg==
+=f9+n
+-----END PGP SIGNATURE-----
+
+--2xeD/fx0+7k8I/QN--
