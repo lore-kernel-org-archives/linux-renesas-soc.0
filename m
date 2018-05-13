@@ -1,119 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59114 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751927AbeENCFy (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:15344 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751695AbeEMTAp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 May 2018 22:05:54 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        Sun, 13 May 2018 15:00:45 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] media: rcar-vin: enable support for r8a77965
-Date: Mon, 14 May 2018 05:06:11 +0300
-Message-ID: <3586332.p7dOIGCUmf@avalon>
-In-Reply-To: <20180513190023.16170-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180513190023.16170-1-niklas.soderlund+renesas@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] media: rcar-vin: enable support for r8a77965
+Date: Sun, 13 May 2018 21:00:23 +0200
+Message-Id: <20180513190023.16170-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Add the SoC specific information for Renesas r8a77965.
 
-Thank you for the patch.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 48 +++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-On Sunday, 13 May 2018 22:00:23 EEST Niklas S=F6derlund wrote:
-> Add the SoC specific information for Renesas r8a77965.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 48 +++++++++++++++++++++
->  1 file changed, 48 insertions(+)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
-> b/drivers/media/platform/rcar-vin/rcar-core.c index
-> d3072e166a1ca24f..f7bfd05accbfde67 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -974,6 +974,50 @@ static const struct rvin_info rcar_info_r8a7796 =3D {
->  	.routes =3D rcar_info_r8a7796_routes,
->  };
->=20
-> +static const struct rvin_group_route _rcar_info_r8a77965_routes[] =3D {
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 0, .mask =3D BIT(0) | B=
-IT(3) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 0, .mask =3D BIT(1) | B=
-IT(4) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 0, .mask =3D BIT(2) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 1, .mask =3D BIT(0) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 1, .mask =3D BIT(1) | B=
-IT(3) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 1, .mask =3D BIT(2) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 1, .mask =3D BIT(4) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 2, .mask =3D BIT(0) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 2, .mask =3D BIT(1) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 2, .mask =3D BIT(2) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 2, .vin =3D 2, .mask =3D BIT(3) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 2, .vin =3D 2, .mask =3D BIT(4) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 3, .mask =3D BIT(0) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 3, .mask =3D BIT(1) | B=
-IT(2) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 3, .vin =3D 3, .mask =3D BIT(3) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 3, .vin =3D 3, .mask =3D BIT(4) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 4, .mask =3D BIT(0) | B=
-IT(3) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 4, .mask =3D BIT(1) | B=
-IT(4) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 4, .mask =3D BIT(2) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 5, .mask =3D BIT(0) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 5, .mask =3D BIT(1) | B=
-IT(3) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 5, .mask =3D BIT(2) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 5, .mask =3D BIT(4) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 6, .mask =3D BIT(0) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 6, .mask =3D BIT(1) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 6, .mask =3D BIT(2) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 2, .vin =3D 6, .mask =3D BIT(3) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 2, .vin =3D 6, .mask =3D BIT(4) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 7, .mask =3D BIT(0) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 7, .mask =3D BIT(1) | B=
-IT(2) },
-> +	{ .csi =3D RVIN_CSI40, .channel =3D 3, .vin =3D 7, .mask =3D BIT(3) },
-> +	{ .csi =3D RVIN_CSI20, .channel =3D 3, .vin =3D 7, .mask =3D BIT(4) },
-> +	{ /* Sentinel */ }
-> +};
-> +
-> +static const struct rvin_info rcar_info_r8a77965 =3D {
-> +	.model =3D RCAR_GEN3,
-> +	.use_mc =3D true,
-> +	.max_width =3D 4096,
-> +	.max_height =3D 4096,
-> +	.routes =3D _rcar_info_r8a77965_routes,
-> +};
-> +
->  static const struct rvin_group_route _rcar_info_r8a77970_routes[] =3D {
->  	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 0, .mask =3D BIT(0) | B=
-IT(3) },
->  	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 1, .mask =3D BIT(2) },
-> @@ -1030,6 +1074,10 @@ static const struct of_device_id rvin_of_id_table[=
-] =3D
-> { .compatible =3D "renesas,vin-r8a7796",
->  		.data =3D &rcar_info_r8a7796,
->  	},
-> +	{
-> +		.compatible =3D "renesas,vin-r8a77965",
-> +		.data =3D &rcar_info_r8a77965,
-> +	},
->  	{
->  		.compatible =3D "renesas,vin-r8a77970",
->  		.data =3D &rcar_info_r8a77970,
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index d3072e166a1ca24f..f7bfd05accbfde67 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -974,6 +974,50 @@ static const struct rvin_info rcar_info_r8a7796 = {
+ 	.routes = rcar_info_r8a7796_routes,
+ };
+ 
++static const struct rvin_group_route _rcar_info_r8a77965_routes[] = {
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 0, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 0, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 1, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 1, .mask = BIT(1) | BIT(3) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 1, .mask = BIT(4) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 2, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 2, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 2, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 2, .vin = 2, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 2, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 3, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 3, .mask = BIT(1) | BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 3, .vin = 3, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 3, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 4, .mask = BIT(1) | BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 4, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 5, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(1) | BIT(3) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 5, .mask = BIT(4) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 6, .mask = BIT(0) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 6, .mask = BIT(1) },
++	{ .csi = RVIN_CSI20, .channel = 0, .vin = 6, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 2, .vin = 6, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 2, .vin = 6, .mask = BIT(4) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 7, .mask = BIT(0) },
++	{ .csi = RVIN_CSI20, .channel = 1, .vin = 7, .mask = BIT(1) | BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 3, .vin = 7, .mask = BIT(3) },
++	{ .csi = RVIN_CSI20, .channel = 3, .vin = 7, .mask = BIT(4) },
++	{ /* Sentinel */ }
++};
++
++static const struct rvin_info rcar_info_r8a77965 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = _rcar_info_r8a77965_routes,
++};
++
+ static const struct rvin_group_route _rcar_info_r8a77970_routes[] = {
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 0, .mask = BIT(0) | BIT(3) },
+ 	{ .csi = RVIN_CSI40, .channel = 0, .vin = 1, .mask = BIT(2) },
+@@ -1030,6 +1074,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+ 		.compatible = "renesas,vin-r8a7796",
+ 		.data = &rcar_info_r8a7796,
+ 	},
++	{
++		.compatible = "renesas,vin-r8a77965",
++		.data = &rcar_info_r8a77965,
++	},
+ 	{
+ 		.compatible = "renesas,vin-r8a77970",
+ 		.data = &rcar_info_r8a77970,
+-- 
+2.17.0
