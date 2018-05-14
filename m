@@ -1,91 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:60503 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751060AbeEVKHM (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:60772 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752192AbeENJQp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 May 2018 06:07:12 -0400
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document RZ/N1 clock driver
-Date: Tue, 22 May 2018 11:01:23 +0100
-Message-Id: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+        Mon, 14 May 2018 05:16:45 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: heikki.krogerus@linux.intel.com, hdegoede@redhat.com,
+        andy.shevchenko@gmail.com, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC v3 4/4] arm64: dts: renesas: r8a7795: add OF graph for usb role switch
+Date: Mon, 14 May 2018 18:16:00 +0900
+Message-Id: <1526289360-3997-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1526289360-3997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1526289360-3997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-to provide the SoC clock infrastructure for Linux.
+This patch adds OF graph properties for usb role switch in r8a7795
+into USB3.0 host/peripheral nodes.
 
-This documents the driver bindings.
+TODO:
+ - need patches for other SoCs.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- .../bindings/clock/renesas,rzn1-clocks.txt         | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-new file mode 100644
-index 0000000..0c41137
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-@@ -0,0 +1,44 @@
-+* Renesas RZ/N1 Clock Driver
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 1d5e3ac..50d3312 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1746,6 +1746,12 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 328>;
+ 			status = "disabled";
 +
-+This driver provides the clock infrastructure used by all the other drivers.
++			port {
++				usb3_host0_ep: endpoint {
++					remote-endpoint = <&usb3_peri0_ep>;
++				};
++			};
+ 		};
+ 
+ 		usb3_peri0: usb@ee020000 {
+@@ -1757,6 +1763,12 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 328>;
+ 			status = "disabled";
 +
-+One of the 'special' feature of this infrastructure is that Linux doesn't
-+necessary 'own' all the clocks on the SoC, some other OS runs on
-+the Cortex-M3 core and that OS can access and claim it's own clocks.
-+
-+Required Properties:
-+
-+  - compatible: Must be
-+    - "renesas,r9a06g032-clocks" for the RZ/N1D
-+    and "renesas,rzn1-clocks" as a fallback.
-+  - reg: Base address and length of the memory resource used by the driver
-+  - #clock-cells: Must be 1
-+
-+Examples
-+--------
-+
-+  - Clock driver device node:
-+
-+	clock: clocks@4000c000 {
-+		compatible = "renesas,r9a06g032-clocks",
-+				"renesas,rzn1-clocks";
-+		reg = <0x4000c000 0x1000>;
-+		status = "okay";
-+		#clock-cells = <1>;
-+	};
-+
-+
-+  - Other drivers can use the clocks as in:
-+
-+	uart0: serial@40060000 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x40060000 0x400>;
-+		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		clocks = <&clock RZN1_CLK_UART0>;
-+		clock-names = "baudclk";
-+	};
-+    Note the use of RZN1_CLK_UART0 -- these constants are declared in
-+    the rzn1-clocks.h header file. These are not hardware based constants
-+    and are Linux specific.
++			port {
++				usb3_peri0_ep: endpoint {
++					remote-endpoint = <&usb3_host0_ep>;
++				};
++			};
+ 		};
+ 
+ 		usb_dmac0: dma-controller@e65a0000 {
 -- 
-2.7.4
+1.9.1
