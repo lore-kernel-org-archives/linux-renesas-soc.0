@@ -1,105 +1,119 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:58322 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751740AbeEBOT5 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59114 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751927AbeENCFy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 May 2018 10:19:57 -0400
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fDsbr-0002VZ-6L
-        for linux-renesas-soc@vger.kernel.org; Wed, 02 May 2018 16:19:55 +0200
-Received: from geert by ramsan with local (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fDsbr-00034F-4q
-        for linux-renesas-soc@vger.kernel.org; Wed, 02 May 2018 16:19:55 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2018-05-02-v4.17-rc3
-Date: Wed,  2 May 2018 16:19:55 +0200
-Message-Id: <1525270795-11752-1-git-send-email-geert+renesas@glider.be>
+        Sun, 13 May 2018 22:05:54 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: rcar-vin: enable support for r8a77965
+Date: Mon, 14 May 2018 05:06:11 +0300
+Message-ID: <3586332.p7dOIGCUmf@avalon>
+In-Reply-To: <20180513190023.16170-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180513190023.16170-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2018-05-02-v4.17-rc3 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hi Niklas,
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+Thank you for the patch.
 
-Today's version is based on renesas-devel-20180501-v4.17-rc3.
+On Sunday, 13 May 2018 22:00:23 EEST Niklas S=F6derlund wrote:
+> Add the SoC specific information for Renesas r8a77965.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/rcar-gen2-wdt-v6
-  - topic/bd9571-ddr-backup-mode-driver-v3
-  - topic/bd9571-ddr-backup-mode-dt-v3
-  - topic/r8a77990-soc-v1
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/cpufreq-automatic
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/ipmmu-driver-v6
-  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
-  - git://linuxtv.org/pinchartl/media.git#tags/vsp1-discom-v3-20180428
-  - git://linuxtv.org/pinchartl/media.git#tags/drm-next-colorkey-v1-20171215
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/tlb-optimise/v8
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#d3/i2c-conflict/drm
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#tags/vsp1/du/interlaced/v2.5
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Included fixes:
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
-  - sched/fair: fix the update of blocked load when newly idle
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 48 +++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> b/drivers/media/platform/rcar-vin/rcar-core.c index
+> d3072e166a1ca24f..f7bfd05accbfde67 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -974,6 +974,50 @@ static const struct rvin_info rcar_info_r8a7796 =3D {
+>  	.routes =3D rcar_info_r8a7796_routes,
+>  };
+>=20
+> +static const struct rvin_group_route _rcar_info_r8a77965_routes[] =3D {
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 0, .mask =3D BIT(0) | B=
+IT(3) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 0, .mask =3D BIT(1) | B=
+IT(4) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 0, .mask =3D BIT(2) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 1, .mask =3D BIT(0) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 1, .mask =3D BIT(1) | B=
+IT(3) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 1, .mask =3D BIT(2) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 1, .mask =3D BIT(4) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 2, .mask =3D BIT(0) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 2, .mask =3D BIT(1) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 2, .mask =3D BIT(2) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 2, .vin =3D 2, .mask =3D BIT(3) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 2, .vin =3D 2, .mask =3D BIT(4) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 3, .mask =3D BIT(0) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 3, .mask =3D BIT(1) | B=
+IT(2) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 3, .vin =3D 3, .mask =3D BIT(3) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 3, .vin =3D 3, .mask =3D BIT(4) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 4, .mask =3D BIT(0) | B=
+IT(3) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 4, .mask =3D BIT(1) | B=
+IT(4) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 4, .mask =3D BIT(2) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 5, .mask =3D BIT(0) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 5, .mask =3D BIT(1) | B=
+IT(3) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 5, .mask =3D BIT(2) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 5, .mask =3D BIT(4) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 6, .mask =3D BIT(0) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 6, .mask =3D BIT(1) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 0, .vin =3D 6, .mask =3D BIT(2) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 2, .vin =3D 6, .mask =3D BIT(3) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 2, .vin =3D 6, .mask =3D BIT(4) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 1, .vin =3D 7, .mask =3D BIT(0) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 1, .vin =3D 7, .mask =3D BIT(1) | B=
+IT(2) },
+> +	{ .csi =3D RVIN_CSI40, .channel =3D 3, .vin =3D 7, .mask =3D BIT(3) },
+> +	{ .csi =3D RVIN_CSI20, .channel =3D 3, .vin =3D 7, .mask =3D BIT(4) },
+> +	{ /* Sentinel */ }
+> +};
+> +
+> +static const struct rvin_info rcar_info_r8a77965 =3D {
+> +	.model =3D RCAR_GEN3,
+> +	.use_mc =3D true,
+> +	.max_width =3D 4096,
+> +	.max_height =3D 4096,
+> +	.routes =3D _rcar_info_r8a77965_routes,
+> +};
+> +
+>  static const struct rvin_group_route _rcar_info_r8a77970_routes[] =3D {
+>  	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 0, .mask =3D BIT(0) | B=
+IT(3) },
+>  	{ .csi =3D RVIN_CSI40, .channel =3D 0, .vin =3D 1, .mask =3D BIT(2) },
+> @@ -1030,6 +1074,10 @@ static const struct of_device_id rvin_of_id_table[=
+] =3D
+> { .compatible =3D "renesas,vin-r8a7796",
+>  		.data =3D &rcar_info_r8a7796,
+>  	},
+> +	{
+> +		.compatible =3D "renesas,vin-r8a77965",
+> +		.data =3D &rcar_info_r8a77965,
+> +	},
+>  	{
+>  		.compatible =3D "renesas,vin-r8a77970",
+>  		.data =3D &rcar_info_r8a77970,
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+=2D-=20
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
