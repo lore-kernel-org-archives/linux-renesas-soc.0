@@ -1,418 +1,180 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:1254 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751309AbeEPCCa (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 22:02:30 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 4/7] arm64: dts: renesas: r8a77965: add VIN and CSI-2 nodes
-Date: Wed, 16 May 2018 03:58:51 +0200
-Message-Id: <20180516015854.19432-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-media-owner@vger.kernel.org>
+Date: Mon, 14 May 2018 10:06:46 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/5] media: rcar-vin: Add digital input subdevice parsing
+Message-ID: <20180514080646.GB5956@w540>
+References: <1526032781-14319-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526032781-14319-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20180511110124.GC18974@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+nBD6E3TurpgldQp"
+Content-Disposition: inline
+In-Reply-To: <20180511110124.GC18974@bigcity.dyn.berto.se>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 326 +++++++++++++++++++++-
- 1 file changed, 316 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 1f67aea493050a34..486aecacb22abcf2 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -886,43 +886,259 @@
- 		};
- 
- 		vin0: video@e6ef0000 {
-+			compatible = "renesas,vin-r8a77965";
- 			reg = <0 0xe6ef0000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 811>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 811>;
-+			renesas,id = <0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin0csi20: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint= <&csi20vin0>;
-+					};
-+					vin0csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin0>;
-+					};
-+				};
-+			};
- 		};
- 
- 		vin1: video@e6ef1000 {
-+			compatible = "renesas,vin-r8a77965";
- 			reg = <0 0xe6ef1000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 810>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 810>;
-+			renesas,id = <1>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin1csi20: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint= <&csi20vin1>;
-+					};
-+					vin1csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin1>;
-+					};
-+				};
-+			};
- 		};
- 
- 		vin2: video@e6ef2000 {
-+			compatible = "renesas,vin-r8a77965";
- 			reg = <0 0xe6ef2000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 809>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 809>;
-+			renesas,id = <2>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin2csi20: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint= <&csi20vin2>;
-+					};
-+					vin2csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin2>;
-+					};
-+				};
-+			};
- 		};
- 
- 		vin3: video@e6ef3000 {
-+			compatible = "renesas,vin-r8a77965";
- 			reg = <0 0xe6ef3000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 808>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 808>;
-+			renesas,id = <3>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin3csi20: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint= <&csi20vin3>;
-+					};
-+					vin3csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin3>;
-+					};
-+				};
-+			};
- 		};
- 
- 		vin4: video@e6ef4000 {
-+			compatible = "renesas,vin-r8a77965";
- 			reg = <0 0xe6ef4000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 807>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 807>;
-+			renesas,id = <4>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin4csi20: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint= <&csi20vin4>;
-+					};
-+					vin4csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin4>;
-+					};
-+				};
-+			};
- 		};
- 
- 		vin5: video@e6ef5000 {
-+			compatible = "renesas,vin-r8a77965";
- 			reg = <0 0xe6ef5000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 806>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 806>;
-+			renesas,id = <5>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin5csi20: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint= <&csi20vin5>;
-+					};
-+					vin5csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin5>;
-+					};
-+				};
-+			};
- 		};
- 
- 		vin6: video@e6ef6000 {
-+			compatible = "renesas,vin-r8a77965";
- 			reg = <0 0xe6ef6000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 805>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 805>;
-+			renesas,id = <6>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin6csi20: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint= <&csi20vin6>;
-+					};
-+					vin6csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin6>;
-+					};
-+				};
-+			};
- 		};
- 
- 		vin7: video@e6ef7000 {
-+			compatible = "renesas,vin-r8a77965";
- 			reg = <0 0xe6ef7000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 804>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 804>;
-+			renesas,id = <7>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin7csi20: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint= <&csi20vin7>;
-+					};
-+					vin7csi40: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin7>;
-+					};
-+				};
-+			};
- 		};
- 
- 		rcar_sound: sound@ec500000 {
-@@ -1218,22 +1434,112 @@
- 		};
- 
- 		csi20: csi2@fea80000 {
-+			compatible = "renesas,r8a77965-csi2";
- 			reg = <0 0xfea80000 0 0x10000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 714>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 714>;
-+			status = "disabled";
- 
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					csi20vin0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&vin0csi20>;
-+					};
-+					csi20vin1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&vin1csi20>;
-+					};
-+					csi20vin2: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint = <&vin2csi20>;
-+					};
-+					csi20vin3: endpoint@3 {
-+						reg = <3>;
-+						remote-endpoint = <&vin3csi20>;
-+					};
-+					csi20vin4: endpoint@4 {
-+						reg = <4>;
-+						remote-endpoint = <&vin4csi20>;
-+					};
-+					csi20vin5: endpoint@5 {
-+						reg = <5>;
-+						remote-endpoint = <&vin5csi20>;
-+					};
-+					csi20vin6: endpoint@6 {
-+						reg = <6>;
-+						remote-endpoint = <&vin6csi20>;
-+					};
-+					csi20vin7: endpoint@7 {
-+						reg = <7>;
-+						remote-endpoint = <&vin7csi20>;
-+					};
-+				};
- 			};
- 		};
- 
- 		csi40: csi2@feaa0000 {
-+			compatible = "renesas,r8a77965-csi2";
- 			reg = <0 0xfeaa0000 0 0x10000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
- 
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					csi40vin0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&vin0csi40>;
-+					};
-+					csi40vin1: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&vin1csi40>;
-+					};
-+					csi40vin2: endpoint@2 {
-+						reg = <2>;
-+						remote-endpoint = <&vin2csi40>;
-+					};
-+					csi40vin3: endpoint@3 {
-+						reg = <3>;
-+						remote-endpoint = <&vin3csi40>;
-+					};
-+					csi40vin4: endpoint@4 {
-+						reg = <4>;
-+						remote-endpoint = <&vin4csi40>;
-+					};
-+					csi40vin5: endpoint@5 {
-+						reg = <5>;
-+						remote-endpoint = <&vin5csi40>;
-+					};
-+					csi40vin6: endpoint@6 {
-+						reg = <6>;
-+						remote-endpoint = <&vin6csi40>;
-+					};
-+					csi40vin7: endpoint@7 {
-+						reg = <7>;
-+						remote-endpoint = <&vin7csi40>;
-+					};
-+				};
- 			};
- 		};
- 
--- 
-2.17.0
+--+nBD6E3TurpgldQp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Niklas,
+
+On Fri, May 11, 2018 at 01:01:24PM +0200, Niklas S=C3=B6derlund wrote:
+> Hi Jacopo,
+>
+> Thanks for your work!
+>
+> The comments here apply to both 2/5 and 3/5.
+>
+> On 2018-05-11 11:59:38 +0200, Jacopo Mondi wrote:
+> > Add support for digital input subdevices to Gen-3 rcar-vin.
+> > The Gen-3, media-controller compliant, version has so far only accepted
+> > CSI-2 input subdevices. Remove assumptions on the supported bus_type and
+> > accepted number of subdevices, and allow digital input connections on p=
+ort@0.
+>
+> I feel this much more complex then it has to be. You defer parsing the
+> DT graph until all VIN's are probed just like it's done for the port@1
+> parsing. For the CSI-2 endpoints in port@1 this is needed as they are
+> shared for all VIN's in the group. While for the parallel input this is
+> local for each VIN and could be parsed at probe time for each individual
+> VIN. As a bonus for doing that I think you could reuse the parallel
+> parsing functions from the Gen2 code whit small additions.
+>
+> Maybe something like this can be done:
+>
+> - At each VIN probe() rework the block
+>
+>     if (vin->info->use_mc)
+> 	    ret =3D rvin_mc_init(vin);
+>     else
+> 	    ret =3D rvin_digital_graph_init(vin);
+>
+>   To:
+>     ret =3D rvin_digital_graph_init(vin);
+>     ...
+>     ret =3D rvin_mc_init(vin);
+>     ...
+>
+> - Then in rvin_digital_graph_init() don't call
+>   v4l2_async_notifier_register() if vin->info->use_mc is set.
+>
+>   And instead as a last step in rvin_mc_init() call
+>   v4l2_async_notifier_register() for each vin->notifier that contains a
+>   subdevice.
+>
+> - As a last step add a check for vin->info->use_mc in
+>   rvin_digital_notify_complete() and handle the case for Gen2 behavior
+>   (what it does now) and Gen3 behavior (adding the MC link).
+>
+>
+> I think my doing this you could greatly simplify the process of handling
+> the parallel subdevice.
+>
+> Please see bellow for one additional comment.
+
+Thanks for the suggestion.
+My understanding was that the 'Gen2' was planned for removal in the
+long term, and we should have paved the road for a
+media-controller-only version of the driver. But I admit I didn't even
+try to re-use that code part, I'll give your suggestions a spin, if
+this won't prevent future removal of the non-mc part of the driver.
+>
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-core.c | 166 ++++++++++++++++++++=
++++-----
+> >  drivers/media/platform/rcar-vin/rcar-vin.h  |  13 +++
+> >  2 files changed, 153 insertions(+), 26 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/medi=
+a/platform/rcar-vin/rcar-core.c
+> > index e547ef7..105b6b6 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> > @@ -697,29 +697,21 @@ static const struct v4l2_async_notifier_operation=
+s rvin_group_notify_ops =3D {
+> >  	.complete =3D rvin_group_notify_complete,
+
+[snip]
+
+> > +
+> > +	switch (vep->base.port) {
+> > +	case RVIN_PORT_DIGITAL:
+> > +		ret =3D rvin_mc_parse_of_digital(vin, vep, asd);
+> > +		break;
+> > +	case RVIN_PORT_CSI2:
+> > +	default:
+> > +		ret =3D rvin_mc_parse_of_csi2(vin, vep, asd);
+> > +		break;
+> > +	}
+> > +		/*
+
+[snip]
+
+> > +
+> > +		switch (ep.port) {
+> > +		case RVIN_PORT_DIGITAL:
+> > +			asd_struct_size =3D sizeof(struct rvin_graph_entity);
+> > +			break;
+> > +		case RVIN_PORT_CSI2:
+> > +			asd_struct_size =3D sizeof(struct v4l2_async_subdev);
+> > +			break;
+> > +		default:
+> >  };
+
+[snip]
+
+> >
+> >  /**
+> > + * enum rvin_port_id
+> > + *
+> > + * List the available VIN port functions.
+> > + *
+> > + * RVIN_PORT_DIGITAL	- Input port for digital video connection
+> > + * RVIN_PORT_CSI2	- Input port for CSI-2 video connection
+> > + */
+> > +enum rvin_port_id {
+> > +	RVIN_PORT_DIGITAL,
+> > +	RVIN_PORT_CSI2
+> > +};
+>
+> This enum is never used in the patch-set is it used later by a different
+> patch-set or a left over from refactoring?
+
+I see two occurencies each of this enumeration members in this patch.
+I left them un-cut above.
+
+Thanks
+   j
+
+--+nBD6E3TurpgldQp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa+UOWAAoJEHI0Bo8WoVY8LEEP/3h5vaAteTQcy1qtEaY291/R
+CsAjd+WapFrdIlWxRLOjUN+v6r4O/+T8FGlvc4Iht3o323GMtFn3BJkFL/RXpUdc
+DKFuQJTSpsJcJgPyW0P/LvtuiI5W3WR0dIxUV5BqRdBV4CMtIKlIxSPD9F6s1Sm6
+nPJv+zwAIOdSqs5AltHOCFdeUHUvH51e66yRx5hQdOMTuAWeBL0sTv6V4YyfzgYT
+fZXUP+cJaNeSJVITaHbWCOipH5la2nK3AiJZauWOZd3eApbeRjc2+B+DwWhDs+mi
+JcIZXqg/O2U5WFL+118kcM/KnXwWxeyu5VGNGeh+Ags7+eI39dq1JZp4sqR1ppHk
+uktRkR1iUAhdD+DImLxLzX84BMe+Ix76UW7fZGSRjElrNZ5KfrWhQDACUNuErGYE
+Xwo23IvLyaorU4o6eo3qdsleyBs2QsOiiRoxCDtzvFzk+T6NIDIxBe0+hjrbLbCG
+Yq5Hx0OuexugpgxOzKFLxHWD6igQJiN3lOqQ0xSe0tCJRA2cgrbFO8cb5iRxFYJ2
+waCpKjnZX+vLIYlcYTxdE58aigLDEgLZ1tczu0avRb17iLjy0FFMNidQGjNdQ7z9
+fQd0iJ2lnFP2poiUfewfokfIV0SFUSQFtTjWslreRZZ0VhxRwAAHOe8ern5kE4oG
+FgoidgeImC/dVCIxpAxw
+=VUs5
+-----END PGP SIGNATURE-----
+
+--+nBD6E3TurpgldQp--
