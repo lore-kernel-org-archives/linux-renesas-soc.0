@@ -1,158 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:22765 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:56590 "EHLO
         relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751992AbeEKDXL (ORCPT
+        by vger.kernel.org with ESMTP id S1751219AbeENCbK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 May 2018 23:23:11 -0400
+        Sun, 13 May 2018 22:31:10 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 6/6] pinctrl: sh-pfc: r8a77990: Add EthernetAVB pins, groups and functions
-Date: Fri, 11 May 2018 12:22:27 +0900
-Message-Id: <1526008947-26667-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1526008947-26667-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1526008947-26667-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH/RFC v2 1/6] dt-bindings: usb: add Renesas R-Car USB 3.0
+ role switch
+Date: Mon, 14 May 2018 02:31:05 +0000
+Message-ID: <OSBPR01MB22936DD92C07CA2761247D10D89C0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1524742006-17984-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524742006-17984-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20180427200559.5kxgetsjzpjlrm2m@rob-hp-laptop>
+ <OSBPR01MB2293BDDB3DDEF46D6EDA8F20D89A0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <CAL_JsqJpzJqs4xbTvy=BCrJvxCUfrhif80Qp+h5xc=AOC0hvhg@mail.gmail.com>
+In-Reply-To: <CAL_JsqJpzJqs4xbTvy=BCrJvxCUfrhif80Qp+h5xc=AOC0hvhg@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-
-This patch adds group and function of AVB PHY, LINK, MAGIC, MII and PTP
-pins for the R8A77990 SoC.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 90 +++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 508dc21..6c692fa 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -1299,6 +1299,78 @@ enum {
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 3, PRESETOUT_N, CFG_FLAGS),
- };
- 
-+/* - EtherAVB --------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	/* AVB_LINK */
-+	RCAR_GP_PIN(2, 23),
-+};
-+
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
-+};
-+
-+static const unsigned int avb_magic_pins[] = {
-+	/* AVB_MAGIC */
-+	RCAR_GP_PIN(2, 22),
-+};
-+
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+
-+static const unsigned int avb_phy_int_pins[] = {
-+	/* AVB_PHY_INT */
-+	RCAR_GP_PIN(2, 21),
-+};
-+
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+
-+static const unsigned int avb_mii_pins[] = {
-+	/*
-+	 * AVB_RX_CTL, AVB_RXC, AVB_RD0,
-+	 * AVB_RD1, AVB_RD2, AVB_RD3,
-+	 * AVB_TXCREFCLK
-+	 */
-+	RCAR_GP_PIN(2, 14), RCAR_GP_PIN(2, 15), RCAR_GP_PIN(2, 16),
-+	RCAR_GP_PIN(2, 17), RCAR_GP_PIN(2, 18), RCAR_GP_PIN(2, 19),
-+	RCAR_GP_PIN(2, 20),
-+};
-+
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_RX_CTL_MARK, AVB_RXC_MARK, AVB_RD0_MARK,
-+	AVB_RD1_MARK, AVB_RD2_MARK, AVB_RD3_MARK,
-+	AVB_TXCREFCLK_MARK,
-+};
-+
-+static const unsigned int avb_avtp_pps_pins[] = {
-+	/* AVB_AVTP_PPS */
-+	RCAR_GP_PIN(1, 2),
-+};
-+
-+static const unsigned int avb_avtp_pps_mux[] = {
-+	AVB_AVTP_PPS_MARK,
-+};
-+
-+static const unsigned int avb_avtp_match_a_pins[] = {
-+	/* AVB_AVTP_MATCH_A */
-+	RCAR_GP_PIN(2, 24),
-+};
-+
-+static const unsigned int avb_avtp_match_a_mux[] = {
-+	AVB_AVTP_MATCH_A_MARK,
-+};
-+
-+static const unsigned int avb_avtp_capture_a_pins[] = {
-+	/* AVB_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(2, 25),
-+};
-+
-+static const unsigned int avb_avtp_capture_a_mux[] = {
-+	AVB_AVTP_CAPTURE_A_MARK,
-+};
-+
- /* - I2C -------------------------------------------------------------------- */
- static const unsigned int i2c1_a_pins[] = {
- 	/* SCL, SDA */
-@@ -1713,6 +1785,13 @@ enum {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mii),
-+	SH_PFC_PIN_GROUP(avb_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
- 	SH_PFC_PIN_GROUP(i2c1_a),
- 	SH_PFC_PIN_GROUP(i2c1_b),
- 	SH_PFC_PIN_GROUP(i2c1_c),
-@@ -1760,6 +1839,16 @@ enum {
- 	SH_PFC_PIN_GROUP(scif_clk_b),
- };
- 
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mii",
-+	"avb_avtp_pps",
-+	"avb_avtp_match_a",
-+	"avb_avtp_capture_a",
-+};
-+
- static const char * const i2c1_groups[] = {
- 	"i2c1_a",
- 	"i2c1_b",
-@@ -1845,6 +1934,7 @@ enum {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
- 	SH_PFC_FUNCTION(i2c4),
--- 
-1.9.1
+SGkgUm9iLA0KDQo+IEZyb206IFJvYiBIZXJyaW5nLCBTZW50OiBTYXR1cmRheSwgTWF5IDEyLCAy
+MDE4IDE6MDcgQU0NCj4gDQo+IE9uIE1vbiwgTWF5IDcsIDIwMTggYXQgOTo0MyBQTSwgWW9zaGlo
+aXJvIFNoaW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToN
+Cj4gPiBIaSBSb2IsDQo+ID4NCj4gPiBTb3JyeSBmb3IgdGhlIGRlbGF5ZWQgcmVzcG9uc2UuIEkg
+aGFkIGEgdmFjYXRpb24gaW4gbGFzdCB3ZWVrLg0KPiA+DQo+ID4+IEZyb206IFJvYiBIZXJyaW5n
+LCBTZW50OiBTYXR1cmRheSwgQXByaWwgMjgsIDIwMTggNTowNiBBTQ0KPiA+Pg0KPiA+PiBPbiBU
+aHUsIEFwciAyNiwgMjAxOCBhdCAwODoyNjo0MVBNICswOTAwLCBZb3NoaWhpcm8gU2hpbW9kYSB3
+cm90ZToNCj4gPj4gPiBUaGlzIHBhdGNoIGFkZHMgYSBuZXcgZG9jdW1lbnRhdGlvbiBmb3IgUmVu
+ZXNhcyBSLUNhciBVU0IgMy4wIHJvbGUNCj4gPj4gPiBzd2l0Y2ggdGhhdCBjYW4gY2hhbmdlIHRo
+ZSBVU0IgMy4wIHJvbGUgdG8gZWl0aGVyIGhvc3Qgb3IgcGVyaXBoZXJhbA0KPiA+PiA+IGJ5IGEg
+aGFyZHdhcmUgcmVnaXN0ZXIgdGhhdCBpcyBpbmNsdWRlZCBpbiBVU0IzLjAgcGVyaXBoZXJhbCBt
+b2R1bGUuDQo+ID4+ID4NCj4gPj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8
+eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+DQo+ID4+ID4gLS0tDQo+ID4+ID4gIC4u
+Li9iaW5kaW5ncy91c2IvcmVuZXNhcyxyY2FyLXVzYjMtcm9sZS1zdy50eHQgICAgIHwgNDcgKysr
+KysrKysrKysrKysrKysrKysrKw0KPiA+PiA+ICAxIGZpbGUgY2hhbmdlZCwgNDcgaW5zZXJ0aW9u
+cygrKQ0KPiA+PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL3VzYi9yZW5lc2FzLHJjYXItdXNiMy1yb2xlLXN3LnR4dA0KPiA+PiA+DQo+ID4+
+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy91c2IvcmVu
+ZXNhcyxyY2FyLXVzYjMtcm9sZS1zdy50eHQNCj4gPj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvdXNiL3JlbmVzYXMscmNhci11c2IzLXJvbGUtc3cudHh0DQo+ID4+ID4gbmV3
+IGZpbGUgbW9kZSAxMDA2NDQNCj4gPj4gPiBpbmRleCAwMDAwMDAwLi5lMDc0YzAzDQo+ID4+ID4g
+LS0tIC9kZXYvbnVsbA0KPiA+PiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy91c2IvcmVuZXNhcyxyY2FyLXVzYjMtcm9sZS1zdy50eHQNCj4gPj4gPiBAQCAtMCwwICsx
+LDQ3IEBADQo+ID4+ID4gK1JlbmVzYXMgRWxlY3Ryb25pY3MgUi1DYXIgVVNCIDMuMCByb2xlIHN3
+aXRjaA0KPiA+PiA+ICsNCj4gPj4gPiArQSByZW5lc2FzX3VzYjMncyBub2RlIGNhbiBjb250YWlu
+IHRoaXMgbm9kZS4NCj4gPj4gPiArDQo+ID4+ID4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+ID4+
+ID4gKyAtIGNvbXBhdGlibGU6IE11c3QgY29udGFpbiAicmVuZXNhcyxyY2FyLXVzYjMtcm9sZS1z
+d2l0Y2giLg0KPiA+PiA+ICsNCj4gPj4gPiArUmVxdWlyZWQgbm9kZXM6DQo+ID4+ID4gKyAtIFRo
+ZSBjb25uZWN0aW9uIHRvIGEgdXNiMy4wIGhvc3Qgbm9kZSBuZWVkcyBieSB1c2luZyBPRiBncmFw
+aCBiaW5kaW5ncy4NCj4gPj4gPiArICAtIHBvcnRAMCA9IFVTQiAzLjAgaG9zdCBwb3J0DQo+ID4+
+ID4gKyAgLSBwb3J0QDEgPSBVU0IgMy4wIHBlcmlwaGVyYWwgcG9ydA0KPiA+PiA+ICsNCj4gPj4g
+PiArRXhhbXBsZSBvZiBSLUNhciBIMyBFUzIuMDoNCj4gPj4gPiArICAgdXNiM19wZXJpMDogdXNi
+QGVlMDIwMDAwIHsNCj4gPj4gPiArICAgICAgICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMscjhh
+Nzc5NS11c2IzLXBlcmkiLA0KPiA+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAicmVuZXNh
+cyxyY2FyLWdlbjMtdXNiMy1wZXJpIjsNCj4gPj4gPiArICAgICAgICAgICByZWcgPSA8MCAweGVl
+MDIwMDAwIDAgMHg0MDA+Ow0KPiA+PiA+ICsgICAgICAgICAgIGludGVycnVwdHMgPSA8R0lDX1NQ
+SSAxMDQgSVJRX1RZUEVfTEVWRUxfSElHSD47DQo+ID4+ID4gKyAgICAgICAgICAgY2xvY2tzID0g
+PCZjcGcgQ1BHX01PRCAzMjg+Ow0KPiA+PiA+ICsgICAgICAgICAgIHBvd2VyLWRvbWFpbnMgPSA8
+JnN5c2MgUjhBNzc5NV9QRF9BTFdBWVNfT04+Ow0KPiA+PiA+ICsgICAgICAgICAgIHJlc2V0cyA9
+IDwmY3BnIDMyOD47DQo+ID4+ID4gKw0KPiA+PiA+ICsgICAgICAgICAgIHVzYjMtcm9sZS1zdyB7
+DQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMscmNhci11
+c2IzLXJvbGUtc3dpdGNoIjsNCj4gPj4NCj4gPj4gWW91IGRvbid0IGRlZmluZSBhbnkgaC93IHJl
+c291cmNlcy4gSG93IGlzIHRoaXMgZGV2aWNlIGFjY2Vzc2VkPw0KPiA+DQo+ID4gVGhpcyBkZXZp
+Y2UgYWNjZXNzZXMgb25lIG9mIHJlZ2lzdGVycyBpbiB0aGUgdXNiM19wZXJpMC4NCj4gPiBJbiB0
+aGUgZGV0YWlsLCB0aGUgdXNiMy1yb2xlLXN3IHVzZXMgMHhlZTAyMDIxOCAoMzItYml0IHJlZ2lz
+dGVyKSBvbmx5Lg0KPiA+IChVbmZvcnR1bmF0ZWx5LCB0aGUgaGFyZHdhcmUgZGVzaWduIGlzIG5v
+dCBnb29kLi4uKQ0KPiA+DQo+ID4gSW4gdGhpcyBjYXNlLCBzaG91bGQgSSBkZXNjcmliZSB0aGUg
+Zm9sbG93aW5nIGluIHRoZSB1c2IzLXJvbGUtc3cgbm9kZT8NCj4gPg0KPiA+ICAgICAgICAgcmVn
+ID0gPDAgMHhlZTAyMDIxOCAwIDQ+Ow0KPiA+DQo+ID4gT3IsIHNob3VsZG4ndCBJIGFkZCB0aGUg
+dXNiMy1yb2xlLXN3IG5vZGUgYW5kIGEgZHJpdmVyIGZvciB1c2IzX3BlcmkwIHNob3VsZA0KPiA+
+IHRha2UgY2FyZSBmb3IgaXQ/DQo+IA0KPiBJTU8sIHRoZSBkcml2ZXIgc2hvdWxkIHRha2UgY2Fy
+ZSBvZiBpdC4NCg0KVGhhbmsgeW91IGZvciB0aGUgcmVwbHkuIEknbGwgbW9kaWZ5IHRoZSB1c2Iz
+X3BlcmkwIGRyaXZlciBmb3Igcm9sZSBzd2l0Y2guDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGly
+byBTaGltb2RhDQoNCj4gUm9iDQo=
