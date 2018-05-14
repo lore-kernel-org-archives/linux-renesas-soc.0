@@ -1,16 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:42582 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752321AbeEOIk4 (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:41336 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751978AbeENUN7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 04:40:56 -0400
+        Mon, 14 May 2018 16:13:59 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWEzRic5dy_Daj-JDkwCjn7mPTmWbVb7zTPLbuxcQ22Fg@mail.gmail.com>
+In-Reply-To: <1526008947-26667-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1526008947-26667-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1526008947-26667-4-git-send-email-yoshihiro.shimoda.uh@renesas.com> <CAMuHMdWEzRic5dy_Daj-JDkwCjn7mPTmWbVb7zTPLbuxcQ22Fg@mail.gmail.com>
+ <1526008947-26667-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 May 2018 10:40:55 +0200
-Message-ID: <CAMuHMdURM9oRi6BEWgmXhkEwBQYvm+7ORnqkQCOSmvQaM9_xwQ@mail.gmail.com>
+Date: Mon, 14 May 2018 22:13:56 +0200
+Message-ID: <CAMuHMdWEzRic5dy_Daj-JDkwCjn7mPTmWbVb7zTPLbuxcQ22Fg@mail.gmail.com>
 Subject: Re: [PATCH 3/6] pinctrl: sh-pfc: r8a77990: Add bias pinconf support
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -27,57 +27,54 @@ Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 14, 2018 at 10:13 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, May 11, 2018 at 5:22 AM, Yoshihiro Shimoda
-> <yoshihiro.shimoda.uh@renesas.com> wrote:
->> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->>
->> This patch implements control of pull-up and pull-down. On this SoC there
->> is no simple mapping of GP pins to bias register bits, so we need a table.
->>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->
-> Thanks for your patch!
->
->> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
->> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
->
->> @@ -1227,10 +1248,55 @@ enum {
->>
->>         PINMUX_IPSR_GPSR(IP15_31_28,            USB30_OVC),
->>         PINMUX_IPSR_MSEL(IP15_31_28,            USB0_OVC_A,     SEL_USB_20_CH0_0),
->> +
->> +/*
->> + * Static pins can not be muxed between different functions but
->> + * still needs a mark entry in the pinmux list. Add each static
->
-> need mark entries
->
->> + * pin to the list without an associated function. The sh-pfc
->> + * core will do the right thing and skip trying to mux then pin
->
-> mux the pin
->
->> + * while still applying configuration to it
->
-> period
->
-> I have just sent a patch to fix the other copies, in the hope these grammar
-> atrocities will stop spreading ;-)
->
->> @@ -1708,8 +1774,263 @@ enum {
->>         { },
->>  };
->>
->> +static const struct pinmux_bias_reg pinmux_bias_regs[] = {
->
-> The register definitions look OK to me.
-> I'll review the actual pin mappings later.
+Hi Shimoda-san,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.18 with the comments fixed.
+On Fri, May 11, 2018 at 5:22 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch implements control of pull-up and pull-down. On this SoC there
+> is no simple mapping of GP pins to bias register bits, so we need a table.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+
+> @@ -1227,10 +1248,55 @@ enum {
+>
+>         PINMUX_IPSR_GPSR(IP15_31_28,            USB30_OVC),
+>         PINMUX_IPSR_MSEL(IP15_31_28,            USB0_OVC_A,     SEL_USB_20_CH0_0),
+> +
+> +/*
+> + * Static pins can not be muxed between different functions but
+> + * still needs a mark entry in the pinmux list. Add each static
+
+need mark entries
+
+> + * pin to the list without an associated function. The sh-pfc
+> + * core will do the right thing and skip trying to mux then pin
+
+mux the pin
+
+> + * while still applying configuration to it
+
+period
+
+I have just sent a patch to fix the other copies, in the hope these grammar
+atrocities will stop spreading ;-)
+
+> @@ -1708,8 +1774,263 @@ enum {
+>         { },
+>  };
+>
+> +static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+
+The register definitions look OK to me.
+I'll review the actual pin mappings later.
 
 Gr{oetje,eeting}s,
 
