@@ -1,464 +1,133 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRS (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45082 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752055AbeENUIp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 067/102] arm64: dts: renesas: r8a77965: use r8a77965-sysc binding definitions
-Date: Fri, 18 May 2018 13:15:29 +0200
-Message-Id: <7e26520fb466ddbecf7d0c1eea44126c1a353a19.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Mon, 14 May 2018 16:08:45 -0400
+Received: by mail-lf0-f66.google.com with SMTP id q2-v6so19857487lfc.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 May 2018 13:08:44 -0700 (PDT)
+Date: Mon, 14 May 2018 22:08:42 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: sh-pfc: rcar-gen3: Fix grammar in static pin
+ comments
+Message-ID: <20180514200841.GJ30519@bigcity.dyn.berto.se>
+References: <1526327042-31055-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526327042-31055-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi Geert,
 
-Replace the hardcoded power domain indices by R8A77965_PD_* symbols.
+Thanks for your work.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
-[simon: dropped hunk to include r8a77965-sysc.h which is already present]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 94 +++++++++++++++----------------
- 1 file changed, 47 insertions(+), 47 deletions(-)
+On 2018-05-14 21:44:02 +0200, Geert Uytterhoeven wrote:
+> The comment block explaining the rationale for static pins contains
+> grammar errors.  It appeared first in the pin control driver for R-Car
+> H3 ES1.x, and spread to R-Car M3-W, H3 ES2.0, and M3-N later.
+> 
+> Fix the grammar in all copies at once.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 7c9555309c0a..536fed8eec6a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -61,7 +61,7 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x0>;
- 			device_type = "cpu";
--			power-domains = <&sysc 0>;
-+			power-domains = <&sysc R8A77965_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -70,14 +70,14 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x1>;
- 			device_type = "cpu";
--			power-domains = <&sysc 1>;
-+			power-domains = <&sysc R8A77965_PD_CA57_CPU1>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
- 
- 		L2_CA57: cache-controller-0 {
- 			compatible = "cache";
--			power-domains = <&sysc 12>;
-+			power-domains = <&sysc R8A77965_PD_CA57_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-@@ -147,7 +147,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 912>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 912>;
- 		};
- 
-@@ -162,7 +162,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 911>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 911>;
- 		};
- 
-@@ -177,7 +177,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 910>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 910>;
- 		};
- 
-@@ -192,7 +192,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 909>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 909>;
- 		};
- 
-@@ -207,7 +207,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 908>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 908>;
- 		};
- 
-@@ -222,7 +222,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 907>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 907>;
- 		};
- 
-@@ -237,7 +237,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 906>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 906>;
- 		};
- 
-@@ -252,7 +252,7 @@
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 			clocks = <&cpg CPG_MOD 905>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 905>;
- 		};
- 
-@@ -294,7 +294,7 @@
- 				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
- 				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 407>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 407>;
- 		};
- 
-@@ -348,7 +348,7 @@
- 			reg = <0 0xe60b0000 0 0x425>;
- 			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 926>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 926>;
- 			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
- 			dma-names = "tx", "rx";
-@@ -367,7 +367,7 @@
- 			renesas,buswait = <11>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 704>;
- 			status = "disabled";
- 		};
-@@ -380,7 +380,7 @@
- 				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "ch0", "ch1";
- 			clocks = <&cpg CPG_MOD 330>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 330>;
- 			#dma-cells = <1>;
- 			dma-channels = <2>;
-@@ -394,7 +394,7 @@
- 				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "ch0", "ch1";
- 			clocks = <&cpg CPG_MOD 331>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 331>;
- 			#dma-cells = <1>;
- 			dma-channels = <2>;
-@@ -407,7 +407,7 @@
- 			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
- 				 <&usb_extal_clk>;
- 			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 328>;
- 			#phy-cells = <0>;
- 			status = "disabled";
-@@ -441,7 +441,7 @@
- 					"ch12", "ch13", "ch14", "ch15";
- 			clocks = <&cpg CPG_MOD 219>;
- 			clock-names = "fck";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-@@ -475,7 +475,7 @@
- 					"ch12", "ch13", "ch14", "ch15";
- 			clocks = <&cpg CPG_MOD 218>;
- 			clock-names = "fck";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-@@ -509,7 +509,7 @@
- 					"ch12", "ch13", "ch14", "ch15";
- 			clocks = <&cpg CPG_MOD 217>;
- 			clock-names = "fck";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 217>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-@@ -552,7 +552,7 @@
- 					  "ch20", "ch21", "ch22", "ch23",
- 					  "ch24";
- 			clocks = <&cpg CPG_MOD 812>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
- 			#address-cells = <1>;
-@@ -566,7 +566,7 @@
- 			#pwm-cells = <2>;
- 			clocks = <&cpg CPG_MOD 523>;
- 			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
- 
-@@ -576,7 +576,7 @@
- 			#pwm-cells = <2>;
- 			clocks = <&cpg CPG_MOD 523>;
- 			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
- 
-@@ -586,7 +586,7 @@
- 			#pwm-cells = <2>;
- 			clocks = <&cpg CPG_MOD 523>;
- 			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
- 
-@@ -596,7 +596,7 @@
- 			#pwm-cells = <2>;
- 			clocks = <&cpg CPG_MOD 523>;
- 			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
- 
-@@ -606,7 +606,7 @@
- 			#pwm-cells = <2>;
- 			clocks = <&cpg CPG_MOD 523>;
- 			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
- 
-@@ -616,7 +616,7 @@
- 			#pwm-cells = <2>;
- 			clocks = <&cpg CPG_MOD 523>;
- 			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
- 
-@@ -626,7 +626,7 @@
- 			#pwm-cells = <2>;
- 			clocks = <&cpg CPG_MOD 523>;
- 			resets = <&cpg 523>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
- 
-@@ -642,7 +642,7 @@
- 			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
- 			       <&dmac2 0x51>, <&dmac2 0x50>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 207>;
- 			status = "disabled";
- 		};
-@@ -659,7 +659,7 @@
- 			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
- 			       <&dmac2 0x53>, <&dmac2 0x52>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 206>;
- 			status = "disabled";
- 		};
-@@ -673,7 +673,7 @@
- 				 <&cpg CPG_CORE 20>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
- 		};
-@@ -689,7 +689,7 @@
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
- 			dma-names = "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 204>;
- 			status = "disabled";
- 		};
-@@ -705,7 +705,7 @@
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
- 			dma-names = "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 203>;
- 			status = "disabled";
- 		};
-@@ -722,7 +722,7 @@
- 			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
- 			       <&dmac2 0x5b>, <&dmac2 0x5a>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 202>;
- 			status = "disabled";
- 		};
-@@ -736,7 +736,7 @@
- 			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
- 			       <&dmac2 0x41>, <&dmac2 0x40>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 211>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -752,7 +752,7 @@
- 			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
- 			       <&dmac2 0x43>, <&dmac2 0x42>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 210>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -767,7 +767,7 @@
- 			clocks = <&cpg CPG_MOD 209>;
- 			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
- 			dma-names = "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 209>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -782,7 +782,7 @@
- 			clocks = <&cpg CPG_MOD 208>;
- 			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
- 			dma-names = "tx", "rx";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 208>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -873,7 +873,7 @@
- 			reg = <0 0xee000000 0 0xc00>;
- 			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 328>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 328>;
- 			status = "disabled";
- 		};
-@@ -884,7 +884,7 @@
- 			reg = <0 0xee020000 0 0x400>;
- 			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 328>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 328>;
- 			status = "disabled";
- 		};
-@@ -896,7 +896,7 @@
- 			clocks = <&cpg CPG_MOD 703>;
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
- 		};
-@@ -908,7 +908,7 @@
- 			clocks = <&cpg CPG_MOD 702>;
- 			phys = <&usb2_phy1>;
- 			phy-names = "usb";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 702>;
- 			status = "disabled";
- 		};
-@@ -921,7 +921,7 @@
- 			phys = <&usb2_phy0>;
- 			phy-names = "usb";
- 			companion = <&ohci0>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			status = "disabled";
- 		};
-@@ -934,7 +934,7 @@
- 			phys = <&usb2_phy1>;
- 			phy-names = "usb";
- 			companion = <&ohci1>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 702>;
- 			status = "disabled";
- 		};
-@@ -945,7 +945,7 @@
- 			reg = <0 0xee080200 0 0x700>;
- 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 703>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			#phy-cells = <0>;
- 			status = "disabled";
-@@ -956,7 +956,7 @@
- 				     "renesas,rcar-gen3-usb2-phy";
- 			reg = <0 0xee0a0200 0 0x700>;
- 			clocks = <&cpg CPG_MOD 703>;
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 703>;
- 			#phy-cells = <0>;
- 			status = "disabled";
-@@ -995,7 +995,7 @@
- 					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
--			power-domains = <&sysc 32>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 408>;
- 		};
- 
+Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+Not sure a review tag from the one who made the grammar errors in the 
+first place is worth much... :-)
+
+> ---
+> To be queued in sh-pfc-for-v4.18.
+> 
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 6 +++---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 6 +++---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 6 +++---
+>  drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 6 +++---
+>  4 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+> index 82a1c411c952a63e..a6c5d50557e676de 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+> @@ -1432,10 +1432,10 @@ static const u16 pinmux_data[] = {
+>  
+>  /*
+>   * Static pins can not be muxed between different functions but
+> - * still needs a mark entry in the pinmux list. Add each static
+> + * still need mark entries in the pinmux list. Add each static
+>   * pin to the list without an associated function. The sh-pfc
+> - * core will do the right thing and skip trying to mux then pin
+> - * while still applying configuration to it
+> + * core will do the right thing and skip trying to mux the pin
+> + * while still applying configuration to it.
+>   */
+>  #define FM(x)	PINMUX_DATA(x##_MARK, 0),
+>  	PINMUX_STATIC
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> index 34626898f757a13a..4f55b1562ad4878a 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -1493,10 +1493,10 @@ static const u16 pinmux_data[] = {
+>  
+>  /*
+>   * Static pins can not be muxed between different functions but
+> - * still needs a mark entry in the pinmux list. Add each static
+> + * still need mark entries in the pinmux list. Add each static
+>   * pin to the list without an associated function. The sh-pfc
+> - * core will do the right thing and skip trying to mux then pin
+> - * while still applying configuration to it
+> + * core will do the right thing and skip trying to mux the pin
+> + * while still applying configuration to it.
+>   */
+>  #define FM(x)	PINMUX_DATA(x##_MARK, 0),
+>  	PINMUX_STATIC
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> index 764afa13a8c63658..3ea133cfb241a3df 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> @@ -1499,10 +1499,10 @@ static const u16 pinmux_data[] = {
+>  
+>  /*
+>   * Static pins can not be muxed between different functions but
+> - * still needs a mark entry in the pinmux list. Add each static
+> + * still need mark entries in the pinmux list. Add each static
+>   * pin to the list without an associated function. The sh-pfc
+> - * core will do the right thing and skip trying to mux then pin
+> - * while still applying configuration to it
+> + * core will do the right thing and skip trying to mux the pin
+> + * while still applying configuration to it.
+>   */
+>  #define FM(x)   PINMUX_DATA(x##_MARK, 0),
+>  	PINMUX_STATIC
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+> index 4d944e3c73e91b61..5caecb6a844180ee 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+> @@ -1501,10 +1501,10 @@ static const u16 pinmux_data[] = {
+>  
+>  /*
+>   * Static pins can not be muxed between different functions but
+> - * still needs a mark entry in the pinmux list. Add each static
+> + * still need mark entries in the pinmux list. Add each static
+>   * pin to the list without an associated function. The sh-pfc
+> - * core will do the right thing and skip trying to mux then pin
+> - * while still applying configuration to it
+> + * core will do the right thing and skip trying to mux the pin
+> + * while still applying configuration to it.
+>   */
+>  #define FM(x)   PINMUX_DATA(x##_MARK, 0),
+>  	PINMUX_STATIC
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
