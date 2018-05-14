@@ -1,62 +1,47 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay10.mail.gandi.net ([217.70.178.230]:56773 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752490AbeENHjq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 May 2018 03:39:46 -0400
-Date: Mon, 14 May 2018 09:39:34 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, horms@verge.net.au,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
         geert@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 3/3] arm64: dts: renesas: draak: Describe HDMI input
-Message-ID: <20180514073520.GA5956@w540>
-References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
- <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org>
- <20180513125755.GQ18974@bigcity.dyn.berto.se>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="GID0FwUMdk1T2AWN"
-Content-Disposition: inline
+Date: Mon, 14 May 2018 05:49:41 +0300
+Message-ID: <26780153.JLo9OE30iv@avalon>
 In-Reply-To: <20180513125755.GQ18974@bigcity.dyn.berto.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org> <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org> <20180513125755.GQ18974@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello,
 
---GID0FwUMdk1T2AWN
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Niklas,
-
-On Sun, May 13, 2018 at 02:57:55PM +0200, Niklas S=C3=B6derlund wrote:
-> Hi Jacopo,
->
-> Thanks for your patch.
->
+On Sunday, 13 May 2018 15:57:55 EEST Niklas S=F6derlund wrote:
 > On 2018-05-11 12:00:02 +0200, Jacopo Mondi wrote:
 > > Describe HDMI input connected to VIN4 interface for R-Car D3 Draak
 > > development board.
-> >
+> >=20
 > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > > ---
+> >=20
 > >  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68 ++++++++++++++++++=
-++++++++
++++
 > >  1 file changed, 68 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm6=
-4/boot/dts/renesas/r8a77995-draak.dts
-> > index d03f194..e0ce462 100644
+> >=20
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index d03f194..e0ce462
+> > 100644
 > > --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
 > > +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
 > > @@ -59,6 +59,17 @@
+> >=20
 > >  		};
+> >  =09
 > >  	};
-> >
+> >=20
 > > +	hdmi-in {
 > > +		compatible =3D "hdmi-connector";
 > > +		type =3D "a";
@@ -68,25 +53,36 @@ On Sun, May 13, 2018 at 02:57:55PM +0200, Niklas S=C3=B6derlund wrote:
 > > +		};
 > > +	};
 > > +
+> >=20
 > >  	memory@48000000 {
+> >  =09
 > >  		device_type =3D "memory";
 > >  		/* first 128MB is reserved for secure area. */
+> >=20
 > > @@ -142,6 +153,11 @@
+> >=20
 > >  		groups =3D "usb0";
 > >  		function =3D "usb0";
+> >  =09
 > >  	};
+> >=20
 > > +
 > > +	vin4_pins: vin4 {
 > > +		groups =3D "vin4_data24", "vin4_sync", "vin4_clk", "vin4_clkenb";
 > > +		function =3D "vin4";
 > > +	};
+> >=20
 > >  };
-> >
+> > =20
 > >  &i2c0 {
+> >=20
 > > @@ -154,6 +170,35 @@
+> >=20
 > >  		reg =3D <0x50>;
 > >  		pagesize =3D <8>;
+> >  =09
 > >  	};
+> >=20
 > > +
 > > +	hdmi-decoder@4c {
 > > +		compatible =3D "adi,adv7612";
@@ -110,37 +106,34 @@ On Sun, May 13, 2018 at 02:57:55PM +0200, Niklas S=C3=B6derlund wrote:
 > > +					pclk-sample =3D <0>;
 > > +					hsync-active =3D <0>;
 > > +					vsync-active =3D <0>;
->
+>=20
 > This differs from the Gen2 DT bindings which is a very similar hardware
 > setup using the same components. Defining these properties will make the
 > bus marked as V4L2_MBUS_PARALLEL instead of V4L2_MBUS_BT656.
-
-And that's what we want....
-
->
+>=20
 > This will change how the hardware is configured for capture if the media
 > bus is in a UYVY format, see VNMC_INF register in rvin_setup(). Maybe
 > this it not an issue here but still I'm curious to why this differ
 > between Gen2 and Gen3 :-)
-
-Actually this won't impact the VIN configuration as this is the
-'remote endpoint' from VIN perspective and the properties used to
-configure the interface are the ones in the 'local endpoint'.
-
->
+>=20
 > > +
 > > +					remote-endpoint =3D <&vin4_in>;
 > > +				};
 > > +			};
 > > +		};
 > > +	};
+> >=20
 > >  };
-> >
+> > =20
 > >  &i2c1 {
+> >=20
 > > @@ -246,3 +291,26 @@
+> >=20
 > >  	timeout-sec =3D <60>;
 > >  	status =3D "okay";
+> > =20
 > >  };
+> >=20
 > > +
 > > +&vin4 {
 > > +	pinctrl-0 =3D <&vin4_pins>;
@@ -158,83 +151,41 @@ configure the interface are the ones in the 'local endpoint'.
 > > +			vin4_in: endpoint {
 > > +				hsync-active =3D <0>;
 > > +				vsync-active =3D <0>;
->
+>=20
 > Comparing this to the Gen2 bindings some properties are missing,
->
+>=20
 > bus-width =3D <24>;
 > pclk-sample =3D <1>;
 > data-active =3D <1>;
-
-The VIN driver does not parse them, so there is no value in having
-them there, if not confusing people as it happened to me reading the
-Gen2 DT.
-
->
+>=20
 > This is not a big deal as the VIN driver don't use these properties so
 > no functional change should come of this but still a difference.
 
-Exactly.
+I think the VIN DT bindings should be updated to explicitly list the endpoi=
+nt=20
+properties that are mandatory, optional, or not allowed.
 
-On a side note. I have not seen a way to configure the pixel clock
-sampling level in the interface datasheet. The register used to
-configure synchronism signals polarities is VnDMR2, and there I read
-we can configure HSYNC/VSYNC and CLOCKENB (which is data enable, not
-pixel clock) polarities. Is it configured through some other
-register?
->
 > Over all I'm happy with this change but before I add my tag I would like
 > to understand why it differs from the Gen2 configuration for the adv7612
 > properties.
->
+>=20
 > Also on a side not it is possible with hardware switches on the board
 > switch the VIN4 source to a completely different pipeline CVBS connector
 > -> adv7180 -> VIN4. But I think it's best we keep the HDMI as default as
 > this seems to be how the boards are shipped. But maybe mentioning this
 > in the commit message would not hurt if you end-up resending the patch.
-
-Oh I see. SW-49 to SW-52 enables the HDMI input, SW53-SW54 CVBS one.
-And actually, reading the 'initial setting of slide switches' in the
-Draak board manual, it turns out that the board default configuration
-is with CVBS input selected... What should we do here? reflect
-defaults in the DT, or prioritize HDMI?
-
-Thanks
-   j
-
->
+>=20
 > > +
 > > +				remote-endpoint =3D <&adv7612_out>;
 > > +			};
 > > +		};
 > > +	};
 > > +};
-> > --
-> > 2.7.4
-> >
->
-> --
-> Regards,
-> Niklas S=C3=B6derlund
 
---GID0FwUMdk1T2AWN
-Content-Type: application/pgp-signature; name="signature.asc"
+=2D-=20
+Regards,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Laurent Pinchart
 
-iQIcBAEBAgAGBQJa+T02AAoJEHI0Bo8WoVY8BdkP/RPpYXFtZq+D6Av1ZueRiVjJ
-+Rd+j2J9zgHO9dzIxy7v4MGMnY13aiCu1NF7Tb9XAYlXvOtJ5ahkX9AmQ/fve/Ir
-JMxZzCEgNq/z8JsDsml0yjx7KDSXa+MGJND2QpXWszdSKeeGJdQ1dY+B8UPK1Ubu
-ZlyJd+WZBZqDu7TRmJAwID94pmqJ9rkWlCqn723BjlofldOIRi/Sp0kDxGqyUQLF
-YQ3HDnEpbIaqp4PhdyXMjnnUjw4j6IfQLekL/xAjXN7CnDt+Ii7gXjh3ljpsr87w
-m1rFZLeFYfsejrZ6nWPP1OePQtxJd3anKIB24+Vn8KgXTyT1jNNSAWWRLOKUsO5H
-NcA/XJc9w0WRMQikpgmLxpRuEjj+Y9NZ6lXZXLoQeZ+GE41mh7C2S6sgI4VCQaHH
-HY6hJp5sgAdparut3u8oUQ11aTMSoyW0mZQtJ813MS37p2ld/mIBVm23oliaJf/6
-Fjkjk6Z/iLKdUj6xAci7SaYYoifCqOrYrlkYE255MaMKDhz5CKCyhPxKVwM5DV2q
-Dv420PLVEDCA2ZPqLZwuuKMhC+IWGoecDTAet0z5p9RnOV9bSo02xgEV/t7Jcwyf
-uilb/2PwlyF1AuW72qXEjSwiKnlg1MXI0yQJPbCnTvEm8lsW8IKzCLRQz50QthnH
-OXIEFxo1p6krAUxarvQL
-=t/+Q
------END PGP SIGNATURE-----
 
---GID0FwUMdk1T2AWN--
+
