@@ -1,4 +1,9 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:37596 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbeEOV7i (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 15 May 2018 17:59:38 -0400
 From: Florian Fainelli <f.fainelli@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Florian Fainelli <f.fainelli@gmail.com>,
@@ -31,49 +36,38 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
         linux-usb@vger.kernel.org (open list:USB NETWORKING DRIVERS),
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE)
-Subject: [PATCH net-next 1/2] of: mdio: Fall back to mdiobus_register() with np is NULL
-Date: Tue, 15 May 2018 14:59:29 -0700
-Message-Id: <20180515215930.12115-2-f.fainelli@gmail.com>
-In-Reply-To: <20180515215930.12115-1-f.fainelli@gmail.com>
-References: <20180515215930.12115-1-f.fainelli@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH net-next 0/2] of: mdio: Fall back to mdiobus_register() with np is NULL
+Date: Tue, 15 May 2018 14:59:28 -0700
+Message-Id: <20180515215930.12115-1-f.fainelli@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the Device Tree node specified is NULL, fall back to
-mdiobus_register(). We have a number of drivers having a similar pattern
-which is:
+Hi all,
 
-if (np)
-	of_mdiobus_register()
-else
-	mdiobus_register()
+This patch series updates of_mdiobus_register() such that when the device_node
+argument is NULL, it calls mdiobus_register() directly. This is consistent with
+the behavior of of_mdiobus_register() when CONFIG_OF=n.
 
-so incorporate that behavior within the core of_mdiobus_register()
-function. This is also consistent with the stub version that we defined
-when CONFIG_OF=n.
+I only converted the most obvious drivers, there are others that have a much
+less obvious behavior and specifically attempt to deal with CONFIG_ACPI.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/of/of_mdio.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Florian Fainelli (2):
+  of: mdio: Fall back to mdiobus_register() with np is NULL
+  drivers: net: Remove device_node checks with of_mdiobus_register()
 
-diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
-index 8c0c92712fc9..2341dbf675bf 100644
---- a/drivers/of/of_mdio.c
-+++ b/drivers/of/of_mdio.c
-@@ -204,6 +204,12 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
- 	bool scanphys = false;
- 	int addr, rc;
- 
-+	/* If the Device Tree node does not exist, fall back to traditional
-+	 * registration
-+	 */
-+	if (!np)
-+		return mdiobus_register(mdio);
-+
- 	/* Do not continue if the node is disabled */
- 	if (!of_device_is_available(np))
- 		return -ENODEV;
+ drivers/net/dsa/bcm_sf2.c                         |  8 ++------
+ drivers/net/dsa/mv88e6xxx/chip.c                  |  5 +----
+ drivers/net/ethernet/cadence/macb_main.c          | 12 +++---------
+ drivers/net/ethernet/freescale/fec_main.c         |  8 ++------
+ drivers/net/ethernet/marvell/mvmdio.c             |  5 +----
+ drivers/net/ethernet/renesas/sh_eth.c             | 11 +++--------
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c |  5 +----
+ drivers/net/ethernet/ti/davinci_mdio.c            |  6 ++----
+ drivers/net/phy/mdio-gpio.c                       |  6 +-----
+ drivers/net/phy/mdio-mscc-miim.c                  |  6 +-----
+ drivers/net/usb/lan78xx.c                         |  7 ++-----
+ drivers/of/of_mdio.c                              |  6 ++++++
+ 12 files changed, 25 insertions(+), 60 deletions(-)
+
 -- 
 2.14.1
-
