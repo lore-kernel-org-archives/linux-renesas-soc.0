@@ -1,70 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay12.mail.gandi.net ([217.70.178.232]:36603 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752232AbeEKJ7z (ORCPT
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:42582 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752321AbeEOIk4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 05:59:55 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5/5] media: rcar-vin: Use FTEV for digital input
-Date: Fri, 11 May 2018 11:59:41 +0200
-Message-Id: <1526032781-14319-6-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526032781-14319-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526032781-14319-1-git-send-email-jacopo+renesas@jmondi.org>
+        Tue, 15 May 2018 04:40:56 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWEzRic5dy_Daj-JDkwCjn7mPTmWbVb7zTPLbuxcQ22Fg@mail.gmail.com>
+References: <1526008947-26667-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1526008947-26667-4-git-send-email-yoshihiro.shimoda.uh@renesas.com> <CAMuHMdWEzRic5dy_Daj-JDkwCjn7mPTmWbVb7zTPLbuxcQ22Fg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 May 2018 10:40:55 +0200
+Message-ID: <CAMuHMdURM9oRi6BEWgmXhkEwBQYvm+7ORnqkQCOSmvQaM9_xwQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] pinctrl: sh-pfc: r8a77990: Add bias pinconf support
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commit (015060cb "media: rcar-vin: enable field toggle after a set
-number of lines for Gen3) the VIN generates an internal field signal
-toggle after a fixed number of received lines, and uses the internal
-field signal to drive capture operations. When capturing from digital
-input, using FTEH driven field signal toggling messes up the received
-image sizes. Fall back to use FTEV driven signal toggling when capturing
-from digital input.
+On Mon, May 14, 2018 at 10:13 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, May 11, 2018 at 5:22 AM, Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>>
+>> This patch implements control of pull-up and pull-down. On this SoC there
+>> is no simple mapping of GP pins to bias register bits, so we need a table.
+>>
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>
+> Thanks for your patch!
+>
+>> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+>> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+>
+>> @@ -1227,10 +1248,55 @@ enum {
+>>
+>>         PINMUX_IPSR_GPSR(IP15_31_28,            USB30_OVC),
+>>         PINMUX_IPSR_MSEL(IP15_31_28,            USB0_OVC_A,     SEL_USB_20_CH0_0),
+>> +
+>> +/*
+>> + * Static pins can not be muxed between different functions but
+>> + * still needs a mark entry in the pinmux list. Add each static
+>
+> need mark entries
+>
+>> + * pin to the list without an associated function. The sh-pfc
+>> + * core will do the right thing and skip trying to mux then pin
+>
+> mux the pin
+>
+>> + * while still applying configuration to it
+>
+> period
+>
+> I have just sent a patch to fix the other copies, in the hope these grammar
+> atrocities will stop spreading ;-)
+>
+>> @@ -1708,8 +1774,263 @@ enum {
+>>         { },
+>>  };
+>>
+>> +static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+>
+> The register definitions look OK to me.
+> I'll review the actual pin mappings later.
 
-As explained in the comment, this disables buffer overflow protection
-for digital input capture, for which the FOE overflow might be used in
-future.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.18 with the comments fixed.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-dma.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index ea7a120..8dc3455 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -685,11 +685,27 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	}
- 
--	if (vin->info->model == RCAR_GEN3) {
-+	if (vin->info->model == RCAR_GEN3 &&
-+	    vin->mbus_cfg.type == V4L2_MBUS_CSI2) {
- 		/* Enable HSYNC Field Toggle mode after height HSYNC inputs. */
- 		lines = vin->format.height / (halfsize ? 2 : 1);
- 		dmr2 = VNDMR2_FTEH | VNDMR2_HLV(lines);
- 		vin_dbg(vin, "Field Toogle after %u lines\n", lines);
-+	} else if (vin->info->model == RCAR_GEN3 &&
-+		   vin->mbus_cfg.type == V4L2_MBUS_PARALLEL) {
-+		/*
-+		 * FIXME
-+		 * Section 26.3.17 specifies that for digital input there's no
-+		 * need to program FTEH or FTEV to generate internal
-+		 * field toggle signal to driver capture. Although when
-+		 * running on GEN3 with digital input no EFE interrupt is ever
-+		 * generated, and we need to rely on FTEV driven field signal
-+		 * toggling, as using FTEH as in the CSI-2 case, messes up
-+		 * the output image size. This implies no protection
-+		 * against buffer overflow is in place for Gen3 digital input
-+		 * capture.
-+		 */
-+		dmr2 = VNDMR2_FTEV;
- 	} else {
- 		/* Enable VSYNC Field Toogle mode after one VSYNC input. */
- 		dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
