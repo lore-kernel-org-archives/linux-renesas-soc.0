@@ -1,58 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59714 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752343AbeEOM35 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 08:29:57 -0400
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-Date: Tue, 15 May 2018 13:29:29 +0100
-Message-Id: <1526387370-17142-4-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-media-owner@vger.kernel.org>
+Subject: Re: [PATCH 26/61] media: platform: exynos4-is: simplify getting
+ .drvdata
+To: linux-media@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <613c3648-1d2e-e008-60a8-d9f21eca9fae@samsung.com>
+Date: Tue, 15 May 2018 11:47:49 +0200
+MIME-version: 1.0
+In-reply-to: <20180419140641.27926-27-wsa+renesas@sang-engineering.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        <20180419140641.27926-27-wsa+renesas@sang-engineering.com>
+        <CGME20180515094754epcas2p2715cc9c6376ddbb5f400830ef41b514b@epcas2p2.samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add bindings for CryptoCell instance in the SoC.
+On 04/19/2018 04:05 PM, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 91486b4..6c76841 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -528,6 +528,14 @@
- 			status = "disabled";
- 		};
- 
-+		arm_cc630p: crypto@e6601000 {
-+			compatible = "arm,cryptocell-630p-ree";
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <2>;
-+			reg = <0x0 0xe6601000 0 0x1000>;
-+			clocks = <&cpg CPG_MOD 229>;
-+		};
-+
- 		i2c3: i2c@e66d0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.7.4
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
