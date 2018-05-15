@@ -1,353 +1,156 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: f.fainelli@gmail.com, opendmb@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v9 10/12] ARM: sun8i: smp: Add support for A83T
-Date: Fri,  4 May 2018 21:05:43 +0200
-Message-Id: <20180504190545.5114-11-mylene.josserand@bootlin.com>
-In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH/RFC v3 1/4] base: devcon: add a new API to find the graph
+Date: Tue, 15 May 2018 11:02:57 +0000
+Message-ID: <OSBPR01MB2293D83364ADD5467D7A20AAD8930@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1526289360-3997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1526289360-3997-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20180514132740.GE21435@kuha.fi.intel.com>
+ <OSBPR01MB22932EC3210BC8097E0B7F0FD8930@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <20180515082911.GH21435@kuha.fi.intel.com>
+In-Reply-To: <20180515082911.GH21435@kuha.fi.intel.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the support for A83T.
+Hi Heikki,
 
-A83T SoC has an additional register than A80 to handle CPU configurations:
-R_CPUS_CFG. Information about the register comes from Allwinner's BSP
-driver.
-An important difference is the Power Off Gating register for clusters
-which is BIT(4) in case of SUN9I-A80 and BIT(0) in case of SUN8I-A83T.
-There is also a bit swap between sun8i-a83t and sun9i-a80 that must be
-handled.
+Thank you for the reply!
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
----
- arch/arm/mach-sunxi/Kconfig  |   2 +-
- arch/arm/mach-sunxi/mc_smp.c | 151 ++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 137 insertions(+), 16 deletions(-)
+> From: Heikki Krogerus, Sent: Tuesday, May 15, 2018 5:29 PM
+>=20
+> On Tue, May 15, 2018 at 02:19:14AM +0000, Yoshihiro Shimoda wrote:
+> > Hi Heikki,
+> >
+> > > From: Heikki Krogerus, Sent: Monday, May 14, 2018 10:28 PM
+> > >
+> > > On Mon, May 14, 2018 at 06:15:57PM +0900, Yoshihiro Shimoda wrote:
+<snip>
+> > > > +struct device *device_connection_find_by_graph(struct device *dev,=
+ u32 port,
+> > > > +					       u32 endpoint)
+> > > > +{
+> > > > +	struct bus_type *bus;
+> > > > +	struct fwnode_handle *remote;
+> > > > +	struct device *conn;
+> > > > +
+> > > > +	remote =3D fwnode_graph_get_remote_node(dev_fwnode(dev), port, en=
+dpoint);
+> > > > +	if (!remote)
+> > > > +		return NULL;
+> > > > +
+> > > > +	for (bus =3D generic_match_buses[0]; bus; bus++) {
+> > > > +		conn =3D bus_find_device(bus, NULL, remote, generic_graph_match)=
+;
+> > > > +		if (conn)
+> > > > +			return conn;
+> > > > +	}
+> > > > +
+> > > > +	/*
+> > > > +	 * We only get called if a connection was found, tell the caller =
+to
+> > > > +	 * wait for the other device to show up.
+> > > > +	 */
+> > > > +	return ERR_PTR(-EPROBE_DEFER);
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(device_connection_find_by_graph);
+> > >
+> > > Why do we need more API for walking through the graph?
+> >
+> > I thought there is difficult to find if a device has multiple ports or =
+endpoints.
+> > So, I'd like to use port and endpoint number for finding a device.
+> >
+> > > I'm not sure exactly sure what is going on here, I'll try to study
+> > > your patches more when I have time, but the approach looks wrong. Tha=
+t
+> > > function looks like a helper, but just not that useful one.
+> > >
+> > > We really should be able to use the existing functions. In practice
+> > > device_connection_find_match() should eventually parse the graph, the=
+n
+> > > fallback to build-in connections if no graph is found. Otherwise
+> > > parsing graph here is not really useful at all.
+> >
+> > I think using device_connection_find_match() for finding the graph beco=
+mes complicated.
+> > The current arguments of the function is the below:
+> >
+> > void *device_connection_find_match(struct device *dev, const char *con_=
+id,
+> > 			       void *data,
+> > 			       void *(*match)(struct device_connection *con,
+> > 					      int ep, void *data))
+> >
+> > If finding the graph, the following arguments will be not used.
+> >  - con_id
+> >  - *con and ep of "match" arguments.
+> >
+> > This is because these arguments are for the build-in connections.
+>=20
+> No they're not. You do realize that we can build a temporary struct
+> device_connection there and then (in stack) to be supplied for the
+> ->match callback.
 
-diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-index ce53ceaf4cc5..d9c8ecf88ec6 100644
---- a/arch/arm/mach-sunxi/Kconfig
-+++ b/arch/arm/mach-sunxi/Kconfig
-@@ -51,7 +51,7 @@ config MACH_SUN9I
- config ARCH_SUNXI_MC_SMP
- 	bool
- 	depends on SMP
--	default MACH_SUN9I
-+	default MACH_SUN9I || MACH_SUN8I
- 	select ARM_CCI400_PORT_CTRL
- 	select ARM_CPU_SUSPEND
- 
-diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-index fc10e3a3268f..b4037b603897 100644
---- a/arch/arm/mach-sunxi/mc_smp.c
-+++ b/arch/arm/mach-sunxi/mc_smp.c
-@@ -55,22 +55,31 @@
- #define CPUCFG_CX_RST_CTRL_L2_RST	BIT(8)
- #define CPUCFG_CX_RST_CTRL_CX_RST(n)	BIT(4 + (n))
- #define CPUCFG_CX_RST_CTRL_CORE_RST(n)	BIT(n)
-+#define CPUCFG_CX_RST_CTRL_CORE_RST_ALL	(0xf << 0)
- 
- #define PRCM_CPU_PO_RST_CTRL(c)		(0x4 + 0x4 * (c))
- #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
- #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
- #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
-+/* The power off register for clusters are different from a80 and a83t */
-+#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN8I	BIT(0)
- #define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
- #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
- #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
- #define PRCM_CPU_SOFT_ENTRY_REG		0x164
- 
-+/* R_CPUCFG registers, specific to sun8i-a83t */
-+#define R_CPUCFG_CLUSTER_PO_RST_CTRL(c)	(0x30 + (c) * 0x4)
-+#define R_CPUCFG_CLUSTER_PO_RST_CTRL_CORE(n)	BIT(n)
-+#define R_CPUCFG_CPU_SOFT_ENTRY_REG		0x01a4
-+
- #define CPU0_SUPPORT_HOTPLUG_MAGIC0	0xFA50392F
- #define CPU0_SUPPORT_HOTPLUG_MAGIC1	0x790DCA3A
- 
- static void __iomem *cpucfg_base;
- static void __iomem *prcm_base;
- static void __iomem *sram_b_smp_base;
-+static void __iomem *r_cpucfg_base;
- 
- extern void sunxi_mc_smp_secondary_startup(void);
- extern void sunxi_mc_smp_resume(void);
-@@ -161,6 +170,16 @@ static int sunxi_cpu_powerup(unsigned int cpu, unsigned int cluster)
- 	reg &= ~PRCM_CPU_PO_RST_CTRL_CORE(cpu);
- 	writel(reg, prcm_base + PRCM_CPU_PO_RST_CTRL(cluster));
- 
-+	if (is_a83t) {
-+		/* assert cpu power-on reset */
-+		reg  = readl(r_cpucfg_base +
-+			     R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
-+		reg &= ~(R_CPUCFG_CLUSTER_PO_RST_CTRL_CORE(cpu));
-+		writel(reg, r_cpucfg_base +
-+		       R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
-+		udelay(10);
-+	}
-+
- 	/* Cortex-A7: hold L1 reset disable signal low */
- 	if (!sunxi_core_is_cortex_a15(cpu, cluster)) {
- 		reg = readl(cpucfg_base + CPUCFG_CX_CTRL_REG0(cluster));
-@@ -184,17 +203,38 @@ static int sunxi_cpu_powerup(unsigned int cpu, unsigned int cluster)
- 	/* open power switch */
- 	sunxi_cpu_power_switch_set(cpu, cluster, true);
- 
-+	/* Handle A83T bit swap */
-+	if (is_a83t) {
-+		if (cpu == 0)
-+			cpu = 4;
-+	}
-+
- 	/* clear processor power gate */
- 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
- 	reg &= ~PRCM_PWROFF_GATING_REG_CORE(cpu);
- 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
- 	udelay(20);
- 
-+	/* Handle A83T bit swap */
-+	if (is_a83t) {
-+		if (cpu == 4)
-+			cpu = 0;
-+	}
-+
- 	/* de-assert processor power-on reset */
- 	reg = readl(prcm_base + PRCM_CPU_PO_RST_CTRL(cluster));
- 	reg |= PRCM_CPU_PO_RST_CTRL_CORE(cpu);
- 	writel(reg, prcm_base + PRCM_CPU_PO_RST_CTRL(cluster));
- 
-+	if (is_a83t) {
-+		reg  = readl(r_cpucfg_base +
-+			     R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
-+		reg |= R_CPUCFG_CLUSTER_PO_RST_CTRL_CORE(cpu);
-+		writel(reg, r_cpucfg_base +
-+		       R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
-+		udelay(10);
-+	}
-+
- 	/* de-assert all processor resets */
- 	reg = readl(cpucfg_base + CPUCFG_CX_RST_CTRL(cluster));
- 	reg |= CPUCFG_CX_RST_CTRL_DBG_RST(cpu);
-@@ -216,6 +256,14 @@ static int sunxi_cluster_powerup(unsigned int cluster)
- 	if (cluster >= SUNXI_NR_CLUSTERS)
- 		return -EINVAL;
- 
-+	/* For A83T, assert cluster cores resets */
-+	if (is_a83t) {
-+		reg = readl(cpucfg_base + CPUCFG_CX_RST_CTRL(cluster));
-+		reg &= ~CPUCFG_CX_RST_CTRL_CORE_RST_ALL;   /* Core Reset    */
-+		writel(reg, cpucfg_base + CPUCFG_CX_RST_CTRL(cluster));
-+		udelay(10);
-+	}
-+
- 	/* assert ACINACTM */
- 	reg = readl(cpucfg_base + CPUCFG_CX_CTRL_REG1(cluster));
- 	reg |= CPUCFG_CX_CTRL_REG1_ACINACTM;
-@@ -226,6 +274,16 @@ static int sunxi_cluster_powerup(unsigned int cluster)
- 	reg &= ~PRCM_CPU_PO_RST_CTRL_CORE_ALL;
- 	writel(reg, prcm_base + PRCM_CPU_PO_RST_CTRL(cluster));
- 
-+	/* assert cluster cores resets */
-+	if (is_a83t) {
-+		reg  = readl(r_cpucfg_base +
-+			     R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
-+		reg &= ~CPUCFG_CX_RST_CTRL_CORE_RST_ALL;
-+		writel(reg, r_cpucfg_base +
-+		       R_CPUCFG_CLUSTER_PO_RST_CTRL(cluster));
-+		udelay(10);
-+	}
-+
- 	/* assert cluster resets */
- 	reg = readl(cpucfg_base + CPUCFG_CX_RST_CTRL(cluster));
- 	reg &= ~CPUCFG_CX_RST_CTRL_DBG_SOC_RST;
-@@ -256,7 +314,10 @@ static int sunxi_cluster_powerup(unsigned int cluster)
- 
- 	/* clear cluster power gate */
- 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
--	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
-+	if (is_a83t)
-+		reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN8I;
-+	else
-+		reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
- 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
- 	udelay(20);
- 
-@@ -453,7 +514,10 @@ static int sunxi_cluster_powerdown(unsigned int cluster)
- 	/* gate cluster power */
- 	pr_debug("%s: gate cluster power\n", __func__);
- 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
--	reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
-+	if (is_a83t)
-+		reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN8I;
-+	else
-+		reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
- 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
- 	udelay(20);
- 
-@@ -535,8 +599,12 @@ static int sunxi_mc_smp_cpu_kill(unsigned int l_cpu)
- 	return !ret;
- }
- 
--static bool sunxi_mc_smp_cpu_can_disable(unsigned int __unused)
-+static bool sunxi_mc_smp_cpu_can_disable(unsigned int cpu)
- {
-+	/* CPU0 hotplug not handled for sun8i-a83t */
-+	if (is_a83t)
-+		if (cpu == 0)
-+			return false;
- 	return true;
- }
- #endif
-@@ -619,6 +687,7 @@ struct sunxi_mc_smp_nodes {
- 	struct device_node *prcm_node;
- 	struct device_node *cpucfg_node;
- 	struct device_node *sram_node;
-+	struct device_node *r_cpucfg_node;
- };
- 
- /* This structure holds SoC-specific bits tied to an enable-method string. */
-@@ -633,6 +702,7 @@ static void __init sunxi_mc_smp_put_nodes(struct sunxi_mc_smp_nodes *nodes)
- 	of_node_put(nodes->prcm_node);
- 	of_node_put(nodes->cpucfg_node);
- 	of_node_put(nodes->sram_node);
-+	of_node_put(nodes->r_cpucfg_node);
- 	memset(nodes, 0, sizeof(*nodes));
- }
- 
-@@ -662,11 +732,42 @@ static int __init sun9i_a80_get_smp_nodes(struct sunxi_mc_smp_nodes *nodes)
- 	return 0;
- }
- 
-+static int __init sun8i_a83t_get_smp_nodes(struct sunxi_mc_smp_nodes *nodes)
-+{
-+	nodes->prcm_node = of_find_compatible_node(NULL, NULL,
-+						   "allwinner,sun8i-a83t-r-ccu");
-+	if (!nodes->prcm_node) {
-+		pr_err("%s: PRCM not available\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	nodes->cpucfg_node = of_find_compatible_node(NULL, NULL,
-+						     "allwinner,sun8i-a83t-cpucfg");
-+	if (!nodes->cpucfg_node) {
-+		pr_err("%s: CPUCFG not available\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	nodes->r_cpucfg_node = of_find_compatible_node(NULL, NULL,
-+						       "allwinner,sun8i-a83t-r-cpucfg");
-+	if (!nodes->r_cpucfg_node) {
-+		pr_err("%s: RCPUCFG not available\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct sunxi_mc_smp_data sunxi_mc_smp_data[] __initconst = {
- 	{
- 		.enable_method	= "allwinner,sun9i-a80-smp",
- 		.get_smp_nodes	= sun9i_a80_get_smp_nodes,
- 	},
-+	{
-+		.enable_method	= "allwinner,sun8i-a83t-smp",
-+		.get_smp_nodes	= sun8i_a83t_get_smp_nodes,
-+		.is_a83t	= true,
-+	},
- };
- 
- static int __init sunxi_mc_smp_init(void)
-@@ -674,6 +775,7 @@ static int __init sunxi_mc_smp_init(void)
- 	struct sunxi_mc_smp_nodes nodes = { 0 };
- 	struct device_node *node;
- 	struct resource res;
-+	void __iomem *addr;
- 	int i, ret;
- 
- 	/*
-@@ -738,12 +840,23 @@ static int __init sunxi_mc_smp_init(void)
- 		goto err_unmap_prcm;
- 	}
- 
--	sram_b_smp_base = of_io_request_and_map(nodes.sram_node, 0,
--						"sunxi-mc-smp");
--	if (IS_ERR(sram_b_smp_base)) {
--		ret = PTR_ERR(sram_b_smp_base);
--		pr_err("%s: failed to map secure SRAM\n", __func__);
--		goto err_unmap_release_cpucfg;
-+	if (is_a83t) {
-+		r_cpucfg_base = of_io_request_and_map(nodes.r_cpucfg_node,
-+						      0, "sunxi-mc-smp");
-+		if (IS_ERR(r_cpucfg_base)) {
-+			ret = PTR_ERR(r_cpucfg_base);
-+			pr_err("%s: failed to map R-CPUCFG registers\n",
-+			       __func__);
-+			goto err_unmap_release_cpucfg;
-+		}
-+	} else {
-+		sram_b_smp_base = of_io_request_and_map(nodes.sram_node, 0,
-+							"sunxi-mc-smp");
-+		if (IS_ERR(sram_b_smp_base)) {
-+			ret = PTR_ERR(sram_b_smp_base);
-+			pr_err("%s: failed to map secure SRAM\n", __func__);
-+			goto err_unmap_release_cpucfg;
-+		}
- 	}
- 
- 	/* Configure CCI-400 for boot cluster */
-@@ -751,15 +864,18 @@ static int __init sunxi_mc_smp_init(void)
- 	if (ret) {
- 		pr_err("%s: failed to configure boot cluster: %d\n",
- 		       __func__, ret);
--		goto err_unmap_release_secure_sram;
-+		goto err_unmap_release_sram_rcpucfg;
- 	}
- 
- 	/* We don't need the device nodes anymore */
- 	sunxi_mc_smp_put_nodes(&nodes);
- 
- 	/* Set the hardware entry point address */
--	writel(__pa_symbol(sunxi_mc_smp_secondary_startup),
--	       prcm_base + PRCM_CPU_SOFT_ENTRY_REG);
-+	if (is_a83t)
-+		addr = r_cpucfg_base + R_CPUCFG_CPU_SOFT_ENTRY_REG;
-+	else
-+		addr = prcm_base + PRCM_CPU_SOFT_ENTRY_REG;
-+	writel(__pa_symbol(sunxi_mc_smp_secondary_startup), addr);
- 
- 	/* Actually enable multi cluster SMP */
- 	smp_set_ops(&sunxi_mc_smp_smp_ops);
-@@ -768,9 +884,14 @@ static int __init sunxi_mc_smp_init(void)
- 
- 	return 0;
- 
--err_unmap_release_secure_sram:
--	iounmap(sram_b_smp_base);
--	of_address_to_resource(nodes.sram_node, 0, &res);
-+err_unmap_release_sram_rcpucfg:
-+	if (is_a83t) {
-+		iounmap(r_cpucfg_base);
-+		of_address_to_resource(nodes.r_cpucfg_node, 0, &res);
-+	} else {
-+		iounmap(sram_b_smp_base);
-+		of_address_to_resource(nodes.sram_node, 0, &res);
-+	}
- 	release_mem_region(res.start, resource_size(&res));
- err_unmap_release_cpucfg:
- 	iounmap(cpucfg_base);
--- 
-2.11.0
+I understood it.
 
+> > So, should I modify the arguments of the function for finding both
+> > the graph and built-in connections somehow?
+>=20
+> I don't see any need for that. We may need to modify struct
+> device_connection, but there should not be any need to touch the API.
+>=20
+> Your plan to use port and endpoint number is wrong, as they are just
+> indexes, and therefore not reliable. Luckily it should be completely
+> unnecessary to use them.
+>=20
+> The way I see this working is that we parse all the endpoints the
+> caller device has. If we can't take advantage of the con_id for
+> identification (though ideally we can), we just need to call ->match
+> with every one of them. The implementation for the ->match callback is
+> then responsible of figuring out if the endpoint is the one we are
+> looking for or not in that case.
+
+I understood it. But, I need to investigate how to find a device.
+
+> The only problem I see with that is that we may not have a reliable
+> way to convert the fwnode pointing to the remote-endpoint parent into
+> struct device (if one has already been enumerated) in order to get the
+> device name and use it as the second endpoint name in struct
+> device_connection. To solve that, we could consider for example just
+> adding a new member, fwnode pointer perhaps, to the structure. Or
+> perhaps use the endpoint members for something else than device names
+> when graph is used, and add a member defining the type of match:
+> graph, build-in, etc. There are many things we can consider.
+
+I don't understand why adding such new member(s) can solve that.
+Anyway, I will investigate this more...
+
+> I don't know if I'm able to explain what I'm after with this, so if
+> you like, I can propose something for this myself. Though that will
+> have to wait for few weeks. Right now I'm too busy with other stuff.
+
+Thank you for your proposal! However, I'd like to try to investigate
+once more while you are too busy.
+
+Best regards,
+Yoshihiro Shimoda
+
+>=20
+> Thanks,
+>=20
+> --
+> heikki
