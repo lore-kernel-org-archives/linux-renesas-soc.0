@@ -1,40 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:57628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752354AbeEOVFp (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:43448 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752475AbeEOJcW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 17:05:45 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kukjin Kim <kgene@kernel.org>,
+        Tue, 15 May 2018 05:32:22 -0400
+Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <93ee0d94-81aa-db81-2bff-87f5f91bc9d3@samsung.com>
+Date: Tue, 15 May 2018 11:32:12 +0200
+MIME-version: 1.0
+In-reply-to: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
-Message-ID: <152641834430.237094.6970165334408131900@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
-Date: Tue, 15 May 2018 14:05:44 -0700
+        <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+        <CGME20180515093219epcas1p28a5fa4be53b9ea0fd85e4726cf92f804@epcas1p2.samsung.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Quoting Wolfram Sang (2018-04-19 07:05:35)
+On 04/19/2018 04:05 PM, Wolfram Sang wrote:
 > We should get drvdata from struct device directly. Going via
 > platform_device is an unneeded step back and forth.
-> =
-
+> 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
 
-Applied to clk-next
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+It seems to be the only clk/samsung patch in the v4.18 queue, please
+feel free to apply it directly.
+
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> index 077df3e539a7..f41d89cef0f1 100644
+> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
+> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> @@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
+>  #ifdef CONFIG_PM_SLEEP
+>  static int s3c24xx_dclk_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
+>  	return 0;
+> @@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
+>  
+>  static int s3c24xx_dclk_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
+>  	return 0;
+
+-- 
+Regards,
+Sylwester
