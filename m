@@ -1,79 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay12.mail.gandi.net ([217.70.178.232]:43113 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752232AbeEKJ7t (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 May 2018 05:59:49 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/5] rcar-vin: Add support for digital input on Gen3
-Date: Fri, 11 May 2018 11:59:36 +0200
-Message-Id: <1526032781-14319-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rcar-vin: fix crop and compose handling for Gen3
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+ <niklas.soderlund+renesas@ragnatech.se>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <20180511144126.24804-1-niklas.soderlund+renesas@ragnatech.se>
+ <20180511144126.24804-3-niklas.soderlund+renesas@ragnatech.se>
+Reply-To: kieran.bingham@ideasonboard.com
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Message-ID: <746b2859-b064-c91e-00a6-7f2537a24ab2@ideasonboard.com>
+Date: Tue, 15 May 2018 10:27:00 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180511144126.24804-3-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this series add support for 'digital' input to the Gen3 version of rcar-vin
-driver.
+Hi Niklas,
 
-'Digital' inputs (the terms comes from the existing Gen2 version of the driver)
-describe parallel video input sources connected to a VIN instance. So far, the
-Gen3-version of the driver (the media-controller compliant one) only supported
-CSI-2 inputs.
+This looks like quite the improvement :D
 
-This series extends the device tree parsing to accept a connection on port@0,
-and parses the 'digital' subdevice, as implemented in patches [2/5] and [3/5].
+On 11/05/18 15:41, Niklas Söderlund wrote:
+> When refactoring the Gen3 enablement series crop and compose handling
+> where broken. This went unnoticed but can result in writing out side the
 
-The series has been tested on D3 Draak platform, which has an HDMI decoder
-connected to the parallel input of VIN4. To have capture operations working
-properly two additional patches have been added to the series.
-[4/5] is a general fix which should imo be included regardless of this series.
-[5/5] won't please Niklas, as it discards buffer overflow protection for
-the digital capture operations. As explained in the commit message, I had to
-fall back to use field toggling on VSYNC input to have images correctly
-captured. A possible protection against buffer overflow may be enabling
-interrupt for the FIFO overflow and stop capture at that point, but this have to
-be discussed later.
+As well as Sergei's 'where/were', 'out side' is one word in this context.
 
-A separate series for the VIN4 and HDMI input enabling on Draak board has been
-sent to renesas-soc list.
+'outside of the capture buffer'
 
-The vin-tests repository patches to automate capture testing have been extended
-to support D3 board and capture from HDMI output, and patches have been sent
-to Niklas.
+> capture buffer. Fix this by restoring the crop and compose to reflect
+> the format dimensions as we have not yet enabled the scaler for Gen3.
+> 
+> Fixes: 5e7c623632fcf8f5 ("media: rcar-vin: use different v4l2 operations in media controller mode")
+> Reported-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-The series is based on the media-master tree, where VIN patches have been
-recently merged.
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Tested capturing HDMI input images on D3 and for backward compatibility on
-Salvator-X M3-W too (seems like I didn't break anything there).
-
-Patches for testing on D3 are available at:
-git://jmondi.org/linux d3/media-master/driver
-git://jmondi.org/linux d3/media-master/dts
-git://jmondi.org/linux d3/media-master/test
-git://jmondi.org/vin-tests d3
-
-Patches to test on M3-W (based on latest renesas drivers, which includes an
-older version of VIN series, but has CSI-2 driver) available at:
-git://jmondi.org/linux d3/renesas-drivers/test
-
-Thanks
-    j
-
-Jacopo Mondi (5):
-  media: rcar-vin: Add support for R-Car R8A77995 SoC
-  media: rcar-vin: Add digital input subdevice parsing
-  media: rcar-vin: [un]bind and link digital subdevice
-  media: rcar-vin: Do not use crop if not configured
-  media: rcar-vin: Use FTEV for digital input
-
- drivers/media/platform/rcar-vin/rcar-core.c | 315 +++++++++++++++++++++++-----
- drivers/media/platform/rcar-vin/rcar-dma.c  |  33 ++-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  13 ++
- 3 files changed, 305 insertions(+), 56 deletions(-)
-
---
-2.7.4
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 2fb8587116f25a4f..e78fba84d59028ef 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -702,6 +702,12 @@ static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
+>  
+>  	vin->format = f->fmt.pix;
+>  
+> +	vin->crop.top = 0;
+> +	vin->crop.left = 0;
+> +	vin->crop.width = vin->format.width;
+> +	vin->crop.height = vin->format.height;
+> +	vin->compose = vin->crop;
+> +
+>  	return 0;
+>  }
+>  
+> 
