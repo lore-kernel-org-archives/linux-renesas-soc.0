@@ -1,53 +1,52 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
-        robh+dt@kernel.org
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] arm64: dts: Draak: Enable HDMI input and VIN4
-Date: Fri, 11 May 2018 11:59:59 +0200
-Message-Id: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:33087 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbeEOIzy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 15 May 2018 04:55:54 -0400
+MIME-Version: 1.0
+In-Reply-To: <1526008947-26667-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1526008947-26667-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1526008947-26667-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 May 2018 10:55:53 +0200
+Message-ID: <CAMuHMdXaiYi=vZPijaO+OjQRLUWN_wK6w71S+1tDbBFDmX4B8Q@mail.gmail.com>
+Subject: Re: [PATCH 4/6] pinctrl: sh-pfc: r8a77990: Add SCIF pins, groups and functions
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
-   this series enables HDMI input and VIN4 on R-Car D3 Draak board.
+On Fri, May 11, 2018 at 5:22 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds SCIF{0,1,2,3,4,5} pins, groups and functions to R8A77990
+> SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-The Draak board has an HDMI input connected to an HDMI decoder that feeds
-the VIN capture interface through its parallel video interface.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.18...
 
-The series requires the just sent:
-[PATCH 0/5] rcar-vin: Add support for digital input on Gen3
+Gr{oetje,eeting}s,
 
-and enables image capture operations on D3 Draak board.
+                        Geert
 
-The series has been developed on top of media-master tree but applies cleanly
-on top of latest renesas-driver.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Geert: would you like a topic branch for this series to be included in
-renesas-drivers?
-
-Patches for testing are available at:
-git://jmondi.org/linux d3/media-master/driver
-git://jmondi.org/linux d3/media-master/dts
-git://jmondi.org/linux d3/media-master/test
-git://jmondi.org/vin-tests d3
-
-Thanks
-    j
-
-Jacopo Mondi (3):
-  dt-bindings: media: rcar-vin: Add R8A77995 support
-  arm64: dts: renesas: r8a77995: Add VIN4
-  arm64: dts: renesas: draak: Describe HDMI input
-
- .../devicetree/bindings/media/rcar_vin.txt         |  1 +
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 68 ++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 11 ++++
- 3 files changed, 80 insertions(+)
-
---
-2.7.4
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
