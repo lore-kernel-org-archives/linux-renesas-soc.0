@@ -1,51 +1,39 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: f.fainelli@gmail.com, opendmb@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v9 04/12] ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
-Date: Fri,  4 May 2018 21:05:37 +0200
-Message-Id: <20180504190545.5114-5-mylene.josserand@bootlin.com>
-In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH 0/3] enable ccree on Renesas R-Car platform
+Date: Tue, 15 May 2018 13:29:26 +0100
+Message-Id: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R_CPUCFG is a collection of registers needed for SMP bringup
-on clusters and cluster's reset.
-For the moment, documentation about this register is found in
-Allwinner's code only.
+The following patch set enables CryptoCell present in the Renesas
+R-Car SoC.
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Gilad Ben-Yossef (3):
+  crypto: ccree: drop signature register check
+  clk: renesas: r8a7795: Add ccree clock
+  arm64: dts: renesas: r8a7795: add ccree binding
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index a50ccb475de8..53ace066b7dc 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -938,6 +938,11 @@
- 			#reset-cells = <1>;
- 		};
- 
-+		r_cpucfg@1f01c00 {
-+			compatible = "allwinner,sun8i-a83t-r-cpucfg";
-+			reg = <0x1f01c00 0x400>;
-+		};
-+
- 		r_pio: pinctrl@1f02c00 {
- 			compatible = "allwinner,sun8i-a83t-r-pinctrl";
- 			reg = <0x01f02c00 0x400>;
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |  8 ++++++++
+ drivers/clk/renesas/r8a7795-cpg-mssr.c   |  1 +
+ drivers/crypto/ccree/cc_driver.c         | 18 +++---------------
+ 3 files changed, 12 insertions(+), 15 deletions(-)
+
 -- 
-2.11.0
+2.7.4
 
