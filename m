@@ -1,18 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:34433 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752483AbeEOOur (ORCPT
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59714 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752343AbeEOM35 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 10:50:47 -0400
-MIME-Version: 1.0
-In-Reply-To: <1526387370-17142-4-git-send-email-gilad@benyossef.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com> <1526387370-17142-4-git-send-email-gilad@benyossef.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 May 2018 16:50:44 +0200
-Message-ID: <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Tue, 15 May 2018 08:29:57 -0400
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -22,59 +15,44 @@ Cc: Simon Horman <horms@verge.net.au>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+Date: Tue, 15 May 2018 13:29:29 +0100
+Message-Id: <1526387370-17142-4-git-send-email-gilad@benyossef.com>
+In-Reply-To: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Gilad,
+Add bindings for CryptoCell instance in the SoC.
 
-On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> Add bindings for CryptoCell instance in the SoC.
->
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks for your patch!
-
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -528,6 +528,14 @@
->                         status = "disabled";
->                 };
->
-> +               arm_cc630p: crypto@e6601000 {
-> +                       compatible = "arm,cryptocell-630p-ree";
-> +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-> +                       #interrupt-cells = <2>;
-
-I believe the #interrupt-cells property is not needed.
-
-> +                       reg = <0x0 0xe6601000 0 0x1000>;
-> +                       clocks = <&cpg CPG_MOD 229>;
-> +               };
-
-The rest looks good, but I cannot verify the register block.
-
-> +
->                 i2c3: i2c@e66d0000 {
->                         #address-cells = <1>;
->                         #size-cells = <0>;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 91486b4..6c76841 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -528,6 +528,14 @@
+ 			status = "disabled";
+ 		};
+ 
++		arm_cc630p: crypto@e6601000 {
++			compatible = "arm,cryptocell-630p-ree";
++			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
++			#interrupt-cells = <2>;
++			reg = <0x0 0xe6601000 0 0x1000>;
++			clocks = <&cpg CPG_MOD 229>;
++		};
++
+ 		i2c3: i2c@e66d0000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
