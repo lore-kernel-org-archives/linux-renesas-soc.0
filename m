@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34356 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752227AbeEOIEC (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:14610 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752307AbeEOICF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 04:04:02 -0400
-Date: Tue, 15 May 2018 10:03:43 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Tue, 15 May 2018 04:02:05 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mark.rutland@arm.com" <mark.rutland@arm.com>,
         "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
@@ -17,67 +16,62 @@ Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH/RFC v3 3/4] usb: gadget: udc: renesas_usb3: use usb role
+Subject: RE: [PATCH/RFC v3 3/4] usb: gadget: udc: renesas_usb3: use usb role
  switch API
-Message-ID: <20180515080342.wksfk5qpazv4l3rs@verge.net.au>
+Date: Tue, 15 May 2018 08:02:00 +0000
+Message-ID: <OSBPR01MB2293EFC5FD518ECDD612ABDFD8930@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 References: <1526289360-3997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <1526289360-3997-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <20180515075428.6fvkwv2tz6v7cnyj@verge.net.au>
- <OSBPR01MB2293EFC5FD518ECDD612ABDFD8930@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <20180515075428.6fvkwv2tz6v7cnyj@verge.net.au>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OSBPR01MB2293EFC5FD518ECDD612ABDFD8930@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 15, 2018 at 08:02:00AM +0000, Yoshihiro Shimoda wrote:
-> Hi Simon-san,
-> 
-> Thank you for your review!
-> 
-> > From: Simon Horman, Sent: Tuesday, May 15, 2018 4:54 PM
-> > On Mon, May 14, 2018 at 06:15:59PM +0900, Yoshihiro Shimoda wrote:
-> <snip>
-> > >  static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
-> > >  {
-> > > -	_usb3_set_mode(usb3, host);
-> > > +	if (usb3->role_sw)
-> > > +		usb_role_switch_set_role(usb3->role_sw, host ?
-> > > +					 USB_ROLE_HOST : USB_ROLE_DEVICE);
-> > > +	else
-> > > +		_usb3_set_mode(usb3, host);
-> > >  }
-> > >
-> > >  static void usb3_vbus_out(struct renesas_usb3 *usb3, bool enable)
-> > > @@ -672,8 +676,8 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
-> > >  {
-> > >  	unsigned long flags;
-> > >
-> > > -	spin_lock_irqsave(&usb3->lock, flags);
-> > >  	usb3_set_mode(usb3, host);
-> > > +	spin_lock_irqsave(&usb3->lock, flags);
-> > 
-> > Hi Shimoda-san,
-> > 
-> > could you clarify why moving this lock is safe?
-> 
-> The usb3_set_mode() is possible to call usb_role_switch_set_role() API
-> and usb_role_switch_set_role() calls mutex_lock().
-> So, this moving this lock (especially avoiding irqsave) needs.
+Hi Simon-san,
 
-Thanks, that make sense.
+Thank you for your review!
 
-But usb3_set_mode() may also call _usb3_set_mode().
-It is safe to call _usb3_set_mode() without holding the lock?
+> From: Simon Horman, Sent: Tuesday, May 15, 2018 4:54 PM
+> On Mon, May 14, 2018 at 06:15:59PM +0900, Yoshihiro Shimoda wrote:
+<snip>
+> >  static void usb3_set_mode(struct renesas_usb3 *usb3, bool host)
+> >  {
+> > -	_usb3_set_mode(usb3, host);
+> > +	if (usb3->role_sw)
+> > +		usb_role_switch_set_role(usb3->role_sw, host ?
+> > +					 USB_ROLE_HOST : USB_ROLE_DEVICE);
+> > +	else
+> > +		_usb3_set_mode(usb3, host);
+> >  }
+> >
+> >  static void usb3_vbus_out(struct renesas_usb3 *usb3, bool enable)
+> > @@ -672,8 +676,8 @@ static void usb3_mode_config(struct renesas_usb3 *u=
+sb3, bool host, bool a_dev)
+> >  {
+> >  	unsigned long flags;
+> >
+> > -	spin_lock_irqsave(&usb3->lock, flags);
+> >  	usb3_set_mode(usb3, host);
+> > +	spin_lock_irqsave(&usb3->lock, flags);
+>=20
+> Hi Shimoda-san,
+>=20
+> could you clarify why moving this lock is safe?
 
-> Best regards,
-> Yoshihiro Shimoda
-> 
-> > >  	usb3_vbus_out(usb3, a_dev);
-> > >  	/* for A-Peripheral or forced B-device mode */
-> > >  	if ((!host && a_dev) ||
-> > > --
-> > > 1.9.1
-> > >
-> 
+The usb3_set_mode() is possible to call usb_role_switch_set_role() API
+and usb_role_switch_set_role() calls mutex_lock().
+So, this moving this lock (especially avoiding irqsave) needs.
+
+Best regards,
+Yoshihiro Shimoda
+
+> >  	usb3_vbus_out(usb3, a_dev);
+> >  	/* for A-Peripheral or forced B-device mode */
+> >  	if ((!host && a_dev) ||
+> > --
+> > 1.9.1
+> >
