@@ -1,79 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41703 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751402AbeEOX4d (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:33303 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752321AbeEOInl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 May 2018 19:56:33 -0400
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Antoine Tenart <antoine.tenart@free-electrons.com>,
-        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Maxim Uvarov <muvarov@gmail.com>, Sekhar Nori <nsekhar@ti.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-renesas-soc@vger.kernel.org (open list:RENESAS ETHERNET DRIVERS),
-        linux-omap@vger.kernel.org (open list:TI ETHERNET SWITCH DRIVER (CPSW)),
-        linux-usb@vger.kernel.org (open list:USB NETWORKING DRIVERS),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE)
-Subject: [PATCH net-next v2 1/2] of: mdio: Fall back to mdiobus_register() with NULL device_node
-Date: Tue, 15 May 2018 16:56:18 -0700
-Message-Id: <20180515235619.27773-2-f.fainelli@gmail.com>
-In-Reply-To: <20180515235619.27773-1-f.fainelli@gmail.com>
-References: <20180515235619.27773-1-f.fainelli@gmail.com>
+        Tue, 15 May 2018 04:43:41 -0400
+Received: by mail-lf0-f68.google.com with SMTP id h9-v6so21145621lfi.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 May 2018 01:43:40 -0700 (PDT)
+Subject: Re: [PATCH] dt-bindings: net: ravb: Add support for r8a77990 SoC
+To: Simon Horman <horms@verge.net.au>,
+        David Miller <davem@davemloft.net>
+Cc: yoshihiro.shimoda.uh@renesas.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org
+References: <1526008736-26496-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20180511.155942.16024095909155343.davem@davemloft.net>
+ <20180513075803.plrkbwmzksjnz45u@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <19e43b97-9235-a752-7cf9-56a5e3bb281a@cogentembedded.com>
+Date: Tue, 15 May 2018 11:43:39 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180513075803.plrkbwmzksjnz45u@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When the device_node specified is NULL, fall back to mdiobus_register().
-We have a number of drivers having a similar pattern which is:
+On 5/13/2018 10:58 AM, Simon Horman wrote:
 
-if (np)
-	of_mdiobus_register()
-else
-	mdiobus_register()
+>>> Add documentation for r8a77990 compatible string to renesas ravb device
+>>> tree bindings documentation.
+>>>
+>>> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>>
+>> I'm assuming this isn't targetted at one of my trees.  Just FYI.
+> 
+> Hi Dave,
+> 
+> I think this is appropriate for net-next but if not I can take it.
 
-so incorporate that behavior within the core of_mdiobus_register()
-function. This is also consistent with the stub version that we defined
-when CONFIG_OF=n.
+    There's also Rob, and IIRC he has taken alike patch recently...
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/of/of_mdio.c | 3 +++
- 1 file changed, 3 insertions(+)
+[...]
 
-diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
-index 8c0c92712fc9..d963baf8e53a 100644
---- a/drivers/of/of_mdio.c
-+++ b/drivers/of/of_mdio.c
-@@ -204,6 +204,9 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
- 	bool scanphys = false;
- 	int addr, rc;
- 
-+	if (!np)
-+		return mdiobus_register(mdio);
-+
- 	/* Do not continue if the node is disabled */
- 	if (!of_device_is_available(np))
- 		return -ENODEV;
--- 
-2.14.1
+MBR, Sergei
