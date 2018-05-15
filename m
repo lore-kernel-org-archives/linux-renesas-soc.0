@@ -1,67 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:46143 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755610AbeEAMcb (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:59540 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752215AbeEOJgB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 08:32:31 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v8 09/12] ARM: sun9i: smp: Add is_a83t field
-Date: Tue,  1 May 2018 14:31:28 +0200
-Message-Id: <20180501123131.7738-10-mylene.josserand@bootlin.com>
-In-Reply-To: <20180501123131.7738-1-mylene.josserand@bootlin.com>
-References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
+        Tue, 15 May 2018 05:36:01 -0400
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: RE: [PATCH v2 1/3] dt-bindings: timer: renesas, cmt: Document
+ r8a774[35] CMT support
+Date: Tue, 15 May 2018 09:35:57 +0000
+Message-ID: <TY1PR01MB177024E60A454389C064C87DC0930@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1513618743-4773-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513618743-4773-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR01MB1770621EC40038C4237B1BAAC0BE0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <20180513074656.5rkkp4trtpozvxhv@verge.net.au>
+In-Reply-To: <20180513074656.5rkkp4trtpozvxhv@verge.net.au>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To prepare the support of sun8i-a83t, add a field in the smp_data
-structure to know if we are on sun9i-a80 or sun8i-a83t.
+Thank you Simon.
 
-Add also a global variable to retrieve which architecture we are
-having.
+Fab
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
----
- arch/arm/mach-sunxi/mc_smp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> -----Original Message-----
+> From: Simon Horman [mailto:horms@verge.net.au]
+> Sent: 13 May 2018 08:47
+> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>; Daniel Lezcano <daniel.lezcano@=
+linaro.org>; Geert Uytterhoeven
+> <geert+renesas@glider.be>; devicetree@vger.kernel.org; Chris Paterson <Ch=
+ris.Paterson2@renesas.com>; Biju Das
+> <biju.das@bp.renesas.com>; linux-renesas-soc@vger.kernel.org; Rob Herring=
+ <robh+dt@kernel.org>; Mark Rutland
+> <mark.rutland@arm.com>
+> Subject: Re: [PATCH v2 1/3] dt-bindings: timer: renesas, cmt: Document r8=
+a774[35] CMT support
+>
+> On Tue, Apr 10, 2018 at 09:36:39AM +0000, Fabrizio Castro wrote:
+> > Good morning gentlemen,
+> >
+> > I am very sorry to bother you again, but it seems this patch has no
+> > master. Is anybody willing to take it?
+>
+> Patchwork tells me this has been Acked by Daniel Lezcano.
+> So I have decided to take this one in from the cold and apply it to the
+> renesas tree.
 
-diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-index 03f021d0c73e..fc10e3a3268f 100644
---- a/arch/arm/mach-sunxi/mc_smp.c
-+++ b/arch/arm/mach-sunxi/mc_smp.c
-@@ -74,6 +74,7 @@ static void __iomem *sram_b_smp_base;
- 
- extern void sunxi_mc_smp_secondary_startup(void);
- extern void sunxi_mc_smp_resume(void);
-+static bool is_a83t;
- 
- static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
- {
-@@ -624,6 +625,7 @@ struct sunxi_mc_smp_nodes {
- struct sunxi_mc_smp_data {
- 	const char *enable_method;
- 	int (*get_smp_nodes)(struct sunxi_mc_smp_nodes *nodes);
-+	bool is_a83t;
- };
- 
- static void __init sunxi_mc_smp_put_nodes(struct sunxi_mc_smp_nodes *nodes)
-@@ -697,6 +699,8 @@ static int __init sunxi_mc_smp_init(void)
- 			break;
- 	}
- 
-+	is_a83t = sunxi_mc_smp_data[i].is_a83t;
-+
- 	of_node_put(node);
- 	if (ret)
- 		return -ENODEV;
--- 
-2.11.0
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
