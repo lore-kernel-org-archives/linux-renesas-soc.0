@@ -1,242 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLQ1 (ORCPT
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:45409 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753080AbeEON70 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:16:27 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 009/102] arm64: dts: renesas: r8a7796: sort subnodes of the root node
-Date: Fri, 18 May 2018 13:14:31 +0200
-Message-Id: <6ef5e21294dfd2edcc3e1bb547aef3333d42e86d.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Tue, 15 May 2018 09:59:26 -0400
+Received: by mail-vk0-f67.google.com with SMTP id n134-v6so142846vke.12
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 May 2018 06:59:25 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAOtvUMcQgrPBo5c-vX=hdHHEAUMjZhAW6DgvXkErcGo247urbQ@mail.gmail.com>
+References: <CAOtvUMc80rEZaKD8j=F0fyV27Y17JOU5zzXtqDgPo=KEMROrhQ@mail.gmail.com>
+ <CAMuHMdVQdNO14JCaQyFQYD=brrD4XpsBzc8oMzhXG_rVZdCz-g@mail.gmail.com> <CAOtvUMcQgrPBo5c-vX=hdHHEAUMjZhAW6DgvXkErcGo247urbQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 May 2018 15:59:24 +0200
+Message-ID: <CAMuHMdUV-tjx3cXtAdaFWFz-he-yJXcOGbJ_qY9RFgqnudzSLg@mail.gmail.com>
+Subject: Re: Booting Salvator-X ES1 board with upstream kernel
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Sort subnodes of the root node alphanumerically.
+Hi Gilad,
 
-This is part of an ongoing effort to provide consistent node
-order in the DT of Renesas SoCs to improve maintainability.
+On Tue, May 15, 2018 at 2:36 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Mon, May 14, 2018 at 5:29 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Thu, May 10, 2018 at 10:12 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>> I have an R-Car 3rd gen Salvator-X ES1 board. I've been able to boot
+>>> Linux 4.9 on it from the rareness-bsp tree, using the defconfig and
+>>> the r8a7795-es1-salvator-x DTB with no problems, so the HW is fine.
+>>>
+>>> However, I can't seem to boot an upstream kernel (Linus master or
+>>> soc-for-v4.17 branch) on it. I just get total silence on the UART
+>>> after u-boot.
+>>>
+>>> Any tips or ideas for me to try?
+>>
+>> Please try appending the following to the kernel command line:
+>>
+>>     earlycon keep_bootcon
+>>
+>> FWIW, I'm using:
+>>
+>>     tftpboot 0x48080000 h3-salvator-x/Image
+>>     tftpboot 0x49f00000 h3-salvator-x/r8a7795-es1-salvator-x.dtb
+>>     booti 0x48080000 - 0x49f00000
+>>
+>> Which firmware revision do you have? It may be too old to boot moden
+>> (large) kernel images. Check the first line of BL2 output.
+>>
+>> Which config are you using? Please try renesas_defconfig from Simon's
+>> repository.
+>
+> That was it. I was building with defoncfig and getting a kernel that won't be.
+> Simon's config did the trick.
 
-This should not have any run-time effect.
+Good to hear you succeeded!
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 162 +++++++++++++++----------------
- 1 file changed, 81 insertions(+), 81 deletions(-)
+FWIW, mine boots v4.17-rc5 fine, using arm64 defconfig.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 556eb8e45499..78fbb4fd34bf 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -60,6 +60,72 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1600000000 {
-+			opp-hz = /bits/ 64 <1600000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+		opp-1700000000 {
-+			opp-hz = /bits/ 64 <1700000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+		opp-1800000000 {
-+			opp-hz = /bits/ 64 <1800000000>;
-+			opp-microvolt = <960000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1300000000 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+			turbo-mode;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -161,72 +227,6 @@
- 		clock-frequency = <0>;
- 	};
- 
--	cluster0_opp: opp_table0 {
--		compatible = "operating-points-v2";
--		opp-shared;
--
--		opp-500000000 {
--			opp-hz = /bits/ 64 <500000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1000000000 {
--			opp-hz = /bits/ 64 <1000000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1500000000 {
--			opp-hz = /bits/ 64 <1500000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1600000000 {
--			opp-hz = /bits/ 64 <1600000000>;
--			opp-microvolt = <900000>;
--			clock-latency-ns = <300000>;
--			turbo-mode;
--		};
--		opp-1700000000 {
--			opp-hz = /bits/ 64 <1700000000>;
--			opp-microvolt = <900000>;
--			clock-latency-ns = <300000>;
--			turbo-mode;
--		};
--		opp-1800000000 {
--			opp-hz = /bits/ 64 <1800000000>;
--			opp-microvolt = <960000>;
--			clock-latency-ns = <300000>;
--			turbo-mode;
--		};
--	};
--
--	cluster1_opp: opp_table1 {
--		compatible = "operating-points-v2";
--		opp-shared;
--
--		opp-800000000 {
--			opp-hz = /bits/ 64 <800000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1000000000 {
--			opp-hz = /bits/ 64 <1000000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1200000000 {
--			opp-hz = /bits/ 64 <1200000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--		};
--		opp-1300000000 {
--			opp-hz = /bits/ 64 <1300000000>;
--			opp-microvolt = <820000>;
--			clock-latency-ns = <300000>;
--			turbo-mode;
--		};
--	};
--
- 	/* External PCIe clock - can be overridden by the board */
- 	pcie_bus_clk: pcie_bus {
- 		compatible = "fixed-clock";
-@@ -234,13 +234,6 @@
- 		clock-frequency = <0>;
- 	};
- 
--	pmu_a57 {
--		compatible = "arm,cortex-a57-pmu";
--		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
--				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-affinity = <&a57_0>, <&a57_1>;
--	};
--
- 	pmu_a53 {
- 		compatible = "arm,cortex-a53-pmu";
- 		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-@@ -250,6 +243,13 @@
- 		interrupt-affinity = <&a53_0>, <&a53_1>, <&a53_2>, <&a53_3>;
- 	};
- 
-+	pmu_a57 {
-+		compatible = "arm,cortex-a57-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a57_0>, <&a57_1>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0", "arm,psci-0.2";
- 		method = "smc";
-@@ -2063,14 +2063,6 @@
- 		};
- 	};
- 
--	timer {
--		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
--	};
--
- 	thermal-zones {
- 		sensor_thermal1: sensor-thermal1 {
- 			polling-delay-passive = <250>;
-@@ -2151,6 +2143,14 @@
- 		};
- 	};
- 
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
- 	/* External USB clocks - can be overridden by the board */
- 	usb3s0_clk: usb3s0 {
- 		compatible = "fixed-clock";
+My firmware is:
+BL2: R-Car Gen3 Initial Program Loader(CA57) Rev.1.0.12
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
