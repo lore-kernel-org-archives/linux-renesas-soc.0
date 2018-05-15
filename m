@@ -1,34 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:43811 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754340AbeEANlF (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:52816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750748AbeEOWkB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 1 May 2018 09:41:05 -0400
-Date: Tue, 1 May 2018 08:41:03 -0500
-From: Rob Herring <robh@kernel.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: arm: consistently name r8a77965 as M3-N
-Message-ID: <20180501134103.GA29214@rob-hp-laptop>
-References: <20180424055442.19710-1-horms+renesas@verge.net.au>
+        Tue, 15 May 2018 18:40:01 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180424055442.19710-1-horms+renesas@verge.net.au>
+Content-Transfer-Encoding: quoted-printable
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525884754-21253-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1525884754-21253-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <152642400072.237094.5673745562388720173@swboyd.mtv.corp.google.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.18
+Date: Tue, 15 May 2018 15:40:00 -0700
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 07:54:42AM +0200, Simon Horman wrote:
-> There is an inconsistency between the use of M3N and M3-N.
-> This patch resolves this by consistently using the latter.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> Based on renesas-devel-20180423-v4.17-rc2
-> ---
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Quoting Geert Uytterhoeven (2018-05-09 09:52:34)
+>         Hi Mike, Stephen,
+> =
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a2433=
+38:
+> =
+
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> =
+
+> are available in the git repository at:
+> =
+
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v4.18-tag1
+> =
+
+> for you to fetch changes up to 3570a2af473789c5d5f5b9e04f72295102967824:
+> =
+
+>   clk: renesas: cpg-mssr: Add support for R-Car E3 (2018-05-09 18:43:57 +=
+0200)
+> =
+
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.18
+> =
+
+>   - Add support for the MSIOF module clocks on R-Car M3-N,
+>   - Add support for the new RZ/G1C and R-Car E3 SoCs,
+>   - Small fixes and cleanups.
+
+Thanks. Pulled into clk-next.
