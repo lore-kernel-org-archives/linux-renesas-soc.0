@@ -1,51 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35461 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751996AbeEGMiH (ORCPT
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:44893 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbeEOIA6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 May 2018 08:38:07 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 15 May 2018 04:00:58 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180515073553.372uzwx4gvj5qpk4@verge.net.au>
+References: <20180502095806.30341-1-horms+renesas@verge.net.au>
+ <2473510.IAjYrYimeR@aspire.rjw.lan> <20180515073553.372uzwx4gvj5qpk4@verge.net.au>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 15 May 2018 10:00:57 +0200
+Message-ID: <CAJZ5v0hyga1pHCqJK5e5y1fXJLLc3cDm1p7N2o6bzPZFNpRZxQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Revert explicit support for Renesas R-Car Gen 3
+ r8a779[56] SoCs
+To: Simon Horman <horms@verge.net.au>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: dts: r8a7740: Add CEU1
-Date: Mon,  7 May 2018 14:37:57 +0200
-Message-Id: <20180507123757.4708-1-horms+renesas@verge.net.au>
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe CEU1 peripheral for Renesas R-Mobile A1 R8A7740 Soc.
+On Tue, May 15, 2018 at 9:35 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, May 10, 2018 at 11:51:38AM +0200, Rafael J. Wysocki wrote:
+>> On Wednesday, May 2, 2018 11:58:04 AM CEST Simon Horman wrote:
+>> > Revert commits that added explicit support for Renesas R-Car Gen 3
+>> > r8a779[56] SoCs to the generic cpufreq driver.
+>> >
+>> > This is no longer needed since the flowing commit and to the best of my
+>> > knowledge is not relied on by any upstream DTS: edeec420de24 ("cpufreq:
+>> > dt-platdev: Automatically create cpufreq device with OPP v2")
+>> >
+>> > Simon Horman (2):
+>> >   Revert "cpufreq: dt: Add r8a7796 support to to use generic cpufreq
+>> >     driver"
+>> >   Revert "cpufreq: rcar: Add support for R8A7795 SoC"
+>> >
+>> >  drivers/cpufreq/cpufreq-dt-platdev.c | 2 --
+>> >  1 file changed, 2 deletions(-)
+>> >
+>> >
+>>
+>> Am I expected to pick up this series?
+>
+> Hi Rafael,
+>
+> that would be ideal from my point of view.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+OK, I'll queue them up, then.
 
- Depends and based on:
- "[PATCH v2 2/2] ARM: dts: r8a7740: Add CEU0"
-
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index 508d93440ee8..af4c071c9178 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -77,6 +77,16 @@
- 		status = "disabled";
- 	};
- 
-+	ceu1: ceu@fe914000 {
-+		reg = <0xfe910000 0x3000>;
-+		compatible = "renesas,r8a7740-ceu";
-+		interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp1_clks R8A7740_CLK_CEU21>;
-+		clock-names = "ceu21";
-+		power-domains = <&pd_a4r>;
-+		status = "disabled";
-+	};
-+
- 	cmt1: timer@e6138000 {
- 		compatible = "renesas,cmt-48-r8a7740", "renesas,cmt-48";
- 		reg = <0xe6138000 0x170>;
--- 
-2.11.0
+Thanks!
