@@ -1,182 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:23840 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752439AbeEOA5S (ORCPT
+Received: from mail-he1eur01on0132.outbound.protection.outlook.com ([104.47.0.132]:21089
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752289AbeEPKPa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 May 2018 20:57:18 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        jacopo mondi <jacopo@jmondi.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v16 1/2] rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver documentation
-Date: Tue, 15 May 2018 02:56:34 +0200
-Message-Id: <20180515005635.25715-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20180515005635.25715-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20180515005635.25715-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 16 May 2018 06:15:30 -0400
+From: Peter Rosin <peda@axentia.se>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v3 00/26] device link, bridge supplier <-> drm device
+Date: Wed, 16 May 2018 12:14:44 +0200
+Message-Id: <20180516101510.13215-1-peda@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Documentation for Renesas R-Car MIPI CSI-2 receiver. The CSI-2 receivers
-are located between the video sources (CSI-2 transmitters) and the video
-grabbers (VIN) on Gen3 of Renesas R-Car SoC.
+Hi!
 
-Each CSI-2 device is connected to more than one VIN device which
-simultaneously can receive video from the same CSI-2 device. Each VIN
-device can also be connected to more than one CSI-2 device. The routing
-of which links are used is controlled by the VIN devices. There are only
-a few possible routes which are set by hardware limitations, which are
-different for each SoC in the Gen3 family.
+It was noted by Russell King [1] that bridges (not using components)
+might disappear unexpectedly if the owner of the bridge was unbound.
+Jyri Sarha had previously noted the same thing with panels [2]. Jyri
+came up with using device links to resolve the panel issue, which
+was also my (independent) reaction to the note from Russell.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+This series builds up to the addition of that link in the last
+patch, but in my opinion the other 25 patches do have merit on their
+own.
 
----
+The last patch needs testing, while the others look trivial. Jyri, are
+you able to test? That said, I might have missed some subtlety.
 
-* Changes since v14.
-- Added compatible string for R8A77965 and R8A77970.
-- s/Port 0/port@0/
-- s/Port 1/port@1/
-- s/Endpoint 0/endpoint@0/
+Oh, and the reason I'm pushing this is of course so that the issue
+noted by Russell in [1] is addressed which in turn means that the
+tda998x bridge driver can be patched according to that series without
+objection (hopefully) and then used from the atmel-hlcdc driver (and
+other drivers that are not componentized).
 
-* Changes since v13
-- Add Laurent's tag.
----
- .../bindings/media/renesas,rcar-csi2.txt      | 101 ++++++++++++++++++
- MAINTAINERS                                   |   1 +
- 2 files changed, 102 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+Changes since v2    https://lkml.org/lkml/2018/5/4/443
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-new file mode 100644
-index 0000000000000000..2d385b65b275bc58
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-@@ -0,0 +1,101 @@
-+Renesas R-Car MIPI CSI-2
-+------------------------
-+
-+The R-Car CSI-2 receiver device provides MIPI CSI-2 capabilities for the
-+Renesas R-Car family of devices. It is used in conjunction with the
-+R-Car VIN module, which provides the video capture capabilities.
-+
-+Mandatory properties
-+--------------------
-+ - compatible: Must be one or more of the following
-+   - "renesas,r8a7795-csi2" for the R8A7795 device.
-+   - "renesas,r8a7796-csi2" for the R8A7796 device.
-+   - "renesas,r8a77965-csi2" for the R8A77965 device.
-+   - "renesas,r8a77970-csi2" for the R8A77970 device.
-+
-+ - reg: the register base and size for the device registers
-+ - interrupts: the interrupt for the device
-+ - clocks: reference to the parent clock
-+
-+The device node shall contain two 'port' child nodes according to the
-+bindings defined in Documentation/devicetree/bindings/media/
-+video-interfaces.txt. port@0 shall connect to the CSI-2 source. port@1
-+shall connect to all the R-Car VIN modules that have a hardware
-+connection to the CSI-2 receiver.
-+
-+- port@0- Video source (mandatory)
-+	- endpoint@0 - sub-node describing the endpoint that is the video source
-+
-+- port@1 - VIN instances (optional)
-+	- One endpoint sub-node for every R-Car VIN instance which is connected
-+	  to the R-Car CSI-2 receiver.
-+
-+Example:
-+
-+	csi20: csi2@fea80000 {
-+		compatible = "renesas,r8a7796-csi2";
-+		reg = <0 0xfea80000 0 0x10000>;
-+		interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 714>;
-+		power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+		resets = <&cpg 714>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				reg = <0>;
-+
-+				csi20_in: endpoint@0 {
-+					reg = <0>;
-+					clock-lanes = <0>;
-+					data-lanes = <1>;
-+					remote-endpoint = <&adv7482_txb>;
-+				};
-+			};
-+
-+			port@1 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				reg = <1>;
-+
-+				csi20vin0: endpoint@0 {
-+					reg = <0>;
-+					remote-endpoint = <&vin0csi20>;
-+				};
-+				csi20vin1: endpoint@1 {
-+					reg = <1>;
-+					remote-endpoint = <&vin1csi20>;
-+				};
-+				csi20vin2: endpoint@2 {
-+					reg = <2>;
-+					remote-endpoint = <&vin2csi20>;
-+				};
-+				csi20vin3: endpoint@3 {
-+					reg = <3>;
-+					remote-endpoint = <&vin3csi20>;
-+				};
-+				csi20vin4: endpoint@4 {
-+					reg = <4>;
-+					remote-endpoint = <&vin4csi20>;
-+				};
-+				csi20vin5: endpoint@5 {
-+					reg = <5>;
-+					remote-endpoint = <&vin5csi20>;
-+				};
-+				csi20vin6: endpoint@6 {
-+					reg = <6>;
-+					remote-endpoint = <&vin6csi20>;
-+				};
-+				csi20vin7: endpoint@7 {
-+					reg = <7>;
-+					remote-endpoint = <&vin7csi20>;
-+				};
-+			};
-+		};
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 49003f77cedd5d71..13d470d03269b765 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8825,6 +8825,7 @@ L:	linux-media@vger.kernel.org
- L:	linux-renesas-soc@vger.kernel.org
- T:	git git://linuxtv.org/media_tree.git
- S:	Supported
-+F:	Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
- F:	Documentation/devicetree/bindings/media/rcar_vin.txt
- F:	drivers/media/platform/rcar-vin/
- 
+- Russell King spells his name this way. Sorry!
+- Add review tag from Andrzej Hajda (patches 1, 25 and 26).
+- Add ack tag from Daniel Vetter (patches 1, 24, 25 and 26).
+- Mention the interaction with the rockchip_lvds driver in the
+  commit message for patch 1.
+- Change the comment for the new @link member in patch 26, so that a
+  symmetric relationchip between cunsumer/supplier isn't implied.
+
+Changes since v1    https://lkml.org/lkml/2018/4/26/1018
+
+- rename .owner to .odev to not get mixed up with the module owner.
+- added patches for new recent drivers thc63lvd1024 and cdns-dsi
+- fix for problem in the rockchip_lvds driver reported by 0day
+- added a WARN in drm_bridge_add if there is no .odev owner device
+
+Cheers,
+Peter
+
+[1] https://lkml.org/lkml/2018/4/23/769
+[2] https://www.spinics.net/lists/dri-devel/msg174275.html
+
+Peter Rosin (26):
+  drm/bridge: allow optionally specifying an owner .odev device
+  drm/bridge: adv7511: provide an owner .odev device
+  drm/bridge/analogix: core: specify the owner .odev of the bridge
+  drm/bridge: analogix-anx78xx: provide an owner .odev device
+  drm/bridge: cdns-dsi: provide an owner .odev device
+  drm/bridge: vga-dac: provide an owner .odev device
+  drm/bridge: lvds-encoder: provide an owner .odev device
+  drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: provide an owner .odev
+    device
+  drm/bridge: nxp-ptn3460: provide an owner .odev device
+  drm/bridge: panel: provide an owner .odev device
+  drm/bridge: ps8622: provide an owner .odev device
+  drm/bridge: sii902x: provide an owner .odev device
+  drm/bridge: sii9234: provide an owner .odev device
+  drm/bridge: sii8620: provide an owner .odev device
+  drm/bridge: synopsys: provide an owner .odev device for the bridges
+  drm/bridge: tc358767: provide an owner .odev device
+  drm/bridge: thc63lvd1024: provide an owner .odev device
+  drm/bridge: ti-tfp410: provide an owner .odev device
+  drm/exynos: mic: provide an owner .odev device for the bridge
+  drm/mediatek: hdmi: provide an owner .odev device for the bridge
+  drm/msm: specify the owner .odev of the bridges
+  drm/rcar-du: lvds: provide an owner .odev device for the bridge
+  drm/sti: provide an owner .odev device for the bridges
+  drm/bridge: remove the .of_node member
+  drm/bridge: require the owner .odev to be filled in on
+    drm_bridge_add/attach
+  drm/bridge: establish a link between the bridge supplier and consumer
+
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       |  2 +-
+ drivers/gpu/drm/bridge/analogix-anx78xx.c          |  5 +----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  1 +
+ drivers/gpu/drm/bridge/cdns-dsi.c                  |  2 +-
+ drivers/gpu/drm/bridge/dumb-vga-dac.c              |  2 +-
+ drivers/gpu/drm/bridge/lvds-encoder.c              |  2 +-
+ .../drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c   |  2 +-
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               |  2 +-
+ drivers/gpu/drm/bridge/panel.c                     |  4 +---
+ drivers/gpu/drm/bridge/parade-ps8622.c             |  2 +-
+ drivers/gpu/drm/bridge/sii902x.c                   |  2 +-
+ drivers/gpu/drm/bridge/sii9234.c                   |  2 +-
+ drivers/gpu/drm/bridge/sil-sii8620.c               |  2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  4 +---
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c      |  4 +---
+ drivers/gpu/drm/bridge/tc358767.c                  |  2 +-
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |  2 +-
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  2 +-
+ drivers/gpu/drm/drm_bridge.c                       | 26 +++++++++++++++++++++-
+ drivers/gpu/drm/exynos/exynos_drm_mic.c            |  2 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |  2 +-
+ drivers/gpu/drm/msm/dsi/dsi_manager.c              |  1 +
+ drivers/gpu/drm/msm/edp/edp_bridge.c               |  1 +
+ drivers/gpu/drm/msm/hdmi/hdmi_bridge.c             |  1 +
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_lvds.c           |  2 +-
+ drivers/gpu/drm/sti/sti_dvo.c                      |  2 +-
+ drivers/gpu/drm/sti/sti_hda.c                      |  1 +
+ drivers/gpu/drm/sti/sti_hdmi.c                     |  1 +
+ include/drm/drm_bridge.h                           |  8 +++----
+ 30 files changed, 57 insertions(+), 36 deletions(-)
+
 -- 
-2.17.0
+2.11.0
