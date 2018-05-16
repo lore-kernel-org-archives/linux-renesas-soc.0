@@ -1,99 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33804 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750888AbeERLRC (ORCPT
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:54771 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752095AbeEPMRF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 May 2018 07:17:02 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 054/102] arm64: dts: renesas: r8a77965: Add FCPF and FCPV instances
-Date: Fri, 18 May 2018 13:15:16 +0200
-Message-Id: <104243b2e831fd0a5cf86429b9bcea271f7a3d4d.1526637994.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1526637994.git.horms+renesas@verge.net.au>
-References: <cover.1526637994.git.horms+renesas@verge.net.au>
+        Wed, 16 May 2018 08:17:05 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 0/4]  rcar-vin: Add support for digital input on Gen3
+Date: Wed, 16 May 2018 14:16:52 +0200
+Message-Id: <1526473016-30559-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Hello,
+   this series add support for 'digital' input to the Gen3 version of rcar-vin
+driver.
 
-The FCPs handle the interface between various IP cores and memory. Add
-the instances related to the FDPs and VSP2s.
+'Digital' inputs (the terms comes from the existing Gen2 version of the driver)
+describe parallel video input sources connected to a VIN instance. So far, the
+Gen3-version of the driver (the media-controller compliant one) only supported
+CSI-2 inputs.
 
-Based on a similar patch of the R8A7796 device tree
-by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
+This series extends the device tree parsing to accept a connection on port@0,
+and parses the 'digital' subdevice reusing the Gen-2 functions.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Kieran: Rebase to top of tree]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 41 +++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+Compared to v1, this series drops all changes to rcar-dma module, as Niklas
+sent a proper fix for both crop and compose rectangle managment and field
+signal toggling method. This series is thus based on the media master branch
+with Niklas' series on top.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index b12f41755aea..74a7ae4ebccc 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a77965-sysc.h>
- 
- #define CPG_AUDIO_CLK_I		10
- 
-@@ -1000,6 +1001,46 @@
- 			/* placeholder */
- 		};
- 
-+		fcpf0: fcp@fe950000 {
-+			compatible = "renesas,fcpf";
-+			reg = <0 0xfe950000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 615>;
-+			power-domains = <&sysc R8A77965_PD_A3VP>;
-+			resets = <&cpg 615>;
-+		};
-+
-+		fcpvb0: fcp@fe96f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe96f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 607>;
-+			power-domains = <&sysc R8A77965_PD_A3VP>;
-+			resets = <&cpg 607>;
-+		};
-+
-+		fcpvi0: fcp@fe9af000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfe9af000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 611>;
-+			power-domains = <&sysc R8A77965_PD_A3VP>;
-+			resets = <&cpg 611>;
-+		};
-+
-+		fcpvd0: fcp@fea27000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea27000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 603>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 603>;
-+		};
-+
-+		fcpvd1: fcp@fea2f000 {
-+			compatible = "renesas,fcpv";
-+			reg = <0 0xfea2f000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 602>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 602>;
-+		};
-+
- 		csi20: csi2@fea80000 {
- 			reg = <0 0xfea80000 0 0x10000>;
- 			/* placeholder */
--- 
-2.11.0
+Compared to v1 I incorporated Niklas' suggestion to re-use Gen2 functions for
+parsing the digital input device nodes, and register one notifier for each VIN
+that has an active connection on port@0. The 'group' notifier then only collects
+async subdevices for CSI-2 inputs.
+
+A separate series for the VIN4 and HDMI input enabling on Draak board has been
+sent to renesas-soc list.
+
+The vin-tests repository patches to automate capture testing have been extended
+to support D3 board and capture from HDMI output, and patches have been sent
+to Niklas.
+
+Tested capturing HDMI input images on D3 and for backward compatibility on
+Salvator-X M3-W too (seems like I didn't break anything there).
+
+Patches for testing on D3 are available at:
+git://jmondi.org/linux d3/media-master/driver-v2
+git://jmondi.org/linux d3/media-master/dts
+git://jmondi.org/linux d3/media-master/test
+git://jmondi.org/vin-tests d3
+
+Patches to test on M3-W (based on latest renesas drivers, which includes an
+older version of VIN series, but has CSI-2 driver) available at:
+git://jmondi.org/linux d3/renesas-drivers/test
+
+Thanks
+    j
+
+Jacopo Mondi (4):
+  media: rcar-vin: Parse digital input in mc-path
+  media: rcar-vin: Handle mc in digital notifier ops
+  media: rcar-vin: Handle digital subdev in link_notify
+  media: rcar-vin: Add support for R-Car R8A77995 SoC
+
+ drivers/media/platform/rcar-vin/rcar-core.c | 239 ++++++++++++++++++++++------
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  15 ++
+ 2 files changed, 202 insertions(+), 52 deletions(-)
+
+--
+2.7.4
