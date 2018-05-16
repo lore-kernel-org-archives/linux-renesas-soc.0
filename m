@@ -1,236 +1,416 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/4] media: rcar-vin: Parse digital input in mc-path
-Date: Wed, 16 May 2018 14:16:53 +0200
-Message-Id: <1526473016-30559-2-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1526473016-30559-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1526473016-30559-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:47445 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751309AbeEPCCW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 15 May 2018 22:02:22 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/7] arm64: dts: renesas: r8a7796: add VIN and CSI-2 nodes
+Date: Wed, 16 May 2018 03:58:50 +0200
+Message-Id: <20180516015854.19432-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20180516015854.19432-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for digital input subdevices to Gen-3 rcar-vin.
-The Gen-3, media-controller compliant, version has so far only accepted
-CSI-2 input subdevices. Remove assumptions on the supported bus_type and
-accepted number of subdevices, and allow digital input connections on port@0.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 99 +++++++++++++++++++++++------
- drivers/media/platform/rcar-vin/rcar-vin.h  | 15 +++++
- 2 files changed, 93 insertions(+), 21 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 367 +++++++++++++++++++++++
+ 1 file changed, 367 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index d3072e1..0ea21ab 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -562,7 +562,7 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
- 		return ret;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 6ffab2da07cb9d67..7c25be6b5af3eea8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1280,6 +1280,262 @@
+ 			status = "disabled";
+ 		};
  
- 	if (!vin->digital)
--		return -ENODEV;
-+		return -ENOTCONN;
- 
- 	vin_dbg(vin, "Found digital subdevice %pOF\n",
- 		to_of_node(vin->digital->asd.match.fwnode));
-@@ -703,15 +703,13 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
- {
- 	struct rvin_dev *vin = dev_get_drvdata(dev);
- 
--	if (vep->base.port != 1 || vep->base.id >= RVIN_CSI_MAX)
-+	if (vep->base.port != RVIN_PORT_CSI2 || vep->base.id >= RVIN_CSI_MAX)
- 		return -EINVAL;
- 
- 	if (!of_device_is_available(to_of_node(asd->match.fwnode))) {
--
- 		vin_dbg(vin, "OF device %pOF disabled, ignoring\n",
- 			to_of_node(asd->match.fwnode));
- 		return -ENOTCONN;
--
- 	}
- 
- 	if (vin->group->csi[vep->base.id].fwnode) {
-@@ -720,6 +718,8 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
- 		return -ENOTCONN;
- 	}
- 
-+	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
-+	vin->mbus_cfg.flags = 0;
- 	vin->group->csi[vep->base.id].fwnode = asd->match.fwnode;
- 
- 	vin_dbg(vin, "Add group OF device %pOF to slot %u\n",
-@@ -742,7 +742,14 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
- 		return -EINVAL;
- 	}
- 
--	/* If not all VIN's are registered don't register the notifier. */
-+	/* Collect digital subdevices in this VIN device node. */
-+	ret = rvin_digital_graph_init(vin);
-+	if (ret < 0 && ret != -ENOTCONN) {
-+		mutex_unlock(&vin->group->lock);
-+		return ret;
-+	}
++		vin0: video@e6ef0000 {
++			compatible = "renesas,vin-r8a7796";
++			reg = <0 0xe6ef0000 0 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 811>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 811>;
++			renesas,id = <0>;
++			status = "disabled";
 +
-+	/* Only the last registered VIN instance collects CSI-2 subdevices. */
- 	for (i = 0; i < RCAR_VIN_NUM; i++)
- 		if (vin->group->vin[i])
- 			count++;
-@@ -752,22 +759,33 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
- 		return 0;
- 	}
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin0csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi20vin0>;
++					};
++					vin0csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin0>;
++					};
++				};
++			};
++		};
++
++		vin1: video@e6ef1000 {
++			compatible = "renesas,vin-r8a7796";
++			reg = <0 0xe6ef1000 0 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 810>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 810>;
++			renesas,id = <1>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin1csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi20vin1>;
++					};
++					vin1csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin1>;
++					};
++				};
++			};
++		};
++
++		vin2: video@e6ef2000 {
++			compatible = "renesas,vin-r8a7796";
++			reg = <0 0xe6ef2000 0 0x1000>;
++			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 809>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 809>;
++			renesas,id = <2>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin2csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi20vin2>;
++					};
++					vin2csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin2>;
++					};
++				};
++			};
++		};
++
++		vin3: video@e6ef3000 {
++			compatible = "renesas,vin-r8a7796";
++			reg = <0 0xe6ef3000 0 0x1000>;
++			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 808>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 808>;
++			renesas,id = <3>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin3csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi20vin3>;
++					};
++					vin3csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin3>;
++					};
++				};
++			};
++		};
++
++		vin4: video@e6ef4000 {
++			compatible = "renesas,vin-r8a7796";
++			reg = <0 0xe6ef4000 0 0x1000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 807>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 807>;
++			renesas,id = <4>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin4csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi20vin4>;
++					};
++					vin4csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin4>;
++					};
++				};
++			};
++		};
++
++		vin5: video@e6ef5000 {
++			compatible = "renesas,vin-r8a7796";
++			reg = <0 0xe6ef5000 0 0x1000>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 806>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 806>;
++			renesas,id = <5>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin5csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi20vin5>;
++					};
++					vin5csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin5>;
++					};
++				};
++			};
++		};
++
++		vin6: video@e6ef6000 {
++			compatible = "renesas,vin-r8a7796";
++			reg = <0 0xe6ef6000 0 0x1000>;
++			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 805>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 805>;
++			renesas,id = <6>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin6csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi20vin6>;
++					};
++					vin6csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin6>;
++					};
++				};
++			};
++		};
++
++		vin7: video@e6ef7000 {
++			compatible = "renesas,vin-r8a7796";
++			reg = <0 0xe6ef7000 0 0x1000>;
++			interrupts = <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 804>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 804>;
++			renesas,id = <7>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin7csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint= <&csi20vin7>;
++					};
++					vin7csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin7>;
++					};
++				};
++			};
++		};
++
+ 		drif00: rif@e6f40000 {
+ 			compatible = "renesas,r8a7796-drif",
+ 				     "renesas,rcar-gen3-drif";
+@@ -1998,6 +2254,117 @@
+ 			renesas,fcp = <&fcpvi0>;
+ 		};
  
--	/*
--	 * Have all VIN's look for subdevices. Some subdevices will overlap
--	 * but the parser function can handle it, so each subdevice will
--	 * only be registered once with the notifier.
--	 */
--
--	vin->group->notifier = &vin->notifier;
--
-+	vin->group->notifier = NULL;
- 	for (i = 0; i < RCAR_VIN_NUM; i++) {
-+		struct v4l2_async_notifier *notifier;
++		csi20: csi2@fea80000 {
++			compatible = "renesas,r8a7796-csi2";
++			reg = <0 0xfea80000 0 0x10000>;
++			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 714>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 714>;
++			status = "disabled";
 +
- 		if (!vin->group->vin[i])
- 			continue;
- 
-+		/* This VIN alread has digitial subdevices registered, skip. */
-+		notifier = &vin->group->vin[i]->notifier;
-+		if (notifier->num_subdevs)
-+			continue;
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+		/* This VIN instance notifier will collect all CSI-2 subdevs. */
-+		if (!vin->group->notifier) {
-+			vin->group->v4l2_dev = &vin->group->vin[i]->v4l2_dev;
-+			vin->group->notifier = &vin->group->vin[i]->notifier;
-+		}
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
 +
-+		/*
-+		 * Some CSI-2 subdevices will overlap but the parser function
-+		 * can handle it, so each subdevice will only be registered
-+		 * once with the group notifier.
-+		 */
- 		ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
- 				vin->group->vin[i]->dev, vin->group->notifier,
--				sizeof(struct v4l2_async_subdev), 1,
--				rvin_mc_parse_of_endpoint);
-+				sizeof(struct v4l2_async_subdev),
-+				RVIN_PORT_CSI2, rvin_mc_parse_of_endpoint);
- 		if (ret) {
- 			mutex_unlock(&vin->group->lock);
- 			return ret;
-@@ -776,25 +794,64 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
- 
- 	mutex_unlock(&vin->group->lock);
- 
--	vin->group->notifier->ops = &rvin_group_notify_ops;
-+	/*
-+	 * Go and register all notifiers for digital subdevs, and
-+	 * the group notifier for CSI-2 subdevs, if any.
-+	 */
-+	for (i = 0; i < RCAR_VIN_NUM; i++) {
-+		struct rvin_dev *ivin = vin->group->vin[i];
-+		struct v4l2_async_notifier *notifier;
- 
--	ret = v4l2_async_notifier_register(&vin->v4l2_dev, &vin->notifier);
-+		if (!ivin)
-+			continue;
++					reg = <1>;
 +
-+		notifier = &ivin->notifier;
-+		if (notifier == vin->group->notifier ||
-+		    !notifier->num_subdevs)
-+			continue;
++					csi20vin0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&vin0csi20>;
++					};
++					csi20vin1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vin1csi20>;
++					};
++					csi20vin2: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&vin2csi20>;
++					};
++					csi20vin3: endpoint@3 {
++						reg = <3>;
++						remote-endpoint = <&vin3csi20>;
++					};
++					csi20vin4: endpoint@4 {
++						reg = <4>;
++						remote-endpoint = <&vin4csi20>;
++					};
++					csi20vin5: endpoint@5 {
++						reg = <5>;
++						remote-endpoint = <&vin5csi20>;
++					};
++					csi20vin6: endpoint@6 {
++						reg = <6>;
++						remote-endpoint = <&vin6csi20>;
++					};
++					csi20vin7: endpoint@7 {
++						reg = <7>;
++						remote-endpoint = <&vin7csi20>;
++					};
++				};
++			};
++		};
 +
-+		notifier->ops = &rvin_digital_notify_ops;
-+		ret = v4l2_async_notifier_register(&ivin->v4l2_dev, notifier);
-+		if (ret < 0) {
-+			vin_err(ivin, "Notifier registration failed\n");
-+			goto error_unregister_notifiers;
-+		}
-+	}
++		csi40: csi2@feaa0000 {
++			compatible = "renesas,r8a7796-csi2";
++			reg = <0 0xfeaa0000 0 0x10000>;
++			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 716>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			resets = <&cpg 716>;
++			status = "disabled";
 +
-+	if (!vin->group->notifier || !vin->group->notifier->num_subdevs)
-+		return 0;
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+	vin->group->notifier->ops = &rvin_group_notify_ops;
-+	ret = v4l2_async_notifier_register(vin->group->v4l2_dev,
-+					   vin->group->notifier);
- 	if (ret < 0) {
- 		vin_err(vin, "Notifier registration failed\n");
- 		return ret;
- 	}
- 
- 	return 0;
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
 +
-+error_unregister_notifiers:
-+	for (; i > 0; i--) {
-+		struct v4l2_async_notifier *notifier;
++					reg = <1>;
 +
-+		if (!vin->group->vin[i - 1])
-+			continue;
++					csi40vin0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&vin0csi40>;
++					};
++					csi40vin1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vin1csi40>;
++					};
++					csi40vin2: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&vin2csi40>;
++					};
++					csi40vin3: endpoint@3 {
++						reg = <3>;
++						remote-endpoint = <&vin3csi40>;
++					};
++					csi40vin4: endpoint@4 {
++						reg = <4>;
++						remote-endpoint = <&vin4csi40>;
++					};
++					csi40vin5: endpoint@5 {
++						reg = <5>;
++						remote-endpoint = <&vin5csi40>;
++					};
++					csi40vin6: endpoint@6 {
++						reg = <6>;
++						remote-endpoint = <&vin6csi40>;
++					};
++					csi40vin7: endpoint@7 {
++						reg = <7>;
++						remote-endpoint = <&vin7csi40>;
++					};
++				};
 +
-+		notifier = &vin->group->vin[i - 1]->notifier;
-+		if (!notifier->num_subdevs)
-+			continue;
++			};
++		};
 +
-+		v4l2_async_notifier_unregister(notifier);
-+	}
-+
-+	return ret;
- }
- 
- static int rvin_mc_init(struct rvin_dev *vin)
- {
- 	int ret;
- 
--	/* All our sources are CSI-2 */
--	vin->mbus_cfg.type = V4L2_MBUS_CSI2;
--	vin->mbus_cfg.flags = 0;
--
- 	vin->pad.flags = MEDIA_PAD_FL_SINK;
- 	ret = media_entity_pads_init(&vin->vdev.entity, 1, &vin->pad);
- 	if (ret)
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index c2aef78..836751e 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -52,6 +52,19 @@ enum rvin_csi_id {
- };
- 
- /**
-+ * enum rvin_port_id
-+ *
-+ * List the available VIN port functions.
-+ *
-+ * RVIN_PORT_DIGITAL	- Input port for digital video connection
-+ * RVIN_PORT_CSI2	- Input port for CSI-2 video connection
-+ */
-+enum rvin_port_id {
-+	RVIN_PORT_DIGITAL,
-+	RVIN_PORT_CSI2
-+};
-+
-+/**
-  * STOPPED  - No operation in progress
-  * RUNNING  - Operation in progress have buffers
-  * STOPPING - Stopping operation
-@@ -225,6 +238,7 @@ struct rvin_dev {
-  *
-  * @lock:		protects the count, notifier, vin and csi members
-  * @count:		number of enabled VIN instances found in DT
-+ * @v4l2_dev:		pointer to the group v4l2 device
-  * @notifier:		pointer to the notifier of a VIN which handles the
-  *			groups async sub-devices.
-  * @vin:		VIN instances which are part of the group
-@@ -238,6 +252,7 @@ struct rvin_group {
- 
- 	struct mutex lock;
- 	unsigned int count;
-+	struct v4l2_device *v4l2_dev;
- 	struct v4l2_async_notifier *notifier;
- 	struct rvin_dev *vin[RCAR_VIN_NUM];
- 
+ 		hdmi0: hdmi@fead0000 {
+ 			compatible = "renesas,r8a7796-hdmi", "renesas,rcar-gen3-hdmi";
+ 			reg = <0 0xfead0000 0 0x10000>;
 -- 
-2.7.4
+2.17.0
